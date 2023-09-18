@@ -82,6 +82,7 @@ return [
         'StepStar',
         'InscriptionAdministrative',
         'Application',
+        'Substitution',
         'SygalApi',
         'SygalApiImpl',
     ],

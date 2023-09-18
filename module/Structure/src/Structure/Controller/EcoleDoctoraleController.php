@@ -48,6 +48,22 @@ class EcoleDoctoraleController extends StructureConcreteController
     /**
      * @return ViewModel
      */
+    public function voirAction(): ViewModel
+    {
+        $id = $this->params()->fromRoute('ecole-doctorale');
+
+        /** @var EcoleDoctorale $structureConcrete */
+        $structureConcrete = $this->ecoleDoctoraleService->getRepository()->find($id);
+
+        return $this->forward()->dispatch(self::class, [
+            'action' => 'information',
+            'structure' => $structureConcrete->getStructure(false)->getId(),
+        ]);
+    }
+
+    /**
+     * @return ViewModel
+     */
     public function informationAction(): ViewModel
     {
         $viewModel = parent::informationAction();

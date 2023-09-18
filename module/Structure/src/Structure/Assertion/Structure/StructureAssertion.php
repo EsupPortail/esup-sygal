@@ -9,7 +9,10 @@ use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\StructureInterface;
 use Structure\Provider\Privilege\StructurePrivileges;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 
@@ -48,6 +51,14 @@ class StructureAssertion extends AbstractAssertion
             case $privilege === StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES :
             case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES :
                 return $role->getStructure() === $structure;
+        }
+
+        if ($structure instanceof SubstitutionAwareInterface) {
+            switch (true) {
+                case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES :
+                case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES :
+                    return $structure->updateEnabled();
+            }
         }
 
         return true;

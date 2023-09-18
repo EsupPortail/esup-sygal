@@ -2,10 +2,19 @@
 -- Substitutions
 --
 
+-- --drop table substit_config;
+-- create table substit_config (
+--     param_name varchar(128) primary key,
+--     param_value text,
+--     param_value_default text
+-- );
+
+
 --drop table substit_log;
 create table substit_log (
     id bigserial primary key,
     type varchar(128) not null,
+    operation varchar(64) not null,
     substitue_id bigint,
     substituant_id bigint not null,
     npd varchar(256),
@@ -26,15 +35,12 @@ select kcu.table_name as source_table,
        kcu.column_name as fk_column,
        kcu.constraint_name
 from information_schema.table_constraints tco
-         join information_schema.key_column_usage kcu
-              on tco.constraint_schema = kcu.constraint_schema
-                  and tco.constraint_name = kcu.constraint_name
-         join information_schema.referential_constraints rco
-              on tco.constraint_schema = rco.constraint_schema
-                  and tco.constraint_name = rco.constraint_name
-         join information_schema.table_constraints rel_tco
-              on rco.unique_constraint_schema = rel_tco.constraint_schema
-                  and rco.unique_constraint_name = rel_tco.constraint_name
+    join information_schema.key_column_usage kcu
+        on tco.constraint_schema = kcu.constraint_schema and tco.constraint_name = kcu.constraint_name
+    join information_schema.referential_constraints rco
+        on tco.constraint_schema = rco.constraint_schema and tco.constraint_name = rco.constraint_name
+    join information_schema.table_constraints rel_tco
+        on rco.unique_constraint_schema = rel_tco.constraint_schema and rco.unique_constraint_name = rel_tco.constraint_name
 where tco.constraint_type = 'FOREIGN KEY';
 
 
@@ -104,6 +110,7 @@ $$;
 
 
 create or replace function substit_insert_log(type varchar,
+                                              operation varchar,
                                               substitue_id bigint,
                                               substituant_id bigint,
                                               npd varchar,
@@ -111,8 +118,8 @@ create or replace function substit_insert_log(type varchar,
     language plpgsql
 as
 $$begin
-    insert into substit_log(type, substitue_id, substituant_id, npd, log)
-    values (type, substitue_id, substituant_id, npd, log);
+    insert into substit_log(type, operation, substitue_id, substituant_id, npd, log)
+    values (type, operation, substitue_id, substituant_id, npd, log);
 end
 $$;
 
@@ -127,7 +134,7 @@ $$declare
     substituant_record_id bigint;
 begin
     --
-    -- Crée si nécessaire une subsitution pour un NPD donné.
+    -- Crée si nécessaire une substitution pour un NPD donné.
     --
 
     raise notice 'Création si necessaire d''une substitution avec le NPD %...', p_npd;
@@ -138,7 +145,7 @@ begin
     if found then
         execute format('select * from substit_fetch_data_for_substituant_%s(%L) limit 1', type, p_npd) into data;
         execute format('select substit_create_substituant_%s($1)', type) using data into substituant_record_id;
-        perform substit_insert_log(type, null, substituant_record_id, p_npd,
+        perform substit_insert_log(type, 'SUBSTITUANT_CREATE', null, substituant_record_id, p_npd,
                                    format('Nouvel enregistrement substituant : %s', substituant_record_id));
 
         while found loop
@@ -157,16 +164,25 @@ $$;
 create or replace function substit_update_substituant(type varchar, p_substituant_id bigint, data record) returns void
     language plpgsql
 as
-$$begin
+$$declare
+    v_record record;
+begin
     --
     -- Mise à jour des attributs de l'enregistrement substituant spécifié, à partir des valeurs spécifiées.
     --
 
-    raise notice 'Mise à jour du substituant % avec les valeurs %', p_substituant_id, data;
+    execute format('select * from %I where id = %s', type, p_substituant_id) into v_record;
+    if v_record.substit_update_enabled = false then
+        raise notice 'Mise à jour du substituant % : désactivée', p_substituant_id;
+        perform substit_insert_log(type, 'SUBSTITUANT_UPDATE_NO', null, p_substituant_id, null,
+                                   format('Mise à jour du substituant %s : désactivée', p_substituant_id));
+        return;
+    end if;
 
     execute format('select substit_update_substituant_%s(%s, $1)', type, p_substituant_id) using data;
+    raise notice 'Mise à jour du substituant % avec les valeurs %', p_substituant_id, data;
 
-    perform substit_insert_log(type, null, p_substituant_id, null,
+    perform substit_insert_log(type, 'SUBSTITUANT_UPDATE', null, p_substituant_id, null,
                                format('Mise à jour du substituant %s', p_substituant_id));
 end
 $$;
@@ -193,7 +209,7 @@ begin
     while found loop
         execute format('update %s_substit set histo_destruction = current_timestamp, histo_destructeur_id = 1
                        where id = %s', type, v_substit_record.id);
-        perform substit_insert_log(type, v_substit_record.from_id, p_substituant_id, v_substit_record.npd,
+        perform substit_insert_log(type, 'SUBSTITUTION_HISTO', v_substit_record.from_id, p_substituant_id, v_substit_record.npd,
                                    format('Historisation de la substitution de %s par %s', v_substit_record.from_id, v_substit_record.to_id));
         fetch next from v_cursor_substit into v_substit_record;
     end loop;
@@ -201,7 +217,7 @@ begin
 
     execute format('update %I set histo_destruction = current_timestamp, histo_destructeur_id = 1
                    where id = %s', type, p_substituant_id);
-    perform substit_insert_log(type, null, substituant_record_id, null,
+    perform substit_insert_log(type, 'SUBSTITUANT_HISTO', null, p_substituant_id, null,
                                format('Historisation du substituant %s', p_substituant_id));
 
     raise notice '=> Fait.';
@@ -227,7 +243,7 @@ begin
     execute format('insert into %s_substit (from_id, to_id, npd, histo_createur_id)
                     values (%s, %s, %L, 1)', type, p_substitue_id, p_substituant_id, p_substitue_npd);
 
-    perform substit_insert_log(type, p_substituant_id, p_substitue_id, p_substitue_npd,
+    perform substit_insert_log(type, 'SUBSTITUE_ADD', p_substitue_id, p_substituant_id, p_substitue_npd,
                                format('Ajout de %s à la substitution par %s', p_substitue_id, p_substituant_id));
 end
 $$;
@@ -255,14 +271,13 @@ begin
 
     raise notice '=> %', substit_record;
 
-    perform substit_insert_log(type, p_substituant_id, p_substitue_id, null,
+    perform substit_insert_log(type, 'SUBSTITUTION_HISTO', p_substituant_id, p_substitue_id, null,
                                format('Historisation de la substitution de %s par %s', p_substitue_id, p_substituant_id));
 
-    -- mise à jour de la substitution
+    -- mise à jour du substituant
     execute format('select * from substit_fetch_data_for_substituant_%s(%L) limit 1', type, substit_record.npd) into data;
-    -- NB : si aucune donnée n'est retournée, c'est que la substitution n'a plus de raison d'être (0 doublon).
     if data is null then
-        raise notice 'Aucune donnée trouvée donc suppression de la substitution...';
+        raise notice 'Aucune donnée trouvée donc la substitution n''a plus de raison d''être : suppression de la substitution...';
         perform substit_delete_substitution(type, substit_record.to_id);
     else
         perform substit_update_substituant(type, substit_record.to_id, data);
@@ -390,10 +405,9 @@ begin
         perform substit_update_substitution_if_exists(type, v_npd, new);
 
         return new;
-    end if;
 
     ----------------------------------------- suppression ------------------------------------
-    if operation = 'DELETE' then
+    elseif operation = 'DELETE' then
         raise notice '[DELETE] %', operation_desc;
         raise notice 'Enregistrement : %', old;
 
@@ -408,10 +422,9 @@ begin
         perform substit_update_substitution_if_exists(type, v_npd, old);
 
         return old;
-    end if;
 
     ----------------------------------------- ajout ou restauration ------------------------------------
-    if operation = 'INSERT' then
+    elseif operation = 'INSERT' then
         raise notice '[INSERT] %', operation_desc;
         raise notice 'Enregistrement : %', new;
 
@@ -446,10 +459,9 @@ begin
         perform substit_create_substitution_if_required(type, v_npd);
 
         return new;
-    end if;
 
     ----------------------------------------- modification ------------------------------------
-    if operation = 'UPDATE' then
+    elseif operation = 'UPDATE' then
         raise notice '[UPDATE] %', operation_desc;
         raise notice 'Enregistrement avant : %', old;
         raise notice 'Enregistrement après : %', new;
@@ -533,56 +545,124 @@ end
 $$;
 
 
--- drop function substit_replace_foreign_keys_values;
-create or replace function substit_replace_foreign_keys_values(p_table varchar, p_from_id bigint, p_to_id bigint) returns void
+-- drop function substit_replace_foreign_keys_values(varchar);
+create or replace function substit_replace_foreign_keys_values(type varchar) returns int
     language plpgsql
 as
 $$declare
-    v_substit_fk v_substit_foreign_keys;
+    v_cursor refcursor;
+    v_substit record;
+    v_count int;
+    v_total_count int = 0;
+begin
+    --
+    -- Parcours de la table des substitutions pour remplacer les valeurs de clés étrangères.
+    --
+
+    open v_cursor for execute format('select from_id, to_id from %I where histo_destruction is null', type || '_substit');
+    fetch next from v_cursor into v_substit;
+    while found loop
+        select substit_replace_foreign_keys_values(type, v_substit.from_id, v_substit.to_id) into v_count;
+        v_total_count = v_total_count + v_count;
+        fetch next from v_cursor into v_substit;
+    end loop;
+    close v_cursor;
+
+    return v_total_count;
+end
+$$;
+
+
+-- drop function substit_replace_foreign_keys_values(varchar, bigint, bigint);
+create or replace function substit_replace_foreign_keys_values(type varchar, p_from_id bigint, p_to_id bigint) returns int
+    language plpgsql
+as
+$$declare
+    v_cursor refcursor;
+    v_substit_fk record;
     v_col_name varchar(100);
     v_tab_name varchar(100);
-    v_id bigint;
-    v_message text;
+--     v_id bigint;
+    v_count int;
+    v_total_count int = 0;
+--     v_message text;
 begin
     --
     -- Parcours des tables ayant une clé étrangère vers la table spécifiée, pour remplacer les valeurs de clés étrangères.
     -- Les remplacements qui déclenchent une erreur d'unicité ne sont pas gérés : il ne sont tout simplement pas faits.
     --
 
-    for v_substit_fk in
-        select * from v_substit_foreign_keys
-                 where target_table = p_table
-                   and source_table not in (p_table, 'substit_'||p_table,
-                                           'etablissement', 'ecole_doct', 'unite_rech') -- todo : à virer, ce n'est pas la solution !
-                 order by source_table
-    loop
+    open v_cursor for execute
+        format('select * from v_substit_foreign_keys_%s where target_table = %L and source_table <> %L order by source_table', type, type, type||'_substit');
+    fetch next from v_cursor into v_substit_fk;
+    while found loop
         v_tab_name = v_substit_fk.source_table;
         v_col_name = v_substit_fk.fk_column;
 
-        ---------> todo : >>>>>>>>>>> empecher le remplacement de certaines FK précises <<<<<<<<<<<<
+--         v_message = format('Substitution ''%s %s => %s'', remplacement FK %s.%s :', upper(type), p_from_id, p_to_id, upper(v_tab_name), v_col_name);
+--
+--         -- Remplacement éventuel de la valeur de la clé étrangère.
+--         -- NB : pas possible d'écarter les historisés et de màj histo_modification car toutes les tables n'ont pas les colonnes histo_* !
+--         begin
+--             v_count = 0;
+--             for v_id in execute format('update %I set %I = %s where %I = %s returning id', v_tab_name, v_col_name, p_to_id, v_col_name, p_from_id) loop
+--                 v_count = v_count + 1;
+--                 perform substit_insert_log(type, 'FK_REPLACE', p_from_id, p_to_id, null, v_message||' '||v_id);
+--             end loop;
+--             raise notice '% % remplacements.', v_message, v_count;
+--
+--             exception WHEN unique_violation THEN
+--                 -- échec du remplacement à cause d'une erreur d'unicité
+--                 perform substit_insert_log(type, 'FK_REPLACE_PROBLEM', p_from_id, p_to_id, null, v_message || format(' %s => %s impossible (problème d''unicité)', p_from_id, p_to_id));
+--                 raise notice '%', v_message || format(' %s => %s impossible (problème d''unicité)', p_from_id, p_to_id);
+--                 -- todo : historiser la ligne dont la tentative de modif a déclenché l'erreur ? Id = v_id ? Et la table n'a pas forcément de colonnes d'histo.
+--         end;
+        select substit_replace_foreign_key_value(type, v_tab_name, v_col_name, p_from_id, p_to_id) into v_count;
+        v_total_count = v_total_count + v_count;
 
-        v_message = format('Correction de la FK %L dans %L : ', v_col_name, v_tab_name);
-
-        -- Remplacement éventuelle de la valeur de la clé étrangère.
-        -- NB : pas possible d'écarter les historisés et de màj histo_modification car toutes les tables n'ont pas les colonnes histo_* !
-        begin
-            for v_id in
-                execute format('update %I set %I = %s where %I = %s returning id', v_tab_name, v_col_name, p_to_id, v_col_name, p_from_id, v_tab_name) loop
-                    perform substit_insert_log(p_table, p_from_id, p_to_id, null, v_message || format('id %s : %s => %s', v_id, p_from_id, p_to_id));
-                    v_message = v_message || chr(10) || format('- id %s : %s => %s', v_id, p_from_id, p_to_id);
-            end loop;
-            if v_id is not null then
-                raise notice '%', v_message;
-            end if;
-
-            exception WHEN unique_violation THEN
-                -- échec du remplacement à cause d'une erreur d'unicité
-                perform substit_insert_log(p_table, p_from_id, p_to_id, null, v_message || format('%s => %s impossible (problème d''unicité)', p_from_id, p_to_id));
-                v_message = v_message || chr(10) || format('- %s => %s impossible (problème d''unicité)', p_from_id, p_to_id);
-                raise notice '%', v_message;
-                -- todo : historiser la ligne puisqu'il y aen a forcément une autre ? (mais la table n'a pas forcément de colonne d'histo)
-        end;
+        fetch next from v_cursor into v_substit_fk;
     end loop;
+    close v_cursor;
+
+    return v_total_count;
+end
+$$;
+
+
+-- drop function substit_replace_foreign_key_value();
+create or replace function substit_replace_foreign_key_value(type varchar, p_tab_name varchar, p_col_name varchar, p_from_id bigint, p_to_id bigint) returns int
+    language plpgsql
+as
+$$declare
+    v_id bigint;
+    v_count int = 0;
+    v_message text;
+begin
+    --
+    -- Remplacement de la valeur de la clé étrangère dans une table.
+    -- NB : pas possible d'écarter les historisés et de màj histo_modification car toutes les tables n'ont pas les colonnes histo_* !
+    --
+
+    v_message = format('Substitution %s => %s, remplacement FK %s.%s :', p_from_id, p_to_id, upper(p_tab_name), p_col_name);
+
+    for v_id in execute format('update %I set %I = %s where %I = %s returning id', p_tab_name, p_col_name, p_to_id, p_col_name, p_from_id)
+        loop
+            v_count = v_count + 1;
+            perform substit_insert_log(type, 'FK_REPLACE', p_from_id, p_to_id, null, v_message||' '||v_id);
+        end loop;
+    if v_count > 0 then
+        raise notice '% % remplacements.', v_message, v_count;
+    end if;
+
+    return v_count;
+
+    exception WHEN unique_violation THEN
+        -- échec du remplacement à cause d'une erreur d'unicité
+        perform substit_insert_log(type, 'FK_REPLACE_PROBLEM', p_from_id, p_to_id, null, v_message || format(' %s => %s impossible (problème d''unicité)', p_from_id, p_to_id));
+        raise notice '%', v_message || format(' %s => %s impossible (problème d''unicité) : '||v_id, p_from_id, p_to_id);
+        -- todo : historiser la ligne dont la tentative de modif a déclenché l'erreur ? Id = v_id ? Et la table n'a pas forcément de colonnes d'histo.
+
+    return v_count;
 end
 $$;
 
@@ -600,7 +680,7 @@ begin
         'update %I set histo_destruction = current_timestamp, histo_destructeur_id = %s where id = %s',
         type, APP_SOURCE_ID, p_substitue_id);
 
-    perform substit_insert_log(type, p_substitue_id, p_substituant_id, null, format('Historisation du substitué %s', p_substitue_id));
+    perform substit_insert_log(type, 'SUBSTITUE_HISTO', p_substitue_id, p_substituant_id, null, format('Historisation du substitué %s', p_substitue_id));
 end
 $$;
 
@@ -631,6 +711,6 @@ begin
 
     raise notice '%', v_message;
 
-    perform substit_insert_log(type, p_substitue_id, p_substituant_id, null, v_message);
+    perform substit_insert_log(type, 'SUBSTITE_RESTORE', p_substitue_id, p_substituant_id, null, v_message);
 end
 $$;

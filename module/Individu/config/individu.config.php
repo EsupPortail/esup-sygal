@@ -70,13 +70,6 @@ return [
                     'action' => ['supprimer', 'restaurer'],
                     'privileges' => IndividuPrivileges::INDIVIDU_SUPPRIMER,
                 ],
-
-                ///////////////////////////// todo : finaliser
-                [
-                    'controller' => IndividuController::class,
-                    'action' => ['substitution'],
-                    'privilege' => IndividuPrivileges::INDIVIDU_MODIFIER,
-                ],
             ],
         ],
     ],
@@ -93,17 +86,6 @@ return [
                                 'resource' => PrivilegeController::getResourceId(IndividuController::class, 'index'),
                                 'icon' => "fas fa-user-friends",
                                 'order' => 64,
-                            ],
-                            'substitution' => [
-                                'pages' => [
-                                    'individu' => [
-                                        'label' => 'Individus',
-                                        'route' => 'individu/substitution',
-                                        //'resource' => PrivilegeController::getResourceId(IndividuController::class, 'substitution'),
-                                        'icon' => "fas fa-object-subtract",
-                                        'order' => 10,
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -177,16 +159,6 @@ return [
                             'defaults' => [
                                 'controller' => IndividuController::class,
                                 'action' => 'rechercher',
-                            ],
-                        ],
-                    ],
-                    'substitution' => [
-                        'type' => Literal::class,
-                        'options' => [
-                            'route' => '/substitution',
-                            'defaults' => [
-                                'controller' => IndividuController::class,
-                                'action' => 'substitution',
                             ],
                         ],
                     ],

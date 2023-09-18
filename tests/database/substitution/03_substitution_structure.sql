@@ -5,8 +5,28 @@
 --=============================== STRUCTURE ================================-
 
 --
+-- Vue listant les clés étrangères (FK) pointant vers 'structure'
+-- dont la valeur doit être remplacée par l'id substituant éventuel.
+--
+-- drop view v_substit_foreign_keys_structure;
+create or replace view v_substit_foreign_keys_structure as
+select * from v_substit_foreign_keys
+where target_table = 'structure'
+  and source_table <> 'structure'
+  and source_table <> 'structure_substit'
+--   and not (
+--     source_table = 'etablissement' and fk_column = 'structure_id' or
+--     source_table = 'ecole_doct' and fk_column = 'structure_id' or
+--     source_table = 'unite_rech' and fk_column = 'structure_id'
+--   )
+;
+
+
+--
 -- Mise à jour table STRUCTURE
 --
+alter table structure add substit_update_enabled bool default true not null;
+comment on column structure.substit_update_enabled is 'Indique si ce substituant (le cas échéant) peut être mis à jour à partir des attributs des substitués';
 alter table structure alter column code set not null;
 alter table structure alter column code drop default;
 create index structure_code_index on structure (code);
@@ -37,7 +57,7 @@ alter table pre_structure add constraint pre_structure_hd_fk foreign key (histo_
 alter table pre_structure add constraint pre_structure_type_fk foreign key (type_structure_id) references type_structure on delete cascade;
 create sequence if not exists pre_structure_id_seq owned by pre_structure.id;
 alter table pre_structure alter column id set default nextval('pre_structure_id_seq');
-select setval('pre_structure_id_seq', (select max(id) from pre_structure));
+select setval('pre_structure_id_seq', (select max(id) from structure));
 
 alter table structure_substit rename column from_structure_id to from_id;
 alter table structure_substit rename column to_structure_id to to_id;
@@ -54,8 +74,8 @@ drop index str_substit_unique;
 create unique index structure_substit_unique_idx on structure_substit(from_id) where histo_destruction is null;
 create unique index structure_substit_unique_hist_idx on structure_substit(from_id, histo_destruction) where histo_destruction is not null;
 
---drop view v_diff_pre_structure;
---drop view src_pre_structure;
+drop view if exists v_diff_pre_structure;
+drop view if exists src_pre_structure;
 create or replace view src_pre_structure as
     select null::bigint as id,
            tmp.source_code,
@@ -71,10 +91,16 @@ create or replace view src_pre_structure as
 drop view if exists v_diff_structure;
 drop view if exists src_structure;
 create or replace view src_structure as
-    select pre.*
+    select id,
+           source_id,
+           source_code,
+           type_structure_id,
+           code,
+           libelle,
+           sigle
     from pre_structure pre
     where pre.histo_destruction is null and not exists (
-        select * from structure_substit where histo_destruction is null and from_id = pre.id
+        select id from structure_substit where histo_destruction is null and from_id = pre.id
     );
 
 --
@@ -128,9 +154,12 @@ begin
     -- Attention !
     -- Modifier le calcul du NPD n'est pas une mince affaire car cela remet en question les substitutions existantes
     -- définies dans la table 'xxxx_substit'.
+    -- > Dans les 2 cas qui suivent, il faudra absolument désactiver au préalable les triggers suivants :
+    --   - substit_trigger_pre_xxxx
+    --   - substit_trigger_on_xxxx_substit
     -- > Dans le cas où cela ne change rien aux substitutions existantes, il faudra tout de même :
     --   - mettre à jour les valeurs dans la colonne 'npd' de la table 'xxxx_substit' en faisant appel
-    --     à la fonction 'substit_npd_xxxx()';
+    --     à la présente fonction ;
     --   - mettre à jour manuellement les valeurs dans la colonne 'npd_force" de la table 'pre_xxxx'.
     -- > Dans le cas où cela invalide des substitutions existantes, il faudra :
     --   - historiser les substitutions concernées dans la table 'xxxx_substit' ;
@@ -164,7 +193,7 @@ with structures_npd as (
 select i.id, i.code, npds.npd
 from npds, structures_npd i
 where i.npd = npds.npd
-order by i.code
+--order by i.code
 ;
 
 --drop function substit_fetch_data_for_substituant_structure;
@@ -195,8 +224,8 @@ $$begin
     return query
         select
             mode() within group (order by i.type_structure_id) as type_structure_id,
-            mode() within group (order by i.sigle) as sigle,
-            mode() within group (order by i.libelle) as libelle,
+            mode() within group (order by trim(i.sigle)::varchar) as sigle,
+            mode() within group (order by trim(i.libelle)::varchar) as libelle,
             mode() within group (order by i.code) as code
         from pre_structure i
              join v_structure_doublon v on v.id = i.id and v.npd = p_npd

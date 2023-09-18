@@ -52,6 +52,22 @@ class UniteRechercheController extends StructureConcreteController
     /**
      * @return ViewModel
      */
+    public function voirAction(): ViewModel
+    {
+        $id = $this->params()->fromRoute('unite-recherche');
+
+        /** @var UniteRecherche $structureConcrete */
+        $structureConcrete = $this->uniteRechercheService->getRepository()->find($id);
+
+        return $this->forward()->dispatch(self::class, [
+            'action' => 'information',
+            'structure' => $structureConcrete->getStructure(false)->getId(),
+        ]);
+    }
+
+    /**
+     * @return ViewModel
+     */
     public function informationAction(): ViewModel
     {
         $viewModel = parent::informationAction();

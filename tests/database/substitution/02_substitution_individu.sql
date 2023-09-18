@@ -5,8 +5,26 @@
 --=============================== INDIVIDU ================================-
 
 --
+-- Vue listant les clés étrangères (FK) pointant vers 'individu'
+-- dont la valeur doit être remplacée par l'id substituant éventuel.
+--
+-- drop view v_substit_foreign_keys_individu;
+create or replace view v_substit_foreign_keys_individu as
+    select * from v_substit_foreign_keys
+    where target_table = 'individu'
+      and source_table <> 'individu'
+      and source_table <> 'individu_substit'
+--       and not (
+--           source_table = 'doctorant' and fk_column = 'individu_id'
+--       )
+;
+
+
+--
 -- Mise à jour table INDIVIDU
 --
+alter table individu add substit_update_enabled bool default true not null;
+comment on column individu.substit_update_enabled is 'Indique si ce substituant (le cas échéant) peut être mis à jour à partir des attributs des substitués';
 -- nom patronymique not nullable
 update individu set nom_patronymique = nom_usuel where nom_patronymique is null;
 alter table individu alter nom_patronymique set not null;
@@ -31,7 +49,7 @@ alter table pre_individu add constraint pre_individu_hd_fk foreign key (histo_de
 alter table pre_individu add constraint pre_individu_pays_fk foreign key (pays_id_nationalite) references pays;
 create sequence if not exists pre_individu_id_seq owned by pre_individu.id;
 alter table pre_individu alter column id set default nextval('pre_individu_id_seq');
-select setval('pre_individu_id_seq', (select max(id) from pre_individu));
+select setval('pre_individu_id_seq', (select max(id) from individu));
 
 --drop table individu_substit cascade;
 create table individu_substit
@@ -76,10 +94,24 @@ create or replace view src_pre_individu as
 drop view if exists v_diff_individu;
 drop view if exists src_individu;
 create or replace view src_individu as
-    select pre.*
+    select id,
+           source_id,
+           source_code,
+           type,
+           civilite,
+           nom_usuel,
+           nom_patronymique,
+           prenom1,
+           prenom2,
+           prenom3,
+           email,
+           date_naissance,
+           nationalite,
+           supann_id,
+           pays_id_nationalite
     from pre_individu pre
     where pre.histo_destruction is null and not exists (
-        select * from individu_substit where histo_destruction is null and from_id = pre.id
+        select id from individu_substit where histo_destruction is null and from_id = pre.id
     );
 
 
@@ -108,8 +140,8 @@ execute procedure substit_trigger_on_pre_fct('individu');
 -- Trigger sur la table INDIVIDU se déclenchant en cas d'insertion d'un enregistrement potentiellement substituant,
 -- en vue de remplacer partout où c'est nécessaire les valeurs des clés étrangères par l'id du substituant.
 --
-drop trigger if exists substit_trigger_on_substit_individu on individu_substit;
-create trigger substit_trigger_on_substit_individu
+drop trigger if exists substit_trigger_on_individu_substit on individu_substit;
+create trigger substit_trigger_on_individu_substit
     after insert
     or update of histo_destruction
     or delete
@@ -128,17 +160,20 @@ $$begin
     -- Attention !
     -- Modifier le calcul du NPD n'est pas une mince affaire car cela remet en question les substitutions existantes
     -- définies dans la table 'xxxx_substit'.
+    -- > Dans les 2 cas qui suivent, il faudra absolument désactiver au préalable les triggers suivants :
+    --   - substit_trigger_pre_xxxx
+    --   - substit_trigger_on_xxxx_substit
     -- > Dans le cas où cela ne change rien du tout aux substitutions existantes, il faudra tout de même :
     --   - mettre à jour les valeurs dans la colonne 'npd' de la table 'xxxx_substit' en faisant appel
-    --     à la fonction 'substit_npd_xxxx()';
+    --     à la présente fonction;
     --   - mettre à jour manuellement les valeurs dans la colonne 'npd_force" de la table 'pre_xxxx'.
     -- > Dans le cas où cela invalide des substitutions existantes, il faudra :
     --   - historiser les substitutions concernées dans la table 'xxxx_substit' ;
     --   - mettre à jour manuellement les valeurs dans la colonne 'npd_force" de la table 'pre_xxxx'.
     --
 
-    return normalized_string(individu.nom_patronymique) || '_' ||
-           normalized_string(individu.prenom1) || '_' ||
+    return normalized_string(trim(individu.nom_patronymique)) || '_' ||
+           normalized_string(trim(individu.prenom1)) || '_' ||
            normalized_string(coalesce(date(individu.date_naissance)::varchar, ''));
 end;
 $$;
@@ -205,12 +240,12 @@ $$begin
         select
                     mode() within group (order by i.type) as type,
                     mode() within group (order by i.civilite) as civilite,
-                    mode() within group (order by i.nom_patronymique) as nom_patronymique,
-                    mode() within group (order by i.nom_usuel) as nom_usuel,
-                    mode() within group (order by i.prenom1) as prenom1,
-                    mode() within group (order by i.prenom2) as prenom2,
-                    mode() within group (order by i.prenom3) as prenom3,
-                    mode() within group (order by i.email) as email,
+                    mode() within group (order by trim(i.nom_patronymique)::varchar) as nom_patronymique,
+                    mode() within group (order by trim(i.nom_usuel)::varchar) as nom_usuel,
+                    mode() within group (order by trim(i.prenom1)::varchar) as prenom1,
+                    mode() within group (order by trim(i.prenom2)::varchar) as prenom2,
+                    mode() within group (order by trim(i.prenom3)::varchar) as prenom3,
+                    mode() within group (order by trim(i.email)::varchar) as email,
                     mode() within group (order by i.date_naissance) as date_naissance,
                     mode() within group (order by i.nationalite) as nationalite,
                     mode() within group (order by i.supann_id) as supann_id,
@@ -317,8 +352,8 @@ $$declare
     v_pre_count smallint;
     v_count smallint = 0;
     v_data record;
-    v_individu_substituant_id bigint;
-    v_individu_substitue record;
+    v_substituant_id bigint;
+    v_substitue record;
 begin
     --
     -- Fonction de créations de N substitutions parmi toutes les substitutions possibles.
@@ -339,9 +374,10 @@ begin
             if v_data is null then
                 raise exception 'Anomalie : aucune donnée trouvée pour le NPD % !', v_npd;
             end if;
-            v_individu_substituant_id = substit_create_substituant_individu(v_data);
-            for v_individu_substitue in select * from v_individu_doublon v where npd = v_npd loop
-                    perform substit_add_to_substitution('individu', v_individu_substitue.id, v_npd, v_individu_substituant_id);
+            v_substituant_id = substit_create_substituant_individu(v_data);
+            for v_substitue in select * from v_individu_doublon v where npd = v_npd loop
+                    perform substit_add_to_substitution('individu', v_substitue.id, v_npd, v_substituant_id);
+                    perform substit_remove_substitue('individu', v_substitue.id, v_substituant_id);
                 end loop;
             v_count = v_count + 1;
 

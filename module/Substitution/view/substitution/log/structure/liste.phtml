@@ -1,0 +1,29 @@
+<?php
+
+namespace Substitution;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctrine\DBAL\Result $result
+ * @var \Doctrine\DBAL\Result $operations
+ *
+ * @see \Substitution\Controller\IndexController::structureAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate("Logs concernant les structures")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-key"></span>
+    <?php echo $this->translate("Logs concernant les structures"); ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php echo $this->partial('substitution/log/_partial/liste', [
+    'result' => $result,
+    'operations' => $operations,
+    'logRoute' => 'substitution/log/structure',
+]); ?>

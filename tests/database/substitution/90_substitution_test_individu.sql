@@ -1,15 +1,30 @@
+--drop function test_substit_individu__set_up;
+CREATE or replace FUNCTION test_substit_individu__set_up() returns void
+    language plpgsql
+as
+$$begin
+    alter table individu disable trigger individu_rech_update;
+end$$;
+
+
 --drop function test_substit_individu__tear_down;
 CREATE or replace FUNCTION test_substit_individu__tear_down() returns void
     language plpgsql
 as
 $$begin
+    alter table pre_individu disable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+
     delete from individu_substit where from_id in (select id from pre_individu where nom_usuel = 'test1234');
     delete from individu_substit where to_id in (select id from individu where nom_usuel = 'test1234');
     delete from individu where nom_usuel = 'test1234';
-    truncate table substit_log;
-    alter table pre_individu disable trigger individu_substit_trigger;
+    --truncate table substit_log;
     delete from pre_individu where nom_usuel = 'test1234';
-    alter table pre_individu enable trigger individu_substit_trigger;
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit enable trigger substit_trigger_on_individu_substit;
+
+    alter table individu enable trigger individu_rech_update;
 end$$;
 
 
@@ -27,6 +42,11 @@ $$declare
     v_pre_individu_3 pre_individu;
     v_data record;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -112,10 +132,15 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -145,9 +170,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L', v_pre_individu_2.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert not (v_pre_individu is null or v_pre_individu.email <> 'aaaa@mail.fr'),
-        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert not (v_individu is null or v_individu.email <> 'aaaa@mail.fr'),
+        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'aaaa@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -163,11 +188,16 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -197,9 +227,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = % et npd = %', v_pre_individu_2.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert not (v_pre_individu is null or v_pre_individu.email <> 'aaaa@mail.fr'),
-        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert not (v_individu is null or v_individu.email <> 'aaaa@mail.fr'),
+        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_individu.email);
 
     --
     -- Test insertion d'un autre doublon : HÔCHON Paule bbbb@mail.fr
@@ -213,12 +243,213 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = % et npd = %', v_pre_individu_3.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert not (v_pre_individu is null or v_pre_individu.email <> 'bbbb@mail.fr'),
-        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'bbbb@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert not (v_individu is null or v_individu.email <> 'bbbb@mail.fr'),
+        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'bbbb@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
+
+
+--drop function test_substit_individu__creates_substit_and_replaces_fk;
+CREATE or replace FUNCTION test_substit_individu__creates_substit_and_replaces_fk() returns void
+    language plpgsql
+as
+$$declare
+    v_app_user bigint = 1; -- pseudo-utilisateur SyGAL
+    v_source_id bigint = 2; -- source INSA
+    v_npd_a varchar(256);
+
+    v_record record;
+    v_table record;
+
+    v_role role;
+    v_individu_role individu_role;
+    v_individu_substit individu_substit;
+    v_pre_individu_1 pre_individu;
+    v_pre_individu_2 pre_individu;
+    v_individu_1 individu;
+    v_individu_2 individu;
+    v_individu_id bigint;
+begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit enable trigger substit_trigger_on_individu_substit; -- AVEC remplacement des FK
+
+    v_npd_a = 'hochon_paule_20000101';
+
+    select * into v_role from role where code = 'ADMIN_TECH'; -- NB : il n'y a qu'un seul role avec ce code
+
+
+    -- Création d'un 'pre_individu' : HOCHON PAULE (mail = bbbb@mail.fr) :
+    select nextval('individu_id_seq') into v_individu_id; -- 'individu' et 'pre_individu' partagent les mêmes ids
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id)
+    select v_individu_id, 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
+    returning * into v_pre_individu_1;
+    -- Création du 'individu' correspondant :
+    INSERT INTO individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id)
+    select v_individu_id, 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
+    returning * into v_individu_1;
+
+    -- Création d'un 'individu_role' pointant sur ce 1er 'individu' :
+    INSERT INTO individu_role(id, role_id, individu_id) select nextval('individu_role_id_seq'), v_role.id, v_individu_1.id
+                                                        returning * into v_individu_role;
+
+    -- Insertion d'un 'pre_individu' en doublon : HOCHON PAULE aaaa@mail.fr
+    select nextval('individu_id_seq') into v_individu_id; -- 'individu' et 'pre_individu' partagent les mêmes ids
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id)
+    select v_individu_id, 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
+    returning * into v_pre_individu_2;
+    -- Création du 'individu' correspondant :
+    -- inutile pour ce test.
+
+    select * into v_individu_substit from individu_substit where from_id = v_pre_individu_1.id and npd = v_npd_a;
+    select * into v_individu_role from individu_role where id = v_individu_role.id;
+
+    assert v_individu_role.individu_id = v_individu_substit.to_id,
+        format('[TEST] Attendu : FK INDIVIDU_ROLE.individu_id remplacée par %s (mais valeur = %s)',
+               v_individu_substit.to_id, v_individu_role.individu_id);
+
+    delete from individu_role where id = v_individu_role.id;
+
+    perform test_substit_individu__tear_down();
+end$$;
+
+
+--drop function test_substit_individu__creates_substit_can_fail_to_replace_fk;
+CREATE or replace FUNCTION test_substit_individu__creates_substit_can_fail_to_replace_fk() returns void
+    language plpgsql
+as
+$$declare
+    v_app_user bigint = 1; -- pseudo-utilisateur SyGAL
+    v_source_id bigint = 2; -- source INSA
+    v_npd_a varchar(256);
+
+    v_role role;
+    v_individu_role_1 individu_role;
+    v_individu_role_2 individu_role;
+    v_individu_substit individu_substit;
+    v_individu_1 individu;
+    v_individu_2 individu;
+    v_individu_id bigint;
+    v_pre_individu_1 pre_individu;
+    v_pre_individu_2 pre_individu;
+
+    v_count smallint;
+begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu disable trigger substit_trigger_pre_individu; -- pour pouvoir créer des pre_individu
+
+    v_npd_a = 'hochon_paule_20000101';
+
+    select * into v_role from role where code = 'ADMIN_TECH'; -- NB : il n'y a qu'un seul role avec ce code
+
+    -- Création d'un 'pre_individu' : HOCHON PAULE (mail = bbbb@mail.fr) :
+    select nextval('individu_id_seq') into v_individu_id; -- 'individu' et 'pre_individu' partagent les mêmes ids
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select v_individu_id, 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_1;
+    -- Création du 'individu' correspondant :
+    INSERT INTO individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id)
+    select v_individu_id, 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
+    returning * into v_individu_1;
+
+    -- Création d'un 'pre_individu' : TERGEIST PAULE (mail = aaaa@mail.fr)
+    select nextval('individu_id_seq') into v_individu_id; -- 'individu' et 'pre_individu' partagent les mêmes ids
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select v_individu_id, 'TERGEIST', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_2;
+    -- Création du 'individu' correspondant :
+    INSERT INTO individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id)
+    select v_individu_id, 'TERGEIST', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
+    returning * into v_individu_2;
+
+    -- Création d'un 'individu_role' pointant sur le 1er 'individu' :
+    INSERT INTO individu_role(id, role_id, individu_id) select nextval('individu_role_id_seq'), v_role.id, v_individu_1.id
+    returning * into v_individu_role_1;
+    -- Création d'un 'individu_role' pointant sur le 2e 'individu' ET SUR LE MÊME ROLE QUE LE 1ER :
+    INSERT INTO individu_role(id, role_id, individu_id) select nextval('individu_role_id_seq'), v_role.id, v_individu_2.id
+    returning * into v_individu_role_2;
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu; -- rétablissement du trigger
+    alter table individu_substit enable trigger substit_trigger_on_individu_substit; -- AVEC remplacement des FK
+
+    -- Update du 2e 'pre_individu' pour déclencher les substitutions
+    update pre_individu set nom_patronymique = 'Hochon' where id = v_pre_individu_2.id;
+
+    -- Fetch de la substitution
+    select * into v_individu_substit from individu_substit where from_id = v_pre_individu_1.id and npd = v_npd_a;
+
+    -- Attendu : 1 seul remplacement de FK sur les 2 nécessaires car la contrainte d'unicité (role_id, individu_id)
+    -- bloque le 2e remplacement :
+    select count(*) into v_count from individu_role where role_id = v_role.id and individu_id = v_individu_substit.to_id;
+    assert v_count = 1, format('[TEST] Attendu : une FK INDIVIDU_ROLE.individu_id remplacée par %s', v_individu_substit.to_id);
+    select count(*) into v_count from individu_role where role_id = v_role.id and individu_id in (v_individu_1.id, v_individu_2.id);
+    assert v_count = 1, format('[TEST] Attendu : une FK INDIVIDU_ROLE.individu_id non remplacée');
+
+    delete from individu_role where id in (v_individu_role_1.id, v_individu_role_2.id);
+
+    perform test_substit_individu__tear_down();
+end$$;
+
+
+--drop function test_substit_individu__substituant_update_enabled;
+CREATE or replace FUNCTION test_substit_individu__substituant_update_enabled() returns void
+    language plpgsql
+as
+$$declare
+    v_app_user bigint = 1; -- pseudo-utilisateur SyGAL
+    v_source_id bigint = 2; -- source INSA
+
+    v_npd_individu_a varchar(256);
+
+    v_pre_individu_1 pre_individu;
+    v_pre_individu_2 pre_individu;
+    v_pre_individu_3 pre_individu;
+    v_individu individu;
+    v_individu_substit individu_substit;
+begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
+    v_npd_individu_a = 'hochon_paule_20000101';
+
+    -- Création d'un individu : HOCHON PAULE (mail = bbbb@mail.fr)
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_1;
+
+    -- Insertion d'un doublon : HOCHON PAULE aaaa@mail.fr
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_2;
+
+    -- Fetch de la substitution et du substituant correspondant
+    select * into v_individu_substit from individu_substit where from_id = v_pre_individu_1.id and npd = v_npd_individu_a;
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+
+    -- Verif des valeurs des attributs mis à jour automatiquement à partir des substitués
+    assert v_individu.email = 'aaaa@mail.fr' /* car ordre alpha */,
+        format('[TEST] Attendu : 1 individu substituant avec email = %s (mais email = %s)', 'aaaa@mail.fr', v_individu.email);
+
+    -- À présent, interdiction de mise à jour automatique des valeurs des attributs du substituant à partir des substitués
+    update individu set substit_update_enabled = false where id = v_individu.id;
+
+    -- Insertion d'un autre doublon : HÔCHON Paule bbbb@mail.fr
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HÔCHON', 'test1234', 'Paule', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_3;
+
+    -- Vérif que les valeurs d'attributs du substituant n'ont pas changé
+    assert v_individu.email = 'aaaa@mail.fr' /* alors que bbbb@mail.fr est majoritaire */,
+        format('[TEST] Attendu : 1 individu substituant avec email = %s (mais email = %s)', 'aaaa@mail.fr', v_individu.email);
+
+    perform test_substit_individu__tear_down();
+END$$;
 
 
 --drop function test_substit_individu__removes_from_substit_si_historise;
@@ -231,11 +462,16 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -271,9 +507,9 @@ begin
     assert v_individu_substit.histo_destruction is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L et histo_destruction not null', v_pre_individu_2.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert not (v_pre_individu is null or v_pre_individu.email <> 'bbbb@mail.fr'),
-        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'bbbb@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert not (v_individu is null or v_individu.email <> 'bbbb@mail.fr'),
+        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'bbbb@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -289,11 +525,16 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -334,9 +575,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L et histo_destruction null', v_pre_individu_2.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'aaaa@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'aaaa@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'aaaa@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -352,11 +593,16 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -392,9 +638,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L et histo_destruction not null', v_pre_individu_1.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'bbbb@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'bbbb@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'bbbb@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'bbbb@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -410,11 +656,16 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -460,9 +711,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L et histo_destruction null', v_pre_individu_1.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert not (v_pre_individu is null or v_pre_individu.email <> 'aaaa@mail.fr'),
-        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert not (v_individu is null or v_individu.email <> 'aaaa@mail.fr'),
+        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'aaaa@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -478,10 +729,15 @@ $$declare
     v_npd_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -503,9 +759,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = % et npd = %', v_pre_individu_2.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'aaaa@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'aaaa@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -522,12 +778,17 @@ $$declare
     v_npd_b varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
     v_pre_individu_4 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -573,9 +834,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L et histo_destruction not null', v_pre_individu_3.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'aaaa@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = %s (mais email = %L)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'aaaa@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = %s (mais email = %L)', 'aaaa@mail.fr', v_individu.email);
 
     select * into v_individu_substit from individu_substit where from_id = v_pre_individu_3.id and npd = v_npd_b;
     assert v_individu_substit.to_id is not null,
@@ -585,9 +846,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %s et npd = %L', v_pre_individu_4.id, v_npd_b);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert not (v_pre_individu is null or v_pre_individu.email <> 'bbbb@mail.fr'),
-        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'bbbb@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert not (v_individu is null or v_individu.email <> 'bbbb@mail.fr'),
+        format('[TEST] Attendu : 1 individu substituant avec email = %L (mais email = %L)', 'bbbb@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -604,12 +865,17 @@ $$declare
     v_npd_b varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
     v_pre_individu_4 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -653,9 +919,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = % et npd = %', v_pre_individu_4.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'aaaa@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'aaaa@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_individu.email);
 
     perform test_substit_individu__tear_down();
 end$$;
@@ -672,12 +938,17 @@ $$declare
     v_npd_b varchar(256);
 
     v_individu_substit individu_substit;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
     v_pre_individu_4 pre_individu;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -715,9 +986,9 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = % et npd = %', v_pre_individu_4.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'aaaa@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'aaaa@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'aaaa@mail.fr', v_individu.email);
 
     --
     -- Effacement du NPD forcé.
@@ -728,9 +999,9 @@ begin
     assert v_individu_substit.histo_destruction is not null,
         format('[TEST] Attendu : 1 individu_substit historisé avec from_id = % et npd = %', v_pre_individu_4.id, v_npd_a);
 
-    select * into v_pre_individu from individu i where id = v_individu_substit.to_id;
-    assert v_pre_individu.email = 'bbbb@mail.fr',
-        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'bbbb@mail.fr', v_pre_individu.email);
+    select * into v_individu from individu i where id = v_individu_substit.to_id;
+    assert v_individu.email = 'bbbb@mail.fr',
+        format('[TEST] Attendu : 1 individu substituant avec email = % (mais email = %)', 'bbbb@mail.fr', v_individu.email);
 
 
     perform test_substit_individu__tear_down();
@@ -753,6 +1024,11 @@ $$declare
     v_individu individu;
     v_count smallint;
 begin
+    perform test_substit_individu__set_up();
+
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit; -- SANS remplacement de FK
+
     v_npd_a = 'hochon_paule_20000101';
 
     --
@@ -791,21 +1067,3 @@ begin
 
     perform test_substit_individu__tear_down();
 end$$;
-
-
-alter table individu disable trigger individu_rech_update;
-select test_substit_individu__fetches_data_for_substituant();
-select test_substit_individu__creates_substit_2_doublons();
-select test_substit_individu__creates_substit_3_doublons();
-select test_substit_individu__removes_from_substit_si_historise();
-select test_substit_individu__adds_to_substit_si_dehistorise();
-select test_substit_individu__removes_from_substit_si_source_app();
-select test_substit_individu__removes_from_substit_si_plus_source_app();
-select test_substit_individu__adds_to_substit_si_npd_force();
-select test_substit_individu__updates_substits_si_modif_nom();
-select test_substit_individu__adds_to_substit_si_ajout_npd();
-select test_substit_individu__adds_to_substit_si_suppr_npd();
-select test_substit_individu__deletes_substit_si_plus_doublon();
-alter table individu enable trigger individu_rech_update;
-
--- ménage : perform test_substit_individu__tear_down();

@@ -1,0 +1,34 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctrine\DBAL\Result $result
+ */
+?>
+
+<p class="lead">
+    Voici la liste des clés étrangères prises en charge par le mécanisme de substitution automatique.
+    Lorsqu'une substitution est créée, ces clés étrangères sont mises à jour automatiquement :
+    tous les id des substitués sont remplacés par l'id du substituant.
+</p>
+
+<?php if ($count = $result->rowCount()): ?>
+    <p><?php echo $count ?> clés étrangères trouvées.</p>
+
+    <table class="table table-bordered table-extra-condensed">
+        <tr>
+            <th>Table source</th>
+            <th>Colonne</th>
+        </tr>
+        <?php while ($row = $result->fetchAssociative()): ?>
+            <tr>
+                <td><?php echo $row['source_table'] ?></td>
+                <td><?php echo $row['fk_column'] ?></td>
+            </tr>
+        <?php endwhile ?>
+    </table>
+<?php else: ?>
+    <p>Aucune.</p>
+<?php endif ?>

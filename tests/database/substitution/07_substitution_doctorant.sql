@@ -4,17 +4,34 @@
 
 --=============================== DOCTORANT ================================-
 
-alter table tmp_doctorant add column code_apprenant_in_source varchar(128);
+--
+-- Vue listant les clés étrangères (FK) pointant vers 'doctorant'
+-- dont la valeur doit être remplacée par l'id substituant éventuel.
+--
+-- drop view v_substit_foreign_keys_doctorant;
+create or replace view v_substit_foreign_keys_doctorant as
+select * from v_substit_foreign_keys
+where target_table = 'doctorant'
+  and source_table <> 'doctorant'
+  and source_table <> 'doctorant_substit'
+;
+
+
+--
+-- Mise à jour table doctorant
+--
+alter table doctorant add substit_update_enabled bool default true not null;
+comment on column doctorant.substit_update_enabled is 'Indique si ce substituant (le cas échéant) peut être mis à jour à partir des attributs des substitués';
 
 create index doctorant_ine_index on doctorant (ine);
 
 -- sauvegarde table doctorant
 create table doctorant_sav as select * from doctorant;
 
+
 -- nouvelle table PRE_DOCTORANT
 create table pre_doctorant (like doctorant including all);
 insert into pre_doctorant select * from doctorant;
-alter table pre_doctorant add column code_apprenant_in_source varchar(128);
 alter table pre_doctorant add column npd_force varchar(256);
 alter table pre_doctorant add constraint pre_doctorant_source_fk foreign key (source_id) references source on delete cascade;
 alter table pre_doctorant add constraint pre_doctorant_hc_fk foreign key (histo_createur_id) references utilisateur on delete cascade;
@@ -22,7 +39,7 @@ alter table pre_doctorant add constraint pre_doctorant_hm_fk foreign key (histo_
 alter table pre_doctorant add constraint pre_doctorant_hd_fk foreign key (histo_destructeur_id) references utilisateur on delete cascade;
 create sequence if not exists pre_doctorant_id_seq owned by pre_doctorant.id;
 alter table pre_doctorant alter column id set default nextval('pre_doctorant_id_seq');
-select setval('pre_doctorant_id_seq', (select max(id) from pre_doctorant));
+select setval('pre_doctorant_id_seq', (select max(id) from doctorant));
 
 --drop table doctorant_substit cascade;
 create table doctorant_substit
@@ -42,8 +59,8 @@ create unique index doctorant_substit_unique_idx on doctorant_substit(from_id) w
 create unique index doctorant_substit_unique_hist_idx on doctorant_substit(from_id, histo_destruction) where histo_destruction is not null;
 
 
---drop view v_diff_pre_doctorant;
---drop view src_pre_doctorant;
+drop view if exists v_diff_pre_doctorant;
+drop view if exists src_pre_doctorant;
 create or replace view src_pre_doctorant as
     SELECT NULL::bigint AS id,
            tmp.source_code,
@@ -63,18 +80,16 @@ drop view if exists src_doctorant;
 create or replace view src_doctorant as
     select pre.id,
            coalesce(isub.to_id, pre.individu_id) as individu_id,
-           coalesce(es.id, pre.etablissement_id) as etablissement_id,
+           coalesce(esub.id, pre.etablissement_id) as etablissement_id,
            pre.source_code,
            pre.source_id,
            pre.ine,
            pre.code_apprenant_in_source
     from pre_doctorant pre
-    join pre_etablissement pe on pre.etablissement_id = pe.id
     left join individu_substit isub on isub.from_id = pre.individu_id and isub.histo_destruction is null
-    left join structure_substit ssub on ssub.from_id = pe.structure_id and ssub.histo_destruction is null
-    left join etablissement es on es.structure_id = ssub.to_id
+    left join etablissement_substit esub on esub.from_id = pre.etablissement_id and esub.histo_destruction is null
     where pre.histo_destruction is null and not exists (
-        select * from doctorant_substit where histo_destruction is null and from_id = pre.id
+        select id from doctorant_substit where histo_destruction is null and from_id = pre.id
     );
 
 
@@ -87,9 +102,9 @@ create trigger substit_trigger_pre_doctorant
     after insert
         or delete
         or update of
-            ine, -- pour entrer ou sortir d'une substitution éventuelle (NPD)
+            individu_id, ine, -- pour entrer ou sortir d'une substitution éventuelle (NPD)
             --
-            individu_id, etablissement_id, code_apprenant_in_source, -- pour mettre à jour le substituant éventuel
+            etablissement_id, code_apprenant_in_source, -- pour mettre à jour le substituant éventuel
             --
             npd_force, -- pour réagir à une demande de substitution forcée
             histo_destruction, -- pour réagir à l'historisation/restauration d'un enregsitrement
@@ -128,6 +143,9 @@ begin
     -- Attention !
     -- Modifier le calcul du NPD n'est pas une mince affaire car cela remet en question les substitutions existantes
     -- définies dans la table 'xxxx_substit'.
+    -- > Dans les 2 cas qui suivent, il faudra absolument désactiver au préalable les triggers suivants :
+    --   - substit_trigger_pre_xxxx
+    --   - substit_trigger_on_xxxx_substit
     -- > Dans le cas où cela ne change rien du tout aux substitutions existantes, il faudra tout de même :
     --   - mettre à jour les valeurs dans la colonne 'npd' de la table 'xxxx_substit' en faisant appel
     --     à la fonction 'substit_npd_xxxx()';
@@ -277,8 +295,8 @@ $$declare
     v_pre_count smallint;
     v_count smallint = 0;
     v_data record;
-    v_doctorant_substituant_id bigint;
-    v_doctorant_substitue record;
+    v_substituant_id bigint;
+    v_substitue record;
 begin
     --
     -- Fonction de créations de N substitutions parmi toutes les substitutions possibles.
@@ -299,9 +317,10 @@ begin
             if v_data is null then
                 raise exception 'Anomalie : aucune donnée trouvée pour le NPD % !', v_npd;
             end if;
-            v_doctorant_substituant_id = substit_create_substituant_doctorant(v_data);
-            for v_doctorant_substitue in select * from v_doctorant_doublon v where npd = v_npd loop
-                    perform substit_add_to_substitution('doctorant', v_doctorant_substitue.id, v_npd, v_doctorant_substituant_id);
+            v_substituant_id = substit_create_substituant_doctorant(v_data);
+            for v_substitue in select * from v_doctorant_doublon v where npd = v_npd loop
+                    perform substit_add_to_substitution('doctorant', v_substitue.id, v_npd, v_substituant_id);
+                    perform substit_remove_substitue('doctorant', v_substitue.id, v_substituant_id);
                 end loop;
             v_count = v_count + 1;
 

@@ -27,6 +27,7 @@ return [
                     'controller' => EtablissementController::class,
                     'action'     => [
                         'index',
+                        'voir',
                         'information',
                     ],
                     'privileges' => [
@@ -82,6 +83,15 @@ return [
                             'route'       => '/rechercher',
                             'defaults'    => [
                                 'action' => 'rechercher',
+                            ],
+                        ],
+                    ],
+                    'voir' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/voir/:etablissement',
+                            'defaults' => [
+                                'action' => 'voir',
                             ],
                         ],
                     ],

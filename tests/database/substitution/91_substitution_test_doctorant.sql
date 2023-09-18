@@ -1,25 +1,42 @@
+--drop function test_substit_doctorant__set_up;
+CREATE or replace FUNCTION test_substit_doctorant__set_up() returns void
+    language plpgsql
+as
+$$begin
+
+end$$;
+
+
 --drop function test_substit_doctorant__tear_down;
 CREATE or replace FUNCTION test_substit_doctorant__tear_down() returns void
     language plpgsql
 as
 $$begin
+    alter table pre_doctorant disable trigger substit_trigger_pre_doctorant;
+    alter table pre_individu disable trigger substit_trigger_pre_individu;
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     truncate table substit_log;
 
     delete from doctorant_substit where from_id in (select d.id from pre_doctorant d join pre_individu i on d.individu_id = i.id where nom_usuel = 'test1234');
     delete from doctorant_substit where to_id in (select d.id from doctorant d join individu i on d.individu_id = i.id where nom_usuel = 'test1234');
     delete from doctorant where individu_id in (select id from individu where nom_usuel = 'test1234');
 
-    alter table pre_doctorant disable trigger doctorant_substit_trigger;
     delete from pre_doctorant where individu_id in (select id from pre_individu where nom_usuel = 'test1234');
-    alter table pre_doctorant enable trigger doctorant_substit_trigger;
 
     delete from individu_substit where from_id in (select id from pre_individu where nom_usuel = 'test1234');
     delete from individu_substit where to_id in (select id from individu where nom_usuel = 'test1234');
     delete from individu where nom_usuel = 'test1234';
 
-    alter table pre_individu disable trigger individu_substit_trigger;
     delete from pre_individu where nom_usuel = 'test1234';
-    alter table pre_individu enable trigger individu_substit_trigger;
+
+    alter table pre_doctorant enable trigger substit_trigger_pre_doctorant;
+    alter table pre_individu enable trigger substit_trigger_pre_individu;
+
+    alter table individu_substit enable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit enable trigger substit_trigger_on_doctorant_substit;
 end$$;
 
 
@@ -42,6 +59,11 @@ $$declare
     v_individu_substit individu_substit;
     v_doctorant_substit doctorant_substit;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -58,12 +80,12 @@ begin
     returning * into v_pre_doctorant_1;
 
     --
-    -- Création d'un pre_individu : prenom1 = 'PAULE' donc il n'est pas un doublon du 1er individu ;
+    -- Création d'un pre_individu : prenom1 = 'PIERRE' donc il n'est pas un doublon du 1er individu ;
     -- et pre_doctorant associé : ine = '123ABC' donc on pourrait s'attendre à ce qu'il soit détecté comme doublon du 1er doctorant.
     --
     INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
-    returning * into v_pre_individu_2; -- NB : prenom1 = 'PAULE'
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PIERRE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_2;
 
     INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_doctorant_id_seq'), v_pre_individu_2.id, '123ABC', 2, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
@@ -110,6 +132,11 @@ $$declare
     v_pre_doctorant_3 pre_doctorant;
     v_data record;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_a = 'hochon_paule_20000101,123ABC';
 
     --
@@ -186,8 +213,7 @@ $$declare
     v_npd_individu_a varchar(256);
 
     v_individu_substit individu_substit;
-    v_individu_1 individu;
-    v_pre_individu pre_individu;
+    v_individu individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
 
@@ -196,36 +222,31 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
-    --
-    -- Création d'un pre_individu et pre_doctorant associé : ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG123
-    --
+    -- Création de 2 'pre_individu' en doublon.
     INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_individu_1;
-
-    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_doctorant_id_seq'), v_pre_individu_1.id, '123ABC', 5, 'PEG123', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
-    returning * into v_pre_doctorant_1; -- NB : etablissement = 5
-
-    select * into v_doctorant_substit from doctorant_substit where from_id = v_pre_doctorant_1.id;
-    assert v_doctorant_substit.id is null,
-        format('[TEST] Attendu : aucun doctorant_substit avec from_id = %L', v_pre_doctorant_1.id);
-
-    --
-    -- Test insertion d'un doublon de doctorant : ine = 123ABC, etablissement = 2, code_apprenant_in_source = PEG456
-    --   - création d'une subsitution '123ABC' : 2 doublons (etablissement = 2 car 2<5, code_apprenant_in_source = PEG123 car 1er dans alphabet)
-    --
     INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_individu_2;
 
+    -- Insertion des 2 doublons 'pre_doctorant' associés :
+    --   - ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG123
+    --   - ine = 123ABC, etablissement = 2, code_apprenant_in_source = PEG456
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_1.id, '123ABC', 5, 'PEG123', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_1; -- NB : etablissement = 5
     INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_doctorant_id_seq'), v_pre_individu_2.id, '123ABC', 2, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_doctorant_2; -- NB : etablissement = 2
@@ -234,7 +255,7 @@ begin
     assert v_individu_substit.to_id is not null,
         format('[TEST] Attendu : 1 individu_substit avec from_id = %L et npd = %L', v_pre_individu_2.id, v_npd_individu_a);
 
-    select * into v_individu_1 from individu where id = v_individu_substit.to_id;
+    select * into v_individu from individu where id = v_individu_substit.to_id;
 
     select * into v_doctorant_substit from doctorant_substit where from_id = v_pre_doctorant_1.id and npd = v_npd_doctorant_a;
     assert v_doctorant_substit.to_id is not null,
@@ -270,7 +291,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -280,45 +300,43 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
     --
-    -- Création d'un pre_individu et pre_doctorant associé : ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG123
+    -- Création de 2 'pre_individu' en doublon.
     --
     INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_individu_1;
-
-    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_doctorant_id_seq'), v_pre_individu_1.id, '123ABC', 5, 'PEG123', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
-    returning * into v_pre_doctorant_1; -- NB : etablissement = 5
-
-    --
-    -- Test insertion d'un doublon de doctorant : ine = 123ABC, etablissement = 2, code_apprenant_in_source = PEG456
-    --   - création d'une subsitution '123ABC' : 2 doublons (etablissement = 2 car 2<5, code_apprenant_in_source = PEG123 car 1er dans alphabet)
-    --
     INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_individu_2;
-
-    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_doctorant_id_seq'), v_pre_individu_2.id, '123ABC', 2, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
-    returning * into v_pre_doctorant_2; -- NB : etablissement = 2
-
-    --
-    -- Test insertion d'un autre doublon : ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG456
-    --   - ajout à la subsitution existante 'hochon_paule_20000101' : 3 doublons (etablissement = 5 car majoritaire, code_apprenant_in_source = PEG456 car majoritaire)
-    --
     INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_individu_id_seq'), 'HÔCHON', 'test1234', 'Paule', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_individu_3;
 
+    --
+    -- Insertion des 3 doublons 'pre_doctorant' associés :
+    --   - ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG123
+    --   - ine = 123ABC, etablissement = 2, code_apprenant_in_source = PEG456
+    --   - ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG456
+    --
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_1.id, '123ABC', 5, 'PEG123', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_1; -- NB : etablissement = 5
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_2.id, '123ABC', 2, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_2; -- NB : etablissement = 2
     INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
     select nextval('pre_doctorant_id_seq'), v_pre_individu_3.id, '123ABC', 5, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_doctorant_3; -- NB : etablissement = 5
@@ -341,9 +359,147 @@ begin
 
     select * into v_doctorant from doctorant i where id = v_doctorant_substit.to_id;
     assert v_doctorant.etablissement_id = 5/*car majoritaire*/ and v_doctorant.code_apprenant_in_source = 'PEG456'/*car majoritaire*/,
-        format('[TEST] Attendu : 1 doctorant substituant avec etablissement_id = %s (reçu %s) et code_apprenant_in_source = %L (reçu %L)', 5, v_doctorant.etablissement_id, 'PEG456', v_doctorant.code_apprenant_in_source);
+        format('[TEST] Attendu : 1 doctorant substituant avec etablissement_id = %s (reçu %s) et code_apprenant_in_source = %L (reçu %L)',
+            5, v_doctorant.etablissement_id,
+            'PEG456', v_doctorant.code_apprenant_in_source);
     assert v_doctorant.individu_id = v_individu_substit.to_id/*id de l'individu substituant*/,
-        format('[TEST] Attendu : 1 doctorant substituant avec individu_id = %s (reçu %s)', v_individu_substit.to_id, v_doctorant.individu_id);
+        format('[TEST] Attendu : 1 doctorant substituant avec individu_id = %s (reçu %s)',
+            v_individu_substit.to_id, v_doctorant.individu_id);
+
+    perform test_substit_doctorant__tear_down();
+END$$;
+
+
+--drop function test_substit_doctorant__creates_substit_and_replaces_fk;
+CREATE or replace FUNCTION test_substit_doctorant__creates_substit_and_replaces_fk() returns void
+    language plpgsql
+as
+$$declare
+    v_app_user bigint = 1; -- pseudo-utilisateur SyGAL
+    v_source_id bigint = 2; -- source INSA
+
+    v_npd_individu_a varchar(256);
+
+    v_individu_substit individu_substit;
+    v_individu individu;
+    v_pre_individu_1 pre_individu;
+    v_pre_individu_2 pre_individu;
+
+    v_npd_doctorant_a varchar(256);
+
+    v_doctorant_substit doctorant_substit;
+    v_doctorant doctorant;
+    v_pre_doctorant_1 pre_doctorant;
+    v_pre_doctorant_2 pre_doctorant;
+begin
+    perform test_substit_doctorant__set_up();
+
+    alter table pre_doctorant enable trigger substit_trigger_pre_doctorant;
+    alter table doctorant_substit enable trigger substit_trigger_on_doctorant_substit; -- AVEC remplacement des FK
+
+    v_npd_individu_a = 'hochon_paule_20000101';
+    v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
+
+    -- Création de 2 'pre_individu' en doublon.
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_1;
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_2;
+
+    -- Insertion des 2 doublons 'pre_doctorant' associés :
+    --   - ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG123
+    --   - ine = 123ABC, etablissement = 2, code_apprenant_in_source = PEG456
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_1.id, '123ABC', 5, 'PEG123', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_1; -- NB : etablissement = 5
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_2.id, '123ABC', 2, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_2; -- NB : etablissement = 2
+
+    select * into v_individu_substit from individu_substit where from_id = v_pre_individu_2.id and npd = v_npd_individu_a;
+    select * into v_individu from individu where id = v_individu_substit.to_id;
+
+    select * into v_doctorant_substit from doctorant_substit where from_id = v_pre_doctorant_1.id and npd = v_npd_doctorant_a;
+    select * into v_doctorant from doctorant where id = v_doctorant_substit.to_id;
+
+    assert v_doctorant.individu_id = v_individu.id,
+        format('[TEST] Attendu : FK DOCTORANT.individu_id remplacée par %s (mais valeur = %s)',
+               v_individu.id, v_doctorant.individu_id);
+
+    perform test_substit_doctorant__tear_down();
+end$$;
+
+
+--drop function test_substit_doctorant__substituant_update_enabled;
+CREATE or replace FUNCTION test_substit_doctorant__substituant_update_enabled() returns void
+    language plpgsql
+as
+$$declare
+    v_app_user bigint = 1; -- pseudo-utilisateur SyGAL
+    v_source_id bigint = 2; -- source INSA
+
+    v_pre_individu_1 pre_individu;
+    v_pre_individu_2 pre_individu;
+    v_pre_individu_3 pre_individu;
+
+    v_npd_doctorant_a varchar(256);
+
+    v_doctorant_substit doctorant_substit;
+    v_doctorant doctorant;
+    v_pre_doctorant_1 pre_doctorant;
+    v_pre_doctorant_2 pre_doctorant;
+    v_pre_doctorant_3 pre_doctorant;
+begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
+    v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
+
+    -- Création d'un pre_individu et pre_doctorant associé : ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG123
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'aaaa@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_1;
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_1.id, '123ABC', 5, 'PEG123', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_1; -- NB : etablissement = 5
+
+    -- Insertion d'un doublon : ine = 123ABC, etablissement = 2, code_apprenant_in_source = PEG456
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HOCHON', 'test1234', 'PAULE', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_2;
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_2.id, '123ABC', 2, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_2; -- NB : etablissement = 2
+
+    -- Fetch de la substitution et du substituant correspondant
+    select * into v_doctorant_substit from doctorant_substit where from_id = v_pre_doctorant_1.id and npd = v_npd_doctorant_a;
+    select * into v_doctorant from doctorant i where id = v_doctorant_substit.to_id;
+
+    -- Verif des valeurs des attributs mis à jour automatiquement à partir des substitués
+    assert v_doctorant.etablissement_id = 2/*car 2<5*/ and v_doctorant.code_apprenant_in_source = 'PEG123'/*car ordre alpha*/,
+        format('[TEST] Attendu : 1 doctorant substituant avec etablissement_id = %s (reçu %s) et code_apprenant_in_source = %L (reçu %L)', 2, v_doctorant.etablissement_id, 'PEG123', v_doctorant.code_apprenant_in_source);
+
+    -- À présent, interdiction de mise à jour automatique des valeurs des attributs du substituant à partir des substitués
+    update doctorant set substit_update_enabled = false where id = v_doctorant.id;
+
+    -- Insertion d'un autre doublon : ine = 123ABC, etablissement = 5, code_apprenant_in_source = PEG456
+    INSERT INTO pre_individu(id, nom_patronymique, nom_usuel, prenom1, date_naissance, email, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_individu_id_seq'), 'HÔCHON', 'test1234', 'Paule', '2000-01-01', 'bbbb@mail.fr', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_individu_3;
+    INSERT INTO pre_doctorant(id, individu_id, ine, etablissement_id, code_apprenant_in_source, source_code, source_id, histo_createur_id, npd_force)
+    select nextval('pre_doctorant_id_seq'), v_pre_individu_3.id, '123ABC', 5, 'PEG456', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    returning * into v_pre_doctorant_3; -- NB : etablissement = 5
+
+    -- Vérif que les valeurs d'attributs du substituant n'ont pas changé
+    assert v_doctorant.etablissement_id = 2 /* alors que 5 est majoritaire */ and
+           v_doctorant.code_apprenant_in_source = 'PEG123' /* alors que PEG456 est majoritaire */,
+        format('[TEST] Attendu : 1 doctorant substituant avec etablissement_id = %s (reçu %s) et code_apprenant_in_source = %L (reçu %L)',
+            2, v_doctorant.etablissement_id,
+            'PEG123', v_doctorant.code_apprenant_in_source);
 
     perform test_substit_doctorant__tear_down();
 END$$;
@@ -363,7 +519,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -373,11 +528,15 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -454,7 +613,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -464,11 +622,15 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -555,7 +717,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -565,11 +726,15 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -646,7 +811,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -656,11 +820,15 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -747,7 +915,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -758,12 +925,16 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
     v_pre_doctorant_4 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -850,7 +1021,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -863,13 +1033,17 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
     v_pre_doctorant_4 pre_doctorant;
     v_pre_doctorant_5 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -966,7 +1140,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
     v_pre_individu_3 pre_individu;
@@ -976,11 +1149,15 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
     v_pre_doctorant_3 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -1057,7 +1234,6 @@ $$declare
 
     v_individu_substit individu_substit;
     v_individu_1 individu;
-    v_pre_individu pre_individu;
     v_pre_individu_1 pre_individu;
     v_pre_individu_2 pre_individu;
 
@@ -1066,10 +1242,14 @@ $$declare
     v_doctorant_substit doctorant_substit;
     v_doctorant doctorant;
     v_doctorant_1 doctorant;
-    v_pre_doctorant pre_doctorant;
     v_pre_doctorant_1 pre_doctorant;
     v_pre_doctorant_2 pre_doctorant;
 begin
+    perform test_substit_doctorant__set_up();
+
+    alter table individu_substit disable trigger substit_trigger_on_individu_substit;
+    alter table doctorant_substit disable trigger substit_trigger_on_doctorant_substit;
+
     v_npd_individu_a = 'hochon_paule_20000101';
     v_npd_doctorant_a = 'hochon_paule_20000101,123ABC';
 
@@ -1129,31 +1309,3 @@ begin
 
     perform test_substit_doctorant__tear_down();
 END$$;
-
-
-alter table individu disable trigger individu_rech_update;
-select test_substit_doctorant__finds_doublon_ssi_doublon_individu();
-select test_substit_doctorant__fetches_data_for_substituant();
-select test_substit_doctorant__creates_substit_2_doublons();
-select test_substit_doctorant__creates_substit_3_doublons();
-select test_substit_doctorant__removes_from_substit_si_historise();
-select test_substit_doctorant__adds_to_substit_si_dehistorise();
-select test_substit_doctorant__removes_from_substit_si_source_app();
-select test_substit_doctorant__removes_from_substit_si_plus_source_app();
-select test_substit_doctorant__adds_to_substit_si_npd_force();
-select test_substit_doctorant__updates_substits_si_modif_ine();
-select test_substit_doctorant__adds_to_substit_si_ajout_npd();
-select test_substit_doctorant__deletes_substit_si_plus_doublon();
-alter table individu enable trigger individu_rech_update;
-
--- ménage : perform test_substit_doctorant__tear_down();
-
-select * from substit_log;
-select * from individu_substit order by to_id, id;
-select * from doctorant_substit order by to_id, id;
-select * from pre_doctorant where nom_patronymique in ('HOCHON','HÔCHON','HOCHAN','COCHON') and histo_destruction is null order by source_code;
-select * from src_doctorant where nom_patronymique in ('HOCHON','HÔCHON','HOCHAN','COCHON') and histo_destruction is null order by source_code;
-select * from doctorant where nom_patronymique in ('HOCHON','HÔCHON','HOCHAN','COCHON') and histo_destruction is null order by source_code;
-select i.id, v.* from v_diff_doctorant v join pre_doctorant i on v.source_code = i.source_code;
-
-select substit_create_all_substitutions_doctorant(20); -- totalité : 23-24 min (avec ou sans les raise)

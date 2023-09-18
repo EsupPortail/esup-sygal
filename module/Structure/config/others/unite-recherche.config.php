@@ -28,6 +28,7 @@ return [
                     'controller' => UniteRechercheController::class,
                     'action'     => [
                         'index',
+                        'voir',
                         'information',
                     ],
                     'privileges' => [
@@ -86,6 +87,15 @@ return [
                             'route'       => '/rechercher',
                             'defaults'    => [
                                 'action' => 'rechercher',
+                            ],
+                        ],
+                    ],
+                    'voir' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/voir/:unite-recherche',
+                            'defaults' => [
+                                'action' => 'voir',
                             ],
                         ],
                     ],

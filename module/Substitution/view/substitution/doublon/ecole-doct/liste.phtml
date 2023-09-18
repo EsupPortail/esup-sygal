@@ -1,0 +1,29 @@
+<?php
+
+namespace Substitution;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctrine\DBAL\Result $result
+ *
+ * @see \Substitution\Controller\IndexController::ecoleDoctAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate("Doublons d'écoles doctorales")) ?>
+
+<h1 class="page-header">
+    <span class="far fa-clone"></span>
+    <?php echo $this->translate("Doublons d'écoles doctorales"); ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php echo $this->partial('substitution/doublon/_partial/liste', [
+    'result' => $result,
+    'attributes' => ['code' => 'Code'],
+    'routeName' => 'ecole-doctorale/voir',
+    'routeParamName' => 'ecole-doctorale',
+]); ?>

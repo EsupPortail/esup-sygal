@@ -54,12 +54,13 @@ trait StructureConcreteRepositoryTrait
     {
         $qb
             ->andWhere("structure.id = :structureId")
-            ->setParameter("structureId", $id);
+            ->setParameter("structureId", $id)
+            ->andWhereNotHistorise();
 
         try {
             return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie : plusieurs structures concrètes trouvées pointant vers la même structure $id");
+            throw new RuntimeException("Anomalie : plusieurs structures concrètes non historisées trouvées pointant vers la même structure $id");
         }
     }
 

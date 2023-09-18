@@ -27,7 +27,8 @@ return [
                     'controller' => EcoleDoctoraleController::class,
                     'action'     => [
                         'index',
-                        'information'
+                        'voir',
+                        'information',
                     ],
                     'privileges' => [
                         StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
@@ -82,6 +83,15 @@ return [
                             'route'       => '/rechercher',
                             'defaults'    => [
                                 'action' => 'rechercher',
+                            ],
+                        ],
+                    ],
+                    'voir' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/voir/:ecole-doctorale',
+                            'defaults' => [
+                                'action' => 'voir',
                             ],
                         ],
                     ],

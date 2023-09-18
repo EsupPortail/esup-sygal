@@ -1,0 +1,27 @@
+<?php
+
+namespace Substitution;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctrine\DBAL\Result $result
+ *
+ * @see \Substitution\Controller\IndexController::doctorantAction()
+ */
+
+?>
+
+<?php $this->headTitle($this->translate("Clés étrangères vers des doctorants")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-key"></span>
+    <?php echo $this->translate("Clés étrangères vers des doctorants"); ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php echo $this->partial('substitution/foreign-key/_partial/liste', [
+    'result' => $result,
+]); ?>

@@ -667,26 +667,29 @@ const CONFIG_IMPORTS = [
  * Ce qui suit n'est que la config "commune".
  */
 const CONFIG_SYNCHROS = [
+    ////////////////////////////////////////////// STRUCTURE //////////////////////////////////////////////
     [
+        ////// PRE-STRUCTURE : pour détection de doublons.
         'name' => 'pre-structure-%s',
         'order' => 10,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
-            'table' => 'src_pre_structure',
+            'table' => 'SRC_PRE_STRUCTURE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'pre_structure',
+            'table' => 'PRE_STRUCTURE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
+            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
             'id_sequence' => null,
         ],
     ],
     [
+        ////// STRUCTURE : sans doublons non historisés.
         'name' => 'structure-%s',
         'order' => 11,
         'source' => [
@@ -701,30 +704,33 @@ const CONFIG_SYNCHROS = [
             'table' => 'STRUCTURE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'SEQUENCE',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// ETABLISSEMENT //////////////////////////////////////////////
     [
+        ////// PRE-ETABLISSEMENT : pour détection de doublons.
         'name' => 'pre-etablissement-%s',
         'order' => 20,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
-            'table' => 'src_pre_etablissement',
+            'table' => 'SRC_PRE_ETABLISSEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'pre_etablissement',
+            'table' => 'PRE_ETABLISSEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
+            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
             'id_sequence' => null,
         ],
     ],
     [
+        ////// ETABLISSEMENT : sans doublons non historisés.
         'name' => 'etablissement-%s',
         'order' => 22,
         'source' => [
@@ -739,30 +745,33 @@ const CONFIG_SYNCHROS = [
             'table' => 'ETABLISSEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// ECOLE-DOCTORALE //////////////////////////////////////////////
     [
+        ////// ECOLE-DOCTORALE : pour détection de doublons.
         'name' => 'pre-ecole-doctorale-%s',
         'order' => 30,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
-            'table' => 'src_pre_ecole_doct',
+            'table' => 'SRC_PRE_ECOLE_DOCT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'pre_ecole_doct',
+            'table' => 'PRE_ECOLE_DOCT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
+            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
             'id_sequence' => null,
         ],
     ],
     [
+        ////// ECOLE-DOCTORALE : sans doublons non historisés.
         'name' => 'ecole-doctorale-%s',
         'order' => 31,
         'source' => [
@@ -777,30 +786,33 @@ const CONFIG_SYNCHROS = [
             'table' => 'ECOLE_DOCT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// UNITE-RECHERCHE //////////////////////////////////////////////
     [
+        ////// UNITE-RECHERCHE : pour détection de doublons.
         'name' => 'pre-unite-recherche-%s',
         'order' => 40,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
-            'table' => 'src_pre_unite_rech',
+            'table' => 'SRC_PRE_UNITE_RECH',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'pre_unite_rech',
+            'table' => 'PRE_UNITE_RECH',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
+            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
             'id_sequence' => null,
         ],
     ],
     [
+        ////// UNITE-RECHERCHE : sans doublons non historisés.
         'name' => 'unite-recherche-%s',
         'order' => 41,
         'source' => [
@@ -815,30 +827,33 @@ const CONFIG_SYNCHROS = [
             'table' => 'UNITE_RECH',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// INDIVIDU //////////////////////////////////////////////
     [
+        ////// PRE-INDIVIDU : pour détection de doublons.
         'name' => 'pre-individu-%s',
         'order' => 50,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
-            'table' => 'src_pre_individu',
+            'table' => 'SRC_PRE_INDIVIDU',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'pre_individu',
+            'table' => 'PRE_INDIVIDU',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
+            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
             'id_sequence' => null,
         ],
     ],
     [
+        ////// INDIVIDU : sans doublons non historisés.
         'name' => 'individu-%s',
         'order' => 51,
         'source' => [
@@ -853,30 +868,33 @@ const CONFIG_SYNCHROS = [
             'table' => 'INDIVIDU',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// DOCTORANT //////////////////////////////////////////////
     [
+        ////// PRE-DOCTORANT : pour détection de doublons.
         'name' => 'pre-doctorant-%s',
         'order' => 60,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
-            'table' => 'src_pre_doctorant',
+            'table' => 'SRC_PRE_DOCTORANT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'pre_doctorant',
+            'table' => 'PRE_DOCTORANT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
+            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
             'id_sequence' => null,
         ],
     ],
     [
+        ////// DOCTORANT : sans doublons non historisés.
         'name' => 'doctorant-%s',
         'order' => 61,
         'source' => [
@@ -891,10 +909,11 @@ const CONFIG_SYNCHROS = [
             'table' => 'DOCTORANT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// THESE //////////////////////////////////////////////
     [
         'name' => 'these-%s',
         'order' => 70,
@@ -914,6 +933,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// THESE-ANNEE-UNIV //////////////////////////////////////////////
     [
         'name' => 'these-annee-univ-%s',
         'order' => 80,
@@ -933,6 +953,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// ROLE //////////////////////////////////////////////
     [
         'name' => 'role-%s',
         'order' => 90,
@@ -952,6 +973,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// ACTEUR //////////////////////////////////////////////
     [
         'name' => 'acteur-%s',
         'order' => 100,
@@ -971,6 +993,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// ORIGINE-FINANCEMENT //////////////////////////////////////////////
     [
         'name' => 'origine-financement-%s',
         'order' => 110,
@@ -990,6 +1013,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// FINANCEMENT //////////////////////////////////////////////
     [
         'name' => 'financement-%s',
         'order' => 120,
@@ -1009,6 +1033,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// TITRE-ACCES //////////////////////////////////////////////
     [
         'name' => 'titre-acces-%s',
         'order' => 130,
@@ -1028,6 +1053,7 @@ const CONFIG_SYNCHROS = [
             'id_sequence' => null,
         ],
     ],
+    ////////////////////////////////////////////// VARIABLE //////////////////////////////////////////////
     [
         'name' => 'variable-%s',
         'order' => 140,
@@ -1043,7 +1069,7 @@ const CONFIG_SYNCHROS = [
             'table' => 'VARIABLE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
     ],

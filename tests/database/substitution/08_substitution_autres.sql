@@ -4,7 +4,8 @@
 
 --=============================== Autres ================================-
 
---drop view v_diff_acteur; drop view src_acteur;
+drop view if exists v_diff_acteur;
+drop view if exists src_acteur;
 create or replace view src_acteur as
 with pre as (
     SELECT NULL::bigint      AS id,
@@ -58,20 +59,24 @@ with pre as (
              LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text
 )
 select pre.id,
-       pre.source_code,
        pre.source_id,
+       pre.source_code,
        pre.these_id,
        pre.role_id,
        coalesce(isub.to_id, pre.individu_id) as individu_id,
        coalesce(esub.to_id, pre.acteur_etablissement_id) as acteur_etablissement_id,
+--        pre.individu_id as individu_id_orig,                         -- pour debug
+--        pre.acteur_etablissement_id as acteur_etablissement_id_orig, -- pour debug
        pre.qualite,
        pre.lib_role_compl
 from pre
     left join individu_substit isub on isub.from_id = pre.individu_id and isub.histo_destruction is null
-    left join etablissement_substit esub on esub.from_id = pre.acteur_etablissement_id and esub.histo_destruction is null;
+    left join etablissement_substit esub on esub.from_id = pre.acteur_etablissement_id and esub.histo_destruction is null
+;
 
 
--- drop view if exists v_diff_role; drop view src_role;
+drop view if exists v_diff_role;
+drop view if exists src_role;
 create or replace view src_role
 as
 with pre as (
@@ -97,12 +102,14 @@ select pre.id,
        pre.role_id,
        pre.these_dep,
        coalesce(ssub.to_id, pre.structure_id) as structure_id,
+--        pre.structure_id as structure_id_orig, -- pour debug
        pre.type_structure_dependant_id
 from pre
     left join structure_substit ssub on ssub.from_id = pre.structure_id and ssub.histo_destruction is null;
 
 
--- drop view if exists v_diff_these; drop view src_these;
+drop view if exists v_diff_these;
+drop view if exists src_these;
 create or replace view src_these
 as
 with pre as (
@@ -162,6 +169,10 @@ select pre.id,
        coalesce(esub.to_id, pre.etablissement_id) as etablissement_id,
        coalesce(edsub.to_id, pre.ecole_doct_id) as ecole_doct_id,
        coalesce(ursub.to_id, pre.unite_rech_id) as unite_rech_id,
+--        pre.doctorant_id as doctorant_id_orig,         -- pour debug
+--        pre.etablissement_id as etablissement_id_orig, -- pour debug
+--        pre.ecole_doct_id as ecole_doct_id_orig,       -- pour debug
+--        pre.unite_rech_id as unite_rech_id_orig,       -- pour debug
        pre.titre,
        pre.etat_these,
        pre.resultat,
@@ -184,35 +195,44 @@ from pre
     left join doctorant_substit dsub on dsub.from_id = pre.doctorant_id and dsub.histo_destruction is null
     left join etablissement_substit esub on esub.from_id = pre.etablissement_id and esub.histo_destruction is null
     left join ecole_doct_substit edsub on edsub.from_id = pre.ecole_doct_id and edsub.histo_destruction is null
-    left join unite_rech_substit ursub on ursub.from_id = pre.unite_rech_id and ursub.histo_destruction is null;
+    left join unite_rech_substit ursub on ursub.from_id = pre.unite_rech_id and ursub.histo_destruction is null
+;
 
-select * from these where source_code = 'UCN::3219';
-select * from src_these where source_code = 'UCN::3219';
-select * from unite_rech_substit where to_id in (104
-,    105
-,1
-,2
-,3
-,68
-,87
-,89
-,90
-,96
-,99
-,106
-    )
-order by to_id;
 
-select * from pre_structure ps join pre_unite_rech pur on pur.structure_id = ps.id where pur.id = 154;
-select * from structure ps join unite_rech pur on pur.structure_id = ps.id where pur.id = 122;
+drop view if exists v_diff_variable;
+drop view if exists src_variable;
+create or replace view src_variable
+as
+with pre as (
+    SELECT NULL::bigint AS id,
+           tmp.source_code,
+           src.id       AS source_id,
+           e.id         AS etablissement_id,
+           tmp.cod_vap  AS code,
+           tmp.lib_vap  AS description,
+           tmp.par_vap  AS valeur,
+           tmp.date_deb_validite,
+           tmp.date_fin_validite
+    FROM tmp_variable tmp
+         JOIN source src ON src.id = tmp.source_id
+         JOIN etablissement e ON e.id = src.etablissement_id and e.histo_destruction is null
+)
+select pre.id,
+       pre.source_code,
+       pre.source_id,
+       coalesce(esub.to_id, pre.etablissement_id) as etablissement_id,
+--        pre.etablissement_id as etablissement_id_orig, -- pour debug
+       pre.code,
+       pre.description,
+       pre.valeur,
+       pre.date_deb_validite,
+       pre.date_fin_validite
+from pre
+     left join etablissement_substit esub on esub.from_id = pre.etablissement_id and esub.histo_destruction is null
+;
 
-select * from v_structure_doublon where code = 'ALGO';
-select * from pre_structure ps join pre_unite_rech pur on pur.structure_id = ps.id where ps.code = 'ALGO';
-select * from pre_structure ps join pre_unite_rech pur on pur.structure_id = ps.id where pur.id = 106;
-select * from structure ps join unite_rech pur on pur.structure_id = ps.id where pur.id = 3;
-select * from structure ps join unite_rech pur on pur.structure_id = ps.id where pur.id = 2;
-select * from structure ps join unite_rech pur on pur.structure_id = ps.id where pur.id = 1;
 
+/*
 select sub.npd, ps.id, ps.code, ps.source_code, s.id, s.code, s.source_code
 from unite_rech_substit sub
 join pre_unite_rech pur on pur.id = sub.from_id and pur.histo_destruction is null
@@ -221,54 +241,4 @@ join pre_structure ps on ps.id = pur.structure_id and ps.histo_destruction is nu
 join structure s on s.id = ur.structure_id and s.histo_destruction is null
 where sub.histo_destruction is null
 order by npd;
-
-
-create or replace view src_these_annee_univ(id, source_code, source_id, these_id, annee_univ) as
-SELECT NULL::bigint AS id,
-       tmp.source_code,
-       src.id     AS source_id,
-       t.id       AS these_id,
-       tmp.annee_univ
-FROM tmp_these_annee_univ tmp
-         JOIN source src ON src.id = tmp.source_id
-         JOIN etablissement e ON e.structure_id = src.etablissement_id
-         JOIN structure s ON s.id = e.structure_id
-         JOIN these t ON t.source_code::text = tmp.these_id::text;
-
-create or replace view src_titre_acces
-            (id, source_code, source_id, these_id, titre_acces_interne_externe, libelle_titre_acces,
-             type_etb_titre_acces, libelle_etb_titre_acces, code_dept_titre_acces, code_pays_titre_acces)
-as
-SELECT NULL::bigint AS id,
-       tmp.source_code,
-       src.id     AS source_id,
-       t.id       AS these_id,
-       tmp.titre_acces_interne_externe,
-       tmp.libelle_titre_acces,
-       tmp.type_etb_titre_acces,
-       tmp.libelle_etb_titre_acces,
-       tmp.code_dept_titre_acces,
-       tmp.code_pays_titre_acces
-FROM tmp_titre_acces tmp
-         JOIN source src ON src.id = tmp.source_id
-         JOIN etablissement e ON e.structure_id = src.etablissement_id
-         JOIN structure s ON s.id = e.structure_id
-         JOIN these t ON t.source_code::text = tmp.these_id::text;
-
-create or replace view src_variable
-            (id, source_code, source_id, etablissement_id, code, description, valeur, date_deb_validite,
-             date_fin_validite) as
-SELECT NULL::bigint  AS id,
-       tmp.source_code,
-       src.id      AS source_id,
-       e.id        AS etablissement_id,
-       tmp.cod_vap AS code,
-       tmp.lib_vap AS description,
-       tmp.par_vap AS valeur,
-       tmp.date_deb_validite,
-       tmp.date_fin_validite
-FROM tmp_variable tmp
-         JOIN source src ON src.id = tmp.source_id
-         JOIN etablissement e ON e.structure_id = src.etablissement_id
-         JOIN structure s ON s.id = e.structure_id;
-
+*/
