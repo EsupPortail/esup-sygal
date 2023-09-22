@@ -14,6 +14,7 @@ Journal des modifications
 - [FIX] Soutenance : message d'alerte affiché à tort systématiquement à propos de l'adresse Doctorat manquante.
 - [FIX] Chargement de la navigation : plantage d'une assertion à cause d'une variable null (role).
 - [FIX] Accès aux fiches individus.
+- [FIX] Pages de couverture : réduction de la marge en haut de page.
 
 6.0.5
 -----

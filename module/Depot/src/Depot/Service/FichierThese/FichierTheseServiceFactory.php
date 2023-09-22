@@ -65,6 +65,8 @@ class FichierTheseServiceFactory
         /** @var PageDeCouverturePdfExporter $pdcPdfExporter */
         $pdcPdfExporter = $container->get(PageDeCouverturePdfExporter::class);
         $pdcPdfExporter
+            ->setMarginTop(5)
+            ->setMarginBottom(5)
             ->setTemplateFilePath($templateFilePath)
             ->setCssFilePath($cssFilePath);
 
