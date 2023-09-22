@@ -275,7 +275,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
                 $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
 
-                return $this->redirect()->toRoute('utilisateur');
+                return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
             }
         }
 

@@ -10,6 +10,7 @@ Journal des modifications
 'Années financées' ; modification du séparateur de valeurs multiples ',' en ' ; ' ; correction de la colonne 
 'Date de dépôt version corrigée' toujours vide.
 - [FIX] Création d'un compte utilisateur local : vérif de l'email déjà utilisé remplacée par vérif de l'email déjà utilisé comme username.
+- [FIX] Création d'un compte utilisateur local : redirection vers la fiche du nouveau compte après création.
 - [FIX] Soutenance : message d'alerte affiché à tort systématiquement à propos de l'adresse Doctorat manquante.
 - [FIX] Chargement de la navigation : plantage d'une assertion à cause d'une variable null (role).
 - [FIX] Accès aux fiches individus.
