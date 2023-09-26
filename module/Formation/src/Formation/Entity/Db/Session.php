@@ -283,7 +283,7 @@ class Session implements HistoriqueAwareInterface,
 
         $mois = ((int) $debut->format('m'));
         $annee =  ((int) $debut->format('Y'));
-        if ($mois > 8) $annee += 1;
+        if ($mois < 9) $annee -= 1;
         return $annee;
     }
 

@@ -4,7 +4,8 @@ Journal des modifications
 6.0.6
 -----
 - Passage dans UnicaenRenderer du template des historiques de co-encadrements
-- Ajout d'un filtre sur l'année sur l'écran des formations pour masquer/afficher les sessions
+- [FORMATION] Ajout d'un filtre sur l'année sur l'écran des formations pour masquer/afficher les sessions
+- [SOUTENANCE] Récupération de la date de fin de confidentialité depuis la thèse puis du dossier de soutenance pour le docuement de la présidence
 
 6.0.5
 -----
