@@ -7,6 +7,7 @@ use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 class InformationsInscriptionFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -38,17 +39,25 @@ class InformationsInscriptionFieldset extends Fieldset implements InputFilterPro
                 ->setOptions(['empty_option' => 'Choisissez un élément',])
         );
 
-        $this->add(
-            (new Select("nom_directeur_thèse"))
-                ->setLabel("Nom du directeur de thèse")
-                ->setOptions(['empty_option' => 'Choisissez un élément',])
-        );
+        $nom_directeur_thèse = new SearchAndSelect('nom_directeur_thèse', ['label' => "Nom du directeur de thèse"]);
+        $nom_directeur_thèse
+            ->setSelectionRequired()
+            ->setAttributes([
+                'class' => 'selectpicker show-tick',
+                'data-live-search' => 'true',
+                'id' => 'nom_directeur_thèse',
+            ]);
+        $this->add($nom_directeur_thèse);
 
-        $this->add(
-            (new Select("nom_codirecteur_thèse"))
-                ->setLabel("Nom du co-directeur de thèse")
-                ->setOptions(['empty_option' => 'Facultatif',])
-        );
+        $nom_codirecteur_thèse = new SearchAndSelect('nom_codirecteur_thèse', ['label' => "Nom du co-directeur de thèse"]);
+        $nom_codirecteur_thèse
+            ->setSelectionRequired()
+            ->setAttributes([
+                'class' => 'selectpicker show-tick',
+                'data-live-search' => 'true',
+                'id' => 'nom_directeur_thèse',
+            ]);
+        $this->add($nom_codirecteur_thèse);
 
         $this->add(
             (new Textarea('titre_these'))

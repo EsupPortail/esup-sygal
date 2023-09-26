@@ -74,7 +74,7 @@ class NiveauEtudeFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(
             (new Select("annee_dobtention_diplome"))
-                ->setLabel("Année d'obtention :")
+                ->setLabel("Année d'obtention")
                 ->setValueOptions($this->generateYearOptions())
         );
 

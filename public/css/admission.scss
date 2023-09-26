@@ -104,7 +104,7 @@ h1{
   align-items: center;
 }
 
-i{
+.upload_file>i{
   cursor: pointer;
   font-size: 15px;
 }
@@ -159,12 +159,38 @@ i:hover {
   margin-left: 15px;
 }
 
-.statut_dossier{
-  background: #FEFEFE 0% 0% no-repeat padding-box;
+.dossier_complet{
   border: 3px solid #37AF37;
   border-radius: 11px;
-  opacity: 1;
+  max-width: 18rem;
 }
+
+.dossier_complet>div>p{
+  color:#707070;
+  font-size: 15px;
+}
+
+.dossier_complet>div>i{
+  font-style: unset;
+}
+
+.card-body.text-success i.icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.card-body.text-success p.card-title {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+textarea{
+  width: 100%;
+}
+
+
+
 @media (max-width: 768px) {
   .detail_file {
     margin: 15px;
@@ -188,6 +214,13 @@ i:hover {
   .date_televersement>p{
     margin-top: revert;
 
+  }
+
+  .cards_validation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 }
 

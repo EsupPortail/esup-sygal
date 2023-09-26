@@ -16,17 +16,15 @@ use Application\View\Renderer\PhpRenderer;
 <p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral à
     l'université de Caen Normandie. <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.
 </p>
-
+<?php
+    $form = $this->form;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Pièces justificatives</h2>
     </div>
-    <?php
-    $form = $this->form;
-    $form->prepare();
-    echo $this->form()->openTag($form);
-    $form = $form->get('validation')->get('pieces_justificatives');
-    ?>
     <div class="row subfield">
         <div class="col informations-pieces_justificatives">
             <p>Obligatoires</p>
@@ -34,13 +32,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('diplome_bac')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('diplome_bac')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('diplome_bac')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('diplome_bac')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 25/09/2023</p>
@@ -54,13 +52,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('curicculum_vitae')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('curicculum_vitae')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('curicculum_vitae')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('curicculum_vitae')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                 </div>
@@ -73,13 +71,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('financement')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('financement')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('financement')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('financement')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 25/09/2023</p>
@@ -93,13 +91,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('projet_these')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('projet_these')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('projet_these')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('projet_these')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                 </div>
@@ -112,13 +110,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('exemplaires_convention')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('exemplaires_convention')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('exemplaires_convention')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('exemplaires_convention')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 24/09/2023</p>
@@ -132,13 +130,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('exemplaires_charte_doctorat')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('exemplaires_charte_doctorat')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('exemplaires_charte_doctorat')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('exemplaires_charte_doctorat')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 25/09/2023</p>
@@ -158,21 +156,10 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('argumentaire_directeur_these')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('argumentaire_directeur_these')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
-            <div class="row detail_file">
-                <div class="col-lg-1 upload_file">
-                    <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('argumentaire_directeur_these')) ?>
-                </div>
-                <div class="col-lg-2 date_televersement">
-                </div>
-                <div class="col-lg-1 action_file">
-                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
-                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
-                </div>
-            </div>
+            <?php echo $this->formtextarea($form->get('validation')->get('pieces_justificatives')->get('argumentaire_directeur_these')) ?>
         </div>
     </div>
 
@@ -183,13 +170,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('diplomes_releves_notes_traduits')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('diplomes_releves_notes_traduits')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('diplomes_releves_notes_traduits')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('diplomes_releves_notes_traduits')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 23/09/2023</p>
@@ -203,13 +190,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('acte_naissance')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('acte_naissance')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('acte_naissance')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('acte_naissance')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 24/09/2023</p>
@@ -223,13 +210,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('photocopie_passeport')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('photocopie_passeport')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('photocopie_passeport')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('photocopie_passeport')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                 </div>
@@ -248,13 +235,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('diplomes_travaux_experience_pro')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('diplomes_travaux_experience_pro')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('diplomes_travaux_experience_pro')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('diplomes_travaux_experience_pro')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 25/09/2023</p>
@@ -274,13 +261,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('documents_demande_confidentialite')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('documents_demande_confidentialite')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('documents_demande_confidentialite')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('documents_demande_confidentialite')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 25/09/2023</p>
@@ -294,13 +281,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('documents_cotutelle')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('documents_cotutelle')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('documents_cotutelle')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('documents_cotutelle')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                 </div>
@@ -313,13 +300,13 @@ use Application\View\Renderer\PhpRenderer;
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formlabel($form->get('documents_coencadrement')) ?>
+            <?php echo $this->formlabel($form->get('validation')->get('pieces_justificatives')->get('documents_coencadrement')) ?>
         </div>
         <div class="col-lg-9 col-sm-12">
             <div class="row detail_file">
                 <div class="col-lg-1 upload_file">
                     <i class="icon icon-upload"></i>
-                    <?php echo $this->formfile($form->get('documents_coencadrement')) ?>
+                    <?php echo $this->formfile($form->get('validation')->get('pieces_justificatives')->get('documents_coencadrement')) ?>
                 </div>
                 <div class="col-lg-2 date_televersement">
                     <p>Téléversé le 25/09/2023</p>
@@ -332,59 +319,56 @@ use Application\View\Renderer\PhpRenderer;
         </div>
     </div>
 </div>
-<?php echo $this->form()->closeTag() ?>
 
 <div class="row_sous_partie">
     <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Circuit des signatures</h2>
+        <h2 class="titre_sous_partie">Signatures</h2>
     </div>
     <div class="row">
-        <div class="col">
-            <?php
-            $form = $this->form;
-            $form->prepare();
-            echo $this->form()->openTag($form);
-            $form = $form->get('validation')->get('circuit_signature'); ?>
+        <div class="col-lg-6 col-sm-12">
             <div class="row subfield">
                 <div class="col etape_signature">
                     <div class="circle"><p>1</p></div>
-                    <?php echo $this->formlabel($form->get('validation_gestionnaires')) ?>
+                    <?php echo $this->formlabel($form->get('validation')->get('circuit_signature')->get('validation_gestionnaires')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
                     <div class="circle"><p>2</p></div>
-                    <?php echo $this->formlabel($form->get('validation_directeurthese')) ?>
+                    <?php echo $this->formlabel($form->get('validation')->get('circuit_signature')->get('validation_directeurthese')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
                     <div class="circle"><p>3</p></div>
-                    <?php echo $this->formlabel($form->get('validation_codirecteur')) ?>
+                    <?php echo $this->formlabel($form->get('validation')->get('circuit_signature')->get('validation_codirecteur')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
                     <div class="circle"><p>4</p></div>
-                    <?php echo $this->formlabel($form->get('validation_uniterecherche')) ?>
+                    <?php echo $this->formlabel($form->get('validation')->get('circuit_signature')->get('validation_uniterecherche')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
                     <div class="circle"><p>5</p></div>
-                    <?php echo $this->formlabel($form->get('validation_ecoledoctorale')) ?>
+                    <?php echo $this->formlabel($form->get('validation')->get('circuit_signature')->get('validation_ecoledoctorale')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
                     <div class="circle"><p>6</p></div>
-                    <?php echo $this->formlabel($form->get('signature_president')) ?>
+                    <?php echo $this->formlabel($form->get('validation')->get('circuit_signature')->get('signature_president')) ?>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="statut_dossier">
-                <p>Votre dossier est complet</p>
+        <div class="col-lg-6 col-sm-12 cards_validation">
+            <div class="card border-success mb-3 dossier_complet">
+                <div class="card-body text-success">
+                    <i class="icon icon-information"></i>
+                    <p class="card-title">Votre dossier est complet</p>
+                </div>
             </div>
         </div>
     </div>
@@ -400,8 +384,8 @@ use Application\View\Renderer\PhpRenderer;
 
 <script>
 
-    $("i").click(function () {
-        $("input[type='file']").trigger('click');
+    $(".upload_file > i").click(function () {
+        $(this).siblings("input[type='file']").trigger('click');
     });
 
     // Sélectionnez toutes les divs avec la classe "date_televersement"

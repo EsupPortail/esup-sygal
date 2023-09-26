@@ -5,6 +5,7 @@ use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
 
@@ -46,18 +47,14 @@ class PiecesJustificativesFieldset extends Fieldset implements InputFilterProvid
         );
 
         $this->add(
-            (new File('argumentaire_directeur_these'))
-                ->setLabel("Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire")
-        );
-
-        $this->add(
             (new File('diplomes_releves_notes_traduits'))
                 ->setLabel("Diplômes et relevés de notes traduits en français avec tampons originaux")
         );
 
         $this->add(
-            (new File('argumentaire_directeur_these'))
+            (new Textarea('argumentaire_directeur_these'))
                 ->setLabel("Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire")
+                ->setAttributes(["id" => "argumentaire_directeur_these"])
         );
 
         $this->add(
