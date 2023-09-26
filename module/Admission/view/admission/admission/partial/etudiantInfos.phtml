@@ -1,0 +1,182 @@
+<?php
+
+use Admission\Fieldset\Etudiant\EtudiantFieldset;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer         $this
+ * @var EtudiantFieldset    $fieldset
+ * @var string              $error
+ *
+ * @see IndividuRecrutementController::ajouterIndividuIndividuAction()
+ */
+$fcg = $this->formControlGroup();
+$fieldset_infosEtudiant = $fieldset->get("infosEtudiant");
+//var_dump($fcg);
+?>
+
+<?php $this->headTitle($this->translate($title = "Admission")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral à
+    l'université de Caen Normandie. <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.
+</p>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Étudiant</h2>
+    </div>
+    <?php
+    ?>
+    <div class="row subfield">
+        <div class="col-md-6">
+            <?php
+            echo $fcg($fieldset_infosEtudiant->get('ine')) ?>
+        </div>
+        <div class="col-md-6">
+            <?php echo $fcg($fieldset_infosEtudiant->get('numero_etudiant')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-sm-12">
+            <div class="checkbox_admission">
+                <?php echo $fcg($fieldset_infosEtudiant->get('civilite')) ?>
+            </div>
+        </div>
+        <div class="col">
+            <?php echo $fcg($fieldset_infosEtudiant->get('nomPatronymique')) ?>
+        </div>
+        <div class="col">
+            <?php echo $fcg($fieldset_infosEtudiant->get('nomUsuel')) ?>
+        </div>
+        <div class="col-sm-12">
+            <?php echo $fcg($fieldset_infosEtudiant->get('prenom1')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-md-3">
+            <?php echo $fcg($fieldset_infosEtudiant->get('dateNaissance')) ?>
+        </div>
+        <div class="col-md-3">
+            <?php echo $fcg($fieldset_infosEtudiant->get('ville_naissance')) ?>
+        </div>
+        <div class="col-md-3">
+            <?php echo $fcg($fieldset_infosEtudiant->get('paysNationalite')) ?>
+        </div>
+        <div class="col-md-3">
+            <?php echo $fcg($fieldset_infosEtudiant->get('nationalite')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-md-3">
+            <?php echo $fcg($fieldset_infosEtudiant->get('adresse_ligne3_bvoie')) ?>
+        </div>
+        <div class="col-md-1">
+            <?php echo $fcg($fieldset_infosEtudiant->get('adresse_code_postale')) ?>
+        </div>
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $fcg($fieldset_infosEtudiant->get('adresse_code_commune')) ?>
+        </div>
+        <div class="col-lg-2 col-sm-12">
+            <?php echo $fcg($fieldset_infosEtudiant->get('numero_telephone1')) ?>
+        </div>
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $fcg($fieldset_infosEtudiant->get('email')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+            <div class="checkbox_admission">
+                <?php echo $fcg($fieldset_infosEtudiant->get('situation_handicap')) ?>
+                <p class="informations">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
+                    N'hésitez pas à
+                    contacter le Service Universitaire de Médecine Préventive (SUMPPS) sumpps@unicaen.fr ainsi que le
+                    relai
+                    handicap santé (deve.accueil.handicap@unicaen.fr)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Niveau d'étude permettant l'accès en doctorat</h2>
+    </div>
+    <div class="row subfield">
+        <?php
+        $fieldset_diplomeEtudiant = $fieldset->get('diplomeEtudiant');
+        ?>
+        <div class="checkbox_admission">
+            <?php echo $fcg($fieldset_diplomeEtudiant->get('niveau_etude')) ?>
+        </div>
+        <div id="additional_fields_diplome">
+            <div class="row subfield">
+                <div class="col-lg-4 col-sm-12">
+                    <?php echo $fcg($fieldset_diplomeEtudiant->get('intitule_du_diplome')) ?>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <?php echo $fcg($fieldset_diplomeEtudiant->get("annee_dobtention_diplome")) ?>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <?php echo $fcg($fieldset_diplomeEtudiant->get("etablissement_dobtention_diplome")) ?>
+                </div>
+            </div>
+        </div>
+        <div id="additional_fields_autre">
+            <div class="row subfield">
+                <div class="col">
+                    <div class="checkbox_admission checkbox_diplome">
+                        <?php echo $fcg($fieldset_diplomeEtudiant->get('type_diplome_autre')) ?>
+                    </div>
+                </div>
+                <p class="informations">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
+                    au préalable contacter le
+                    service spécifique : vae@unicaen.fr</p>
+            </div>
+            <div class="row subfield">
+                <div class="col-sm-12">
+                    <?php echo $fcg($fieldset_diplomeEtudiant->get('intitule_du_diplome')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col-lg-6 col-sm-12">
+                    <?php echo $fcg($fieldset_diplomeEtudiant->get("annee_dobtention_diplome")) ?>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <?php echo $fcg($fieldset_diplomeEtudiant->get("etablissement_dobtention_diplome")) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row_fin_formulaire">
+    <div class="col-12 text-right">
+        <input type="submit" name="save_and_come_back_later" class="btn btn-warning" value="Enregistrer et continuer plus tard">
+        <input type="submit" name="save_and_continue" class="btn btn-success" value="Étape suivante et enregistrer">
+    </div>
+</div>
+
+<script>
+    // Sélectionnez tous les éléments radio avec le même nom
+    var diplomeRadios = document.querySelectorAll('input[name="etudiant[diplomeEtudiant][niveau_etude]"]');
+    var additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
+    var additionalFieldsAutre = document.getElementById('additional_fields_autre');
+
+    // Cachez les champs supplémentaires au chargement de la page
+    additionalFieldsDiplome.style.display = 'none';
+    additionalFieldsAutre.style.display = 'none';
+
+    // Parcourez tous les éléments radio et ajoutez un gestionnaire d'événement à chacun
+    diplomeRadios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            if (radio.checked && radio.value=="1") {
+                additionalFieldsDiplome.style.display = 'block';
+                additionalFieldsAutre.style.display = 'none';
+            } else {
+                additionalFieldsDiplome.style.display = 'none';
+                additionalFieldsAutre.style.display = 'block';
+            }
+        });
+    });
+</script>

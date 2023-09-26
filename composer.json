@@ -79,6 +79,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-0": {
+            "Admission\\": "module/Admission/src",
             "Application\\": "module/Application/src",
             "ComiteSuiviIndividuel\\": "module/ComiteSuiviIndividuel/src",
             "Depot\\": "module/Depot/src",

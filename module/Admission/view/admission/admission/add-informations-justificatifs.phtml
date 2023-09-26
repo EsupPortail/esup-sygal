@@ -1,0 +1,427 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ *
+ * @see \Admission\Controller\AdmissionController::addInformationsJustificatifsAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate($title = "Admission")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral à
+    l'université de Caen Normandie. <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.
+</p>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Pièces justificatives</h2>
+    </div>
+    <?php
+    $form = $this->form;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    $form = $form->get('validation')->get('pieces_justificatives');
+    ?>
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Obligatoires</p>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('diplome_bac')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('diplome_bac')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 25/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('curicculum_vitae')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('curicculum_vitae')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('financement')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('financement')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 25/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('projet_these')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('projet_these')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('exemplaires_convention')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('exemplaires_convention')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 24/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('exemplaires_charte_doctorat')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('exemplaires_charte_doctorat')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 25/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Si autre diplôme qu'un master français (Dérogation)</p>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('argumentaire_directeur_these')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('argumentaire_directeur_these')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Si l'étudiant est titulaire d'un titre étranger</p>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('diplomes_releves_notes_traduits')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('diplomes_releves_notes_traduits')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 23/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('acte_naissance')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('acte_naissance')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 24/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('photocopie_passeport')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('photocopie_passeport')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Si l'étudiant est titulaire d'un diplôme français ne conférant pas le grade de master</p>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('diplomes_travaux_experience_pro')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('diplomes_travaux_experience_pro')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 25/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Si spécificité(s) demandé(s)</p>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('documents_demande_confidentialite')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('documents_demande_confidentialite')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 25/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('documents_cotutelle')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('documents_cotutelle')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <?php echo $this->formlabel($form->get('documents_coencadrement')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-1 upload_file">
+                    <i class="icon icon-upload"></i>
+                    <?php echo $this->formfile($form->get('documents_coencadrement')) ?>
+                </div>
+                <div class="col-lg-2 date_televersement">
+                    <p>Téléversé le 25/09/2023</p>
+                </div>
+                <div class="col-lg-1 action_file">
+                    <span class="icon icon-voir iconly" title="Voir le fichier"></span>
+                    <span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php echo $this->form()->closeTag() ?>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Circuit des signatures</h2>
+    </div>
+    <div class="row">
+        <div class="col">
+            <?php
+            $form = $this->form;
+            $form->prepare();
+            echo $this->form()->openTag($form);
+            $form = $form->get('validation')->get('circuit_signature'); ?>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <div class="circle"><p>1</p></div>
+                    <?php echo $this->formlabel($form->get('validation_gestionnaires')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <div class="circle"><p>2</p></div>
+                    <?php echo $this->formlabel($form->get('validation_directeurthese')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <div class="circle"><p>3</p></div>
+                    <?php echo $this->formlabel($form->get('validation_codirecteur')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <div class="circle"><p>4</p></div>
+                    <?php echo $this->formlabel($form->get('validation_uniterecherche')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <div class="circle"><p>5</p></div>
+                    <?php echo $this->formlabel($form->get('validation_ecoledoctorale')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <div class="circle"><p>6</p></div>
+                    <?php echo $this->formlabel($form->get('signature_president')) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="statut_dossier">
+                <p>Votre dossier est complet</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row_fin_formulaire">
+    <div class="col-12 text-right">
+        <?php echo $this->formSubmit($this->form->get('save_and_come_back_later')) ?>
+        <?php echo $this->formSubmit($this->form->get('save_and_continue')) ?>
+    </div>
+</div>
+
+<?php echo $this->form()->closeTag() ?>
+
+<script>
+
+    $("i").click(function () {
+        $("input[type='file']").trigger('click');
+    });
+
+    // Sélectionnez toutes les divs avec la classe "date_televersement"
+    const dateTeleversementDivs = document.querySelectorAll('.date_televersement');
+
+    // Parcourez chaque div
+    dateTeleversementDivs.forEach((dateDiv) => {
+        // Vérifiez si la div "date_televersement" n'est pas vide
+        if (dateDiv.children.length <= 0) {
+            // Trouvez la div "action_file" au même niveau que "date_televersement"
+            const actionFileDiv = dateDiv.nextElementSibling;
+            // Vérifiez si la div "action_file" existe
+            if (actionFileDiv && actionFileDiv.classList.contains('action_file')) {
+                // Affichez la div "action_file"
+                actionFileDiv.style.display = 'none'; // Vous pouvez utiliser 'flex', 'inline', etc. selon votre mise en page
+            }
+        }
+    });
+
+
+
+
+</script>

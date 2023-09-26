@@ -1,0 +1,81 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ *
+ * @see \Admission\Controller\AdmissionController::addInformationsFinancement()
+ */
+?>
+
+<?php $this->headTitle($this->translate($title = "Admission")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral à
+    l'université de Caen Normandie. <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.
+</p>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Financement</h2>
+    </div>
+    <?php
+    $form = $this->form;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    $form = $form->get('financement');
+    ?>
+
+    <div class="row subfield">
+        <div class="col-lg-2 col-sm-12">
+            <div class="checkbox_admission">
+                <?php echo $this->formControlGroup($form->get('contrat_doctoral')) ?>
+            </div>
+        </div>
+        <div class="col-lg-10 col-sm-12">
+            <div id="additional_fields_contratDoctoral">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        <?php echo $this->formControlGroup($form->get('employeur_contrat')) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row subfield">
+        <div class="col-lg-12 col-sm-12">
+            <p class="informations">Merci de préciser le nom, l'acronyme, adresse, coordonnées de la structure publique ou privée signataire du contrat</p>
+            <?php echo $this->formControlGroup($form->get('detail_contrat_doctoral')) ?>
+        </div>
+    </div>
+    <div class="row_fin_formulaire">
+        <div class="col-12 text-right">
+            <?php echo $this->formSubmit($this->form->get('save_and_come_back_later')) ?>
+            <?php echo $this->formSubmit($this->form->get('save_and_continue')) ?>
+        </div>
+    </div>
+</div>
+<?php echo $this->form()->closeTag() ?>
+
+<script>
+    // Sélectionnez tous les éléments radio avec le même nom
+    var contratDoctoralRadios = document.querySelectorAll('input[name="financement[contrat_doctoral]"]');
+    var additionalFieldscontratDoctoral = document.getElementById('additional_fields_contratDoctoral');
+
+    // Cachez les champs supplémentaires au chargement de la page
+    additionalFieldscontratDoctoral.style.display = 'none';
+
+    // Parcourez tous les éléments radio et ajoutez un gestionnaire d'événement à chacun
+    contratDoctoralRadios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            if (radio.checked && radio.value=="1") {
+                additionalFieldscontratDoctoral.style.display = 'block';
+            } else {
+                additionalFieldscontratDoctoral.style.display = 'none';
+            }
+        });
+    });
+</script>

@@ -1,0 +1,31 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ *
+ * @see \Admission\Controller\AdmissionController::addInformationsEtudiant()
+ */
+?>
+
+<?php $this->headTitle($this->translate($title = "Admission")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral à
+    l'université de Caen Normandie. <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.
+</p>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2>Étudiant</h2>
+    </div>
+    <?php
+
+    $multipageFormFieldset = $this->multipageFormFieldset();
+    $multipageFormFieldset->setPartial('admission/partial/etudiantInfos');
+//    var_dump($multipageFormFieldset);
+    echo $multipageFormFieldset;
+    ?>
+</div>

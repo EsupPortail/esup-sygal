@@ -1,0 +1,175 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ *
+ * @see \Admission\Controller\AdmissionController::addInformationsEtudiant()
+ */
+?>
+
+<?php $this->headTitle($this->translate($title = "Admission")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral à
+    l'université de Caen Normandie. <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.
+</p>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Inscription demandée</h2>
+    </div>
+    <?php
+    $form = $this->form;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    $form = $form->get('inscription')->get('infosInscription');
+    ?>
+    <div class="row subfield">
+        <div class="col">
+            <?php echo $this->formControlGroup($form->get('discipline_doctorat')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($form->get('composante_doctorat')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($form->get('ecole_doctorale')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+            <?php echo $this->formControlGroup($form->get('unite_recherche')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($form->get('nom_directeur_thèse')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($form->get('nom_codirecteur_thèse')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+            <?php echo $this->formControlGroup($form->get('titre_these')) ?>
+        </div>
+    </div>
+</div>
+<?php echo $this->form()->closeTag() ?>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <h2 class="titre_sous_partie">Spécificités envisagées</h2>
+            </div>
+            <div class="col">
+                <p class="informations-title-sous-partie">Demande de spécificité(s) à émettre obligatoirement via le(s) formulaire(s) téléchargeable(s) sur le site internet UNICAEN</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <?php
+        $form = $this->form;
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        $form = $form->get('inscription')->get('specifitesEnvisagees'); ?>
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($form->get('confidentialite')) ?>
+                </div>
+            </div>
+            <div class="col-lg-10 col-sm-12">
+                <div id="additional_fields_confidentialite">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($form->get('date_confidentialité')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12 informations-confidentialite-souhaitee">
+                            <p class="informations">A demander et motiver dans la convention de formation doctorale</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($form->get('co_tutelle')) ?>
+                </div>
+            </div>
+            <div class="col-lg-10 col-sm-12">
+                <div id="additional_fields_cotutelle">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($form->get('pays_co-tutelle')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <p class="informations">Attention, il est OBLIGATOIRE d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($form->get('co-direction')) ?>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($form->get('co_encadrement')) ?>
+                </div>
+            </div>
+            <div class="col-lg-10 col-sm-12">
+                <p class="informations">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D .R Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row_fin_formulaire">
+    <div class="col-12 text-right">
+        <?php echo $this->formSubmit($this->form->get('save_and_come_back_later')) ?>
+        <?php echo $this->formSubmit($this->form->get('save_and_continue')) ?>
+    </div>
+</div>
+
+<?php echo $this->form()->closeTag() ?>
+
+<script>
+    // Sélectionnez tous les éléments radio avec le même nom
+    var confidentialiteRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][confidentialite]"]');
+    var cotutelleRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][co_tutelle]"]');
+    var additionalFieldsConfidentialite = document.getElementById('additional_fields_confidentialite');
+    var additionalFieldsCotutelle = document.getElementById('additional_fields_cotutelle');
+
+    // Cachez les champs supplémentaires au chargement de la page
+    additionalFieldsConfidentialite.style.display = 'none';
+    additionalFieldsCotutelle.style.display = 'none';
+
+    showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite)
+    showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle)
+
+    function showOrNotDiv(radiobutton, additionnalFields){
+        // Parcourez tous les éléments radio et ajoutez un gestionnaire d'événement à chacun
+        radiobutton.forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                if (radio.checked && radio.value=="1") {
+                    additionnalFields.style.display = 'block';
+                } else {
+                    additionnalFields.style.display = 'none';
+                }
+            });
+        });
+    }
+
+</script>

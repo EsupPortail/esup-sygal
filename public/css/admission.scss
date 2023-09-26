@@ -1,0 +1,198 @@
+$title_color : #004980;
+$padding_titre_sous_partie_formulaire : 5px;
+
+//GLOBAL
+h1{
+  color:$title_color;
+}
+
+.introduction{
+  text-align: left;
+  color:#707070;
+  margin-left: 50px;
+}
+
+.row_sous_partie{
+  margin-top: 50px;
+}
+
+.title_sous_partie{
+  background: #00498099 0% 0% no-repeat padding-box;
+  padding-left: 15px;
+  align-items: center;
+}
+
+.titre_sous_partie{
+  text-align: left;
+  color: #FFFFFF;
+  font-size: 20px;
+  padding: $padding_titre_sous_partie_formulaire  ;
+}
+
+.row_fin_formulaire{
+  text-align: end;
+  margin-top: 30px;
+}
+
+.col_fin_formulaire > input{
+  margin-right: 15px;
+}
+
+.informations-title-sous-partie{
+  color: #FFFFFF;
+  margin-top: revert;
+}
+
+.row.subfield{
+  margin: 15px;
+}
+
+//Partie étudiant
+.checkbox_admission > .mb-2 > .multicheckbox > .form-check-label{
+  display: inline-block;
+  padding-right: 15px;
+}
+
+.informations{
+  font-style: italic;
+}
+
+.checkbox_admission.checkbox_diplome{
+  margin-left: 20px;
+  margin-top: 15px;
+}
+
+.form-select.form-select{
+  font-size: inherit;
+}
+
+//Partie Inscription
+.informations-confidentialite-souhaitee{
+  align-items: center;
+  display: flex;
+}
+
+.title_sous_partie > .row > .col{
+  align-items: center;
+  display: flex;
+}
+
+//select[name="inscription[infosInscription][discipline_doctorat]"] option:first-child {
+//  /* Styles que vous souhaitez appliquer au premier élément */
+//  color: red;
+//  font-weight: bold;
+//}
+
+//Partie Financement
+.mb-2 > .multicheckbox > .form-check-label{
+  display: inline-block;
+  padding-right: 15px;
+}
+
+//Partie Justificatifs
+.informations-pieces_justificatives>p{
+  text-align: left;
+  color: #004980;
+  margin-bottom: 5px;
+}
+
+.informations-pieces_justificatives{
+  border-bottom: 1px dashed #004980;
+}
+.element {
+  display: inline-flex;
+  align-items: center;
+}
+
+i{
+  cursor: pointer;
+  font-size: 15px;
+}
+
+span{
+  margin-right: 7px;
+}
+
+i:hover {
+  opacity: 0.6;
+}
+
+.upload_file>input {
+  display: none;
+}
+.upload_file>i {
+  font-style: unset;
+}
+.upload_file{
+  width: auto;
+}
+
+.date_televersement:empty {
+  display: none;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% ;
+  border: 2px solid #8E8E8E;
+  color: #fff;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+}
+
+.circle > p{
+  color:#8E8E8E;
+}
+
+.etape_signature{
+  display: flex;
+  align-items: center;
+}
+
+.etape_signature>label{
+  color:#707070;
+  font-size: 15px;
+  margin-left: 15px;
+}
+
+.statut_dossier{
+  background: #FEFEFE 0% 0% no-repeat padding-box;
+  border: 3px solid #37AF37;
+  border-radius: 11px;
+  opacity: 1;
+}
+@media (max-width: 768px) {
+  .detail_file {
+    margin: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .row>.upload_file{
+    width:revert;
+  }
+
+  .row>.action_file{
+    width:revert;
+  }
+
+  .row>.date_televersement{
+    width:revert;
+  }
+
+  .date_televersement>p{
+    margin-top: revert;
+
+  }
+}
+
+
+
+
+
+
