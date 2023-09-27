@@ -13,6 +13,8 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Mpdf\MpdfException;
+use RuntimeException;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -21,11 +23,13 @@ use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
+use These\Provider\Template\PdfTemplates;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
-use These\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
+use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class CoEncadrantController extends AbstractActionController
 {
@@ -38,15 +42,11 @@ class CoEncadrantController extends AbstractActionController
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use RenduServiceAwareTrait;
 
 
-    /** @var PhpRenderer */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer($renderer)
+    private ?PhpRenderer $renderer = null;
+    public function setRenderer(PhpRenderer $renderer): void
     {
         $this->renderer = $renderer;
     }
@@ -55,7 +55,8 @@ class CoEncadrantController extends AbstractActionController
     {
         $form = $this->getRechercherCoEncadrantForm();
         $form->setAttribute('action', $this->url()->fromRoute('co-encadrant', [], [], true));
-        //todo !doit remonter un acteur
+
+        /** @see CoEncadrantController::rechercherCoEncadrantAction() */
         $form->setUrlCoEncadrant($this->url()->fromRoute('co-encadrant/rechercher-co-encadrant', [], [], true));
         $form->get('bouton')->setLabel("Afficher l'historique de co-encadrement");
 
@@ -63,6 +64,7 @@ class CoEncadrantController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['co-encadrant']['id'] !== "") {
+                /** @see CoEncadrantController::historiqueAction() */
                 $this->redirect()->toRoute('co-encadrant/historique', ['co-encadrant' => $data['co-encadrant']['id']]);
             }
         }
@@ -115,7 +117,7 @@ class CoEncadrantController extends AbstractActionController
             if (isset($data['co-encadrant']['id'])) {
                 /** @var Individu $individu */
                 $individu = $this->getIndividuService()->getRepository()->find($data['co-encadrant']['id']);
-                $etablissement = (isset($data['etablissement']['id']) && $data['etablissement']['id'] !== '')?$this->getEtablissementService()->getRepository()->find($data['etablissement']['id']):null;
+                $etablissement = (isset($data['etablissement']['id']) && $data['etablissement']['id'] !== '') ? $this->getEtablissementService()->getRepository()->find($data['etablissement']['id']) : null;
                 $this->getActeurService()->ajouterCoEncradrant($these, $individu, $etablissement);
             }
         }
@@ -166,26 +168,62 @@ class CoEncadrantController extends AbstractActionController
         ]);
     }
 
-    public function genererJustificatifCoencadrementsAction(): void
+    public function genererJustificatifCoencadrementsAction(): ?string
     {
         $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
-        $logos = [];
-        try {
-            $logos['etablissement'] = $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure());
-        } catch (StorageAdapterException $e) {
-            $logos['etablissement'] = null;
-        }
+        $vars = [
+            'acteur' => $coencadrant,
+        ];
 
-        //exporter
-        $export = new JustificatifCoencadrementPdfExporter($this->renderer, 'A4');
-        $export->setVars([
-            'coencadrant' => $coencadrant,
-            'theses' => $theses,
-            'logos' => $logos,
-        ]);
-        $export->export('justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf");
+        $listing = "<ul>";
+        foreach ($theses as $these) {
+            //todo macro ou formateur ...
+            $listing .= "<li>";
+
+            $listing .= $these->getTitre();
+            $listing .= " (" . $these->getAnneeUniv1ereInscription() . ")";
+
+            $listing .= "<br>";
+
+            $listing .= $these->getDoctorant()->getIndividu()->getPrenom1() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel();
+            $listing .= " - ";
+            $listing .= $these->getEtablissement()->getStructure()->getLibelle();
+            $listing .= " - ";
+            $listing .= $these->getUniteRecherche()->getStructure()->getLibelle() . " (" . $these->getUniteRecherche()->getStructure()->getSigle() . ")";
+            $listing .= "</li>";
+        }
+        $listing .= "</ul>";
+
+        try {
+            $logoCOMUE = $this->etablissementService->fetchEtablissementComue() ? $this->fichierStorageService->getFileForLogoStructure($this->etablissementService->fetchEtablissementComue()->getStructure()) : null;
+            $logoETAB = $coencadrant->getEtablissement() ? $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure()) : null;
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de logo.", 0, $e);
+        }
+        $logos = [
+            "COMUE" => $logoCOMUE,
+            "ETAB" => $logoETAB,
+        ];
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::COENCADREMENTS_JUSTIFICATIF, $vars);
+        $corps = str_replace("###LISTING_THESE###", $listing, $rendu->getCorps());
+        $filename = 'justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf";
+
+        $export = new PdfExporter();
+
+        try {
+            $export->getMpdf()->SetMargins(0, 0, 60);
+            //todo passer un header exploitant les logo
+//        $export->setHeaderScript('pdf/header.phtml', null, $logos);
+            $export->setHeaderScriptToNone();
+            $export->setFooterScriptToNone();
+            $export->addBodyHtml($corps);
+            return $export->export($filename);
+        } catch (MpdfException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la génération du PDF", 0 , $e);
+        }
     }
 
     public function genererExportCsvAction(): CsvModel

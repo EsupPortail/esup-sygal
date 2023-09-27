@@ -39,7 +39,7 @@ use These\Entity\Db\These;
  *
  * @var IndividuRole[] $ecoleResponsables
  * @var IndividuRole[] $uniteResponsables
- * @var IndividuRole[] $etablissementResponsables
+ * @var string[] $emailsAspectDoctorats
  * @var bool $informationsOk
  *
  * @var $FORMULAIRE_DELOCALISATION
@@ -87,7 +87,7 @@ echo $this->partial('partial/informations', [
     'directeurs' => $directeurs,
     'uniteResponsables' => $uniteResponsables,
     'ecoleResponsables' => $ecoleResponsables,
-    'etablissementResponsables' => $etablissementResponsables,
+    'emailsAspectDoctorats' => $emailsAspectDoctorats,
 
     'canModifier' => $canModifier]);
 ?>

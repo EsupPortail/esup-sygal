@@ -5,7 +5,8 @@ namespace Formation\Service\Session;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Formation\Entity\Db\Etat;
@@ -15,7 +16,7 @@ use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Entity\Db\SessionEtatHeurodatage;
 use Formation\Service\Formation\FormationServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
+use RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class SessionService {
@@ -29,7 +30,11 @@ class SessionService {
     public function getRepository() : SessionRepository
     {
         /** @var SessionRepository $repo */
-        $repo = $this->entityManager->getRepository(Session::class);
+        try {
+            $repo = $this->entityManager->getRepository(Session::class);
+        } catch (NotSupported $e) {
+            throw new RuntimeException("Un problème est survenu lors de la création du QueryBuilder de [".Session::class."]",0,$e);
+        }
         return $repo;
     }
 
@@ -181,7 +186,13 @@ class SessionService {
         $heurodatage->setEtat($etat);
         $heurodatage->setHeurodatage(new DateTime());
         $user = $this->userContextService->getIdentityDb();
-        if ($user === null) $user = $this->getEntityManager()->getRepository(Utilisateur::class)->find(1);
+        if ($user === null) {
+            try {
+                $user = $this->getEntityManager()->getRepository(Utilisateur::class)->find(1);
+            } catch (NotSupported $e) {
+                throw new RuntimeException("Un erreur est survenu lors de la récupération de l'utilisateur d'id 1 (sygal-app)",0,$e);
+            }
+        }
         $heurodatage->setUtilisateur($user);
 
         try {

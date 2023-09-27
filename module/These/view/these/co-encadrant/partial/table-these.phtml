@@ -43,6 +43,7 @@ use These\Entity\Db\These;
                 <?php echo $these->getAnneeUniv1ereInscription(); ?>
             </td>
             <td>
+                <?php /** @see \These\Controller\TheseController::detailIdentiteAction() */ ?>
                 <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true); ?>">
                     <span class="icon icon-voir"></span>
                 </a>

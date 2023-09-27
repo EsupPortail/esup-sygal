@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\ExportController;
 use Application\Controller\Factory\ExportControllerFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -9,7 +10,7 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => 'Application\Controller\Export',
+                    'controller' => ExportController::class,
                     'action'     => [
                         'csv',
                     ],
@@ -25,8 +26,7 @@ return [
                 'options'       => [
                     'route'    => '/export',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Export',
+                        'controller' => ExportController::class,
                     ],
                 ],
                 'may_terminate' => false,
@@ -36,6 +36,7 @@ return [
                         'options' => [
                             'route'    => '/csv',
                             'defaults' => [
+                                /** @see ExportController::csvAction() */
                                 'action' => 'csv',
                             ],
                         ],
@@ -51,7 +52,7 @@ return [
     ],
     'controllers'     => [
         'factories' => [
-            'Application\Controller\Export' => ExportControllerFactory::class,
+            ExportController::class => ExportControllerFactory::class,
         ],
     ],
 ];

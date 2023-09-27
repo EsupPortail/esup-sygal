@@ -278,7 +278,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     /**
      * @return string qualite
      */
-    public function getQualite()
+    public function getQualite(): string
     {
         if ($this->qualite === null) {
             return " ";
@@ -365,5 +365,19 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     public function getMembre(): ?Membre
     {
         return $this->membre;
+    }
+
+    /** FONCTION POUR LES MACROS **************************************************************************************/
+
+    /** @noinspection PhpUnused */
+    public function getDenomination(): string
+    {
+        return $this->getIndividu()->getNomComplet(false, false, false, true);
+    }
+
+    /** @noinspection PhpUnused */
+    public function getEtablissementAsLibelle(): string
+    {
+        return ($this->getEtablissement())?$this->getEtablissement()->getStructure()->getLibelle():"<span style='background:darkred;'>Aucun établissement</span>";
     }
 }

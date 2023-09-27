@@ -16,6 +16,7 @@ use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\These\TheseService;
+use UnicaenRenderer\Service\Rendu\RenduService;
 
 class CoEncadrantControllerFactory
 {
@@ -35,15 +36,17 @@ class CoEncadrantControllerFactory
          * @var EtablissementService $etablissementService
          * @var IndividuService $individuService
          * @var FichierStorageService $fileService
+         * @var RenduService $renduService
          * @var TheseService $theseService
          * @var UniteRechercheService $uniteRechercheService
-         */
+ */
         $acteurService = $container->get(ActeurService::class);
         $coEncadrantService = $container->get(CoEncadrantService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $etablissementService = $container->get(EtablissementService::class);
         $individuService = $container->get(IndividuService::class);
         $fileService = $container->get(FichierStorageService::class);
+        $renduService = $container->get(RenduService::class);
         $theseService = $container->get('TheseService');
         $uniteRechercheService = $container->get(UniteRechercheService::class);
 
@@ -62,6 +65,7 @@ class CoEncadrantControllerFactory
         $controller->setEtablissementService($etablissementService);
         $controller->setIndividuService($individuService);
         $controller->setFichierStorageService($fileService);
+        $controller->setRenduService($renduService);
         $controller->setTheseService($theseService);
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setRechercherCoEncadrantForm($rechercheCoEncadrantForm);
