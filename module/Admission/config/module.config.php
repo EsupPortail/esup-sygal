@@ -4,6 +4,10 @@ namespace Admission;
 
 
 use Admission\Controller\AdmissionControllerFactory;
+use Admission\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Fieldset\Financement\FinancementFieldset;
+use Admission\Fieldset\Inscription\InscriptionFieldset;
+use Admission\Fieldset\Justificatifs\ValidationFieldset;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use Admission\Controller\AdmissionController;
@@ -17,19 +21,18 @@ return array(
                 [
                     'controller' => AdmissionController::class,
                     'action' => [
-                        'index',
                         'ajouter',
                         'etudiant',
-                        'ajouterInscription',
-                        'ajouterFinancement',
-                        'ajouterJustificatifs',
+                        'inscription',
+                        'financement',
+                        'validation',
+                        'confirmer',
+                        'annuler',
                         'addInformationsEtudiant',
                         'addInformationsInscription',
                         'addInformationsFinancement',
                         'addInformationsJustificatifs'
-                    ],
-                    'role' => [],
-                    'roles' => [],
+                    ]
                 ]
             ]
         ],
@@ -65,53 +68,53 @@ return array(
                             ],
                         ],
                     ],
-//                    'infos-etudiant' => [
-//                        'type' => Literal::class,
-//                        'may_terminate' => true,
-//                        'options' => [
-//                            'route' => '/informations-etudiant',
-//                            'defaults' => [
-//                                'controller' => AdmissionController::class,
-//                                'action' => "addInformationsEtudiant"
-//                            ],
-//                        ],
-//                    ],
-//                    'infos-inscription' => [
-//                        'type' => Literal::class,
-//                        'may_terminate' => true,
-//                        'options' => [
-//                            'route' => '/informations-inscription',
-//                            'defaults' => [
-//                                'controller' => AdmissionController::class,
-////                                'action' => 'inscription',
-//                                'action' => "addInformationsInscription"
-//                            ],
-//                        ],
-//                    ],
-//                    'infos-financement' => [
-//                        'type' => Literal::class,
-//                        'may_terminate' => true,
-//                        'options' => [
-//                            'route' => '/informations-financement',
-//                            'defaults' => [
-//                                'controller' => AdmissionController::class,
-////                                'action' => 'financement',
-//                                'action' => "addInformationsFinancement"
-//                            ],
-//                        ],
-//                    ],
-//                    'infos-justificatifs' => [
-//                        'type' => Literal::class,
-//                        'may_terminate' => true,
-//                        'options' => [
-//                            'route' => '/informations-justificatifs',
-//                            'defaults' => [
-//                                'controller' => AdmissionController::class,
-////                                'action' => 'justificatifs',
-//                                'action' => "addInformationsJustificatifs"
-//                            ],
-//                        ],
-//                    ],
+                    'infos-etudiant' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/informations-etudiant',
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+                                'action' => "addInformationsEtudiant"
+                            ],
+                        ],
+                    ],
+                    'infos-inscription' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/informations-inscription',
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+//                                'action' => 'inscription',
+                                'action' => "addInformationsInscription"
+                            ],
+                        ],
+                    ],
+                    'infos-financement' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/informations-financement',
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+//                                'action' => 'financement',
+                                'action' => "addInformationsFinancement"
+                            ],
+                        ],
+                    ],
+                    'infos-justificatifs' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/informations-justificatifs',
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+//                                'action' => 'justificatifs',
+                                'action' => "addInformationsJustificatifs"
+                            ],
+                        ],
+                    ],
                 ],
             ],
 
@@ -121,6 +124,15 @@ return array(
     'controllers' => [
         'factories' => [
             AdmissionController::class => AdmissionControllerFactory::class,
+        ],
+    ],
+
+    'form_manager' => [
+        'factories' => [
+            EtudiantFieldset::class => InvokableFactory::class,
+            InscriptionFieldset::class => InvokableFactory::class,
+            FinancementFieldset::class => InvokableFactory::class,
+            ValidationFieldset::class => InvokableFactory::class
         ],
     ],
 
@@ -140,6 +152,9 @@ return array(
         ],
         'stylesheets' => [
             '080_admission' => '/css/admission.css',
+        ],
+        'head_scripts' => [
+            '080_uploader' => "/js/admission.js",
         ],
     ],
 );

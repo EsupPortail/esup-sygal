@@ -77,12 +77,6 @@ h1{
   display: flex;
 }
 
-//select[name="inscription[infosInscription][discipline_doctorat]"] option:first-child {
-//  /* Styles que vous souhaitez appliquer au premier élément */
-//  color: red;
-//  font-weight: bold;
-//}
-
 //Partie Financement
 .mb-2 > .multicheckbox > .form-check-label{
   display: inline-block;
@@ -189,8 +183,35 @@ textarea{
   width: 100%;
 }
 
+.boutons_gestionnaires {
+  display: flex;
+  text-align: end;
+}
 
+.bouton_gestionnaire{
+  margin-right: 15px;
+}
 
+.multipage-nav{
+  float: right;
+}
+
+.multipage-nav.next {
+  float: right;
+}
+
+.multipage-nav.cancel {
+  clear: both;
+  float: right;
+}
+
+.multipage-nav.submit{
+  float: right;
+}
+
+#contenu-principal{
+  padding-bottom: 95px;
+}
 @media (max-width: 768px) {
   .detail_file {
     margin: 15px;

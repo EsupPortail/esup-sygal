@@ -8,14 +8,13 @@ use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\File\Extension;
 
 class PiecesJustificativesFieldset extends Fieldset implements InputFilterProviderInterface
 {
 
     public function init()
     {
-
-        // Single file upload:
         $this->add(
             (new File('diplome_bac'))
                 ->setLabel("Copie du diplôme de Bac + 5 permettant l'accès au doctorat")
@@ -93,20 +92,156 @@ class PiecesJustificativesFieldset extends Fieldset implements InputFilterProvid
     public function getInputFilterSpecification(): array
     {
         return [
-            'contrat_doctoral' => [
-                'name' => 'contrat_doctoral',
+            'diplome_bac' => [
+                'name' => 'diplome_bac',
                 'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
             ],
-            'employeur_contrat' => [
-                'name' => 'employeur_contrat',
+            'curicculum_vitae' => [
+                'name' => 'curicculum_vitae',
                 'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
             ],
-            'detail_contrat_doctoral' => [
-                'name' => 'detail_contrat_doctoral',
+            'financement' => [
+                'name' => 'financement',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'projet_these' => [
+                'name' => 'projet_these',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'exemplaires_convention' => [
+                'name' => 'exemplaires_convention',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'exemplaires_charte_doctorat' => [
+                'name' => 'exemplaires_charte_doctorat',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'diplomes_releves_notes_traduits' => [
+                'name' => 'diplomes_releves_notes_traduits',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'argumentaire_directeur_these' => [
+                'name' => 'argumentaire_directeur_these',
                 'required' => false,
                 'filters' => [
                     ['name' => StripTags::class],
                     ['name' => StringTrim::class],
+                ],
+            ],
+            'acte_naissance' => [
+                'name' => 'acte_naissance',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'photocopie_passeport' => [
+                'name' => 'photocopie_passeport',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'diplomes_travaux_experience_pro' => [
+                'name' => 'diplomes_travaux_experience_pro',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'documents_cotutelle' => [
+                'name' => 'documents_cotutelle',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
+                ],
+            ],
+            'documents_coencadrement' => [
+                'name' => 'documents_coencadrement',
+                'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], 
+                        ],
+                    ],
                 ],
             ],
         ];

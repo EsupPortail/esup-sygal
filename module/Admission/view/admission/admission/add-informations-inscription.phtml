@@ -58,6 +58,13 @@ use Application\View\Renderer\PhpRenderer;
             <?php echo $this->formControlGroup($form->get('inscription')->get('infosInscription')->get('titre_these')) ?>
         </div>
     </div>
+    <div class="row boutons_gestionnaires">
+        <div class="col">
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-primary bouton_gestionnaire">Modifier</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+        </div>
+    </div>
 </div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -126,6 +133,13 @@ use Application\View\Renderer\PhpRenderer;
             <div class="col-lg-10 col-sm-12">
                 <p class="informations">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D .R Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
             </div>
+        </div>
+    </div>
+    <div class="row boutons_gestionnaires">
+        <div class="col">
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-primary bouton_gestionnaire">Modifier</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
         </div>
     </div>
 </div>

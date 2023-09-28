@@ -103,188 +103,28 @@ class SpecifitesEnvisageesFieldset extends Fieldset implements InputFilterProvid
     public function getInputFilterSpecification(): array
     {
         return [
-            'civilite' => [
-                'name' => 'civilite',
+            'confidentialite' => [
+                'name' => 'confidentialite',
                 'required' => false,
             ],
-            'nomUsuel' => [
-                'name' => 'nomUsuel',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'nomPatronymique' => [
-                'name' => 'nomPatronymique',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'prenom1' => [
-                'name' => 'prenom1',
-                'required' => true,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'prenom2' => [
-                'name' => 'prenom2',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'prenom3' => [
-                'name' => 'prenom3',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'ine' => [
-                'name' => 'ine',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-                'validators' => [
-                    [
-                        'name' => StringLength::class,
-                        'options' => [
-                            'min' => 11,  // 11 caractères
-                            'max' => 11,
-                        ],
-                    ],
-                    [
-                        'name' => Regex::class,
-                        'options' => [
-                            'pattern' => '/^\d{10}[A-Z]$/i',  // 10 chiffres et 1 lettre
-                        ],
-                    ],
-                    [
-                        'name' => Regex::class,
-                        'options' => [
-                            'pattern' => '/^\d{9}[A-Z]{2}$/i',  // 9 chiffres et 2 lettres
-                        ],
-                    ],
-                ],
-            ],
-            'email' => [
-                'name' => 'email',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'dateNaissance' => [
-                'name' => 'dateNaissance',
+            'date_confidentialité' => [
+                'name' => 'date_confidentialité',
                 'required' => false,
             ],
-            'paysNationalite' => [
-                'name' => 'paysNationalite',
+            'co_tutelle' => [
+                'name' => 'co_tutelle',
                 'required' => false,
-                'filters' => [
-                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
             ],
-            'adresse_ligne1_etage' => [
-                'name' => 'adresse_ligne1_etage',
+            'pays_co-tutelle' => [
+                'name' => 'pays_co-tutelle',
+                'required' => false ,
+            ],
+            'co_encadrement' => [
+                'name' => 'co_encadrement',
                 'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
             ],
-            'adresse_ligne2_etage' => [
-                'name' => 'adresse_ligne2_etage',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'adresse_ligne3_batiment' => [
-                'name' => 'adresse_ligne3_batiment',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'adresse_ligne3_bvoie' => [
-                'name' => 'adresse_ligne3_bvoie',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'adresse_ligne4_complement' => [
-                'name' => 'adresse_ligne4_complement',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'adresse_code_postale' => [
-                'name' => 'adresse_code_postale',
-                'required' => false,
-                'filters' => [
-                    ['name' => Digits::class],
-                ],
-                'validators' => [
-                    [
-                        'name' => GreaterThan::class,
-                        'options' => [
-                            'min' => 0,
-                            'inclusive' => true, // Inclure 0 comme une valeur positive
-                            'message' => 'Le code postal doit être une valeur positive.',
-                        ],
-                    ],
-                ],
-            ],
-            'adresse_code_commune' => [
-                'name' => 'adresse_code_commune',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
-            ],
-            'adresse_cp_ville_etranger' => [
-                'name' => 'adresse_cp_ville_etranger',
-                'required' => false,
-                'filters' => [
-                    ['name' => Digits::class],
-                ],
-            ],
-            'numero_telephone1' => [
-                'name' => 'numero_telephone1',
-                'required' => false,
-                'filters' => [
-                    ['name' => Digits::class],
-                ],
-            ],
-            'numero_telephone2' => [
-                'name' => 'numero_telephone2',
-                'required' => false,
-                'filters' => [
-                    ['name' => Digits::class],
-                ],
-            ],
-            'situation_handicap' => [
-                'name' => 'situation_handicap',
+            'co-direction' => [
+                'name' => 'co-direction',
                 'required' => false,
             ],
         ];

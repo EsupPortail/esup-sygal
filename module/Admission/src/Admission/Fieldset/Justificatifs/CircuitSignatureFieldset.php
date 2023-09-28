@@ -1,11 +1,10 @@
 <?php
 namespace Admission\Fieldset\Justificatifs;
 
-use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\File\Extension;
 
 class CircuitSignatureFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -49,9 +48,17 @@ class CircuitSignatureFieldset extends Fieldset implements InputFilterProviderIn
     public function getInputFilterSpecification(): array
     {
         return [
-            'niveau_etude' => [
-                'name' => 'niveau_etude',
+            'validation_gestionnaires' => [
+                'name' => 'validation_gestionnaires',
                 'required' => false,
+                'validators' => [
+                    [
+                        'name' => Extension::class,
+                        'options' => [
+                            'extension' => ['pdf','jpg', 'png'], // Validez l'extension du fichier (par exemple, autorisez seulement les fichiers JPG et PNG)
+                        ],
+                    ],
+                ],
             ],
             'intitule_du_diplome' => [
                 'name' => 'intitule_du_diplome',

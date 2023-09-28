@@ -7,56 +7,30 @@ use Admission\Fieldset\Justificatifs\ValidationFieldset;
 use Admission\Fieldset\Financement\FinancementFieldset;
 use Admission\Fieldset\Inscription\InscriptionFieldset;
 use Laminas\Form\Element\Submit;
-use Laminas\Form\Form;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Form\MultipageForm;
 
 class EtudiantForm extends MultipageForm
-//class EtudiantForm extends Form
 {
-//    public function __construct($name = null, $options = array())
-//    {
-//        parent::__construct($name, $options);
-//
-//        $this->add(new EtudiantFieldset("infosEtudiant"))
-//            ->add(new Csrf('csrf'))
-//            ->add(new Submit('save_and_come_back_later', array('label'=>"Enregistrer et continuer plus tard", 'class' => 'btn btn-success btn-lg')))
-//            ->add(new Submit('save_and_continue', array('label'=>"Étape suivante et enregistrer", 'class' => 'btn btn-success btn-lg')));
-//    }
-
-
     public function init()
     {
         parent::init();
 
-        $this->add([
-            'name' => "etudiant",
-            'type' => EtudiantFieldset::class,
-        ]);
+        $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
+        $etudiantFieldset->setName("etudiant");
+        $this->add($etudiantFieldset);
 
-        $this->add([
-            'name' => "inscription",
-            'type' => InscriptionFieldset::class,
-        ]);
+        $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);
+        $inscriptionFieldset->setName("inscription");
+        $this->add($inscriptionFieldset);
 
-        $this->add([
-            'name' => "financement",
-            'type' => FinancementFieldset::class,
-        ]);
+        $financementFieldset = $this->getFormFactory()->getFormElementManager()->get(FinancementFieldset::class);
+        $financementFieldset->setName("financement");
+        $this->add($financementFieldset);
 
-        $this->add([
-            'name' => "validation",
-            'type' => ValidationFieldset::class,
-        ]);
-
-//        $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
-//        $etudiantFieldset->setLabel("Informations concernant l'étudiant");
-//        $this->add($etudiantFieldset)->setName("etudiant");
-//
-//        /** @var InscriptionFieldset $inscriptionFieldset */
-//        $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);
-//        $inscriptionFieldset->setLabel("Inscription");
-//        $this->add($inscriptionFieldset)->setName("inscription");
+        $validationFieldset = $this->getFormFactory()->getFormElementManager()->get(ValidationFieldset::class);
+        $validationFieldset->setName("validation");
+        $this->add($validationFieldset);
 
         $this->add((new Submit('save_and_come_back_later'))
             ->setValue("Enregistrer et continuer plus tard")
@@ -68,12 +42,9 @@ class EtudiantForm extends MultipageForm
             ->setAttribute('class', 'btn btn-success btn-lg')
         );
 
-        $this->addConfirmFieldset();
+//        $this->addConfirmFieldset();
 
-//        $this->add(new Csrf('security'));
         $this->setNavigationFieldsetPrototype($this->createNavigationFieldsetPrototype());
-
-
     }
     /**
      * @return MultipageFormNavFieldset
@@ -90,8 +61,8 @@ class EtudiantForm extends MultipageForm
 
         // ajouts de classes CSS
         $nextButton->setAttribute('class', $nextButton->getAttribute('class') . ' btn btn-primary');
-        $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-default');
-        $cancelButton->setAttribute('class', $cancelButton->getAttribute('class') . ' btn btn-warning');
+        $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
+        $cancelButton->setAttribute('class', $cancelButton->getAttribute('class') . ' btn btn-danger');
         $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
         $confirmButton->setAttribute('class', $confirmButton->getAttribute('class') . ' btn btn-success');
 

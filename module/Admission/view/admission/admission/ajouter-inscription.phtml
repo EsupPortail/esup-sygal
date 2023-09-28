@@ -5,7 +5,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  *
- * @see \Admission\Controller\AdmissionController::etudiantAction()
+ * @see \Admission\Controller\AdmissionController::inscriptionAction()
  */
 ?>
 
@@ -19,6 +19,6 @@ use Application\View\Renderer\PhpRenderer;
 
 <?php
 $multipageFormFieldset = $this->multipageFormFieldset();
-$multipageFormFieldset->setPartial('admission/partial/etudiantInfos');
+$multipageFormFieldset->setPartial('admission/partial/inscriptionInfos');
 echo $multipageFormFieldset;
 ?>

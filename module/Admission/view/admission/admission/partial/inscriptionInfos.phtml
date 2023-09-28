@@ -1,0 +1,134 @@
+<?php
+
+use Admission\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Fieldset\Inscription\InscriptionFieldset;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer         $this
+ * @var InscriptionFieldset    $fieldset
+ * @var string              $error
+ *
+ */
+$fcg = $this->formControlGroup();
+?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Inscription demandée</h2>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+                <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('discipline_doctorat')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('composante_doctorat')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('ecole_doctorale')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('unite_recherche')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('nom_directeur_thèse')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('nom_codirecteur_thèse')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('titre_these')) ?>
+        </div>
+    </div>
+    <div class="row boutons_gestionnaires">
+        <div class="col">
+            <a title="Modifier ces éléments" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-warning bouton_gestionnaire">Modifier</a>
+            <a title="Cette partie du formulaire est incomplète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
+            <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+        </div>
+    </div>
+</div>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <h2 class="titre_sous_partie">Spécificités envisagées</h2>
+            </div>
+            <div class="col">
+                <p class="informations-title-sous-partie">Demande de spécificité(s) à émettre obligatoirement via le(s) formulaire(s) téléchargeable(s) sur le site internet UNICAEN</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('confidentialite')) ?>
+                </div>
+            </div>
+            <div class="col-lg-10 col-sm-12">
+                <div id="additional_fields_confidentialite">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('date_confidentialité')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12 informations-confidentialite-souhaitee">
+                            <p class="informations">A demander et motiver dans la convention de formation doctorale</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('co_tutelle')) ?>
+                </div>
+            </div>
+            <div class="col-lg-10 col-sm-12">
+                <div id="additional_fields_cotutelle">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('pays_co-tutelle')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <p class="informations">Attention, il est OBLIGATOIRE d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('co-direction')) ?>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-2 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('co_encadrement')) ?>
+                </div>
+            </div>
+            <div class="col-lg-10 col-sm-12">
+                <p class="informations">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D.R. Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="row boutons_gestionnaires">
+        <div class="col">
+            <a title="Modifier ces éléments" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-warning bouton_gestionnaire">Modifier</a>
+            <a title="Cette partie du formulaire est incomplète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
+            <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+        </div>
+    </div>
+</div>

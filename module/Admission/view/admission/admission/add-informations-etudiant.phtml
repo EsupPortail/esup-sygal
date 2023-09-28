@@ -94,6 +94,13 @@ use Application\View\Renderer\PhpRenderer;
             </div>
         </div>
     </div>
+    <div class="row boutons_gestionnaires">
+        <div class="col">
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-primary bouton_gestionnaire">Modifier</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+        </div>
+    </div>
 </div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -142,19 +149,14 @@ use Application\View\Renderer\PhpRenderer;
             </div>
         </div>
     </div>
+    <div class="row boutons_gestionnaires">
+        <div class="col">
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-primary bouton_gestionnaire">Modifier</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
+            <a href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+        </div>
+    </div>
 </div>
-<div class="row boutons_gestionnaires">
-<!--    <div class="col">-->
-<!--        <a href="--><?php //= $this->url('admission', ['action' => 'edit']) ?><!--">Modifier</a>-->
-<!--    </div>-->
-<!--    <div class="col">-->
-<!--        <a href="--><?php //= $this->url('admission', ['action' => 'edit']) ?><!--">Incomplet</a>-->
-<!--    </div>-->
-<!--    <div class="col">-->
-<!--        <a href="--><?php //= $this->url('admission', ['action' => 'edit']) ?><!--">Complet</a>-->
-<!--    </div>-->
-</div>
-
 <div class="row_fin_formulaire">
     <div class="col-12 text-right">
         <?php echo $this->formSubmit($this->form->get('save_and_come_back_later')) ?>
