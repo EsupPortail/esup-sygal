@@ -34,7 +34,7 @@ class NewEmailValidator extends AbstractValidator
         $perimetre = $this->getPerimetre();
 
         if (in_array('utilisateur', $perimetre)) {
-            if ($this->entityManager->getRepository(Utilisateur::class)->findOneBy(['email' => $value]) !== null) {
+            if ($this->entityManager->getRepository(Utilisateur::class)->findOneBy(['username' => $value]) !== null) {
                 $this->error(self::UTILISATEUR);
                 $nb_pb++;
             }

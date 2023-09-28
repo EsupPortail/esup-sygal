@@ -4,7 +4,18 @@ Journal des modifications
 6.0.6
 -----
 - Passage dans UnicaenRenderer du template des historiques de co-encadrements
-- [FORMATION] Ajout d'un filtre sur l'année sur l'écran des formations pour masquer/afficher les sessions
+- Ajout d'un filtre sur l'année sur l'écran des formations pour masquer/afficher les sessions
+- Extraction CSV des thèses : amélioration du temps de génération (création d'une vue en bdd) ; ajout des colonnes 
+'Dernier rapport d'activité', 'Dernier rapport CSI', 'Date d'extraction', 'Discipline Code SISE', 'Autorisation de MEL', 
+'Années financées' ; modification du séparateur de valeurs multiples ',' en ' ; ' ; correction de la colonne 
+'Date de dépôt version corrigée' toujours vide.
+- [FIX] Création d'un compte utilisateur local : vérif de l'email déjà utilisé remplacée par vérif de l'email déjà utilisé comme username.
+- [FIX] Création d'un compte utilisateur local : redirection vers la fiche du nouveau compte après création.
+- [FIX] Soutenance : message d'alerte affiché à tort systématiquement à propos de l'adresse Doctorat manquante.
+- [FIX] Chargement de la navigation : plantage d'une assertion à cause d'une variable null (role).
+- [FIX] Accès aux fiches individus.
+- [FIX] Pages de couverture : réduction de la marge en haut de page.
+- [FORMATION] Filtre selon les année pour les sessions
 - [SOUTENANCE] Récupération de la date de fin de confidentialité depuis la thèse puis du dossier de soutenance pour le docuement de la présidence
 
 6.0.5
@@ -12,7 +23,7 @@ Journal des modifications
 - [FIX] Correction d'un bug empêchant la création d'établissement ; améliorations des validateurs des formulaires de structures.
 - [FIX] Correction de bugs en cas d'utilisateur ayant à la fois le rôle Doctorant et un autre rôle.
 - [FIX] Correction du plantage survenant dans RapportActiviteAssertion (interrogée par la navigation) lorsque l'utilisateur n'est pas authentifié.
-- [FIX] Destinataires de la notification de demande de validation d'une proposition de soutenance : adresse mail "aspects doctorat"
+- [FIX] Destinataires de la notification de demande de validation d'une proposition de soutenance : adresse mail 'aspects doctorat'
   de l'établissement d'inscription, plutôt que la liste des individus ayant le rôle BDD obsolète.
 - Onglet 'Rôles et membres' d'une ED/UR : renommage de 'Site' en 'Établissement d'inscription' (clarification).
 - Complétion des qualités du jury sur la page de couverture avec le dossier de soutenance si manquante dans la donnée source
@@ -72,7 +83,7 @@ Journal des modifications
 
 5.3.1
 -----
-- [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est " "
+- [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est ' '
 - [FIX] hydration des justificatifs
 
 5.3.0
@@ -85,10 +96,10 @@ Journal des modifications
 - Soutenance : Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
 - Soutenance : Retravail du rapport de soutenance (Ajout d'une page blacnhe et d'une troisième page pour les signatures)
 - Soutenance : Ajout du dépôt de l'autorisation de soutenance et du rapport de soutenance
-- Soutenance : Dépôt de l'attestation de la formation "Intégrité scientifique"
+- Soutenance : Dépôt de l'attestation de la formation 'Intégrité scientifique'
 - Soutenance : Mise en place de l'horodatage 
 - Soutenance : Ajout d'une étape intermédiaire avant feu vert pour soutenance
-- Soutenance : [Fix] Echappement des caractères " et encapsulation des réponses
+- Soutenance : [Fix] Echappement des caractères ' et encapsulation des réponses
 - Dépôt de thèse : un dépôt existant de la version corrigée reste visible même si l'avis de reproduction Apogée revient à Non. 
 - Menu Dépôt fichiers divers : remonté et affiché sans condition
 - Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance
@@ -133,7 +144,7 @@ Journal des modifications
 - Suppression du menu 'Mes données' : la modif de l'adresse de contact et du consentement associé est désormais sur la fiche Thèse
 - Abandon (avant suppression) de la table obsolète doctorant_compl.
 - Ajout d'un bloc dans l'écran de proposition de soutenance pour le téléchargement des pré-rapports et du serment
-- Nouveau document "Serment du docteur"
+- Nouveau document 'Serment du docteur'
 - Modification du pv de soutenance
 - Ajout d'un nouvel mail intermediare à la clôture des inscriptions + deplacement du mail d'echec d'inscription
 - [FIX] Module Formation : Ordonnancement des séances sur les index des formations et des sessions
@@ -198,7 +209,7 @@ Journal des modifications
 - Changement de l'assertion pour l'accès des rapporteurs à la proposition de soutenance
 - [FIX] Remise en place du menu de dépôt de rapport de pré-soutenance
 - Changement du libellé 'Aucun Site' => 'Multi-site' (module de formation)
-- Extension du mail "échec d'inscription" aux personnes non classées (module de formation)
+- Extension du mail 'échec d'inscription' aux personnes non classées (module de formation)
 - Changements de libellés.
 
 5.2.1
@@ -225,7 +236,7 @@ Journal des modifications
 5.1.1
 -----
 - [FIX] Corrections suite à l'intégration du nouveau module Fichier.
-- [FIX] Suppression à tort des "attestations" du 1er dépôt à la place de celles du 2nd dépôt.
+- [FIX] Suppression à tort des 'attestations' du 1er dépôt à la place de celles du 2nd dépôt.
 - [FIX] Suppression physique de l'ancien fichier lors du changement de logo d'une structure.
 - [FIX] Correction et amélioration du calcul du nom de fichier du logo (existant ou nouveau) d'une structure.
 - Template de pagination : abandon du module/Application/view/paginator.phtml et généralisation du module/Application/view/application/paginator.phtml
@@ -233,7 +244,7 @@ Journal des modifications
 
 5.1.0
 -----
-- Nouveau module "technique" Fichier proposant 2 modes de stockage des fichiers téléversés : Filesystem ou S3 
+- Nouveau module 'technique' Fichier proposant 2 modes de stockage des fichiers téléversés : Filesystem ou S3 
   (cf. [releases notes](./doc/release-notes/v5.1.0.md)).
 - [FIX] Correction du chemin de stockage des rapports CSI et de mi-parcours
 
@@ -311,7 +322,7 @@ Journal des modifications
 4.0.4
 -----
 - Correction de typos dans mail de feu vert de la soutenance
-- Ajout de redirection de mail lorsque certains mails n'ont pas de destinataire "ATTENTION MAIL NON DÉLIVRÉ".
+- Ajout de redirection de mail lorsque certains mails n'ont pas de destinataire 'ATTENTION MAIL NON DÉLIVRÉ'.
 - Compléments d'individu : mise en place des éléments de base 
 - Modification du texte de mail de réussite au doctorat
 - [FIX] verification des assertions au niveau des actions de PropositionController
@@ -340,14 +351,14 @@ Journal des modifications
 - Migration vers Bootstrap 5 (front-end JS & CSS).
 - Réorganisation des infos affichées à propos de la connexion dans le menu principal.
 - Cas de la connexion d'un utilisateur sans possibilité de trouver d'individu associé : plus de création automatique d'individu car peut bloquer un import ultétieur.
-- Amélioration de la page "Contact Assistance" en cas d'établissement indéterminé et/ou d'adresse d'assistance indéterminé ou invalide.
-- [FIX] Plantage de la page "Contact Assistance" en cas de connexion avec un compte local.
+- Amélioration de la page 'Contact Assistance' en cas d'établissement indéterminé et/ou d'adresse d'assistance indéterminé ou invalide.
+- [FIX] Plantage de la page 'Contact Assistance' en cas de connexion avec un compte local.
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 - [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
 - Ajout des unités de recherche fermées dans le filtre des thèses
 - [FIX] correction du bug lié au typage de retour trop strict de l'entité Structure
 - Mise en place de la déclaration de non plagiat dans la proposition de soutenance
-- [FIX] Plantage lors de la création/modification/suppression d'une substitution de structure ("Synchro introuvable avec ce nom : these")
+- [FIX] Plantage lors de la création/modification/suppression d'une substitution de structure ('Synchro introuvable avec ce nom : these')
 
 3.0.12
 ------
@@ -374,7 +385,7 @@ Journal des modifications
 
 3.0.10
 -----
-- Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"
+- Ajout de la mention 'La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge'
 - Meilleure gestion des tokens des membres d'une soutenance
 - Déclaration tardive de visoconférence ajouté aux interventions de soutenance
 - Avis sur rapport d'activité de fin de thèse
@@ -434,7 +445,7 @@ Journal des modifications
 
 3.0.3
 -----
-- Ajout d'une valeur d'état aux soutenances "Validée par l'établissement" post validation d'une soutenance par la présidence de l'établissement
+- Ajout d'une valeur d'état aux soutenances 'Validée par l'établissement' post validation d'une soutenance par la présidence de l'établissement
 - [FIX] Plus de demande de justificatif pour la confidentialité si la demande est faite en amont de la soutenance
 - [FIX] La notif de validation de la version corrigée par le Président du jury faisait mention à tort du Directeur de thèse.
 - [FIX] Plantage de l'export CSV des thèses à cause d'un appel de méthode erroné (getMailContact).
@@ -472,12 +483,12 @@ Journal des modifications
 
 2.2.3
 -----
-- Scission du rôle "École doctorale" en 2 : "Responsable École doctorale" et "Gestionnaire École doctorale".
-- Scission du rôle "Unité de recherche" en 2 : "Responsable Unité de recherche" et "Gestionnaire Unité de recherche".
+- Scission du rôle 'École doctorale' en 2 : 'Responsable École doctorale' et 'Gestionnaire École doctorale'.
+- Scission du rôle 'Unité de recherche' en 2 : 'Responsable Unité de recherche' et 'Gestionnaire Unité de recherche'.
 - Envoi automatique par mail des jetons d'authentification créés + possibilité de les renvoyer.
 - Utilisation des dates et lieux des dossiers de soutenances plutôt que celles saisies dans les SIs pour la génération des documents du module soutenance.
 - Précision de la date de rendu des rapports dès le premier mail des rapporteurs
-- Recherche de rapports d'activité : nouveau filtre "Annuel ou fin de thèse".  
+- Recherche de rapports d'activité : nouveau filtre 'Annuel ou fin de thèse'.  
 - Fiche d'identité de la thèse : la date prévisionnelle de soutenance n'est plus affichée car elle peut être erronée.
 - Rapports d'activité, CSI, de fin de thèse : la date de bascule pour déterminer l'année universitaire est le 01/11. 
 - [FIX] Dédoublonnage des origines de financement dans le filtres de la page des rapports.
@@ -495,7 +506,7 @@ Journal des modifications
 - [FIX] Ligne de commande de lancement de toutes les synchros.
 - [FIX] Correction du texte de la convocation s'attendant à avoir un individu (pas toujours le cas car le lien n'est pas fait systèmatiquement).
 - [FIX] La recherche du doctorant lié à un individu doit écarter les individus historisés.
-- [FIX] Warning lors de la génération de la PDC à cause d'un tableau non initialisé"
+- [FIX] Warning lors de la génération de la PDC à cause d'un tableau non initialisé'
 
 2.2.0
 -----
@@ -575,8 +586,8 @@ Journal des modifications
 - Ajout à l'export de l'annuaire des co-encadrants
 - Onglets dans les pages d'information des structures
 - Page de connexion scindée par type d'authentification activée.
-- Import du témoin "corrections effectuées" de chaque thèse.
-- Pages de dépôt de la version corrigée : visibles dès lors que le témoin "corrections effectuées" est à Oui.
+- Import du témoin 'corrections effectuées' de chaque thèse.
+- Pages de dépôt de la version corrigée : visibles dès lors que le témoin 'corrections effectuées' est à Oui.
 - Amélioration du temps de réponse de la recherche textuelle de thèses.
 - Retour du bouton d'import forcé de thèse qui avait disparu à cause d'une erreur de config.
 - Mise en retrait des items de menus concernant le dépôt de la version initiale en cas de corrections attendues ou effectuées.
@@ -625,7 +636,7 @@ Journal des modifications
 - Ajout d'une configuration pour le fil d'actualité.
 - Ajout du champ IdREF pour toutes les structures et modification de l'affichage/saisie des informations.
 - Changement de l'affichage des structures fermées dans le filtre des thèses.
-- Nouveau message "Dépôt terminé" au doctorant sur la page Rendez-vous BU.
+- Nouveau message 'Dépôt terminé' au doctorant sur la page Rendez-vous BU.
 
 1.4.8 (01/09/2020)
 ------------------
@@ -637,15 +648,15 @@ Journal des modifications
 ------------------
 
 - Lors du dépôt d'une version corrigée, l'autorisation de mise en ligne est reprise texto (dupliquée) du 1er dépôt,
-sauf si l'utilisateur possède le privilège "Saisie du formulaire d'autorisation de diffusion de la version corrigée", 
+sauf si l'utilisateur possède le privilège 'Saisie du formulaire d'autorisation de diffusion de la version corrigée', 
 auquel cas elle est redemandée à l'utilisateur.
-Idem pour les attestations et le privilège "Modification des attestations concernant la version corrigée".
+Idem pour les attestations et le privilège 'Modification des attestations concernant la version corrigée'.
 - Masquage du complément de financement dans la fiche d'identité de la thèse
 - Optimisation de l'export CSV des thèses
 - Pages de téléversement et de recherche des rapports annuels.
 - Correction d'un bug dans la recherche de thèses par nom du doctorant.
 - Correction d'un bug dans le package Oracle APP_IMPORT qui ne filtrait pas les thèses selon l'établissement spécifié.
-- Possibilité d'attribuer un "identifiant permanent" à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
+- Possibilité d'attribuer un 'identifiant permanent' à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
   de lien de téléchargement de ce fichier dans une page.
 - Listes de diffusion dynamique Sympa alimentées par SyGAL : pages de consultation des listes de diffusion déclarées
   dans la config ; une URL pour fournir les abonnés, une autre pour fournir les propriétaires.
@@ -653,16 +664,16 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 1.4.6 (29/05/2020)
 ------------------
 
-- Ajout du drapeau "établissement d'inscription" et ajout des visualisations et interfaces pour gérer ce nouveau drapeau.
+- Ajout du drapeau 'établissement d'inscription' et ajout des visualisations et interfaces pour gérer ce nouveau drapeau.
 - Restriction du filtre des établissements sur la partie annuaire aux établissements d'inscription.
 - Ajout dans structures des champs adresse, tel, fax, site web, email qui sont utilisables pour l'édition de document.
 - Utilisation des nouveaux champs dans la génération de la convention de MEL (requiert unicaen/app v1.3.19).
 - Amélioration de la recherche textuelle de thèses : ajout d'une liste déroulante permettant de sélectionner 
-  précisément sur quels critères porte la recherche : "Titre de la thèse", "Numéro étudiant de l'auteur", 
-  "Nom de l'auteur", "Prénom de l'auteur", "Nom du directeur ou co-directeur de thèse", 
-  "Code national de l'école doctorale concernée (ex: 181)", "Unité de recherche concernée (ex: umr6211)".
-- Correction d'un dysfonctionnement de la recherche textuelle sur les critères "numéro étudiant", "unité de recherche"
-  et "école doctorale".
+  précisément sur quels critères porte la recherche : 'Titre de la thèse', 'Numéro étudiant de l'auteur', 
+  'Nom de l'auteur', 'Prénom de l'auteur', 'Nom du directeur ou co-directeur de thèse', 
+  'Code national de l'école doctorale concernée (ex: 181)', 'Unité de recherche concernée (ex: umr6211)'.
+- Correction d'un dysfonctionnement de la recherche textuelle sur les critères 'numéro étudiant', 'unité de recherche'
+  et 'école doctorale'.
 
 
 1.4.5 (08/04/2020)
@@ -691,7 +702,7 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 - Extraction CSV des thèses : nouvelles colonnes concernant l'embargo et refus de diffusion ; 
   virgule plutôt que point dans la durée de la thèse.
 - Page d'accueil : affichage des actualités issues du flux RSS fourni par la COMUE.
-- Filtrage de la liste des thèses : correction de l'affichage du filtre "Unité de recherche".
+- Filtrage de la liste des thèses : correction de l'affichage du filtre 'Unité de recherche'.
 - Corrections de textes sur la page RDV BU.
 
 
@@ -711,8 +722,8 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 - Modification des textes liés à l'autorisation de diffusion dans le formulaire et dans la convention PDF générée.
 - Convention de MEL : suppression du petit logo dans l'entête puisqu'il y en a déjà un sous le titre
 - Nouvelle charte de diffusion téléchargeable.
-- Ajout du flag "fermé" pour les structures et utilisations dans la recherche de thèses.
-- Ajout d'un champ "Id HAL" dans le formulaire d'autorisation de diffusion.
+- Ajout du flag 'fermé' pour les structures et utilisations dans la recherche de thèses.
+- Ajout d'un champ 'Id HAL' dans le formulaire d'autorisation de diffusion.
 - Ajout d'un menu dépôt pour séparer les action liés au dépôt de la partie annuaire
 - La couverture est maintenant recto/verso lorsque la premiere page n'est pas retirée
 - Ajout de la colonne durée des thèses dans l'export
@@ -752,7 +763,7 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 
 - Convention de mise en ligne : 
     - Le libellé du tribunal compétent mentionné est importé de chaque établissement.
-    - Utilisation de la mention générique "Le chef d'établissement" plutôt que d'exploiter les libellés 
+    - Utilisation de la mention générique 'Le chef d'établissement' plutôt que d'exploiter les libellés 
       importés des établissements.
 - Nouvelle ligne de commande pour importer une thèse à la demande.
 
@@ -763,7 +774,7 @@ Idem pour les attestations et le privilège "Modification des attestations conce
     - Améliorations pour utiliser moins de mémoire ; meilleurs logs. 
     - Correction des exceptions de type `ORA-00001: unique constraint (SYGAL.TMP_ACTEUR_UNIQ) violated` 
       par un changement de stratégie côté web service (interrogation de tables plutôt que des vues). 
-- Le bouton d'import d'une thèse à la demande avait disparu (menu "Page de couverture") à cause d'une config erronée.
+- Le bouton d'import d'une thèse à la demande avait disparu (menu 'Page de couverture') à cause d'une config erronée.
 
 1.2.11 (13/11/2019)
 ------------------
@@ -782,7 +793,7 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 ### Ajout
 
 - Un message avertissant des formats d'image valide est maintenant ajouté dans les pages de modification des structures concertes
-- Utilisation de convert (imagemagick) pour convertir les logos "automatiquement" au format png 
+- Utilisation de convert (imagemagick) pour convertir les logos 'automatiquement' au format png 
 
 1.2.9 (24/10/2019)
 ------------------
@@ -852,19 +863,19 @@ Idem pour les attestations et le privilège "Modification des attestations conce
 
 ### Ajout
 
-- Nouvelle page consacrée au dépôt de fichiers divers liés à une thèse (précédemment dans la page "Thèse").
-- Possibilité de déposer des fichiers dits "communs" utiles aux gestionnaires, ex: modèle d'avenant à la convention 
+- Nouvelle page consacrée au dépôt de fichiers divers liés à une thèse (précédemment dans la page 'Thèse').
+- Possibilité de déposer des fichiers dits 'communs' utiles aux gestionnaires, ex: modèle d'avenant à la convention 
   de mise en ligne.
 
 ### Améliorations
 
-- Améliorations de la page "Privilèges", notamment le filtrage par rôle. 
+- Améliorations de la page 'Privilèges', notamment le filtrage par rôle. 
 - Déplacement des privilèges de la catégorie `fichier-divers` vers la catégorie `these`
   car ils concernent des fichiers liés à une thèse (ex: PV de soutenance).
   La catégorie `fichier-divers` désigne désormais les privilèges concernant des fichiers sans lien aux
   thèses (ex: fichiers déposés pour les pages d'informations).
 - Refonte technique de la gestion des fichiers liés aux pages d'informations, prélable au travail sur les droits de 
-  dépôt de fichiers "divers" et "communs".
+  dépôt de fichiers 'divers' et 'communs'.
 
 
 1.2.0 (10/07/2019)

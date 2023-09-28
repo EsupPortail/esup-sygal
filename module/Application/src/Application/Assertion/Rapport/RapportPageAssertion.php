@@ -57,7 +57,7 @@ class RapportPageAssertion implements PageAssertionInterface, UserContextService
         $role = $this->userContextService->getSelectedIdentityRole();
 
         // rôle doctorant
-        if ($role->isDoctorant()) {
+        if ($role && $role->isDoctorant()) {
             $doctorant = $this->userContextService->getIdentityDoctorant();
             $this->assertTrue(
                 $this->these->getDoctorant()->getId() === $doctorant->getId(),
