@@ -424,6 +424,7 @@ return [
                                 'options' => [
                                     'route' => '/signature-presidence',
                                     'defaults' => [
+                                        /** @see PropositionController::signaturePresidenceAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'signature-presidence',
                                     ],

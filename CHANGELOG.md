@@ -15,6 +15,8 @@ Journal des modifications
 - [FIX] Chargement de la navigation : plantage d'une assertion à cause d'une variable null (role).
 - [FIX] Accès aux fiches individus.
 - [FIX] Pages de couverture : réduction de la marge en haut de page.
+- [FORMATION] Filtre selon les année pour les sessions
+- [SOUTENANCE] Récupération de la date de fin de confidentialité depuis la thèse puis du dossier de soutenance pour le docuement de la présidence
 
 6.0.5
 -----

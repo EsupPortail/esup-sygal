@@ -217,7 +217,8 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure
     </tr>
     <tr>
         <td class="head"> Thèse confidentielle : </td>
-        <td class="info"> <?php echo ($proposition->getConfidentialite())?"Fin de confidentialité le ".$proposition->getConfidentialite()->format('d/m/Y'):"Non"; ?> </td>
+        <?php $dateFinConfidentialite = $these->getDateFinConfidentialite()??$proposition->getConfidentialite()??null; ?>
+        <td class="info"> <?php echo ($dateFinConfidentialite)?"Fin de confidentialité le ".$dateFinConfidentialite->format('d/m/Y'):"Non"; ?> </td>
     </tr>
     <tr>
         <td class="head"> Soutenance en huis clos : </td>
