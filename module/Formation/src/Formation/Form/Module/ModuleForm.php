@@ -3,6 +3,7 @@
 namespace Formation\Form\Module;
 
 use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
@@ -49,6 +50,17 @@ class ModuleForm extends Form {
                 'class' => 'required',
             ],
         ]);
+        //titre
+        $this->add([
+            'type' => Checkbox::class,
+            'name' => 'mission_enseignement',
+            'options' => [
+                'label' => "Les doctorants doivent avoir une mission d'enseignement déclarée",
+            ],
+            'attributes' => [
+                'id' => 'mission_enseignement',
+            ],
+        ]);
 
         //submit
         $this->add([
@@ -69,6 +81,7 @@ class ModuleForm extends Form {
             'libelle'       => [ 'required' => true, ],
             'description'   => [ 'required' => false, ],
             'lien'          => [ 'required' => false, ],
+            'mission_enseignement'          => [ 'required' => false, ],
         ]));
     }
 }

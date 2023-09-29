@@ -53,7 +53,6 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     private Collection $missionsEnseignements;
 
 
-
     /**
      * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
      *
@@ -61,8 +60,8 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
      * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
      *
      * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
-     * @see Etablissement::getEtablissementSubstituant()
      * @return Etablissement|null
+     * @see Etablissement::getEtablissementSubstituant()
      */
     public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
     {
@@ -385,19 +384,12 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
         return 'Doctorant';
     }
 
-    /**
-     * @return string
-     */
-    public function getIne()
+    public function getIne(): string
     {
         return $this->ine;
     }
 
-    /**
-     * @param string $ine
-     * @return self
-     */
-    public function setIne($ine)
+    public function setIne(string $ine): Doctorant
     {
         $this->ine = $ine;
         return $this;
@@ -407,6 +399,14 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     public function getMissionsEnseignements(): array
     {
         return $this->missionsEnseignements->toArray();
+    }
+
+    public function hasMissionEnseignementFor(int $annee): bool
+    {
+        foreach ($this->getMissionsEnseignements() as $missionEnseignement) {
+            if ($missionEnseignement->getAnneeUniversitaire() === $annee) return true;
+        }
+        return false;
     }
 
 }

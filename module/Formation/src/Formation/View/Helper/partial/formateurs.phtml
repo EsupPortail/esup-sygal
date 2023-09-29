@@ -10,7 +10,7 @@ use Formation\Entity\Db\Session;
  * @var array $options
  */
 
-$displayType = $options['display-type'];
+$displayType = $options['display-type']??null;
 
 /** @var Formateur[] $formateurs */
 $formateurs = $session->getFormateurs()->toArray();

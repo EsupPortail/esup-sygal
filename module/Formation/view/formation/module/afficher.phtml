@@ -69,6 +69,13 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
     <?php endif ?>
 </dl>
 
+<?php if ($module->isRequireMissionEnseignement()) : ?>
+    <div class="alert alert-info">
+        <span class="icon icon-information"></span>
+        Ce module nécessite une mission d'enseigment pour permettre l'inscription à ces sessions de formation.
+    </div>
+<?php endif; ?>
+
 <h2>
     Liste des formations associées au module
 </h2>

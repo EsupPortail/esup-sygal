@@ -11,6 +11,7 @@
         <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
         <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
         <field name="lien"                type="string"       length="9999"       column="LIEN"             nullable="true"/>
+        <field name="requireMissionEnseignement"                type="boolean"       column="require_missionenseignement"/>
 
         <one-to-many field="formations" target-entity="Formation\Entity\Db\Formation" mapped-by="module"/>
 
