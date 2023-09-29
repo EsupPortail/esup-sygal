@@ -384,4 +384,13 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return false;
     }
 
+    /** FONCTIONS POUR LES MACROS *************************************************************************************/
+
+    /** @noinspection  PhpUnused */
+    public function toStringDateRetourRapport() : string
+    {
+        $date = $this->getRenduRapport();
+        if ($date) return $date->format('d/M/Y');
+        return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
+    }
 }

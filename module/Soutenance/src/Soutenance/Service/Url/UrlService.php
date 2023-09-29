@@ -6,7 +6,9 @@ use DateTime;
 use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\PropositionController;
+use Soutenance\Entity\Membre;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use These\Entity\Db\These;
 
 /**
  * TODO faire remonter un service père qui embarque la mécanique de base
@@ -127,7 +129,9 @@ class UrlService {
      */
     public function getUrlRapporteurDashboard() : string
     {
+        /** @var These $these */
         $these = $this->variables['these'];
+        /** @var Membre $rapporteur */
         $rapporteur = $this->variables['rapporteur'];
         if ($rapporteur->getActeur()) {
             $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);

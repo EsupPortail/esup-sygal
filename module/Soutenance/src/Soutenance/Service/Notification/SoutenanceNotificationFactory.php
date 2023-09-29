@@ -587,74 +587,65 @@ class SoutenanceNotificationFactory extends NotificationFactory
         }
     }
 
-    /**
-     * @param Proposition $proposition
-     * @param Utilisateur $user
-     * @param string $url
-     * @return Notification
-     */
-    public function createNotificationConnexionRapporteur(Proposition $proposition, Utilisateur $user, string $url): Notification
+    /** Mail concernants les rapporteur·trices ************************************************************************/
+
+    public function createNotificationConnexionRapporteur(Proposition $proposition, Membre $rapporteur): Notification
     {
-        $email = $user->getEmail();
-        if ($email === null) {
-            throw new RuntimeException("Aucun email de fourni !");
+        $mail = $rapporteur->getEmail();
+        if ($mail === null) {
+            throw new RuntimeException("Aucun mail trouvé pour le rapporteur ".$rapporteur->getDenomination()." (id:".$rapporteur->getId().")");
         }
 
-        if (!empty($email)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Connexion en tant que rapporteur de la thèse de " . $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/connexion-rapporteur')
-                ->setTemplateVariables([
-                    'proposition' => $proposition,
-                    'these' => $proposition->getThese(),
-                    'username' => $user->getUsername(),
-                    'url' => $url,
-                ]);
+        $these = $proposition->getThese();
+        $doctorant = $these->getDoctorant();
+        $etablissement = $these->getEtablissement();
 
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $proposition->getThese()->getId() . ")");
-        }
+        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $doctorant, 'rapporteur' => $rapporteur, 'etablissement' => $etablissement];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::CONNEXION_RAPPORTEUR, $vars);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($mail)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
-    /**
-     * @param Membre $membre
-     * @param string $url
-     */
-    public function createNotificationNotificationRapporteurRetard($membre, $url): Notification
+    public function createNotificationNotificationRapporteurRetard(Membre $membre): Notification
     {
         if ($membre->getActeur() === null) {
             throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun acteur n'est lié.");
         }
-
         $email = $membre->getEmail();
         if ($email === null) {
             throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun email est donné pour l'individu associé [IndividuId = " . $membre->getIndividu()->getId() . "].");
         }
 
-        $these = $membre->getProposition()->getThese();
-        $doctorant = $these->getDoctorant()->getIndividu();
+        $proposition = $membre->getProposition();
+        $these = $proposition->getThese();
+        $doctorant = $these->getDoctorant();
+        $etablissement = $these->getEtablissement();
 
-        if (!empty($email)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de rapport de présoutenance pour la thèse de " . $doctorant->getNomComplet())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/retard-rapporteur')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'doctorant' => $doctorant,
-                    'proposition' => $membre->getProposition(),
-                    'url' => $url,
-                ]);
+        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $doctorant, 'rapporteur' => $membre, 'etablissement' => $etablissement];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
 
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
-        }
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_RAPPORT_SOUTENANCE, $vars);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($email)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
+
+    /** Mails de fin de procédure *************************************************************************************/
+
+
 
     /**
      * @param Doctorant $doctorant
