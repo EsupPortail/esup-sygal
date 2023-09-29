@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.7
+-----
+- [FORMATION] Affichage des missions d'enseignement à coté des inscriptions dans les sessions de formation
+
 6.0.6
 -----
 - Passage dans UnicaenRenderer du template des historiques de co-encadrements

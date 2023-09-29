@@ -31,7 +31,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     protected $sourceCode;
 
     /**
-     * @var \Individu\Entity\Db\Individu
+     * @var Individu
      */
     private $individu;
 
@@ -41,7 +41,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     private $theses;
 
     /**
-     * @var \Structure\Entity\Db\Etablissement|null
+     * @var Etablissement|null
      */
     protected ?Etablissement $etablissement = null;
 
@@ -49,6 +49,10 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
      * @var string
      */
     private $ine;
+
+    private Collection $missionsEnseignements;
+
+
 
     /**
      * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
@@ -70,7 +74,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     }
 
     /**
-     * @param \Structure\Entity\Db\Etablissement $etablissement
+     * @param Etablissement $etablissement
      */
     public function setEtablissement(Etablissement $etablissement)
     {
@@ -83,6 +87,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     public function __construct()
     {
         $this->theses = new ArrayCollection();
+        $this->missionsEnseignements = new ArrayCollection();
     }
 
     /**
@@ -396,6 +401,12 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     {
         $this->ine = $ine;
         return $this;
+    }
+
+    /** @return MissionEnseignement[] */
+    public function getMissionsEnseignements(): array
+    {
+        return $this->missionsEnseignements->toArray();
     }
 
 }

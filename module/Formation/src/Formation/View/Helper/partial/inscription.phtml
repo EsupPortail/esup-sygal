@@ -32,7 +32,7 @@ $these = current($doctorant->getTheses());
     echo $doctorant->getIndividu()->getNomComplet(); ?>
     <span class=" <?php if ($inscription->estHistorise()) echo "historisee"; ?> " title="<?php echo $inscription->getDescription(); ?>">
     <?php foreach ($doctorant->getTheses() as $these) {
-        if ($these->getEtatThese() === These::ETAT_EN_COURS AND $these->estNonHistorise()) {
+        if ($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise()) {
             echo "<br/>";
             echo $this->site($these->getEtablissement());
             echo " - ";
@@ -41,6 +41,17 @@ $these = current($doctorant->getTheses());
             echo $this->site($these->getUniteRecherche());
             echo " - ";
             echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee));
+        }
+        $missions = $doctorant->getMissionsEnseignements();
+        if (!empty($missions)) {
+            echo " - ";
+            foreach ($missions as $mission) {
+                echo "<span style='font-weight:bold; font-family: monospace; color:";
+                echo ($mission->getAnneeUniversitaire() === $session->getAnneeScolaire())?"darkgreen":"darkorange";
+                echo "'>";
+                echo "ME".$mission->getAnneeUniversitaire(). " ";
+                echo "</span>";
+            }
         }
     }
     ?>

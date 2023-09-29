@@ -266,8 +266,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
             window.location.reload();
         });
 
-        $("select#annee").on("change", toggleAnnee);
-        $("select#annee").selectpicker();
+        $("select#annee").on("change", toggleAnnee).selectpicker();
     });
 </script>
 
