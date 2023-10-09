@@ -2,46 +2,100 @@
 
 namespace Admission\Controller;
 
+use Admission\Entity\Db\Individu;
 use Admission\Form\Etudiant\EtudiantForm;
+use Admission\Form\Etudiant\EtudiantFormAwareTrait;
+use Admission\Hydrator\IndividuHydrator;
+use Admission\Provider\Template\MailTemplates;
+use Admission\Service\Individu\IndividuServiceAwareTrait;
+use Admission\Service\Notification\NotificationFactoryAwareTrait;
+use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use Notification\Exception\RuntimeException;
+use Notification\Service\NotifierServiceAwareTrait;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenApp\Controller\Plugin\MultipageFormPlugin;
 
 class AdmissionController extends AdmissionAbstractController {
 
-    public function __construct(EtudiantForm $form)
-    {
-        $this->form = $form;
-    }
+    use StructureServiceAwareTrait;
+    use DisciplineServiceAwareTrait;
+    use NotificationFactoryAwareTrait;
+    use NotifierServiceAwareTrait;
+    use EtudiantFormAwareTrait;
+    use IndividuServiceAwareTrait;
 
-    public function ajouterAction()
+    public function ajouterAction(): Response
     {
-        return $this->multipageForm($this->form)
+        return $this->multipageForm($this->getEtudiantForm())
             ->setUsePostRedirectGet()
             ->setReuseRequestQueryParams() // la redir vers la 1ere étape conservera les nom, prenom issus de la recherche
             ->start(); // réinit du plugin et redirection vers la 1ère étape
     }
 
-    public function etudiantAction()
+    public function etudiantAction(): Response|ViewModel
     {
-        $this->form->get('etudiant')->get('infosEtudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
-        $this->form->get('etudiant')->get('infosEtudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
+        $this->getEtudiantForm()->get('etudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
+        $this->getEtudiantForm()->get('etudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
+        $request = $this->getRequest();
+        var_dump($request);
+        die();
+//        $response = $this->processMultipageForm($this->getEtudiantForm());
+//        if ($response instanceof Response) {
+//            return $response;
+//        }
+//
+//        $response->setTemplate('admission/ajouter-etudiant');
 
-        $response = $this->processMultipageForm($this->form);
-        if ($response instanceof Response) {
-            return $response;
+
+        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+        $this->getEtudiantForm()->bindValues($data);
+
+        /** @var IndividuHydrator $individuObject */
+        $individuObject = $this->getEtudiantForm()->getObject();
+
+        try {
+            /** @var Individu $individu */
+            $individuData = $this->getEtudiantForm()->getData();
+            $individu = $this->individuService->create($individuData);
+
+            var_dump("c'est good!");
         }
-
-        $response->setTemplate('admission/ajouter-etudiant');
-
+        catch (\Exception $e) {
+            var_dump("ça a pas marché");
+        }
+//        if ($request->isGet()) {
+//            $data = $request->getPost();
+//            var_dump($data);
+//            $this->getEtudiantForm()->setData($data);
+//            if (!$this->getEtudiantForm()->isValid()) {
+//                var_dump("pas bon");
+//                return $response;
+//            }
+//            var_dump("bon");
+//        }
         return $response;
     }
 
-    public function inscriptionAction()
+    public function inscriptionAction(): Response|ViewModel
     {
-        $this->form->get('inscription')->get('specifitesEnvisagees')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
-        $data = $this->multipageForm($this->form)->getFormSessionData();
-        $this->form->bindValues($data);
-        $response = $this->processMultipageForm($this->form);
+        //Partie Informations sur l'inscription
+        $this->getEtudiantForm()->get('inscription')->setUrlDirecteurThese($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
+        $this->getEtudiantForm()->get('inscription')->setUrlCoDirecteurThese($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
+        $this->getEtudiantForm()->get('inscription')->setUrlEtablissement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
+        $disciplines = $this->getDisciplineService()->getDisciplinesAsOptions();
+        $this->getEtudiantForm()->get('inscription')->setDisciplines($disciplines);
+        $ecoles = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false);
+        $this->getEtudiantForm()->get('inscription')->setEcolesDoctorales($ecoles);
+        $unites = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', false);
+        $this->getEtudiantForm()->get('inscription')->setUnitesRecherche($unites);
+
+        //Partie Spécifités envisagées
+        $this->getEtudiantForm()->get('inscription')->setUrlPaysCoTutelle($this->url()->fromRoute('pays/rechercher-pays', [], ["query" => []], true));
+
+        $response = $this->processMultipageForm($this->getEtudiantForm());
         if ($response instanceof Response) {
             return $response;
         }
@@ -51,9 +105,9 @@ class AdmissionController extends AdmissionAbstractController {
         return $response;
     }
 
-    public function financementAction()
+    public function financementAction() : Response|ViewModel
     {
-        $response = $this->processMultipageForm($this->form);
+        $response = $this->processMultipageForm($this->getEtudiantForm());
         if ($response instanceof Response) {
             return $response;
         }
@@ -63,21 +117,22 @@ class AdmissionController extends AdmissionAbstractController {
         return $response;
     }
 
-    public function validationAction()
+    public function validationAction(): Response|ViewModel
     {
-        $response = $this->processMultipageForm($this->form);
+        $response = $this->processMultipageForm($this->getEtudiantForm());
         if ($response instanceof Response) {
             return $response;
         }
-        $response->setVariable('data_form', "coucou");
+
+        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+
+        $response->setVariable('data_form', $data);
         $response->setTemplate('admission/ajouter-validation');
 
         return $response;
     }
 
-
-
-    public function annulerAction()
+    public function annulerAction(): Response
     {
         $this->multipageForm()->clearSession();
 
@@ -87,11 +142,11 @@ class AdmissionController extends AdmissionAbstractController {
 
     public function confirmerAction()
     {
-        $response = $this->multipageForm($this->form)->process();
+        $response = $this->multipageForm($this->getEtudiantForm())->process();
         if ($response instanceof Response) {
             return $response;
         }
-        return array('form' => $this->form);
+        return array('form' => $this->getEtudiantForm());
     }
 
 //    public function ajouterEnregistrerAction()
@@ -103,34 +158,15 @@ class AdmissionController extends AdmissionAbstractController {
 //        return $this->redirect()->toRoute('home');
 //    }
 
+    public function envoyerMailAction(): Response
+    {
+        try {
+            $notif = $this->notificationFactory->createNotificationEnvoyerMail();
+            $this->notifierService->trigger($notif);
+        } catch (RuntimeException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::ENVOYER_MAIL."]",0,$e);
+        }
 
-//    public function addInformationsEtudiantAction() : ViewModel
-//    {
-//        $this->form->get('etudiant')->get('infosEtudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
-//        $this->form->get('etudiant')->get('infosEtudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
-//        return new ViewModel([
-//            'form' => $this->form,
-//        ]);
-//    }
-//    public function addInformationsInscriptionAction() : ViewModel
-//    {
-//        $this->form->get('inscription')->get('specifitesEnvisagees')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
-//        return new ViewModel([
-//            'form' => $this->form,
-//        ]);
-//    }
-//
-//    public function addInformationsFinancementAction() : ViewModel
-//    {
-//        return new ViewModel([
-//            'form' => $this->form,
-//        ]);
-//    }
-//
-//    public function addInformationsJustificatifsAction() : ViewModel
-//    {
-//        return new ViewModel([
-//            'form' => $this->form,
-//        ]);
-//    }
+        return $this->redirect()->toRoute('home', [], [], true );
+    }
 }

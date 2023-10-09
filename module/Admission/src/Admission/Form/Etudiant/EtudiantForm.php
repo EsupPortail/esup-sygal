@@ -2,11 +2,10 @@
 
 namespace Admission\Form\Etudiant;
 
-use Admission\Fieldset\Etudiant\EtudiantFieldset;
-use Admission\Fieldset\Justificatifs\ValidationFieldset;
-use Admission\Fieldset\Financement\FinancementFieldset;
-use Admission\Fieldset\Inscription\InscriptionFieldset;
-use Laminas\Form\Element\Submit;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Form\Fieldset\Financement\FinancementFieldset;
+use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
+use Admission\Form\Fieldset\Validation\ValidationFieldset;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Form\MultipageForm;
 
@@ -31,16 +30,6 @@ class EtudiantForm extends MultipageForm
         $validationFieldset = $this->getFormFactory()->getFormElementManager()->get(ValidationFieldset::class);
         $validationFieldset->setName("validation");
         $this->add($validationFieldset);
-
-        $this->add((new Submit('save_and_come_back_later'))
-            ->setValue("Enregistrer et continuer plus tard")
-            ->setAttribute('class', 'btn btn-warning btn-lg')
-        );
-
-        $this->add((new Submit('save_and_continue'))
-            ->setValue("Étape suivante et enregistrer")
-            ->setAttribute('class', 'btn btn-success btn-lg')
-        );
 
 //        $this->addConfirmFieldset();
 

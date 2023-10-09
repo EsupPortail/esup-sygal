@@ -1,0 +1,470 @@
+<?php
+namespace Admission\Entity\Db;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\UniteRecherche;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenApp\Entity\HistoriqueAwareTrait;
+
+class Inscription implements HistoriqueAwareInterface{
+
+    use HistoriqueAwareTrait;
+
+    /**
+     * @var string|null
+     */
+    private $disciplineDoctorat;
+
+    /**
+     * @var string|null
+     */
+    private $nomDirecteurThese;
+
+    /**
+     * @var string|null
+     */
+    private $nomCodirecteurThese;
+
+    /**
+     * @var string|null
+     */
+    private $titreThese;
+
+    /**
+     * @var \DateTime|null
+     */
+    private $dateConfidentialite;
+
+    /**
+     * @var bool|null
+     */
+    private $coTutelle;
+
+    /**
+     * @var string|null
+     */
+    private $paysCoTutelle;
+
+    /**
+     * @var bool|null
+     */
+    private $coEncadrement;
+
+    /**
+     * @var bool|null
+     */
+    private $coDirection;
+
+    /**
+     * @var \Structure\Entity\Db\Structure
+     */
+    private $composanteDoctorat;
+
+    /**
+     * @var \Structure\Entity\Db\EcoleDoctorale
+     */
+    private $ecoleDoctorale;
+
+    /**
+     * @var \Structure\Entity\Db\UniteRecherche
+     */
+    private $uniteRecherche;
+
+    /**
+     * @var bool|null
+     */
+    private $confidentialite;
+
+    /**
+     * @var int
+     */
+    private $id;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+//        $this->admission_id = new ArrayCollection();
+    }
+
+    /**
+     * Set disciplineDoctorat.
+     *
+     * @param string|null $disciplineDoctorat
+     *
+     * @return Diplome
+     */
+    public function setDisciplineDoctorat($disciplineDoctorat = null)
+    {
+        $this->discipline_doctorat = $disciplineDoctorat;
+
+        return $this;
+    }
+
+    /**
+     * Get disciplineDoctorat.
+     *
+     * @return string|null
+     */
+    public function getDisciplineDoctorat()
+    {
+        return $this->discipline_doctorat;
+    }
+
+    /**
+     * Set nomDirecteurThese.
+     *
+     * @param string|null $nomDirecteurThese
+     *
+     * @return Diplome
+     */
+    public function setNomDirecteurThese($nomDirecteurThese = null)
+    {
+        $this->nom_directeur_these = $nomDirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get nomDirecteurThese.
+     *
+     * @return string|null
+     */
+    public function getNomDirecteurThese()
+    {
+        return $this->nom_directeur_these;
+    }
+
+    /**
+     * Set nomCodirecteurThese.
+     *
+     * @param string|null $nomCodirecteurThese
+     *
+     * @return Diplome
+     */
+    public function setNomCodirecteurThese($nomCodirecteurThese = null)
+    {
+        $this->nom_codirecteur_these = $nomCodirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get nomCodirecteurThese.
+     *
+     * @return string|null
+     */
+    public function getNomCodirecteurThese()
+    {
+        return $this->nom_codirecteur_these;
+    }
+
+    /**
+     * Set titreThese.
+     *
+     * @param string|null $titreThese
+     *
+     * @return Diplome
+     */
+    public function setTitreThese($titreThese = null)
+    {
+        $this->titre_these = $titreThese;
+
+        return $this;
+    }
+
+    /**
+     * Get titreThese.
+     *
+     * @return string|null
+     */
+    public function getTitreThese()
+    {
+        return $this->titre_these;
+    }
+
+    /**
+     * Set confidentialite.
+     *
+     * @param bool|null $confidentialite
+     *
+     * @return Diplome
+     */
+    public function setConfidentialite($confidentialite = null)
+    {
+        $this->confidentialite = $confidentialite;
+
+        return $this;
+    }
+
+    /**
+     * Get confidentialite.
+     *
+     * @return bool|null
+     */
+    public function getConfidentialite()
+    {
+        return $this->confidentialite;
+    }
+
+    /**
+     * Set dateConfidentialite.
+     *
+     * @param \DateTime|null $dateConfidentialite
+     *
+     * @return Diplome
+     */
+    public function setDateConfidentialite($dateConfidentialite = null)
+    {
+        $this->date_confidentialite = $dateConfidentialite;
+
+        return $this;
+    }
+
+    /**
+     * Get dateConfidentialite.
+     *
+     * @return \DateTime|null
+     */
+    public function getDateConfidentialite()
+    {
+        return $this->date_confidentialite;
+    }
+
+    /**
+     * Set coTutelle.
+     *
+     * @param bool|null $coTutelle
+     *
+     * @return Diplome
+     */
+    public function setCoTutelle($coTutelle = null)
+    {
+        $this->co_tutelle = $coTutelle;
+
+        return $this;
+    }
+
+    /**
+     * Get coTutelle.
+     *
+     * @return bool|null
+     */
+    public function getCoTutelle()
+    {
+        return $this->co_tutelle;
+    }
+
+    /**
+     * Set paysCoTutelle.
+     *
+     * @param string|null $paysCoTutelle
+     *
+     * @return Diplome
+     */
+    public function setPaysCoTutelle($paysCoTutelle = null)
+    {
+        $this->pays_co_tutelle = $paysCoTutelle;
+
+        return $this;
+    }
+
+    /**
+     * Get paysCoTutelle.
+     *
+     * @return string|null
+     */
+    public function getPaysCoTutelle()
+    {
+        return $this->pays_co_tutelle;
+    }
+
+    /**
+     * Set coEncadrement.
+     *
+     * @param bool|null $coEncadrement
+     *
+     * @return Diplome
+     */
+    public function setCoEncadrement($coEncadrement = null)
+    {
+        $this->co_encadrement = $coEncadrement;
+
+        return $this;
+    }
+
+    /**
+     * Get coEncadrement.
+     *
+     * @return bool|null
+     */
+    public function getCoEncadrement()
+    {
+        return $this->co_encadrement;
+    }
+
+    /**
+     * Set coDirection.
+     *
+     * @param bool|null $coDirection
+     *
+     * @return Diplome
+     */
+    public function setCoDirection($coDirection = null)
+    {
+        $this->co_direction = $coDirection;
+
+        return $this;
+    }
+
+    /**
+     * Get coDirection.
+     *
+     * @return bool|null
+     */
+    public function getCoDirection()
+    {
+        return $this->co_direction;
+    }
+
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Add admissionId.
+     *
+     * @param Admission $admissionId
+     *
+     * @return Diplome
+     */
+    public function addAdmissionId(Admission $admissionId)
+    {
+        $this->admission_id[] = $admissionId;
+
+        return $this;
+    }
+
+    /**
+     * Remove admissionId.
+     *
+     * @param Admission $admissionId
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeAdmissionId(Admission $admissionId)
+    {
+        return $this->admission_id->removeElement($admissionId);
+    }
+
+    /**
+     * Get admissionId.
+     *
+     * @return Collection
+     */
+    public function getAdmissionId()
+    {
+        return $this->admission_id;
+    }
+
+    /**
+     * Set composanteDoctorat.
+     *
+     * @param Structure|null $composanteDoctorat
+     *
+     * @return Diplome
+     */
+    public function setComposanteDoctorat(Structure $composanteDoctorat = null)
+    {
+        $this->composante_doctorat = $composanteDoctorat;
+
+        return $this;
+    }
+
+    /**
+     * Get composanteDoctorat.
+     *
+     * @return Structure|null
+     */
+    public function getComposanteDoctorat()
+    {
+        return $this->composante_doctorat;
+    }
+
+    /**
+     * Set ecoleDoctorale.
+     *
+     * @param EcoleDoctorale|null $ecoleDoctorale
+     *
+     * @return Diplome
+     */
+    public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale = null)
+    {
+        $this->ecole_doctorale = $ecoleDoctorale;
+
+        return $this;
+    }
+
+    /**
+     * Get ecoleDoctorale.
+     *
+     * @return EcoleDoctorale|null
+     */
+    public function getEcoleDoctorale()
+    {
+        return $this->ecole_doctorale;
+    }
+
+    /**
+     * Set uniteRecherche.
+     *
+     * @param UniteRecherche|null $uniteRecherche
+     *
+     * @return Diplome
+     */
+    public function setUniteRecherche(UniteRecherche $uniteRecherche = null)
+    {
+        $this->unite_recherche = $uniteRecherche;
+
+        return $this;
+    }
+
+    /**
+     * Get uniteRecherche.
+     *
+     * @return UniteRecherche|null
+     */
+    public function getUniteRecherche()
+    {
+        return $this->unite_recherche;
+    }
+    /**
+     * @var \Admission\Entity\Db\Admission
+     */
+    private $admissionId;
+
+
+    /**
+     * Set admissionId.
+     *
+     * @param \Admission\Entity\Db\Admission|null $admissionId
+     *
+     * @return Diplome
+     */
+    public function setAdmissionId(\Admission\Entity\Db\Admission $admissionId = null)
+    {
+        $this->admissionId = $admissionId;
+
+        return $this;
+    }
+}

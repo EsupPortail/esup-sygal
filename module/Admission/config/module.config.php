@@ -3,18 +3,49 @@
 namespace Admission;
 
 
-use Admission\Controller\AdmissionControllerFactory;
-use Admission\Fieldset\Etudiant\EtudiantFieldset;
-use Admission\Fieldset\Financement\FinancementFieldset;
-use Admission\Fieldset\Inscription\InscriptionFieldset;
-use Admission\Fieldset\Justificatifs\ValidationFieldset;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 use Admission\Controller\AdmissionController;
-use UnicaenAuth\Guard\PrivilegeController;
+use Admission\Controller\AdmissionControllerFactory;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldsetFactory;
+use Admission\Form\Fieldset\Financement\FinancementFieldset;
+use Admission\Form\Fieldset\Financement\FinancementFieldsetFactory;
+use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
+use Admission\Form\Fieldset\Inscription\InscriptionFieldsetFactory;
+use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Admission\Form\Fieldset\Validation\ValidationFieldsetFactory;
+use Admission\Hydrator\IndividuHydrator;
+use Admission\Service\Admission\AdmissionService;
+use Admission\Service\Admission\AdmissionServiceFactory;
+use Admission\Service\Financement\FinancementService;
+use Admission\Service\Financement\FinancementServiceFactory;
+use Admission\Service\Individu\IndividuService;
+use Admission\Service\Individu\IndividuServiceFactory;
+use Admission\Service\Inscription\InscriptionService;
+use Admission\Service\Inscription\InscriptionServiceFactory;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use UnicaenAuth\Guard\PrivilegeController;
 
 return array(
+    'doctrine' => [
+        'driver' => [
+            'orm_default' => [
+                'class' => MappingDriverChain::class,
+                'drivers' => [
+                    'Admission\Entity\Db' => 'orm_default_xml_driver',
+                ],
+            ],
+            'orm_default_xml_driver' => [
+                'class' => XmlDriver::class,
+                'cache' => 'array',
+                'paths' => [
+                    __DIR__ . '/../src/Admission/Entity/Db/Mapping',
+                ],
+            ],
+        ],
+    ],
     'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
@@ -53,65 +84,13 @@ return array(
                     'ajouter' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/ajouter/:action',
+                            'route' => '/:action',
                             'constraints' => [
                                 /**
                                  * @see AdmissionController::ajouterAction()
                                  * @see AdmissionController::ajouterEtudiantAction()
                                  */
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
-                            ],
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-//
-//                                'action' => "addInformationsEtudiant"
-                            ],
-                        ],
-                    ],
-                    'infos-etudiant' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/informations-etudiant',
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-                                'action' => "addInformationsEtudiant"
-                            ],
-                        ],
-                    ],
-                    'infos-inscription' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/informations-inscription',
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-//                                'action' => 'inscription',
-                                'action' => "addInformationsInscription"
-                            ],
-                        ],
-                    ],
-                    'infos-financement' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/informations-financement',
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-//                                'action' => 'financement',
-                                'action' => "addInformationsFinancement"
-                            ],
-                        ],
-                    ],
-                    'infos-justificatifs' => [
-                        'type' => Literal::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/informations-justificatifs',
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-//                                'action' => 'justificatifs',
-                                'action' => "addInformationsJustificatifs"
                             ],
                         ],
                     ],
@@ -129,15 +108,24 @@ return array(
 
     'form_manager' => [
         'factories' => [
-            EtudiantFieldset::class => InvokableFactory::class,
-            InscriptionFieldset::class => InvokableFactory::class,
-            FinancementFieldset::class => InvokableFactory::class,
-            ValidationFieldset::class => InvokableFactory::class
+            EtudiantFieldset::class => EtudiantFieldsetFactory::class,
+            InscriptionFieldset::class => InscriptionFieldsetFactory::class,
+            FinancementFieldset::class => FinancementFieldsetFactory::class,
+            ValidationFieldset::class => ValidationFieldsetFactory::class
+        ],
+    ],
+
+    'hydrators' => [
+        'factories' => [
         ],
     ],
 
     'service_manager' => [
         'factories' => [
+            AdmissionService::class => AdmissionServiceFactory::class,
+            FinancementService::class => FinancementServiceFactory::class,
+            IndividuService::class => IndividuServiceFactory::class,
+            InscriptionService::class => InscriptionServiceFactory::class
         ],
     ],
 

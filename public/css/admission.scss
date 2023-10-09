@@ -47,6 +47,11 @@ h1{
   margin: 15px;
 }
 
+.btn-warning{
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
 //Partie étudiant
 .checkbox_admission > .mb-2 > .multicheckbox > .form-check-label{
   display: inline-block;
@@ -75,6 +80,17 @@ h1{
 .title_sous_partie > .row > .col{
   align-items: center;
   display: flex;
+}
+
+.titre_these > span{
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: unset;
+}
+
+.titre_these > div {
+  display: inline;
+  float: left
 }
 
 //Partie Financement
@@ -138,6 +154,38 @@ i:hover {
   content: "1";
 }
 
+.circle_success {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% ;
+  border: 2px solid #2EA662;
+  background-color: #2EA662;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset;
+}
+
+.circle_incomplete {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% ;
+  border: 2px solid #d23544;
+  background-color: #d23544;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset;
+}
+
 .circle > p{
   color:#8E8E8E;
 }
@@ -159,24 +207,29 @@ i:hover {
   max-width: 18rem;
 }
 
-.dossier_complet>div>p{
+.dossier_incomplet{
+  border: 3px solid #E69B18;
+  border-radius: 11px;
+  max-width: 25rem;
+}
+
+.dossier_complet>div>p, .dossier_incomplet>div>p{
   color:#707070;
   font-size: 15px;
 }
 
-.dossier_complet>div>i{
+.dossier_complet>div>i, .dossier_incomplet>div>i{
   font-style: unset;
 }
 
-.card-body.text-success i.icon {
+.card-body.text-success i.icon, .card-body.text-warning i.icon {
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px;
 }
 
-.card-body.text-success p.card-title {
+.card-body.text-success p.card-title, .card-body.text-warning p.card-title{
   display: inline-block;
-  vertical-align: middle;
 }
 
 textarea{
@@ -192,11 +245,7 @@ textarea{
   margin-right: 15px;
 }
 
-.multipage-nav{
-  float: right;
-}
-
-.multipage-nav.next {
+.multipage-nav.next, .multipage-nav, .multipage-nav.submit {
   float: right;
 }
 
@@ -205,14 +254,46 @@ textarea{
   float: right;
 }
 
-.multipage-nav.submit{
-  float: right;
-}
-
 #contenu-principal{
   padding-bottom: 95px;
 }
+
+.validation_attestation>div>div>div>label{
+  margin-left: 7px;
+  vertical-align: sub;
+}
+
+input[name="validation[saveAttestationHonneur]"]{
+  width: auto;
+  margin-top: revert !important;
+}
+
+.bouton_validation{
+  display: flex;
+  align-items: end;
+}
+
+.texte_validation_attestation_honneur{
+  margin-bottom: revert !important;
+}
+
+.validation_attestation{
+  margin-top: revert !important;
+}
+
 @media (max-width: 768px) {
+  //Partie inscription
+  .inner.show{
+    position: absolute;
+    max-height: calc(100vh - 50px); /* Limitez la hauteur du menu à la hauteur de l'écran moins la hauteur de l'en-tête (50px) */
+    overflow-y: auto;
+  }
+
+  ul.dropdown-menu.inner.show > li{
+    font-size: 9px;
+  }
+
+  //Partie Validation
   .detail_file {
     margin: 15px;
     display: flex;
@@ -220,15 +301,7 @@ textarea{
     justify-content: center;
   }
 
-  .row>.upload_file{
-    width:revert;
-  }
-
-  .row>.action_file{
-    width:revert;
-  }
-
-  .row>.date_televersement{
+  .row>.upload_file, .row>.date_televersement, .row>.action_file {
     width:revert;
   }
 
@@ -237,11 +310,13 @@ textarea{
 
   }
 
-  .cards_validation {
-    display: flex;
+  .cards_validation .card {
+    margin: 0 auto;
+    float: none;
+  }
+
+  .bouton_validation {
     justify-content: center;
-    align-items: center;
-    height: 100%;
   }
 }
 

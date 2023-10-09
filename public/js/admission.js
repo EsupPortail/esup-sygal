@@ -21,7 +21,7 @@ function englob_nav(type_formulaire){
         divParent.appendChild(boutonAnnuler);
     }
 
-    var container = document.querySelector('form'); // Remplacez '#container' par le sélecteur de votre choix
+    var container = document.querySelector('form');
     container.appendChild(divParent);
 }
 
@@ -70,9 +70,9 @@ function showOrNotDivStart(radiobutton, additionnalFields) {
 var currentUrl = window.location.href;
 setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
-        var diplomeRadios = document.querySelectorAll('input[name="etudiant[diplomeEtudiant][niveau_etude]"]');
-        var additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
-        var additionalFieldsAutre = document.getElementById('additional_fields_autre');
+        var diplomeRadios = document.querySelectorAll('input[name="etudiant[diplomeEtudiant][niveauEtude]"]');
+        var additionalFieldsDiplome = document.getElementById('additionalFieldsDiplome');
+        var additionalFieldsAutre = document.getElementById('additionalFieldsAutre');
 
         // Cachez les champs supplémentaires au chargement de la page
         additionalFieldsDiplome.style.display = 'none';
@@ -92,6 +92,22 @@ setTimeout(function () {
         });
 
         document.addEventListener('DOMContentLoaded', function () {
+            // Sélectionnez tous les éléments d'entrée de la page
+            var inputElements = document.querySelectorAll('input');
+
+            for (var i = 0; i < inputElements.length; i++) {
+                var input = inputElements[i];
+
+                // Vérifiez si l'élément d'entrée a une valeur non vide
+                if (((input.type !== 'radio' && input.type !== 'submit') && input.value.trim() !== '') || input.type == 'radio' && input.checked) {
+                    break; // Sortez de la boucle dès que vous en trouvez un
+                }
+            }
+
+            if (i === inputElements.length) {
+                $('.modal').modal('show');
+            }
+
             diplomeRadios.forEach(function (radio) {
                 if (radio.checked && radio.value == "1") {
                     additionalFieldsDiplome.style.display = 'block';
@@ -107,9 +123,9 @@ setTimeout(function () {
 
     if (currentUrl.indexOf("/inscription") !== -1) {
         var confidentialiteRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][confidentialite]"]');
-        var cotutelleRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][co_tutelle]"]');
-        var additionalFieldsConfidentialite = document.getElementById('additional_fields_confidentialite');
-        var additionalFieldsCotutelle = document.getElementById('additional_fields_cotutelle');
+        var cotutelleRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][coTutelle]"]');
+        var additionalFieldsConfidentialite = document.getElementById('additionalFieldsConfidentialite');
+        var additionalFieldsCotutelle = document.getElementById('additionalFieldsCotutelle');
 
         // Cachez les champs supplémentaires au chargement de la page
         additionalFieldsConfidentialite.style.display = 'none';
@@ -125,8 +141,8 @@ setTimeout(function () {
     }
 
     if (currentUrl.indexOf("/financement") !== -1) {
-        var contratDoctoralRadios = document.querySelectorAll('input[name="financement[contrat_doctoral]"]');
-        var additionalFieldscontratDoctoral = document.getElementById('additional_fields_contratDoctoral');
+        var contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
+        var additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
 
         // Cachez les champs supplémentaires au chargement de la page
         additionalFieldscontratDoctoral.style.display = 'none';
@@ -160,3 +176,13 @@ setTimeout(function () {
     }
 }, 100)
 
+
+$(document).ready(function () {
+    if (currentUrl.indexOf("/inscription") !== -1) {
+        $('select').selectpicker();
+    }
+
+    $('[data-toggle="tooltip"]').tooltip({
+        placement: 'top',
+    });
+});

@@ -1,6 +1,6 @@
 <?php
 
-use Admission\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -12,69 +12,86 @@ use Application\View\Renderer\PhpRenderer;
  */
 $fcg = $this->formControlGroup();
 ?>
+<div class="modal hide fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">SyGAL - Admission</h5>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Les informations que vous entrez dans ce formulaire sont automatiquement sauvegardées dès lors que vous passez à l'étape suivante, ou revenez à l'étape précédente.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Étudiant</h2>
     </div>
     <div class="row subfield">
         <div class="col-md-6">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('ine')) ?>
+            <?php echo $fcg($fieldset->get('ine')) ?>
         </div>
         <div class="col-md-6">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('numero_etudiant')) ?>
+            <?php echo $fcg($fieldset->get('numeroEtudiant')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
             <div class="checkbox_admission">
-                <?php echo $fcg($fieldset->get("infosEtudiant")->get('civilite')) ?>
+                <?php echo $fcg($fieldset->get('civilite')) ?>
             </div>
         </div>
         <div class="col-lg-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('nomPatronymique')) ?>
+            <?php echo $fcg($fieldset->get('nomFamille')) ?>
         </div>
         <div class="col-lg-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('nomUsuel')) ?>
+            <?php echo $fcg($fieldset->get('nomUsuel')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('prenom1')) ?>
+            <?php echo $fcg($fieldset->get('prenom')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('dateNaissance')) ?>
+            <?php echo $fcg($fieldset->get('dateNaissance')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('ville_naissance')) ?>
+            <?php echo $fcg($fieldset->get('villeNaissance')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('paysNationalite')) ?>
+            <?php echo $fcg($fieldset->get('paysNationalite')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('nationalite')) ?>
+            <?php echo $fcg($fieldset->get('nationalite')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('adresse_ligne3_bvoie')) ?>
+            <?php echo $fcg($fieldset->get('adresseLigne3Bvoie')) ?>
         </div>
         <div class="col-md-1">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('adresse_code_postale')) ?>
+            <?php echo $fcg($fieldset->get('adresseCodePostal')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('adresse_code_commune')) ?>
+            <?php echo $fcg($fieldset->get('adresseCodeCommune')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('numero_telephone1')) ?>
+            <?php echo $fcg($fieldset->get('numeroTelephone1')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get("infosEtudiant")->get('email')) ?>
+            <?php echo $fcg($fieldset->get('email')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col">
             <div class="checkbox_admission">
-                <?php echo $fcg($fieldset->get("infosEtudiant")->get('situation_handicap')) ?>
+                <?php echo $fcg($fieldset->get('situationHandicap')) ?>
                 <p class="informations">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
                     N'hésitez pas à
                     contacter le Service Universitaire de Médecine Préventive (SUMPPS) sumpps@unicaen.fr ainsi que le
@@ -97,18 +114,18 @@ $fcg = $this->formControlGroup();
     </div>
     <div class="row subfield">
         <div class="checkbox_admission">
-            <?php echo $fcg($fieldset->get("diplomeEtudiant")->get('niveau_etude')) ?>
+            <?php echo $fcg($fieldset->get('niveauEtude')) ?>
         </div>
         <div id="additional_fields_diplome">
             <div class="row subfield">
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("diplomeEtudiant")->get('intitule_du_diplome')) ?>
+                    <?php echo $fcg($fieldset->get('intituleDuDiplome')) ?>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("diplomeEtudiant")->get("annee_dobtention_diplome")) ?>
+                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplome")) ?>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("diplomeEtudiant")->get("etablissement_dobtention_diplome")) ?>
+                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplome")) ?>
                 </div>
             </div>
         </div>
@@ -116,7 +133,7 @@ $fcg = $this->formControlGroup();
             <div class="row subfield">
                 <div class="col">
                     <div class="checkbox_admission checkbox_diplome">
-                        <?php echo $fcg($fieldset->get("diplomeEtudiant")->get('type_diplome_autre')) ?>
+                        <?php echo $fcg($fieldset->get('typeDiplomeAutre')) ?>
                     </div>
                 </div>
                 <p class="informations">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
@@ -125,15 +142,15 @@ $fcg = $this->formControlGroup();
             </div>
             <div class="row subfield">
                 <div class="col-sm-12">
-                    <?php echo $fcg($fieldset->get("diplomeEtudiant")->get('intitule_du_diplome')) ?>
+                    <?php echo $fcg($fieldset->get('intituleDuDiplome')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col-lg-6 col-sm-12">
-                    <?php echo $fcg($fieldset->get("diplomeEtudiant")->get("annee_dobtention_diplome")) ?>
+                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplome")) ?>
                 </div>
                 <div class="col-lg-6 col-sm-12">
-                    <?php echo $fcg($fieldset->get("diplomeEtudiant")->get("etablissement_dobtention_diplome")) ?>
+                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplome")) ?>
                 </div>
             </div>
         </div>
@@ -145,5 +162,12 @@ $fcg = $this->formControlGroup();
             <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
         </div>
     </div>
+    <input type="submit" name="envoyer_donnees" title="Enregistrer les données renseignées" class="btn btn-warning bouton_gestionnaire" value="Enregistrer >">
 </div>
 
+<?php ///** @see \Admission\Controller\AdmissionController::envoyerMailAction() */ ?>
+<!--<a href="--><?php //echo $this->url('admission/envoyer-mail', [], [], true); ?><!--"-->
+<!--   class="btn btn-primary">-->
+<!--    <span class="icon icon-notifier"></span>-->
+<!--    Envoyer un mail-->
+<!--</a>-->

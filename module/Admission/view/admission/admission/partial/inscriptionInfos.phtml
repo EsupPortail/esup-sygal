@@ -1,7 +1,6 @@
 <?php
 
-use Admission\Fieldset\Etudiant\EtudiantFieldset;
-use Admission\Fieldset\Inscription\InscriptionFieldset;
+use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -18,33 +17,37 @@ $fcg = $this->formControlGroup();
     </div>
     <div class="row subfield">
         <div class="col">
-                <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('discipline_doctorat')) ?>
+                <?php echo $this->formControlGroup($fieldset->get('disciplineDoctorat')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-lg-6 col-sm-12">
-            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('composante_doctorat')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('composanteDoctorat')) ?>
         </div>
         <div class="col-lg-6 col-sm-12">
-            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('ecole_doctorale')) ?>
-        </div>
-    </div>
-    <div class="row subfield">
-        <div class="col">
-            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('unite_recherche')) ?>
-        </div>
-    </div>
-    <div class="row subfield">
-        <div class="col-lg-6 col-sm-12">
-            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('nom_directeur_thèse')) ?>
-        </div>
-        <div class="col-lg-6 col-sm-12">
-            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('nom_codirecteur_thèse')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('ecoleDoctorale')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col">
-            <?php echo $this->formControlGroup($fieldset->get("infosInscription")->get('titre_these')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('uniteRecherche')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('nomDirecteurThese')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('nomCodirecteurThese')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-12 titre_these">
+            <label class="form-label" for="inscription[infosInscription][titreThese]">Titre provisoire de la thèse</label>
+            <span class="icon icon-information" data-toggle="tooltip" title="Le titre saisi dans ce champ est provisoire et pourra être modifié ultérieurement durant votre parcours doctoral"></span>
+        </div>
+        <div class="col">
+            <?php echo $this->formControlGroup($fieldset->get('titreThese')) ?>
         </div>
     </div>
     <div class="row boutons_gestionnaires">
@@ -70,14 +73,14 @@ $fcg = $this->formControlGroup();
         <div class="row subfield">
             <div class="col-lg-2 col-sm-12">
                 <div class="checkbox_admission">
-                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('confidentialite')) ?>
+                    <?php echo $this->formControlGroup($fieldset->get('confidentialite')) ?>
                 </div>
             </div>
             <div class="col-lg-10 col-sm-12">
-                <div id="additional_fields_confidentialite">
+                <div id="additionalFieldsConfidentialite">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('date_confidentialité')) ?>
+                            <?php echo $this->formControlGroup($fieldset->get('dateConfidentialite')) ?>
                         </div>
                         <div class="col-lg-6 col-sm-12 informations-confidentialite-souhaitee">
                             <p class="informations">A demander et motiver dans la convention de formation doctorale</p>
@@ -90,14 +93,14 @@ $fcg = $this->formControlGroup();
         <div class="row subfield">
             <div class="col-lg-2 col-sm-12">
                 <div class="checkbox_admission">
-                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('co_tutelle')) ?>
+                    <?php echo $this->formControlGroup($fieldset->get('coTutelle')) ?>
                 </div>
             </div>
             <div class="col-lg-10 col-sm-12">
-                <div id="additional_fields_cotutelle">
+                <div id="additionalFieldsCotutelle">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
-                            <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('pays_co-tutelle')) ?>
+                            <?php echo $this->formControlGroup($fieldset->get('paysCoTutelle')) ?>
                         </div>
                         <div class="col-lg-6 col-sm-12">
                             <p class="informations">Attention, il est OBLIGATOIRE d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/</a></p>
@@ -109,14 +112,14 @@ $fcg = $this->formControlGroup();
         <div class="row subfield">
             <div class="col-lg-2 col-sm-12">
                 <div class="checkbox_admission">
-                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('co-direction')) ?>
+                    <?php echo $this->formControlGroup($fieldset->get('coDirection')) ?>
                 </div>
             </div>
         </div>
         <div class="row subfield">
             <div class="col-lg-2 col-sm-12">
                 <div class="checkbox_admission">
-                    <?php echo $this->formControlGroup($fieldset->get("specifitesEnvisagees")->get('co_encadrement')) ?>
+                    <?php echo $this->formControlGroup($fieldset->get('coEncadrement')) ?>
                 </div>
             </div>
             <div class="col-lg-10 col-sm-12">
@@ -132,3 +135,7 @@ $fcg = $this->formControlGroup();
         </div>
     </div>
 </div>
+
+<script>
+
+</script>
