@@ -16,8 +16,8 @@ class EtudiantForm extends MultipageForm
         parent::init();
 
         $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
-        $etudiantFieldset->setName("etudiant");
-        $this->add($etudiantFieldset);
+        $etudiantFieldset->setName("etudiant")->setAttribute('class',"etudiantt");
+        $this->add($etudiantFieldset)->setAttribute('class',"etudiantt");
 
         $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);
         $inscriptionFieldset->setName("inscription");

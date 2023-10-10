@@ -14,6 +14,11 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
+        <one-to-many field="financements" target-entity="Admission\Entity\Db\Financement" mapped-by="admissionId"/>
+        <one-to-many field="individus" target-entity="Admission\Entity\Db\Individu" mapped-by="admissionId"/>
+        <one-to-many field="inscriptions" target-entity="Admission\Entity\Db\Inscription" mapped-by="admissionId"/>
+        <one-to-many field="validations" target-entity="Admission\Entity\Db\Validation" mapped-by="admissionId"/>
+
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
                 <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>

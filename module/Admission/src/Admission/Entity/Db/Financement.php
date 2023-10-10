@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -29,14 +30,14 @@ class Financement implements HistoriqueAwareInterface{
     private $id;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $admissionId;
 
     /**
      * Constructor
      */
-    public function Construct()
+    public function __construct()
     {
         $this->admissionId = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -140,11 +141,11 @@ class Financement implements HistoriqueAwareInterface{
     /**
      * Remove admissionId.
      *
-     * @param \Admission\Entity\Admission $admissionId
+     * @param Admission $admissionId
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeAdmissionId(\Admission\Entity\Admission $admissionId)
+    public function removeAdmissionId(Admission $admissionId)
     {
         return $this->admissionId->removeElement($admissionId);
     }
@@ -152,7 +153,7 @@ class Financement implements HistoriqueAwareInterface{
     /**
      * Get admissionId.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getAdmissionId()
     {
@@ -162,11 +163,11 @@ class Financement implements HistoriqueAwareInterface{
     /**
      * Set admissionId.
      *
-     * @param \Admission\Entity\Db\Admission|null $admissionId
+     * @param Admission|null $admissionId
      *
      * @return Financement
      */
-    public function setAdmissionId(\Admission\Entity\Db\Admission $admissionId = null)
+    public function setAdmissionId(Admission $admissionId = null)
     {
         $this->admissionId = $admissionId;
 

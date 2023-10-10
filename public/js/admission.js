@@ -71,8 +71,8 @@ var currentUrl = window.location.href;
 setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
         var diplomeRadios = document.querySelectorAll('input[name="etudiant[diplomeEtudiant][niveauEtude]"]');
-        var additionalFieldsDiplome = document.getElementById('additionalFieldsDiplome');
-        var additionalFieldsAutre = document.getElementById('additionalFieldsAutre');
+        var additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
+        var additionalFieldsAutre = document.getElementById('additional_fields_autre');
 
         // Cachez les champs supplémentaires au chargement de la page
         additionalFieldsDiplome.style.display = 'none';
@@ -118,6 +118,12 @@ setTimeout(function () {
                     additionalFieldsAutre.style.display = 'block';
                 }
             });
+
+            // Sélectionnez le formulaire par son sélecteur (par exemple, par son nom ou sa classe)
+            var monFormulaire = document.querySelector("form");
+            if (monFormulaire) {
+                // monFormulaire.setAttribute("action", "/admission/etudiantEnregistrer");
+            }
         })
     }
 

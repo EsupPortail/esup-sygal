@@ -35,52 +35,53 @@ class AdmissionController extends AdmissionAbstractController {
             ->start(); // réinit du plugin et redirection vers la 1ère étape
     }
 
+    public function etudiantEnregistrerAction(){
+        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+        $this->getEtudiantForm()->bindValues($data);
+//        var_dump($data);
+
+        $request = $this->getRequest();
+//        var_dump($request->isPost());
+        if ($request->isPost()) {
+            $postData = $request->getPost();
+            var_dump($postData); // Affichez les données pour déboguer
+        }
+    }
+
     public function etudiantAction(): Response|ViewModel
     {
         $this->getEtudiantForm()->get('etudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
         $this->getEtudiantForm()->get('etudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
-        $request = $this->getRequest();
-        var_dump($request);
-        die();
-//        $response = $this->processMultipageForm($this->getEtudiantForm());
-//        if ($response instanceof Response) {
-//            return $response;
-//        }
-//
-//        $response->setTemplate('admission/ajouter-etudiant');
 
+        var_dump($this->params()->fromPost());
 
+        var_dump($this->getEtudiantForm()->get('etudiant')->getHydrator());
+
+        $response = $this->processMultipageForm($this->getEtudiantForm());
         $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
-        $this->getEtudiantForm()->bindValues($data);
 
-        /** @var IndividuHydrator $individuObject */
-        $individuObject = $this->getEtudiantForm()->getObject();
+        var_dump($data);
 
-        try {
-            /** @var Individu $individu */
-            $individuData = $this->getEtudiantForm()->getData();
-            $individu = $this->individuService->create($individuData);
+        /** @var Individu $individu */
+        $individu = $this->getEtudiantForm()->get('etudiant')->populateValues($data["etudiant"]);
+        var_dump($individu);
+//        $event = $this->individuService->create($individu);
 
-            var_dump("c'est good!");
+        var_dump($this->getEtudiantForm()->get('etudiant')->getObject());
+        if ($response instanceof Response) {
+            return $response;
         }
-        catch (\Exception $e) {
-            var_dump("ça a pas marché");
-        }
-//        if ($request->isGet()) {
-//            $data = $request->getPost();
-//            var_dump($data);
-//            $this->getEtudiantForm()->setData($data);
-//            if (!$this->getEtudiantForm()->isValid()) {
-//                var_dump("pas bon");
-//                return $response;
-//            }
-//            var_dump("bon");
-//        }
+
+        $response->setTemplate('admission/ajouter-etudiant');
+
         return $response;
     }
 
     public function inscriptionAction(): Response|ViewModel
     {
+//        var_dump($this->getRequest()->getPost()['inscription']['_nav']);
+        var_dump($this->params()->fromPost());
+
         //Partie Informations sur l'inscription
         $this->getEtudiantForm()->get('inscription')->setUrlDirecteurThese($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
         $this->getEtudiantForm()->get('inscription')->setUrlCoDirecteurThese($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
@@ -149,14 +150,16 @@ class AdmissionController extends AdmissionAbstractController {
         return array('form' => $this->getEtudiantForm());
     }
 
-//    public function ajouterEnregistrerAction()
-//    {
-//        $data = $this->multipageForm($this->getForm())->getFormSessionData();
-//        // ...
-//        // enregistrement en base de données (par exemple)
-//        // ...
-//        return $this->redirect()->toRoute('home');
-//    }
+    public function enregistrerAction()
+    {
+        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+        var_dump($data);
+
+        // ...
+        // enregistrement en base de données (par exemple)
+        // ...
+        return "";
+    }
 
     public function envoyerMailAction(): Response
     {

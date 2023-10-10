@@ -59,10 +59,8 @@ return array(
                         'validation',
                         'confirmer',
                         'annuler',
-                        'addInformationsEtudiant',
-                        'addInformationsInscription',
-                        'addInformationsFinancement',
-                        'addInformationsJustificatifs'
+                        'etudiantEnregistrer',
+                        'enregistrer'
                     ]
                 ]
             ]
