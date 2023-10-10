@@ -43,7 +43,17 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                 <br/>
                 <?php echo $seance->getDuree(); ?> h.
             </td>
-            <td> <?php echo $seance->getLieu(); ?> </td>
+            <td>
+                <?php $first = true; ?>
+                <?php if (!$first) echo "<br>"; ?>
+                <?php if ($seance->getLieu()) { echo $seance->getLieu(); $first = false; } ?>
+                <?php if (!$first) echo "<br>"; ?>
+                <?php if ($seance->getLien()) {
+                    echo $seance->getLien();
+                    if ($seance->getMotDePasse()) echo "(Mot de passe:".$seance->getMotDePasse().")";
+                    $first = false;
+                } ?>
+            </td>
             <td>
                 <?php if ($canAfficherSession AND $seance->getSession() !== null) : ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>

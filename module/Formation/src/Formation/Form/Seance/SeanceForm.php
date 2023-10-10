@@ -76,6 +76,28 @@ class SeanceForm extends Form {
                 'id' => 'lieu',
             ],
         ]);
+        //lien
+        $this->add([
+            'type' => Text::class,
+            'name' => 'lien',
+            'options' => [
+                'label' => "Lien pour la visio-conférence :",
+            ],
+            'attributes' => [
+                'id' => 'lien',
+            ],
+        ]);
+        //lien
+        $this->add([
+            'type' => Text::class,
+            'name' => 'mot_de_passe',
+            'options' => [
+                'label' => "Mot de passe pour la visio-conférence :",
+            ],
+            'attributes' => [
+                'id' => 'mot_de_passe',
+            ],
+        ]);
         //description
         $this->add([
             'type' => Textarea::class,
@@ -109,6 +131,8 @@ class SeanceForm extends Form {
             'debut'         => [ 'required' => true, ],
             'fin'           => [ 'required' => true, ],
             'lieu'          => [ 'required' => false, ],
+            'lien'          => [ 'required' => false, ],
+            'mot_de_passe'  => [ 'required' => false, ],
             'description'   => [ 'required' => false, ],
         ]));
     }

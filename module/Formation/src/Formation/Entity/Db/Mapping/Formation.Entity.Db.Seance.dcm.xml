@@ -17,6 +17,8 @@
             <field name="debut"               type="datetime"                         column="DEBUT"            nullable="false"/>
             <field name="fin"                 type="datetime"                         column="FIN"              nullable="false"/>
             <field name="lieu"                type="string"       length="1024"       column="LIEU"             nullable="true"/>
+            <field name="lien"                type="string"       length="1024"       column="LIEN"             nullable="true"/>
+            <field name="motDePasse"          type="string"       length="1024"       column="MOT_DE_PASSE"             nullable="true"/>
             <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
             <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
