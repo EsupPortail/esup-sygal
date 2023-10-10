@@ -10,6 +10,7 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
+use JetBrains\PhpStorm\Pure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -32,6 +33,9 @@ class Formation implements HistoriqueAwareInterface,
     private ?Individu $responsable  = null;
     private ?int $tailleListePrincipale = null;
     private ?int $tailleListeComplementaire = null;
+
+    private ?string $objectif = null;
+    private ?string $programme = null;
 
     /**
      * @return int
@@ -175,10 +179,30 @@ class Formation implements HistoriqueAwareInterface,
         return $this;
     }
 
+    public function getObjectif(): ?string
+    {
+        return $this->objectif;
+    }
+
+    public function setObjectif(?string $objectif): void
+    {
+        $this->objectif = $objectif;
+    }
+
+    public function getProgramme(): ?string
+    {
+        return $this->programme;
+    }
+
+    public function setProgramme(?string $programme): void
+    {
+        $this->programme = $programme;
+    }
+
     /**
      * @return string
      */
-    public function getCode() : string
+    #[Pure] public function getCode() : string
     {
         $module = $this->getModule();
         return 'M'.$module->getId() . 'F'.$this->getId();
@@ -186,9 +210,7 @@ class Formation implements HistoriqueAwareInterface,
 
     /** FONCTION POUR MACRO *******************************************************************************************/
 
-    /**
-     * @return string
-     */
+    /** @noinspection  PhpUnused */
     public function toStringResponsable() : string
     {
         if ($this->getResponsable() === null) return "Aucun responsable de nommé·e pour cette formation";

@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - [FORMATION] Affichage des missions d'enseignement à coté des inscriptions dans les sessions de formation
 - [FORMATION] Possibilité de renseigner la nécessité de mission d'enseignement sur un module et filtrage des formations en conséquent
+- [FORMATION] Ajout des champs "objectif" et "programme" pour les actions de formation
 - [SOUTENANCE] Nouveaux templates pour remplacer l'ancien système de notification : CONNEXION_RAPPORTEUR, DEMANDE_RAPPORT_SOUTENANCE
 
 6.0.6

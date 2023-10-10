@@ -82,6 +82,18 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
         <dt class="col-md-3"> Lien vers de la fiche </dt>
         <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
     <?php endif ?>
+    <?php if ($formation->getObjectif() !== null) : ?>
+        <dt class="col-md-3">Objectif </dt>
+        <dd class="col-md-9">
+                <?php echo $formation->getObjectif(); ?>
+        </dd>
+    <?php endif; ?>
+    <?php if ($formation->getProgramme() !== null) : ?>
+        <dt class="col-md-3">Programme </dt>
+        <dd class="col-md-9">
+            <?php echo $formation->getProgramme(); ?>
+        </dd>
+    <?php endif; ?>
 </dl>
 
 <h2> Valeurs par défaut transmises aux sessions </h2>
