@@ -2,7 +2,7 @@
 
 namespace Admission\Controller;
 
-use Admission\Form\Etudiant\EtudiantForm;
+use Admission\Form\Admission\AdmissionForm;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use UnicaenApp\Controller\Plugin\MultipageFormPlugin;
@@ -16,7 +16,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
  */
 class AdmissionAbstractController extends AbstractActionController
 {
-    protected function processMultipageForm(EtudiantForm $form): ViewModel|Response
+    protected function processMultipageForm(AdmissionForm $form): ViewModel|Response
     {
         $response = $this->multipageForm($form)
             ->setUsePostRedirectGet()

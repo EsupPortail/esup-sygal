@@ -5,6 +5,8 @@ namespace Admission;
 
 use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
+use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\Admission\AdmissionFormFactory;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldsetFactory;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
@@ -106,6 +108,7 @@ return array(
 
     'form_manager' => [
         'factories' => [
+            AdmissionForm::class => AdmissionFormFactory::class,
             EtudiantFieldset::class => EtudiantFieldsetFactory::class,
             InscriptionFieldset::class => InscriptionFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,

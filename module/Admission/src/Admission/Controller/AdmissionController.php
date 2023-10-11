@@ -3,8 +3,8 @@
 namespace Admission\Controller;
 
 use Admission\Entity\Db\Individu;
-use Admission\Form\Etudiant\EtudiantForm;
-use Admission\Form\Etudiant\EtudiantFormAwareTrait;
+use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\Admission\AdmissionFormAwareTrait;
 use Admission\Hydrator\IndividuHydrator;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Service\Individu\IndividuServiceAwareTrait;
@@ -17,6 +17,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Controller\Plugin\MultipageFormPlugin;
+use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 
 class AdmissionController extends AdmissionAbstractController {
 
@@ -24,7 +25,7 @@ class AdmissionController extends AdmissionAbstractController {
     use DisciplineServiceAwareTrait;
     use NotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
-    use EtudiantFormAwareTrait;
+    use AdmissionFormAwareTrait;
     use IndividuServiceAwareTrait;
 
     public function ajouterAction(): Response
@@ -53,21 +54,16 @@ class AdmissionController extends AdmissionAbstractController {
         $this->getEtudiantForm()->get('etudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
         $this->getEtudiantForm()->get('etudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
 
+//        var_dump($this->params()->fromPost()[MultipageFormNavFieldset::NAME] == MultipageFormNavFieldset::NAME_NEXT);
         var_dump($this->params()->fromPost());
-
-        var_dump($this->getEtudiantForm()->get('etudiant')->getHydrator());
-
         $response = $this->processMultipageForm($this->getEtudiantForm());
         $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
 
-        var_dump($data);
-
-        /** @var Individu $individu */
-        $individu = $this->getEtudiantForm()->get('etudiant')->populateValues($data["etudiant"]);
+//
+        $individu = $this->getEtudiantForm()->getObject();
         var_dump($individu);
-//        $event = $this->individuService->create($individu);
-
-        var_dump($this->getEtudiantForm()->get('etudiant')->getObject());
+//        $this->individuService->create($individu);
+//        var_dump($this->getEtudiantForm()->get('etudiant'));
         if ($response instanceof Response) {
             return $response;
         }
@@ -79,7 +75,6 @@ class AdmissionController extends AdmissionAbstractController {
 
     public function inscriptionAction(): Response|ViewModel
     {
-//        var_dump($this->getRequest()->getPost()['inscription']['_nav']);
         var_dump($this->params()->fromPost());
 
         //Partie Informations sur l'inscription

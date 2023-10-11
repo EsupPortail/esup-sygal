@@ -1,6 +1,6 @@
 <?php
 
-namespace Admission\Form\Etudiant;
+namespace Admission\Form\Admission;
 
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
@@ -9,14 +9,14 @@ use Admission\Form\Fieldset\Validation\ValidationFieldset;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Form\MultipageForm;
 
-class EtudiantForm extends MultipageForm
+class AdmissionForm extends MultipageForm
 {
     public function init()
     {
         parent::init();
 
         $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
-        $etudiantFieldset->setName("etudiant")->setAttribute('class',"etudiantt");
+        $etudiantFieldset->setName("etudiant")  ;
         $this->add($etudiantFieldset)->setAttribute('class',"etudiantt");
 
         $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);

@@ -70,7 +70,7 @@ function showOrNotDivStart(radiobutton, additionnalFields) {
 var currentUrl = window.location.href;
 setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
-        var diplomeRadios = document.querySelectorAll('input[name="etudiant[diplomeEtudiant][niveauEtude]"]');
+        var diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
         var additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
         var additionalFieldsAutre = document.getElementById('additional_fields_autre');
 
@@ -118,12 +118,6 @@ setTimeout(function () {
                     additionalFieldsAutre.style.display = 'block';
                 }
             });
-
-            // Sélectionnez le formulaire par son sélecteur (par exemple, par son nom ou sa classe)
-            var monFormulaire = document.querySelector("form");
-            if (monFormulaire) {
-                // monFormulaire.setAttribute("action", "/admission/etudiantEnregistrer");
-            }
         })
     }
 

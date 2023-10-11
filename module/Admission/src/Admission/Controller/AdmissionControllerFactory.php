@@ -1,7 +1,7 @@
 <?php
 namespace Admission\Controller;
 
-use Admission\Form\Etudiant\EtudiantForm;
+use Admission\Form\Admission\AdmissionForm;
 use Admission\Service\Individu\IndividuService;
 use Admission\Service\Notification\NotificationFactory;
 use Application\Service\Discipline\DisciplineService;
@@ -35,9 +35,9 @@ class AdmissionControllerFactory implements FactoryInterface
         $notifierService = $container->get(NotifierService::class);
 
         /**
-         * @var EtudiantForm $etudiantForm
+         * @var AdmissionForm $etudiantForm
          */
-        $etudiantForm = $container->get('FormElementManager')->get(EtudiantForm::class);
+        $etudiantForm = $container->get('FormElementManager')->get(AdmissionForm::class);
 
         $controller = new AdmissionController();
 

@@ -99,27 +99,27 @@ class ValidationFieldset extends Fieldset implements InputFilterProviderInterfac
 
         $this->add(
             (new Text('validationGestionnaires'))
-                ->setLabel("Validité des gestionnaires")
+                ->setLabel("Validation des gestionnaires")
         );
 
         $this->add(
             (new Text('validationDirecteurthese'))
-                ->setLabel("Validité du directeur de thèse")
+                ->setLabel("Validation du directeur de thèse")
         );
 
         $this->add(
             (new Text('validationCodirecteur'))
-                ->setLabel("Validité du co-directeur")
+                ->setLabel("Validation du co-directeur")
         );
 
         $this->add(
             (new Text('validationUniterecherche'))
-                ->setLabel("Validité de l'Unité de recherche")
+                ->setLabel("Validation de l'Unité de recherche")
         );
 
         $this->add(
             (new Text('validationEcoledoctorale'))
-                ->setLabel("Validité de l'école doctorale")
+                ->setLabel("Validation de l'école doctorale")
         );
 
         $this->add(
