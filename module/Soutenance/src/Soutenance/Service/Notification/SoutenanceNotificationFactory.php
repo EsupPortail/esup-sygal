@@ -441,39 +441,29 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    /**
-     * @param These $these
-     * @param Avis $avis
-     * @param string $url
-     */
-    public function createNotificationAvisDefavorable($these, $avis, $url = null): Notification
+    public function createNotificationAvisDefavorable(These $these, Avis $avis): Notification
     {
+        $emailBDD = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
-        $emails = array_merge($emailsDirecteurs, $emailsED, $emailsUR);
+        $emails = array_merge($emailBDD, $emailsDirecteurs, $emailsED, $emailsUR);
 
-        $emails = array_filter($emails, function ($s) {
-            return $s !== null;
-        });
-
-        if ($emails !== []) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Un avis de soutenance défavorable de la thèse de " . $these->getDoctorant()->getIndividu() . " a été rendue.")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/avis-defavorable')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'avis' => $avis,
-                    'url' => $url,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la notification [".MailTemplates::SOUTENANCE_AVIS_DEFAVORABLE."] la thèse {$these->getId()}");
         }
 
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_AVIS_DEFAVORABLE, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
 
