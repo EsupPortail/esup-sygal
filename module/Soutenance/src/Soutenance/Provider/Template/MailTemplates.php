@@ -23,4 +23,5 @@ class MailTemplates
 
     const CONNEXION_RAPPORTEUR                          = 'CONNEXION_RAPPORTEUR';
     const DEMANDE_RAPPORT_SOUTENANCE                    = 'DEMANDE_RAPPORT_SOUTENANCE';
+    const SOUTENANCE_AVIS_FAVORABLE                     = 'SOUTENANCE_AVIS_FAVORABLE';
 }

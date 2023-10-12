@@ -3,10 +3,13 @@
 namespace Soutenance\Service\Url;
 
 use DateTime;
+use Fichier\Controller\FichierController;
 use Laminas\View\Renderer\PhpRenderer;
+use Soutenance\Controller\AvisController;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\PropositionController;
 use Soutenance\Entity\Membre;
+use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use These\Entity\Db\These;
 
@@ -143,4 +146,17 @@ class UrlService {
         return "<a href='".$url."' target='_blank'> Tableau de bord / Dashboard </a>";
     }
 
+    /**
+     * @noinspection PhpUnused
+     */
+    public function getPrerapportSoutenance() : string
+    {
+        $these = $this->variables['these'];
+        $avis = $this->variables['avis'];
+        $membre = $this->variables['membre'];
+        /** @see AvisController::telechargerAction() */
+        $url = $this->renderer->url('soutenance/avis-soutenance/telecharger',
+            ['these' => $these->getId(),'rapporteur' => $membre->getId(),'avis' => $avis->getId()], ['force_canonical' => 'true'], true);
+        return $url;
+    }
 }
