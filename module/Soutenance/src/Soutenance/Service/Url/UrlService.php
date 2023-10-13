@@ -66,10 +66,7 @@ class UrlService {
         return $url;
     }
 
-    /**
-     * @noinspection
-     * @return string
-     */
+    /** @noinspection PhpUnused  */
     public function getSoutenancePresoutenance() : string
     {
         $these = $this->variables['these'];
@@ -157,6 +154,25 @@ class UrlService {
         /** @see AvisController::telechargerAction() */
         $url = $this->renderer->url('soutenance/avis-soutenance/telecharger',
             ['these' => $these->getId(),'rapporteur' => $membre->getId(),'avis' => $avis->getId()], ['force_canonical' => 'true'], true);
+        return $url;
+    }
+
+    /** @noinspection PhpUnused  */
+    public function getSoutenanceConvocationDoctorant() : string
+    {
+        $these = $this->variables['$these'];
+        /** @see PresoutenanceController::convocationDoctorantAction() */
+        $url = $this->renderer->url('soutenance/presoutenance/convocation-doctorant', ['these' => $these->getId()], ['force_canonical' => true], true);
+        return $url;
+    }
+
+    /** @noinspection PhpUnused  */
+    public function getSoutenanceConvocationMembre() : string
+    {
+        $these = $this->variables['these'];
+        $membre = $this->variables['membre'];
+        /** @see PresoutenanceController::convocationMembreAction() */
+        $url = $this->renderer->url('soutenance/presoutenance/convocation-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
         return $url;
     }
 }

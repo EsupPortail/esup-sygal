@@ -31,4 +31,5 @@ class MailTemplates
     const SOUTENANCE_AVIS_DEFAVORABLE                   = 'SOUTENANCE_AVIS_DEFAVORABLE';
     const SOUTENANCE_FEU_VERT                           = 'SOUTENANCE_FEU_VERT';
     const SOUTENANCE_STOP_DEMARCHE                      = 'SOUTENANCE_STOP_DEMARCHE';
+    const SOUTENANCE_CONVOCATION_DOCTORANT              = 'SOUTENANCE_CONVOCATION_DOCTORANT';
 }

@@ -12,6 +12,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Url\UrlService;
+use Application\Service\Validation\ValidationService;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
 use UnicaenRenderer\Service\Rendu\RenduService;
@@ -43,18 +44,21 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
          * @var VariableService $variableService
          * @var TheseService $theseService
          * @var UtilisateurService $utilisateurService
+         * @var ValidationService $validationService
          */
         $acteurService = $container->get(ActeurService::class);
         $emailTheseService = $container->get(EmailTheseService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
         $theseService = $container->get('TheseService');
+        $validationService = $container->get(ValidationService::class);
 
         $factory->setActeurService($acteurService);
         $factory->setEmailTheseService($emailTheseService);
         $factory->setMembreService($membreService);
         $factory->setRoleService($roleService);
         $factory->setTheseService($theseService);
+        $factory->setValidationService($validationService);
 
         /** @var RenduService $renduService */
         $renduService = $container->get(RenduService::class);
