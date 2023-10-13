@@ -8,6 +8,7 @@ class MailTemplates
 
     /** GESTION DES VALIDATIONS ***************************************************************************************/
     const PROPOSITION_REFUS                             = 'PROPOSITION_REFUS';
+    const SOUTENANCE_TOUS_AVIS_RENDUS                   = 'SOUTENANCE_TOUS_AVIS_RENDUS';
     const SOUTENANCE_VALIDATION_ANNULEE                 = 'SOUTENANCE_VALIDATION_ANNULEE';
     const SOUTENANCE_VALIDATION_ACTEUR_DIRECT           = 'SOUTENANCE_VALIDATION_ACTEUR_DIRECT';
     const SOUTENANCE_VALIDATION_DEMANDE_UR              = 'SOUTENANCE_VALIDATION_DEMANDE_UR';

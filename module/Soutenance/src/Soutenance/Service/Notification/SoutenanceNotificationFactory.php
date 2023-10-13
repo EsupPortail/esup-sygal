@@ -22,7 +22,6 @@ use Soutenance\Service\Url\UrlServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenAuth\Entity\Db\RoleInterface;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class StringElement {
@@ -318,21 +317,22 @@ class SoutenanceNotificationFactory extends NotificationFactory
     public function createNotificationAvisRendus(These $these): Notification
     {
         $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
-
-        if (!empty($email)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Tous les avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu() . " ont été rendus.")
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/tous-avis-soutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($email)) {
+            throw new RuntimeException("Aucune adresse électronique trouvée pour les aspects doctorales");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_TOUS_AVIS_RENDUS, $vars);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($email)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
