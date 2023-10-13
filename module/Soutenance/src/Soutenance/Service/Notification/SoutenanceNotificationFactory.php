@@ -311,9 +311,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**************************** avis ***************************/
 
-    /**
-     * TODO
-     */
     public function createNotificationAvisRendus(These $these): Notification
     {
         $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
@@ -335,28 +332,25 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    /**
-     * TODO
-     */
     public function createNotificationAvisRendusDirection(These $these): Notification
     {
         $emails = $this->emailTheseService->fetchEmailEncadrants($these);
-
-        if ($emails !== []) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Tous les avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu() . " ont été rendus.")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/tous-avis-soutenance-directions')
-                ->setTemplateVariables([
-                    'these' => $these,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($email)) {
+            throw new RuntimeException("Aucune adresse électronique trouvée pour les encadrants de la thèse");
         }
 
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_TOUS_AVIS_RENDUS_DIRECTION, $vars);
+
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($email)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     public function createNotificationAvisFavorable(These $these, Avis $avis): Notification
