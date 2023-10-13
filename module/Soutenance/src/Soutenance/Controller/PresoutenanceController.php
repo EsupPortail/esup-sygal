@@ -332,11 +332,8 @@ class PresoutenanceController extends AbstractController
         foreach ($rapporteurs as $rapporteur) {
             $hasRapport = ($this->getAvisService()->getAvisByMembre($rapporteur) !== null);
             if ($hasRapport === false) {
-                $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
-                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
                 try {
-                    $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
+                    $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAvisSoutenance($these, $rapporteur);
                     $this->notifierService->trigger($notif);
                 } catch (\Notification\Exception\RuntimeException $e) {
                     // aucun destinataire, todo : cas à gérer !
@@ -380,10 +377,8 @@ class PresoutenanceController extends AbstractController
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
-        $avis = $this->getAvisService()->getAvisByThese($these);
-
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($these, $proposition, $avis);
+            $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($these);
             $this->notifierService->trigger($notif);
         } catch (\Notification\Exception\RuntimeException $e) {
             // aucun destinataire, todo : cas à gérer !

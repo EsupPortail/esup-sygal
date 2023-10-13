@@ -25,7 +25,9 @@ class MailTemplates
     const ANNULATION_ENGAGEMENT_IMPARTIALITE            = 'ANNULATION_ENGAGEMENT_IMPARTIALITE';
 
     const CONNEXION_RAPPORTEUR                          = 'CONNEXION_RAPPORTEUR';
+    const DEMANDE_PRERAPPORT                            = 'DEMANDE_PRERAPPORT';
     const DEMANDE_RAPPORT_SOUTENANCE                    = 'DEMANDE_RAPPORT_SOUTENANCE';
     const SOUTENANCE_AVIS_FAVORABLE                     = 'SOUTENANCE_AVIS_FAVORABLE';
     const SOUTENANCE_AVIS_DEFAVORABLE                   = 'SOUTENANCE_AVIS_DEFAVORABLE';
+    const SOUTENANCE_FEU_VERT                           = 'SOUTENANCE_FEU_VERT';
 }

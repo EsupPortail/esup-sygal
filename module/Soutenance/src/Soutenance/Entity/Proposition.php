@@ -390,7 +390,23 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     public function toStringDateRetourRapport() : string
     {
         $date = $this->getRenduRapport();
-        if ($date) return $date->format('d/M/Y');
+        if ($date) return $date->format('d/m/Y');
         return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
+    }
+
+    /** @noinspection  PhpUnused */
+    public function toStringDateSoutenance() : string
+    {
+        $date = $this->getDate();
+        if ($date) return $date->format('d/m/Y');
+        return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
+    }
+
+    /** @noinspection  PhpUnused */
+    public function toStringLieu() : string
+    {
+        $lieu = $this->getLieu();
+        if ($lieu) return $lieu;
+        return "<span style='color:darkorange;'>Aucun lieu de précisé</span>";
     }
 }

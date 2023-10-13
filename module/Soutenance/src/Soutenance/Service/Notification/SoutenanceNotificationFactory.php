@@ -406,62 +406,48 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**************************** présoutenance ***************************/
 
-    /**
-     * TODO
-     */
-    public function createNotificationDemandeAvisSoutenance(These $these, Proposition $proposition, Membre $rapporteur, string $url): Notification
+    public function createNotificationDemandeAvisSoutenance(These $these, Membre $rapporteur): Notification
     {
         $email = $rapporteur->getEmail();
-
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de l'avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/demande-avis-soutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $rapporteur,
-                    'url' => $url,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if ($email === null) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::DEMANDE_PRERAPPORT . "] la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'rapporteur' => $rapporteur];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_PRERAPPORT, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($email)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
-    /**
-     * TODO
-     */
-    public function createNotificationFeuVertSoutenance($these, $proposition, $avis): Notification
+    public function createNotificationFeuVertSoutenance(These $these): Notification
     {
         $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
 
-        $emails = array_filter($emails, function ($s) {
-            return $s !== null;
-        });
-
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été acceptée par votre établissement.")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'avis' => $avis,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_FEU_VERT . "] la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_PRERAPPORT, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
