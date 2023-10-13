@@ -450,35 +450,28 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    /**
-     * TODO
-     */
-    public function createNotificationStopperDemarcheSoutenance($these, $proposition): Notification
+    public function createNotificationStopperDemarcheSoutenance($these): Notification
     {
         $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
 
-        $emails = array_filter($emails, function ($s) {
-            return $s !== null;
-        });
-
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Les démarches de soutenance de " . $these->getDoctorant()->getIndividu() . " ont été stoppées par la maison du doctorats de votre établissement.")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/stopper-demarche-soutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_STOP_DEMARCHE . "] la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_STOP_DEMARCHE, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /** Mail concernants les rapporteur·trices ************************************************************************/
