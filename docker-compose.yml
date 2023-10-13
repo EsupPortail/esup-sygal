@@ -26,7 +26,6 @@ services:
 #      context: .
 #      args:
 #        - PHP_VERSION=8.0
-    container_name: sygal-container-php8.0
     environment:
       - http_proxy
       - https_proxy
@@ -46,29 +45,8 @@ services:
     working_dir: /app
     networks:
       - sygalnet
-    depends_on:
-      - sygal-db
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-  sygal-db:
-    image: registre.unicaen.fr:5000/sygal-db-image
-    container_name: sygal-db-container
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      SYGAL_DB: sygal
-      SYGAL_USER: ad_sygal
-      SYGAL_PASSWORD: azerty
-    ports:
-      - 5432:5432
-    volumes:
-      # Base de dev
-      - ../sygal-db/sql/dev:/sql                 # Scripts de création/init
-      - ../sygal-db/dev:/var/lib/postgresql/data # Données persistées.
-    networks:
-      - sygalnet
 
   sygal-import-ws:
     image: registre.unicaen.fr:5000/sygal-import-ws-image-php7.4
