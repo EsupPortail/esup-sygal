@@ -9,7 +9,6 @@ use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use Notification\Exception\RuntimeException;
@@ -21,15 +20,19 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Template\MailTemplates;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Url\UrlServiceAwareTrait;
-use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
-class StringElement {
+class StringElement
+{
     public string $texte = "Aucun texte";
-    public function getTexte() : string {return $this->texte; }
+
+    public function getTexte(): string
+    {
+        return $this->texte;
+    }
 }
 
 /**
@@ -212,7 +215,8 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse électronique trouvée pour les acteurs directs de la thèse {$these->getId()}");
         }
 
-        $refus = new StringElement(); $refus->texte = $motif;
+        $refus = new StringElement();
+        $refus->texte = $motif;
         $vars = ['individu' => $currentUser, 'role' => $currentRole, 'etablissement' => $currentRole->getStructure(), 'stringelement' => $refus, 'these' => $these, 'doctorant' => $these->getDoctorant()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
@@ -536,11 +540,11 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /** Mails de fin de procédure *************************************************************************************/
 
-    public function createNotificationEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray): Notification
+    public function createNotificationEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition): Notification
     {
         $email = $doctorant->getIndividu()->getEmailUtilisateur();
         if ($email === null) {
-            throw new RuntimeException("Aucun mail pour la notification [".MailTemplates::SOUTENANCE_CONVOCATION_DOCTORANT."]");
+            throw new RuntimeException("Aucun mail pour la notification [" . MailTemplates::SOUTENANCE_CONVOCATION_DOCTORANT . "]");
         }
         $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $proposition->getThese());
         if (empty($validation)) {
@@ -561,38 +565,28 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    /**
-     * TODO
-     */
-    public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray): Notification
+    public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition): Notification
     {
-        $doctorant = $proposition->getThese()->getDoctorant();
-        $these = $proposition->getThese();
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $email = $membre->getEmail();
+        if ($email === null) {
+            throw new RuntimeException("Aucun mail pour la notification [" . MailTemplates::SOUTENANCE_CONVOCATION_DOCTORANT . "]");
+        }
+        $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $proposition->getThese());
+        if (empty($validation)) {
+            throw new RuntimeException("Aucune validation de trouvée");
+        }
 
-        if ($email === null or $email === '') {
-            throw new RuntimeException("Aucune adresse électronique pour le membre [" . $membre->getDenomination() . "]");
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new RuntimeException("L'adresse électronique est mal formée pour le membre [" . $membre->getDenomination() . "]");
-        }
+        $vars = ['soutenance' => $proposition, 'these' => $proposition->getThese(), 'membre' => $membre, 'validation' => $validation[0], 'etablissement' => $proposition->getThese()->getEtablissement()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_CONVOCATION_MEMBRE, $vars);
 
         $notif = new Notification();
         $notif
-            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
+            ->setSubject($rendu->getSujet())
             ->setTo($email)
-            ->setTemplatePath('soutenance/notification/convocation-membre')
-            ->setTemplateVariables([
-                'these' => $these,
-                'proposition' => $proposition,
-                'informations' => $pdcData,
-                'date' => $date,
-                'membre' => $membre,
-                'url' => $url,
-
-                'avisArray' => $avisArray,
-            ]);
-
+            ->setBody($rendu->getCorps());
         return $notif;
     }
 

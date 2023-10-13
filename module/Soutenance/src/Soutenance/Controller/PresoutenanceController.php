@@ -681,33 +681,10 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
-        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $avisArray = [];
-        /** @var Avis $avis */
-        foreach ($proposition->getAvis() as $avis) {
-            if ($avis->estNonHistorise()) {
-                $denomination = $avis->getMembre()->getDenomination();
-                $lien = $this->url()->fromRoute('soutenance/avis-soutenance/telecharger', [
-                    'these' => $these->getId(),
-                    'rapporteur' => $avis->getMembre()->getId()
-                    ], [
-                        'force_canonical'=>true
-                    ], true);
-                $avisArray[$denomination] = $lien;
-            }
-        }
-
         //doctorant
         $doctorant = $these->getDoctorant();
-        $email = $doctorant->getIndividu()->getEmailContact() ?:
-            $doctorant->getIndividu()->getEmailPro() ?:
-            $doctorant->getIndividu()->getEmailUtilisateur();
-        /** @see PresoutenanceController::convocationDoctorantAction() */
-        $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
+            $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationDoctorant($doctorant, $proposition);
             $this->notifierService->trigger($notif);
         } catch (\Notification\Exception\RuntimeException $e) {
             // aucun destinataire, todo : cas à gérer !
@@ -721,9 +698,8 @@ class PresoutenanceController extends AbstractController
                 if ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) $email = $membre->getIndividu()->getEmailPro();
                 if ($email === null or trim($email) === '') $email = $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
-                $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
                 try {
-                    $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
+                    $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($membre, $proposition);
                     $this->notifierService->trigger($notif);
                 } catch (\Notification\Exception\RuntimeException $e) {
                     // aucun destinataire, todo : cas à gérer !

@@ -1543,4 +1543,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         return $this->getAnneesUnivInscription()->count();
     }
+
+    /** Fonctions pour macros *****************************************************************************************/
+
+    /** @noinspection PhpUnused */
+    public function toStringEncadrement() : string {
+        $encadrement = $this->getEncadrements();
+        $texte = [];
+        foreach ($encadrement as $directeur) { $texte[] = $directeur->getNomComplet();}
+        return implode (" et ", $texte);
+    }
 }
