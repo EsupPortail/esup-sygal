@@ -7,6 +7,7 @@ class MailTemplates
     const TRANSMETTRE_DOCUMENTS_DIRECTION       = "TRANSMETTRE_DOCUMENTS_DIRECTION";
 
     /** GESTION DES VALIDATIONS ***************************************************************************************/
+    const PROPOSITION_REFUS                             = 'PROPOSITION_REFUS';
     const SOUTENANCE_VALIDATION_ANNULEE                 = 'SOUTENANCE_VALIDATION_ANNULEE';
     const SOUTENANCE_VALIDATION_ACTEUR_DIRECT           = 'SOUTENANCE_VALIDATION_ACTEUR_DIRECT';
     const SOUTENANCE_VALIDATION_DEMANDE_UR              = 'SOUTENANCE_VALIDATION_DEMANDE_UR';

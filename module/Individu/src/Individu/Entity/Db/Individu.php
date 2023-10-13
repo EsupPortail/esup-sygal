@@ -781,4 +781,5 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     {
         return 'Individu';
     }
+
 }

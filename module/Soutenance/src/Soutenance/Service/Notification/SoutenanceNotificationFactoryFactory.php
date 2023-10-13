@@ -6,9 +6,10 @@ use Application\Service\Email\EmailTheseService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
-use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Url\UrlService;
 use These\Service\Acteur\ActeurService;
@@ -26,8 +27,8 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
     protected string $class = SoutenanceNotificationFactory::class;
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): SoutenanceNotificationFactory
     {
@@ -42,21 +43,18 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
          * @var VariableService $variableService
          * @var TheseService $theseService
          * @var UtilisateurService $utilisateurService
-         * @var IndividuService $individuService
          */
         $acteurService = $container->get(ActeurService::class);
         $emailTheseService = $container->get(EmailTheseService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
         $theseService = $container->get('TheseService');
-        $individuService = $container->get(IndividuService::class);
 
         $factory->setActeurService($acteurService);
         $factory->setEmailTheseService($emailTheseService);
         $factory->setMembreService($membreService);
         $factory->setRoleService($roleService);
         $factory->setTheseService($theseService);
-        $factory->setIndividuService($individuService);
 
         /** @var RenduService $renduService */
         $renduService = $container->get(RenduService::class);
@@ -65,7 +63,7 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
         /** @var UrlService $urlService */
         $urlService = $container->get(UrlService::class);
         $factory->setUrlService($urlService);
-        
+
         return $factory;
     }
 }

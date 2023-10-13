@@ -614,7 +614,6 @@ class PropositionController extends AbstractController
                 $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Structures");
 
                 $currentUser = $this->userContextService->getIdentityIndividu();
-                /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
