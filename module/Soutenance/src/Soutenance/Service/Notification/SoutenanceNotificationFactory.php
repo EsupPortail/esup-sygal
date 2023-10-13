@@ -334,7 +334,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationAvisRendusDirection(These $these): Notification
     {
-        $emails = $this->emailTheseService->fetchEmailEncadrants($these);
+        $email = $this->emailTheseService->fetchEmailEncadrants($these);
         if (empty($email)) {
             throw new RuntimeException("Aucune adresse électronique trouvée pour les encadrants de la thèse");
         }
