@@ -8,7 +8,7 @@ Journal des modifications
 - [FORMATION] Ajout des champs "objectif" et "programme" pour les actions de formation
 - [FORMATION] Ajout des champs "lien" et "mot de passe" dans les séances
 - [FORMATION] Un doctorant n'a plus accés à la desinscription si la session est imminente
-- [SOUTENANCE] Nouveaux templates pour remplacer l'ancien système de notification : CONNEXION_RAPPORTEUR, DEMANDE_RAPPORT_SOUTENANCE
+- [SOUTENANCE] Mise en place des templates associés aux mails 
 - [FIX] Pour se voir attribuer par l'application le rôle Doctorant, il faut désormais avoir une thèse soit en cours soit soutenue.
 
 6.0.6

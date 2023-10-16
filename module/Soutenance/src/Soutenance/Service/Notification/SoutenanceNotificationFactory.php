@@ -25,6 +25,7 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
+/** Todo à déplacer dans UnicaenRenderer dans les prochaines versions */
 class StringElement
 {
     public string $texte = "Aucun texte";

@@ -175,4 +175,23 @@ class UrlService {
         $url = $this->renderer->url('soutenance/presoutenance/convocation-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
         return $url;
     }
+
+    /** @noinspection PhpUnused */
+    public function generateTablePrerapport() : string
+    {
+        $these = $this->variables['these'];
+        $soutenance = $this->variables['soutenance'];
+        $rapporteurs = $soutenance->getRapporteurs();
+
+        $texte  = "<table>";
+        $texte .= "<tr><th>Rapporteur·trice</th><th>Pré-rapport</th></tr>";
+        foreach ($rapporteurs as $rapporteur) {
+            $url = $this->renderer->url('soutenance/avis-soutenance/telecharger',['these' => $these->getId(), 'rapporteur' => $rapporteur->getId()],['force_canonical' => true], true);
+            $texte .= "<tr><td>".$rapporteur->getDenomination()."</td>";
+            $texte .= "<td><a href='".$url."'>Prérapport</a></td>";
+        }
+        $texte .= "</table>";
+        return $texte;
+
+    }
 }
