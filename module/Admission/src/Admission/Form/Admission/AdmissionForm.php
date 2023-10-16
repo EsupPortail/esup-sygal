@@ -2,6 +2,7 @@
 
 namespace Admission\Form\Admission;
 
+use Admission\Entity\Db\Admission;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
@@ -9,6 +10,9 @@ use Admission\Form\Fieldset\Validation\ValidationFieldset;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Form\MultipageForm;
 
+/**
+ * @property Admission $object
+ */
 class AdmissionForm extends MultipageForm
 {
     public function init()
@@ -16,8 +20,9 @@ class AdmissionForm extends MultipageForm
         parent::init();
 
         $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
-        $etudiantFieldset->setName("etudiant")  ;
-        $this->add($etudiantFieldset)->setAttribute('class',"etudiantt");
+        $etudiantFieldset->setName("etudiant");
+//        $etudiantFieldset->setUseAsBaseFieldset(true);
+        $this->add($etudiantFieldset);
 
         $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);
         $inscriptionFieldset->setName("inscription");

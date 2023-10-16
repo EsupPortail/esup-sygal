@@ -122,8 +122,8 @@ setTimeout(function () {
     }
 
     if (currentUrl.indexOf("/inscription") !== -1) {
-        var confidentialiteRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][confidentialite]"]');
-        var cotutelleRadios = document.querySelectorAll('input[name="inscription[specifitesEnvisagees][coTutelle]"]');
+        var confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
+        var cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
         var additionalFieldsConfidentialite = document.getElementById('additionalFieldsConfidentialite');
         var additionalFieldsCotutelle = document.getElementById('additionalFieldsCotutelle');
 

@@ -54,13 +54,16 @@ class DisciplineService {
      * @param string $ordre
      * @return array
      */
-    public function getDisciplinesAsOptions(string $champ = 'code', string $ordre = 'ASC') : array
+    public function getDisciplinesAsOptions(string $champ = 'code', string $ordre = 'ASC', string $typeValue = 'libelle') : array
     {
         $result = $this->getDisciplines($champ, $ordre);
         $options = [];
         foreach ($result as $item) {
-            //$options[$item->getCode()] = $item->getLibelle();
-            $options[$item->getLibelle()] = $item->getLibelle();
+            if($typeValue == 'libelle'){
+                $options[$item->getLibelle()] = $item->getLibelle();
+            }elseif($typeValue == 'code'){
+                $options[$item->getCode()] = $item->getLibelle();
+            }
         }
         return $options;
     }

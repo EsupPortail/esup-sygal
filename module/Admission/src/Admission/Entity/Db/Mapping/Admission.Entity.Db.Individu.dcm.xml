@@ -16,7 +16,7 @@
         <field name="prenom3" type="string" column="PRENOM3" length="60" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="true"/>
         <field name="villeNaissance" type="string" column="VILLE_NAISSANCE" length="60" nullable="true"/>
-        <field name="nationalite" column="NATIONALITE" nullable="true"/>
+        <field name="nationalite" type="string" column="NATIONALITE" nullable="true"/>
         <field name="codeNationalite" type="string" column="CODE_NATIONALITE" length="5" nullable="true"/>
         <field name="ine" type="string" column="INE" length="11" nullable="true"/>
         <field name="adresseCodePays" type="string" column="ADRESSE_CODE_PAYS" length="5" nullable="true"/>
@@ -25,7 +25,7 @@
         <field name="adresseLigne3Batiment" type="string" column="ADRESSE_LIGNE3_BATIMENT" length="45" nullable="true"/>
         <field name="adresseLigne3Bvoie" type="string" column="ADRESSE_LIGNE3_BVOIE" length="45" nullable="true"/>
         <field name="adresseLigne4Complement" type="string" column="ADRESSE_LIGNE4_COMPLEMENT" length="45" nullable="true"/>
-        <field name="adresseCodePostal" type="integer" column="ADRESSE_CODE_POSTAL" nullable="true"/>
+        <field name="adresseCodePostal" type="bigint" column="ADRESSE_CODE_POSTAL" nullable="true"/>
         <field name="adresseCodeCommune" type="string" column="ADRESSE_CODE_COMMUNE" length="45" nullable="true"/>
         <field name="adresseCpVilleEtrangere" type="string" column="ADRESSE_CP_VILLE_ETRANGERE" length="10" nullable="true"/>
         <field name="numeroTelephone1" type="string" column="NUMERO_TELEPHONE1" length="20" nullable="true"/>
@@ -33,8 +33,8 @@
         <field name="courriel" type="string" column="COURRIEL" length="255" nullable="true"/>
         <field name="situationHandicap" type="boolean" column="SITUATION_HANDICAP" nullable="true"/>
         <field name="niveauEtude" type="boolean" column="NIVEAU_ETUDE" nullable="true"/>
-        <field name="intituleDuDiplome" type="string" column="INTITULE_DIPLOME" length="128" nullable="true"/>
-        <field name="anneeDobtentionDiplome" type="integer" column="ANNEE_OBTENTION_DIPLOME" nullable="true"/>
+        <field name="intituleDuDiplome" type="string" column="INTITULE_DU_DIPLOME" length="128" nullable="true"/>
+        <field name="anneeDobtentionDiplome" type="integer" column="ANNEE_DOBTENTION_DIPLOME" nullable="true"/>
         <field name="etablissementDobtentionDiplome" type="string" column="ETABLISSEMENT_DOBTENTION_DIPLOME" length="128" nullable="true"/>
         <field name="typeDiplomeAutre" type="boolean" column="TYPE_DIPLOME_AUTRE" nullable="true"/>
 
@@ -42,17 +42,23 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-        <many-to-one field="admissionId" target-entity="Admission\Entity\Db\Admission">
+        <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">
             <join-columns>
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="paysNaissanceId" target-entity="Application\Entity\Db\Pays">
+        <many-to-one field="paysNaissance" target-entity="Application\Entity\Db\Pays">
             <join-columns>
                 <join-column name="PAYS_NAISSANCE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+
+<!--        <many-to-one field="nationalite" target-entity="Application\Entity\Db\Pays">-->
+<!--            <join-columns>-->
+<!--                <join-column name="NATIONALITE" referenced-column-name="LIBELLE_NATIONALITE"/>-->
+<!--            </join-columns>-->
+<!--        </many-to-one>-->
 
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>

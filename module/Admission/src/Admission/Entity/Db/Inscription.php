@@ -1,8 +1,6 @@
 <?php
 namespace Admission\Entity\Db;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\UniteRecherche;
@@ -59,17 +57,17 @@ class Inscription implements HistoriqueAwareInterface{
     private $coDirection;
 
     /**
-     * @var \Structure\Entity\Db\Structure
+     * @var Structure
      */
     private $composanteDoctorat;
 
     /**
-     * @var \Structure\Entity\Db\EcoleDoctorale
+     * @var EcoleDoctorale
      */
     private $ecoleDoctorale;
 
     /**
-     * @var \Structure\Entity\Db\UniteRecherche
+     * @var UniteRecherche
      */
     private $uniteRecherche;
 
@@ -81,26 +79,23 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * @var int
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * Constructor
+     * @var Admission
      */
-    public function __construct()
-    {
-//        $this->admission_id = new ArrayCollection();
-    }
+    private $admission;
 
     /**
      * Set disciplineDoctorat.
      *
      * @param string|null $disciplineDoctorat
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setDisciplineDoctorat($disciplineDoctorat = null)
     {
-        $this->discipline_doctorat = $disciplineDoctorat;
+        $this->disciplineDoctorat = $disciplineDoctorat;
 
         return $this;
     }
@@ -112,7 +107,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getDisciplineDoctorat()
     {
-        return $this->discipline_doctorat;
+        return $this->disciplineDoctorat;
     }
 
     /**
@@ -124,7 +119,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function setNomDirecteurThese($nomDirecteurThese = null)
     {
-        $this->nom_directeur_these = $nomDirecteurThese;
+        $this->nomDirecteurThese = $nomDirecteurThese;
 
         return $this;
     }
@@ -136,7 +131,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getNomDirecteurThese()
     {
-        return $this->nom_directeur_these;
+        return $this->nomDirecteurThese;
     }
 
     /**
@@ -148,7 +143,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function setNomCodirecteurThese($nomCodirecteurThese = null)
     {
-        $this->nom_codirecteur_these = $nomCodirecteurThese;
+        $this->nomCodirecteurThese = $nomCodirecteurThese;
 
         return $this;
     }
@@ -160,7 +155,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getNomCodirecteurThese()
     {
-        return $this->nom_codirecteur_these;
+        return $this->nomCodirecteurThese;
     }
 
     /**
@@ -168,11 +163,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param string|null $titreThese
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setTitreThese($titreThese = null)
     {
-        $this->titre_these = $titreThese;
+        $this->titreThese = $titreThese;
 
         return $this;
     }
@@ -184,7 +179,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getTitreThese()
     {
-        return $this->titre_these;
+        return $this->titreThese;
     }
 
     /**
@@ -192,7 +187,7 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param bool|null $confidentialite
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setConfidentialite($confidentialite = null)
     {
@@ -216,11 +211,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param \DateTime|null $dateConfidentialite
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setDateConfidentialite($dateConfidentialite = null)
     {
-        $this->date_confidentialite = $dateConfidentialite;
+        $this->dateConfidentialite = $dateConfidentialite;
 
         return $this;
     }
@@ -232,7 +227,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getDateConfidentialite()
     {
-        return $this->date_confidentialite;
+        return $this->dateConfidentialite;
     }
 
     /**
@@ -240,11 +235,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param bool|null $coTutelle
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setCoTutelle($coTutelle = null)
     {
-        $this->co_tutelle = $coTutelle;
+        $this->coTutelle = $coTutelle;
 
         return $this;
     }
@@ -256,7 +251,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getCoTutelle()
     {
-        return $this->co_tutelle;
+        return $this->coTutelle;
     }
 
     /**
@@ -264,11 +259,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param string|null $paysCoTutelle
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setPaysCoTutelle($paysCoTutelle = null)
     {
-        $this->pays_co_tutelle = $paysCoTutelle;
+        $this->paysCoTutelle = $paysCoTutelle;
 
         return $this;
     }
@@ -280,7 +275,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getPaysCoTutelle()
     {
-        return $this->pays_co_tutelle;
+        return $this->paysCoTutelle;
     }
 
     /**
@@ -288,11 +283,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param bool|null $coEncadrement
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setCoEncadrement($coEncadrement = null)
     {
-        $this->co_encadrement = $coEncadrement;
+        $this->coEncadrement = $coEncadrement;
 
         return $this;
     }
@@ -304,7 +299,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getCoEncadrement()
     {
-        return $this->co_encadrement;
+        return $this->coEncadrement;
     }
 
     /**
@@ -312,11 +307,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param bool|null $coDirection
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setCoDirection($coDirection = null)
     {
-        $this->co_direction = $coDirection;
+        $this->coDirection = $coDirection;
 
         return $this;
     }
@@ -328,7 +323,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getCoDirection()
     {
-        return $this->co_direction;
+        return $this->coDirection;
     }
 
     /**
@@ -342,51 +337,15 @@ class Inscription implements HistoriqueAwareInterface{
     }
 
     /**
-     * Add admissionId.
-     *
-     * @param Admission $admissionId
-     *
-     * @return Diplome
-     */
-    public function addAdmissionId(Admission $admissionId)
-    {
-        $this->admission_id[] = $admissionId;
-
-        return $this;
-    }
-
-    /**
-     * Remove admissionId.
-     *
-     * @param Admission $admissionId
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeAdmissionId(Admission $admissionId)
-    {
-        return $this->admission_id->removeElement($admissionId);
-    }
-
-    /**
-     * Get admissionId.
-     *
-     * @return Collection
-     */
-    public function getAdmissionId()
-    {
-        return $this->admission_id;
-    }
-
-    /**
      * Set composanteDoctorat.
      *
      * @param Structure|null $composanteDoctorat
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setComposanteDoctorat(Structure $composanteDoctorat = null)
     {
-        $this->composante_doctorat = $composanteDoctorat;
+        $this->composanteDoctorat = $composanteDoctorat;
 
         return $this;
     }
@@ -398,7 +357,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getComposanteDoctorat()
     {
-        return $this->composante_doctorat;
+        return $this->composanteDoctorat;
     }
 
     /**
@@ -406,11 +365,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param EcoleDoctorale|null $ecoleDoctorale
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale = null)
     {
-        $this->ecole_doctorale = $ecoleDoctorale;
+        $this->ecoleDoctorale = $ecoleDoctorale;
 
         return $this;
     }
@@ -422,7 +381,7 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getEcoleDoctorale()
     {
-        return $this->ecole_doctorale;
+        return $this->ecoleDoctorale;
     }
 
     /**
@@ -430,11 +389,11 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param UniteRecherche|null $uniteRecherche
      *
-     * @return Diplome
+     * @return Inscription
      */
     public function setUniteRecherche(UniteRecherche $uniteRecherche = null)
     {
-        $this->unite_recherche = $uniteRecherche;
+        $this->uniteRecherche = $uniteRecherche;
 
         return $this;
     }
@@ -446,25 +405,30 @@ class Inscription implements HistoriqueAwareInterface{
      */
     public function getUniteRecherche()
     {
-        return $this->unite_recherche;
+        return $this->uniteRecherche;
     }
-    /**
-     * @var \Admission\Entity\Db\Admission
-     */
-    private $admissionId;
-
 
     /**
-     * Set admissionId.
+     * Set admission.
      *
-     * @param \Admission\Entity\Db\Admission|null $admissionId
+     * @param \Admission\Entity\Db\Admission|null $admission
      *
-     * @return Diplome
+     * @return Inscription
      */
-    public function setAdmissionId(\Admission\Entity\Db\Admission $admissionId = null)
+    public function setAdmission(\Admission\Entity\Db\Admission $admission = null)
     {
-        $this->admissionId = $admissionId;
+        $this->admission = $admission;
 
         return $this;
+    }
+
+    /**
+     * Get admission.
+     *
+     * @return \Admission\Entity\Db\Admission|null
+     */
+    public function getAdmission()
+    {
+        return $this->admission;
     }
 }

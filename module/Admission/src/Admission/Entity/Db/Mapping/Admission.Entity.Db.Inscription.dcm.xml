@@ -15,7 +15,7 @@
         <field name="confidentialite" type="boolean" column="CONFIDENTIALITE" nullable="true"/>
         <field name="dateConfidentialite" type="datetime" column="DATE_CONFIDENTIALITE" nullable="true"/>
         <field name="coTutelle" type="boolean" column="CO_TUTELLE" nullable="true"/>
-        <field name="paysCoTutelle" type="string" column="PAYS_COTUTELLE" length="60" nullable="true"/>
+        <field name="paysCoTutelle" type="string" column="PAYS_CO_TUTELLE" length="60" nullable="true"/>
         <field name="coEncadrement" type="boolean" column="CO_ENCADREMENT" nullable="true"/>
         <field name="coDirection" type="boolean" column="CO_DIRECTION" nullable="true"/>
 
@@ -23,7 +23,7 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-        <many-to-one field="admissionId" target-entity="Admission\Entity\Db\Admission">
+        <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">
             <join-columns>
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
             </join-columns>

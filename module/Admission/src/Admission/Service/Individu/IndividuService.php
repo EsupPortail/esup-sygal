@@ -2,14 +2,17 @@
 
 namespace Admission\Service\Individu;
 
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Individu;
 use Admission\Entity\Db\Repository\IndividuRepository;
+use Admission\Entity\Db\Repository\ValidationRepository;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use DateTime;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\ORMException;
 use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
@@ -34,15 +37,17 @@ class IndividuService extends BaseService
 
     /**
      * @param Individu $individu
+     * @param Admission $admission
      * @return Individu
      */
-    public function create(Individu $individu) : Individu
+    public function create(Individu $individu, Admission $admission) : Individu
     {
         try {
             $date = new DateTime();
             $user = $this->userContextService->getIdentityDb();
             $individu->setHistoModification($date);
             $individu->setHistoModificateur($user);
+            $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->persist($individu);
             $this->getEntityManager()->flush($individu);
         } catch(ORMException $e) {
@@ -51,8 +56,6 @@ class IndividuService extends BaseService
 
         return $individu;
     }
-
-
 
     /**
      * @param Individu $individu

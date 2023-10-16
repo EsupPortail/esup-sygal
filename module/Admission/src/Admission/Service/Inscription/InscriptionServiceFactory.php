@@ -33,7 +33,7 @@ class InscriptionServiceFactory {
          */
         $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
 
-        $service = new AdmissionService();
+        $service = new InscriptionService();
         $service->setRoleService($roleService);
         $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);

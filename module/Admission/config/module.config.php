@@ -5,6 +5,8 @@ namespace Admission;
 
 use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
+use Admission\Entity\Db\Repository\IndividuRepository;
+use Admission\Entity\Db\Repository\IndividuRepositoryFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
@@ -15,7 +17,16 @@ use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldsetFactory;
 use Admission\Form\Fieldset\Validation\ValidationFieldset;
 use Admission\Form\Fieldset\Validation\ValidationFieldsetFactory;
+use Admission\Hydrator\AdmissionHydrator;
+use Admission\Hydrator\AdmissionHydratorFactory;
+use Admission\Hydrator\FinancementHydrator;
+use Admission\Hydrator\FinancementHydratorFactory;
 use Admission\Hydrator\IndividuHydrator;
+use Admission\Hydrator\IndividuHydratorFactory;
+use Admission\Hydrator\InscriptionHydrator;
+use Admission\Hydrator\InscriptionHydratorFactory;
+use Admission\Hydrator\ValidationHydrator;
+use Admission\Hydrator\ValidationHydratorFactory;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
 use Admission\Service\Financement\FinancementService;
@@ -84,13 +95,17 @@ return array(
                     'ajouter' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/:action',
+                            'route' => '/:action/:individu',
                             'constraints' => [
                                 /**
-                                 * @see AdmissionController::ajouterAction()
-                                 * @see AdmissionController::ajouterEtudiantAction()
+                                 * @see AdmissionController::etudiantAction()
+                                 * @see AdmissionController::inscriptionAction()
+                                 * @see AdmissionController::financementAction()
+                                 * @see AdmissionController::validationAction()Action()
+                                 *
                                  */
-                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'individu' => '[0-9]*'
                             ],
                         ],
                     ],
@@ -106,7 +121,7 @@ return array(
         ],
     ],
 
-    'form_manager' => [
+    'form_elements' => [
         'factories' => [
             AdmissionForm::class => AdmissionFormFactory::class,
             EtudiantFieldset::class => EtudiantFieldsetFactory::class,
@@ -118,6 +133,11 @@ return array(
 
     'hydrators' => [
         'factories' => [
+            AdmissionHydrator::class => AdmissionHydratorFactory::class,
+            IndividuHydrator::class => IndividuHydratorFactory::class,
+            InscriptionHydrator::class => InscriptionHydratorFactory::class,
+            FinancementHydrator::class => FinancementHydratorFactory::class,
+            ValidationHydrator::class => ValidationHydratorFactory::class
         ],
     ],
 

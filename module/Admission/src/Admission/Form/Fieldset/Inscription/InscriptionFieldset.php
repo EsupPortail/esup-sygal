@@ -3,6 +3,7 @@ namespace Admission\Form\Fieldset\Inscription;
 
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
@@ -237,18 +238,30 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             'disciplineDoctorat' => [
                 'name' => 'disciplineDoctorat',
                 'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
             ],
             'composanteDoctorat' => [
                 'name' => 'composanteDoctorat',
                 'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
             ],
             'ecoleDoctorale' => [
                 'name' => 'ecoleDoctorale',
                 'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
             ],
             'uniteRecherche' => [
                 'name' => 'uniteRecherche',
                 'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
             ],
             'nomDirecteurThese' => [
                 'name' => 'nomDirecteurThèse',
@@ -264,6 +277,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 'filters' => [
                     ['name' => StripTags::class],
                     ['name' => StringTrim::class],
+                    ['name' => ToNull::class],
                 ],
             ],
             //Spécifités envisagées

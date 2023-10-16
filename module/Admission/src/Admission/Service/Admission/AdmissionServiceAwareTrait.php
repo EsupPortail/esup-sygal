@@ -7,21 +7,21 @@ trait AdmissionServiceAwareTrait
     /**
      * @var AdmissionService
      */
-    protected $diplomeService;
+    protected $admissionService;
 
     /**
-     * @param AdmissionService $diplomeService
+     * @param AdmissionService $admissionService
      */
-    public function setDiplomeService(AdmissionService $diplomeService): void
+    public function setAdmissionService(AdmissionService $admissionService): void
     {
-        $this->diplomeService = $diplomeService;
+        $this->admissionService = $admissionService;
     }
 
     /**
      * @return AdmissionService
      */
-    public function getDiplomeService(): AdmissionService
+    public function getAdmissionService(): AdmissionService
     {
-        return $this->diplomeService;
+        return $this->admissionService;
     }
 }

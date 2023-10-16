@@ -30,7 +30,7 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
     public function setUrlPaysNationalite(string $urlPaysNationalite): void
     {
         $this->$urlPaysNationalite = $urlPaysNationalite;
-        $this->get('paysNationalite')->setAutocompleteSource($this->$urlPaysNationalite);
+        $this->get('paysNaissance')->setAutocompleteSource($this->$urlPaysNationalite);
     }
 
     public function setUrlNationalite(string $urlNationalite): void
@@ -112,16 +112,17 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                 ->setLabel("Date de naissance :")
         );
 
-        $paysNationalite = new SearchAndSelect('paysNationalite', ['label' => "Pays de naissance :"]);
-        $paysNationalite
+        $paysNaissance = new SearchAndSelect('paysNaissance', ['label' => "Pays de naissance :"]);
+        $paysNaissance
             ->setAutocompleteSource($this->urlPaysNationalite)
-            ->setSelectionRequired()
+            ->setSelectionRequired(false)
+            ->setRequired(false)
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
-                'id' => 'paysNationalite',
+                'id' => 'paysNaissance',
             ]);
-        $this->add($paysNationalite);
+        $this->add($paysNaissance);
 
         $this->add(
             (new Text('villeNaissance'))
@@ -339,8 +340,8 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                 'name' => 'dateNaissance',
                 'required' => false,
             ],
-            'paysNationalite' => [
-                'name' => 'paysNationalite',
+            'paysNaissance' => [
+                'name' => 'paysNaissance',
                 'required' => false,
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */

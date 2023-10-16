@@ -34,6 +34,15 @@ class AdmissionService extends BaseService
         return $repo;
     }
 
+    public function findIfCurrentUserAlreadyHasAdmission(){
+        $userId = $this->userContextService->getIdentityDb()->getId();
+        $admission = $this->getRepository()->findOneByIndividuId($userId);
+        if($admission !== null){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param Admission $admission
      * @return Admission

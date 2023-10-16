@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Admission;
 
+use Admission\Service\Inscription\InscriptionService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
@@ -16,7 +17,7 @@ class AdmissionServiceFactory {
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): InscriptionService
+    public function __invoke(ContainerInterface $container): AdmissionService
     {
         /**
          * @var RoleService $roleService
@@ -32,7 +33,7 @@ class AdmissionServiceFactory {
          */
         $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
 
-        $service = new InscriptionService();
+        $service = new AdmissionService()   ;
         $service->setRoleService($roleService);
         $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);

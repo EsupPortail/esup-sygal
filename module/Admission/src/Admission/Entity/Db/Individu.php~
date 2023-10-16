@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Application\Entity\Db\Pays;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -153,26 +154,19 @@ class Individu implements HistoriqueAwareInterface{
     private $typeDiplomeAutre;
 
     /**
-     * @var int
+     * @var ?int
      */
-    private $id;
+    private ?int $id = null;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Admission
      */
-    private $admissionId;
+    private $admission;
 
     /**
-     * @var \Application\Entity\Db\Pays
+     * @var Pays
      */
-    private $paysNaissanceId;
-    /**
-     * Constructor
-     */
-    public function Construct()
-    {
-        $this->admissionId = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    private $paysNaissance = null;
 
     /**
      * Set civilite.
@@ -881,76 +875,50 @@ class Individu implements HistoriqueAwareInterface{
     }
 
     /**
-     * Add admissionId.
+     * Set paysNaissance.
      *
-     * @param \Admission\Entity\Admission $admissionId
+     * @param Pays|null $paysNaissance
      *
      * @return Individu
      */
-    public function addAdmissionId(\Admission\Entity\Admission $admissionId)
+    public function setPaysNaissance(?Pays $paysNaissance): Individu
     {
-        $this->admissionId[] = $admissionId;
+        $this->paysNaissance = $paysNaissance;
 
         return $this;
     }
 
     /**
-     * Remove admissionId.
+     * Get paysNaissance.
      *
-     * @param \Admission\Entity\Admission $admissionId
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     * @return Pays|null
      */
-    public function removeAdmissionId(\Admission\Entity\Admission $admissionId)
+    public function getPaysNaissance()
     {
-        return $this->admissionId->removeElement($admissionId);
+        return $this->paysNaissance;
     }
 
     /**
-     * Get admissionId.
+     * Set admission.
      *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getAdmissionId()
-    {
-        return $this->admissionId;
-    }
-
-    /**
-     * Set paysNaissanceId.
-     *
-     * @param \Application\Entity\Db\Pays|null $paysNaissanceId
+     * @param Admission|null $admission
      *
      * @return Individu
      */
-    public function setPaysNaissanceId(\Application\Entity\Db\Pays $paysNaissanceId = null)
+    public function setAdmission(Admission $admission = null)
     {
-        $this->paysNaissanceId = $paysNaissanceId;
+        $this->admission = $admission;
 
         return $this;
     }
 
     /**
-     * Get paysNaissanceId.
+     * Get admission.
      *
-     * @return \Application\Entity\Db\Pays|null
+     * @return Admission|null
      */
-    public function getPaysNaissanceId()
+    public function getAdmission()
     {
-        return $this->paysNaissanceId;
-    }
-
-    /**
-     * Set admissionId.
-     *
-     * @param \Admission\Entity\Db\Admission|null $admissionId
-     *
-     * @return Individu
-     */
-    public function setAdmissionId(\Admission\Entity\Db\Admission $admissionId = null)
-    {
-        $this->admissionId = $admissionId;
-
-        return $this;
+        return $this->admission;
     }
 }

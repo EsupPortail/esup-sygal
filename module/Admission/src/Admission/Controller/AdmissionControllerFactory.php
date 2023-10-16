@@ -2,7 +2,9 @@
 namespace Admission\Controller;
 
 use Admission\Form\Admission\AdmissionForm;
+use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Individu\IndividuService;
+use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
 use Application\Service\Discipline\DisciplineService;
 use Interop\Container\ContainerInterface;
@@ -29,7 +31,10 @@ class AdmissionControllerFactory implements FactoryInterface
          * @var NotifierService $notifierService
          */
         $structureService = $container->get(StructureService::class);
-        $individuService = $container->get(IndividuService::class);
+        $individuAdmissionService = $container->get(IndividuService::class);
+        $individuService = $container->get(\Individu\Service\IndividuService::class);
+        $inscriptionService = $container->get(InscriptionService::class);
+        $admissionService = $container->get(AdmissionService::class);
         $disciplineService = $container->get(DisciplineService::class);
         $notificationFactory = $container->get(NotificationFactory::class);
         $notifierService = $container->get(NotifierService::class);
@@ -42,7 +47,10 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller = new AdmissionController();
 
         $controller->setStructureService($structureService);
+        $controller->setIndividuAdmissionService($individuAdmissionService);
+        $controller->setInscriptionService($inscriptionService);
         $controller->setIndividuService($individuService);
+        $controller->setAdmissionService($admissionService);
         $controller->setDisciplineService($disciplineService);
         $controller->setNotificationFactory($notificationFactory);
         $controller->setNotifierService($notifierService);

@@ -2,14 +2,19 @@
 
 namespace Admission\Controller;
 
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Individu;
+use Admission\Entity\Db\Inscription;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormAwareTrait;
 use Admission\Hydrator\IndividuHydrator;
 use Admission\Provider\Template\MailTemplates;
+use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Individu\IndividuServiceAwareTrait;
+use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
+use Doctrine\ORM\Exception\NotSupported;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Notification\Exception\RuntimeException;
@@ -27,6 +32,9 @@ class AdmissionController extends AdmissionAbstractController {
     use NotifierServiceAwareTrait;
     use AdmissionFormAwareTrait;
     use IndividuServiceAwareTrait;
+    use \Individu\Service\IndividuServiceAwareTrait;
+    use AdmissionServiceAwareTrait;
+    use InscriptionServiceAwareTrait;
 
     public function ajouterAction(): Response
     {
@@ -36,34 +44,23 @@ class AdmissionController extends AdmissionAbstractController {
             ->start(); // réinit du plugin et redirection vers la 1ère étape
     }
 
-    public function etudiantEnregistrerAction(){
-        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
-        $this->getEtudiantForm()->bindValues($data);
-//        var_dump($data);
-
-        $request = $this->getRequest();
-//        var_dump($request->isPost());
-        if ($request->isPost()) {
-            $postData = $request->getPost();
-            var_dump($postData); // Affichez les données pour déboguer
-        }
-    }
-
     public function etudiantAction(): Response|ViewModel
     {
         $this->getEtudiantForm()->get('etudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
         $this->getEtudiantForm()->get('etudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
 
 //        var_dump($this->params()->fromPost()[MultipageFormNavFieldset::NAME] == MultipageFormNavFieldset::NAME_NEXT);
-        var_dump($this->params()->fromPost());
+//        var_dump($this->params()->fromPost());
         $response = $this->processMultipageForm($this->getEtudiantForm());
         $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
 
-//
-        $individu = $this->getEtudiantForm()->getObject();
-        var_dump($individu);
-//        $this->individuService->create($individu);
-//        var_dump($this->getEtudiantForm()->get('etudiant'));
+        //si l'utilisateur possède déjà un dossier d'admission
+//        if($this->admissionService->findIfCurrentUserAlreadyHasAdmission()){
+            //Récupération de l'objet -> A FAIRE
+
+            //rempli le formulaire des données de l'objet
+//            $this->getEtudiantForm()->bind();
+//        }
         if ($response instanceof Response) {
             return $response;
         }
@@ -73,15 +70,18 @@ class AdmissionController extends AdmissionAbstractController {
         return $response;
     }
 
+    /**
+     * @throws NotSupported
+     */
     public function inscriptionAction(): Response|ViewModel
     {
-        var_dump($this->params()->fromPost());
-
+//        var_dump($this->params()->fromPost());
+//        var_dump($this->params()->fromRoute('individu'));
         //Partie Informations sur l'inscription
         $this->getEtudiantForm()->get('inscription')->setUrlDirecteurThese($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
         $this->getEtudiantForm()->get('inscription')->setUrlCoDirecteurThese($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
         $this->getEtudiantForm()->get('inscription')->setUrlEtablissement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
-        $disciplines = $this->getDisciplineService()->getDisciplinesAsOptions();
+        $disciplines = $this->getDisciplineService()->getDisciplinesAsOptions('code','ASC','code');
         $this->getEtudiantForm()->get('inscription')->setDisciplines($disciplines);
         $ecoles = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false);
         $this->getEtudiantForm()->get('inscription')->setEcolesDoctorales($ecoles);
@@ -92,6 +92,41 @@ class AdmissionController extends AdmissionAbstractController {
         $this->getEtudiantForm()->get('inscription')->setUrlPaysCoTutelle($this->url()->fromRoute('pays/rechercher-pays', [], ["query" => []], true));
 
         $response = $this->processMultipageForm($this->getEtudiantForm());
+        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+//        var_dump($data);
+//        $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
+//        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
+//
+//        //Si l'individu ne possède pas de dossier d'admission, on lui crée puis associe un fieldset étudiant
+//        if($admission === null){
+//            try {
+//                $this->getEtudiantForm()->get('etudiant')->bindValues($data['etudiant']);
+//                /** @var Admission $admission */
+//                $admission = $this->getEtudiantForm()->getObject();
+//                $admission->setIndividuId($individu);
+//
+//                $entity = $this->getEtudiantForm()->get('etudiant')->getObject();
+//                $entity->setAdmission($admission);
+//
+//                $this->individuAdmissionService->create($entity, $admission);
+//            }catch (\Exception $e) {
+//                var_dump($e);
+//            }
+//        }else{
+////            var_dump("l'individu possède déjà un dossier d'admission");
+//            //Faire l'update du fieldset étudiant
+//
+//            //Vérifier que le fieldset inscription existe et si oui : populate les valeurs avec la BDD
+////            var_dump($admission);
+//            $inscriptionFieldset = $this->inscriptionService->getRepository()->findOneByAdmission($admission->getId());
+//            var_dump($inscriptionFieldset);
+//            if($inscriptionFieldset instanceof Inscription){
+//                $this->getEtudiantForm()->get('inscription')->bind($inscriptionFieldset);
+//            }else{
+//                var_dump("le fieldset Inscription n'est pas initialisé");
+//            }
+//        }
+
         if ($response instanceof Response) {
             return $response;
         }
@@ -166,5 +201,29 @@ class AdmissionController extends AdmissionAbstractController {
         }
 
         return $this->redirect()->toRoute('home', [], [], true );
+    }
+
+    public function saveData($fieldsetName, $service, $data){
+//        if (isset($data[$fieldsetName]['nationalite']['label'])) {
+//            $data[$fieldsetName]['nationalite'] = $data[$fieldsetName]['nationalite']['label'];
+//        }
+        $this->getEtudiantForm()->get($fieldsetName)->bindValues($data[$fieldsetName]);
+
+        if(!$service->getRepository()->findIfCurrentUserHasAlreadyAdmission()){
+            try {
+                $admission = new Admission();
+
+                $entity = $this->getEtudiantForm()->get('etudiant')->getObject();
+                $entity->setAdmission($admission);
+                var_dump($entity);
+                $service->getEntityManager()->persist($admission);
+                $service->create($entity);
+            }
+            catch (\Exception $e) {
+
+            }
+        }else{
+
+        }
     }
 }

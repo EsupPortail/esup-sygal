@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -17,37 +18,38 @@ class Admission implements HistoriqueAwareInterface{
     /**
      * @var int
      */
-    private $id;
+    private ?int $id = null;
+
 
     /**
      * @var Collection
      */
-    private $financements;
+    private $financement;
 
     /**
      * @var Collection
      */
-    private $individus;
+    private $individu;
 
     /**
      * @var Collection
      */
-    private $inscriptions;
+    private $inscription;
 
     /**
      * @var Collection
      */
-    private $validations;
+    private $validation;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->financements = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->individus = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->inscriptions = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->validations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->financement = new ArrayCollection();
+        $this->individu = new ArrayCollection();
+        $this->inscription = new ArrayCollection();
+        $this->validation = new ArrayCollection();
     }
 
     /**
@@ -91,9 +93,9 @@ class Admission implements HistoriqueAwareInterface{
      *
      * @return Admission
      */
-    public function addFinancement(Financement $financement)
+    public function addFinancement(Financement $financement): Admission
     {
-        $this->financements[] = $financement;
+        $this->financement[] = $financement;
 
         return $this;
     }
@@ -105,19 +107,9 @@ class Admission implements HistoriqueAwareInterface{
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeFinancement(Financement $financement)
+    public function removeFinancement(Financement $financement): bool
     {
-        return $this->financements->removeElement($financement);
-    }
-
-    /**
-     * Get financements.
-     *
-     * @return Collection
-     */
-    public function getFinancements()
-    {
-        return $this->financements;
+        return $this->financement->removeElement($financement);
     }
 
     /**
@@ -127,9 +119,9 @@ class Admission implements HistoriqueAwareInterface{
      *
      * @return Admission
      */
-    public function addIndividu(Individu $individu)
+    public function addIndividu(Individu $individu): Admission
     {
-        $this->individus[] = $individu;
+        $this->individu[] = $individu;
 
         return $this;
     }
@@ -143,17 +135,7 @@ class Admission implements HistoriqueAwareInterface{
      */
     public function removeIndividu(Individu $individu)
     {
-        return $this->individus->removeElement($individu);
-    }
-
-    /**
-     * Get individus.
-     *
-     * @return Collection
-     */
-    public function getIndividus()
-    {
-        return $this->individus;
+        return $this->individu->removeElement($individu);
     }
 
     /**
@@ -163,9 +145,9 @@ class Admission implements HistoriqueAwareInterface{
      *
      * @return Admission
      */
-    public function addInscription(Inscription $inscription)
+    public function addInscription(Inscription $inscription): Admission
     {
-        $this->inscriptions[] = $inscription;
+        $this->inscription[] = $inscription;
 
         return $this;
     }
@@ -177,21 +159,10 @@ class Admission implements HistoriqueAwareInterface{
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeInscription(Inscription $inscription)
+    public function removeInscription(Inscription $inscription): bool
     {
-        return $this->inscriptions->removeElement($inscription);
+        return $this->inscription->removeElement($inscription);
     }
-
-    /**
-     * Get inscriptions.
-     *
-     * @return Collection
-     */
-    public function getInscriptions()
-    {
-        return $this->inscriptions;
-    }
-
     /**
      * Add validation.
      *
@@ -201,7 +172,7 @@ class Admission implements HistoriqueAwareInterface{
      */
     public function addValidation(Validation $validation)
     {
-        $this->validations[] = $validation;
+        $this->validation[] = $validation;
 
         return $this;
     }
@@ -215,16 +186,75 @@ class Admission implements HistoriqueAwareInterface{
      */
     public function removeValidation(Validation $validation)
     {
-        return $this->validations->removeElement($validation);
+        return $this->validation->removeElement($validation);
     }
 
     /**
-     * Get validations.
+     * Get financement.
      *
      * @return Collection
      */
-    public function getValidations()
+    public function getFinancement()
     {
-        return $this->validations;
+        return $this->financement;
+    }
+
+    /**
+     * Get individu.
+     *
+     * @return Collection
+     */
+    public function getIndividu()
+    {
+        return $this->individu;
+    }
+
+    /**
+     * Get inscription.
+     *
+     * @return Collection
+     */
+    public function getInscription()
+    {
+        return $this->inscription;
+    }
+
+    /**
+     * Get validation.
+     *
+     * @return Collection
+     */
+    public function getValidation()
+    {
+        return $this->validation;
+    }
+    /**
+     * @var \Individu\Entity\Db\Individu
+     */
+    private $individuId;
+
+
+    /**
+     * Set individuId.
+     *
+     * @param \Individu\Entity\Db\Individu|null $individuId
+     *
+     * @return Admission
+     */
+    public function setIndividuId(\Individu\Entity\Db\Individu $individuId = null)
+    {
+        $this->individuId = $individuId;
+
+        return $this;
+    }
+
+    /**
+     * Get individuId.
+     *
+     * @return \Individu\Entity\Db\Individu|null
+     */
+    public function getIndividuId()
+    {
+        return $this->individuId;
     }
 }

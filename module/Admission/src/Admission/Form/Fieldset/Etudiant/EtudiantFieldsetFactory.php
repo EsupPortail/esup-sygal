@@ -18,7 +18,6 @@ class EtudiantFieldsetFactory
     {
         /** @var IndividuHydrator $IndividuHydrator */
         $etudiantHydrator = $container->get('HydratorManager')->get(IndividuHydrator::class);
-
         $fieldset = new EtudiantFieldset();
         $fieldset->setHydrator($etudiantHydrator);
         $fieldset->setObject(new Individu());

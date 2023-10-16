@@ -7,21 +7,21 @@ trait IndividuServiceAwareTrait
     /**
      * @var IndividuService
      */
-    protected IndividuService $individuService;
+    protected IndividuService $individuAdmissionService;
 
     /**
-     * @param IndividuService $individuService
+     * @param IndividuService $individuAdmissionService
      */
-    public function setIndividuService(IndividuService $individuService): void
+    public function setIndividuAdmissionService(IndividuService $individuAdmissionService): void
     {
-        $this->individuService = $individuService;
+        $this->individuAdmissionService = $individuAdmissionService;
     }
 
     /**
      * @return IndividuService
      */
-    public function getIndividuService(): IndividuService
+    public function getIndividuAdmissionService(): IndividuService
     {
-        return $this->individuService;
+        return $this->individuAdmissionService;
     }
 }

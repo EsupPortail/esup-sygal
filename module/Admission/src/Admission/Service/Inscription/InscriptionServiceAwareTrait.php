@@ -12,7 +12,7 @@ trait InscriptionServiceAwareTrait
     /**
      * @param InscriptionService $inscriptionService
      */
-    public function setInscriptionService(InscriptionService $inscriptionService)
+    public function setInscriptionService(InscriptionService $inscriptionService): void
     {
         $this->inscriptionService = $inscriptionService;
     }
@@ -20,7 +20,7 @@ trait InscriptionServiceAwareTrait
     /**
      * @return InscriptionService
      */
-    public function getInscriptionService()
+    public function getInscriptionService(): InscriptionService
     {
         return $this->inscriptionService;
     }
