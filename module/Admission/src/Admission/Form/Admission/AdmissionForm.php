@@ -7,6 +7,7 @@ use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Laminas\Form\Element\Collection;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Form\MultipageForm;
 

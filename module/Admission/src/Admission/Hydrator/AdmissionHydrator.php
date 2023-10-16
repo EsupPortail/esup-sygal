@@ -22,25 +22,18 @@ class AdmissionHydrator extends DoctrineObject
 
     public function hydrate(array $data, object $object): object
     {
-//        if (isset($data['inscription'])) {
-//            $data['inscriptions'][] = $data['inscription'];
-//            unset($data['inscription']);
-//        }
-//
-//        if (isset($data['financement'])) {
-//            $data['financements'][] = $data['financement'];
-//            unset($data['financement']);
-//        }
-//
-//        if (isset($data['individu'])) {
-//            $data['individus'][] = $data['individu'];
-//            unset($data['individu']);
-//        }
-//
-//        if (isset($data['validation'])) {
-//            $data['validations'][] = $data['validation'];
-//            unset($data['validation']);
-//        }
+        if (isset($data['inscription']) && !is_array($data['inscription'])) {
+            $data['inscription'] = [$data['inscription']];
+        }
+        if (isset($data['financement']) && !is_array($data['financement'])) {
+            $data['financement'] = [$data['financement']];
+        }
+        if (isset($data['individu']) && !is_array($data['individu'])) {
+            $data['individu'] = [$data['individu']];
+        }
+        if (isset($data['validation']) && !is_array($data['validation'])) {
+            $data['validation'] = [$data['validation']];
+        }
 
         return parent::hydrate($data, $object);
     }

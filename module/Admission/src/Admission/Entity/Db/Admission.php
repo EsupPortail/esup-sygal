@@ -88,105 +88,90 @@ class Admission implements HistoriqueAwareInterface{
 
     /**
      * Add financement.
-     *
-     * @param Financement $financement
-     *
-     * @return Admission
      */
-    public function addFinancement(Financement $financement): Admission
+    public function addFinancement(Collection $financements): Admission
     {
-        $this->financement[] = $financement;
+        foreach ($financements as $f) {
+            $this->financement->add($f);
+        }
 
         return $this;
     }
 
     /**
-     * Remove financement.
-     *
-     * @param Financement $financement
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     * Remove financements.
      */
-    public function removeFinancement(Financement $financement): bool
+    public function removeFinancement(Collection $financements): void
     {
-        return $this->financement->removeElement($financement);
+        foreach ($financements as $f) {
+            $this->financement->removeElement($f);
+        }
     }
 
     /**
      * Add individu.
-     *
-     * @param Individu $individu
-     *
-     * @return Admission
      */
-    public function addIndividu(Individu $individu): Admission
+    public function addIndividu(Collection $individus): Admission
     {
-        $this->individu[] = $individu;
+        foreach ($individus as $i) {
+            $this->individu->add($i);
+        }
 
         return $this;
     }
 
     /**
-     * Remove individu.
-     *
-     * @param Individu $individu
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     * Remove individus.
      */
-    public function removeIndividu(Individu $individu)
+    public function removeIndividu(Collection $individus): void
     {
-        return $this->individu->removeElement($individu);
+        foreach ($individus as $i) {
+            $this->individu->removeElement($i);
+        }
     }
 
     /**
-     * Add inscription.
-     *
-     * @param Inscription $inscription
-     *
-     * @return Admission
+     * Add inscriptions.
      */
-    public function addInscription(Inscription $inscription): Admission
+    public function addInscription(Collection $inscriptions): Admission
     {
-        $this->inscription[] = $inscription;
+        foreach ($inscriptions as $i) {
+            $this->inscription->add($i);
+        }
 
         return $this;
     }
 
     /**
-     * Remove inscription.
-     *
-     * @param Inscription $inscription
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     * Remove inscriptions.
      */
-    public function removeInscription(Inscription $inscription): bool
+    public function removeInscription(Collection $inscriptions): void
     {
-        return $this->inscription->removeElement($inscription);
+        foreach ($inscriptions as $i) {
+            $this->inscription->removeElement($i);
+        }
     }
+
     /**
      * Add validation.
-     *
-     * @param Validation $validation
-     *
-     * @return Admission
      */
-    public function addValidation(Validation $validation)
+    public function addValidation(Collection $validations): self
     {
-        $this->validation[] = $validation;
+        foreach ($validations as $v) {
+            $this->validation->add($v);
+        }
 
         return $this;
     }
 
     /**
      * Remove validation.
-     *
-     * @param Validation $validation
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeValidation(Validation $validation)
+    public function removeValidation(Collection $validations): void
     {
-        return $this->validation->removeElement($validation);
+        foreach ($validations as $v) {
+            $this->validation->removeElement($v);
+        }
     }
 
     /**
