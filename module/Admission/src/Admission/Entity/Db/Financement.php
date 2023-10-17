@@ -30,17 +30,9 @@ class Financement implements HistoriqueAwareInterface{
     private $id;
 
     /**
-     * @var Collection
+     * @var Admission
      */
-    private $admissionId;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->admissionId = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    private $admission;
 
     /**
      * Set contratDoctoral.
@@ -125,52 +117,26 @@ class Financement implements HistoriqueAwareInterface{
     }
 
     /**
-     * Add admissionId.
+     * Set admission.
      *
-     * @param \Admission\Entity\Admission $admissionId
+     * @param Admission|null $admission
      *
      * @return Financement
      */
-    public function addAdmissionId(\Admission\Entity\Admission $admissionId)
+    public function setAdmission(Admission $admission = null)
     {
-        $this->admissionId[] = $admissionId;
+        $this->admission = $admission;
 
         return $this;
     }
 
     /**
-     * Remove admissionId.
+     * Get admission.
      *
-     * @param Admission $admissionId
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     * @return Admission|null
      */
-    public function removeAdmissionId(Admission $admissionId)
+    public function getAdmission()
     {
-        return $this->admissionId->removeElement($admissionId);
-    }
-
-    /**
-     * Get admissionId.
-     *
-     * @return Collection
-     */
-    public function getAdmissionId()
-    {
-        return $this->admissionId;
-    }
-
-    /**
-     * Set admissionId.
-     *
-     * @param Admission|null $admissionId
-     *
-     * @return Financement
-     */
-    public function setAdmissionId(Admission $admissionId = null)
-    {
-        $this->admissionId = $admissionId;
-
-        return $this;
+        return $this->admission;
     }
 }

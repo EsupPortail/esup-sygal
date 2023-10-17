@@ -87,6 +87,11 @@ class Inscription implements HistoriqueAwareInterface{
     private $admission;
 
     /**
+     * @var string|null
+     */
+    private $specialiteDoctorat;
+
+    /**
      * Set disciplineDoctorat.
      *
      * @param string|null $disciplineDoctorat
@@ -430,5 +435,29 @@ class Inscription implements HistoriqueAwareInterface{
     public function getAdmission()
     {
         return $this->admission;
+    }
+
+    /**
+     * Set specialiteDoctorat.
+     *
+     * @param string|null $specialiteDoctorat
+     *
+     * @return Inscription
+     */
+    public function setSpecialiteDoctorat($specialiteDoctorat = null)
+    {
+        $this->specialiteDoctorat = $specialiteDoctorat;
+
+        return $this;
+    }
+
+    /**
+     * Get specialiteDoctorat.
+     *
+     * @return string|null
+     */
+    public function getSpecialiteDoctorat()
+    {
+        return $this->specialiteDoctorat;
     }
 }

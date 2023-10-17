@@ -3,9 +3,11 @@ namespace Admission\Controller;
 
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Service\Admission\AdmissionService;
+use Admission\Service\Financement\FinancementService;
 use Admission\Service\Individu\IndividuService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
+use Admission\Service\Validation\ValidationService;
 use Application\Service\Discipline\DisciplineService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -34,6 +36,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $individuAdmissionService = $container->get(IndividuService::class);
         $individuService = $container->get(\Individu\Service\IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
+        $financementService = $container->get(FinancementService::class);
+        $validationService = $container->get(ValidationService::class);
         $admissionService = $container->get(AdmissionService::class);
         $disciplineService = $container->get(DisciplineService::class);
         $notificationFactory = $container->get(NotificationFactory::class);
@@ -50,6 +54,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setIndividuAdmissionService($individuAdmissionService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setIndividuService($individuService);
+        $controller->setFinancementService($financementService);
+        $controller->setValidationService($validationService);
         $controller->setAdmissionService($admissionService);
         $controller->setDisciplineService($disciplineService);
         $controller->setNotificationFactory($notificationFactory);

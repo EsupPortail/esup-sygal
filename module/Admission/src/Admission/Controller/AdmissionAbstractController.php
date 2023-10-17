@@ -19,7 +19,7 @@ class AdmissionAbstractController extends AbstractActionController
     protected function processMultipageForm(AdmissionForm $form): ViewModel|Response
     {
         $response = $this->multipageForm($form)
-            ->setUsePostRedirectGet()
+            ->setUsePostRedirectGet(false)
             ->process();
 
         if ($response instanceof Response) {

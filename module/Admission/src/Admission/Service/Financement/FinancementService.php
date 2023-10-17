@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Financement;
 
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Repository\FinancementRepository;
 use Application\Service\BaseService;
@@ -36,13 +37,14 @@ class FinancementService extends BaseService
      * @param Financement $financement
      * @return Financement
      */
-    public function create(Financement $financement) : Financement
+    public function create(Financement $financement, Admission $admission) : Financement
     {
         try {
             $date = new DateTime();
             $user = $this->userContextService->getIdentityDb();
             $financement->setHistoModification($date);
             $financement->setHistoModificateur($user);
+            $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->persist($financement);
             $this->getEntityManager()->flush($financement);
         } catch(ORMException $e) {

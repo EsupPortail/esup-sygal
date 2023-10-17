@@ -35,6 +35,8 @@ use Admission\Service\Individu\IndividuService;
 use Admission\Service\Individu\IndividuServiceFactory;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Inscription\InscriptionServiceFactory;
+use Admission\Service\Validation\ValidationService;
+use Admission\Service\Validation\ValidationServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Laminas\Router\Http\Segment;
@@ -73,7 +75,8 @@ return array(
                         'confirmer',
                         'annuler',
                         'etudiantEnregistrer',
-                        'enregistrer'
+                        'enregistrer',
+                        'rechercher-individu'
                     ]
                 ]
             ]
@@ -106,6 +109,15 @@ return array(
                                  */
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'individu' => '[0-9]*'
+                            ],
+                        ],
+                    ],
+                    'rechercher-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/rechercher-individu',
+                            'defaults'    => [
+                                'action' => 'rechercher-individu',
                             ],
                         ],
                     ],
@@ -146,7 +158,8 @@ return array(
             AdmissionService::class => AdmissionServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,
             IndividuService::class => IndividuServiceFactory::class,
-            InscriptionService::class => InscriptionServiceFactory::class
+            InscriptionService::class => InscriptionServiceFactory::class,
+            ValidationService::class => ValidationServiceFactory::class
         ],
     ],
 

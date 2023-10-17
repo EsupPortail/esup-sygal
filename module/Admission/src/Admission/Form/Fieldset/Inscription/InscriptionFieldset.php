@@ -22,7 +22,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     private $ecolesDoctorales = null;
     /** @var array */
     private $unitesRecherche = null;
-    private $disciplines = null;
+    private $specialites = null;
 
 
     public function setUrlDirecteurThese(string $urlDirecteurThese): void
@@ -43,10 +43,10 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->get('composanteDoctorat')->setAutocompleteSource($this->urlEtablissement);
     }
 
-    public function setDisciplines(array $disciplines): void
+    public function setSpecialites(array $specialites): void
     {
-        $this->disciplines = $disciplines;
-        $this->get('disciplineDoctorat')->setValueOptions($disciplines);
+        $this->specialites = $specialites;
+        $this->get('specialiteDoctorat')->setValueOptions($specialites);
     }
 
     public function setEcolesDoctorales(array $ecolesDoctorales): void
@@ -100,6 +100,18 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     public function init()
     {
         //Informations Inscription
+        $this->add(
+            (new Select("specialiteDoctorat"))
+                ->setLabel("Code et libellé de la spécialité d'inscription en doctorat souhaitée")
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => 'nature',
+                ])
+        );
+
+        //Disciplines à récupérer -> liste en attente de récupération (demandée à Emilie)
         $this->add(
             (new Select("disciplineDoctorat"))
                 ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
@@ -235,6 +247,13 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     {
         return [
             //Informations Inscription
+            'specialiteDoctorat' => [
+                'name' => 'specialiteDoctorat',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class],
+                ],
+            ],
             'disciplineDoctorat' => [
                 'name' => 'disciplineDoctorat',
                 'required' => false,

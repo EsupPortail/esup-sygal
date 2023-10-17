@@ -9,11 +9,10 @@ class InscriptionRepository extends DefaultEntityRepository{
      * Recherche d'un fieldset Individu à partir de l'ID de son créateur.
      *
      * @param string $id
-     * @return Inscription
+     * @return Inscription|null
      */
     public function findOneByAdmission($id): Inscription|null
     {
-        var_dump($id);
         return $this->findOneBy(['admission' => $id]);
     }
 }

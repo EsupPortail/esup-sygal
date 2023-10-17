@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Inscription;
 
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\InscriptionRepository;
 use Application\Service\BaseService;
@@ -36,13 +37,14 @@ class InscriptionService extends BaseService
      * @param Inscription $inscription
      * @return Inscription
      */
-    public function create(Inscription $inscription) : Inscription
+    public function create(Inscription $inscription, Admission $admission) : Inscription
     {
         try {
             $date = new DateTime();
             $user = $this->userContextService->getIdentityDb();
             $inscription->setHistoModification($date);
             $inscription->setHistoModificateur($user);
+            $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->persist($inscription);
             $this->getEntityManager()->flush($inscription);
         } catch(ORMException $e) {

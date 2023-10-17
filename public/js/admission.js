@@ -185,4 +185,12 @@ $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip({
         placement: 'top',
     });
+
+    $("#nomDirecteurThese-autocomplete").on('autocompleteselect',
+        function(a) {
+            console.log(a.target.value)
+            alert("selection!");
+        }
+    );
 });
+

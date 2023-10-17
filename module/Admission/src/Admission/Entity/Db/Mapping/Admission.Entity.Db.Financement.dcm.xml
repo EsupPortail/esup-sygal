@@ -2,7 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Admission\Entity\Db\Financement" table="ADMISSIONFINANCEMENT"
+    <entity name="Admission\Entity\Db\Financement" table="ADMISSION_FINANCEMENT"
             repository-class="Admission\Entity\Db\Repository\FinancementRepository">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
@@ -16,7 +16,7 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-        <many-to-one field="admissionId" target-entity="Admission\Entity\Db\Admission">
+        <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">
             <join-columns>
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -24,17 +24,17 @@
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTOMODIFICATEURID" referenced-column-name="ID"/>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTODESTRUCTEURID" referenced-column-name="ID"/>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTOCREATEURID" referenced-column-name="ID"/>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
     </entity>

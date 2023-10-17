@@ -9,6 +9,7 @@
         </id>
 
         <field name="disciplineDoctorat" type="string" column="DISCIPLINE_DOCTORAT" length="60" nullable="true"/>
+        <field name="specialiteDoctorat" type="string" column="SPECIALITE_DOCTORAT" length="60" nullable="true"/>
         <field name="nomDirecteurThese" type="string" column="NOM_DIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="nomCodirecteurThese" type="string" column="NOM_CODIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="titreThese" type="string" column="TITRE_THESE" length="60" nullable="true"/>

@@ -60,7 +60,6 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Radio('civilite'))
                 ->setValueOptions([
-                    null => "(Aucune)",
                     Individu::CIVILITE_M => Individu::CIVILITE_M,
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
