@@ -9,6 +9,7 @@ Journal des modifications
 - [FORMATION] Ajout des champs "lien" et "mot de passe" dans les séances
 - [FORMATION] Un doctorant n'a plus accés à la desinscription si la session est imminente
 - [SOUTENANCE] Mise en place des templates associés aux mails 
+- [DEPOT] Retouche du texte de mail concernant la page de couverture générée.
 - [FIX] Pour se voir attribuer par l'application le rôle Doctorant, il faut désormais avoir une thèse soit en cours soit soutenue.
 
 6.0.6
