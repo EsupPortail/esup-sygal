@@ -5,6 +5,8 @@ use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Date;
+use Laminas\Form\Element\Email;
+use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Textarea;
@@ -46,7 +48,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     public function setSpecialites(array $specialites): void
     {
         $this->specialites = $specialites;
-        $this->get('specialiteDoctorat')->setValueOptions($specialites);
+        $this->get('specialiteDoctorat')->setValueOptions($this->specialites);
     }
 
     public function setEcolesDoctorales(array $ecolesDoctorales): void
@@ -107,7 +109,6 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
-                    'id' => 'nature',
                 ])
         );
 
@@ -119,7 +120,6 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
-                    'id' => 'nature',
                 ])
         );
 
@@ -142,9 +142,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
-                    'id' => 'nature',
                 ])
-
         );
 
         $this->add(
@@ -153,9 +151,13 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
-                    'id' => 'nature',
                     'data-live-search' => 'true',
+                    'id' => "uniteRecherche"
                 ])
+        );
+
+        $this->add(
+            (new Hidden('directeur'))
         );
 
         $nomDirecteurThese = new SearchAndSelect('nomDirecteurThese', ['label' => "Nom du directeur de thèse"]);
@@ -170,6 +172,30 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             ]);
         $this->add($nomDirecteurThese);
 
+        $prenomDirecteurThese = new SearchAndSelect('prenomDirecteurThese', ['label' => "Prénom du directeur de thèse"]);
+        $prenomDirecteurThese
+            ->setAutocompleteSource($this->urlDirecteurThese)
+            ->setSelectionRequired()
+            ->setAttributes([
+                'class' => 'selectpicker show-tick',
+                'data-live-search' => 'true',
+                'id' => 'prenomDirecteurThese',
+                'placeholder' => "Entrez les deux premières lettres...",
+            ]);
+        $this->add($prenomDirecteurThese);
+
+        $this->add(
+            (new Email('emailDirecteurThese'))
+                ->setLabel("Mail du directeur de thèse")
+                ->setAttributes([
+                    'id' => 'emailDirecteurThese',
+                ])
+        );
+
+        $this->add(
+            (new Hidden('coDirecteur'))
+        );
+
         $nomCodirecteurThese = new SearchAndSelect('nomCodirecteurThese', ['label' => "Nom du co-directeur de thèse"]);
         $nomCodirecteurThese
             ->setSelectionRequired()
@@ -180,6 +206,26 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 'placeholder' => "Entrez les deux premières lettres...",
             ]);
         $this->add($nomCodirecteurThese);
+
+        $prenomCodirecteurThese = new SearchAndSelect('prenomCodirecteurThese', ['label' => "Prénom du co-directeur de thèse"]);
+        $prenomCodirecteurThese
+            ->setAutocompleteSource($this->urlDirecteurThese)
+            ->setSelectionRequired()
+            ->setAttributes([
+                'class' => 'selectpicker show-tick',
+                'data-live-search' => 'true',
+                'id' => 'prenomCodirecteurThese',
+                'placeholder' => "Entrez les deux premières lettres...",
+            ]);
+        $this->add($prenomCodirecteurThese);
+
+        $this->add(
+            (new Email('emailCodirecteurThese'))
+                ->setLabel("Mail du co-directeur de thèse")
+                ->setAttributes([
+                    'id' => 'emailCodirecteurThese',
+                ])
+        );
 
         $this->add(
             (new Textarea('titreThese'))
@@ -238,6 +284,14 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     0 => "Non"])
                 ->setLabel("Co-direction demandée")
         );
+
+        $this->add(
+            (new Textarea('verificationInscription'))
+                ->setLabel("Observations (Non enregistrées encore en base de données)")
+                ->setAttributes([
+                    "class" => "text_observations_gestionnaire"
+                ])
+        );
     }
 
     /**
@@ -282,12 +336,28 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
                 ],
             ],
+            'prenomDirecteurThese' => [
+                'name' => 'prenomDirecteurThese',
+                'required' => false,
+            ],
             'nomDirecteurThese' => [
-                'name' => 'nomDirecteurThèse',
+                'name' => 'nomDirecteurThese',
+                'required' => false,
+            ],
+            'emailDirecteurThese' => [
+                'name' => 'emailDirecteurThese',
+                'required' => false,
+            ],
+            'prenomCodirecteurThese' => [
+                'name' => 'prenomCodirecteurThese',
                 'required' => false,
             ],
             'nomCodirecteurThese' => [
-                'name' => 'nomCodirecteurThèse',
+                'name' => 'nomCodirecteurThese',
+                'required' => false,
+            ],
+            'emailCodirecteurThese' => [
+                'name' => 'emailCodirecteurThese',
                 'required' => false,
             ],
             'titreThese' => [

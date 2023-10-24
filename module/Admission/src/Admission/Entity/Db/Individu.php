@@ -51,11 +51,6 @@ class Individu implements HistoriqueAwareInterface{
     /**
      * @var string|null
      */
-    private $nationalite;
-
-    /**
-     * @var string|null
-     */
     private $codeNationalite;
 
     /**
@@ -129,11 +124,6 @@ class Individu implements HistoriqueAwareInterface{
     private $situationHandicap;
 
     /**
-     * @var bool|null
-     */
-    private $niveauEtude;
-
-    /**
      * @var string|null
      */
     private $intituleDuDiplome;
@@ -167,6 +157,46 @@ class Individu implements HistoriqueAwareInterface{
      * @var Pays
      */
     private $paysNaissance = null;
+
+    /**
+     * @var string|null
+     */
+    private $intituleDuDiplomeNational;
+
+    /**
+     * @var int|null
+     */
+    private $anneeDobtentionDiplomeNational;
+
+    /**
+     * @var string|null
+     */
+    private $etablissementDobtentionDiplomeNational;
+
+    /**
+     * @var string|null
+     */
+    private $intituleDuDiplomeAutre;
+
+    /**
+     * @var int|null
+     */
+    private $anneeDobtentionDiplomeAutre;
+
+    /**
+     * @var string|null
+     */
+    private $etablissementDobtentionDiplomeAutre;
+
+    /**
+     * @var Pays
+     */
+    private $nationalite;
+
+    /**
+     * @var int|null
+     */
+    private $niveauEtude;
 
     /**
      * Set civilite.
@@ -358,30 +388,6 @@ class Individu implements HistoriqueAwareInterface{
     public function getVilleNaissance()
     {
         return $this->villeNaissance;
-    }
-
-    /**
-     * Set nationalite.
-     *
-     * @param string|null $nationalite
-     *
-     * @return Individu
-     */
-    public function setNationalite($nationalite = null)
-    {
-        $this->nationalite = $nationalite;
-
-        return $this;
-    }
-
-    /**
-     * Get nationalite.
-     *
-     * @return string|null
-     */
-    public function getNationalite()
-    {
-        return $this->nationalite;
     }
 
     /**
@@ -745,30 +751,6 @@ class Individu implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set niveauEtude.
-     *
-     * @param bool|null $niveauEtude
-     *
-     * @return Individu
-     */
-    public function setNiveauEtude($niveauEtude = null)
-    {
-        $this->niveauEtude = $niveauEtude;
-
-        return $this;
-    }
-
-    /**
-     * Get niveauEtude.
-     *
-     * @return bool|null
-     */
-    public function getNiveauEtude()
-    {
-        return $this->niveauEtude;
-    }
-
-    /**
      * Set intituleDuDiplome.
      *
      * @param string|null $intituleDuDiplome
@@ -920,5 +902,197 @@ class Individu implements HistoriqueAwareInterface{
     public function getAdmission()
     {
         return $this->admission;
+    }
+
+    /**
+     * Set intituleDuDiplomeNational.
+     *
+     * @param string|null $intituleDuDiplomeNational
+     *
+     * @return Individu
+     */
+    public function setIntituleDuDiplomeNational($intituleDuDiplomeNational = null)
+    {
+        $this->intituleDuDiplomeNational = $intituleDuDiplomeNational;
+
+        return $this;
+    }
+
+    /**
+     * Get intituleDuDiplomeNational.
+     *
+     * @return string|null
+     */
+    public function getIntituleDuDiplomeNational()
+    {
+        return $this->intituleDuDiplomeNational;
+    }
+
+    /**
+     * Set anneeDobtentionDiplomeNational.
+     *
+     * @param int|null $anneeDobtentionDiplomeNational
+     *
+     * @return Individu
+     */
+    public function setAnneeDobtentionDiplomeNational($anneeDobtentionDiplomeNational = null)
+    {
+        $this->anneeDobtentionDiplomeNational = $anneeDobtentionDiplomeNational;
+
+        return $this;
+    }
+
+    /**
+     * Get anneeDobtentionDiplomeNational.
+     *
+     * @return int|null
+     */
+    public function getAnneeDobtentionDiplomeNational()
+    {
+        return $this->anneeDobtentionDiplomeNational;
+    }
+
+    /**
+     * Set etablissementDobtentionDiplomeNational.
+     *
+     * @param string|null $etablissementDobtentionDiplomeNational
+     *
+     * @return Individu
+     */
+    public function setEtablissementDobtentionDiplomeNational($etablissementDobtentionDiplomeNational = null)
+    {
+        $this->etablissementDobtentionDiplomeNational = $etablissementDobtentionDiplomeNational;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementDobtentionDiplomeNational.
+     *
+     * @return string|null
+     */
+    public function getEtablissementDobtentionDiplomeNational()
+    {
+        return $this->etablissementDobtentionDiplomeNational;
+    }
+
+    /**
+     * Set intituleDuDiplomeAutre.
+     *
+     * @param string|null $intituleDuDiplomeAutre
+     *
+     * @return Individu
+     */
+    public function setIntituleDuDiplomeAutre($intituleDuDiplomeAutre = null)
+    {
+        $this->intituleDuDiplomeAutre = $intituleDuDiplomeAutre;
+
+        return $this;
+    }
+
+    /**
+     * Get intituleDuDiplomeAutre.
+     *
+     * @return string|null
+     */
+    public function getIntituleDuDiplomeAutre()
+    {
+        return $this->intituleDuDiplomeAutre;
+    }
+
+    /**
+     * Set anneeDobtentionDiplomeAutre.
+     *
+     * @param int|null $anneeDobtentionDiplomeAutre
+     *
+     * @return Individu
+     */
+    public function setAnneeDobtentionDiplomeAutre($anneeDobtentionDiplomeAutre = null)
+    {
+        $this->anneeDobtentionDiplomeAutre = $anneeDobtentionDiplomeAutre;
+
+        return $this;
+    }
+
+    /**
+     * Get anneeDobtentionDiplomeAutre.
+     *
+     * @return int|null
+     */
+    public function getAnneeDobtentionDiplomeAutre()
+    {
+        return $this->anneeDobtentionDiplomeAutre;
+    }
+
+    /**
+     * Set etablissementDobtentionDiplomeAutre.
+     *
+     * @param string|null $etablissementDobtentionDiplomeAutre
+     *
+     * @return Individu
+     */
+    public function setEtablissementDobtentionDiplomeAutre($etablissementDobtentionDiplomeAutre = null)
+    {
+        $this->etablissementDobtentionDiplomeAutre = $etablissementDobtentionDiplomeAutre;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementDobtentionDiplomeAutre.
+     *
+     * @return string|null
+     */
+    public function getEtablissementDobtentionDiplomeAutre()
+    {
+        return $this->etablissementDobtentionDiplomeAutre;
+    }
+
+    /**
+     * Set nationalite.
+     *
+     * @param Pays|null $nationalite
+     *
+     * @return Individu
+     */
+    public function setNationalite(Pays $nationalite = null)
+    {
+        $this->nationalite = $nationalite;
+
+        return $this;
+    }
+
+    /**
+     * Get nationalite.
+     *
+     * @return Pays|null
+     */
+    public function getNationalite()
+    {
+        return $this->nationalite;
+    }
+
+    /**
+     * Set niveauEtude.
+     *
+     * @param int|null $niveauEtude
+     *
+     * @return Individu
+     */
+    public function setNiveauEtude($niveauEtude = null)
+    {
+        $this->niveauEtude = $niveauEtude;
+
+        return $this;
+    }
+
+    /**
+     * Get niveauEtude.
+     *
+     * @return int|null
+     */
+    public function getNiveauEtude()
+    {
+        return $this->niveauEtude;
     }
 }

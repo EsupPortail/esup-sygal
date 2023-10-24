@@ -13,7 +13,7 @@ class IndividuRepository extends DefaultEntityRepository{
      * @param string $id
      * @return Individu
      */
-    public function findOneByAdmission($id): Individu|null
+    public function findOneByAdmission($id): Individu
     {
         return $this->findOneBy(['admission' => $id]);
     }

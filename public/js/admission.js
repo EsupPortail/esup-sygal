@@ -1,53 +1,29 @@
 //ajouter une div englobant les boutons de navigations du formulaire
 function englob_nav(type_formulaire){
-    var boutonSuivant = document.querySelector('input[name="'+type_formulaire+'[_nav][_next]"]');
-    var boutonPrecedent = document.querySelector('input[name="'+type_formulaire+'[_nav][_previous]"]');
-    var boutonAnnuler = document.querySelector('input[name="'+type_formulaire+'[_nav][_cancel]"]');
-    var boutonEnvoyer = document.querySelector('input[name="'+type_formulaire+'[_nav][_submit]"]');
+    var boutons = [
+        'next',
+        'previous',
+        'cancel',
+        'submit'
+    ];
 
     var divParent = document.createElement('div');
-    divParent.classList.add("nav_formulaire")
+    divParent.classList.add("nav_formulaire");
 
-    if(boutonEnvoyer){
-        divParent.appendChild(boutonEnvoyer);
-    }
-    if(boutonSuivant){
-        divParent.appendChild(boutonSuivant);
-    }
-    if(boutonPrecedent){
-        divParent.appendChild(boutonPrecedent);
-    }
-    if(boutonAnnuler){
-        divParent.appendChild(boutonAnnuler);
-    }
+    boutons.forEach(function(bouton) {
+        var boutonElement = document.querySelector('input[name="' + type_formulaire + '[_nav][_'+ bouton + ']"]');
+
+        if (boutonElement) {
+            divParent.appendChild(boutonElement);
+        }
+    });
 
     var container = document.querySelector('form');
     container.appendChild(divParent);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    var currentUrl = window.location.href;
-
-    if (currentUrl.indexOf("/etudiant") !== -1) {
-        setTimeout(function () {
-            englob_nav("etudiant"); // Appel de la fonction avec les arguments
-        }, 100);
-    } else if (currentUrl.indexOf("/inscription") !== -1) {
-        setTimeout(function () {
-            englob_nav("inscription"); // Appel de la fonction avec les arguments
-        }, 100);
-    }else if (currentUrl.indexOf("/financement") !== -1){
-        setTimeout(function () {
-            englob_nav("financement"); // Appel de la fonction avec les arguments
-        }, 100);
-    }else if (currentUrl.indexOf("/validation") !== -1){
-        setTimeout(function () {
-            englob_nav("validation"); // Appel de la fonction avec les arguments
-        }, 100);
-    }
-});
 //fonction affichant ou non les div en fonction de boutons radios
-function showOrNotDiv(radiobutton, additionnalFields) {
+function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
     radiobutton.forEach(function (radio) {
         radio.addEventListener('change', function () {
             if (radio.checked && radio.value == "1") {
@@ -56,29 +32,55 @@ function showOrNotDiv(radiobutton, additionnalFields) {
                 additionnalFields.style.display = 'none';
             }
         });
-    });
-}
 
-function showOrNotDivStart(radiobutton, additionnalFields) {
-    radiobutton.forEach(function (radio) {
-        if (radio.checked && radio.value == "1") {
-            additionnalFields.style.display = 'block'
+        if (ifItsAtLoadingPage && radio.checked && radio.value == "1") {
+            additionnalFields.style.display = 'block';
         }
     });
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    var currentUrl = window.location.href;
+    var parts = currentUrl.split("/");
+    var typeFormulaire = parts[parts.length - 1];
+
+    setTimeout(function () {
+        englob_nav(typeFormulaire); // Appel de la fonction avec les arguments
+    }, 100);
+
+    //permet de afficher/cacher le textarea observations pour le gestionnaire
+    var observationsDiv = document.querySelector(".observations_gestionnaire");
+    var boutonGestionnaire = document.querySelector(".bouton_gestionnaire.incomplet");
+    var textObservationsGestionnaire = document.querySelector(".text_observations_gestionnaire");
+
+    // Cache la div au chargement de la page si le textarea est vide
+    if (textObservationsGestionnaire.value.trim() === "") {
+        observationsDiv.style.display = "none";
+    } else {
+        observationsDiv.style.display = "block";
+    }
+
+    boutonGestionnaire.addEventListener("click", function(event) {
+        event.preventDefault();
+
+        if (observationsDiv.style.display === "none") {
+            observationsDiv.style.display = "block";
+        } else {
+            observationsDiv.style.display = "none";
+        }
+    });
+});
+
 var currentUrl = window.location.href;
 setTimeout(function () {
-    if (currentUrl.indexOf("/etudiant") !== -1) {
-        var diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
+    if (currentUrl.indexOf("/individu") !== -1) {
+        var diplomeRadios = document.querySelectorAll('input[name="individu[niveauEtude]"]');
         var additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
         var additionalFieldsAutre = document.getElementById('additional_fields_autre');
 
-        // Cachez les champs supplémentaires au chargement de la page
         additionalFieldsDiplome.style.display = 'none';
         additionalFieldsAutre.style.display = 'none';
 
-        //Parcourez tous les éléments radio et ajoutez un gestionnaire d'événement à chacun
         diplomeRadios.forEach(function (radio) {
             radio.addEventListener('change', function () {
                 if (radio.checked && radio.value == "1") {
@@ -92,15 +94,13 @@ setTimeout(function () {
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Sélectionnez tous les éléments d'entrée de la page
             var inputElements = document.querySelectorAll('input');
 
             for (var i = 0; i < inputElements.length; i++) {
                 var input = inputElements[i];
 
-                // Vérifiez si l'élément d'entrée a une valeur non vide
                 if (((input.type !== 'radio' && input.type !== 'submit') && input.value.trim() !== '') || input.type == 'radio' && input.checked) {
-                    break; // Sortez de la boucle dès que vous en trouvez un
+                    break;
                 }
             }
 
@@ -124,34 +124,36 @@ setTimeout(function () {
     if (currentUrl.indexOf("/inscription") !== -1) {
         var confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
         var cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
+        var codirectionRadios = document.querySelectorAll('input[name="inscription[coDirection]"]');
         var additionalFieldsConfidentialite = document.getElementById('additionalFieldsConfidentialite');
         var additionalFieldsCotutelle = document.getElementById('additionalFieldsCotutelle');
-
-        // Cachez les champs supplémentaires au chargement de la page
-        additionalFieldsConfidentialite.style.display = 'none';
-        additionalFieldsCotutelle.style.display = 'none';
+        var additionalFieldsCodirection = document.getElementById('additionalFieldsCodirection');
 
         document.addEventListener('DOMContentLoaded', function () {
-            showOrNotDivStart(confidentialiteRadios, additionalFieldsConfidentialite)
-            showOrNotDivStart(cotutelleRadios, additionalFieldsCotutelle)
+            additionalFieldsConfidentialite.style.display = 'none';
+            additionalFieldsCotutelle.style.display = 'none';
+            additionalFieldsCodirection.style.display = 'none';
+            showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite, true)
+            showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle, true)
+            showOrNotDiv(codirectionRadios, additionalFieldsCodirection, true)
         })
 
-        showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite)
-        showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle)
+        showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite, false)
+        showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle, false)
+        showOrNotDiv(codirectionRadios, additionalFieldsCodirection, false)
     }
 
     if (currentUrl.indexOf("/financement") !== -1) {
         var contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
         var additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
 
-        // Cachez les champs supplémentaires au chargement de la page
         additionalFieldscontratDoctoral.style.display = 'none';
 
         document.addEventListener('DOMContentLoaded', function () {
-            showOrNotDivStart(contratDoctoralRadios, additionalFieldscontratDoctoral)
+            showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral, true)
         })
 
-        showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral)
+        showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral, false)
     }
 
     if (currentUrl.indexOf("/validation") !== -1) {
@@ -159,20 +161,20 @@ setTimeout(function () {
             $(this).siblings("input[type='file']").trigger('click');
         });
 
-        // Sélectionnez toutes les divs avec la classe "date_televersement"
+        // Sélectionne toutes les divs avec la classe "date_televersement"
         const dateTeleversementDivs = document.querySelectorAll('.date_televersement');
 
-        dateTeleversementDivs.forEach((dateDiv) => {
-            // Vérifiez si la div "date_televersement" n'est pas vide
-            if (dateDiv.children.length <= 0) {
-                // Trouvez la div "action_file" au même niveau que "date_televersement"
-                const actionFileDiv = dateDiv.nextElementSibling;
-                // Vérifiez si la div "action_file" existe
-                if (actionFileDiv && actionFileDiv.classList.contains('action_file')) {
-                    actionFileDiv.style.display = 'none';
-                }
-            }
-        });
+        // dateTeleversementDivs.forEach((dateDiv) => {
+        //     // Vérifiez si la div "date_televersement" n'est pas vide
+        //     if (dateDiv.children.length <= 0) {
+        //         // Trouvez la div "action_file" au même niveau que "date_televersement"
+        //         const actionFileDiv = dateDiv.nextElementSibling;
+        //         // Vérifiez si la div "action_file" existe
+        //         if (actionFileDiv && actionFileDiv.classList.contains('action_file')) {
+        //             actionFileDiv.style.display = 'none';
+        //         }
+        //     }
+        // });
     }
 }, 100)
 
@@ -186,11 +188,25 @@ $(document).ready(function () {
         placement: 'top',
     });
 
-    $("#nomDirecteurThese-autocomplete").on('autocompleteselect',
-        function(a) {
-            console.log(a.target.value)
-            alert("selection!");
-        }
-    );
+    //permet de split la paire nom/prénom dans chaque input correspondant
+    $(function() {
+        $("#nomDirecteurThese-autocomplete, #prenomDirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
+            console.log(data.item.extras);
+            setTimeout(function() {
+                $("#nomDirecteurThese-autocomplete").val(data.item.extras.nom);
+            }, 50);
+            $("#prenomDirecteurThese-autocomplete").val(data.item.extras.prenoms);
+            $("#emailDirecteurThese").val(data.item.extras.email);
+        })
+
+        $("#nomCodirecteurThese-autocomplete, #prenomCodirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
+            console.log(data.item.extras);
+            setTimeout(function() {
+                $("#nomCodirecteurThese-autocomplete").val(data.item.extras.nom);
+            }, 50);
+            $("#prenomCodirecteurThese-autocomplete").val(data.item.extras.prenoms);
+            $("#emailCodirecteurThese").val(data.item.extras.email);
+        })
+    })
 });
 

@@ -1,5 +1,5 @@
 <?php
-namespace Admission\Form\Fieldset\Etudiant;
+namespace Admission\Form\Fieldset\Individu;
 
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\Digits;
@@ -14,6 +14,7 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Tel;
 use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\GreaterThan;
@@ -21,7 +22,7 @@ use Laminas\Validator\Regex;
 use Laminas\Validator\StringLength;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
-class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
+class IndividuFieldset extends Fieldset implements InputFilterProviderInterface
 {
     private ?string $urlPaysNationalite = null;
 
@@ -102,8 +103,8 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         );
 
         $this->add(
-            (new Email('email'))
-                ->setLabel("Mél")
+            (new Email('courriel'))
+                ->setLabel("Mail")
         );
 
         $this->add(
@@ -226,18 +227,18 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         );
 
         $this->add(
-            (new Text('intituleDuDiplome'))
+            (new Text('intituleDuDiplomeNational'))
                 ->setLabel("Intitulé")
         );
 
         $this->add(
-            (new Select("anneeDobtentionDiplome"))
+            (new Select("anneeDobtentionDiplomeNational"))
                 ->setLabel("Année d'obtention")
                 ->setValueOptions($this->generateYearOptions())
         );
 
         $this->add(
-            (new Text("etablissementDobtentionDiplome"))
+            (new Text("etablissementDobtentionDiplomeNational"))
                 ->setLabel("Etablissement d'obtention")
         );
 
@@ -247,6 +248,30 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                     1 => "Diplôme obtenu à l'étranger",
                     2 => "Diplôme français ne conférant pas le grade de master"
                 ])
+        );
+
+        $this->add(
+            (new Text('intituleDuDiplomeAutre'))
+                ->setLabel("Intitulé")
+        );
+
+        $this->add(
+            (new Select("anneeDobtentionDiplomeAutre"))
+                ->setLabel("Année d'obtention")
+                ->setValueOptions($this->generateYearOptions())
+        );
+
+        $this->add(
+            (new Text('etablissementDobtentionDiplomeAutre'))
+                ->setLabel("Intitulé")
+        );
+
+        $this->add(
+            (new Textarea('verificationIndividu'))
+                ->setLabel("Observations (Non enregistrées encore en base de données)")
+            ->setAttributes([
+                "class" => "text_observations_gestionnaire"
+            ])
         );
     }
 
@@ -316,19 +341,16 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                     [
                         'name' => Regex::class,
                         'options' => [
-                            'pattern' => '/^\d{10}[A-Z]$/i',  // 10 chiffres et 1 lettre
-                        ],
-                    ],
-                    [
-                        'name' => Regex::class,
-                        'options' => [
-                            'pattern' => '/^\d{9}[A-Z]{2}$/i',  // 9 chiffres et 2 lettres
+                            'pattern' => '/^\d{10}[A-Z]$|^\d{9}[A-Z]{2}$/i',  // 10 chiffres et 1 lettre ou 9 chiffres et 2 lettres
+                            'messages' => [
+                                Regex::NOT_MATCH => "L'INE doit-être composé de 11 caractères, soit 10 chiffres et 1 lettre, soit 9 chiffres et 2 lettres",
+                            ],
                         ],
                     ],
                 ],
             ],
-            'email' => [
-                'name' => 'email',
+            'courriel' => [
+                'name' => 'courriel',
                 'required' => false,
                 'filters' => [
                     ['name' => StripTags::class],
@@ -443,20 +465,32 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                 'name' => 'niveauEtude',
                 'required' => false,
             ],
-            'intituleDuDiplome' => [
-                'name' => 'intituleDuDiplome',
+            'intituleDuDiplomeNational' => [
+                'name' => 'intituleDuDiplomeNational',
                 'required' => false,
             ],
-            'anneeDobtentionDiplome' => [
-                'name' => 'anneeDobtentionDiplome',
+            'anneeDobtentionDiplomeNational' => [
+                'name' => 'anneeDobtentionDiplomeNational',
                 'required' => false,
             ],
-            'etablissementDobtentionDiplome' => [
-                'name' => 'etablissementDobtentionDiplome',
+            'etablissementDobtentionDiplomeNational' => [
+                'name' => 'etablissementDobtentionDiplomeNational',
                 'required' => false,
             ],
             'typeDiplomeAutre' => [
                 'name' => 'typeDiplomeAutre',
+                'required' => false,
+            ],
+            'intituleDuDiplomeAutre' => [
+                'name' => 'intituleDuDiplomeAutre',
+                'required' => false,
+            ],
+            'anneeDobtentionDiplomeAutre' => [
+                'name' => 'anneeDobtentionDiplomeAutre',
+                'required' => false,
+            ],
+            'etablissementDobtentionDiplomeAutre' => [
+                'name' => 'etablissementDobtentionDiplomeAutre',
                 'required' => false,
             ],
         ];

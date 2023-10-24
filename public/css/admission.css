@@ -39,6 +39,31 @@ h1 {
   background-color: #ffc107;
   border-color: #ffc107; }
 
+.boutons_gestionnaires {
+  display: flex;
+  text-align: end; }
+
+.bouton_gestionnaire {
+  margin-right: 15px; }
+
+.observations_gestionnaire {
+  margin-top: 10px;
+  margin-bottom: 25px; }
+
+.observations_gestionnaire > .col {
+  text-align: right;
+  pointer-events: none;
+  color: #ccc;
+  text-decoration: none; }
+
+.form_admission {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  position: relative; }
+
 .checkbox_admission > .mb-2 > .multicheckbox > .form-check-label {
   display: inline-block;
   padding-right: 15px; }
@@ -135,6 +160,21 @@ i:hover {
   padding-right: unset;
   margin-right: unset; }
 
+.circle_waiting {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #F1732D;
+  background-color: #F1732D;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset; }
+
 .circle_incomplete {
   width: 30px;
   height: 30px;
@@ -189,13 +229,6 @@ i:hover {
 
 textarea {
   width: 100%; }
-
-.boutons_gestionnaires {
-  display: flex;
-  text-align: end; }
-
-.bouton_gestionnaire {
-  margin-right: 15px; }
 
 .multipage-nav.next, .multipage-nav, .multipage-nav.submit {
   float: right; }

@@ -4,16 +4,16 @@ namespace Admission\Form\Admission;
 
 trait AdmissionFormAwareTrait {
 
-    private AdmissionForm $etudiantForm;
+    private AdmissionForm $admissionForm;
 
-    public function getEtudiantForm(): AdmissionForm
+    public function getAdmissionForm(): AdmissionForm
     {
-        return $this->etudiantForm;
+        return $this->admissionForm;
     }
 
-    public function setEtudiantForm(AdmissionForm $etudiantForm): void
+    public function setAdmissionForm(AdmissionForm $admissionForm): void
     {
-        $this->etudiantForm = $etudiantForm;
+        $this->admissionForm = $admissionForm;
     }
 
 }

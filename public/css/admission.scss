@@ -52,6 +52,40 @@ h1{
   border-color: #ffc107;
 }
 
+.boutons_gestionnaires {
+  display: flex;
+  text-align: end;
+}
+
+.bouton_gestionnaire{
+  margin-right: 15px;
+  //pointer-events: none;
+  //color: #ccc;
+  //text-decoration: none;
+}
+
+.observations_gestionnaire{
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+.observations_gestionnaire > .col{
+  text-align: right;
+  pointer-events: none;
+  color: #ccc;
+  text-decoration: none;
+}
+
+//Page accueil Admission
+.form_admission{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  position: relative;
+}
+
 //Partie étudiant
 .checkbox_admission > .mb-2 > .multicheckbox > .form-check-label{
   display: inline-block;
@@ -170,6 +204,22 @@ i:hover {
   margin-right: unset;
 }
 
+.circle_waiting {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% ;
+  border: 2px solid #F1732D;
+  background-color: #F1732D;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset;
+}
+
 .circle_incomplete {
   width: 30px;
   height: 30px;
@@ -234,15 +284,6 @@ i:hover {
 
 textarea{
   width: 100%;
-}
-
-.boutons_gestionnaires {
-  display: flex;
-  text-align: end;
-}
-
-.bouton_gestionnaire{
-  margin-right: 15px;
 }
 
 .multipage-nav.next, .multipage-nav, .multipage-nav.submit {

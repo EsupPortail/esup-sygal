@@ -20,36 +20,57 @@ class ValidationFieldset extends Fieldset implements InputFilterProviderInterfac
         $this->add(
             (new File('diplomeBac'))
                 ->setLabel("Copie du diplôme de Bac + 5 permettant l'accès au doctorat")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('curicculumVitae'))
                 ->setLabel("Curriculum Vitae avec adresse, courriel et n° de téléphone")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('financement'))
                 ->setLabel("Justificatif du financement (contrat, attestation de l'employeur)")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('projetThese'))
                 ->setLabel("Le projet de thèse et son titre (dactylographiés) 1 à 1 page 1/2 maximum")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('exemplairesConvention'))
-                ->setLabel("Deux exemplaires de la convention de formation doctorale")
+                ->setLabel("Convention de formation doctorale")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('exemplairesCharteDoctorat'))
-                ->setLabel("Deux exemplaires de la charte du doctorat")
+                ->setLabel("Charte du doctorat")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('diplomesRelevesNotesTraduits'))
                 ->setLabel("Diplômes et relevés de notes traduits en français avec tampons originaux")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
@@ -61,28 +82,46 @@ class ValidationFieldset extends Fieldset implements InputFilterProviderInterfac
         $this->add(
             (new File('acteNaissance'))
                 ->setLabel("Extrait d'acte de naissance")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new File('photocopiePasseport'))
                 ->setLabel("Photocopie du passeport (ou de la carte d'identité pour les ressortissants européens)")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
         $this->add(
             (new File('diplomesTravauxExperiencePro'))
                 ->setLabel("Diplômes, travaux et expérience professionnelle détaillés")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         $this->add(
             (new Text('documentsDemandeConfidentialite'))
                 ->setLabel("Demande de confidentialité à formuler et motiver dans la convention de formation doctorale")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
         $this->add(
             (new File('documentsCotutelle'))
                 ->setLabel("Formulaire de demande de cotutelle")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
         $this->add(
             (new File('documentsCoencadrement'))
                 ->setLabel("Formulaire de demande de co-encadrement à compléter (dès que le co-encadrant est connu)")
+                ->setAttributes([
+                    'disabled' => 'disabled'
+                ])
         );
 
         //Circuit signature
@@ -94,22 +133,25 @@ class ValidationFieldset extends Fieldset implements InputFilterProviderInterfac
 
         $this->add((new Submit('saveAttestationHonneur'))
             ->setValue("Valider")
-            ->setAttribute('class', 'btn btn-success')
+            ->setAttributes([
+                'class' => 'btn btn-success',
+                'disabled' => 'disabled'
+            ])
         );
 
         $this->add(
             (new Text('validationGestionnaires'))
-                ->setLabel("Validation des gestionnaires")
+                ->setLabel("Vérification effectuée par les gestionnaires")
         );
 
         $this->add(
             (new Text('validationDirecteurthese'))
-                ->setLabel("Validation du directeur de thèse")
+                ->setLabel("Validation de la Direction de thèse")
         );
 
         $this->add(
             (new Text('validationCodirecteur'))
-                ->setLabel("Validation du co-directeur")
+                ->setLabel("Validation de la Co-direction")
         );
 
         $this->add(
@@ -119,12 +161,20 @@ class ValidationFieldset extends Fieldset implements InputFilterProviderInterfac
 
         $this->add(
             (new Text('validationEcoledoctorale'))
-                ->setLabel("Validation de l'école doctorale")
+                ->setLabel("Validation de l'École doctorale")
         );
 
         $this->add(
             (new Text('signaturePresident'))
-                ->setLabel("Signature du président de l'Université")
+                ->setLabel("Signature de la Présidence de l'établissement d'inscription")
+        );
+
+        $this->add(
+            (new Textarea('verificationValidation'))
+                ->setLabel("Observations (Non enregistrées encore en base de données)")
+                ->setAttributes([
+                    "class" => "text_observations_gestionnaire"
+                ])
         );
     }
 

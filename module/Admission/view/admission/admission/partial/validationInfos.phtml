@@ -139,7 +139,7 @@ $fcg = $this->formControlGroup();
             </div>
         </div>
     </div>
-    <?php if (isset($dataForm['etudiant']['diplomeEtudiant']['niveauEtude']) && $dataForm['etudiant']['diplomeEtudiant']['niveauEtude'] == 2) { ?>
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2) { ?>
         <div class="row subfield">
             <div class="col informations-piecesJustificatives">
                 <p>Vous avez un autre diplôme qu'un master français (Dérogation)</p>
@@ -154,7 +154,7 @@ $fcg = $this->formControlGroup();
             </div>
         </div>
     <?php } ?>
-    <?php if (isset($dataForm['etudiant']['diplomeEtudiant']['niveauEtude']) && $dataForm['etudiant']['diplomeEtudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['diplomeEtudiant']['typeDiplomeAutre'] == 1) { ?>
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 1) { ?>
         <div class="row subfield">
             <div class="col informations-piecesJustificatives">
                 <p>Vous êtes titulaire d'un titre étranger</p>
@@ -220,7 +220,7 @@ $fcg = $this->formControlGroup();
             </div>
         </div>
     <?php } ?>
-    <?php if (isset($dataForm['etudiant']['diplomeEtudiant']['niveauEtude']) && $dataForm['etudiant']['diplomeEtudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['diplomeEtudiant']['typeDiplomeAutre'] == 2) { ?>
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 2) { ?>
         <div class="row subfield">
             <div class="col informations-piecesJustificatives">
                 <p>Vous êtes titulaire d'un diplôme français ne conférant pas le grade de master</p>
@@ -247,20 +247,20 @@ $fcg = $this->formControlGroup();
             </div>
         </div>
     <?php } ?>
-    <?php if (isset($dataForm['inscription']['specifitesEnvisagees']['confidentialite']) || isset($dataForm['inscription']['specifitesEnvisagees']['coTutelle']) || isset($dataForm['inscription']['specifitesEnvisagees']['coEncadrement']) || isset($dataForm['inscription']['specifitesEnvisagees']['co-direction'])) { ?>
+    <?php if (isset($dataForm['inscription']['confidentialite']) || isset($dataForm['inscription']['coTutelle']) || isset($dataForm['inscription']['coEncadrement']) || isset($dataForm['inscription']['co-direction'])) { ?>
         <div class="row subfield">
-            <div class="col informations-piecesJustificatives">
+            <div class="col informations-pieces_justificatives">
                 <p>Spécificité(s) demandée(s)</p>
             </div>
         </div>
-        <?php if (isset($dataForm['inscription']['specifitesEnvisagees']['confidentialite']) && $dataForm['inscription']['specifitesEnvisagees']['confidentialite'] == 1) { ?>
+        <?php if (isset($dataForm['inscription']['confidentialite']) && $dataForm['inscription']['confidentialite'] == 1) { ?>
             <div class="row subfield">
                 <div class="col-lg-3 col-sm-12">
                     <?php echo $this->formlabel($fieldset->get('documentsDemandeConfidentialite')) ?>
                 </div>
             </div>
         <?php } ?>
-        <?php if (isset($dataForm['inscription']['specifitesEnvisagees']['coTutelle']) && $dataForm['inscription']['specifitesEnvisagees']['coTutelle'] == 1) { ?>
+        <?php if (isset($dataForm['inscription']['coTutelle']) && $dataForm['inscription']['coTutelle'] == 1) { ?>
             <div class="row subfield">
                 <div class="col-lg-3 col-sm-12">
                     <?php echo $this->formlabel($fieldset->get('documentsCotutelle')) ?>
@@ -281,7 +281,7 @@ $fcg = $this->formControlGroup();
                 </div>
             </div>
         <?php } ?>
-        <?php if (isset($dataForm['inscription']['specifitesEnvisagees']['coEncadrement']) && $dataForm['inscription']['specifitesEnvisagees']['coEncadrement'] == 1) { ?>
+        <?php if (isset($dataForm['inscription']['coEncadrement']) && $dataForm['inscription']['coEncadrement'] == 1) { ?>
             <div class="row subfield">
                 <div class="col-lg-3 col-sm-12">
                     <?php echo $this->formlabel($fieldset->get('documentsCoencadrement')) ?>
@@ -306,9 +306,14 @@ $fcg = $this->formControlGroup();
     <?php } ?>
     <div class="row boutons_gestionnaires">
         <div class="col">
-            <a title="Modifier ces éléments" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-warning bouton_gestionnaire">Modifier</a>
-            <a title="Cette partie du formulaire est incomplète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
-            <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+            <a title="Cette partie du formulaire est incomplète" class="btn btn-danger bouton_gestionnaire incomplet">Incomplet</a>
+            <a title="Cette partie du formulaire est complète" class="btn btn-success bouton_gestionnaire complet">Complet</a>
+        </div>
+    </div>
+    <div class="row observations_gestionnaire">
+        <?php echo $fcg($fieldset->get("verificationValidation")) ?>
+        <div class="col">
+            <button class="btn btn-success">Envoyer vos observations</button>
         </div>
     </div>
 </div>
@@ -319,7 +324,7 @@ $fcg = $this->formControlGroup();
     </div>
     <div class="attestation_honneur">
         <div class="row subfield texte_validation_attestation_honneur">
-            <p>A la validation, mon dossier sera soumis au visa du directeur de thèse, du co-directeur (le cas échéant), du directeur de l'unité de recherche, du directeur de l'école doctorale et du Président de l'université</p>
+            <p>A la validation, mon dossier sera soumis au visa de la direction de thèse, de la co-direction (le cas échéant), de la direction de l'unité de recherche, de la direction de l'école doctorale et de la présidence de l'établissement d'inscription</p>
         </div>
         <div class="row subfield validation_attestation">
             <div class="col-lg-4">
@@ -340,31 +345,45 @@ $fcg = $this->formControlGroup();
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
-                    <span class="icon icon-unchecked circle_incomplete"></span>
+                    <span class="icon icon-hourglass circle_waiting"></span>
                     <?php echo $this->formlabel($fieldset->get('validationDirecteurthese')) ?>
                 </div>
             </div>
-            <div class="row subfield">
-                <div class="col etape_signature">
-                    <div class="circle"><p>3</p></div>
-                    <?php echo $this->formlabel($fieldset->get('validationCodirecteur')) ?>
+            <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                <div class="row subfield">
+                    <div class="col etape_signature">
+                        <div class="circle"><p>3</p></div>
+                        <?php echo $this->formlabel($fieldset->get('validationCodirecteur')) ?>
+                    </div>
                 </div>
-            </div>
+            <?php } ?>
             <div class="row subfield">
                 <div class="col etape_signature">
-                    <div class="circle"><p>4</p></div>
+                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                        <div class="circle"><p>4</p></div>
+                    <?php }else{ ?>
+                        <div class="circle"><p>3</p></div>
+                    <?php } ?>
                     <?php echo $this->formlabel($fieldset->get('validationUniterecherche')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
-                    <div class="circle"><p>5</p></div>
+                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                        <div class="circle"><p>5</p></div>
+                    <?php }else{ ?>
+                        <div class="circle"><p>4</p></div>
+                    <?php } ?>
                     <?php echo $this->formlabel($fieldset->get('validationEcoledoctorale')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col etape_signature">
-                    <div class="circle"><p>6</p></div>
+                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                        <div class="circle"><p>6</p></div>
+                    <?php }else{ ?>
+                        <div class="circle"><p>5</p></div>
+                    <?php } ?>
                     <?php echo $this->formlabel($fieldset->get('signaturePresident')) ?>
                 </div>
             </div>
@@ -379,15 +398,9 @@ $fcg = $this->formControlGroup();
             <div class="card mb-3 dossier_incomplet">
                 <div class="card-body text-warning">
                     <i class="icon icon-information"></i>
-                    <p class="card-title">En attente de la validation du directeur de thèse</p>
+                    <p class="card-title">En attente de la validation de la direction de thèse</p>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row boutons_gestionnaires">
-        <div class="col">
-            <a title="Cette partie du formulaire est incomplète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
-            <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
         </div>
     </div>
 </div>

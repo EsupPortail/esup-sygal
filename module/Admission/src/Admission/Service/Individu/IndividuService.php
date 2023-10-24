@@ -134,4 +134,9 @@ class IndividuService extends BaseService
         $individu = $this->getRepository()->find($id);
         return $individu;
     }
+
+    public function setEntityClass(string $entityClass)
+    {
+        // TODO: Implement setEntityClass() method.
+    }
 }

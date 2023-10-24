@@ -11,12 +11,15 @@
         <field name="disciplineDoctorat" type="string" column="DISCIPLINE_DOCTORAT" length="60" nullable="true"/>
         <field name="specialiteDoctorat" type="string" column="SPECIALITE_DOCTORAT" length="60" nullable="true"/>
         <field name="nomDirecteurThese" type="string" column="NOM_DIRECTEUR_THESE" length="60" nullable="true"/>
+        <field name="prenomDirecteurThese" type="string" column="PRENOM_DIRECTEUR_THESE" length="60" nullable="true"/>
+        <field name="emailDirecteurThese" type="string" column="MAIL_DIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="nomCodirecteurThese" type="string" column="NOM_CODIRECTEUR_THESE" length="60" nullable="true"/>
+        <field name="prenomCodirecteurThese" type="string" column="PRENOM_CODIRECTEUR_THESE" length="60" nullable="true"/>
+        <field name="emailCodirecteurThese" type="string" column="MAIL_CODIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="titreThese" type="string" column="TITRE_THESE" length="60" nullable="true"/>
         <field name="confidentialite" type="boolean" column="CONFIDENTIALITE" nullable="true"/>
         <field name="dateConfidentialite" type="datetime" column="DATE_CONFIDENTIALITE" nullable="true"/>
         <field name="coTutelle" type="boolean" column="CO_TUTELLE" nullable="true"/>
-        <field name="paysCoTutelle" type="string" column="PAYS_CO_TUTELLE" length="60" nullable="true"/>
         <field name="coEncadrement" type="boolean" column="CO_ENCADREMENT" nullable="true"/>
         <field name="coDirection" type="boolean" column="CO_DIRECTION" nullable="true"/>
 
@@ -29,7 +32,12 @@
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="composanteDoctorat" target-entity="Structure\Entity\Db\Structure">
+        <many-to-one field="paysCoTutelle" target-entity="Application\Entity\Db\Pays">
+            <join-columns>
+                <join-column name="PAYS_CO_TUTELLE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="composanteDoctorat" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
                 <join-column name="COMPOSANTE_DOCTORAT_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -44,6 +52,19 @@
                 <join-column name="UNITE_RECHERCHE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+        <many-to-one field="directeur" target-entity="Individu\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="DIRECTEUR_THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="coDirecteur" target-entity="Individu\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="CODIRECTEUR_THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+<!--        <one-to-many field="verificationInscription" target-entity="Admission\Entity\Db\VerificationInscription" mapped-by="admissionInscription" />-->
+
+
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
                 <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>

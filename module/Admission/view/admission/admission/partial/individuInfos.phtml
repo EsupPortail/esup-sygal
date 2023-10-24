@@ -1,11 +1,11 @@
 <?php
 
-use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Form\Fieldset\Individu\IndividuFieldset;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer         $this
- * @var EtudiantFieldset    $fieldset
+ * @var IndividuFieldset    $fieldset
  * @var string              $error
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
@@ -20,7 +20,7 @@ $fcg = $this->formControlGroup();
             </div>
             <div class="modal-body">
                 <p>
-                    Les informations que vous entrez dans ce formulaire sont automatiquement sauvegardées dès lors que vous passez à l'étape suivante, ou revenez à l'étape précédente.
+                    Les données que vous saisissez dans ce formulaire sont automatiquement sauvegardées dès que vous avancez vers l'étape suivante. Si vous effectuez des modifications sans passer à l'étape suivante, ces données sont temporairement enregistrées en mémoire.
                 </p>
             </div>
             <div class="modal-footer">
@@ -85,7 +85,7 @@ $fcg = $this->formControlGroup();
             <?php echo $fcg($fieldset->get('numeroTelephone1')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get('email')) ?>
+            <?php echo $fcg($fieldset->get('courriel')) ?>
         </div>
     </div>
     <div class="row subfield">
@@ -94,17 +94,10 @@ $fcg = $this->formControlGroup();
                 <?php echo $fcg($fieldset->get('situationHandicap')) ?>
                 <p class="informations">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
                     N'hésitez pas à
-                    contacter le Service Universitaire de Médecine Préventive (SUMPPS) sumpps@unicaen.fr ainsi que le
+                    contacter le Service Universitaire de Médecine Préventive (SUMPPS) <a href="mailto:sumpps@unicaen.fr">sumpps@unicaen.fr</a> ainsi que le
                     relais
                     handicap santé (<a href="mailto:deve.accueil.handicap@unicaen.fr">deve.accueil.handicap@unicaen.fr</a>)</p>
             </div>
-        </div>
-    </div>
-    <div class="row boutons_gestionnaires">
-        <div class="col">
-            <a title="Modifier ces éléments" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-warning bouton_gestionnaire">Modifier</a>
-            <a title="Cette partie du formulaire est incomplète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
-            <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
         </div>
     </div>
 </div>
@@ -119,13 +112,13 @@ $fcg = $this->formControlGroup();
         <div id="additional_fields_diplome">
             <div class="row subfield">
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get('intituleDuDiplome')) ?>
+                    <?php echo $fcg($fieldset->get('intituleDuDiplomeNational')) ?>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplome")) ?>
+                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplomeNational")) ?>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplome")) ?>
+                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplomeNational")) ?>
                 </div>
             </div>
         </div>
@@ -142,24 +135,29 @@ $fcg = $this->formControlGroup();
             </div>
             <div class="row subfield">
                 <div class="col-sm-12">
-                    <?php echo $fcg($fieldset->get('intituleDuDiplome')) ?>
+                    <?php echo $fcg($fieldset->get('intituleDuDiplomeAutre')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col-lg-6 col-sm-12">
-                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplome")) ?>
+                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplomeAutre")) ?>
                 </div>
                 <div class="col-lg-6 col-sm-12">
-                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplome")) ?>
+                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplomeAutre")) ?>
                 </div>
             </div>
         </div>
     </div>
     <div class="row boutons_gestionnaires">
         <div class="col">
-            <a title="Modifier ces éléments" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-warning bouton_gestionnaire">Modifier</a>
-            <a title="Cette partie du formulaire est incomplète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-danger bouton_gestionnaire">Incomplet</a>
-            <a title="Cette partie du formulaire est complète" href="<?= $this->url('admission', ['action' => 'addInformationsEtudiantAction']) ?>" class="btn btn-success bouton_gestionnaire">Complet</a>
+            <a title="Cette partie du formulaire est incomplète" class="btn btn-danger bouton_gestionnaire incomplet">Incomplet</a>
+            <a title="Cette partie du formulaire est complète" class="btn btn-success bouton_gestionnaire complet">Complet</a>
+        </div>
+    </div>
+    <div class="row observations_gestionnaire">
+        <?php echo $fcg($fieldset->get("verificationIndividu")) ?>
+        <div class="col">
+            <button class="btn btn-success">Envoyer vos observations</button>
         </div>
     </div>
 </div>

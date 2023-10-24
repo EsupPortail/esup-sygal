@@ -9,8 +9,8 @@ use Admission\Entity\Db\Repository\IndividuRepository;
 use Admission\Entity\Db\Repository\IndividuRepositoryFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
-use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
-use Admission\Form\Fieldset\Etudiant\EtudiantFieldsetFactory;
+use Admission\Form\Fieldset\Individu\IndividuFieldset;
+use Admission\Form\Fieldset\Individu\IndividuFieldsetFactory;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldsetFactory;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
@@ -29,6 +29,8 @@ use Admission\Hydrator\ValidationHydrator;
 use Admission\Hydrator\ValidationHydratorFactory;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
+use Admission\Service\Document\DocumentService;
+use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Financement\FinancementServiceFactory;
 use Admission\Service\Individu\IndividuService;
@@ -67,14 +69,14 @@ return array(
                 [
                     'controller' => AdmissionController::class,
                     'action' => [
+                        'index',
                         'ajouter',
-                        'etudiant',
+                        'individu',
                         'inscription',
                         'financement',
                         'validation',
                         'confirmer',
                         'annuler',
-                        'etudiantEnregistrer',
                         'enregistrer',
                         'rechercher-individu'
                     ]
@@ -90,7 +92,7 @@ return array(
                 'options' => [
                     'route' => '/admission',
                     'defaults' => [
-                        'action' => 'ajouter',
+                        'action' => 'index',
                         'controller' => AdmissionController::class,
                     ],
                 ],
@@ -101,11 +103,10 @@ return array(
                             'route' => '/:action/:individu',
                             'constraints' => [
                                 /**
-                                 * @see AdmissionController::etudiantAction()
+                                 * @see AdmissionController::individuAction()
                                  * @see AdmissionController::inscriptionAction()
                                  * @see AdmissionController::financementAction()
-                                 * @see AdmissionController::validationAction()Action()
-                                 *
+                                 * @see AdmissionController::validationAction()
                                  */
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'individu' => '[0-9]*'
@@ -136,7 +137,7 @@ return array(
     'form_elements' => [
         'factories' => [
             AdmissionForm::class => AdmissionFormFactory::class,
-            EtudiantFieldset::class => EtudiantFieldsetFactory::class,
+            IndividuFieldset::class => IndividuFieldsetFactory::class,
             InscriptionFieldset::class => InscriptionFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,
             ValidationFieldset::class => ValidationFieldsetFactory::class
@@ -159,7 +160,8 @@ return array(
             FinancementService::class => FinancementServiceFactory::class,
             IndividuService::class => IndividuServiceFactory::class,
             InscriptionService::class => InscriptionServiceFactory::class,
-            ValidationService::class => ValidationServiceFactory::class
+            ValidationService::class => ValidationServiceFactory::class,
+            DocumentService::class => DocumentServiceFactory::class
         ],
     ],
 

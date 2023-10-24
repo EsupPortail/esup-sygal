@@ -16,7 +16,6 @@
         <field name="prenom3" type="string" column="PRENOM3" length="60" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="true"/>
         <field name="villeNaissance" type="string" column="VILLE_NAISSANCE" length="60" nullable="true"/>
-        <field name="nationalite" type="string" column="NATIONALITE" nullable="true"/>
         <field name="codeNationalite" type="string" column="CODE_NATIONALITE" length="5" nullable="true"/>
         <field name="ine" type="string" column="INE" length="11" nullable="true"/>
         <field name="adresseCodePays" type="string" column="ADRESSE_CODE_PAYS" length="5" nullable="true"/>
@@ -32,11 +31,14 @@
         <field name="numeroTelephone2" type="string" column="NUMERO_TELEPHONE2" length="20" nullable="true"/>
         <field name="courriel" type="string" column="COURRIEL" length="255" nullable="true"/>
         <field name="situationHandicap" type="boolean" column="SITUATION_HANDICAP" nullable="true"/>
-        <field name="niveauEtude" type="boolean" column="NIVEAU_ETUDE" nullable="true"/>
-        <field name="intituleDuDiplome" type="string" column="INTITULE_DU_DIPLOME" length="128" nullable="true"/>
-        <field name="anneeDobtentionDiplome" type="integer" column="ANNEE_DOBTENTION_DIPLOME" nullable="true"/>
-        <field name="etablissementDobtentionDiplome" type="string" column="ETABLISSEMENT_DOBTENTION_DIPLOME" length="128" nullable="true"/>
+        <field name="niveauEtude" type="integer" column="NIVEAU_ETUDE" nullable="true"/>
+        <field name="intituleDuDiplomeNational" type="string" column="INTITULE_DU_DIPLOME_NATIONAL" length="128" nullable="true"/>
+        <field name="anneeDobtentionDiplomeNational" type="integer" column="ANNEE_DOBTENTION_DIPLOME_NATIONAL" nullable="true"/>
+        <field name="etablissementDobtentionDiplomeNational" type="string" column="ETABLISSEMENT_DOBTENTION_DIPLOME_NATIONAL" length="128" nullable="true"/>
         <field name="typeDiplomeAutre" type="boolean" column="TYPE_DIPLOME_AUTRE" nullable="true"/>
+        <field name="intituleDuDiplomeAutre" type="string" column="INTITULE_DU_DIPLOME_AUTRE" nullable="true"/>
+        <field name="anneeDobtentionDiplomeAutre" type="integer" column="ANNEE_DOBTENTION_DIPLOME_AUTRE" nullable="true"/>
+        <field name="etablissementDobtentionDiplomeAutre" type="string" column="ETABLISSEMENT_DOBTENTION_DIPLOME_AUTRE" length="128" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
@@ -54,11 +56,13 @@
             </join-columns>
         </many-to-one>
 
-<!--        <many-to-one field="nationalite" target-entity="Application\Entity\Db\Pays">-->
-<!--            <join-columns>-->
-<!--                <join-column name="NATIONALITE" referenced-column-name="LIBELLE_NATIONALITE"/>-->
-<!--            </join-columns>-->
-<!--        </many-to-one>-->
+        <many-to-one field="nationalite" target-entity="Application\Entity\Db\Pays">
+            <join-columns>
+                <join-column name="NATIONALITE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+<!--    <one-to-many field="verificationIndividu" target-entity="Admission\Entity\Db\VerificationIndividu" mapped-by="admissionIndividu" />-->
 
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>

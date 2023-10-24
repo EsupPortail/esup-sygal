@@ -4,6 +4,7 @@ namespace Admission\Controller;
 
 use Admission\Form\Admission\AdmissionForm;
 use Laminas\Http\Response;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use UnicaenApp\Controller\Plugin\MultipageFormPlugin;
 use UnicaenApp\Form\MultipageForm;
@@ -13,6 +14,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
  * Class AdmissionAbstractController
  *
  * @method MultipageFormPlugin multipageForm(?MultipageForm $form = null)
+ * @method FlashMessenger flashMessenger()
  */
 class AdmissionAbstractController extends AbstractActionController
 {

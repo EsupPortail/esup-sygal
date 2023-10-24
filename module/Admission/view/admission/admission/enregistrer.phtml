@@ -5,7 +5,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  *
- * @see \Admission\Controller\AdmissionController::inscriptionAction()
+ * @see \Admission\Controller\AdmissionController::enregistrerAction()
  */
 ?>
 
@@ -18,10 +18,6 @@ use Application\View\Renderer\PhpRenderer;
     Les données que vous saisissez dans ce formulaire sont automatiquement sauvegardées dès que vous avancez vers l'étape suivante. Si vous effectuez des modifications sans passer à l'étape suivante, ces données sont temporairement enregistrées en mémoire.
 </p>
 
-<?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php
-$multipageFormFieldset = $this->multipageFormFieldset();
-$multipageFormFieldset->setPartial('admission/partial/inscriptionInfos');
-echo $multipageFormFieldset;
-?>
+Votre dossier d'admission a bien été enregistré !
+Revenez à votre formulaire !

@@ -40,6 +40,14 @@ class Admission implements HistoriqueAwareInterface{
      * @var Collection
      */
     private $validation;
+    /**
+     * @var Collection
+     */
+    private $document;
+    /**
+     * @var \Individu\Entity\Db\Individu
+     */
+    private $individuId;
 
     /**
      * Constructor
@@ -50,6 +58,7 @@ class Admission implements HistoriqueAwareInterface{
         $this->individu = new ArrayCollection();
         $this->inscription = new ArrayCollection();
         $this->validation = new ArrayCollection();
+        $this->document = new ArrayCollection();
     }
 
     /**
@@ -213,11 +222,6 @@ class Admission implements HistoriqueAwareInterface{
     {
         return $this->validation;
     }
-    /**
-     * @var \Individu\Entity\Db\Individu
-     */
-    private $individuId;
-
 
     /**
      * Set individuId.
@@ -241,5 +245,41 @@ class Admission implements HistoriqueAwareInterface{
     public function getIndividuId()
     {
         return $this->individuId;
+    }
+
+    /**
+     * Add document.
+     */
+    public function addDocument(Document $document)
+    {
+        foreach ($document as $d) {
+            $this->document->add($d);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove document.
+     *
+     * @param Document $document
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeDocument(Document $document)
+    {
+        foreach ($document as $d) {
+            $this->document->removeElement($d);
+        }
+    }
+
+    /**
+     * Get document.
+     *
+     * @return Collection
+     */
+    public function getDocument()
+    {
+        return $this->document;
     }
 }

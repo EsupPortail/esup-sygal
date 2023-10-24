@@ -6,27 +6,37 @@ use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Individu;
 use Admission\Entity\Db\Inscription;
+use Admission\Entity\Db\Repository\ValidationRepository;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormAwareTrait;
 use Admission\Hydrator\IndividuHydrator;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
+use Admission\Service\Document\DocumentServiceAwareTrait;
 use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Individu\IndividuServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Admission\Service\Validation\ValidationServiceAwareTrait;
+use Application\Controller\PaysController;
+use Application\Controller\UtilisateurController;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Doctrine\ORM\Exception\NotSupported;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
+use Structure\Controller\EtablissementController;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Controller\Plugin\MultipageFormPlugin;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
+
 
 class AdmissionController extends AdmissionAbstractController {
 
@@ -41,40 +51,61 @@ class AdmissionController extends AdmissionAbstractController {
     use InscriptionServiceAwareTrait;
     use FinancementServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use NatureFichierServiceAwareTrait;
+    use FichierServiceAwareTrait;
+    use DocumentServiceAwareTrait;
+
+    public function indexAction(): ViewModel|Response
+    {
+        $request = $this->getRequest();
+        $id = $request->getPost('individuId');
+
+        if (!empty($id)) {
+            $this->multipageForm($this->getAdmissionForm())->clearSession();
+            return $this->redirect()->toRoute(
+                'admission/ajouter',
+                ['action' => "individu",
+                    'individu' => $id],
+                [],
+                true);
+        }
+        return new ViewModel();
+    }
 
     public function ajouterAction(): Response
     {
-        return $this->multipageForm($this->getEtudiantForm())
+        return $this->multipageForm($this->getAdmissionForm())
             ->setUsePostRedirectGet()
             ->setReuseRequestQueryParams() // la redir vers la 1ere étape conservera les nom, prenom issus de la recherche
             ->start(); // réinit du plugin et redirection vers la 1ère étape
     }
 
-    public function etudiantAction(): Response|ViewModel
+    public function individuAction(): Response|ViewModel
     {
-        $this->getEtudiantForm()->get('etudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
-        $this->getEtudiantForm()->get('etudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
+        $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
 
-//        var_dump($this->params()->fromPost()[MultipageFormNavFieldset::NAME] == MultipageFormNavFieldset::NAME_NEXT);
-//        var_dump($this->params()->fromPost());
-        $response = $this->processMultipageForm($this->getEtudiantForm());
-        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+        //Il faut que l'utilisateur existe, sinon on affiche une exception
+        if ($individu === null) {
+                throw new \UnicaenApp\Exception\RuntimeException("Individu spécifié introuvable");
+//                return $this->redirect()->toRoute('admission',[],[],true);
+        }
 
-//        $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
-//        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
-//        $individuFieldset = $this->individuAdmissionService->getRepository()->findOneByAdmission($admission->getId());
-//
-//        if($individuFieldset instanceof Individu){
-//            $this->getEtudiantForm()->get('etudiant')->setObject($individuFieldset);
-//        }else{
-//            var_dump("le fieldset Individu   n'est pas initialisé");
-//        }
+
+        $this->getAdmissionForm()->get('individu')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
+        $this->getAdmissionForm()->get('individu')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
+
+        $response = $this->processMultipageForm($this->getAdmissionForm());
+        $admission = $this->getAdmission();
+
+        if(!empty($admission)) {
+            $this->getAdmissionForm()->bind($admission);
+        }
 
         if ($response instanceof Response) {
             return $response;
         }
 
-        $response->setTemplate('admission/ajouter-etudiant');
+        $response->setTemplate('admission/ajouter-individu');
 
         return $response;
     }
@@ -84,58 +115,74 @@ class AdmissionController extends AdmissionAbstractController {
      */
     public function inscriptionAction(): Response|ViewModel
     {
-//        var_dump($this->params()->fromPost());
-//        var_dump($this->params()->fromRoute('individu'));
         //Partie Informations sur l'inscription
-        $this->getEtudiantForm()->get('inscription')->setUrlDirecteurThese($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true));
-        $this->getEtudiantForm()->get('inscription')->setUrlCoDirecteurThese($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true));
-        $this->getEtudiantForm()->get('inscription')->setUrlEtablissement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
-        $disciplines = $this->getDisciplineService()->getDisciplinesAsOptions('code','ASC','code');
-        $this->getEtudiantForm()->get('inscription')->setSpecialites($disciplines);
-        $ecoles = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false);
-        $this->getEtudiantForm()->get('inscription')->setEcolesDoctorales($ecoles);
-        $unites = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', false);
-        $this->getEtudiantForm()->get('inscription')->setUnitesRecherche($unites);
-//        var_dump($this->params()->fromPost());
-//        die();
-        //Partie Spécifités envisagées
-        $this->getEtudiantForm()->get('inscription')->setUrlPaysCoTutelle($this->url()->fromRoute('pays/rechercher-pays', [], ["query" => []], true));
+        /** @see AdmissionController::rechercherIndividuAction() */
+        $this->getAdmissionForm()->get('inscription')->setUrlDirecteurThese($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true));
+        /** @see AdmissionController::rechercherIndividuAction() */
+        $this->getAdmissionForm()->get('inscription')->setUrlCoDirecteurThese($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true));
+        /** @see EtablissementController::rechercherAction() */
+        $this->getAdmissionForm()->get('inscription')->setUrlEtablissement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
 
-        $response = $this->processMultipageForm($this->getEtudiantForm());
-//        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
-////        var_dump($data);
-//        $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
-//        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
-//
-//        //Si l'individu ne possède pas de dossier d'admission, on lui crée puis associe un fieldset étudiant
-//        if($admission === null){
-//            try {
-//                $this->getEtudiantForm()->get('etudiant')->bindValues($data['etudiant']);
-//                /** @var Admission $admission */
-//                $admission = $this->getEtudiantForm()->getObject();
-//                $admission->setIndividuId($individu);
-//
-//                $entity = $this->getEtudiantForm()->get('etudiant')->getObject();
-//                $entity->setAdmission($admission);
-//
-//                $this->individuAdmissionService->create($entity, $admission);
-//            }catch (\Exception $e) {
-//                var_dump($e);
-//            }
-//        }else{
-////            var_dump("l'individu possède déjà un dossier d'admission");
-//            //Faire l'update du fieldset étudiant
-//
-//            //Vérifier que le fieldset inscription existe et si oui : populate les valeurs avec la BDD
-////            var_dump($admission);
-//            $inscriptionFieldset = $this->inscriptionService->getRepository()->findOneByAdmission($admission->getId());
-//            var_dump($inscriptionFieldset);
-//            if($inscriptionFieldset instanceof Inscription){
-//                $this->getEtudiantForm()->get('inscription')->setObject($inscriptionFieldset);
-//            }else{
-//                var_dump("le fieldset Inscription n'est pas initialisé");
-//            }
-//        }
+        $disciplines = $this->getDisciplineService()->getDisciplinesAsOptions('code','ASC','code');
+        $this->getAdmissionForm()->get('inscription')->setSpecialites($disciplines);
+
+        $ecoles = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false);
+        $this->getAdmissionForm()->get('inscription')->setEcolesDoctorales($ecoles);
+
+        $unites = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', false);
+        $this->getAdmissionForm()->get('inscription')->setUnitesRecherche($unites);
+
+        //Partie Spécifités envisagées
+        /** @see PaysController::rechercherPaysAction() */
+        $this->getAdmissionForm()->get('inscription')->setUrlPaysCoTutelle($this->url()->fromRoute('pays/rechercher-pays', [], ["query" => []], true));
+
+        $response = $this->processMultipageForm($this->getAdmissionForm());
+        $data = $this->multipageForm($this->getAdmissionForm())->getFormSessionData();
+        $admission = $this->getAdmission();
+
+        //Si le fieldset d'où l'on vient est individu,  on crée/enregistre ses données
+        if ($data['_fieldset'] == "individu") {
+            //Si l'individu ne possède pas de dossier d'admission, on lui crée puis associe un fieldset individu
+            if ($admission == null) {
+                try {
+                    $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
+                    $this->getAdmissionForm()->get('individu')->bindValues($data['individu']);
+
+                    /** @var Admission $admission */
+                    $admission = $this->getAdmissionForm()->getObject();
+                    $admission->setIndividuId($individu);
+
+                    $entity = $this->getAdmissionForm()->get('individu')->getObject();
+                    $entity->setAdmission($admission);
+
+                    $this->individuAdmissionService->create($entity, $admission);
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
+                } catch (\Exception $e) {
+//                    var_dump($e);
+                }
+            } else {
+                //si le dossier d'admission existe, on met à jour l'entité Individu
+                try {
+                    //Mise à jour de l'entité
+                    $this->getAdmissionForm()->get('individu')->setObject($admission->getIndividu()->first());
+
+                    $this->getAdmissionForm()->get('individu')->bindValues($data['individu']);
+                    $entity = $this->getAdmissionForm()->get('individu')->getObject();
+                    $this->individuAdmissionService->update($entity);
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
+                } catch (\Exception $e) {
+//                    var_dump($e);
+                    $this->flashMessenger()->addErrorMessage()("Échec de la modification des informations.");
+                }
+            }
+
+            //            $admission = $this->getAdmissionForm();
+            //            $admission->bindValues($data);
+            //            $admissionObject = $admission->getObject();
+            //            $this->admissionService->ajouter($admissionObject);
+
+        }
+        $this->getAdmissionForm()->bind($admission);
 
         if ($response instanceof Response) {
             return $response;
@@ -151,23 +198,48 @@ class AdmissionController extends AdmissionAbstractController {
      */
     public function financementAction() : Response|ViewModel
     {
-//        var_dump($this->getRequest()->getPost());
-//        die();
-        $response = $this->processMultipageForm($this->getEtudiantForm());
-        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
+        $response = $this->processMultipageForm($this->getAdmissionForm());
+        $data = $this->multipageForm($this->getAdmissionForm())->getFormSessionData();
 
-//        $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
-//        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
-//        $inscriptionFieldset = $this->inscriptionService->getRepository()->findOneByAdmission($admission->getId());
-//
-//        //Si le fieldest Financement n'était pas encore en BDD
-//        if(!$inscriptionFieldset instanceof Inscription){
-//            $this->getEtudiantForm()->get('inscription')->bindValues($data['inscription']);
-//            $entity = $this->getEtudiantForm()->get('inscription')->getObject();
-//            $entity->setAdmission($admission);
-//
-//            $this->inscriptionService->create($entity, $admission);
-//        }
+        $admission = $this->getAdmission();
+
+        if(!empty($admission)) {
+            $inscriptionFieldset = $this->inscriptionService->getRepository()->findOneByAdmission($admission->getId());
+            $this->getAdmissionForm()->bind($admission);
+
+            //Si le fieldset d'où l'on vient est inscription,  on crée/enregistre ses données
+            if ($data['_fieldset'] == "inscription") {
+                //Si le fieldest Inscription n'était pas encore en BDD
+                if (!$inscriptionFieldset instanceof Inscription) {
+                    try {
+                        $this->getAdmissionForm()->get('inscription')->bindValues($data['inscription']);
+                        $entity = $this->getAdmissionForm()->get('inscription')->getObject();
+                        $entity->setAdmission($admission);
+
+                        $this->inscriptionService->create($entity, $admission);
+                        $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
+                    }catch(\Exception $e){
+//                        var_dump($e);
+                        $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
+                    }
+                } else {
+                    try {
+                        //Mise à jour de l'entité
+                        $this->getAdmissionForm()->get('inscription')->setObject($inscriptionFieldset);
+                        $this->getAdmissionForm()->get('inscription')->bindValues($data['inscription']);
+                        $entity = $this->getAdmissionForm()->get('inscription')->getObject();
+                        $this->inscriptionService->update($entity);
+                        $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
+                    }catch(\Exception $e){
+//                        var_dump($e);
+                        $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
+                    }
+
+                }
+            }
+        }else{
+
+        }
 
         if ($response instanceof Response) {
             return $response;
@@ -178,33 +250,47 @@ class AdmissionController extends AdmissionAbstractController {
         return $response;
     }
 
+    /**
+     * @throws NotSupported
+     */
     public function validationAction(): Response|ViewModel
     {
-        $response = $this->processMultipageForm($this->getEtudiantForm());
-        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
-        var_dump($this->params()->fromPost());
-//        die();
-    //        $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
-    //        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
-    //
-    //        $financementFieldset = $this->financementService->getRepository()->findOneByAdmission($admission->getId());
-    //
-    //        //Si le fieldest Inscription n'était pas encore en BDD
-    //        if(!$financementFieldset instanceof Financement){
-    //            $this->getEtudiantForm()->get('financement')->bindValues($data['financement']);
-    //            $entity = $this->getEtudiantForm()->get('financement')->getObject();
-    //            $entity->setAdmission($admission);
-    //
-    //            $this->financementService->create($entity, $admission);
-    //        }
+        $response = $this->processMultipageForm($this->getAdmissionForm());
+        $data = $this->multipageForm($this->getAdmissionForm())->getFormSessionData();
+
+        $admission = $this->getAdmission();
+        if(!empty($admission)){
+            $financementFieldset = $this->financementService->getRepository()->findOneByAdmission($admission->getId());
+
+            //Si le fieldset d'où l'on vient est financement,  on crée/enregistre ses données
+            if($data['_fieldset'] == "financement") {
+                //Si le fieldest Financement n'était pas encore en BDD
+                if (!$financementFieldset instanceof Financement) {
+                    $this->getAdmissionForm()->get('financement')->bindValues($data['financement']);
+                    $entity = $this->getAdmissionForm()->get('financement')->getObject();
+                    $entity->setAdmission($admission);
+
+                    $this->financementService->create($entity, $admission);
+                } else {
+                    $this->getAdmissionForm()->get('financement')->setObject($financementFieldset);
+                    $this->getAdmissionForm()->get('financement')->bindValues($data['financement']);
+                    $entity = $this->getAdmissionForm()->get('financement')->getObject();
+                    $this->financementService->update($entity);
+//                $admission = $this->getAdmissionForm()->setObject($admission);
+//                $admission->bindValues($data);
+//                $admissionObject = $admission->getObject();
+//                $this->admissionService->modifier($admissionObject);
+                }
+            }
+        }else{
+//            return $this->redirect()->toRoute('admission', ['action' => "individu", "individu" => "752883"], [], true);
+        }
 
         if ($response instanceof Response) {
             return $response;
         }
 
-        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
-
-        $response->setVariable('data_form', $data);
+        $response->setVariable('dataForm', $data);
         $response->setTemplate('admission/ajouter-validation');
 
         return $response;
@@ -215,27 +301,62 @@ class AdmissionController extends AdmissionAbstractController {
         $this->multipageForm()->clearSession();
 
         // todo: fournir une page de demande de confirmation d'annulation via le plugin multipageForm() ?
-        return $this->redirect()->toRoute('admission/ajouter/etudiant');
+        return $this->redirect()->toRoute('admission/ajouter/individu');
     }
 
     public function confirmerAction()
     {
-        $response = $this->multipageForm($this->getEtudiantForm())->process();
+        $response = $this->processMultipageForm($this->getAdmissionForm());
+        $data = $this->multipageForm($this->getAdmissionForm())->getFormSessionData();
+//        var_dump($data);
+        $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
+        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
+
+        $validationFieldset = $this->validationService->getRepository()->findOneByAdmission($admission->getId());
+
+        if($data['_fieldset'] == "validation") {
+            //Si le fieldest Validation n'était pas encore en BDD
+//            if (!$validationFieldset instanceof Financement) {
+//                $this->getAdmissionForm()->get('validation')->bindValues($data['validation']);
+//                $entity = $this->getAdmissionForm()->get('validation')->getObject();
+//                $entity->setAdmission($admission);
+//
+//                $this->validationService->create($entity, $admission);
+//            } else {
+//                $this->getAdmissionForm()->get('validation')->setObject($validationFieldset);
+//                $this->getAdmissionForm()->get('validation')->bindValues($data['validation']);
+//                $entity = $this->getAdmissionForm()->get('validation')->getObject();
+//                $this->validationService->update($entity);
+//            }
+            /** @var NatureFichier $nature */
+//            $nature = $this->natureFichierService->getRepository()->find($data['nature']);
+//
+////            $files = $request->getFiles()->toArray();
+//            $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
+//            $this->fichierService->saveFichiers($fichiers);
+            $this->documentService->addDocument($admission, $nature, $fichiers[0]);
+
+        }
+
         if ($response instanceof Response) {
             return $response;
         }
-        return array('form' => $this->getEtudiantForm());
+
+        $response->setVariable('dataForm', $data);
+        $response->setTemplate('admission/ajouter-confirmer');
+
+        return $response;
     }
 
     public function enregistrerAction()
     {
-        $data = $this->multipageForm($this->getEtudiantForm())->getFormSessionData();
-        var_dump($data);
+        $response = $this->processMultipageForm($this->getAdmissionForm());
+        $this->multipageForm($this->getAdmissionForm())->clearSession();
 
-        // ...
-        // enregistrement en base de données (par exemple)
-        // ...
-        return "";
+        if ($response instanceof Response) {
+            return $response;
+        }
+        return $response;
     }
 
     public function envoyerMailAction(): Response
@@ -250,30 +371,6 @@ class AdmissionController extends AdmissionAbstractController {
         return $this->redirect()->toRoute('home', [], [], true );
     }
 
-    public function saveData($fieldsetName, $service, $data){
-//        if (isset($data[$fieldsetName]['nationalite']['label'])) {
-//            $data[$fieldsetName]['nationalite'] = $data[$fieldsetName]['nationalite']['label'];
-//        }
-        $this->getEtudiantForm()->get($fieldsetName)->bindValues($data[$fieldsetName]);
-
-        if(!$service->getRepository()->findIfCurrentUserHasAlreadyAdmission()){
-            try {
-                $admission = new Admission();
-
-                $entity = $this->getEtudiantForm()->get('etudiant')->getObject();
-                $entity->setAdmission($admission);
-                var_dump($entity);
-                $service->getEntityManager()->persist($admission);
-                $service->create($entity);
-            }
-            catch (\Exception $e) {
-
-            }
-        }else{
-
-        }
-    }
-
     public function rechercherIndividuAction(?string $type = null) : JsonModel
     {
         $type = $this->params()->fromQuery('type');
@@ -285,13 +382,14 @@ class AdmissionController extends AdmissionAbstractController {
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
                 $label = $row['nom_usuel'] . ' ' . $prenoms;
                 $extra = array(
-                    'prenoms'=>$row['email'],
-                    'nom' => $row['nom_usuel']
+                    'prenoms' => $prenoms,
+                    'nom' => $row['nom_usuel'],
+                    'email' => $row['email']
                 );
                 $result[] = array(
                     'id' => $row['id'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
-                    'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
+                    'extras' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );
             }
             usort($result, function ($a, $b) {
@@ -301,5 +399,11 @@ class AdmissionController extends AdmissionAbstractController {
             return new JsonModel($result);
         }
         exit;
+    }
+
+    public function getAdmission(): Admission|null
+    {
+        $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
+        return $this->admissionService->getRepository()->findOneByIndividu($individu);
     }
 }

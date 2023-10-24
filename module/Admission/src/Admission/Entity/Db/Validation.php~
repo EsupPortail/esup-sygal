@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Application\Entity\Db\Utilisateur;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -15,28 +16,18 @@ class Validation implements HistoriqueAwareInterface{
     private $id;
 
     /**
-     * @var \Admission\Entity\Db\Admission
-     */
-    private $admissionId;
-
-    /**
      * @var \Application\Entity\Db\TypeValidation
      */
     private $typeValidationId;
 
     /**
-     * @var \Application\Entity\Db\Utilisateur
+     * @var Utilisateur
      */
     private $individuId;
-
-
     /**
-     * Constructor
+     * @var Admission
      */
-    public function __construct()
-    {
-        $this->admissionId = new ArrayCollection();
-    }
+    private $admission;
 
     /**
      * Get id.
@@ -46,30 +37,6 @@ class Validation implements HistoriqueAwareInterface{
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set admissionId.
-     *
-     * @param \Admission\Entity\Db\Admission|null $admissionId
-     *
-     * @return Validation
-     */
-    public function setAdmissionId(\Admission\Entity\Db\Admission $admissionId = null)
-    {
-        $this->admissionId = $admissionId;
-
-        return $this;
-    }
-
-    /**
-     * Get admissionId.
-     *
-     * @return \Admission\Entity\Db\Admission|null
-     */
-    public function getAdmissionId()
-    {
-        return $this->admissionId;
     }
 
     /**
@@ -99,11 +66,11 @@ class Validation implements HistoriqueAwareInterface{
     /**
      * Set individuId.
      *
-     * @param \Application\Entity\Db\Utilisateur|null $individuId
+     * @param Utilisateur|null $individuId
      *
      * @return Validation
      */
-    public function setIndividuId(\Application\Entity\Db\Utilisateur $individuId = null)
+    public function setIndividuId(Utilisateur $individuId = null)
     {
         $this->individuId = $individuId;
 
@@ -113,10 +80,34 @@ class Validation implements HistoriqueAwareInterface{
     /**
      * Get individuId.
      *
-     * @return \Application\Entity\Db\Utilisateur|null
+     * @return Utilisateur|null
      */
     public function getIndividuId()
     {
         return $this->individuId;
+    }
+
+    /**
+     * Set admission.
+     *
+     * @param Admission|null $admission
+     *
+     * @return Validation
+     */
+    public function setAdmission(Admission $admission = null)
+    {
+        $this->admission = $admission;
+
+        return $this;
+    }
+
+    /**
+     * Get admission.
+     *
+     * @return Admission|null
+     */
+    public function getAdmission()
+    {
+        return $this->admission;
     }
 }

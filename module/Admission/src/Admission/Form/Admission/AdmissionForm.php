@@ -3,7 +3,7 @@
 namespace Admission\Form\Admission;
 
 use Admission\Entity\Db\Admission;
-use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Form\Fieldset\Individu\IndividuFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Form\Fieldset\Validation\ValidationFieldset;
@@ -20,10 +20,9 @@ class AdmissionForm extends MultipageForm
     {
         parent::init();
 
-        $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
-        $etudiantFieldset->setName("etudiant");
-//        $etudiantFieldset->setUseAsBaseFieldset(true);
-        $this->add($etudiantFieldset);
+        $individuFieldset = $this->getFormFactory()->getFormElementManager()->get(IndividuFieldset::class);
+        $individuFieldset->setName("individu");
+        $this->add($individuFieldset);
 
         $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);
         $inscriptionFieldset->setName("inscription");
@@ -56,9 +55,12 @@ class AdmissionForm extends MultipageForm
 
         // ajouts de classes CSS
         $nextButton->setAttribute('class', $nextButton->getAttribute('class') . ' btn btn-primary');
+        $nextButton->setValue('Suivant et enregistrer >');
+
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
         $cancelButton->setAttribute('class', $cancelButton->getAttribute('class') . ' btn btn-danger');
         $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
+        $submitButton->setValue('Envoyer aux gestionnaires');
         $confirmButton->setAttribute('class', $confirmButton->getAttribute('class') . ' btn btn-success');
 
         return $navigationElement;

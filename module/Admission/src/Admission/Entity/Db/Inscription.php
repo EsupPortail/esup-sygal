@@ -2,6 +2,7 @@
 namespace Admission\Entity\Db;
 
 use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -42,7 +43,7 @@ class Inscription implements HistoriqueAwareInterface{
     private $coTutelle;
 
     /**
-     * @var string|null
+     * @var \Application\Entity\Db\Pays
      */
     private $paysCoTutelle;
 
@@ -57,14 +58,14 @@ class Inscription implements HistoriqueAwareInterface{
     private $coDirection;
 
     /**
-     * @var Structure
-     */
-    private $composanteDoctorat;
-
-    /**
      * @var EcoleDoctorale
      */
     private $ecoleDoctorale;
+
+    /**
+     * @var Etablissement
+     */
+    private $composanteDoctorat;
 
     /**
      * @var UniteRecherche
@@ -90,6 +91,37 @@ class Inscription implements HistoriqueAwareInterface{
      * @var string|null
      */
     private $specialiteDoctorat;
+
+    /**
+     * @var string|null
+     */
+    private $emailDirecteurThese;
+
+    /**
+     * @var string|null
+     */
+    private $emailCodirecteurThese;
+
+    /**
+     * @var string|null
+     */
+    private $prenomDirecteurThese;
+
+    /**
+     * @var string|null
+     */
+    private $prenomCodirecteurThese;
+
+    /**
+     * @var \Individu\Entity\Db\Individu
+     */
+    private $directeur;
+
+    /**
+     * @var \Individu\Entity\Db\Individu
+     */
+    private $coDirecteur;
+
 
     /**
      * Set disciplineDoctorat.
@@ -259,14 +291,15 @@ class Inscription implements HistoriqueAwareInterface{
         return $this->coTutelle;
     }
 
+
     /**
      * Set paysCoTutelle.
      *
-     * @param string|null $paysCoTutelle
+     * @param \Application\Entity\Db\Pays|null $paysCoTutelle
      *
      * @return Inscription
      */
-    public function setPaysCoTutelle($paysCoTutelle = null)
+    public function setPaysCoTutelle(\Application\Entity\Db\Pays $paysCoTutelle = null)
     {
         $this->paysCoTutelle = $paysCoTutelle;
 
@@ -276,7 +309,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get paysCoTutelle.
      *
-     * @return string|null
+     * @return \Application\Entity\Db\Pays|null
      */
     public function getPaysCoTutelle()
     {
@@ -344,11 +377,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set composanteDoctorat.
      *
-     * @param Structure|null $composanteDoctorat
+     * @param Etablissement|null $composanteDoctorat
      *
      * @return Inscription
      */
-    public function setComposanteDoctorat(Structure $composanteDoctorat = null)
+    public function setComposanteDoctorat(Etablissement $composanteDoctorat = null)
     {
         $this->composanteDoctorat = $composanteDoctorat;
 
@@ -358,7 +391,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get composanteDoctorat.
      *
-     * @return Structure|null
+     * @return Etablissement|null
      */
     public function getComposanteDoctorat()
     {
@@ -459,5 +492,149 @@ class Inscription implements HistoriqueAwareInterface{
     public function getSpecialiteDoctorat()
     {
         return $this->specialiteDoctorat;
+    }
+
+    /**
+     * Set prenomDirecteurThese.
+     *
+     * @param string|null $prenomDirecteurThese
+     *
+     * @return Inscription
+     */
+    public function setPrenomDirecteurThese($prenomDirecteurThese = null)
+    {
+        $this->prenomDirecteurThese = $prenomDirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get prenomDirecteurThese.
+     *
+     * @return string|null
+     */
+    public function getPrenomDirecteurThese()
+    {
+        return $this->prenomDirecteurThese;
+    }
+
+    /**
+     * Set prenomCodirecteurThese.
+     *
+     * @param string|null $prenomCodirecteurThese
+     *
+     * @return Inscription
+     */
+    public function setPrenomCodirecteurThese($prenomCodirecteurThese = null)
+    {
+        $this->prenomCodirecteurThese = $prenomCodirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get prenomCodirecteurThese.
+     *
+     * @return string|null
+     */
+    public function getPrenomCodirecteurThese()
+    {
+        return $this->prenomCodirecteurThese;
+    }
+
+    /**
+     * Set directeur.
+     *
+     * @param \Individu\Entity\Db\Individu|null $directeur
+     *
+     * @return Inscription
+     */
+    public function setDirecteur(\Individu\Entity\Db\Individu $directeur = null)
+    {
+        $this->directeur = $directeur;
+
+        return $this;
+    }
+
+    /**
+     * Get directeur.
+     *
+     * @return \Individu\Entity\Db\Individu|null
+     */
+    public function getDirecteur()
+    {
+        return $this->directeur;
+    }
+
+    /**
+     * Set coDirecteur.
+     *
+     * @param \Individu\Entity\Db\Individu|null $coDirecteur
+     *
+     * @return Inscription
+     */
+    public function setCoDirecteur(\Individu\Entity\Db\Individu $coDirecteur = null)
+    {
+        $this->coDirecteur = $coDirecteur;
+
+        return $this;
+    }
+
+    /**
+     * Get coDirecteur.
+     *
+     * @return \Individu\Entity\Db\Individu|null
+     */
+    public function getCoDirecteur()
+    {
+        return $this->coDirecteur;
+    }
+
+    /**
+     * Set emailDirecteurThese.
+     *
+     * @param string|null $emailDirecteurThese
+     *
+     * @return Inscription
+     */
+    public function setEmailDirecteurThese($emailDirecteurThese = null)
+    {
+        $this->emailDirecteurThese = $emailDirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get emailDirecteurThese.
+     *
+     * @return string|null
+     */
+    public function getEmailDirecteurThese()
+    {
+        return $this->emailDirecteurThese;
+    }
+
+    /**
+     * Set emailCodirecteurThese.
+     *
+     * @param string|null $emailCodirecteurThese
+     *
+     * @return Inscription
+     */
+    public function setEmailCodirecteurThese($emailCodirecteurThese = null)
+    {
+        $this->emailCodirecteurThese = $emailCodirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get emailCodirecteurThese.
+     *
+     * @return string|null
+     */
+    public function getEmailCodirecteurThese()
+    {
+        return $this->emailCodirecteurThese;
     }
 }

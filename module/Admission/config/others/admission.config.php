@@ -50,7 +50,7 @@ return array(
 
     'form_manager' => [
         'factories' => [
-//            EtudiantFieldset::class => InvokableFactory::class,
+//            IndividuFieldset::class => InvokableFactory::class,
 //            InscriptionFieldset::class => InvokableFactory::class,
 //            FinancementFieldset::class => InvokableFactory::class,
 //            ValidationFieldset::class => InvokableFactory::class

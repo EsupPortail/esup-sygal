@@ -4,6 +4,12 @@ namespace Admission\Service\Admission;
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Repository\AdmissionRepository;
+use Admission\Service\Document\DocumentServiceAwareTrait;
+use Admission\Service\Financement\FinancementServiceAwareTrait;
+use Admission\Service\Individu\IndividuServiceAwareTrait;
+use Admission\Service\Inscription\InscriptionServiceAwareTrait;
+use Admission\Service\Validation\ValidationServiceAwareTrait;
+use Application\Application\Form\Hydrator\IndividuRecrutementObject;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -21,6 +27,11 @@ class AdmissionService extends BaseService
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
+    use IndividuServiceAwareTrait;
+    use InscriptionServiceAwareTrait;
+    use FinancementServiceAwareTrait;
+    use ValidationServiceAwareTrait;
+    use DocumentServiceAwareTrait;
 
     /**
      * @return AdmissionRepository
@@ -61,6 +72,81 @@ class AdmissionService extends BaseService
         }
 
         return $admission;
+    }
+
+    public function ajouter(Admission $admissionObject)
+    {
+        var_dump($admissionObject);
+        $admissionIndividu = $admissionObject->getIndividu()->first();
+        var_dump($admissionIndividu);
+        $admissionInscription = $admissionObject->getInscription()->first();
+        $admissionFinancement = $admissionObject->getFinancement()->first();
+
+        try {
+
+            if ($admissionIndividu !== null) {
+                // Si la création du recrutement porte sur un individu existant, création inutile.
+                $individu = $admissionIndividu;
+            } else {
+                $individu = $this->individuAdmissionService->create($admissionIndividu, $admissionObject);
+            }
+            $inscription = $this->inscriptionService->create($admissionInscription,$admissionObject);
+            $financement = $this->financementService->create($admissionFinancement,$admissionObject);
+
+            $this->create($admissionObject);
+
+            $this->commit();
+
+        }
+        catch (Exception $e) {
+            throw $e;
+        }
+
+        return $admissionObject;
+    }
+
+    /**
+     * Mise à jour d'un IndividuRecrutement
+     * en BDD à partir d'une instance de {@see IndividuRecrutementObject}
+     * hydratée par {@see IndividuRecrutementHydrator}.
+     *
+     * @param Admission $admissionObject
+     * @throws Exception
+     */
+    public function modifier(Admission $admissionObject)
+    {
+
+        // Récupérez l'EntityManager de Doctrine
+        $entityManager = $this->getEntityManager();
+        var_dump($admissionObject);
+        // Récupérez l'entité Admission associée à l'EntityManager
+        $admissionEntity = $entityManager->find(Admission::class, $admissionObject->getId());
+
+        $admissionIndividu = $admissionEntity->getIndividu()[0];
+        $admissionInscription = $admissionEntity->getInscription()[0];
+        $admissionFinancement = $admissionEntity->getFinancement()[0];
+//        $admissionValidation = $admissionEntity->getValidation()[0];
+//        $admissionDocuments = $admissionEntity->getDocument()[0];
+
+
+
+        $this->beginTransaction();
+
+        try {
+            $this->individuAdmissionService->update($admissionIndividu);
+            $this->inscriptionService->update($admissionInscription);
+            $this->financementService->update($admissionFinancement);
+//            $this->validationService->update($admissionValidation);
+//            $this->documentService->update($admissionDocuments);
+
+            $this->update($admissionObject);
+
+            $this->commit();
+        }
+        catch (Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
     }
 
 

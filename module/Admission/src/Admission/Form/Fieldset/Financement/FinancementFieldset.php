@@ -35,6 +35,14 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Textarea('detailContratDoctoral'))
         );
+
+        $this->add(
+            (new Textarea('verificationFinancement'))
+                ->setLabel("Observations (Non enregistrées encore en base de données)")
+                ->setAttributes([
+                    "class" => "text_observations_gestionnaire"
+                ])
+        );
     }
 
     /**

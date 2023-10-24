@@ -3,12 +3,16 @@ namespace Admission\Controller;
 
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Service\Admission\AdmissionService;
+use Admission\Service\Document\DocumentService;
+use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Individu\IndividuService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Validation\ValidationService;
 use Application\Service\Discipline\DisciplineService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\NatureFichier\NatureFichierService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
@@ -42,11 +46,14 @@ class AdmissionControllerFactory implements FactoryInterface
         $disciplineService = $container->get(DisciplineService::class);
         $notificationFactory = $container->get(NotificationFactory::class);
         $notifierService = $container->get(NotifierService::class);
+        $natureFichierService = $container->get(NatureFichierService::class);
+        $fichierService = $container->get(FichierService::class);
+        $documentService = $container->get(DocumentService::class);
 
         /**
          * @var AdmissionForm $etudiantForm
          */
-        $etudiantForm = $container->get('FormElementManager')->get(AdmissionForm::class);
+        $admissionForm = $container->get('FormElementManager')->get(AdmissionForm::class);
 
         $controller = new AdmissionController();
 
@@ -60,7 +67,10 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setDisciplineService($disciplineService);
         $controller->setNotificationFactory($notificationFactory);
         $controller->setNotifierService($notifierService);
-        $controller->setEtudiantForm($etudiantForm);
+        $controller->setNatureFichierService($natureFichierService);
+        $controller->setFichierService($fichierService);
+        $controller->setDocumentService($documentService);
+        $controller->setAdmissionForm($admissionForm);
 
         return $controller;
     }

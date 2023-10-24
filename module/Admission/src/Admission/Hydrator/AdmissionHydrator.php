@@ -2,20 +2,21 @@
 
 namespace Admission\Hydrator;
 
+use Admission\Entity\Db\Admission;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 
-/**
- * @author Unicaen
- */
 class AdmissionHydrator extends DoctrineObject
 {
     public function extract(object $object): array
     {
+        /** @var Admission $object */
         $data = parent::extract($object);
-//        $data['inscription'] = is_array($object->getInscriptions()) ? $object->getInscriptions()[0] : [];
-//        $data['financement'] = is_array($object->getFinancements()) ? $object->getFinancements()[0] : [];
-//        $data['individu'] = is_array($object->getIndividus()) ? $object->getIndividus()[0] : [];
-//        $data['validation'] = is_array($object->getValidations()) ? $object->getValidation()[0] : [];
+
+        $data['inscription'] = $object->getInscription()->first() ?: null;
+        $data['financement'] = $object->getFinancement()->first() ?: null;
+        $data['individu'] = $object->getIndividu()->first() ?: null;
+        $data['validation'] = $object->getValidation()->first() ?: null;
+        $data['document'] = $object->getDocument()->first() ?: null;
 
         return $data;
     }

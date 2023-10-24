@@ -1,0 +1,33 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @see \Admission\Controller\AdmissionController::inscriptionAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate($title = "Bienvenue dans le module Admission")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral.
+    <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.<br>
+</p>
+
+<div class="form_admission">
+    <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <label for="individuId">Entrez l'ID de l'individu :</label>
+            </div>
+            <div class="col-lg-3 col-sm-12">
+                <input class="form-control" type="text" id="individuId" name="individuId">
+            </div>
+            <div class="col-lg-5 col-sm-12">
+                <button type="submit" class="btn btn-primary">Accéder à son dossier d'admission</button>
+            </div>
+        </div>
+    </form>
+</div>

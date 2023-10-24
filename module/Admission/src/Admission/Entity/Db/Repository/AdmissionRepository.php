@@ -9,9 +9,10 @@ class AdmissionRepository extends DefaultEntityRepository{
      * Recherche d'un dossier d'Admission à partir de l'ID de son créateur.
      *
      * @param string $individu
-     * @return Admission
+     * @return Admission|null
      */
-    public function findOneByIndividu($individu){
+    public function findOneByIndividu($individu): Admission|null
+    {
         return $this->findOneBy(['individuId' => $individu]);
     }
 }
