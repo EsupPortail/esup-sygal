@@ -144,64 +144,8 @@ class AdmissionController extends AdmissionAbstractController {
         /** @var Admission $admission */
         $admission = $this->getAdmission();
 
-        //Si le fieldset d'où l'on vient est etudiant,  on crée/enregistre ses données
-        if ($data['_fieldset'] == "etudiant") {
-            //Si l'etudiant ne possède pas de dossier d'admission, on lui crée puis associe un fieldset individu
-            if ($admission === null) {
-                try {
-                    $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
-                    $this->getAdmissionForm()->get('etudiant')->bindValues($data['etudiant']);
-
-                    /** @var Admission $admission */
-                    $admission = $this->getAdmissionForm()->getObject();
-                    $admission->setIndividu($individu);
-
-                    /** @var Etudiant $etudiant */
-                    $etudiant = $this->getAdmissionForm()->get('etudiant')->getObject();
-                    $etudiant->setAdmission($admission);
-                    $this->getEtudiantService()->create($etudiant, $admission);
-                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
-                } catch (\Exception $e) {
-                    var_dump($e);
-                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente n'ont pas pu être enregistrées.");
-                }
-            } else {
-                //si le dossier d'admission existe, on met à jour l'entité Etudiant
-                try {
-                    /** @var Etudiant $etudiant */
-                    $etudiant = $admission->getEtudiant()->first();
-
-                    //Mise à jour de l'entité (a remettre)
-                    $this->getAdmissionForm()->get('etudiant')->setObject($etudiant);
-                    $this->getAdmissionForm()->get('etudiant')->bindValues($data['etudiant']);
-                    $etudiant = $this->getAdmissionForm()->get('etudiant')->getObject();
-                    $this->getEtudiantService()->update($etudiant);
-
-                    /** @var Verification $verification */
-                    $verification = $this->getVerificationService()->getRepository()->findOneByEtudiant($etudiant);
-                    if($verification === null){
-                        /** @var Verification $verification */
-                        $verification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
-                        $verification->setEtudiant($etudiant);
-                        $this->getVerificationService()->create($verification);
-                    }else{
-                        $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->setObject($verification);
-                        $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->bindValues($data['etudiant']["verificationEtudiant"]);
-
-                        /** @var Verification $updatedVerification */
-                        $updatedVerification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
-                        $updatedVerification->setEtudiant($etudiant);
-
-                        $this->getVerificationService()->update($updatedVerification);
-                    }
-
-                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
-                } catch (\Exception $e) {
-                    var_dump($e);
-                    $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
-                }
-            }
-        }
+        //Enregistrement des informations de l'Etudiant
+        $this->enregistrerEtudiant($data, $admission);
 
         $this->getAdmissionForm()->bind($admission);
 
@@ -223,42 +167,9 @@ class AdmissionController extends AdmissionAbstractController {
         $admission = $this->getAdmission();
 
         if(!empty($admission)) {
-            /** @var Inscription $inscription */
-            $inscription = $this->getInscriptionService()->getRepository()->findOneByAdmission($admission);
             $this->getAdmissionForm()->bind($admission);
-
-            //Si le fieldset d'où l'on vient est inscription,  on crée/enregistre ses données
-            if ($data['_fieldset'] == "inscription") {
-                //Si le fieldest Inscription n'était pas encore en BDD
-                if (!$inscription instanceof Inscription) {
-                    try {
-                        $this->getAdmissionForm()->get('inscription')->bindValues($data['inscription']);
-                        /** @var Inscription $inscription */
-                        $inscription = $this->getAdmissionForm()->get('inscription')->getObject();
-                        $inscription->setAdmission($admission);
-
-                        $this->getInscriptionService()->create($inscription);
-                        $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
-                    }catch(\Exception $e){
-//                        var_dump($e);
-                        $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations.");
-                    }
-                } else {
-                    try {
-                        //Mise à jour de l'entité
-                        $this->getAdmissionForm()->get('inscription')->setObject($inscription);
-                        $this->getAdmissionForm()->get('inscription')->bindValues($data['inscription']);
-                        /** @var Inscription $inscription */
-                        $inscription = $this->getAdmissionForm()->get('inscription')->getObject();
-                        $this->getInscriptionService()->update($inscription);
-                        $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
-                    }catch(\Exception $e){
-//                        var_dump($e);
-                        $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
-                    }
-
-                }
-            }
+            //Enregistrement des informations concernant l'inscription
+            $this->enregistrerInscription($data, $admission);
         }
 
         if ($response instanceof Response) {
@@ -280,40 +191,9 @@ class AdmissionController extends AdmissionAbstractController {
         $admission = $this->getAdmission();
 
         if(!empty($admission)){
-            /** @var Financement $financement */
-            $financement = $this->getFinancementService()->getRepository()->findOneByAdmission($admission);
             $this->getAdmissionForm()->bind($admission);
-
-            //Si le fieldset d'où l'on vient est financement,  on crée/enregistre ses données
-            if($data['_fieldset'] == "financement") {
-                //Si le fieldest Financement n'était pas encore en BDD
-                if (!$financement instanceof Financement) {
-                    try {
-                        $this->getAdmissionForm()->get('financement')->bindValues($data['financement']);
-                        /** @var Financement $financement */
-                        $financement = $this->getAdmissionForm()->get('financement')->getObject();
-                        $financement->setAdmission($admission);
-
-                        $this->getFinancementService()->create($financement);
-
-                        $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
-                    }catch(\Exception $e){
-                        $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations.");
-                    }
-                } else {
-                    try {
-                        $this->getAdmissionForm()->get('financement')->setObject($financement);
-                        $this->getAdmissionForm()->get('financement')->bindValues($data['financement']);
-                        /** @var Financement $financement */
-                        $financement = $this->getAdmissionForm()->get('financement')->getObject();
-                        $this->getFinancementService()->update($financement);
-
-                        $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
-                    }catch(\Exception $e){
-                        $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
-                    }
-                }
-            }
+            //Enregistrement des informations de Financement
+            $this->enregistrerFinancement($data, $admission);
         }
 
         if ($response instanceof Response) {
@@ -343,29 +223,8 @@ class AdmissionController extends AdmissionAbstractController {
         $admission = $this->getAdmission();
 
         if(!empty($admission)){
-            if($data['_fieldset'] == "validation") {
-                //Si le fieldest Validation n'était pas encore en BDD
-    //            if (!$validationFieldset instanceof Financement) {
-    //                $this->getAdmissionForm()->get('validation')->bindValues($data['validation']);
-    //                $entity = $this->getAdmissionForm()->get('validation')->getObject();
-    //                $entity->setAdmission($admission);
-    //
-    //                $this->validationService->create($entity, $admission);
-    //            } else {
-    //                $this->getAdmissionForm()->get('validation')->setObject($validationFieldset);
-    //                $this->getAdmissionForm()->get('validation')->bindValues($data['validation']);
-    //                $entity = $this->getAdmissionForm()->get('validation')->getObject();
-    //                $this->validationService->update($entity);
-    //            }
-                /** @var NatureFichier $nature */
-    //            $nature = $this->natureFichierService->getRepository()->find($data['nature']);
-    //
-    ////            $files = $request->getFiles()->toArray();
-    //            $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
-    //            $this->fichierService->saveFichiers($fichiers);
-    //            $this->documentService->addDocument($admission, $nature, $fichiers[0]);
-
-            }
+            //Enregistrement des Documents ajoutéss
+            $this->enregistrerDocument($data);
         }
 
         if ($response instanceof Response) {
@@ -435,5 +294,165 @@ class AdmissionController extends AdmissionAbstractController {
     {
         $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
         return $this->admissionService->getRepository()->findOneByIndividu($individu);
+    }
+
+    public function enregistrerEtudiant($data, $admission){
+        //Si le fieldset d'où l'on vient est etudiant,  on crée/enregistre ses données
+        if ($data['_fieldset'] == "etudiant") {
+            //Si l'etudiant ne possède pas de dossier d'admission, on lui crée puis associe un fieldset individu
+            if ($admission === null) {
+                try {
+                    $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
+                    $this->getAdmissionForm()->get('etudiant')->bindValues($data['etudiant']);
+
+                    /** @var Admission $admission */
+                    $admission = $this->getAdmissionForm()->getObject();
+                    $admission->setIndividu($individu);
+
+                    /** @var Etudiant $etudiant */
+                    $etudiant = $this->getAdmissionForm()->get('etudiant')->getObject();
+                    $etudiant->setAdmission($admission);
+                    $this->getEtudiantService()->create($etudiant, $admission);
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
+                } catch (\Exception $e) {
+                    var_dump($e);
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente n'ont pas pu être enregistrées.");
+                }
+            } else {
+                //si le dossier d'admission existe, on met à jour l'entité Etudiant
+                try {
+                    /** @var Etudiant $etudiant */
+                    $etudiant = $admission->getEtudiant()->first();
+
+                    //Mise à jour de l'entité (a remettre)
+                    $this->getAdmissionForm()->get('etudiant')->setObject($etudiant);
+                    $this->getAdmissionForm()->get('etudiant')->bindValues($data['etudiant']);
+                    $etudiant = $this->getAdmissionForm()->get('etudiant')->getObject();
+                    $this->getEtudiantService()->update($etudiant);
+
+                    /** @var Verification $verification */
+                    $verification = $this->getVerificationService()->getRepository()->findOneByEtudiant($etudiant);
+                    if($verification === null){
+                        /** @var Verification $verification */
+                        $verification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
+                        $verification->setEtudiant($etudiant);
+                        $this->getVerificationService()->create($verification);
+                    }else{
+                        $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->setObject($verification);
+                        $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->bindValues($data['etudiant']["verificationEtudiant"]);
+
+                        /** @var Verification $updatedVerification */
+                        $updatedVerification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
+                        $updatedVerification->setEtudiant($etudiant);
+
+                        $this->getVerificationService()->update($updatedVerification);
+                    }
+
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
+                } catch (\Exception $e) {
+                    var_dump($e);
+                    $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
+                }
+            }
+        }
+    }
+
+    public function enregistrerInscription($data, $admission){
+        /** @var Inscription $inscription */
+        $inscription = $this->getInscriptionService()->getRepository()->findOneByAdmission($admission);
+
+        //Si le fieldset d'où l'on vient est inscription,  on crée/enregistre ses données
+        if ($data['_fieldset'] == "inscription") {
+            //Si le fieldest Inscription n'était pas encore en BDD
+            if (!$inscription instanceof Inscription) {
+                try {
+                    $this->getAdmissionForm()->get('inscription')->bindValues($data['inscription']);
+                    /** @var Inscription $inscription */
+                    $inscription = $this->getAdmissionForm()->get('inscription')->getObject();
+                    $inscription->setAdmission($admission);
+
+                    $this->getInscriptionService()->create($inscription);
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
+                }catch(\Exception $e){
+//                        var_dump($e);
+                    $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations.");
+                }
+            } else {
+                try {
+                    //Mise à jour de l'entité
+                    $this->getAdmissionForm()->get('inscription')->setObject($inscription);
+                    $this->getAdmissionForm()->get('inscription')->bindValues($data['inscription']);
+                    /** @var Inscription $inscription */
+                    $inscription = $this->getAdmissionForm()->get('inscription')->getObject();
+                    $this->getInscriptionService()->update($inscription);
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
+                }catch(\Exception $e){
+//                        var_dump($e);
+                    $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
+                }
+            }
+        }
+    }
+
+    public function enregistrerFinancement($data, $admission){
+        /** @var Financement $financement */
+        $financement = $this->getFinancementService()->getRepository()->findOneByAdmission($admission);
+
+        //Si le fieldset d'où l'on vient est financement,  on crée/enregistre ses données
+        if($data['_fieldset'] == "financement") {
+            //Si le fieldest Financement n'était pas encore en BDD
+            if (!$financement instanceof Financement) {
+                try {
+                    $this->getAdmissionForm()->get('financement')->bindValues($data['financement']);
+                    /** @var Financement $financement */
+                    $financement = $this->getAdmissionForm()->get('financement')->getObject();
+                    $financement->setAdmission($admission);
+
+                    $this->getFinancementService()->create($financement);
+
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
+                }catch(\Exception $e){
+                    $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations.");
+                }
+            } else {
+                try {
+                    $this->getAdmissionForm()->get('financement')->setObject($financement);
+                    $this->getAdmissionForm()->get('financement')->bindValues($data['financement']);
+                    /** @var Financement $financement */
+                    $financement = $this->getAdmissionForm()->get('financement')->getObject();
+                    $this->getFinancementService()->update($financement);
+
+                    $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
+                }catch(\Exception $e){
+                    $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
+                }
+            }
+        }
+    }
+
+    public function enregistrerDocument($data){
+        if($data['_fieldset'] == "validation") {
+            //Si le fieldest Validation n'était pas encore en BDD
+            //            if (!$validationFieldset instanceof Financement) {
+            //                $this->getAdmissionForm()->get('validation')->bindValues($data['validation']);
+            //                $entity = $this->getAdmissionForm()->get('validation')->getObject();
+            //                $entity->setAdmission($admission);
+            //
+            //                $this->validationService->create($entity, $admission);
+            //            } else {
+            //                $this->getAdmissionForm()->get('validation')->setObject($validationFieldset);
+            //                $this->getAdmissionForm()->get('validation')->bindValues($data['validation']);
+            //                $entity = $this->getAdmissionForm()->get('validation')->getObject();
+            //                $this->validationService->update($entity);
+            //            }
+            /** @var NatureFichier $nature */
+            //            $nature = $this->natureFichierService->getRepository()->find($data['nature']);
+            //
+            ////            $files = $request->getFiles()->toArray();
+            //            $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
+            //            $this->fichierService->saveFichiers($fichiers);
+            //            $this->documentService->addDocument($admission, $nature, $fichiers[0]);
+
+        }
     }
 }
