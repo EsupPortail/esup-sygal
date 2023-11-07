@@ -1,24 +1,24 @@
 //ajouter une div englobant les boutons de navigations du formulaire
 function englob_nav(type_formulaire){
-    var boutons = [
+    const boutons = [
         'next',
         'previous',
         'cancel',
         'submit'
     ];
 
-    var divParent = document.createElement('div');
+    const divParent = document.createElement('div');
     divParent.classList.add("nav_formulaire");
 
     boutons.forEach(function(bouton) {
-        var boutonElement = document.querySelector('input[name="' + type_formulaire + '[_nav][_'+ bouton + ']"]');
+        const boutonElement = document.querySelector('input[name="' + type_formulaire + '[_nav][_' + bouton + ']"]');
 
         if (boutonElement) {
             divParent.appendChild(boutonElement);
         }
     });
 
-    var container = document.querySelector('form');
+    const container = document.querySelector('form');
     container.appendChild(divParent);
 }
 
@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //permet de afficher/cacher le textarea observations pour le gestionnaire
     const commentairesDiv = document.querySelector(".commentaires_gestionnaire");
     const radioButtons = document.querySelectorAll('.observations_gestionnaire .multicheckbox input[type="radio"]');
-    const textObservationsGestionnaire = document.getElementsByClassName('commentaires_gestionnaire');
 
     radioButtons.forEach(radioButton => {
         radioButton.addEventListener('click', function () {
@@ -68,20 +67,22 @@ document.addEventListener("DOMContentLoaded", function() {
             const label = this.parentElement;
             label.classList.add('selected');
         });
+
+        // Sélectionnez le label parent et ajoutez la classe "selected"
+        const label = radioButton.parentElement;
         if (radioButton.checked) {
-            // Sélectionnez le label parent et ajoutez la classe "selected"
-            const label = radioButton.parentElement;
             label.classList.add('selected');
-            if(radioButton.classList.contains('complet') && radioButton.classList.contains('selected')){
-                commentairesDiv.style.display = "block";
-            }else{
-                commentairesDiv.style.display = "none";
-            }
+        }
+
+        if(radioButton.classList.contains('incomplet') && label.classList.contains('selected')){
+            commentairesDiv.style.display = "block";
+        }else{
+            commentairesDiv.style.display = "none";
         }
     });
 });
 
-var currentUrl = window.location.href;
+const currentUrl = window.location.href;
 setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
         const diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
@@ -104,10 +105,11 @@ setTimeout(function () {
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            var inputElements = document.querySelectorAll('input');
+            let i;
+            const inputElements = document.querySelectorAll('input');
 
-            for (var i = 0; i < inputElements.length; i++) {
-                var input = inputElements[i];
+            for (i = 0; i < inputElements.length; i++) {
+                const input = inputElements[i];
 
                 if (((input.type !== 'radio' && input.type !== 'submit') && input.value.trim() !== '') || input.type === 'radio' && input.checked) {
                     break;
@@ -132,12 +134,12 @@ setTimeout(function () {
     }
 
     if (currentUrl.indexOf("/inscription") !== -1) {
-        var confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
-        var cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
-        var codirectionRadios = document.querySelectorAll('input[name="inscription[coDirection]"]');
-        var additionalFieldsConfidentialite = document.getElementById('additionalFieldsConfidentialite');
-        var additionalFieldsCotutelle = document.getElementById('additionalFieldsCotutelle');
-        var additionalFieldsCodirection = document.getElementById('additionalFieldsCodirection');
+        const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
+        const cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
+        const codirectionRadios = document.querySelectorAll('input[name="inscription[coDirection]"]');
+        const additionalFieldsConfidentialite = document.getElementById('additionalFieldsConfidentialite');
+        const additionalFieldsCotutelle = document.getElementById('additionalFieldsCotutelle');
+        const additionalFieldsCodirection = document.getElementById('additionalFieldsCodirection');
 
         document.addEventListener('DOMContentLoaded', function () {
             additionalFieldsConfidentialite.style.display = 'none';
@@ -154,8 +156,8 @@ setTimeout(function () {
     }
 
     if (currentUrl.indexOf("/financement") !== -1) {
-        var contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
-        var additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
+        const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
+        const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
 
         additionalFieldscontratDoctoral.style.display = 'none';
 
