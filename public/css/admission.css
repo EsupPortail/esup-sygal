@@ -52,9 +52,21 @@ h1 {
 
 .observations_gestionnaire > .col {
   text-align: right;
-  pointer-events: none;
   color: #ccc;
   text-decoration: none; }
+
+.observations_gestionnaire > div > div > div > label {
+  display: inline-flex;
+  margin-right: 15px; }
+
+.observations_gestionnaire > div > div > div > label > input {
+  display: none; }
+
+.observations_gestionnaire > div > div > div > .btn-danger.selected::after {
+  content: "\2715"; }
+
+.observations_gestionnaire > div > div > div > .btn-success.selected::after {
+  content: "\2713"; }
 
 .form_admission {
   display: flex;

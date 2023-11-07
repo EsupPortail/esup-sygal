@@ -39,16 +39,12 @@ $fcg = $this->formControlGroup();
             <?php echo $this->formControlGroup($fieldset->get('detailContratDoctoral')) ?>
         </div>
     </div>
-    <div class="row boutons_gestionnaires">
-        <div class="col">
-            <a title="Cette partie du formulaire est incomplète" class="btn btn-danger bouton_gestionnaire incomplet">Incomplet</a>
-            <a title="Cette partie du formulaire est complète" class="btn btn-success bouton_gestionnaire complet">Complet</a>
-        </div>
-    </div>
     <div class="row observations_gestionnaire">
-        <?php echo $fcg($fieldset->get("verificationFinancement")) ?>
         <div class="col">
-            <button class="btn btn-success">Envoyer vos observations</button>
+            <?php echo $fcg($fieldset->get("verificationFinancement")->get('estComplet'))?>
+        </div>
+        <div class="commentaires_gestionnaire">
+            <?php echo $fcg($fieldset->get("verificationFinancement")->get('commentaire')) ?>
         </div>
     </div>
 </div>

@@ -5,45 +5,53 @@ namespace Admission;
 
 use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
-use Admission\Entity\Db\Repository\IndividuRepository;
+use Admission\Entity\Db\Repository\EtudiantRepository;
 use Admission\Entity\Db\Repository\IndividuRepositoryFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
-use Admission\Form\Fieldset\Individu\IndividuFieldset;
-use Admission\Form\Fieldset\Individu\IndividuFieldsetFactory;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldsetFactory;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldsetFactory;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldsetFactory;
 use Admission\Form\Fieldset\Validation\ValidationFieldset;
 use Admission\Form\Fieldset\Validation\ValidationFieldsetFactory;
+use Admission\Form\Fieldset\Verification\VerificationFieldset;
+use Admission\Form\Fieldset\Verification\VerificationFieldsetFactory;
 use Admission\Hydrator\AdmissionHydrator;
 use Admission\Hydrator\AdmissionHydratorFactory;
 use Admission\Hydrator\FinancementHydrator;
 use Admission\Hydrator\FinancementHydratorFactory;
-use Admission\Hydrator\IndividuHydrator;
-use Admission\Hydrator\IndividuHydratorFactory;
+use Admission\Hydrator\EtudiantHydrator;
+use Admission\Hydrator\EtudiantHydratorFactory;
 use Admission\Hydrator\InscriptionHydrator;
 use Admission\Hydrator\InscriptionHydratorFactory;
 use Admission\Hydrator\ValidationHydrator;
 use Admission\Hydrator\ValidationHydratorFactory;
+use Admission\Hydrator\VerificationHydrator;
+use Admission\Hydrator\VerificationHydratorFactory;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Financement\FinancementServiceFactory;
-use Admission\Service\Individu\IndividuService;
-use Admission\Service\Individu\IndividuServiceFactory;
+use Admission\Service\Etudiant\EtudiantService;
+use Admission\Service\Etudiant\EtudiantServiceFactory;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Inscription\InscriptionServiceFactory;
 use Admission\Service\Validation\ValidationService;
 use Admission\Service\Validation\ValidationServiceFactory;
+use Admission\Service\Verification\VerificationService;
+use Admission\Service\Verification\VerificationServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'doctrine' => [
@@ -70,17 +78,44 @@ return array(
                     'controller' => AdmissionController::class,
                     'action' => [
                         'index',
+//                        'confirmer',
+//                        'enregistrer',
+                        'rechercher-individu'
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_LISTER,
+                    ],
+                ],
+                [
+                    'controller' => AdmissionController::class,
+                    'action' => [
                         'ajouter',
-                        'individu',
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_AJOUTER,
+                    ],
+                ],
+                [
+                    'controller' => AdmissionController::class,
+                    'action' => [
+                        'etudiant',
                         'inscription',
                         'financement',
                         'validation',
-                        'confirmer',
+                    ],
+//                    'privileges' => [
+//                        AdmissionPrivileges::ADMISSION_AFFICHER,
+//                    ],
+                ],
+                [
+                    'controller' => AdmissionController::class,
+                    'action' => [
                         'annuler',
-                        'enregistrer',
-                        'rechercher-individu'
-                    ]
-                ]
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_SUPPRIMER,
+                    ],
+                ],
             ]
         ],
     ],
@@ -137,20 +172,22 @@ return array(
     'form_elements' => [
         'factories' => [
             AdmissionForm::class => AdmissionFormFactory::class,
-            IndividuFieldset::class => IndividuFieldsetFactory::class,
+            EtudiantFieldset::class => EtudiantFieldsetFactory::class,
             InscriptionFieldset::class => InscriptionFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,
-            ValidationFieldset::class => ValidationFieldsetFactory::class
+            ValidationFieldset::class => ValidationFieldsetFactory::class,
+            VerificationFieldset::class => VerificationFieldsetFactory::class
         ],
     ],
 
     'hydrators' => [
         'factories' => [
             AdmissionHydrator::class => AdmissionHydratorFactory::class,
-            IndividuHydrator::class => IndividuHydratorFactory::class,
+            EtudiantHydrator::class => EtudiantHydratorFactory::class,
             InscriptionHydrator::class => InscriptionHydratorFactory::class,
             FinancementHydrator::class => FinancementHydratorFactory::class,
-            ValidationHydrator::class => ValidationHydratorFactory::class
+            ValidationHydrator::class => ValidationHydratorFactory::class,
+            VerificationHydrator::class => VerificationHydratorFactory::class
         ],
     ],
 
@@ -158,10 +195,11 @@ return array(
         'factories' => [
             AdmissionService::class => AdmissionServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,
-            IndividuService::class => IndividuServiceFactory::class,
+            EtudiantService::class => EtudiantServiceFactory::class,
             InscriptionService::class => InscriptionServiceFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
-            DocumentService::class => DocumentServiceFactory::class
+            DocumentService::class => DocumentServiceFactory::class,
+            VerificationService::class => VerificationServiceFactory::class
         ],
     ],
 

@@ -26,64 +26,74 @@ function englob_nav(type_formulaire){
 function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
     radiobutton.forEach(function (radio) {
         radio.addEventListener('change', function () {
-            if (radio.checked && radio.value == "1") {
+            if (radio.checked && radio.value === "1") {
                 additionnalFields.style.display = 'block';
             } else {
                 additionnalFields.style.display = 'none';
             }
         });
 
-        if (ifItsAtLoadingPage && radio.checked && radio.value == "1") {
+        if (ifItsAtLoadingPage && radio.checked && radio.value === "1") {
             additionnalFields.style.display = 'block';
         }
     });
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    var currentUrl = window.location.href;
-    var parts = currentUrl.split("/");
-    var typeFormulaire = parts[parts.length - 1];
+    const currentUrl = window.location.href;
+    const parts = currentUrl.split("/");
+    const typeFormulaire = parts[parts.length - 1];
 
     setTimeout(function () {
         englob_nav(typeFormulaire); // Appel de la fonction avec les arguments
     }, 100);
 
     //permet de afficher/cacher le textarea observations pour le gestionnaire
-    var observationsDiv = document.querySelector(".observations_gestionnaire");
-    var boutonGestionnaire = document.querySelector(".bouton_gestionnaire.incomplet");
-    var textObservationsGestionnaire = document.querySelector(".text_observations_gestionnaire");
+    const commentairesDiv = document.querySelector(".commentaires_gestionnaire");
+    const radioButtons = document.querySelectorAll('.observations_gestionnaire .multicheckbox input[type="radio"]');
+    const textObservationsGestionnaire = document.getElementsByClassName('commentaires_gestionnaire');
 
-    // Cache la div au chargement de la page si le textarea est vide
-    if (textObservationsGestionnaire.value.trim() === "") {
-        observationsDiv.style.display = "none";
-    } else {
-        observationsDiv.style.display = "block";
-    }
+    radioButtons.forEach(radioButton => {
+        radioButton.addEventListener('click', function () {
+            if (this.classList.contains('incomplet')) {
+                commentairesDiv.style.display = 'block';
+            } else if (this.classList.contains('complet')) {
+                commentairesDiv.style.display = 'none';
+            }
 
-    boutonGestionnaire.addEventListener("click", function(event) {
-        event.preventDefault();
+            document.querySelectorAll('.multicheckbox label').forEach(label => {
+                label.classList.remove('selected');
+            });
 
-        if (observationsDiv.style.display === "none") {
-            observationsDiv.style.display = "block";
-        } else {
-            observationsDiv.style.display = "none";
+            const label = this.parentElement;
+            label.classList.add('selected');
+        });
+        if (radioButton.checked) {
+            // Sélectionnez le label parent et ajoutez la classe "selected"
+            const label = radioButton.parentElement;
+            label.classList.add('selected');
+            if(radioButton.classList.contains('complet') && radioButton.classList.contains('selected')){
+                commentairesDiv.style.display = "block";
+            }else{
+                commentairesDiv.style.display = "none";
+            }
         }
     });
 });
 
 var currentUrl = window.location.href;
 setTimeout(function () {
-    if (currentUrl.indexOf("/individu") !== -1) {
-        var diplomeRadios = document.querySelectorAll('input[name="individu[niveauEtude]"]');
-        var additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
-        var additionalFieldsAutre = document.getElementById('additional_fields_autre');
+    if (currentUrl.indexOf("/etudiant") !== -1) {
+        const diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
+        const additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
+        const additionalFieldsAutre = document.getElementById('additional_fields_autre');
 
         additionalFieldsDiplome.style.display = 'none';
         additionalFieldsAutre.style.display = 'none';
 
         diplomeRadios.forEach(function (radio) {
             radio.addEventListener('change', function () {
-                if (radio.checked && radio.value == "1") {
+                if (radio.checked && radio.value === "1") {
                     additionalFieldsDiplome.style.display = 'block';
                     additionalFieldsAutre.style.display = 'none';
                 } else {
@@ -99,7 +109,7 @@ setTimeout(function () {
             for (var i = 0; i < inputElements.length; i++) {
                 var input = inputElements[i];
 
-                if (((input.type !== 'radio' && input.type !== 'submit') && input.value.trim() !== '') || input.type == 'radio' && input.checked) {
+                if (((input.type !== 'radio' && input.type !== 'submit') && input.value.trim() !== '') || input.type === 'radio' && input.checked) {
                     break;
                 }
             }
@@ -109,11 +119,11 @@ setTimeout(function () {
             }
 
             diplomeRadios.forEach(function (radio) {
-                if (radio.checked && radio.value == "1") {
+                if (radio.checked && radio.value === "1") {
                     additionalFieldsDiplome.style.display = 'block';
                     additionalFieldsAutre.style.display = 'none';
                 }
-                if (radio.checked && radio.value == "2") {
+                if (radio.checked && radio.value === "2") {
                     additionalFieldsDiplome.style.display = 'none';
                     additionalFieldsAutre.style.display = 'block';
                 }

@@ -10,6 +10,8 @@ use Application\View\Renderer\PhpRenderer;
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
  */
+
+//$this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
 $fcg = $this->formControlGroup();
 ?>
 <div class="modal hide fade" tabindex="-1" role="dialog">
@@ -148,18 +150,14 @@ $fcg = $this->formControlGroup();
             </div>
         </div>
     </div>
-    <div class="row boutons_gestionnaires">
-        <div class="col">
-            <a title="Cette partie du formulaire est incomplète" class="btn btn-danger bouton_gestionnaire incomplet">Incomplet</a>
-            <a title="Cette partie du formulaire est complète" class="btn btn-success bouton_gestionnaire complet">Complet</a>
+        <div class="row observations_gestionnaire">
+            <div class="col">
+                <?php echo $fcg($fieldset->get("verificationEtudiant")->get('estComplet'))?>
+            </div>
+            <div class="commentaires_gestionnaire">
+                <?php echo $fcg($fieldset->get("verificationEtudiant")->get('commentaire')) ?>
+            </div>
         </div>
-    </div>
-    <div class="row observations_gestionnaire">
-        <?php echo $fcg($fieldset->get("verificationIndividu")) ?>
-        <div c  lass="col">
-            <button class="btn btn-success">Envoyer vos observations</button>
-        </div>
-    </div>
 </div>
 
 <?php ///** @see \Admission\Controller\AdmissionController::envoyerMailAction() */ ?>
