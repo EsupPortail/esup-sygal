@@ -13,6 +13,6 @@ class AdmissionRepository extends DefaultEntityRepository{
      */
     public function findOneByIndividu($individu): Admission|null
     {
-        return $this->findOneBy(['individuId' => $individu]);
+        return $this->findOneBy(['individu' => $individu]);
     }
 }

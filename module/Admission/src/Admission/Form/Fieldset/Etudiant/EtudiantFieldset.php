@@ -1,6 +1,7 @@
 <?php
-namespace Admission\Form\Fieldset\Individu;
+namespace Admission\Form\Fieldset\Etudiant;
 
+use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\Digits;
 use Laminas\Filter\StringTrim;
@@ -22,7 +23,7 @@ use Laminas\Validator\Regex;
 use Laminas\Validator\StringLength;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
-class IndividuFieldset extends Fieldset implements InputFilterProviderInterface
+class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 {
     private ?string $urlPaysNationalite = null;
 
@@ -266,13 +267,9 @@ class IndividuFieldset extends Fieldset implements InputFilterProviderInterface
                 ->setLabel("Intitulé")
         );
 
-        $this->add(
-            (new Textarea('verificationIndividu'))
-                ->setLabel("Observations (Non enregistrées encore en base de données)")
-            ->setAttributes([
-                "class" => "text_observations_gestionnaire"
-            ])
-        );
+        $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
+        $verificationFieldset->setName("verificationEtudiant");
+        $this->add($verificationFieldset);
     }
 
     public function getInputFilterSpecification(): array

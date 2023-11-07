@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Financement;
 
+use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Form\Element\Radio;
@@ -36,13 +37,9 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
             (new Textarea('detailContratDoctoral'))
         );
 
-        $this->add(
-            (new Textarea('verificationFinancement'))
-                ->setLabel("Observations (Non enregistrées encore en base de données)")
-                ->setAttributes([
-                    "class" => "text_observations_gestionnaire"
-                ])
-        );
+        $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
+        $verificationFieldset->setName("verificationFinancement");
+        $this->add($verificationFieldset);
     }
 
     /**

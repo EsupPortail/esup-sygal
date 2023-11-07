@@ -1,11 +1,11 @@
 <?php
 
-use Admission\Form\Fieldset\Individu\IndividuFieldset;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer         $this
- * @var IndividuFieldset    $fieldset
+ * @var EtudiantFieldset    $fieldset
  * @var string              $error
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
@@ -156,7 +156,7 @@ $fcg = $this->formControlGroup();
     </div>
     <div class="row observations_gestionnaire">
         <?php echo $fcg($fieldset->get("verificationIndividu")) ?>
-        <div class="col">
+        <div c  lass="col">
             <button class="btn btn-success">Envoyer vos observations</button>
         </div>
     </div>

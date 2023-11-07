@@ -1,7 +1,8 @@
 <?php
 
-namespace Admission\Service\Individu;
+namespace Admission\Service\Verification;
 
+use Admission\Service\Validation\ValidationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
@@ -10,13 +11,13 @@ use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class IndividuServiceFactory {
+class VerificationServiceFactory {
 
     /**
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): IndividuService
+    public function __invoke(ContainerInterface $container): VerificationService
     {
         /**
          * @var RoleService $roleService
@@ -32,7 +33,7 @@ class IndividuServiceFactory {
          */
         $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
 
-        $service = new IndividuService();
+        $service = new VerificationService();
         $service->setRoleService($roleService);
         $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);

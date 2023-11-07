@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Inscription;
 
+use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToNull;
@@ -285,13 +286,9 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ->setLabel("Co-direction demandée")
         );
 
-        $this->add(
-            (new Textarea('verificationInscription'))
-                ->setLabel("Observations (Non enregistrées encore en base de données)")
-                ->setAttributes([
-                    "class" => "text_observations_gestionnaire"
-                ])
-        );
+        $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
+        $verificationFieldset->setName("verificationInscription");
+        $this->add($verificationFieldset);
     }
 
     /**

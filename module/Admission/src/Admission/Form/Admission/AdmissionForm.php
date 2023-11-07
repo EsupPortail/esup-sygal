@@ -3,7 +3,7 @@
 namespace Admission\Form\Admission;
 
 use Admission\Entity\Db\Admission;
-use Admission\Form\Fieldset\Individu\IndividuFieldset;
+use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Form\Fieldset\Validation\ValidationFieldset;
@@ -20,9 +20,9 @@ class AdmissionForm extends MultipageForm
     {
         parent::init();
 
-        $individuFieldset = $this->getFormFactory()->getFormElementManager()->get(IndividuFieldset::class);
-        $individuFieldset->setName("individu");
-        $this->add($individuFieldset);
+        $etudiantFieldset = $this->getFormFactory()->getFormElementManager()->get(EtudiantFieldset::class);
+        $etudiantFieldset->setName("etudiant");
+        $this->add($etudiantFieldset);
 
         $inscriptionFieldset = $this->getFormFactory()->getFormElementManager()->get(InscriptionFieldset::class);
         $inscriptionFieldset->setName("inscription");

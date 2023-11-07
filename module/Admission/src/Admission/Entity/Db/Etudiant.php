@@ -2,10 +2,12 @@
 namespace Admission\Entity\Db;
 
 use Application\Entity\Db\Pays;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Individu implements HistoriqueAwareInterface{
+class Etudiant implements HistoriqueAwareInterface{
     use HistoriqueAwareTrait;
 
     /**
@@ -124,39 +126,9 @@ class Individu implements HistoriqueAwareInterface{
     private $situationHandicap;
 
     /**
-     * @var string|null
-     */
-    private $intituleDuDiplome;
-
-    /**
      * @var int|null
      */
-    private $anneeDobtentionDiplome;
-
-    /**
-     * @var string|null
-     */
-    private $etablissementDobtentionDiplome;
-
-    /**
-     * @var bool|null
-     */
-    private $typeDiplomeAutre;
-
-    /**
-     * @var ?int
-     */
-    private ?int $id = null;
-
-    /**
-     * @var Admission
-     */
-    private $admission;
-
-    /**
-     * @var Pays
-     */
-    private $paysNaissance = null;
+    private $niveauEtude;
 
     /**
      * @var string|null
@@ -174,6 +146,11 @@ class Individu implements HistoriqueAwareInterface{
     private $etablissementDobtentionDiplomeNational;
 
     /**
+     * @var bool|null
+     */
+    private $typeDiplomeAutre;
+
+    /**
      * @var string|null
      */
     private $intituleDuDiplomeAutre;
@@ -189,21 +166,45 @@ class Individu implements HistoriqueAwareInterface{
     private $etablissementDobtentionDiplomeAutre;
 
     /**
+     * @var int
+     */
+    private $id;
+
+    /**
+     * @var Admission
+     */
+    private $admission;
+
+    /**
+     * @var Pays
+     */
+    private $paysNaissance;
+
+    /**
      * @var Pays
      */
     private $nationalite;
 
     /**
-     * @var int|null
+     * @var Collection
      */
-    private $niveauEtude;
+    private $verificationEtudiant;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->verificationEtudiant = new ArrayCollection();
+    }
+
 
     /**
      * Set civilite.
      *
      * @param string|null $civilite
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setCivilite($civilite = null)
     {
@@ -227,7 +228,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $nomUsuel
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setNomUsuel($nomUsuel = null)
     {
@@ -251,7 +252,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $nomFamille
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setNomFamille($nomFamille = null)
     {
@@ -275,7 +276,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $prenom
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setPrenom($prenom = null)
     {
@@ -299,7 +300,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $prenom2
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setPrenom2($prenom2 = null)
     {
@@ -323,7 +324,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $prenom3
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setPrenom3($prenom3 = null)
     {
@@ -347,7 +348,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param \DateTime|null $dateNaissance
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setDateNaissance($dateNaissance = null)
     {
@@ -371,7 +372,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $villeNaissance
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setVilleNaissance($villeNaissance = null)
     {
@@ -395,7 +396,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $codeNationalite
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setCodeNationalite($codeNationalite = null)
     {
@@ -419,7 +420,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $ine
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setIne($ine = null)
     {
@@ -443,7 +444,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseCodePays
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseCodePays($adresseCodePays = null)
     {
@@ -467,7 +468,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseLigne1Etage
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseLigne1Etage($adresseLigne1Etage = null)
     {
@@ -491,7 +492,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseLigne2Etage
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseLigne2Etage($adresseLigne2Etage = null)
     {
@@ -515,7 +516,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseLigne3Batiment
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseLigne3Batiment($adresseLigne3Batiment = null)
     {
@@ -539,7 +540,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseLigne3Bvoie
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseLigne3Bvoie($adresseLigne3Bvoie = null)
     {
@@ -563,7 +564,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseLigne4Complement
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseLigne4Complement($adresseLigne4Complement = null)
     {
@@ -587,7 +588,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param int|null $adresseCodePostal
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseCodePostal($adresseCodePostal = null)
     {
@@ -611,7 +612,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseCodeCommune
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseCodeCommune($adresseCodeCommune = null)
     {
@@ -635,7 +636,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $adresseCpVilleEtrangere
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAdresseCpVilleEtrangere($adresseCpVilleEtrangere = null)
     {
@@ -659,7 +660,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $numeroTelephone1
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setNumeroTelephone1($numeroTelephone1 = null)
     {
@@ -683,7 +684,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $numeroTelephone2
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setNumeroTelephone2($numeroTelephone2 = null)
     {
@@ -707,7 +708,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $courriel
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setCourriel($courriel = null)
     {
@@ -731,7 +732,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param bool|null $situationHandicap
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setSituationHandicap($situationHandicap = null)
     {
@@ -751,157 +752,27 @@ class Individu implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set intituleDuDiplome.
+     * Set niveauEtude.
      *
-     * @param string|null $intituleDuDiplome
+     * @param int|null $niveauEtude
      *
-     * @return Individu
+     * @return Etudiant
      */
-    public function setIntituleDuDiplome($intituleDuDiplome = null)
+    public function setNiveauEtude($niveauEtude = null)
     {
-        $this->intituleDuDiplome = $intituleDuDiplome;
+        $this->niveauEtude = $niveauEtude;
 
         return $this;
     }
 
     /**
-     * Get intituleDuDiplome.
-     *
-     * @return string|null
-     */
-    public function getIntituleDuDiplome()
-    {
-        return $this->intituleDuDiplome;
-    }
-
-    /**
-     * Set anneeDobtentionDiplome.
-     *
-     * @param int|null $anneeDobtentionDiplome
-     *
-     * @return Individu
-     */
-    public function setAnneeDobtentionDiplome($anneeDobtentionDiplome = null)
-    {
-        $this->anneeDobtentionDiplome = $anneeDobtentionDiplome;
-
-        return $this;
-    }
-
-    /**
-     * Get anneeDobtentionDiplome.
+     * Get niveauEtude.
      *
      * @return int|null
      */
-    public function getAnneeDobtentionDiplome()
+    public function getNiveauEtude()
     {
-        return $this->anneeDobtentionDiplome;
-    }
-
-    /**
-     * Set etablissementDobtentionDiplome.
-     *
-     * @param string|null $etablissementDobtentionDiplome
-     *
-     * @return Individu
-     */
-    public function setEtablissementDobtentionDiplome($etablissementDobtentionDiplome = null)
-    {
-        $this->etablissementDobtentionDiplome = $etablissementDobtentionDiplome;
-
-        return $this;
-    }
-
-    /**
-     * Get etablissementDobtentionDiplome.
-     *
-     * @return string|null
-     */
-    public function getEtablissementDobtentionDiplome()
-    {
-        return $this->etablissementDobtentionDiplome;
-    }
-
-    /**
-     * Set typeDiplomeAutre.
-     *
-     * @param bool|null $typeDiplomeAutre
-     *
-     * @return Individu
-     */
-    public function setTypeDiplomeAutre($typeDiplomeAutre = null)
-    {
-        $this->typeDiplomeAutre = $typeDiplomeAutre;
-
-        return $this;
-    }
-
-    /**
-     * Get typeDiplomeAutre.
-     *
-     * @return bool|null
-     */
-    public function getTypeDiplomeAutre()
-    {
-        return $this->typeDiplomeAutre;
-    }
-
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set paysNaissance.
-     *
-     * @param Pays|null $paysNaissance
-     *
-     * @return Individu
-     */
-    public function setPaysNaissance(?Pays $paysNaissance): Individu
-    {
-        $this->paysNaissance = $paysNaissance;
-
-        return $this;
-    }
-
-    /**
-     * Get paysNaissance.
-     *
-     * @return Pays|null
-     */
-    public function getPaysNaissance()
-    {
-        return $this->paysNaissance;
-    }
-
-    /**
-     * Set admission.
-     *
-     * @param Admission|null $admission
-     *
-     * @return Individu
-     */
-    public function setAdmission(Admission $admission = null)
-    {
-        $this->admission = $admission;
-
-        return $this;
-    }
-
-    /**
-     * Get admission.
-     *
-     * @return Admission|null
-     */
-    public function getAdmission()
-    {
-        return $this->admission;
+        return $this->niveauEtude;
     }
 
     /**
@@ -909,7 +780,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $intituleDuDiplomeNational
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setIntituleDuDiplomeNational($intituleDuDiplomeNational = null)
     {
@@ -933,7 +804,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param int|null $anneeDobtentionDiplomeNational
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAnneeDobtentionDiplomeNational($anneeDobtentionDiplomeNational = null)
     {
@@ -957,7 +828,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $etablissementDobtentionDiplomeNational
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setEtablissementDobtentionDiplomeNational($etablissementDobtentionDiplomeNational = null)
     {
@@ -977,11 +848,35 @@ class Individu implements HistoriqueAwareInterface{
     }
 
     /**
+     * Set typeDiplomeAutre.
+     *
+     * @param bool|null $typeDiplomeAutre
+     *
+     * @return Etudiant
+     */
+    public function setTypeDiplomeAutre($typeDiplomeAutre = null)
+    {
+        $this->typeDiplomeAutre = $typeDiplomeAutre;
+
+        return $this;
+    }
+
+    /**
+     * Get typeDiplomeAutre.
+     *
+     * @return bool|null
+     */
+    public function getTypeDiplomeAutre()
+    {
+        return $this->typeDiplomeAutre;
+    }
+
+    /**
      * Set intituleDuDiplomeAutre.
      *
      * @param string|null $intituleDuDiplomeAutre
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setIntituleDuDiplomeAutre($intituleDuDiplomeAutre = null)
     {
@@ -1005,7 +900,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param int|null $anneeDobtentionDiplomeAutre
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setAnneeDobtentionDiplomeAutre($anneeDobtentionDiplomeAutre = null)
     {
@@ -1029,7 +924,7 @@ class Individu implements HistoriqueAwareInterface{
      *
      * @param string|null $etablissementDobtentionDiplomeAutre
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setEtablissementDobtentionDiplomeAutre($etablissementDobtentionDiplomeAutre = null)
     {
@@ -1049,11 +944,69 @@ class Individu implements HistoriqueAwareInterface{
     }
 
     /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set admission.
+     *
+     * @param Admission|null $admission
+     *
+     * @return Etudiant
+     */
+    public function setAdmission(Admission $admission = null)
+    {
+        $this->admission = $admission;
+
+        return $this;
+    }
+
+    /**
+     * Get admission.
+     *
+     * @return Admission|null
+     */
+    public function getAdmission()
+    {
+        return $this->admission;
+    }
+
+    /**
+     * Set paysNaissance.
+     *
+     * @param Pays|null $paysNaissance
+     *
+     * @return Etudiant
+     */
+    public function setPaysNaissance(Pays $paysNaissance = null)
+    {
+        $this->paysNaissance = $paysNaissance;
+
+        return $this;
+    }
+
+    /**
+     * Get paysNaissance.
+     *
+     * @return Pays|null
+     */
+    public function getPaysNaissance()
+    {
+        return $this->paysNaissance;
+    }
+
+    /**
      * Set nationalite.
      *
      * @param Pays|null $nationalite
      *
-     * @return Individu
+     * @return Etudiant
      */
     public function setNationalite(Pays $nationalite = null)
     {
@@ -1073,26 +1026,35 @@ class Individu implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set niveauEtude.
-     *
-     * @param int|null $niveauEtude
-     *
-     * @return Individu
+     * Add verificationEtudiant.
      */
-    public function setNiveauEtude($niveauEtude = null)
+    public function addVerificationEtudiant(Collection $verificationEtudiants)
     {
-        $this->niveauEtude = $niveauEtude;
+//        var_dump($verificationEtudiants);
+//        foreach ($verificationEtudiants as $vE) {
+//            $this->verificationEtudiant->add($vE);
+//        }
 
         return $this;
     }
 
     /**
-     * Get niveauEtude.
-     *
-     * @return int|null
+     * Remove verificationEtudiant.
      */
-    public function getNiveauEtude()
+    public function removeVerificationEtudiant(Collection $verificationEtudiants)
     {
-        return $this->niveauEtude;
+        foreach ($verificationEtudiants as $vE) {
+            $this->verificationEtudiant->removeElement($vE);
+        }
+    }
+
+    /**
+     * Get verificationEtudiant.
+     *
+     * @return Collection
+     */
+    public function getVerificationEtudiant()
+    {
+        return $this->verificationEtudiant;
     }
 }

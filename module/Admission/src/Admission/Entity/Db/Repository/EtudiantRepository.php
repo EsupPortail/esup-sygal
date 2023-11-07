@@ -7,7 +7,7 @@ use Admission\Entity\Db\Individu;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Service\UserContextServiceAwareTrait;
 
-class DocumentRepository extends DefaultEntityRepository{
+class EtudiantRepository extends DefaultEntityRepository{
     /**
      * Recherche d'un fieldset Etudiant à partir de l'ID de son créateur.
      *

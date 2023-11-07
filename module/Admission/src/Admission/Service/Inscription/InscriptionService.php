@@ -37,16 +37,15 @@ class InscriptionService extends BaseService
      * @param Inscription $inscription
      * @return Inscription
      */
-    public function create(Inscription $inscription, Admission $admission) : Inscription
+    public function create(Inscription $inscription) : Inscription
     {
         try {
             $date = new DateTime();
             $user = $this->userContextService->getIdentityDb();
             $inscription->setHistoModification($date);
             $inscription->setHistoModificateur($user);
-            $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->persist($inscription);
-            $this->getEntityManager()->flush($inscription);
+            $this->getEntityManager()->flush();
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Inscription");
         }

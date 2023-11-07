@@ -2,13 +2,14 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Admission\Entity\Db\Admission" table="ADMISSION_ADMISSION"
-            repository-class="Admission\Entity\Db\Repository\AdmissionRepository">
+    <entity name="Admission\Entity\Db\Verification" table="ADMISSION_VERIFICATION"
+            repository-class="Admission\Entity\Db\Repository\VerificationRepository">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="etatId" type="bigint" column="ETAT_ID" nullable="true"/>
+        <field name="commentaire" type="string" column="COMMENTAIRE" nullable="true"/>
+        <field name="estComplet" type="boolean" column="EST_COMPLET" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
@@ -19,12 +20,18 @@
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-
-        <one-to-many field="financement" target-entity="Admission\Entity\Db\Financement" mapped-by="admission" />
-        <one-to-many field="etudiant" target-entity="Admission\Entity\Db\Etudiant" mapped-by="admission"/>
-        <one-to-many field="inscription" target-entity="Admission\Entity\Db\Inscription" mapped-by="admission"/>
-        <one-to-many field="validation" target-entity="Admission\Entity\Db\Validation" mapped-by="admission"/>
-        <one-to-many field="document" target-entity="Admission\Entity\Db\Document" mapped-by="admission"/>
+        <many-to-one field="etudiant" target-entity="Admission\Entity\Db\Etudiant" inversed-by="verificationEtudiant">
+            <join-column name="ADMISSION_ETUDIANT_ID" referenced-column-name="ID"/>
+        </many-to-one>
+        <many-to-one field="inscription" target-entity="Admission\Entity\Db\Inscription">
+            <join-column name="ADMISSION_INSCRIPTION_ID" referenced-column-name="ID"/>
+        </many-to-one>
+        <many-to-one field="financement" target-entity="Admission\Entity\Db\Financement">
+            <join-column name="ADMISSION_FINANCEMENT_ID" referenced-column-name="ID"/>
+        </many-to-one>
+        <many-to-one field="document" target-entity="Admission\Entity\Db\Document">
+            <join-column name="ADMISSION_DOCUMENT_ID" referenced-column-name="ID"/>
+        </many-to-one>
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>

@@ -6,13 +6,15 @@ use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Financement\FinancementService;
-use Admission\Service\Individu\IndividuService;
+use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Validation\ValidationService;
+use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\NatureFichier\NatureFichierService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
@@ -37,11 +39,12 @@ class AdmissionControllerFactory implements FactoryInterface
          * @var NotifierService $notifierService
          */
         $structureService = $container->get(StructureService::class);
-        $individuAdmissionService = $container->get(IndividuService::class);
-        $individuService = $container->get(\Individu\Service\IndividuService::class);
+        $etudiantService = $container->get(EtudiantService::class);
+        $individuService = $container->get(IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $financementService = $container->get(FinancementService::class);
         $validationService = $container->get(ValidationService::class);
+        $verificationService = $container->get(VerificationService::class);
         $admissionService = $container->get(AdmissionService::class);
         $disciplineService = $container->get(DisciplineService::class);
         $notificationFactory = $container->get(NotificationFactory::class);
@@ -58,11 +61,12 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller = new AdmissionController();
 
         $controller->setStructureService($structureService);
-        $controller->setIndividuAdmissionService($individuAdmissionService);
+        $controller->setEtudiantService($etudiantService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setIndividuService($individuService);
         $controller->setFinancementService($financementService);
         $controller->setValidationService($validationService);
+        $controller->setVerificationService($verificationService);
         $controller->setAdmissionService($admissionService);
         $controller->setDisciplineService($disciplineService);
         $controller->setNotificationFactory($notificationFactory);

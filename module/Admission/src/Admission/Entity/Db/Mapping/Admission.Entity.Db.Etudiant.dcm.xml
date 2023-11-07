@@ -2,8 +2,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Admission\Entity\Db\Individu" table="ADMISSION_INDIVIDU"
-            repository-class="Admission\Entity\Db\Repository\IndividuRepository">
+    <entity name="Admission\Entity\Db\Etudiant" table="ADMISSION_ETUDIANT"
+            repository-class="Admission\Entity\Db\Repository\EtudiantRepository">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
@@ -62,7 +62,7 @@
             </join-columns>
         </many-to-one>
 
-<!--    <one-to-many field="verificationIndividu" target-entity="Admission\Entity\Db\VerificationIndividu" mapped-by="admissionIndividu" />-->
+        <one-to-many field="verificationEtudiant" target-entity="Admission\Entity\Db\Verification" mapped-by="etudiant"/>
 
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>

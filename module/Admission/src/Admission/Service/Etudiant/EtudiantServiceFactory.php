@@ -1,12 +1,7 @@
 <?php
 
-namespace Admission\Service\Admission;
+namespace Admission\Service\Etudiant;
 
-use Admission\Service\Document\DocumentService;
-use Admission\Service\Financement\FinancementService;
-use Admission\Service\Etudiant\EtudiantService;
-use Admission\Service\Inscription\InscriptionService;
-use Admission\Service\Validation\ValidationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
@@ -15,13 +10,13 @@ use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class AdmissionServiceFactory {
+class EtudiantServiceFactory {
 
     /**
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): AdmissionService
+    public function __invoke(ContainerInterface $container): EtudiantService
     {
         /**
          * @var RoleService $roleService
@@ -30,11 +25,6 @@ class AdmissionServiceFactory {
          */
         $roleService = $container->get(RoleService::class);
         $sourceService = $container->get(SourceService::class);
-        $etudiantService = $container->get(EtudiantService::class);
-        $inscriptionService = $container->get(InscriptionService::class);
-        $financementService = $container->get(FinancementService::class);
-        $validationService = $container->get(ValidationService::class);
-        $documentService = $container->get(DocumentService::class);
         $userContextService = $container->get('UserContextService');
 
         /**
@@ -42,14 +32,9 @@ class AdmissionServiceFactory {
          */
         $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
 
-        $service = new AdmissionService()   ;
+        $service = new EtudiantService();
         $service->setRoleService($roleService);
         $service->setSourceService($sourceService);
-        $service->setEtudiantService($etudiantService);
-        $service->setInscriptionService($inscriptionService);
-        $service->setFinancementService($financementService);
-        $service->setValidationService($validationService);
-        $service->setDocumentService($documentService);
         $service->setUserContextService($userContextService);
         $service->setSourceCodeStringHelper($sourceCodeStringHelper);
         return $service;

@@ -4,6 +4,7 @@ namespace Admission\Service\Document;
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Document;
+use Admission\Entity\Db\Repository\DocumentRepository;
 use Application\Entity\DateTimeAwareTrait;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\UserContextServiceAwareTrait;
@@ -27,6 +28,17 @@ class DocumentService
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
     use DateTimeAwareTrait;
+
+    /**
+     * @return DocumentRepository
+     */
+    public function getRepository(): DocumentRepository
+    {
+        /** @var DocumentRepository $repo */
+        $repo = $this->entityManager->getRepository(Document::class);
+
+        return $repo;
+    }
 
     /** Gestion des entités *******************************************************************************************/
 

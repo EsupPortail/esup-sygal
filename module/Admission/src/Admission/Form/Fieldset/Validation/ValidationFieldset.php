@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Validation;
 
+use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Form\Element\Checkbox;
@@ -169,13 +170,9 @@ class ValidationFieldset extends Fieldset implements InputFilterProviderInterfac
                 ->setLabel("Signature de la Présidence de l'établissement d'inscription")
         );
 
-        $this->add(
-            (new Textarea('verificationValidation'))
-                ->setLabel("Observations (Non enregistrées encore en base de données)")
-                ->setAttributes([
-                    "class" => "text_observations_gestionnaire"
-                ])
-        );
+        $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
+        $verificationFieldset->setName("verificationValidation");
+        $this->add($verificationFieldset);
     }
 
     /**

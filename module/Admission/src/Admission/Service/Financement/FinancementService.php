@@ -37,16 +37,15 @@ class FinancementService extends BaseService
      * @param Financement $financement
      * @return Financement
      */
-    public function create(Financement $financement, Admission $admission) : Financement
+    public function create(Financement $financement) : Financement
     {
         try {
             $date = new DateTime();
             $user = $this->userContextService->getIdentityDb();
             $financement->setHistoModification($date);
             $financement->setHistoModificateur($user);
-            $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->persist($financement);
-            $this->getEntityManager()->flush($financement);
+            $this->getEntityManager()->flush();
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Financement");
         }
