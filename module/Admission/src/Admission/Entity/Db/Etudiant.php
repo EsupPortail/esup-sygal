@@ -17,11 +17,6 @@ class Etudiant implements HistoriqueAwareInterface{
     private $civilite;
 
     /**
-     * @var Individu
-     */
-    private $individu;
-
-    /**
      * @var string|null
      */
     private $nomUsuel;
@@ -1064,29 +1059,5 @@ class Etudiant implements HistoriqueAwareInterface{
     public function getVerificationEtudiant()
     {
         return $this->verificationEtudiant;
-    }
-
-    /**
-     * Set individu.
-     *
-     * @param Individu|null $individu
-     *
-     * @return Etudiant
-     */
-    public function setIndividu(Individu $individu = null)
-    {
-        $this->individu = $individu;
-
-        return $this;
-    }
-
-    /**
-     * Get individu.
-     *
-     * @return Individu|null
-     */
-    public function getIndividu()
-    {
-        return $this->individu;
     }
 }

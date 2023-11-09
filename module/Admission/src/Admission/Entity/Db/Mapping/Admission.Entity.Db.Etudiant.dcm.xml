@@ -50,11 +50,11 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
-            <join-columns>
-                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
+<!--        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">-->
+<!--            <join-columns>-->
+<!--                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>-->
+<!--            </join-columns>-->
+<!--        </many-to-one>-->
 
         <many-to-one field="paysNaissance" target-entity="Application\Entity\Db\Pays">
             <join-columns>

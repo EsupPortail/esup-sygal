@@ -35,11 +35,8 @@ class EtudiantHydrator extends DoctrineObject
 
     public function hydrate(array $data, object $object): object
     {
-
-//        $data["paysNaissance"] = empty($data["paysNaissance"]["id"]) ? null : $data["paysNaissance"]["id"];
-        $data["paysNaissance"] = $data["paysNaissanceId"];
-//        $data["nationalite"] = empty($data["nationalite"]["id"]) ? null : $data["nationalite"]["id"];
-        $data["nationalite"] = $data["nationaliteId"];
+        $data["paysNaissance"] = !empty($data["paysNaissanceId"]) ? $data["paysNaissanceId"] : null;
+        $data["nationalite"] = !empty($data["nationaliteId"]) ? $data["nationaliteId"] : null;
         $data["adresseCodePostal"] = empty($data["adresseCodePostal"]) ? null : $data["adresseCodePostal"];
 
         //Si la case niveauEtude n'est pas le diplôme national, on met à null les valeurs des champs reliés
