@@ -107,6 +107,16 @@ h1{
   padding-right: 15px;
 }
 
+input[type="radio"][name="etudiant[civilite]"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]) {
+  display: none;
+}
+
+
 .informations{
   font-style: italic;
 }

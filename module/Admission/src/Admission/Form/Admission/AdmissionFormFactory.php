@@ -3,7 +3,7 @@
 namespace Admission\Form\Admission;
 
 use Admission\Entity\Db\Admission;
-use Admission\Hydrator\AdmissionHydrator;
+use Admission\Hydrator\Admission\AdmissionHydrator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

@@ -4,6 +4,7 @@ namespace Admission\Entity\Db;
 use Application\Entity\Db\Pays;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -14,6 +15,11 @@ class Etudiant implements HistoriqueAwareInterface{
      * @var string|null
      */
     private $civilite;
+
+    /**
+     * @var Individu
+     */
+    private $individu;
 
     /**
      * @var string|null
@@ -1032,7 +1038,9 @@ class Etudiant implements HistoriqueAwareInterface{
     {
 //        var_dump($verificationEtudiants);
 //        foreach ($verificationEtudiants as $vE) {
-//            $this->verificationEtudiant->add($vE);
+//            if (!$this->verificationEtudiant->contains($vE)) {
+//                $this->verificationEtudiant->add($vE);
+//            }
 //        }
 
         return $this;
@@ -1056,5 +1064,29 @@ class Etudiant implements HistoriqueAwareInterface{
     public function getVerificationEtudiant()
     {
         return $this->verificationEtudiant;
+    }
+
+    /**
+     * Set individu.
+     *
+     * @param Individu|null $individu
+     *
+     * @return Etudiant
+     */
+    public function setIndividu(Individu $individu = null)
+    {
+        $this->individu = $individu;
+
+        return $this;
+    }
+
+    /**
+     * Get individu.
+     *
+     * @return Individu|null
+     */
+    public function getIndividu()
+    {
+        return $this->individu;
     }
 }

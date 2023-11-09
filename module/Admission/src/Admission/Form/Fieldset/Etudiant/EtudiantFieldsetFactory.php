@@ -3,7 +3,7 @@
 namespace Admission\Form\Fieldset\Etudiant;
 
 use Admission\Entity\Db\Etudiant;
-use Admission\Hydrator\EtudiantHydrator;
+use Admission\Hydrator\Etudiant\EtudiantHydrator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

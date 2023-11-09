@@ -1,13 +1,12 @@
 <?php
 
-namespace Admission\Hydrator;
+namespace Admission\Hydrator\Admission;
 
-use Application\Application\Form\Hydrator\RecrutementHydrator;
 use Doctrine\ORM\EntityManager;
-use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
-class FinancementHydratorFactory implements FactoryInterface
+class AdmissionHydratorFactory implements FactoryInterface
 {
     /**
      * Create hydrator
@@ -15,7 +14,7 @@ class FinancementHydratorFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return FinancementHydrator
+     * @return AdmissionHydrator
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -24,6 +23,6 @@ class FinancementHydratorFactory implements FactoryInterface
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
 
-        return new FinancementHydrator($entityManager);
+        return new AdmissionHydrator($entityManager);
     }
 }

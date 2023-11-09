@@ -1,6 +1,6 @@
 <?php
 
-namespace Admission\Hydrator;
+namespace Admission\Hydrator\Admission;
 
 use Admission\Entity\Db\Admission;
 use Doctrine\Laminas\Hydrator\DoctrineObject;

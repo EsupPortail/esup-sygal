@@ -2,11 +2,13 @@
 namespace Admission\Form\Fieldset\Etudiant;
 
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\Digits;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToNull;
+use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Hidden;
@@ -29,16 +31,17 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 
     private ?string $urlNationalite = null;
 
+
     public function setUrlPaysNationalite(string $urlPaysNationalite): void
     {
-        $this->$urlPaysNationalite = $urlPaysNationalite;
-        $this->get('paysNaissance')->setAutocompleteSource($this->$urlPaysNationalite);
+        $this->urlPaysNationalite = $urlPaysNationalite;
+//        $this->get('paysNaissance')->setAutocompleteSource($this->urlPaysNationalite);
     }
 
     public function setUrlNationalite(string $urlNationalite): void
     {
-        $this->$urlNationalite = $urlNationalite;
-        $this->get('nationalite')->setAutocompleteSource($this->$urlNationalite);
+        $this->urlNationalite = $urlNationalite;
+//        $this->get('nationalite')->setAutocompleteSource($this->urlNationalite);
     }
 
     // Méthode pour générer les options d'année
@@ -66,31 +69,37 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
                 ->setLabel("Civilité")
+                ->setAttributes(['readonly' => true])
+        );
+
+        $this->add(
+            (new Hidden('individu'))
         );
 
         $this->add(
             (new Text('nomUsuel'))
-                ->setLabel("Nom d'usage")
+                ->setLabel("Nom d'usage:")
+                ->setAttributes(['readonly' => true])
         );
 
         $this->add(
             (new Text('nomFamille'))
-                ->setLabel("Nom")
+                ->setLabel("Nom :")
+                ->setAttributes(['readonly' => true])
         );
 
         $this->add(
             (new Text('prenom'))
-                ->setLabel("Prénom")
+                ->setLabel("Prénom :")
+                ->setAttributes(['readonly' => true])
         );
 
         $this->add(
-            (new Text('prenom2'))
-                ->setLabel("Prénom 2 :")
+            (new Hidden('prenom2'))
         );
 
         $this->add(
-            (new Text('prenom3'))
-                ->setLabel("Prénom 3 :")
+            (new Hidden('prenom3'))
         );
 
         $this->add(
@@ -106,24 +115,36 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Email('courriel'))
                 ->setLabel("Mail")
+                ->setAttributes(['readonly' => true])
         );
 
         $this->add(
             (new Date('dateNaissance'))
                 ->setLabel("Date de naissance :")
+                ->setAttributes(['readonly' => true])
         );
 
-        $paysNaissance = new SearchAndSelect('paysNaissance', ['label' => "Pays de naissance :"]);
-        $paysNaissance
-            ->setAutocompleteSource($this->urlPaysNationalite)
-            ->setSelectionRequired(false)
-            ->setRequired(false)
-            ->setAttributes([
-                'class' => 'selectpicker show-tick',
-                'data-live-search' => 'true',
-                'id' => 'paysNaissance',
-            ]);
-        $this->add($paysNaissance);
+        $this->add(
+            (new Hidden('paysNaissanceId'))
+        );
+
+        $this->add(
+            (new Text('paysNaissance'))
+                ->setLabel("Pays de naissance :")
+                ->setAttributes(['readonly' => true])
+        );
+
+//        $paysNaissance = new SearchAndSelect('paysNaissance', ['label' => "Pays de naissance :"]);
+//        $paysNaissance
+//            ->setAutocompleteSource($this->urlPaysNationalite)
+//            ->setSelectionRequired(false)
+//            ->setRequired(false)
+//            ->setAttributes([
+//                'class' => 'selectpicker show-tick',
+//                'data-live-search' => 'true',
+//                'id' => 'paysNaissance',
+//            ]);
+//        $this->add($paysNaissance);
 
         $this->add(
             (new Text('villeNaissance'))
@@ -135,16 +156,26 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                 ->setLabel("Nationalité")
         );
 
-        $nationalite = new SearchAndSelect('nationalite', ['label' => "Nationalité"]);
-        $nationalite
-            ->setAutocompleteSource($this->urlNationalite)
-            ->setSelectionRequired()
-            ->setAttributes([
-                'class' => 'selectpicker show-tick',
-                'data-live-search' => 'true',
-                'id' => 'nationalite',
-            ]);
-        $this->add($nationalite);
+//        $nationalite = new SearchAndSelect('nationalite', ['label' => "Nationalité"]);
+//        $nationalite
+//            ->setAutocompleteSource($this->urlNationalite)
+//            ->setSelectionRequired()
+//            ->setAttributes([
+//                'class' => 'selectpicker show-tick',
+//                'data-live-search' => 'true',
+//                'id' => 'nationalite',
+//            ]);
+//        $this->add($nationalite);
+
+        $this->add(
+            (new Hidden('nationaliteId'))
+        );
+
+        $this->add(
+            (new Text('nationalite'))
+                ->setLabel("Nationalité")
+                ->setAttributes(['readonly' => true])
+        );
 
         $this->add(
             (new Hidden('codePaysNaissance'))
@@ -267,9 +298,11 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                 ->setLabel("Intitulé")
         );
 
-        $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
-        $verificationFieldset->setName("verificationEtudiant");
-        $this->add($verificationFieldset);
+//        if($this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER))){
+            $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
+            $verificationFieldset->setName("verificationEtudiant");
+            $this->add($verificationFieldset);
+//        }
     }
 
     public function getInputFilterSpecification(): array

@@ -1,17 +1,20 @@
 <?php
 
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
 
 /**
- * @var PhpRenderer         $this
  * @var EtudiantFieldset    $fieldset
+ * @var Individu $individu
  * @var string              $error
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
  */
 
-//$this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+$canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
+
 $fcg = $this->formControlGroup();
 ?>
 <div class="modal hide fade" tabindex="-1" role="dialog">
@@ -46,31 +49,36 @@ $fcg = $this->formControlGroup();
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
             <div class="checkbox_admission">
-                <?php echo $fcg($fieldset->get('civilite')) ?>
+                <?php echo $fcg($fieldset->get('civilite')->setValue($individu->getCivilite())) ?>
             </div>
         </div>
         <div class="col-lg-3">
-            <?php echo $fcg($fieldset->get('nomFamille')) ?>
+            <?php echo $fcg($fieldset->get('individu')->setValue($individu->getId())) ?>
+            <?php echo $fcg($fieldset->get('nomFamille')->setValue($individu->getNomPatronymique())) ?>
         </div>
         <div class="col-lg-3">
-            <?php echo $fcg($fieldset->get('nomUsuel')) ?>
+            <?php echo $fcg($fieldset->get('nomUsuel')->setValue($individu->getNomUsuel())) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get('prenom')) ?>
+            <?php echo $fcg($fieldset->get('prenom')->setValue($individu->getPrenom())) ?>
+            <?php echo $fcg($fieldset->get('prenom2')->setValue($individu->getPrenom2())) ?>
+            <?php echo $fcg($fieldset->get('prenom3')->setValue($individu->getPrenom3())) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('dateNaissance')) ?>
+            <?php echo $fcg($fieldset->get('dateNaissance')->setValue($individu->getDateNaissance())) ?>
         </div>
         <div class="col-md-3">
             <?php echo $fcg($fieldset->get('villeNaissance')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('paysNaissance')) ?>
+            <?php echo $fcg($fieldset->get('paysNaissanceId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
+            <?php echo $fcg($fieldset->get('paysNaissance')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelle() : null)) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('nationalite')) ?>
+            <?php echo $fcg($fieldset->get('nationaliteId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
+            <?php echo $fcg($fieldset->get('nationalite')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelleNationalite() : null)) ?>
         </div>
     </div>
     <div class="row subfield">
@@ -87,7 +95,7 @@ $fcg = $this->formControlGroup();
             <?php echo $fcg($fieldset->get('numeroTelephone1')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get('courriel')) ?>
+            <?php echo $fcg($fieldset->get('courriel')->setValue($individu->getEmailContact())) ?>
         </div>
     </div>
     <div class="row subfield">
@@ -150,15 +158,23 @@ $fcg = $this->formControlGroup();
             </div>
         </div>
     </div>
-        <div class="row observations_gestionnaire">
-            <div class="col">
-                <?php echo $fcg($fieldset->get("verificationEtudiant")->get('estComplet'))?>
-            </div>
-            <div class="commentaires_gestionnaire">
-                <?php echo $fcg($fieldset->get("verificationEtudiant")->get('commentaire')) ?>
-            </div>
-        </div>
+
 </div>
+<?php if($canVerifierAdmission){ ?>
+    <div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Commentaires</h2>
+    </div>
+    <div class="row observations_gestionnaire">
+        <div class="col">
+            <?php echo $fcg($fieldset->get("verificationEtudiant")->get('estComplet'))?>
+        </div>
+        <div class="commentaires_gestionnaire">
+            <?php echo $fcg($fieldset->get("verificationEtudiant")->get('commentaire')) ?>
+        </div>
+    </div>
+</div>
+<?php } ?>
 
 <?php ///** @see \Admission\Controller\AdmissionController::envoyerMailAction() */ ?>
 <!--<a href="--><?php //echo $this->url('admission/envoyer-mail', [], [], true); ?><!--"-->

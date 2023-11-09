@@ -1,13 +1,14 @@
 <?php
 
-namespace Admission\Hydrator;
+namespace Admission\Hydrator\Etudiant;
 
 use Application\Application\Form\Hydrator\RecrutementHydrator;
 use Doctrine\ORM\EntityManager;
-use Psr\Container\ContainerInterface;
+use Individu\Service\IndividuService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
-class ValidationHydratorFactory implements FactoryInterface
+class EtudiantHydratorFactory implements FactoryInterface
 {
     /**
      * Create hydrator
@@ -15,7 +16,7 @@ class ValidationHydratorFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return ValidationHydrator
+     * @return EtudiantHydrator
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -23,7 +24,11 @@ class ValidationHydratorFactory implements FactoryInterface
          * @var EntityManager $entityManager
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
+        $individuService = $container->get(IndividuService::class);
 
-        return new ValidationHydrator($entityManager);
+        $etudiantHydrator = new EtudiantHydrator($entityManager);
+        $etudiantHydrator->setIndividuService($individuService);
+
+        return $etudiantHydrator;
     }
 }

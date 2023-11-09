@@ -1,6 +1,7 @@
 <?php
 
 use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -11,6 +12,7 @@ use Application\View\Renderer\PhpRenderer;
  *
  */
 $fcg = $this->formControlGroup();
+$canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
 ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -304,6 +306,12 @@ $fcg = $this->formControlGroup();
             </div>
         <?php } ?>
     <?php } ?>
+</div>
+<?php if($canVerifierAdmission){ ?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Commentaires</h2>
+    </div>
     <div class="row observations_gestionnaire">
         <div class="col">
             <?php echo $fcg($fieldset->get("verificationValidation")->get('estComplet'))?>
@@ -313,7 +321,7 @@ $fcg = $this->formControlGroup();
         </div>
     </div>
 </div>
-
+<?php } ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Signatures</h2>

@@ -3,43 +3,37 @@
 namespace Admission\Controller;
 
 use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Etudiant;
+use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Inscription;
-use Admission\Entity\Db\Repository\ValidationRepository;
 use Admission\Entity\Db\Verification;
-use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormAwareTrait;
-use Admission\Hydrator\EtudiantHydrator;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
-use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
+use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Admission\Service\Validation\ValidationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Controller\PaysController;
-use Application\Controller\UtilisateurController;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Doctrine\ORM\Exception\NotSupported;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use Mpdf\Tag\Ins;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Controller\EtablissementController;
-use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use UnicaenApp\Controller\Plugin\MultipageFormPlugin;
-use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 
 
 class AdmissionController extends AdmissionAbstractController {
@@ -63,7 +57,7 @@ class AdmissionController extends AdmissionAbstractController {
     public function indexAction(): ViewModel|Response
     {
         $request = $this->getRequest();
-        $id = $request->getPost('etudiant');
+        $id = $request->getPost('individuId');
 
         if (!empty($id)) {
             $this->multipageForm($this->getAdmissionForm())->clearSession();
@@ -85,8 +79,12 @@ class AdmissionController extends AdmissionAbstractController {
             ->start(); // réinit du plugin et redirection vers la 1ère étape
     }
 
+    /**
+     * @throws NotSupported
+     */
     public function etudiantAction(): Response|ViewModel
     {
+        /** @var Individu $individu */
         $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
 
         //Il faut que l'utilisateur existe, sinon on affiche une exception
@@ -94,12 +92,18 @@ class AdmissionController extends AdmissionAbstractController {
                 throw new \UnicaenApp\Exception\RuntimeException("Individu spécifié introuvable");
         }
 
-        $this->getAdmissionForm()->get('etudiant')->setUrlPaysNationalite($this->url()->fromRoute('pays/rechercher-pays', [], [], true));
-        $this->getAdmissionForm()->get('etudiant')->setUrlNationalite($this->url()->fromRoute('pays/rechercher-nationalite', [], [], true));
-
         $response = $this->processMultipageForm($this->getAdmissionForm());
-        $admission = $this->getAdmission();
+        $data = $this->multipageForm($this->getAdmissionForm())->getFormSessionData();
 
+        //si l'individu est différent de celui en session, on vide les données en session
+        if(array_key_exists('individu', $data["etudiant"])){
+            $individuInSession = $data["etudiant"]['individu'];
+            if((int)$individuInSession !== $individu->getId()){
+                $this->multipageForm($this->getAdmissionForm())->clearSession();
+            }
+        };
+
+        $admission = $this->getAdmission();
         if(!empty($admission)) {
             $this->getAdmissionForm()->bind($admission);
         }
@@ -107,7 +111,7 @@ class AdmissionController extends AdmissionAbstractController {
         if ($response instanceof Response) {
             return $response;
         }
-
+        $response->setVariable('individu', $individu);
         $response->setTemplate('admission/ajouter-etudiant');
 
         return $response;
@@ -146,8 +150,6 @@ class AdmissionController extends AdmissionAbstractController {
 
         //Enregistrement des informations de l'Etudiant
         $this->enregistrerEtudiant($data, $admission);
-
-        $this->getAdmissionForm()->bind($admission);
 
         if ($response instanceof Response) {
             return $response;
@@ -290,6 +292,9 @@ class AdmissionController extends AdmissionAbstractController {
         exit;
     }
 
+    /**
+     * @throws NotSupported
+     */
     public function getAdmission(): Admission|null
     {
         $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
@@ -330,24 +335,25 @@ class AdmissionController extends AdmissionAbstractController {
                     $etudiant = $this->getAdmissionForm()->get('etudiant')->getObject();
                     $this->getEtudiantService()->update($etudiant);
 
-                    /** @var Verification $verification */
-                    $verification = $this->getVerificationService()->getRepository()->findOneByEtudiant($etudiant);
-                    if($verification === null){
+                    if($this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER))){
                         /** @var Verification $verification */
-                        $verification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
-                        $verification->setEtudiant($etudiant);
-                        $this->getVerificationService()->create($verification);
-                    }else{
-                        $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->setObject($verification);
-                        $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->bindValues($data['etudiant']["verificationEtudiant"]);
+                        $verification = $this->getVerificationService()->getRepository()->findOneByEtudiant($etudiant);
+                        if($verification === null){
+                            /** @var Verification $verification */
+                            $verification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
+                            $verification->setEtudiant($etudiant);
+                            $this->getVerificationService()->create($verification);
+                        }else{
+                            $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->setObject($verification);
+                            $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->bindValues($data['etudiant']["verificationEtudiant"]);
 
-                        /** @var Verification $updatedVerification */
-                        $updatedVerification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
-                        $updatedVerification->setEtudiant($etudiant);
+                            /** @var Verification $updatedVerification */
+                            $updatedVerification = $this->getAdmissionForm()->get('etudiant')->get('verificationEtudiant')->getObject();
+                            $updatedVerification->setEtudiant($etudiant);
 
-                        $this->getVerificationService()->update($updatedVerification);
+                            $this->getVerificationService()->update($updatedVerification);
+                        }
                     }
-
                     $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
                 } catch (\Exception $e) {
                     var_dump($e);
@@ -355,6 +361,7 @@ class AdmissionController extends AdmissionAbstractController {
                 }
             }
         }
+        $this->getAdmissionForm()->bind($admission);
     }
 
     public function enregistrerInscription($data, $admission){
@@ -372,6 +379,7 @@ class AdmissionController extends AdmissionAbstractController {
                     $inscription->setAdmission($admission);
 
                     $this->getInscriptionService()->create($inscription);
+
                     $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
                 }catch(\Exception $e){
 //                        var_dump($e);
@@ -385,6 +393,25 @@ class AdmissionController extends AdmissionAbstractController {
                     /** @var Inscription $inscription */
                     $inscription = $this->getAdmissionForm()->get('inscription')->getObject();
                     $this->getInscriptionService()->update($inscription);
+
+                    /** @var Verification $verification */
+                    $verification = $this->getVerificationService()->getRepository()->findOneByInscription($inscription);
+                    if($verification === null){
+                        /** @var Verification $verification */
+                        $verification = $this->getAdmissionForm()->get('inscription')->get('verificationInscription')->getObject();
+                        $verification->setInscription($inscription);
+                        $this->getVerificationService()->create($verification);
+                    }else{
+                        $this->getAdmissionForm()->get('inscription')->get('verificationInscription')->setObject($verification);
+                        $this->getAdmissionForm()->get('inscription')->get('verificationInscription')->bindValues($data['inscription']["verificationInscription"]);
+
+                        /** @var Verification $updatedVerification */
+                        $updatedVerification = $this->getAdmissionForm()->get('inscription')->get('verificationInscription')->getObject();
+                        $updatedVerification->setInscription($inscription);
+
+                        $this->getVerificationService()->update($updatedVerification);
+                    }
+
                     $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été modifiées avec succès.");
                 }catch(\Exception $e){
 //                        var_dump($e);

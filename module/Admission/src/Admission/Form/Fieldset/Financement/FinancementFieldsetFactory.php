@@ -3,7 +3,7 @@
 namespace Admission\Form\Fieldset\Financement;
 
 use Admission\Entity\Db\Financement;
-use Admission\Hydrator\FinancementHydrator;
+use Admission\Hydrator\Financement\FinancementHydrator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

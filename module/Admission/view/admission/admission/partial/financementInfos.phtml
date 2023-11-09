@@ -1,6 +1,7 @@
 <?php
 
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -11,9 +12,10 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 $fcg = $this->formControlGroup();
+$canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
 ?>
 
-<div class="rowSousPartie">
+<div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Financement</h2>
     </div>
@@ -39,6 +41,12 @@ $fcg = $this->formControlGroup();
             <?php echo $this->formControlGroup($fieldset->get('detailContratDoctoral')) ?>
         </div>
     </div>
+</div>
+<?php if($canVerifierAdmission){ ?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Commentaires</h2>
+    </div>
     <div class="row observations_gestionnaire">
         <div class="col">
             <?php echo $fcg($fieldset->get("verificationFinancement")->get('estComplet'))?>
@@ -48,3 +56,4 @@ $fcg = $this->formControlGroup();
         </div>
     </div>
 </div>
+<?php } ?>

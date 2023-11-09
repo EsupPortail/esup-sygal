@@ -121,17 +121,4 @@ class VerificationService extends BaseService
 
         return $verification;
     }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Verification
-     */
-    public function getRequestedValidation(AbstractActionController $controller, string $param='Verification')
-    {
-        $id = $controller->params()->fromRoute($param);
-        /** @var Verification $verification */
-        $verification = $this->getRepository()->find($id);
-        return $verification;
-    }
 }

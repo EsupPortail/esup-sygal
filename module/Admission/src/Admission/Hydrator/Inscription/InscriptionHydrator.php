@@ -1,6 +1,6 @@
 <?php
 
-namespace Admission\Hydrator;
+namespace Admission\Hydrator\Inscription;
 
 use Admission\Entity\Db\Inscription;
 use Application\Entity\Db\Pays;
@@ -8,7 +8,6 @@ use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\UniteRecherche;
 
 /**

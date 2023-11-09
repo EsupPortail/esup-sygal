@@ -38,9 +38,8 @@ function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
         }
     });
 }
-
+const currentUrl = window.location.href;
 document.addEventListener("DOMContentLoaded", function() {
-    const currentUrl = window.location.href;
     const parts = currentUrl.split("/");
     const typeFormulaire = parts[parts.length - 1];
 
@@ -73,18 +72,17 @@ document.addEventListener("DOMContentLoaded", function() {
         if (radioButton.checked) {
             label.classList.add('selected');
         }
-
-        if(radioButton.classList.contains('incomplet') && label.classList.contains('selected')){
-            commentairesDiv.style.display = "block";
-        }else{
+        if(radioButton.classList.contains('complet') && label.classList.contains('selected') || radioButton.classList.contains('incomplet') && !radioButton.checked){
             commentairesDiv.style.display = "none";
         }
     });
 });
 
-const currentUrl = window.location.href;
+
 setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
+        //désactive la possibilité de changer la civilité
+        $('input:radio[name="etudiant[civilite]"]:not(:checked)').attr('disabled', true);
         const diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
         const additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
         const additionalFieldsAutre = document.getElementById('additional_fields_autre');

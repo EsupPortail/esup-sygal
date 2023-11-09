@@ -3,9 +3,10 @@
 namespace Admission;
 
 
+use Admission\Assertion\AdmissionAssertion;
+use Admission\Assertion\AdmissionAssertionFactory;
 use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
-use Admission\Entity\Db\Repository\EtudiantRepository;
 use Admission\Entity\Db\Repository\IndividuRepositoryFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
@@ -19,27 +20,27 @@ use Admission\Form\Fieldset\Validation\ValidationFieldset;
 use Admission\Form\Fieldset\Validation\ValidationFieldsetFactory;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldsetFactory;
-use Admission\Hydrator\AdmissionHydrator;
-use Admission\Hydrator\AdmissionHydratorFactory;
-use Admission\Hydrator\FinancementHydrator;
-use Admission\Hydrator\FinancementHydratorFactory;
-use Admission\Hydrator\EtudiantHydrator;
-use Admission\Hydrator\EtudiantHydratorFactory;
-use Admission\Hydrator\InscriptionHydrator;
-use Admission\Hydrator\InscriptionHydratorFactory;
-use Admission\Hydrator\ValidationHydrator;
-use Admission\Hydrator\ValidationHydratorFactory;
-use Admission\Hydrator\VerificationHydrator;
-use Admission\Hydrator\VerificationHydratorFactory;
+use Admission\Hydrator\Admission\AdmissionHydrator;
+use Admission\Hydrator\Admission\AdmissionHydratorFactory;
+use Admission\Hydrator\Etudiant\EtudiantHydrator;
+use Admission\Hydrator\Etudiant\EtudiantHydratorFactory;
+use Admission\Hydrator\Financement\FinancementHydrator;
+use Admission\Hydrator\Financement\FinancementHydratorFactory;
+use Admission\Hydrator\Inscription\InscriptionHydrator;
+use Admission\Hydrator\Inscription\InscriptionHydratorFactory;
+use Admission\Hydrator\Validation\ValidationHydrator;
+use Admission\Hydrator\Validation\ValidationHydratorFactory;
+use Admission\Hydrator\Verification\VerificationHydrator;
+use Admission\Hydrator\Verification\VerificationHydratorFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
-use Admission\Service\Financement\FinancementService;
-use Admission\Service\Financement\FinancementServiceFactory;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Etudiant\EtudiantServiceFactory;
+use Admission\Service\Financement\FinancementService;
+use Admission\Service\Financement\FinancementServiceFactory;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Inscription\InscriptionServiceFactory;
 use Admission\Service\Validation\ValidationService;
@@ -49,7 +50,6 @@ use Admission\Service\Verification\VerificationServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Laminas\Router\Http\Segment;
-use Laminas\ServiceManager\Factory\InvokableFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -72,19 +72,48 @@ return array(
         ],
     ],
     'bjyauthorize' => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'Admission' => [],
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_HISTORISER,
+                            AdmissionPrivileges::ADMISSION_VERIFIER,
+                        ],
+                        'resources'  => ['Admission'],
+                        'assertion'  => AdmissionAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => AdmissionController::class,
                     'action' => [
                         'index',
-//                        'confirmer',
-//                        'enregistrer',
+                        'confirmer',
+                        'enregistrer',
                         'rechercher-individu'
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_LISTER,
+                        AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION,
                     ],
+                    'assertion' => AdmissionAssertion::class,
                 ],
                 [
                     'controller' => AdmissionController::class,
@@ -92,7 +121,7 @@ return array(
                         'ajouter',
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_AJOUTER,
+                        AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION,
                     ],
                 ],
                 [
@@ -103,9 +132,11 @@ return array(
                         'financement',
                         'validation',
                     ],
-//                    'privileges' => [
-//                        AdmissionPrivileges::ADMISSION_AFFICHER,
-//                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION,
+                    ],
+                    'assertion' => AdmissionAssertion::class,
                 ],
                 [
                     'controller' => AdmissionController::class,
@@ -113,7 +144,8 @@ return array(
                         'annuler',
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_SUPPRIMER,
+                        AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION,
                     ],
                 ],
             ]
@@ -138,13 +170,13 @@ return array(
                             'route' => '/:action/:individu',
                             'constraints' => [
                                 /**
-                                 * @see AdmissionController::individuAction()
+                                 * @see AdmissionController::etudiantAction()
                                  * @see AdmissionController::inscriptionAction()
                                  * @see AdmissionController::financementAction()
                                  * @see AdmissionController::validationAction()
                                  */
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'individu' => '[0-9]*'
+                                'admission' => '[0-9]*'
                             ],
                         ],
                     ],
@@ -199,7 +231,8 @@ return array(
             InscriptionService::class => InscriptionServiceFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
             DocumentService::class => DocumentServiceFactory::class,
-            VerificationService::class => VerificationServiceFactory::class
+            VerificationService::class => VerificationServiceFactory::class,
+            AdmissionAssertion::class => AdmissionAssertionFactory::class
         ],
     ],
 

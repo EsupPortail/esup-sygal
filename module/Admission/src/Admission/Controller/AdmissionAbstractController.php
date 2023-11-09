@@ -15,6 +15,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
  *
  * @method MultipageFormPlugin multipageForm(?MultipageForm $form = null)
  * @method FlashMessenger flashMessenger()
+ * @method boolean isAllowed($resource, $privilege = null)
  */
 class AdmissionAbstractController extends AbstractActionController
 {

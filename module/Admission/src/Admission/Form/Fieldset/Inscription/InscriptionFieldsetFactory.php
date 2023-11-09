@@ -3,7 +3,7 @@
 namespace Admission\Form\Fieldset\Inscription;
 
 use Admission\Entity\Db\Inscription;
-use Admission\Hydrator\InscriptionHydrator;
+use Admission\Hydrator\Inscription\InscriptionHydrator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

@@ -3,7 +3,7 @@
 namespace Admission\Form\Fieldset\Verification;
 
 use Admission\Entity\Db\Verification;
-use Admission\Hydrator\VerificationHydrator;
+use Admission\Hydrator\Verification\VerificationHydrator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

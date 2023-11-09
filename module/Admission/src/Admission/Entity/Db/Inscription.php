@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Structure;
@@ -113,12 +114,12 @@ class Inscription implements HistoriqueAwareInterface{
     private $prenomCodirecteurThese;
 
     /**
-     * @var \Individu\Entity\Db\Individu
+     * @var Individu
      */
     private $directeur;
 
     /**
-     * @var \Individu\Entity\Db\Individu
+     * @var Individu
      */
     private $coDirecteur;
 
@@ -545,11 +546,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set directeur.
      *
-     * @param \Individu\Entity\Db\Individu|null $directeur
+     * @param Individu|null $directeur
      *
      * @return Inscription
      */
-    public function setDirecteur(\Individu\Entity\Db\Individu $directeur = null)
+    public function setDirecteur(Individu $directeur = null)
     {
         $this->directeur = $directeur;
 
@@ -559,7 +560,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get directeur.
      *
-     * @return \Individu\Entity\Db\Individu|null
+     * @return Individu|null
      */
     public function getDirecteur()
     {
@@ -569,11 +570,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set coDirecteur.
      *
-     * @param \Individu\Entity\Db\Individu|null $coDirecteur
+     * @param Individu|null $coDirecteur
      *
      * @return Inscription
      */
-    public function setCoDirecteur(\Individu\Entity\Db\Individu $coDirecteur = null)
+    public function setCoDirecteur(Individu $coDirecteur = null)
     {
         $this->coDirecteur = $coDirecteur;
 
@@ -583,7 +584,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get coDirecteur.
      *
-     * @return \Individu\Entity\Db\Individu|null
+     * @return Individu|null
      */
     public function getCoDirecteur()
     {

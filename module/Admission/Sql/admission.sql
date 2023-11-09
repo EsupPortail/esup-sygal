@@ -12,12 +12,17 @@ create table admission_admission
     histo_destruction     timestamp
 );
 
+-- Ajoutez la colonne 'individu_id' de type bigint qui fait référence à la table 'individu'
+ALTER TABLE admission_etudiant
+    ADD COLUMN individu_id bigint REFERENCES individu (id);
+
 create table admission_etudiant
 (
     id                                        bigserial                                                    not null
         primary key,
     admission_id                              bigint REFERENCES admission_admission (id),
     civilite                                  varchar(5),
+    individu_id                               bigint REFERENCES individu (id),
     nom_usuel                                 varchar(60),
     nom_famille                               varchar(60),
     prenom                                    varchar(60),
@@ -159,7 +164,7 @@ create table admission_verification
     admission_inscription_id bigint REFERENCES admission_inscription (id),
     admission_financement_id bigint REFERENCES admission_financement (id),
     admission_document_id    bigint REFERENCES admission_document (id),
-    est_complet boolean,
+    est_complet              boolean,
     individu_id              bigint REFERENCES individu (id),
     commentaire              text,
     histo_createur_id        bigint                                                       not null REFERENCES utilisateur (id),
@@ -171,7 +176,7 @@ create table admission_verification
 );
 
 --
--- Nouvelle catégorie.
+-- Nouvelle catégorie de privilèges : Admission.
 --
 insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE)
 select nextval('categorie_privilege_id_seq'), 'admission', 'Admission', 11000;
@@ -180,15 +185,33 @@ select nextval('categorie_privilege_id_seq'), 'admission', 'Admission', 11000;
 -- Nouveaux privilèges.
 --
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
-with d(ordre, code, lib) as (
-    select 1, 'admission-lister', 'Lister le(s) dossier(s) d''admission en cours' union
-    select 2, 'admission-afficher', 'Consulter un dossier d''admission' union
-    select 3, 'admission-ajouter', 'Ajouter un dossier d''admission' union
-    select 4, 'admission-modifier', 'Modifier un dossier d''admission' union
-    select 5, 'admission-historiser', 'Historiser un dossier d''admission' union
-    select 6, 'admission-supprimer', 'Supprimer un dossier d''admission' union
-    select 7, 'admission-verifier', 'Ajouter des commentaires au dossier d''admission'
-)
+with d(ordre, code, lib) as (select 1,
+                                    'admission-lister-tous-dossiers-admission',
+                                    'Lister les dossiers d''admission en cours'
+                             union
+                             select 1,
+                                    'admission-lister-son-dossier-admission',
+                                    'Lister son dossier d''admission en cours'
+                             union
+                             select 2, 'admission-afficher-tous-dossiers-admission', 'Consulter un dossier d''admission'
+                             union
+                             select 2, 'admission-afficher-son-dossier-admission', 'Consulter son dossier d''admission'
+                             union
+                             select 4, 'admission-modifier-tous-dossiers-admission', 'Modifier un dossier d''admission'
+                             union
+                             select 4,
+                                    'admission-modifier-modifier-son-dossier-admission',
+                                    'Modifier son dossier d''admission'
+                             union
+                             select 5, 'admission-historiser', 'Historiser un dossier d''admission'
+                             union
+                             select 6,
+                                    'admission-supprimer-tous-dossiers-admission',
+                                    'Supprimer un dossier d''admission'
+                             union
+                             select 6, 'admission-supprimer-son-dossier-admission', 'Supprimer son dossier d''admission'
+                             union
+                             select 7, 'admission-verifier', 'Ajouter des commentaires au dossier d''admission')
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
          join CATEGORIE_PRIVILEGE cp on cp.CODE = 'admission'
@@ -198,15 +221,25 @@ from d
 -- Accord de privilèges à des profils.
 --
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (
-    select 'admission', 'admission-lister' union
-    select 'admission', 'admission-afficher' union
-    select 'admission', 'admission-ajouter' union
-    select 'admission', 'admission-modifier' union
-    select 'admission', 'admission-historiser' union
-    select 'admission', 'admission-supprimer' union
-    select 'admission', 'admission-verifier'
-)
+with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-admission'
+                           union
+                           select 'admission', 'admission-lister-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-afficher-tous-dossiers-admission'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-modifier-tous-dossiers-admission'
+                           union
+                           select 'admission', 'admission-modifier-modifier-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-historiser'
+                           union
+                           select 'admission', 'admission-supprimer-tous-dossiers-admission'
+                           union
+                           select 'admission', 'admission-supprimer-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-verifier')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
@@ -215,18 +248,16 @@ from data
     )
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (
-    select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id
-) ;
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (
-    select 'admission', 'admission-lister' union
-    select 'admission', 'admission-afficher' union
-    select 'admission', 'admission-ajouter' union
-    select 'admission', 'admission-modifier' union
-    select 'admission', 'admission-supprimer'
-)
+with data(categ, priv) as (select 'admission', 'admission-lister-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-modifier-modifier-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-supprimer-son-dossier-admission')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
@@ -234,16 +265,12 @@ from data
     )
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (
-    select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id
-) ;
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
 insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
 select p2r.ROLE_ID, pp.PRIVILEGE_ID
 from PROFIL_TO_ROLE p2r
          join profil pr on pr.id = p2r.PROFIL_ID
          join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
-where not exists (
-    select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
-)
+where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;

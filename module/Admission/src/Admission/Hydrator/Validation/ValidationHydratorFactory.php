@@ -1,13 +1,13 @@
 <?php
 
-namespace Admission\Hydrator;
+namespace Admission\Hydrator\Validation;
 
 use Application\Application\Form\Hydrator\RecrutementHydrator;
 use Doctrine\ORM\EntityManager;
-use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
-class InscriptionHydratorFactory implements FactoryInterface
+class ValidationHydratorFactory implements FactoryInterface
 {
     /**
      * Create hydrator
@@ -15,7 +15,7 @@ class InscriptionHydratorFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return InscriptionHydrator
+     * @return ValidationHydrator
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -24,6 +24,6 @@ class InscriptionHydratorFactory implements FactoryInterface
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
 
-        return new InscriptionHydrator($entityManager);
+        return new ValidationHydrator($entityManager);
     }
 }
