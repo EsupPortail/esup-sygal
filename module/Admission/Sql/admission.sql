@@ -12,17 +12,12 @@ create table admission_admission
     histo_destruction     timestamp
 );
 
--- Ajoutez la colonne 'individu_id' de type bigint qui fait référence à la table 'individu'
-ALTER TABLE admission_etudiant
-    ADD COLUMN individu_id bigint REFERENCES individu (id);
-
 create table admission_etudiant
 (
     id                                        bigserial                                                    not null
         primary key,
     admission_id                              bigint REFERENCES admission_admission (id),
     civilite                                  varchar(5),
-    individu_id                               bigint REFERENCES individu (id),
     nom_usuel                                 varchar(60),
     nom_famille                               varchar(60),
     prenom                                    varchar(60),
