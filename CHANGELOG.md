@@ -11,6 +11,7 @@ Journal des modifications
 - [SOUTENANCE] Mise en place des templates associés aux mails 
 - [DEPOT] Retouche du texte de mail concernant la page de couverture générée.
 - [FIX] Pour se voir attribuer par l'application le rôle Doctorant, il faut désormais avoir une thèse soit en cours soit soutenue.
+- Amélioration de la fonction de transfert de thèse en bdd.
 
 6.0.6
 -----
