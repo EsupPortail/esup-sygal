@@ -12,6 +12,7 @@ Journal des modifications
 - [DEPOT] Retouche du texte de mail concernant la page de couverture générée.
 - [FIX] Pour se voir attribuer par l'application le rôle Doctorant, il faut désormais avoir une thèse soit en cours soit soutenue.
 - Amélioration de la fonction de transfert de thèse en bdd.
+- Nouveau ConsoleController (extrait et supprimé d'unicaen/app) pour pouvoir lancer la requête SQL de refresh de la MV de recherche de thèses.
 
 6.0.6
 -----
