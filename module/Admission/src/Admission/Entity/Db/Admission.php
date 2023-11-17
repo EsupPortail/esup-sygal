@@ -10,10 +10,18 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Admission implements HistoriqueAwareInterface{
 
     use HistoriqueAwareTrait;
-    /**
-     * @var int|null
-     */
-    private $etatId;
+
+    const ETAT_EN_COURS   = 'C';
+    const ETAT_ABANDONNE = 'A';
+    const ETAT_VALIDE = 'V';
+
+    const ETATS = [
+        self::ETAT_EN_COURS => self::ETAT_EN_COURS,
+        self::ETAT_ABANDONNE => self::ETAT_ABANDONNE,
+        self::ETAT_VALIDE => self::ETAT_VALIDE,
+    ];
+
+    private ?Etat $etat = null;
 
     /**
      * @var int
@@ -62,28 +70,14 @@ class Admission implements HistoriqueAwareInterface{
         $this->document = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    /**
-     * Set etatId.
-     *
-     * @param int|null $etatId
-     *
-     * @return Admission
-     */
-    public function setEtatId($etatId = null)
+    public function getEtat(): ?Etat
     {
-        $this->etatId = $etatId;
-
-        return $this;
+        return $this->etat;
     }
 
-    /**
-     * Get etatId.
-     *
-     * @return int|null
-     */
-    public function getEtatId()
+    public function setEtat(?Etat $etat): void
     {
-        return $this->etatId;
+        $this->etat = $etat;
     }
 
     /**
@@ -227,9 +221,9 @@ class Admission implements HistoriqueAwareInterface{
     /**
      * Add document.
      */
-    public function addDocument(Document $document)
+    public function addDocument(Collection $documents)
     {
-        foreach ($document as $d) {
+        foreach ($documents as $d) {
             $this->document->add($d);
         }
 
@@ -243,9 +237,9 @@ class Admission implements HistoriqueAwareInterface{
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeDocument(Document $document)
+    public function removeDocument(Collection $documents)
     {
-        foreach ($document as $d) {
+        foreach ($documents as $d) {
             $this->document->removeElement($d);
         }
     }

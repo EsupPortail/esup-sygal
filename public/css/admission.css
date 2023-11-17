@@ -84,7 +84,9 @@ input[type="radio"][name="etudiant[civilite]"] {
   opacity: 0.5;
   pointer-events: none; }
 
-div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]) {
+div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]),
+div.mb-2:has(input[type="hidden"][name="etudiant[paysNaissanceId]"]),
+div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
   display: none; }
 
 .informations {
@@ -130,6 +132,12 @@ div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]) {
   display: inline-flex;
   align-items: center; }
 
+.label-file,
+.date_televersement,
+.action_file {
+  display: flex;
+  align-items: center; }
+
 .upload_file > i {
   cursor: pointer;
   font-size: 15px; }
@@ -147,10 +155,19 @@ i:hover {
   font-style: unset; }
 
 .upload_file {
-  width: auto; }
+  margin-top: 20px; }
 
 .date_televersement:empty {
   display: none; }
+
+.date_televersement {
+  width: auto; }
+
+.date_televersement > p {
+  margin-bottom: initial; }
+
+.action_file > a {
+  padding-right: 15px !important; }
 
 .circle {
   width: 30px;
@@ -288,16 +305,12 @@ input[name="validation[saveAttestationHonneur]"] {
     font-size: 9px; }
 
   .detail_file {
-    margin: 15px;
     display: flex;
     align-items: center;
     justify-content: center; }
 
-  .row > .upload_file, .row > .date_televersement, .row > .action_file {
+  .row > .date_televersement, .row > .action_file {
     width: revert; }
-
-  .date_televersement > p {
-    margin-top: revert; }
 
   .cards_validation .card {
     margin: 0 auto;

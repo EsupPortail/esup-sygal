@@ -1,53 +1,53 @@
-$title_color : #004980;
-$padding_titre_sous_partie_formulaire : 5px;
+$title_color: #004980;
+$padding_titre_sous_partie_formulaire: 5px;
 
 //GLOBAL
-h1{
-  color:$title_color;
+h1 {
+  color: $title_color;
 }
 
-.introduction{
+.introduction {
   text-align: left;
-  color:#707070;
+  color: #707070;
   margin-left: 50px;
 }
 
-.row_sous_partie{
+.row_sous_partie {
   margin-top: 50px;
 }
 
-.title_sous_partie{
+.title_sous_partie {
   background: #00498099 0% 0% no-repeat padding-box;
   padding-left: 15px;
   align-items: center;
 }
 
-.titre_sous_partie{
+.titre_sous_partie {
   text-align: left;
   color: #FFFFFF;
   font-size: 20px;
-  padding: $padding_titre_sous_partie_formulaire  ;
+  padding: $padding_titre_sous_partie_formulaire;
 }
 
-.row_fin_formulaire{
+.row_fin_formulaire {
   text-align: end;
   margin-top: 30px;
 }
 
-.col_fin_formulaire > input{
+.col_fin_formulaire > input {
   margin-right: 15px;
 }
 
-.informations-title-sous-partie{
+.informations-title-sous-partie {
   color: #FFFFFF;
   margin-top: revert;
 }
 
-.row.subfield{
+.row.subfield {
   margin: 15px;
 }
 
-.btn-warning{
+.btn-warning {
   background-color: #ffc107;
   border-color: #ffc107;
 }
@@ -57,31 +57,31 @@ h1{
   text-align: end;
 }
 
-.bouton_gestionnaire{
+.bouton_gestionnaire {
   margin-right: 15px;
 }
 
-.observations_gestionnaire{
+.observations_gestionnaire {
   margin-top: 10px;
   margin-bottom: 25px;
 }
 
-.observations_gestionnaire > .col{
+.observations_gestionnaire > .col {
   text-align: right;
   color: #ccc;
   text-decoration: none;
 }
 
-.observations_gestionnaire > div > div > div > label{
-  display:inline-flex;
+.observations_gestionnaire > div > div > div > label {
+  display: inline-flex;
   margin-right: 15px;
 }
 
-.observations_gestionnaire > div > div > div > label > input{
+.observations_gestionnaire > div > div > div > label > input {
   display: none;
 }
 
-  .observations_gestionnaire > div > div > div > .btn-danger.selected::after {
+.observations_gestionnaire > div > div > div > .btn-danger.selected::after {
   content: "\2715";
 }
 
@@ -92,7 +92,7 @@ h1{
 
 
 //Page accueil Admission
-.form_admission{
+.form_admission {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,7 +102,7 @@ h1{
 }
 
 //Partie étudiant
-.checkbox_admission > .mb-2 > .multicheckbox > .form-check-label{
+.checkbox_admission > .mb-2 > .multicheckbox > .form-check-label {
   display: inline-block;
   padding-right: 15px;
 }
@@ -112,36 +112,38 @@ input[type="radio"][name="etudiant[civilite]"] {
   pointer-events: none;
 }
 
-div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]) {
+div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]),
+div.mb-2:has(input[type="hidden"][name="etudiant[paysNaissanceId]"]),
+div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
   display: none;
 }
 
 
-.informations{
+.informations {
   font-style: italic;
 }
 
-.checkbox_admission.checkbox_diplome{
+.checkbox_admission.checkbox_diplome {
   margin-left: 20px;
   margin-top: 15px;
 }
 
-.form-select.form-select{
+.form-select.form-select {
   font-size: inherit;
 }
 
 //Partie Inscription
-.informations-confidentialite-souhaitee{
+.informations-confidentialite-souhaitee {
   align-items: center;
   display: flex;
 }
 
-.title_sous_partie > .row > .col{
+.title_sous_partie > .row > .col {
   align-items: center;
   display: flex;
 }
 
-.titre_these > span{
+.titre_these > span {
   display: inline-block;
   vertical-align: middle;
   padding-right: unset;
@@ -153,32 +155,40 @@ div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]) {
 }
 
 //Partie Financement
-.mb-2 > .multicheckbox > .form-check-label{
+.mb-2 > .multicheckbox > .form-check-label {
   display: inline-block;
   padding-right: 15px;
 }
 
 //Partie Justificatifs
-.informations-pieces_justificatives>p{
+.informations-pieces_justificatives > p {
   text-align: left;
   color: #004980;
   margin-bottom: 5px;
 }
 
-.informations-pieces_justificatives{
+.informations-pieces_justificatives {
   border-bottom: 1px dashed #004980;
 }
+
 .element {
   display: inline-flex;
   align-items: center;
 }
 
-.upload_file>i{
+.label-file,
+.date_televersement,
+.action_file {
+  display: flex;
+  align-items: center;
+}
+
+.upload_file > i {
   cursor: pointer;
   font-size: 15px;
 }
 
-span{
+span {
   margin-right: 7px;
 }
 
@@ -186,24 +196,38 @@ i:hover {
   opacity: 0.6;
 }
 
-.upload_file>input {
+.upload_file > input {
   display: none;
 }
-.upload_file>i {
+
+.upload_file > i {
   font-style: unset;
 }
-.upload_file{
-  width: auto;
+
+.upload_file {
+  margin-top: 20px;
 }
 
 .date_televersement:empty {
   display: none;
 }
 
+.date_televersement {
+  width: auto;
+}
+
+.date_televersement > p {
+  margin-bottom: initial;
+}
+
+.action_file > a{
+  padding-right: 15px!important;
+}
+
 .circle {
   width: 30px;
   height: 30px;
-  border-radius: 50% ;
+  border-radius: 50%;
   border: 2px solid #8E8E8E;
   color: #fff;
   text-align: center;
@@ -216,7 +240,7 @@ i:hover {
 .circle_success {
   width: 30px;
   height: 30px;
-  border-radius: 50% ;
+  border-radius: 50%;
   border: 2px solid #2EA662;
   background-color: #2EA662;
   color: white;
@@ -232,7 +256,7 @@ i:hover {
 .circle_waiting {
   width: 30px;
   height: 30px;
-  border-radius: 50% ;
+  border-radius: 50%;
   border: 2px solid #F1732D;
   background-color: #F1732D;
   color: white;
@@ -248,7 +272,7 @@ i:hover {
 .circle_incomplete {
   width: 30px;
   height: 30px;
-  border-radius: 50% ;
+  border-radius: 50%;
   border: 2px solid #d23544;
   background-color: #d23544;
   color: white;
@@ -261,39 +285,39 @@ i:hover {
   margin-right: unset;
 }
 
-.circle > p{
-  color:#8E8E8E;
+.circle > p {
+  color: #8E8E8E;
 }
 
-.etape_signature{
+.etape_signature {
   display: flex;
   align-items: center;
 }
 
-.etape_signature>label{
-  color:#707070;
+.etape_signature > label {
+  color: #707070;
   font-size: 15px;
   margin-left: 15px;
 }
 
-.dossier_complet{
+.dossier_complet {
   border: 3px solid #37AF37;
   border-radius: 11px;
   max-width: 18rem;
 }
 
-.dossier_incomplet{
+.dossier_incomplet {
   border: 3px solid #E69B18;
   border-radius: 11px;
   max-width: 25rem;
 }
 
-.dossier_complet>div>p, .dossier_incomplet>div>p{
-  color:#707070;
+.dossier_complet > div > p, .dossier_incomplet > div > p {
+  color: #707070;
   font-size: 15px;
 }
 
-.dossier_complet>div>i, .dossier_incomplet>div>i{
+.dossier_complet > div > i, .dossier_incomplet > div > i {
   font-style: unset;
 }
 
@@ -303,11 +327,11 @@ i:hover {
   margin-right: 10px;
 }
 
-.card-body.text-success p.card-title, .card-body.text-warning p.card-title{
+.card-body.text-success p.card-title, .card-body.text-warning p.card-title {
   display: inline-block;
 }
 
-textarea{
+textarea {
   width: 100%;
 }
 
@@ -320,60 +344,58 @@ textarea{
   float: right;
 }
 
-#contenu-principal{
+#contenu-principal {
   padding-bottom: 95px;
 }
 
-.validation_attestation>div>div>div>label{
+.validation_attestation > div > div > div > label {
   margin-left: 7px;
   vertical-align: sub;
 }
 
-input[name="validation[saveAttestationHonneur]"]{
+input[name="validation[saveAttestationHonneur]"] {
   width: auto;
   margin-top: revert !important;
 }
 
-.bouton_validation{
+.bouton_validation {
   display: flex;
   align-items: end;
 }
 
-.texte_validation_attestation_honneur{
+.texte_validation_attestation_honneur {
   margin-bottom: revert !important;
 }
 
-.validation_attestation{
+.validation_attestation {
   margin-top: revert !important;
 }
 
 @media (max-width: 768px) {
   //Partie inscription
-  .inner.show{
+  .inner.show {
     position: absolute;
     max-height: calc(100vh - 50px); /* Limitez la hauteur du menu à la hauteur de l'écran moins la hauteur de l'en-tête (50px) */
     overflow-y: auto;
   }
 
-  ul.dropdown-menu.inner.show > li{
+  ul.dropdown-menu.inner.show > li {
     font-size: 9px;
   }
 
   //Partie Validation
   .detail_file {
-    margin: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .row>.upload_file, .row>.date_televersement, .row>.action_file {
-    width:revert;
+  .row > .date_televersement, .row > .action_file {
+    width: revert;
   }
 
-  .date_televersement>p{
-    margin-top: revert;
-
+  .date_televersement > p {
+    //margin-top: revert;
   }
 
   .cards_validation .card {

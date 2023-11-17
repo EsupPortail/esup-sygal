@@ -35,6 +35,9 @@ class AdmissionHydrator extends DoctrineObject
         if (isset($data['validation']) && !is_array($data['validation'])) {
             $data['validation'] = [$data['validation']];
         }
+        if (isset($data['document']) && !is_array($data['document'])) {
+            $data['document'] = [$data['document']];
+        }
         return parent::hydrate($data, $object);
     }
 

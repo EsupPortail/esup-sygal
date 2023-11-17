@@ -12,8 +12,11 @@ use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Validation\ValidationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
+use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -38,6 +41,7 @@ class AdmissionControllerFactory implements FactoryInterface
          * @var NotificationFactory $notificationFactory
          * @var NotifierService $notifierService
          */
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $structureService = $container->get(StructureService::class);
         $etudiantService = $container->get(EtudiantService::class);
         $individuService = $container->get(IndividuService::class);
@@ -52,6 +56,9 @@ class AdmissionControllerFactory implements FactoryInterface
         $natureFichierService = $container->get(NatureFichierService::class);
         $fichierService = $container->get(FichierService::class);
         $documentService = $container->get(DocumentService::class);
+        $versionFichierService = $container->get(VersionFichierService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
+
 
         /**
          * @var AdmissionForm $etudiantForm
@@ -59,7 +66,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $admissionForm = $container->get('FormElementManager')->get(AdmissionForm::class);
 
         $controller = new AdmissionController();
-
+        $controller->setEntityManager($entityManager);
         $controller->setStructureService($structureService);
         $controller->setEtudiantService($etudiantService);
         $controller->setInscriptionService($inscriptionService);
@@ -73,7 +80,9 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setNotifierService($notifierService);
         $controller->setNatureFichierService($natureFichierService);
         $controller->setFichierService($fichierService);
+        $controller->setFichierStorageService($fichierStorageService);
         $controller->setDocumentService($documentService);
+        $controller->setVersionFichierService($versionFichierService);
         $controller->setAdmissionForm($admissionForm);
 
         return $controller;

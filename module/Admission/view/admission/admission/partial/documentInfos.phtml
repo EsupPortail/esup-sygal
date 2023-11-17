@@ -1,0 +1,544 @@
+<?php
+
+use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer         $this
+ * @var ValidationFieldset    $fieldset
+ * @var string              $error
+ * @var array               $dataForm
+ * @var array               $documents
+ */
+$individu = $dataForm["etudiant"]["individu"];
+echo '<script>';
+echo 'var documents = ' . json_encode($documents) . ';';
+echo 'var individuId = ' . $individu . ';';
+echo '</script>';
+$fcg = $this->formControlGroup();
+$canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
+?>
+<head>
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+</head>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Pièces justificatives</h2>
+    </div>
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Obligatoires</p>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12 label-file">
+            <?php echo $this->formlabel($fieldset->get('diplomeBac')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-5 upload_file">
+                    <?php echo $this->formfile($fieldset->get('diplomeBac')) ?>
+                </div>
+                <?php
+                $key = $fieldset->get('diplomeBac')->getAttribute('id');
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                                echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                        
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12 label-file">
+            <?php echo $this->formlabel($fieldset->get('curicculumVitae')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-5 upload_file">
+                    <?php echo $this->formfile($fieldset->get('curicculumVitae')) ?>
+                </div>
+                <?php
+                $key = $fieldset->get('curicculumVitae')->getAttribute('id');
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                            echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12 label-file">
+            <?php echo $this->formlabel($fieldset->get('financement')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-5 upload_file">
+                    
+                    <?php echo $this->formfile($fieldset->get('financement')) ?>
+                </div>
+                <?php
+                $key = $fieldset->get('financement')->getAttribute('id');
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                            echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                        
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12 label-file">
+            <?php echo $this->formlabel($fieldset->get('projetThese')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-5 upload_file">
+                    
+                    <?php echo $this->formfile($fieldset->get('projetThese')) ?>
+                </div>
+                <?php
+                $key = $fieldset->get('projetThese')->getAttribute('id');
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                            echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                        
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12 label-file">
+            <?php echo $this->formlabel($fieldset->get('exemplairesConvention')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-5 upload_file">
+                    
+                    <?php echo $this->formfile($fieldset->get('exemplairesConvention')) ?>
+                </div>
+                <?php
+                $key = $fieldset->get('exemplairesConvention')->getAttribute('id');
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                            echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                        
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12 label-file">
+            <?php echo $this->formlabel($fieldset->get('exemplairesCharteDoctorat')) ?>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div class="row detail_file">
+                <div class="col-lg-5 upload_file">
+                    
+                    <?php echo $this->formfile($fieldset->get('exemplairesCharteDoctorat')) ?>
+                </div>
+                <?php
+                $key = $fieldset->get('exemplairesCharteDoctorat')->getAttribute('id');
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                            echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                        
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2) { ?>
+        <div class="row subfield">
+            <div class="col informations-piecesJustificatives">
+                <p>Vous avez un autre diplôme qu'un master français (Dérogation)</p>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 label-file">
+                <?php echo $this->formlabel($fieldset->get('argumentaireDirecteurThese')) ?>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <?php echo $this->formtextarea($fieldset->get('argumentaireDirecteurThese')) ?>
+            </div>
+        </div>
+    <?php } ?>
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 1) { ?>
+        <div class="row subfield">
+            <div class="col informations-piecesJustificatives">
+                <p>Vous êtes titulaire d'un titre étranger</p>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 label-file">
+                <?php echo $this->formlabel($fieldset->get('diplomesRelevesNotesTraduits')) ?>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div class="row detail_file">
+                    <div class="col-lg-5 upload_file">
+                        
+                        <?php echo $this->formfile($fieldset->get('diplomesRelevesNotesTraduits')) ?>
+                    </div>
+                    <?php
+                    $key = $fieldset->get('diplomesRelevesNotesTraduits')->getAttribute('id');
+                    if(array_key_exists($key, $documents)){?>
+                        <div class="col-lg-3 date_televersement">
+                            <p>Téléversé le
+                                <?php
+                                echo $documents[$key]['televersement'];
+                                ?>
+                            </p>
+                        </div>
+                        <div class="col-lg-1 action_file">
+                            <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                               class="icon icon-download iconly"
+                               title="Télécharger ?"></a>
+
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 label-file">
+                <?php echo $this->formlabel($fieldset->get('acteNaissance')) ?>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div class="row detail_file">
+                    <div class="col-lg-5 upload_file">
+                        
+                        <?php echo $this->formfile($fieldset->get('acteNaissance')) ?>
+                    </div>
+                    <?php
+                    $key = $fieldset->get('acteNaissance')->getAttribute('id');
+                    if(array_key_exists($key, $documents)){?>
+                        <div class="col-lg-3 date_televersement">
+                            <p>Téléversé le
+                                <?php
+                                echo $documents[$key]['televersement'];
+                                ?>
+                            </p>
+                        </div>
+                        <div class="col-lg-1 action_file">
+                            <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                               class="icon icon-download iconly"
+                               title="Télécharger ?"></a>
+
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 label-file">
+                <?php echo $this->formlabel($fieldset->get('photocopiePasseport')) ?>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div class="row detail_file">
+                    <div class="col-lg-5 upload_file">
+                        
+                        <?php echo $this->formfile($fieldset->get('photocopiePasseport')) ?>
+                    </div>
+                    <?php
+                    $key = $fieldset->get('photocopiePasseport')->getAttribute('id');
+                    if(array_key_exists($key, $documents)){?>
+                        <div class="col-lg-3 date_televersement">
+                            <p>Téléversé le
+                                <?php
+                                echo $documents[$key]['televersement'];
+                                ?>
+                            </p>
+                        </div>
+                        <div class="col-lg-1 action_file">
+                            <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                               class="icon icon-download iconly"
+                               title="Télécharger ?"></a>
+
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 2) { ?>
+        <div class="row subfield">
+            <div class="col informations-piecesJustificatives">
+                <p>Vous êtes titulaire d'un diplôme français ne conférant pas le grade de master</p>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 label-file">
+                <?php echo $this->formlabel($fieldset->get('diplomesTravauxExperiencePro')) ?>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div class="row detail_file">
+                    <div class="col-lg-5 upload_file">
+                        
+                        <?php echo $this->formfile($fieldset->get('diplomesTravauxExperiencePro')) ?>
+                    </div>
+                    <?php
+                    $key = $fieldset->get('diplomesTravauxExperiencePro')->getAttribute('id');
+                    if(array_key_exists($key, $documents)){?>
+                        <div class="col-lg-3 date_televersement">
+                            <p>Téléversé le
+                                <?php
+                                echo $documents[$key]['televersement'];
+                                ?>
+                            </p>
+                        </div>
+                        <div class="col-lg-1 action_file">
+                            <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                               class="icon icon-download iconly"
+                               title="Télécharger ?"></a>
+
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+    <?php if (isset($dataForm['inscription']['confidentialite']) || isset($dataForm['inscription']['coTutelle']) || isset($dataForm['inscription']['coEncadrement']) || isset($dataForm['inscription']['co-direction'])) { ?>
+        <div class="row subfield">
+            <div class="col informations-pieces_justificatives">
+                <p>Spécificité(s) demandée(s)</p>
+            </div>
+        </div>
+        <?php if (isset($dataForm['inscription']['confidentialite']) && $dataForm['inscription']['confidentialite'] == 1) { ?>
+            <div class="row subfield">
+                <div class="col-lg-3 col-sm-12 label-file">
+                    <?php echo $this->formlabel($fieldset->get('documentsDemandeConfidentialite')) ?>
+                </div>
+            </div>
+        <?php } ?>
+        <?php if (isset($dataForm['inscription']['coTutelle']) && $dataForm['inscription']['coTutelle'] == 1) { ?>
+            <div class="row subfield">
+                <div class="col-lg-3 col-sm-12 label-file">
+                    <?php echo $this->formlabel($fieldset->get('documentsCotutelle')) ?>
+                </div>
+                <div class="col-lg-9 col-sm-12">
+                    <div class="row detail_file">
+                        <div class="col-lg-5 upload_file">
+                            
+                            <?php echo $this->formfile($fieldset->get('documentsCotutelle')) ?>
+                        </div>
+                        <?php
+                        $key = $fieldset->get('documentsCotutelle')->getAttribute('id');
+                        if(array_key_exists($key, $documents)){?>
+                            <div class="col-lg-3 date_televersement">
+                                <p>Téléversé le
+                                    <?php
+                                    echo $documents[$key]['televersement'];
+                                    ?>
+                                </p>
+                            </div>
+                            <div class="col-lg-1 action_file">
+                                <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                                   class="icon icon-download iconly"
+                                   title="Télécharger ?"></a>
+                                
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+        <?php if (isset($dataForm['inscription']['coEncadrement']) && $dataForm['inscription']['coEncadrement'] == 1) { ?>
+            <div class="row subfield">
+                <div class="col-lg-3 col-sm-12 label-file">
+                    <?php echo $this->formlabel($fieldset->get('documentsCoencadrement')) ?>
+                </div>
+                <div class="col-lg-9 col-sm-12">
+                    <div class="row detail_file">
+                        <div class="col-lg-5 upload_file">
+                            
+                            <?php echo $this->formfile($fieldset->get('documentsCoencadrement')) ?>
+                        </div>
+                        <div class="col-lg-3 date_televersement">
+                            <p>Téléversé le 25/09/2023</p>
+                        </div>
+                        <?php
+                        $key = $fieldset->get('documentsCoencadrement')->getAttribute('id');
+                        if(array_key_exists($key, $documents)){?>
+                            <div class="col-lg-3 date_televersement">
+                                <p>Téléversé le
+                                    <?php
+                                    echo $documents[$key]['televersement'];
+                                    ?>
+                                </p>
+                            </div>
+                            <div class="col-lg-1 action_file">
+                                <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
+                                   class="icon icon-download iconly"
+                                   title="Télécharger ?"></a>
+                                
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } ?>
+</div>
+<?php if($canVerifierAdmission){ ?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Commentaires</h2>
+    </div>
+    <div class="row observations_gestionnaire">
+        <div class="col">
+            <?php echo $fcg($fieldset->get("verificationValidation")->get('estComplet'))?>
+        </div>
+        <div class="commentaires_gestionnaire">
+            <?php echo $fcg($fieldset->get("verificationValidation")->get('commentaire')) ?>
+        </div>
+    </div>
+</div>
+<?php } ?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Signatures</h2>
+    </div>
+    <div class="attestation_honneur">
+        <div class="row subfield texte_validation_attestation_honneur">
+            <p>A la validation, mon dossier sera soumis au visa de la direction de thèse, de la co-direction (le cas échéant), de la direction de l'unité de recherche, de la direction de l'école doctorale et de la présidence de l'établissement d'inscription</p>
+        </div>
+        <div class="row subfield validation_attestation">
+            <div class="col-lg-4">
+                <?php echo $fcg($fieldset->get("validation")->get('attestationHonneurInformations')) ?>
+            </div>
+            <div class="col-lg-4 bouton_validation">
+                <?php echo $fcg($fieldset->get("validation")->get('saveAttestationHonneur')) ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12">
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <span class="icon icon-checked circle_success"></span>
+                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationGestionnaires')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <span class="icon icon-hourglass circle_waiting"></span>
+                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationDirecteurthese')) ?>
+                </div>
+            </div>
+            <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                <div class="row subfield">
+                    <div class="col etape_signature">
+                        <div class="circle"><p>3</p></div>
+                        <?php echo $this->formlabel($fieldset->get("validation")->get('validationCodirecteur')) ?>
+                    </div>
+                </div>
+            <?php } ?>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                        <div class="circle"><p>4</p></div>
+                    <?php }else{ ?>
+                        <div class="circle"><p>3</p></div>
+                    <?php } ?>
+                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationUniterecherche')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                        <div class="circle"><p>5</p></div>
+                    <?php }else{ ?>
+                        <div class="circle"><p>4</p></div>
+                    <?php } ?>
+                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationEcoledoctorale')) ?>
+                </div>
+            </div>
+            <div class="row subfield">
+                <div class="col etape_signature">
+                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
+                        <div class="circle"><p>6</p></div>
+                    <?php }else{ ?>
+                        <div class="circle"><p>5</p></div>
+                    <?php } ?>
+                    <?php echo $this->formlabel($fieldset->get("validation")->get('signaturePresident')) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-sm-12 cardsValidation">
+            <div class="card border-success mb-3 dossier_complet">
+                <div class="card-body text-success">
+                    <i class="icon icon-information"></i>
+                    <p class="card-title">Votre dossier est complet</p>
+                </div>
+            </div>
+            <div class="card mb-3 dossier_incomplet">
+                <div class="card-body text-warning">
+                    <i class="icon icon-information"></i>
+                    <p class="card-title">En attente de la validation de la direction de thèse</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -166,25 +166,105 @@ setTimeout(function () {
         showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral, false)
     }
 
-    if (currentUrl.indexOf("/validation") !== -1) {
-        $(".upload_file > i").click(function () {
-            $(this).siblings("input[type='file']").trigger('click');
+    if (currentUrl.indexOf("/document") !== -1) {
+        $(document).ready(function () {
+            FilePond.registerPlugin(FilePondPluginFileValidateType);
+
+            let serverResponse = '';
+            // Sélectionner tous les champs de fichier et les transformer en champs FilePond
+            $('input[type="file"]').each(function () {
+                const inputId = $(this).attr('id');
+                const pond = FilePond.create(this, {
+                    acceptedFileTypes: ['application/pdf', 'image/png', 'image/jpeg'],
+                    server: {
+                        url: '/admission',
+                        process: {
+                            url: '/enregistrer-document',
+                            ondata: (formData) => {
+                                formData.append('individu', individuId);
+                                formData.append('codeNatureFichier', inputId);
+                                return formData;
+                            },
+                            onerror: (response) =>
+                                serverResponse = JSON.parse(response),
+                        },
+                        revert: {
+                            url: '/supprimer-document?individu=' + individuId + '&codeNatureFichier=' + inputId,
+                            onerror: (response) =>
+                                serverResponse = JSON.parse(response),
+                        },
+                        load: {
+                            url: '/telecharger-document?individu=' + individuId + '&codeNatureFichier=' + inputId + '&name=',
+                        },
+                        remove: (source, load, error) => {
+                            fetch('/admission/supprimer-document?individu=' + individuId + '&codeNatureFichier=' + inputId, {
+                                method: 'DELETE',
+                            }).then(response => {
+                                if (!response.ok) {
+                                    error("Erreur de suppression")
+                                    throw new Error("Erreur de suppression");
+                                }
+                                load();
+                                const admissionFileDiv = document.getElementById(inputId);
+                                if (admissionFileDiv) {
+                                    const uploadFileDiv = admissionFileDiv.parentElement;
+                                    if (uploadFileDiv) {
+                                        const dateTeleversementDiv = uploadFileDiv.nextElementSibling;
+                                        const actionFileDiv = dateTeleversementDiv.nextElementSibling;
+                                        if (dateTeleversementDiv && actionFileDiv) {
+                                            dateTeleversementDiv.style.display = 'none';
+                                            actionFileDiv.style.display = 'none';
+                                        }
+                                    }
+                                }
+                            }).catch(error => {
+                                console.log(error)
+                            });
+                        }
+                    },
+                    labelFileProcessingError: () => {
+                        return serverResponse.errors;
+                    },
+                    labelFileProcessingRevertError: () => {
+                        return serverResponse.errors;
+                    },
+                    labelFileRemoveError: () => {
+                        return serverResponse.errors;
+                    },
+                    labelFileLoadError: "Erreur durant le chargement",
+                    labelFileProcessing: "En cours de téléversement",
+                    labelFileLoading: "Chargement",
+                    labelFileProcessingComplete: "Téléversement terminé",
+                    labelFileProcessingAborted: "Téléversement annulé",
+                    labelFileWaitingForSize: "En attente de la taille",
+                    labelFileSizeNotAvailable: "Taille non disponible",
+                    labelTapToUndo: "Appuyez pour revenir en arrière",
+                    labelTapToRetry: "Appuyez pour réessayer",
+                    labelTapToCancel: "Appuyez pour annuler",
+                    labelIdle: "Drag & Drop votre Document ou <span class='filepond--label-action'> Parcourir </span>",
+                    forceRevert: true,
+                    allowRemove: true,
+                    allowMultiple: false,
+                    allowReplace: false,
+                    credits: false,
+                    maxFiles: 1,
+                });
+
+
+                // Vérifier si l'ID d'input correspond à une entrée dans le tableau de documents
+                if (documents.hasOwnProperty(inputId)) {
+                    // Construire l'objet de fichier
+                    var fichier = {
+                        source: documents[inputId].libelle,
+                        options: {
+                            type: 'local', // Type de fichier local
+                        }
+                    };
+                    // Ajouter le fichier à FilePond
+                    pond.addFiles([fichier]);
+                }
+            });
         });
-
-        // Sélectionne toutes les divs avec la classe "date_televersement"
-        const dateTeleversementDivs = document.querySelectorAll('.date_televersement');
-
-        // dateTeleversementDivs.forEach((dateDiv) => {
-        //     // Vérifiez si la div "date_televersement" n'est pas vide
-        //     if (dateDiv.children.length <= 0) {
-        //         // Trouvez la div "action_file" au même niveau que "date_televersement"
-        //         const actionFileDiv = dateDiv.nextElementSibling;
-        //         // Vérifiez si la div "action_file" existe
-        //         if (actionFileDiv && actionFileDiv.classList.contains('action_file')) {
-        //             actionFileDiv.style.display = 'none';
-        //         }
-        //     }
-        // });
     }
 }, 100)
 

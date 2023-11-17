@@ -1,14 +1,16 @@
 <?php
 
+use Admission\Entity\Db\Admission;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
+ * @var Admission[] $admissions
  * @see \Admission\Controller\AdmissionController::inscriptionAction()
  */
 ?>
 
-<?php $this->headTitle($this->translate($title = "Bienvenue dans le module Admission")) ?>
+<?php $this->headTitle($this->translate($title = "Admission")) ?>
 
 <h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
 
@@ -31,3 +33,27 @@ use Application\View\Renderer\PhpRenderer;
         </div>
     </form>
 </div>
+<h2>Dossiers d'admissions en cours</h2>
+<p><?php echo count($admissions)." dossier(s) d'admission(s) trouvé(s)";?></p>
+<table class="table table-sm">
+    <thead>
+    <tr>
+        <th>Nom de l'étudiant</th>
+        <th>Statut</th>
+        <th>Titre provisoire de la thèse</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($admissions as $admission): ?>
+        <tr>
+            <td><?php echo $admission->getIndividu()->getNomUsuel()." ".$admission->getIndividu()->getPrenom(); ?></td>
+            <td><?php echo $admission->getEtat()->getLibelle() ?></td>
+            <td><?php echo $admission->getInscription()->first() ? $admission->getInscription()->first()->getTitreThese() : ""; ?></td>
+            <td>
+                <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>">Accéder</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

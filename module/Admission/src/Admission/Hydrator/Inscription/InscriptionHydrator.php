@@ -3,6 +3,7 @@
 namespace Admission\Hydrator\Inscription;
 
 use Admission\Entity\Db\Inscription;
+use Admission\Entity\Db\Verification;
 use Application\Entity\Db\Pays;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;

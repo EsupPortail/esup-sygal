@@ -1,9 +1,9 @@
-create table admission_admission
+create table IF NOT EXISTS admission_admission
 (
     id                    bigserial                                                    not null
         primary key,
     individu_id           bigint REFERENCES individu (id),
-    etat_id               bigint,
+    etat_code             varchar(1) REFERENCES admission_etat (code),
     histo_createur_id     bigint                                                       not null REFERENCES utilisateur (id),
     histo_creation        timestamp default ('now'::text)::timestamp without time zone not null,
     histo_modificateur_id bigint REFERENCES utilisateur (id),
@@ -12,7 +12,7 @@ create table admission_admission
     histo_destruction     timestamp
 );
 
-create table admission_etudiant
+create table IF NOT EXISTS admission_etudiant
 (
     id                                        bigserial                                                    not null
         primary key,
@@ -58,7 +58,7 @@ create table admission_etudiant
     histo_destruction                         timestamp
 );
 
-create table admission_inscription
+create table IF NOT EXISTS admission_inscription
 (
     id                       bigserial                                                    not null
         primary key,
@@ -91,7 +91,7 @@ create table admission_inscription
     histo_destruction        timestamp
 );
 
-create table admission_financement
+create table IF NOT EXISTS admission_financement
 (
     id                      bigserial                                                    not null
         primary key,
@@ -107,7 +107,7 @@ create table admission_financement
     histo_destruction       timestamp
 );
 
-create table admission_type_validation
+create table IF NOT EXISTS admission_type_validation
 (
     id                    bigserial                                                    not null
         primary key,
@@ -121,7 +121,7 @@ create table admission_type_validation
     histo_destruction     timestamp
 );
 
-create table admission_validation
+create table IF NOT EXISTS admission_validation
 (
     id                    bigserial                                                    not null
         primary key,
@@ -136,7 +136,54 @@ create table admission_validation
     histo_destruction     timestamp
 );
 
-create table admission_document
+-- Nouvelle table
+create table IF NOT EXISTS admission_etat
+(
+    code        varchar(1) not null primary key,
+    libelle     varchar(1024),
+    description text,
+    icone       varchar(1024),
+    couleur     varchar(1024),
+    ordre       bigint
+);
+
+INSERT INTO admission_etat (code, libelle, description, icone, couleur, ordre)
+VALUES ('C', 'En cours', 'Dossier d''admission en cours de saisie', '', '', 1),
+       ('A', 'Abandonné', 'Dossier d''admission abandonné', '', '', 3),
+       ('V', 'Validé', 'Dossier d''admission validé', '', '', 2)
+ON CONFLICT DO NOTHING;
+
+-- Changement de nom de la colonne etat_id en etat_code
+DO
+$$
+    BEGIN
+        IF EXISTS (SELECT 1
+                   FROM information_schema.columns
+                   WHERE table_name = 'admission_admission'
+                     AND column_name = 'etat_id') THEN
+            ALTER TABLE admission_admission
+                RENAME COLUMN etat_id TO etat_code;
+        END IF;
+    END
+$$;
+
+-- Création de la clé étrangère d'admission_admission(etat_code) vers admission_etat(code)
+DO
+$$
+    BEGIN
+        IF NOT EXISTS (SELECT 1
+                       FROM information_schema.table_constraints
+                       WHERE table_name = 'admission_admission'
+                         AND constraint_name = 'fk_admission_etat') THEN
+            ALTER TABLE admission_admission
+                ADD CONSTRAINT fk_admission_etat
+                    FOREIGN KEY (etat_code)
+                        REFERENCES admission_etat (code);
+        END IF;
+    END
+$$;
+
+create table IF NOT EXISTS admission_document
 (
     id                    bigserial                                                    not null
         primary key,
@@ -151,7 +198,7 @@ create table admission_document
     histo_destruction     timestamp
 );
 
-create table admission_verification
+create table IF NOT EXISTS admission_verification
 (
     id                       bigserial                                                    not null
         primary key,
@@ -170,11 +217,32 @@ create table admission_verification
     histo_destruction        timestamp
 );
 
+INSERT INTO nature_fichier (id, code, libelle)
+VALUES (207, 'ADMISSION_DIPLOME_BAC', 'Diplôme de Bac + 5 permettant l''accès au doctorat'),
+       (208, 'ADMISSION_CURRICULUM_VITAE', 'Curriculum Vitae'),
+       (209, 'ADMISSION_FINANCEMENT', 'Justificatif du financement (contrat, attestation de l''employeur)'),
+       (210, 'ADMISSION_PROJET_THESE', 'Le projet de thèse et son titre'),
+       (211, 'ADMISSION_CONVENTION', 'Convention de formation doctorale'),
+       (212, 'ADMISSION_CHARTE_DOCTORAT', 'Charte du doctorat'),
+       (213, 'ADMISSION_DIPLOMES_RELEVES_TRADUITS',
+        'Diplômes et relevés de notes traduits en français avec tampons originaux'),
+       (214, 'ADMISSION_ACTE_NAISSANCE', 'Extrait d''acte de naissance'),
+       (215, 'ADMISSION_PASSEPORT',
+        'Photocopie du passeport (ou de la carte d''identité pour les ressortissants européens)'),
+       (216, 'ADMISSION_DIPLOMES_TRAVAUX_EXPERIENCE_PRO', 'Diplômes, travaux et expérience professionnelle détaillés'),
+       (217, 'ADMISSION_DEMANDE_COTUTELLE', 'Formulaire de demande de cotutelle'),
+       (218, 'ADMISSION_DEMANDE_COENCADREMENT', 'Formulaire de demande de co-encadrement')
+ON CONFLICT DO NOTHING;
+
+-- GESTION DES PRIVILÈGES
 --
 -- Nouvelle catégorie de privilèges : Admission.
 --
-insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE)
-select nextval('categorie_privilege_id_seq'), 'admission', 'Admission', 11000;
+INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE)
+SELECT nextval('categorie_privilege_id_seq'), 'admission', 'Admission', 11000
+WHERE NOT EXISTS (SELECT 1
+                  FROM CATEGORIE_PRIVILEGE
+                  WHERE CODE = 'admission');
 
 --
 -- Nouveaux privilèges.
@@ -210,7 +278,9 @@ with d(ordre, code, lib) as (select 1,
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
          join CATEGORIE_PRIVILEGE cp on cp.CODE = 'admission'
-;
+WHERE NOT EXISTS (SELECT 1
+                  FROM PRIVILEGE p
+                  WHERE p.CODE = d.code);
 
 --
 -- Accord de privilèges à des profils.

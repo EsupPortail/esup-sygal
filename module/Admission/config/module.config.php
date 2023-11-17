@@ -10,6 +10,8 @@ use Admission\Controller\AdmissionControllerFactory;
 use Admission\Entity\Db\Repository\IndividuRepositoryFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
+use Admission\Form\Fieldset\Document\DocumentFieldset;
+use Admission\Form\Fieldset\Document\DocumentFieldsetFactory;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldsetFactory;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
@@ -22,6 +24,8 @@ use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldsetFactory;
 use Admission\Hydrator\Admission\AdmissionHydrator;
 use Admission\Hydrator\Admission\AdmissionHydratorFactory;
+use Admission\Hydrator\Document\DocumentHydrator;
+use Admission\Hydrator\Document\DocumentHydratorFactory;
 use Admission\Hydrator\Etudiant\EtudiantHydrator;
 use Admission\Hydrator\Etudiant\EtudiantHydratorFactory;
 use Admission\Hydrator\Financement\FinancementHydrator;
@@ -49,6 +53,7 @@ use Admission\Service\Verification\VerificationService;
 use Admission\Service\Verification\VerificationServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -107,7 +112,10 @@ return array(
                         'index',
                         'confirmer',
                         'enregistrer',
-                        'rechercher-individu'
+                        'rechercher-individu',
+                        'enregistrer-document',
+                        'supprimer-document',
+                        'telecharger-document'
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION,
@@ -130,7 +138,7 @@ return array(
                         'etudiant',
                         'inscription',
                         'financement',
-                        'validation',
+                        'document',
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
@@ -180,12 +188,51 @@ return array(
                             ],
                         ],
                     ],
+                    /**
+                     * @see AdmissionController::rechercherIndividuAction()
+                     */
                     'rechercher-individu' => [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
                                 'action' => 'rechercher-individu',
+                            ],
+                        ],
+                    ],
+                    /**
+                     * @see AdmissionController::enregistrerDocumentAction()
+                     */
+                    'enregistrer-document' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/enregistrer-document',
+                            'defaults'    => [
+                                'action' => 'enregistrer-document',
+                            ],
+                        ],
+                    ],
+                    /**
+                     * @see AdmissionController::supprimerDocumentAction()
+                     */
+                    'supprimer-document' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/supprimer-document',
+                            'defaults'    => [
+                                'action' => 'supprimer-document',
+                            ],
+                        ],
+                    ],
+                    /**
+                     * @see AdmissionController::telechargerDocumentAction()
+                     */
+                    'telecharger-document' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/telecharger-document',
+                            'defaults'    => [
+                                'action' => 'telecharger-document',
                             ],
                         ],
                     ],
@@ -208,7 +255,8 @@ return array(
             InscriptionFieldset::class => InscriptionFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,
             ValidationFieldset::class => ValidationFieldsetFactory::class,
-            VerificationFieldset::class => VerificationFieldsetFactory::class
+            VerificationFieldset::class => VerificationFieldsetFactory::class,
+            DocumentFieldset::class => DocumentFieldsetFactory::class
         ],
     ],
 
@@ -219,7 +267,8 @@ return array(
             InscriptionHydrator::class => InscriptionHydratorFactory::class,
             FinancementHydrator::class => FinancementHydratorFactory::class,
             ValidationHydrator::class => ValidationHydratorFactory::class,
-            VerificationHydrator::class => VerificationHydratorFactory::class
+            VerificationHydrator::class => VerificationHydratorFactory::class,
+            DocumentHydrator::class => DocumentHydratorFactory::class
         ],
     ],
 

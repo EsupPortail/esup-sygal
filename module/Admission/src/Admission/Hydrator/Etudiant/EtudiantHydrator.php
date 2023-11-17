@@ -28,7 +28,7 @@ class EtudiantHydrator extends DoctrineObject
             $data['nationalite'] = $object->getPaysNaissance()->getLibelle();
         }
 
-        $data['verificationEtudiant'] = $object->getVerificationEtudiant()->first() ?: null;
+        $data['verificationEtudiant'] = $object->getVerificationEtudiant()->first();
 
         return $data;
     }

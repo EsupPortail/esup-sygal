@@ -2,7 +2,6 @@
 
 namespace Admission\Service\Inscription;
 
-use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\InscriptionRepository;
 use Application\Service\BaseService;

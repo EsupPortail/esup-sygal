@@ -3,6 +3,7 @@
 namespace Admission\Form\Admission;
 
 use Admission\Entity\Db\Admission;
+use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
@@ -32,9 +33,14 @@ class AdmissionForm extends MultipageForm
         $financementFieldset->setName("financement");
         $this->add($financementFieldset);
 
-        $validationFieldset = $this->getFormFactory()->getFormElementManager()->get(ValidationFieldset::class);
-        $validationFieldset->setName("validation");
-        $this->add($validationFieldset);
+//        $validationFieldset = $this->getFormFactory()->getFormElementManager()->get(ValidationFieldset::class);
+//        $validationFieldset->setName("validation");
+//        $this->add($validationFieldset);
+
+        $documentFieldset = $this->getFormFactory()->getFormElementManager()->get(DocumentFieldset::class);
+        $documentFieldset->setName("document");
+        $this->add($documentFieldset);
+
 
 //        $this->addConfirmFieldset();
 
