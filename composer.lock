@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81cf6e7d2bf5967a284a62dea6f14247",
+    "content-hash": "772104be0af45c4d339b0e2a51c797e5",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -8523,11 +8523,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "6.0.7",
+            "version": "6.0.11",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "d9e27ec3ac83f969e7533d0b983f5f1f4f22754c"
+                "reference": "daa9401534da7486a9fae3ba672f0998c7c9625e"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -8565,8 +8565,7 @@
                 "unicaen/console": "^6.0"
             },
             "require-dev": {
-                "laminas/laminas-test": "^3.2",
-                "phpunit/phpunit": "^5.6"
+                "laminas/laminas-test": "^4.2"
             },
             "bin": [
                 "bin/deploy.sh",
@@ -8583,7 +8582,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2023-04-28T14:10:12+00:00"
+            "time": "2023-11-13T14:14:48+00:00"
         },
         {
             "name": "unicaen/auth",

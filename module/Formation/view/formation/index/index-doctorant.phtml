@@ -340,7 +340,7 @@ $now = new DateTime();
                            class="ajax-modal">
                             <span class="icon icon-voir"></span> Afficher les informations </a>
                         <br/>
-                        <?php if ($canSupprimerInscription) : ?>
+                        <?php if ($canSupprimerInscription and $session->getEtat()->getCode() !== Etat::CODE_IMMINENT) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
                             <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"

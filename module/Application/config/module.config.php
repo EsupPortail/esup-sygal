@@ -4,6 +4,8 @@ namespace Application;
 
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
+use Application\Controller\ConsoleController;
+use Application\Controller\Factory\ConsoleControllerFactory;
 use Application\Controller\Factory\IndexControllerFactory;
 use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
@@ -28,15 +30,15 @@ use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
-use Fichier\View\Helper\Uploader\UploaderHelper;
-use Fichier\View\Helper\Uploader\UploaderHelperFactory;
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
+use Fichier\View\Helper\Uploader\UploaderHelper;
+use Fichier\View\Helper\Uploader\UploaderHelperFactory;
 use Laminas\Navigation\Navigation;
 use Structure\Form\Factory\EcoleDoctoraleFormFactory;
-use UnicaenApp\Controller\ConsoleController;
+use Unicaen\Console\Router\Simple;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
 
 return array(
@@ -197,6 +199,36 @@ return array(
             ],
         ],
     ],
+    'console'         => [
+        'router'       => [
+            'routes' => [
+                'run-sql-script' => [
+                    'type'    => Simple::class,
+                    'options' => [
+                        'route'    => 'run-sql-script --path= [--logfile=] [--connection=]',
+                        'defaults' => [
+                            'controller' => ConsoleController::class,
+                            'action'     => 'runSQLScript',
+                        ],
+                    ],
+                ],
+                'run-sql-query'  => [
+                    'type'    => Simple::class,
+                    'options' => [
+                        'route'    => 'run-sql-query --sql= [--logfile=] [--connection=]',
+                        'defaults' => [
+                            'controller' => ConsoleController::class,
+                            'action'     => 'runSQLQuery',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'view_manager' => [
+            'display_not_found_reason' => true,
+            'display_exceptions'       => true,
+        ],
+    ],
     'service_manager' => array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
@@ -238,6 +270,7 @@ return array(
     'controllers' => [
         'factories' => [
             'Application\Controller\Index' => IndexControllerFactory::class,
+            ConsoleController::class => ConsoleControllerFactory::class,
         ],
         'initializers' => [
             ServiceAwareInitializer::class,

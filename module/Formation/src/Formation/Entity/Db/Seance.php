@@ -14,6 +14,8 @@ class Seance implements HistoriqueAwareInterface {
     private ?DateTime $debut = null;
     private ?DateTime $fin = null;
     private ?string $lieu = null;
+    private ?string $lien = null;
+    private ?string $motDePasse = null;
     private ?string $description = null;
 
     /**
@@ -86,15 +88,31 @@ class Seance implements HistoriqueAwareInterface {
         return $this->lieu;
     }
 
-    /**
-     * @param string|null $lieu
-     * @return Seance|null
-     */
-    public function setLieu(?string $lieu): Seance
+    public function setLieu(?string $lieu): void
     {
         $this->lieu = $lieu;
-        return $this;
     }
+
+    public function getLien(): ?string
+    {
+        return $this->lien;
+    }
+
+    public function setLien(?string $lien): void
+    {
+        $this->lien = $lien;
+    }
+
+    public function getMotDePasse(): ?string
+    {
+        return $this->motDePasse;
+    }
+
+    public function setMotDePasse(?string $motDePasse): void
+    {
+        $this->motDePasse = $motDePasse;
+    }
+
 
     /**
      * @return string|null

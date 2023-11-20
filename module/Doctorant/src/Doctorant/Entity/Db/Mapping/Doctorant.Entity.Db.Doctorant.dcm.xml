@@ -51,5 +51,7 @@
         </many-to-one>
 
         <field name="ine" column="INE"/>
+
+        <one-to-many field="missionsEnseignements" target-entity="Doctorant\Entity\Db\MissionEnseignement" mapped-by="doctorant"/>
     </entity>
 </doctrine-mapping>

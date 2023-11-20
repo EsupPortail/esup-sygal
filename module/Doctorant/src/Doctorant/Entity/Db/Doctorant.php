@@ -31,7 +31,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     protected $sourceCode;
 
     /**
-     * @var \Individu\Entity\Db\Individu
+     * @var Individu
      */
     private $individu;
 
@@ -41,7 +41,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     private $theses;
 
     /**
-     * @var \Structure\Entity\Db\Etablissement|null
+     * @var Etablissement|null
      */
     protected ?Etablissement $etablissement = null;
 
@@ -50,6 +50,9 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
      */
     private $ine;
 
+    private Collection $missionsEnseignements;
+
+
     /**
      * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
      *
@@ -57,8 +60,8 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
      * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
      *
      * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
-     * @see Etablissement::getEtablissementSubstituant()
      * @return Etablissement|null
+     * @see Etablissement::getEtablissementSubstituant()
      */
     public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
     {
@@ -70,7 +73,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     }
 
     /**
-     * @param \Structure\Entity\Db\Etablissement $etablissement
+     * @param Etablissement $etablissement
      */
     public function setEtablissement(Etablissement $etablissement)
     {
@@ -83,6 +86,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     public function __construct()
     {
         $this->theses = new ArrayCollection();
+        $this->missionsEnseignements = new ArrayCollection();
     }
 
     /**
@@ -380,22 +384,29 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
         return 'Doctorant';
     }
 
-    /**
-     * @return string
-     */
-    public function getIne()
+    public function getIne(): string
     {
         return $this->ine;
     }
 
-    /**
-     * @param string $ine
-     * @return self
-     */
-    public function setIne($ine)
+    public function setIne(string $ine): Doctorant
     {
         $this->ine = $ine;
         return $this;
+    }
+
+    /** @return MissionEnseignement[] */
+    public function getMissionsEnseignements(): array
+    {
+        return $this->missionsEnseignements->toArray();
+    }
+
+    public function hasMissionEnseignementFor(int $annee): bool
+    {
+        foreach ($this->getMissionsEnseignements() as $missionEnseignement) {
+            if ($missionEnseignement->getAnneeUniversitaire() === $annee) return true;
+        }
+        return false;
     }
 
 }

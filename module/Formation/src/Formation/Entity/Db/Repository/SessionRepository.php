@@ -4,6 +4,7 @@ namespace Formation\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formation;
@@ -22,6 +23,7 @@ class SessionRepository extends DefaultEntityRepository
         $qb = parent::createQueryBuilder($alias, $indexBy)
             ->join($alias . '.responsable', 'resp')->addSelect('resp')
             ->join($alias . '.formation', "formation")->addSelect("formation")
+            ->join('formation.module', "module")->addSelect("module")
             ->join($alias. '.site', 'site')->addSelect("site")
             ->leftJoin($alias . '.typeStructure', 'struct')->addSelect("struct")
             ->leftJoin($alias . '.inscriptions', "inscription")->addSelect("inscription")
@@ -86,9 +88,17 @@ class SessionRepository extends DefaultEntityRepository
             ->setParameter('preparation', Etat::CODE_PREPARATION)
         ;
 
-        $result =  $qb->getQuery()->getResult();
-        usort($result, function (Session $a, Session $b) { return $a->getDateDebut(true) > $b->getDateDebut(true);});
+        /** TODO SOMETHING WITH IT*/
+        $now = new DateTime();
+        $mois = ((int) $now->format('m'));
+        $annee =  ((int) $now->format('Y'));
+        if ($mois < 9) $annee -= 1;
+        if (! $doctorant->hasMissionEnseignementFor($annee)) {
+            $qb = $qb->andWhere('module.requireMissionEnseignement = :false')->setParameter('false', false);
+        }
 
+        $result =  $qb->getQuery()->getResult();
+        usort($result, function (Session $a, Session $b) { return $a->getDateDebut() > $b->getDateDebut();});
         return $result;
     }
 

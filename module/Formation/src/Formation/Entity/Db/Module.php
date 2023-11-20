@@ -15,6 +15,7 @@ class Module implements HistoriqueAwareInterface
     private ?string $description = null;
     private ?string $lien = null;
     private Collection $formations;
+    private bool $requireMissionEnseignement = false;
 
     /**
      * @return int
@@ -86,11 +87,20 @@ class Module implements HistoriqueAwareInterface
         return $this->formations;
     }
 
-    /**
-     * @return string
-     */
     public function getCode() : string
     {
         return 'M'.$this->getId();
     }
+
+    public function isRequireMissionEnseignement(): bool
+    {
+        return $this->requireMissionEnseignement;
+    }
+
+    public function setRequireMissionEnseignement(bool $requireMissionEnseignement): void
+    {
+        $this->requireMissionEnseignement = $requireMissionEnseignement;
+    }
+
+
 }

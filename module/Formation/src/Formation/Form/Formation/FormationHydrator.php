@@ -37,6 +37,8 @@ class FormationHydrator implements HydratorInterface {
             'type_structure' => ($object->getTypeStructure())?$object->getTypeStructure()->getId():null,
             'taille_liste_principale' => $object->getTailleListePrincipale(),
             'taille_liste_complementaire' => $object->getTailleListeComplementaire(),
+            'objectif' => $object->getObjectif(),
+            'programme' => $object->getProgramme(),
         ];
         return $data;
     }
@@ -63,6 +65,8 @@ class FormationHydrator implements HydratorInterface {
         $structure = (isset($data['type_structure']) AND trim($data['type_structure']) !== "")?$this->getStructureService()->getRepository()->find($data['type_structure']):null;
         $tailleListePrincipale = (isset($data['taille_liste_principale']) AND trim($data['taille_liste_principale']) !== '')?trim($data['taille_liste_principale']):null;
         $tailleListeComplementaire = (isset($data['taille_liste_complementaire']) AND trim($data['taille_liste_complementaire']) !== '')?trim($data['taille_liste_complementaire']):null;
+        $objectif = (isset($data['objectif']) AND trim($data['objectif']) !== '')?trim($data['objectif']):null;
+        $programme = (isset($data['programme']) AND trim($data['programme']) !== '')?trim($data['programme']):null;
 
         $object->setLibelle($libelle);
         $object->setDescription($description);
@@ -75,6 +79,8 @@ class FormationHydrator implements HydratorInterface {
         $object->setTypeStructure($structure);
         $object->setTailleListePrincipale($tailleListePrincipale);
         $object->setTailleListeComplementaire($tailleListeComplementaire);
+        $object->setObjectif($objectif);
+        $object->setProgramme($programme);
         return $object;
     }
 

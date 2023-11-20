@@ -16,7 +16,9 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 
@@ -29,6 +31,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
 {
     use ActeurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use TheseServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -170,7 +173,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
     }
 
     /**
-     * Rôles découlant de la présence de l'utilisateur dans la table Doctorant.
+     * Rôles découlant de la présence de l'utilisateur dans la table Doctorant et de l'existence d'une thèse pour
+     * ce doctorant.
      *
      * @return Role[]
      */
@@ -179,6 +183,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         $doctorant = $this->doctorantService->findOneByUserWrapper($this->userWrapper);
 
         if (! $doctorant) {
+            return [];
+        }
+
+        // le doctorant doit avoir une thèse en cours ou soutenue
+        $theses = array_filter($doctorant->getTheses(), fn(These $these) => in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]));
+        if (! $theses) {
             return [];
         }
 

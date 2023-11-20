@@ -34,6 +34,8 @@
         </many-to-one>
         <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>
         <field name="tailleListeComplementaire" type="integer"                     column="TAILLE_LISTE_COMPLEMENTAIRE"  nullable="true"/>
+        <field name="objectif" type="string" length="9999"                         column="OBJECTIF"  nullable="true"/>
+        <field name="programme" type="string" length="9999"                        column="PROGRAMME"  nullable="true"/>
 
         <!-- MODULE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <many-to-one field="module" target-entity="Formation\Entity\Db\Module">

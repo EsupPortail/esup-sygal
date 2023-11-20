@@ -5,6 +5,7 @@ namespace Soutenance\Entity;
 use Doctrine\Common\Collections\Collection;
 use Horodatage\Entity\Interfaces\HasHorodatagesInterface;
 use Horodatage\Entity\Traits\HasHorodatagesTrait;
+use JetBrains\PhpStorm\Pure;
 use These\Entity\Db\These;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -384,4 +385,46 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return false;
     }
 
+    /** FONCTIONS POUR LES MACROS *************************************************************************************/
+
+    /** @noinspection  PhpUnused */
+    public function toStringDateRetourRapport() : string
+    {
+        $date = $this->getRenduRapport();
+        if ($date) return $date->format('d/m/Y');
+        return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
+    }
+
+    /** @noinspection  PhpUnused */
+    public function toStringDateSoutenance() : string
+    {
+        $date = $this->getDate();
+        if ($date) return $date->format('d/m/Y');
+        return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
+    }
+
+    /** @noinspection  PhpUnused */
+    #[Pure] public function toStringLieu() : string
+    {
+        $lieu = $this->getLieu();
+        if ($lieu) return $lieu;
+        return "<span style='color:darkorange;'>Aucun lieu de précisé</span>";
+    }
+
+    /** @noinspection  PhpUnused */
+    #[Pure] public function toStringAdresse() : string
+    {
+        $lieu = $this->getAdresse();
+        if ($lieu) return $lieu;
+        return "<span style='color:darkorange;'>Aucune adresse de précisée</span>";
+    }
+
+    /** @noinspection  PhpUnused */
+    #[Pure] public function toStringPublicOuHuisClos() : string
+    {
+        $mode = $this->isHuitClos();
+        if ($mode === false) return " sera publique ";
+        if ($mode === true) return " se déroulera en huis clos";
+        return "<span style='color:darkorange;'>Aucun mode de déclaré</span>";
+    }
 }

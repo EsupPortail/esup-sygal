@@ -8,10 +8,10 @@ use Application\View\Helper\Navigation\MenuSecondaire;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Request as HttpRequest;
-use Laminas\Mvc\ModuleRouteListener;
 use Laminas\ModuleManager\Feature\AutoloaderProviderInterface;
 use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
+use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 use Laminas\View\Helper\Navigation;
@@ -97,26 +97,32 @@ class Module implements BootstrapListenerInterface, AutoloaderProviderInterface,
         ];
     }
 
-    public function getConsoleUsage()
+    public function getConsoleUsage(): array
     {
         return [
-            // Describe available commands
             'fichier fusionner --these= --versionFichier= [--removeFirstPage] [--notifier=]' =>
                 'Fusionner la page de couverture générée avec le manuscrit',
-
-            // Describe expected parameters
             ['--these',           "Id de la thèse concernée"],
             ['--versionFichier',  "Version du fichier de thèse à utiliser (ex: 'VA', 'VOC')"],
             ['--removeFirstPage', "(facultatif) Témoin indiquant si la première page doit être retirée avant la fusion"],
             ['--notifier',        "(facultatif) Adresses électroniques auxquelles envoyer un courriel une fois la fusion terminée"],
 
-            // Describe available commands
             'transfer-these-data --source-id= --destination-id=' =>
                 "Transférer toutes les données saisies sur une thèse *historisée* vers une autre thèse",
-
-            // Describe expected parameters
             ['--source-id',       "Id de la thèse historisée source"],
             ['--destination-id',  "Id de la thèse destination"],
+
+            'run-sql-script --path= [--logfile=] [--connection=]' =>
+                "Exécuter un script SQL",
+            ['--path',       "Requis. Chemin vers le script SQL à exécuter."],
+            ['--logfile',    "Facultatif. Chemin du fichier des logs d'exécution du script. Par défaut, il est généré."],
+            ['--connection', "Facultatif. Identifiant de la connexion Doctrine. Par défaut : 'orm_default'."],
+
+            'run-sql-query --sql= [--logfile=] [--connection=]' =>
+                "Exécuter une requête SQL",
+            ['--sql',        "Requis. Requête SQL à exécuter. Ex: \"begin DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE'); end;\"."],
+            ['--logfile',    "Facultatif. Chemin du fichier des logs d'exécution. Par défaut, il est généré."],
+            ['--connection', "Facultatif. Identifiant de la connexion Doctrine. Par défaut : 'orm_default'."],
         ];
     }
 }

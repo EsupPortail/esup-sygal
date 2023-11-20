@@ -59,6 +59,30 @@ class FormationForm extends Form {
                 'class' => 'tinymce',
             ],
         ]);
+        //objectif
+        $this->add([
+            'type' => Textarea::class,
+            'name' => 'objectif',
+            'options' => [
+                'label' => "Objectif de la formation :",
+            ],
+            'attributes' => [
+                'id' => 'objectif',
+                'class' => 'tinymce',
+            ],
+        ]);
+        //programme
+        $this->add([
+            'type' => Textarea::class,
+            'name' => 'programme',
+            'options' => [
+                'label' => "Programme de la formation :",
+            ],
+            'attributes' => [
+                'id' => 'programme',
+                'class' => 'tinymce',
+            ],
+        ]);
         //lien
         $this->add([
             'type' => Text::class,
@@ -119,9 +143,8 @@ class FormationForm extends Form {
             'options' => [
                 'label' => "Modalité :",
                 'empty_option' => "Non précisée",
-                'value_options' => [
+                'value_options' =>
                     HasModaliteInterface::MODALITES,
-                ],
             ],
             'attributes' => [
                 'id' => 'modalite',
@@ -211,6 +234,8 @@ class FormationForm extends Form {
             'type_structure'=> [ 'required' => false, ],
             'taille_liste_principale'=> [ 'required' => false, ],
             'taille_liste_complementaire'=> [ 'required' => false, ],
+            'objectif'=> [ 'required' => false, ],
+            'programme'=> [ 'required' => false, ],
         ]));
     }
 }

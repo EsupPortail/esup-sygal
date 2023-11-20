@@ -1,6 +1,19 @@
 Journal des modifications
 =========================
 
+6.0.7
+-----
+- [FORMATION] Affichage des missions d'enseignement à coté des inscriptions dans les sessions de formation
+- [FORMATION] Possibilité de renseigner la nécessité de mission d'enseignement sur un module et filtrage des formations en conséquent
+- [FORMATION] Ajout des champs "objectif" et "programme" pour les actions de formation
+- [FORMATION] Ajout des champs "lien" et "mot de passe" dans les séances
+- [FORMATION] Un doctorant n'a plus accés à la desinscription si la session est imminente
+- [SOUTENANCE] Mise en place des templates associés aux mails 
+- [DEPOT] Retouche du texte de mail concernant la page de couverture générée.
+- [FIX] Pour se voir attribuer par l'application le rôle Doctorant, il faut désormais avoir une thèse soit en cours soit soutenue.
+- Amélioration de la fonction de transfert de thèse en bdd.
+- Nouveau ConsoleController (extrait et supprimé d'unicaen/app) pour pouvoir lancer la requête SQL de refresh de la MV de recherche de thèses.
+
 6.0.6
 -----
 - Passage dans UnicaenRenderer du template des historiques de co-encadrements
@@ -15,6 +28,8 @@ Journal des modifications
 - [FIX] Chargement de la navigation : plantage d'une assertion à cause d'une variable null (role).
 - [FIX] Accès aux fiches individus.
 - [FIX] Pages de couverture : réduction de la marge en haut de page.
+- [FORMATION] Filtre selon les année pour les sessions
+- [SOUTENANCE] Récupération de la date de fin de confidentialité depuis la thèse puis du dossier de soutenance pour le docuement de la présidence
 
 6.0.5
 -----
