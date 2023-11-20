@@ -1,3 +1,16 @@
+
+
+-- Nouvelle table
+create table IF NOT EXISTS admission_etat
+(
+    code        varchar(1) not null primary key,
+    libelle     varchar(1024),
+    description text,
+    icone       varchar(1024),
+    couleur     varchar(1024),
+    ordre       bigint
+);
+
 create table IF NOT EXISTS admission_admission
 (
     id                    bigserial                                                    not null
@@ -134,17 +147,6 @@ create table IF NOT EXISTS admission_validation
     histo_modification    timestamp,
     histo_destructeur_id  bigint REFERENCES utilisateur (id),
     histo_destruction     timestamp
-);
-
--- Nouvelle table
-create table IF NOT EXISTS admission_etat
-(
-    code        varchar(1) not null primary key,
-    libelle     varchar(1024),
-    description text,
-    icone       varchar(1024),
-    couleur     varchar(1024),
-    ordre       bigint
 );
 
 INSERT INTO admission_etat (code, libelle, description, icone, couleur, ordre)
