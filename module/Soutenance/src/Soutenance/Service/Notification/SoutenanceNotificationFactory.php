@@ -569,6 +569,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
     public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition): Notification
     {
         $email = $membre->getEmail();
+        $doctorant = $proposition->getThese()->getDoctorant();
         if ($email === null) {
             throw new RuntimeException("Aucun mail pour la notification [" . MailTemplates::SOUTENANCE_CONVOCATION_DOCTORANT . "]");
         }
@@ -577,7 +578,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune validation de trouvée");
         }
 
-        $vars = ['soutenance' => $proposition, 'these' => $proposition->getThese(), 'membre' => $membre, 'validation' => $validation[0], 'etablissement' => $proposition->getThese()->getEtablissement()];
+        $vars = ['soutenance' => $proposition, 'doctorant' => $doctorant, 'these' => $proposition->getThese(), 'membre' => $membre, 'validation' => $validation[0], 'etablissement' => $proposition->getThese()->getEtablissement()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 

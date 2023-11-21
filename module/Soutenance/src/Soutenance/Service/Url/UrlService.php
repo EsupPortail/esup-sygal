@@ -5,6 +5,7 @@ namespace Soutenance\Service\Url;
 use DateTime;
 use Fichier\Controller\FichierController;
 use Laminas\View\Renderer\PhpRenderer;
+use Notification\Exception\RuntimeException;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\PropositionController;
@@ -160,7 +161,8 @@ class UrlService {
     /** @noinspection PhpUnused  */
     public function getSoutenanceConvocationDoctorant() : string
     {
-        $these = $this->variables['$these'];
+        $these = $this->variables['these'];
+        if ($these === null) { throw new RuntimeException("Aucune thèse fournie"); }
         /** @see PresoutenanceController::convocationDoctorantAction() */
         $url = $this->renderer->url('soutenance/presoutenance/convocation-doctorant', ['these' => $these->getId()], ['force_canonical' => true], true);
         return $url;
