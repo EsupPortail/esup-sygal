@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.8
+-----
+- 
+
 6.0.7
 -----
 - [FORMATION] Affichage des missions d'enseignement à coté des inscriptions dans les sessions de formation
