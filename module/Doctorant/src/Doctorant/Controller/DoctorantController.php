@@ -76,6 +76,18 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
+    public function voirAction(): ViewModel
+    {
+        $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
+        if ($doctorant === null) {
+            throw new \InvalidArgumentException("Individu introuvable.");
+        }
+
+        return new ViewModel([
+            'doctorant' => $doctorant,
+        ]);
+    }
+
     public function consulterAction(): ViewModel
     {
         /** @var \Doctorant\Entity\Db\Doctorant $doctorant */

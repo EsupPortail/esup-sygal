@@ -4,7 +4,7 @@
 use Application\Assertion\Loader\AssertionCsvLoader;
 use Application\Assertion\Generator\AssertionGenerator;
 use Composer\Autoload\ClassLoader;
-use Laminas\Console;
+use Unicaen\Console;
 
 /** @var ClassLoader $autoloader */
 $autoloader = require_once __DIR__ . '/../../vendor/autoload.php';
@@ -12,6 +12,7 @@ $autoloader = require_once __DIR__ . '/../../vendor/autoload.php';
 $rules = [
     'help|h'    => 'Get usage message',
     'file|f=s'  => 'CSV file containing assertion rules to parse; required.',
+    'output|o=s'  => 'Result PHP class file path; required for first run.',
 ];
 try {
     $opts = new Console\Getopt($rules);
@@ -22,29 +23,45 @@ try {
 }
 if ($opts->getOption('h')) {
     echo $opts->getUsageMessage();
-    exit();
+    exit(0);
 }
 
-if (! ($file = $opts->getOption('f'))) {
+if (! ($csvFile = $opts->getOption('f'))) {
     echo $opts->getUsageMessage();
-    exit();
+    exit(1);
 }
 
-if (! is_readable($file)) {
-    throw new \UnicaenApp\Exception\RuntimeException("This file is not readable: " . $file);
+if (! is_readable($csvFile)) {
+    echo sprintf("The CSV file is not readable : %s.", $csvFile) . PHP_EOL;
+    exit(1);
+}
+
+$classFilePath = $opts->getOption('o');
+if ($classFilePath && file_exists($classFilePath)) {
+    echo sprintf("The PHP class file already exists : %s.", $classFilePath) . PHP_EOL;
+    exit(1);
 }
 
 // CSV loading
 $loader = new AssertionCsvLoader();
-$loader->setRuleFilePath($file);
+$loader->setRuleFilePath($csvFile);
 $result = $loader->loadFile();
 $class = $result->getAssertionClass();
-$classFilePath = $autoloader->findFile($class);
+
+if (!$classFilePath) {
+    $classFilePath = $autoloader->findFile($class);
+    if (!$classFilePath) {
+        echo sprintf("No PHP file found by autoloader for class %s, please use -o arg.", $class) . PHP_EOL;
+        exit(1);
+    }
+}
 
 // Class generating
 $generator = new AssertionGenerator();
 $generator->setAssertionCsvLoader($loader);
+$generator->setCommandLine(implode(' ', $_SERVER['argv']));
 $code = $generator->generate();
 $content = '<?php' . PHP_EOL . PHP_EOL . $code;
 file_put_contents($classFilePath, $content);
-echo sprintf("%s ==> %s (%s).", $file, $class, realpath($classFilePath)) . PHP_EOL;
+
+echo sprintf("%s ==> %s (%s).", $csvFile, $class, realpath($classFilePath)) . PHP_EOL;

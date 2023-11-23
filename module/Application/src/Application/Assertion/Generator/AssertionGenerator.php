@@ -4,8 +4,6 @@ namespace Application\Assertion\Generator;
 
 use Application\Assertion\Loader\AssertionCsvLoader;
 use Application\Assertion\Loader\AssertionCsvLoaderResult;
-use ReflectionException;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\DocBlock\Tag\AuthorTag;
 use Laminas\Code\Generator\DocBlock\Tag\GenericTag;
@@ -13,55 +11,43 @@ use Laminas\Code\Generator\DocBlock\Tag\ParamTag;
 use Laminas\Code\Generator\DocBlock\Tag\ReturnTag;
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
+use Laminas\Code\Generator\ParameterGenerator;
 use Laminas\Code\Generator\PropertyGenerator;
+use Laminas\Code\Generator\TypeGenerator;
 use Laminas\Code\Reflection\ClassReflection;
+use ReflectionException;
 
 class AssertionGenerator
 {
     const HR = '//--------------------------------------------------------------------------------------';
 
-    /**
-     * @var AssertionCsvLoader
-     */
-    private $loader;
+    private AssertionCsvLoader $loader;
+    protected ClassGenerator $classGenerator;
+    private AssertionCsvLoaderResult $loadingResult;
+    private string $commandLine;
 
-    /**
-     * @var ClassGenerator
-     */
-    protected $classGenerator;
-
-    /**
-     * @var AssertionCsvLoaderResult
-     */
-    private $loadingResult;
-
-    /**
-     * AssertionGenerator constructor.
-     *
-     * @param AssertionCsvLoader|null $loader
-     */
-    public function __construct(AssertionCsvLoader $loader = null)
+    public function __construct(?AssertionCsvLoader $loader = null)
     {
         if ($loader !== null) {
             $this->setAssertionCsvLoader($loader);
         }
     }
 
-    /**
-     * @param AssertionCsvLoader $loader
-     */
-    public function setAssertionCsvLoader(AssertionCsvLoader $loader)
+    public function setAssertionCsvLoader(AssertionCsvLoader $loader): void
     {
         $this->loader = $loader;
+    }
+
+    public function setCommandLine(string $commandLine): void
+    {
+        $this->commandLine = $commandLine;
     }
 
     /**
      * Charge le fichier CSV contenant les règles
      * puis retourne le code PHP de la classe d'Assertion correspondante.
-     *
-     * @return string
      */
-    public function generate()
+    public function generate(): string
     {
         return $this->getClassGenerator()->generate();
     }
@@ -69,10 +55,8 @@ class AssertionGenerator
     /**
      * Charge le fichier CSV contenant les règles
      * puis retourne ClassGenerator permettant de générer le code PHP de la classe d'Assertion correspondante.
-     * 
-     * @return ClassGenerator
      */
-    public function getClassGenerator()
+    public function getClassGenerator(): ClassGenerator
     {
         $this->loadFile();
 
@@ -89,20 +73,20 @@ class AssertionGenerator
         return $this->classGenerator;
     }
 
-    private function loadFile()
+    private function loadFile(): void
     {
         $this->loadingResult = $this->loader->loadFile();
     }
 
 
-    protected function removeAllMethods()
+    protected function removeAllMethods(): void
     {
         foreach ($this->classGenerator->getMethods() as $methodGenerator) {
             $this->classGenerator->removeMethod($methodGenerator->getName());
         }
     }
 
-    protected function addProperties()
+    protected function addProperties(): void
     {
         if ($this->classGenerator->hasProperty('failureMessage')) {
             return;
@@ -112,19 +96,14 @@ class AssertionGenerator
         }
 
         $this->classGenerator->addProperties([
-            new PropertyGenerator('failureMessage', null, PropertyGenerator::FLAG_PROTECTED),
-            new PropertyGenerator('linesTrace', [], PropertyGenerator::FLAG_PROTECTED),
+            new PropertyGenerator('failureMessage', null, PropertyGenerator::FLAG_PROTECTED, TypeGenerator::fromTypeString('?string')),
+            new PropertyGenerator('linesTrace', [], PropertyGenerator::FLAG_PROTECTED, TypeGenerator::fromTypeString('array')),
         ]);
     }
 
-    protected function addUses()
+    protected function addDockBlock(): void
     {
-
-    }
-
-    protected function addDockBlock()
-    {
-        $desc = sprintf('Générée à partir du fichier %s.', realpath($this->loadingResult->getRuleFilePath()));
+        $desc = sprintf("Générée avec la ligne de commande '%s'.", $this->commandLine);
 
         $generator = DocBlockGenerator::fromArray([
             'shortDescription' => "Classe mère d'Assertion.",
@@ -138,7 +117,16 @@ class AssertionGenerator
         $this->classGenerator->setDocBlock($generator);
     }
 
-    protected function addAssertAsBooleanMethod()
+    protected function addUses(): void
+    {
+        $this->classGenerator->addUse('Application\Assertion\Exception\UnexpectedPrivilegeException', 'UnexpectedPrivilegeException');
+
+        foreach ($this->loadingResult->getUses() as $fqdn => $alias) {
+            $this->classGenerator->addUse($fqdn, $alias);
+        }
+    }
+
+    protected function addAssertAsBooleanMethod(): void
     {
         $methodName = 'assertAsBoolean';
         $data = $this->loadingResult->getData();
@@ -154,21 +142,19 @@ class AssertionGenerator
 
         $docblockGenerator = DocBlockGenerator::fromArray([
             'shortDescription' => "Retourne true si le privilège spécifié est accordé ; false sinon.",
-            'longDescription'  => null,
+            'longDescription'  => '',
             'tags'             => [
                 new ParamTag('privilege', 'string'),
                 new ReturnTag('bool'),
             ],
         ]);
 
-        $this->classGenerator->addMethodFromGenerator(
-            new MethodGenerator($methodName, ['privilege'], MethodGenerator::FLAG_PUBLIC, $body, $docblockGenerator)
-        );
-
-        return true;
+        $methodGen = new MethodGenerator($methodName, [new ParameterGenerator('privilege', 'string')], MethodGenerator::FLAG_PUBLIC, $body, $docblockGenerator);
+        $methodGen->setReturnType('bool');
+        $this->classGenerator->addMethodFromGenerator($methodGen);
     }
 
-    protected function addTestMethods()
+    protected function addTestMethods(): void
     {
         foreach ($this->loadingResult->getTestNames() as $testName) {
             $docblockGenerator = DocBlockGenerator::fromArray([
@@ -176,13 +162,14 @@ class AssertionGenerator
                     new ReturnTag('bool'),
                 ],
             ]);
-            $this->classGenerator->addMethodFromGenerator(
-                new MethodGenerator($testName, [], MethodGenerator::FLAG_PROTECTED | MethodGenerator::FLAG_ABSTRACT, null, $docblockGenerator)
-            );
+
+            $methodGen = new MethodGenerator($testName, [], MethodGenerator::FLAG_PROTECTED | MethodGenerator::FLAG_ABSTRACT, null, $docblockGenerator);
+            $methodGen->setReturnType('bool');
+            $this->classGenerator->addMethodFromGenerator($methodGen);
         }
     }
 
-    protected function addLoadedFileContentMethod()
+    protected function addLoadedFileContentMethod(): void
     {
         $methodName = 'loadedFileContent';
 
@@ -192,7 +179,7 @@ class AssertionGenerator
 
         $docblockGenerator = DocBlockGenerator::fromArray([
             'shortDescription' => "Retourne le contenu du fichier CSV à partir duquel a été générée cette classe.",
-            'longDescription'  => null,
+            'longDescription'  => '',
             'tags'             => [
                 new ReturnTag('string'),
             ],
@@ -200,29 +187,24 @@ class AssertionGenerator
 
         $body = "return <<<'EOT'" . PHP_EOL . file_get_contents($this->loadingResult->getRuleFilePath()) . "EOT;";
 
-        $this->classGenerator->addMethodFromGenerator(
-            new MethodGenerator($methodName, [], MethodGenerator::FLAG_PUBLIC, $body, $docblockGenerator)
-        );
+        $methodGen = new MethodGenerator($methodName, [], MethodGenerator::FLAG_PUBLIC, $body, $docblockGenerator);
+        $methodGen->setReturnType('string');
+        $this->classGenerator->addMethodFromGenerator($methodGen);
     }
 
-    protected function createClassGenerator()
+    protected function createClassGenerator(): void
     {
         $assertionClass = $this->loadingResult->getAssertionClass();
 
         try {
             $this->classGenerator = ClassGenerator::fromReflection(new ClassReflection($assertionClass));
         } catch (ReflectionException $e) {
-            throw new RuntimeException("Erreur lors de la création du ClassGenerator", null, $e);
+            $this->classGenerator = new ClassGenerator($assertionClass);
+            $this->classGenerator->setAbstract(true);
         }
     }
 
-    /**
-     * @param array  $tests
-     * @param bool   $return
-     * @param string $failedAssertionMessage
-     * @return string
-     */
-    protected function generateIfThen(array $tests, $return, $failedAssertionMessage = null)
+    protected function generateIfThen(array $tests, bool $return, ?string $failedAssertionMessage = null): string
     {
         $testParts = [];
         foreach ($tests as $testName => $config) {
@@ -248,12 +230,7 @@ class AssertionGenerator
             "}";
     }
 
-    /**
-     * @param string $privilege
-     * @param array  $tests
-     * @return string
-     */
-    protected function generateTestForPrivilege($privilege, array $tests)
+    protected function generateTestForPrivilege(string $privilege, array $tests): string
     {
         if ($privilege === '*') {
             $if = '$privilege';
@@ -277,38 +254,24 @@ class AssertionGenerator
         }
         $parts[] = '}';
 
-        $code = implode(PHP_EOL, $parts);
-
-        return $code;
+        return implode(PHP_EOL, $parts);
     }
 
-    /**
-     * @param bool $return
-     * @return string
-     */
-    protected function generateReturn($return)
+    protected function generateReturn(bool $return): string
     {
         return 'return ' . ($return ? 'true' : 'false') . ';';
     }
 
-    /**
-     * @return string
-     */
-    protected function generateThrowUnexpectedPrivilegeException()
+    protected function generateThrowUnexpectedPrivilegeException(): string
     {
         return
-            'throw new \Application\Assertion\Exception\UnexpectedPrivilegeException(' . PHP_EOL .
+            'throw new UnexpectedPrivilegeException(' . PHP_EOL .
             $this->indent(4, '"Le privilège spécifié n\'est pas couvert par l\'assertion: $privilege. Trace : " . PHP_EOL . ' .
             'implode(PHP_EOL, $this->linesTrace)' .
             ');');
     }
 
-    /**
-     * @param int    $length
-     * @param string $string
-     * @return string
-     */
-    protected function indent($length, $string)
+    protected function indent(int $length, string $string): string
     {
         $prefix = str_repeat(' ', $length);
 

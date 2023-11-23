@@ -3,17 +3,18 @@
 namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\IndividuRole;
-use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
-use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Formation\Provider\NatureFichier\NatureFichier as NatureFichierFormation;
+use Individu\Entity\Db\IndividuRole;
+use Individu\Service\IndividuServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -65,6 +66,21 @@ class StructureController extends AbstractController
         ]);
     }
 
+    public function voirAction(): ViewModel
+    {
+        $id = $this->params()->fromRoute('structure');
+
+        /** @var \Structure\Entity\Db\Structure $structureAbstraite */
+        $structureAbstraite = $this->structureService->getRepository()->find($id);
+        if ($structureAbstraite === null) {
+            throw new InvalidArgumentException("Structure introuvable avec cet id");
+        }
+
+        return (new ViewModel([
+            'structure' => $structureAbstraite,
+        ]))->setTemplate('structure/structure/information');
+    }
+
     public function individuRoleAction()
     {
         $structureId = $this->params()->fromRoute("structure");
@@ -110,7 +126,8 @@ class StructureController extends AbstractController
     /**
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function genererRolesDefautsAction() {
+    public function genererRolesDefautsAction()
+    {
         $id   = $this->params()->fromRoute('id');
         $type = $this->params()->fromRoute('type');
 
@@ -118,15 +135,15 @@ class StructureController extends AbstractController
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($ecole);
-                return $this->redirect()->toRoute('ecole-doctorale/information', ['structure' => $id], ['query' => ['tab' => StructureController::TAB_infos]], true);
+                return $this->redirect()->toRoute('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true);
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                return $this->redirect()->toRoute('unite-recherche/information', ['structure' => $id], ['query' => ['tab' => StructureController::TAB_infos]], true);
+                return $this->redirect()->toRoute('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true);
             case TypeStructure::CODE_ETABLISSEMENT :
-                $unite = $this->getEtablissementService()->getRepository()->findByStructureId($id);
-                $this->getRoleService()->addRoleByStructure($unite);
-                return $this->redirect()->toRoute('etablissement/information', ['structure' => $id], ['query' => ['tab' => StructureController::TAB_infos]], true);
+                $etab = $this->getEtablissementService()->getRepository()->findByStructureId($id);
+                $this->getRoleService()->addRoleByStructure($etab);
+                return $this->redirect()->toRoute('etablissement/voir', ['etablissement' => $etab->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true);
         }
     }
 

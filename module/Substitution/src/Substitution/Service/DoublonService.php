@@ -3,11 +3,21 @@
 namespace Substitution\Service;
 
 use Doctrine\DBAL\Result;
+use Substitution\Constants;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class DoublonService
 {
     use EntityManagerAwareTrait;
+
+    private string $tablePrefix = '';
+
+    public function __construct()
+    {
+        if (Constants::USE_TABLE_PREFIX) {
+            $this->tablePrefix = 'pre_';
+        }
+    }
 
     /**
      * @throws \Doctrine\DBAL\Exception
@@ -139,8 +149,8 @@ class DoublonService
         return <<<EOT
 select d.npd, d.id, pre.source_code, d.nom_patronymique, d.prenom1, to_char(d.date_naissance,'DD/MM/YYYY') date_naissance
 from v_individu_doublon d
-join pre_individu pre on pre.id = d.id and pre.histo_destruction is null
-left join individu_substit sub on d.id = sub.from_id and sub.histo_destruction is null
+join {$this->tablePrefix}individu pre on pre.id = d.id and pre.histo_destruction is null
+left join individu_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- sans substitution 
 order by d.npd, d.nom_patronymique, d.prenom1, d.date_naissance
 limit 100
@@ -152,8 +162,8 @@ EOT;
         return <<<EOT
 select d.npd, d.id, pre.source_code, pre.ine
 from v_doctorant_doublon d
-join pre_doctorant pre on pre.id = d.id and pre.histo_destruction is null
-left join doctorant_substit sub on d.id = sub.from_id and sub.histo_destruction is null
+join {$this->tablePrefix}doctorant pre on pre.id = d.id and pre.histo_destruction is null
+left join doctorant_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- sans substitution 
 order by d.npd, pre.ine
 limit 100
@@ -165,8 +175,8 @@ EOT;
         return <<<EOT
 select d.npd, d.id, pre.source_code, d.code
 from v_structure_doublon d
-join pre_structure pre on pre.id = d.id and pre.histo_destruction is null
-left join structure_substit sub on d.id = sub.from_id and sub.histo_destruction is null
+join {$this->tablePrefix}structure pre on pre.id = d.id and pre.histo_destruction is null
+left join structure_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- aucune substitution existante
 order by d.npd, d.code
 limit 100
@@ -178,9 +188,9 @@ EOT;
         return <<<EOT
 select d.npd, d.id, pre.source_code, pres.libelle
 from v_{$type}_doublon d
-join pre_{$type} pre on d.id = pre.id and pre.histo_destruction is null
-join pre_structure pres on pre.structure_id = pres.id and pres.histo_destruction is null
-left join {$type}_substit sub on d.id = sub.from_id and sub.histo_destruction is null
+join {$this->tablePrefix}{$type} pre on d.id = pre.id and pre.histo_destruction is null
+join {$this->tablePrefix}structure pres on pre.structure_id = pres.id and pres.histo_destruction is null
+left join {$type}_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- aucune substitution existante
 order by d.npd, pres.libelle
 limit 100

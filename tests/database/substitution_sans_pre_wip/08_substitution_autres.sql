@@ -64,16 +64,14 @@ select pre.id,
        pre.these_id,
        pre.role_id,
        coalesce(isub.to_id, pre.individu_id) as individu_id,
-       coalesce(esub.id, pre.acteur_etablissement_id) as acteur_etablissement_id,
+       coalesce(esub.to_id, pre.acteur_etablissement_id) as acteur_etablissement_id,
 --        pre.individu_id as individu_id_orig,                         -- pour debug
 --        pre.acteur_etablissement_id as acteur_etablissement_id_orig, -- pour debug
        pre.qualite,
        pre.lib_role_compl
 from pre
-    left join individu_substit isub on isub.from_id = pre.individu_id and isub.histo_destruction is null
-    left join etablissement e on e.id = pre.acteur_etablissement_id
-    left join structure_substit ssub on ssub.from_id = e.structure_id and ssub.histo_destruction is null
-    left join etablissement esub on esub.structure_id = ssub.to_id
+    left join individu_substit isub on isub.from_id = pre.individu_id --and isub.histo_destruction is null
+    left join etablissement_substit esub on esub.from_id = pre.acteur_etablissement_id --and esub.histo_destruction is null
 ;
 
 
@@ -107,7 +105,8 @@ select pre.id,
 --        pre.structure_id as structure_id_orig, -- pour debug
        pre.type_structure_dependant_id
 from pre
-    left join structure_substit ssub on ssub.from_id = pre.structure_id and ssub.histo_destruction is null;
+    left join structure_substit ssub on ssub.from_id = pre.structure_id --and ssub.histo_destruction is null
+;
 
 
 drop view if exists v_diff_these;
@@ -168,9 +167,9 @@ select pre.id,
        pre.source_code,
        pre.source_id,
        coalesce(dsub.to_id, pre.doctorant_id) as doctorant_id,
-       coalesce(esub.id, pre.etablissement_id) as etablissement_id,
-       coalesce(edsub.id, pre.ecole_doct_id) as ecole_doct_id,
-       coalesce(ursub.id, pre.unite_rech_id) as unite_rech_id,
+       coalesce(esub.to_id, pre.etablissement_id) as etablissement_id,
+       coalesce(edsub.to_id, pre.ecole_doct_id) as ecole_doct_id,
+       coalesce(ursub.to_id, pre.unite_rech_id) as unite_rech_id,
 --        pre.doctorant_id as doctorant_id_orig,         -- pour debug
 --        pre.etablissement_id as etablissement_id_orig, -- pour debug
 --        pre.ecole_doct_id as ecole_doct_id_orig,       -- pour debug
@@ -194,20 +193,45 @@ select pre.id,
        pre.date_abandon,
        pre.date_transfert
 from pre
-    left join doctorant_substit dsub on dsub.from_id = pre.doctorant_id and dsub.histo_destruction is null
-
-    left join etablissement e on e.id = pre.etablissement_id
-    left join structure_substit sse on sse.from_id = e.structure_id and sse.histo_destruction is null
-    left join etablissement esub on esub.structure_id = sse.to_id
-
-    left join ecole_doct ed on ed.id = pre.ecole_doct_id
-    left join structure_substit ssed on ssed.from_id = ed.structure_id and ssed.histo_destruction is null
-    left join ecole_doct edsub on edsub.structure_id = ssed.to_id
-
-    left join unite_rech ur on ur.id = pre.unite_rech_id
-    left join structure_substit ssur on ssur.from_id = ur.structure_id and ssur.histo_destruction is null
-    left join unite_rech ursub on ursub.structure_id = ssur.to_id
+    left join doctorant_substit dsub on dsub.from_id = pre.doctorant_id --and dsub.histo_destruction is null
+    left join etablissement_substit esub on esub.from_id = pre.etablissement_id --and esub.histo_destruction is null
+    left join ecole_doct_substit edsub on edsub.from_id = pre.ecole_doct_id --and edsub.histo_destruction is null
+    left join unite_rech_substit ursub on ursub.from_id = pre.unite_rech_id --and ursub.histo_destruction is null
 ;
+
+
+drop view if exists v_diff_these_annee_univ;
+drop view if exists src_these_annee_univ;
+create or replace view src_these_annee_univ(id, source_code, source_id, these_id, annee_univ) as
+SELECT NULL::text AS id,
+       tmp.source_code,
+       src.id     AS source_id,
+       t.id       AS these_id,
+       tmp.annee_univ
+FROM tmp_these_annee_univ tmp
+         JOIN source src ON src.id = tmp.source_id
+         JOIN these t ON t.source_code::text = tmp.these_id::text;
+
+
+drop view if exists v_diff_titre_acces;
+drop view if exists src_titre_acces;
+create or replace view src_titre_acces
+            (id, source_code, source_id, these_id, titre_acces_interne_externe, libelle_titre_acces,
+             type_etb_titre_acces, libelle_etb_titre_acces, code_dept_titre_acces, code_pays_titre_acces)
+as
+SELECT NULL::text AS id,
+       tmp.source_code,
+       src.id     AS source_id,
+       t.id       AS these_id,
+       tmp.titre_acces_interne_externe,
+       tmp.libelle_titre_acces,
+       tmp.type_etb_titre_acces,
+       tmp.libelle_etb_titre_acces,
+       tmp.code_dept_titre_acces,
+       tmp.code_pays_titre_acces
+FROM tmp_titre_acces tmp
+         JOIN source src ON src.id = tmp.source_id
+         JOIN these t ON t.source_code::text = tmp.these_id::text;
 
 
 drop view if exists v_diff_variable;
@@ -226,12 +250,12 @@ with pre as (
            tmp.date_fin_validite
     FROM tmp_variable tmp
          JOIN source src ON src.id = tmp.source_id
-         JOIN etablissement e ON e.structure_id = src.etablissement_id
+         JOIN etablissement e ON e.id = src.etablissement_id and e.histo_destruction is null
 )
 select pre.id,
        pre.source_code,
        pre.source_id,
-       coalesce(esub.id, pre.etablissement_id) as etablissement_id,
+       coalesce(esub.to_id, pre.etablissement_id) as etablissement_id,
 --        pre.etablissement_id as etablissement_id_orig, -- pour debug
        pre.code,
        pre.description,
@@ -239,18 +263,16 @@ select pre.id,
        pre.date_deb_validite,
        pre.date_fin_validite
 from pre
-    left join etablissement e on e.id = pre.etablissement_id
-    left join structure_substit sse on sse.from_id = e.structure_id and sse.histo_destruction is null
-    left join etablissement esub on esub.structure_id = sse.to_id
+     left join etablissement_substit esub on esub.from_id = pre.etablissement_id --and esub.histo_destruction is null
 ;
 
 
 /*
 select sub.npd, ps.id, ps.code, ps.source_code, s.id, s.code, s.source_code
 from unite_rech_substit sub
-join pre_unite_rech pur on pur.id = sub.from_id and pur.histo_destruction is null
+join unite_rech pur on pur.id = sub.from_id and pur.histo_destruction is null
 join unite_rech ur on ur.id = sub.to_id and ur.histo_destruction is null
-join pre_structure ps on ps.id = pur.structure_id and ps.histo_destruction is null
+join structure ps on ps.id = pur.structure_id and ps.histo_destruction is null
 join structure s on s.id = ur.structure_id and s.histo_destruction is null
 where sub.histo_destruction is null
 order by npd;

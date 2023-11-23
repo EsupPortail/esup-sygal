@@ -66,13 +66,6 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('these', $these)
             ->andWhere('acteur.histoDestruction is null');
 
-        $qb
-            ->leftJoinStructureSubstituante('structure')
-            ->andWhereStructureEstNonSubstituee('structure')
-            ->addSelect('etablissementSubstituant')->leftJoin("structureSubstituante.etablissement", "etablissementSubstituant")
-            ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituant")
-            ->addSelect('uniteRechercheSubstituant')->leftJoin("structureSubstituante.uniteRecherche", "uniteRechercheSubstituant");
-
         return $qb->getQuery()->getResult();
     }
 
@@ -93,13 +86,6 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('these', $these)
             ->andWhere('acteur.histoDestruction is null');
 
-        $qb
-            ->leftJoinStructureSubstituante('structure')
-            ->andWhereStructureEstNonSubstituee('structure')
-            ->addSelect('etablissementSubstituant')->leftJoin("structureSubstituante.etablissement", "etablissementSubstituant")
-            ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituant")
-            ->addSelect('uniteRechercheSubstituant')->leftJoin("structureSubstituante.uniteRecherche", "uniteRechercheSubstituant");
-
         return $qb->getQuery()->getResult();
     }
 
@@ -118,13 +104,6 @@ class ActeurRepository extends DefaultEntityRepository
             ->andWhere('acteur.individu = :individu')
             ->setParameter('individu', $individu)
             ->orderBy('these.id', 'ASC');
-
-        $qb
-            ->leftJoinStructureSubstituante('structure')
-            ->andWhereStructureEstNonSubstituee('structure')
-            ->addSelect('etablissementSubstituant')->leftJoin("structureSubstituante.etablissement", "etablissementSubstituant")
-            ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituant")
-            ->addSelect('uniteRechercheSubstituant')->leftJoin("structureSubstituante.uniteRecherche", "uniteRechercheSubstituant");
 
         return $qb->getQuery()->getResult();
     }
@@ -158,24 +137,23 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->leftJoinStructureSubstituante('s')
             ->andWhere('a.histoDestruction is null')
             ->addOrderBy('i.nomUsuel, i.prenom1');
 
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {
                 $qb
-                    ->andWhere('s = :structure OR structureSubstituante = :structure')
+                    ->andWhere('s = :structure')
                     ->setParameter('structure', $ecoleDoctorale->getStructure(/*false*/));
             } elseif (is_array($ecoleDoctorale)) {
                 $leftPart = key($ecoleDoctorale);
                 $rightPart = current($ecoleDoctorale);
                 $qb
-                    ->andWhere(sprintf($leftPart, 's') . ' = :value OR ' . sprintf($leftPart, 'structureSubstituante'). ' = :value')
+                    ->andWhere(sprintf($leftPart, 's') . ' = :value')
                     ->setParameter('value', $rightPart);
             } else {
                 $qb
-                    ->andWhere('s.code = :code OR structureSubstituante.code = :code')
+                    ->andWhere('s.code = :code')
                     ->setParameter('code', $ecoleDoctorale);
             }
         }
@@ -184,7 +162,7 @@ class ActeurRepository extends DefaultEntityRepository
             $qb
                 ->join('t.etablissement', 'e')->addSelect('e')
                 ->join('e.structure', 'etab_structure')//->addSelect('etab_structure')
-                ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(/*false*/), 'etab_structure');
+                ->andWhereStructureIs($etablissement->getStructure(/*false*/), 'etab_structure');
         }
 
         return $qb->getQuery()->getResult();

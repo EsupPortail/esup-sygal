@@ -1,0 +1,84 @@
+<?php
+/**
+ * @var \Structure\Entity\Db\Etablissement $entity
+ * @var bool $includeGotoDetailsLink
+ */
+?>
+
+<h3>
+    Informations générales
+</h3>
+<dl>
+    <dt>Libelle :</dt>
+    <dd><?php echo $entity->getStructure()->getLibelle(); ?></dd>
+    <dt>Sigle :</dt>
+    <dd><?php echo $entity->getStructure()->getSigle() ?: "(Non renseigné)"; ?></dd>
+    <dt>Site internet :</dt>
+    <dd><?php echo $entity->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
+</dl>
+
+<h3>
+    Coordonnées
+</h3>
+<dl>
+    <dt>Adresse :</dt>
+    <dd><?php echo $entity->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
+    <dt>Téléphone :</dt>
+    <dd><?php echo $entity->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
+    <dt>Fax :</dt>
+    <dd><?php echo $entity->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
+</dl>
+
+<h3>
+    Contact
+</h3>
+<dl>
+    <dt>Adresse électronique :</dt>
+    <dd><?php echo $entity->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
+    <dt>Adresse électronique d'Assistance:</dt>
+    <dd><?php echo $entity->getEmailAssistance() ?: "(Non renseignée)"; ?></dd>
+    <dt>Adresse électronique pour les aspects Bibliothèque :</dt>
+    <dd><?php echo $entity->getEmailBibliotheque() ?: "(Non renseignée)"; ?></dd>
+    <dt>Adresse électronique pour les aspects Doctorat :</dt>
+    <dd><?php echo $entity->getEmailDoctorat() ?: "(Non renseignée)"; ?></dd>
+</dl>
+
+<h3>
+    Informations techniques
+</h3>
+<dl>
+    <dt>Id interne :</dt>
+    <dd><?php echo $entity->getId(); ?></dd>
+    <dt>Code :</dt>
+    <dd><?php echo $entity->getStructure()->getCode(); ?></dd>
+    <dt>IdRef :</dt>
+    <dd>
+        <?php if ($entity->getStructure()->getIdRef() !== null and trim($entity->getStructure()->getIdRef()) !== "") : ?>
+            <?php echo $this->idrefLink($entity->getStructure()->getIdRef()); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+    <dt>Id HAL :</dt>
+    <dd>
+        <?php if ($entity->getStructure()->getIdHal() !== null and trim($entity->getStructure()->getIdHal()) !== "") : ?>
+            <?php echo $entity->getStructure()->getIdHal(); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+    <dt>Domaine :</dt>
+    <dd><?php echo $entity->getDomaine() ?: "(Non renseigné)"; ?></dd>
+</dl>
+
+<?php if ($entity->estHistorise()): ?>
+    <h3>
+        <span class="badge bg-danger">Historisé le <?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></span>
+    </h3>
+<?php endif ?>
+
+<?php if ($includeGotoDetailsLink ?? false): ?>
+    <a href="<?php echo $this->url('etablissement/voir', ['etablissement' => $entity->getId()], [], true); ?>"
+       class="action"><span class="icon icon-voir"></span> Voir la fiche détaillée de cet établissement
+    </a>
+<?php endif ?>

@@ -1,0 +1,19 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var string $type
+ * @var array $substitution
+ * @var \Structure\Entity\Db\EcoleDoctorale $substituant
+ * @var ?\Structure\Entity\Db\EcoleDoctorale[] $substitues
+ */
+
+$this->headTitle("Substitution par " . $substituant->getId());
+?>
+<?php echo $this->partial('substitution/substitution/_partial/voir', [
+    'informationPartial' => 'individu/individu/partial/dl',
+    'type' => $type,
+    'substitution' => $substitution,
+    'substituant' => $substituant,
+    'substitues' => $substitues,
+    'includeGotoDetailsLink' => true,
+]) ?>

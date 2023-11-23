@@ -1,0 +1,20 @@
+<?php
+
+namespace Substitution;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $type
+ * @var \Doctrine\DBAL\Result $result
+ *
+ * @see \Substitution\Controller\IndexController::ecoleDoctAction()
+ */
+?>
+
+<?php echo $this->partial('substitution/substitution/_partial/liste', [
+    'type' => $type,
+    'result' => $result,
+    'attributes' => ['to_code' => 'Code'],
+]); ?>

@@ -669,26 +669,6 @@ const CONFIG_IMPORTS = [
 const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// STRUCTURE //////////////////////////////////////////////
     [
-        ////// PRE-STRUCTURE : pour détection de doublons.
-        'name' => 'pre-structure-%s',
-        'order' => 10,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_PRE_STRUCTURE',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'PRE_STRUCTURE',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
-            'id_sequence' => null,
-        ],
-    ],
-    [
         ////// STRUCTURE : sans doublons non historisés.
         'name' => 'structure-%s',
         'order' => 11,
@@ -704,31 +684,13 @@ const CONFIG_SYNCHROS = [
             'table' => 'STRUCTURE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
+            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
+            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// ETABLISSEMENT //////////////////////////////////////////////
-    [
-        ////// PRE-ETABLISSEMENT : pour détection de doublons.
-        'name' => 'pre-etablissement-%s',
-        'order' => 20,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_PRE_ETABLISSEMENT',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'PRE_ETABLISSEMENT',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
-            'id_sequence' => null,
-        ],
-    ],
     [
         ////// ETABLISSEMENT : sans doublons non historisés.
         'name' => 'etablissement-%s',
@@ -745,31 +707,13 @@ const CONFIG_SYNCHROS = [
             'table' => 'ETABLISSEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
+            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
+            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// ECOLE-DOCTORALE //////////////////////////////////////////////
-    [
-        ////// ECOLE-DOCTORALE : pour détection de doublons.
-        'name' => 'pre-ecole-doctorale-%s',
-        'order' => 30,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_PRE_ECOLE_DOCT',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'PRE_ECOLE_DOCT',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
-            'id_sequence' => null,
-        ],
-    ],
     [
         ////// ECOLE-DOCTORALE : sans doublons non historisés.
         'name' => 'ecole-doctorale-%s',
@@ -786,31 +730,13 @@ const CONFIG_SYNCHROS = [
             'table' => 'ECOLE_DOCT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
+            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
+            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// UNITE-RECHERCHE //////////////////////////////////////////////
-    [
-        ////// UNITE-RECHERCHE : pour détection de doublons.
-        'name' => 'pre-unite-recherche-%s',
-        'order' => 40,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_PRE_UNITE_RECH',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'PRE_UNITE_RECH',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
-            'id_sequence' => null,
-        ],
-    ],
     [
         ////// UNITE-RECHERCHE : sans doublons non historisés.
         'name' => 'unite-recherche-%s',
@@ -827,31 +753,13 @@ const CONFIG_SYNCHROS = [
             'table' => 'UNITE_RECH',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
+            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
+            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// INDIVIDU //////////////////////////////////////////////
-    [
-        ////// PRE-INDIVIDU : pour détection de doublons.
-        'name' => 'pre-individu-%s',
-        'order' => 50,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_PRE_INDIVIDU',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'PRE_INDIVIDU',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
-            'id_sequence' => null,
-        ],
-    ],
     [
         ////// INDIVIDU : sans doublons non historisés.
         'name' => 'individu-%s',
@@ -868,31 +776,13 @@ const CONFIG_SYNCHROS = [
             'table' => 'INDIVIDU',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
+            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
+            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// DOCTORANT //////////////////////////////////////////////
-    [
-        ////// PRE-DOCTORANT : pour détection de doublons.
-        'name' => 'pre-doctorant-%s',
-        'order' => 60,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_PRE_DOCTORANT',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'PRE_DOCTORANT',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null, // car la colonne 'id' est auto-incrémentée
-            'id_sequence' => null,
-        ],
-    ],
     [
         ////// DOCTORANT : sans doublons non historisés.
         'name' => 'doctorant-%s',
@@ -909,8 +799,10 @@ const CONFIG_SYNCHROS = [
             'table' => 'DOCTORANT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
+            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
+            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// THESE //////////////////////////////////////////////
@@ -1135,10 +1027,9 @@ function generateWhereForEtab(string $codeEtablissement): string
 {
     return <<<EOS
 d.source_id in (
-    select source.id from source 
-    join etablissement on source.etablissement_id = etablissement.id
-    join structure on etablissement.structure_id = structure.id
-    where structure.source_code = '$codeEtablissement'
+    select s.id from source s 
+    join etablissement e on s.etablissement_id = e.id
+    where e.source_code = '$codeEtablissement'
 )
 EOS;
 }

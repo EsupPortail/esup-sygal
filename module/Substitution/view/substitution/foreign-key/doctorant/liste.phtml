@@ -13,15 +13,7 @@ use Application\View\Renderer\PhpRenderer;
 
 ?>
 
-<?php $this->headTitle($this->translate("Clés étrangères vers des doctorants")) ?>
-
-<h1 class="page-header">
-    <span class="fas fa-key"></span>
-    <?php echo $this->translate("Clés étrangères vers des doctorants"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/foreign-key/_partial/liste', [
+    'type' => 'doctorant',
     'result' => $result,
 ]); ?>

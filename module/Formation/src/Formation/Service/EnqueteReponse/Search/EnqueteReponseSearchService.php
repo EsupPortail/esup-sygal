@@ -85,7 +85,6 @@ class EnqueteReponseSearchService extends SearchService
             ->leftJoin("form.responsable", 'resp')
             ->leftJoin("form.site", 'site')
             ->leftJoin("site.structure", 'site_structure')->addSelect('site_structure')
-            ->leftJoinStructureSubstituante('site_structure', 'site_structureSubstituante')
             ->andWhere('er.histoDestruction is null')
             ->addOrderBy('q.id');
     }
@@ -99,7 +98,7 @@ class EnqueteReponseSearchService extends SearchService
             ->setLabel("Site")
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
                 $qb
-                    ->andWhere('site.sourceCode = :sourceCodeSite OR site_structureSubstituante.sourceCode = :sourceCodeSite')
+                    ->andWhere('site.sourceCode = :sourceCodeSite')
                     ->setParameter('sourceCodeSite', $filter->getValue());
             });
     }
@@ -146,7 +145,7 @@ class EnqueteReponseSearchService extends SearchService
     public function createSiteSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Site", self::NAME_site);
-        $sorter->setOrderByField("site_structureSubstituante.code, site_structure.code");
+        $sorter->setOrderByField("site_structure.code");
 
         return $sorter;
     }

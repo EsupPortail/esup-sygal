@@ -33,7 +33,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_infos ? 'active' : '' ?>"
-           href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
+           href="<?php echo $this->url('etablissement/voir', ['etablissement' => $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
            role="tab"
            aria-controls="informations"
         >
@@ -42,7 +42,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_membres ? 'active' : '' ?>"
-           href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
+           href="<?php echo $this->url('etablissement/voir', ['etablissement' => $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
            role="tab"
            aria-controls="membres"
         >
@@ -52,7 +52,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php if ($etablissement->estInscription()) : ?>
         <li role="presentation" class="nav-item">
             <a class="nav-link <?php echo $tab === StructureController::TAB_docs ? 'active' : '' ?>"
-               href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
+               href="<?php echo $this->url('etablissement/voir', ['etablissement' => $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
                role="tab"
                aria-controls="documents"
             >
@@ -65,72 +65,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 <div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
     <div class="row">
         <div class="col-md-6">
-            <h2>
-                Informations générales
-            </h2>
-            <dl>
-                <dt>Libelle :</dt>
-                <dd><?php echo $etablissement->getStructure()->getLibelle(); ?></dd>
-                <dt>Sigle :</dt>
-                <dd><?php echo $etablissement->getStructure()->getSigle() ?: "(Non renseigné)"; ?></dd>
-                <dt>Site internet :</dt>
-                <dd><?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
-            </dl>
-
-            <h2>
-                Coordonnées
-            </h2>
-            <dl>
-                <dt>Adresse :</dt>
-                <dd><?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
-                <dt>Téléphone :</dt>
-                <dd><?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
-                <dt>Fax :</dt>
-                <dd><?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
-            </dl>
-
-            <h2>
-                Contact
-            </h2>
-            <dl>
-                <dt>Adresse électronique :</dt>
-                <dd><?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
-                <dt>Adresse électronique d'Assistance:</dt>
-                <dd><?php echo $etablissement->getEmailAssistance() ?: "(Non renseignée)"; ?></dd>
-                <dt>Adresse électronique pour les aspects Bibliothèque :</dt>
-                <dd><?php echo $etablissement->getEmailBibliotheque() ?: "(Non renseignée)"; ?></dd>
-                <dt>Adresse électronique pour les aspects Doctorat :</dt>
-                <dd><?php echo $etablissement->getEmailDoctorat() ?: "(Non renseignée)"; ?></dd>
-            </dl>
-
-            <h2>
-                Informations techniques
-            </h2>
-            <dl>
-                <dt>Code :</dt>
-                <dd><?php echo $etablissement->getStructure()->getCode(); ?></dd>
-                <dt>IdRef :</dt>
-                <dd>
-                    <?php if ($etablissement->getStructure()->getIdRef() !== null and trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $this->idrefLink($etablissement->getStructure()->getIdRef()); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt>Id HAL :</dt>
-                <dd>
-                    <?php if ($etablissement->getStructure()->getIdHal() !== null and trim($etablissement->getStructure()->getIdHal()) !== "") : ?>
-                        <?php echo $etablissement->getStructure()->getIdHal(); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt>Domaine :</dt>
-                <dd><?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
-            </dl>
-            <dl>
-
-            </dl>
+            <?php echo $this->partial('structure/etablissement/partial/information', ['entity' => $etablissement]) ?>
         </div>
         <div class="col-md-4">
             <dl>
@@ -160,7 +95,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     </div>
 
     <?php if($canModifierEtablissement): ?>
-        <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
+        <a href="<?php echo $this->url('etablissement/modifier', ['etablissement'=> $etablissement->getId()], [], true); ?>"
            class="btn btn-primary action"
         >
             <span class="icon icon-edit"></span> Modifier l'établissement

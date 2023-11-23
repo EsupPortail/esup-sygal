@@ -20,6 +20,7 @@ $$begin
     alter table pre_unite_rech disable trigger substit_trigger_pre_unite_rech;
     alter table unite_rech_substit disable trigger substit_trigger_on_unite_rech_substit;
 
+    delete from substit_fk_replacement where type = 'unite_rech' and to_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
     delete from unite_rech_substit where from_id in (select d.id from pre_unite_rech d join pre_structure i on d.structure_id = i.id where sigle = 'test1234');
     delete from unite_rech_substit where to_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
     delete from unite_rech where structure_id in (select id from structure where sigle = 'test1234');
@@ -70,11 +71,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé : etab_support = azerty.org
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, etab_support, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, 'azerty.org', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, 'azerty.org', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -82,11 +83,11 @@ begin
     --   - création attendue d'une subsitution 'azerty.org' : 2 doublons (etab_support = azerty.fr car ordre alpha)
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, etab_support, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, 'azerty.fr', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, 'azerty.fr', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     --
@@ -94,11 +95,11 @@ begin
     --   - ajout à la subsitution existante 'unite-recherche,ETABLE_HISMAN' : 3 doublons (etab_support = azerty.org car majoritaire)
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, etab_support, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, 'azerty.com', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, 'azerty.com', 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     select * into v_data from substit_fetch_data_for_substituant_unite_rech(v_npd_a);
@@ -156,11 +157,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.de',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.de',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id;
@@ -172,11 +173,11 @@ begin
     --   - création attendue d'une subsitution : 2 doublons (etab_support = azerty.al car ordre alpha)
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
@@ -237,11 +238,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -249,11 +250,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     --
@@ -261,11 +262,11 @@ begin
     --   - ajout à la subsitution existante 'unite-recherche,ETABLE_HISMAN' : 3 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     --
@@ -326,11 +327,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -338,11 +339,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     --
@@ -350,11 +351,11 @@ begin
     --   - ajout à la subsitution existante 'unite-recherche,ETABLE_HISMAN' : 3 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     --
@@ -427,11 +428,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -439,11 +440,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     --
@@ -451,11 +452,11 @@ begin
     --   - ajout à la subsitution existante 'unite-recherche,ETABLE_HISMAN' : 3 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     --
@@ -518,11 +519,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -530,11 +531,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     --
@@ -542,11 +543,11 @@ begin
     --   - ajout à la subsitution existante 'unite-recherche,ETABLE_HISMAN' : 3 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     --
@@ -621,11 +622,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.com',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.com',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -633,11 +634,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     --
@@ -645,11 +646,11 @@ begin
     --   - ajout à la subsitution existante 'unite-recherche,ETABLE_HISMAN' : 3 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     --
@@ -657,11 +658,11 @@ begin
     --   - ajout à la subsitution existante : 4 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'PAS_ETABLE_HISMAN', 'Pas Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'PAS_ETABLE_HISMAN', 'Pas Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_4; -- NB : pas de NPD forcé donc la structure n'est pas en doublon
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_4.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, v_npd_unite_rech_a
+    select nextval('unite_rech_id_seq'), v_pre_structure_4.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, v_npd_unite_rech_a
     returning * into v_pre_unite_rech_4; -- NB : NPD forcé
 
     select * into v_structure_substit from structure_substit where from_id = v_pre_structure_4.id and npd = v_npd_structure_a;
@@ -722,11 +723,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -734,11 +735,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
@@ -750,11 +751,11 @@ begin
     --   - ajout à la subsitution existante : 3 doublons (unite_rech_id = 5 car majoritaire)
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'PAS_ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'PAS_ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_3;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
     select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id;
@@ -811,11 +812,11 @@ begin
     -- Création d'un pre_structure et pre_unite_rech associé :
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hisman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.org',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
     --
@@ -823,11 +824,11 @@ begin
     --   - création d'une subsitution 'azerty.org' : 2 doublons
     --
     INSERT INTO pre_structure(id, type_structure_id, code, libelle, sigle, source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('structure_id_seq'), 3, 'ETABLE_HISMAN', 'Etable Hissman', 'test1234', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
     INSERT INTO pre_unite_rech(id, structure_id, /*etab_support,*/ source_code, source_id, histo_createur_id, npd_force)
-    select nextval('pre_unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
+    select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
     select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;

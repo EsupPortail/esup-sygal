@@ -14,6 +14,12 @@ class DoublonController extends AbstractActionController
 {
     use DoublonServiceAwareTrait;
 
+    public function accueilAction(): ViewModel
+    {
+        return (new ViewModel([
+        ]))->setTemplate('substitution/doublon/accueil');
+    }
+
     /**
      * @throws \Doctrine\DBAL\Exception
      */

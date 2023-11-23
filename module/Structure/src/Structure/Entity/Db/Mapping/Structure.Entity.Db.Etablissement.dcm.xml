@@ -19,6 +19,8 @@
         <field name="estComue" type="boolean" column="EST_COMUE"/>
         <field name="estCed" type="boolean" column="EST_CED"/>
 
+        <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
+
         <one-to-many field="theses"         target-entity="These\Entity\Db\These"     mapped-by="etablissement"/>
         <one-to-many field="doctorants"     target-entity="Doctorant\Entity\Db\Doctorant" mapped-by="etablissement"/>
         <one-to-many field="roles"          target-entity="Application\Entity\Db\Role"      mapped-by="etablissement"/>
@@ -31,6 +33,17 @@
                 <cascade-all/>
             </cascade>
         </one-to-one>
+
+        <many-to-many field="substitues" target-entity="Structure\Entity\Db\Etablissement">
+            <join-table name="etablissement_substit">
+                <join-columns>
+                    <join-column name="to_id" referenced-column-name="ID" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="from_id" referenced-column-name="ID" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 

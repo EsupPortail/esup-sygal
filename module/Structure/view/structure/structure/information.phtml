@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @see \Structure\Controller\StructureController::voirAction()
+ * @var \Structure\Entity\Db\Structure $structure
+ */
+
+use Structure\Controller\StructureController;
+
+$this->headTitle("Structure '{$structure->getCode()}'");
+
+$tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
+?>
+
+<h1 class="page-header">
+    Structure &laquo; <?php echo $structure->getLibelle(); ?> &raquo;
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="nav-item">
+        <a class="nav-link <?php echo $tab === StructureController::TAB_infos ? 'active' : '' ?>"
+           href="<?php echo $this->url('structure/information', ['structure' => $structure->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
+           role="tab"
+        >
+            Informations générales
+        </a>
+    </li>
+</ul>
+
+<div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
+    <div class="row">
+        <div class="col-md-6">
+            <?php echo $this->partial('structure/structure/partial/information', ['entity' => $structure]) ?>
+        </div>
+        <div class="col-md-4">
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

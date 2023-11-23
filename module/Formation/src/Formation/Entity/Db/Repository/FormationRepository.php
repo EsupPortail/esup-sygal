@@ -24,9 +24,7 @@ class FormationRepository extends DefaultEntityRepository
 
         $qb
             ->leftJoin('site.structure', 'site_structure')->addSelect('site_structure')
-            ->leftJoin($alias . '.typeStructure', 'struct')->addSelect('struct')
-            ->leftJoinStructureSubstituante('site_structure', 'site_structureSubstituante')
-            ->leftJoinStructureSubstituante('struct', 'struct_structureSubstituante');
+            ->leftJoin($alias . '.typeStructure', 'struct')->addSelect('struct');
 
         return $qb;
     }

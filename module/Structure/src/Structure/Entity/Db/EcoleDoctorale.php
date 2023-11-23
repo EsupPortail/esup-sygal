@@ -4,6 +4,8 @@ namespace Structure\Entity\Db;
 
 use Application\Search\Filter\SearchFilterValueInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -12,12 +14,18 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale
-    implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface, SearchFilterValueInterface
+class EcoleDoctorale implements
+    StructureConcreteInterface,
+    HistoriqueAwareInterface,
+    SourceAwareInterface,
+    ResourceInterface,
+    SearchFilterValueInterface,
+    SubstitutionAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
     use StructureAwareTrait;
+    use SubstitutionAwareTrait;
 
     const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
 
@@ -40,6 +48,7 @@ class EcoleDoctorale
      * @var string
      */
     protected $offreThese;
+
     /**
      * EcoleDoctorale constructor.
      */
@@ -97,23 +106,6 @@ class EcoleDoctorale
     public function getSourceCode(): ?string
     {
         return $this->sourceCode;
-    }
-
-    /**
-     * Retourne l'éventuelle école doctorale substituant celle-ci.
-     *
-     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.ecoleDoctorale'.
-     *
-     * @return \Structure\Entity\Db\EcoleDoctorale|null
-     */
-    public function getEcoleDoctoraleSubstituante(): ?EcoleDoctorale
-    {
-        if ($substit = $this->structure->getStructureSubstituante()) {
-            return $substit->getEcoleDoctorale();
-        }
-
-        return null;
     }
 
     /**

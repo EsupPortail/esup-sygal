@@ -5,6 +5,8 @@ namespace Structure\Entity\Db;
 use Application\Entity\Db\DomaineScientifique;
 use Application\Search\Filter\SearchFilterValueInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -14,12 +16,18 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * UniteRecherche
  */
-class UniteRecherche
-    implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface, SearchFilterValueInterface
+class UniteRecherche implements
+    StructureConcreteInterface,
+    HistoriqueAwareInterface,
+    SourceAwareInterface,
+    ResourceInterface,
+    SearchFilterValueInterface,
+    SubstitutionAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
     use StructureAwareTrait;
+    use SubstitutionAwareTrait;
 
     /**
      * @var string
@@ -146,23 +154,6 @@ class UniteRecherche
         $this->autresEtablissements = $autresEtablissements;
 
         return $this;
-    }
-
-    /**
-     * Retourne l'éventuelle unité de recherche substituant celle-ci.
-     *
-     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.uniteRecherche'.
-     *
-     * @return \Structure\Entity\Db\UniteRecherche|null
-     */
-    public function getUniteRechercheSubstituante(): ?UniteRecherche
-    {
-        if ($substit = $this->structure->getStructureSubstituante()) {
-            return $substit->getUniteRecherche();
-        }
-
-        return null;
     }
 
     /**

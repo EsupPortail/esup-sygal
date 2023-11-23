@@ -60,10 +60,7 @@ h2.modal-title {
       margin: 0; }
     .card.box .card-header .icon {
       margin-right: 5px; }
-  .card.box .card-body h2 {
-    font-size: 150%; }
   .card.box .card-body h3 {
-    font-size: 120%;
     font-weight: bold; }
   .card.box .card-body h3:nth-of-type(1) {
     margin-top: 0; }
@@ -184,7 +181,7 @@ div#contenu-principal {
   margin-top: 10px; }
 
 .page-header small {
-  font-size: 50%; }
+  font-size: 75%; }
 
 .upload-form {
   font-size: 85%;

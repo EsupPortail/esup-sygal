@@ -4,6 +4,7 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
+ * @var string $type
  * @var \Doctrine\DBAL\Result $result
  * @var \Doctrine\DBAL\Result $operations
  * @var string $logRoute
@@ -15,6 +16,15 @@ $operation = $this->queryParams()['operation'] ?? null;
 <p class="lead">
 
 </p>
+
+<?php $this->headTitle($this->translate("Logs : $type")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-key"></span>
+    <?php echo $this->translate("Logs") ?> <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
 <?php if ($count = $result->rowCount()): ?>
     <p><?php echo $count ?> lignes de logs trouvées.</p>

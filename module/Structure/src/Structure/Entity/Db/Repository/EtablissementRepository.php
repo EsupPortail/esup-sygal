@@ -19,9 +19,6 @@ class EtablissementRepository extends DefaultEntityRepository
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
         $qb = $this->_createQueryBuilder($alias);
-        $qb
-            ->addSelect('etablissementSubstituant')
-            ->leftJoin("structureSubstituante.etablissement", 'etablissementSubstituant');
 
         return $qb;
     }
@@ -36,23 +33,12 @@ class EtablissementRepository extends DefaultEntityRepository
         return $this->_findAll($qb);
     }
 
-    /**
-     * @return Etablissement[]
-     */
-    public function findSubstituables(): array
+    public function findByStructureId($structureId, bool $nonHistorise = true): ?Etablissement
     {
         $qb = $this->createQueryBuilder("e");
-
-        return $this->_findSubstituables($qb);
-    }
-
-    /**
-     * @param $structureId
-     * @return \Structure\Entity\Db\Etablissement|null
-     */
-    public function findByStructureId($structureId): ?Etablissement
-    {
-        $qb = $this->createQueryBuilder("e");
+        if ($nonHistorise) {
+            $qb->andWhereNotHistorise('ur');
+        }
 
         return $this->_findByStructureId($qb, $structureId);
     }
@@ -95,9 +81,8 @@ class EtablissementRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder("e")
             ->join("e.source", "s")
-            ->leftJoin("structure.structuresSubstituees", "sub")
             ->leftJoin("structure.typeStructure", "typ")
-            ->addSelect("sub, typ")
+            ->addSelect("typ")
             ->orderBy("structure.libelle");
 
         if ($include) {
@@ -191,7 +176,7 @@ class EtablissementRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder("e")
             ->andWhere("e.estInscription = true")
             ->orderBy('structure.libelle')
-            ->andWhereStructureEstNonSubstituee('structure');
+            ->andWhereNotHistorise('e');
 
         $qb->setCacheable($cacheable);
 

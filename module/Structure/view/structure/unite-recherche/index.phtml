@@ -1,9 +1,7 @@
 <?php
 
-use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Provider\Privilege\StructurePrivileges;
-use Structure\Provider\Privilege\SubstitutionPrivileges;
 
 /**
  * @var UniteRecherche[] $unites
@@ -13,8 +11,8 @@ use Structure\Provider\Privilege\SubstitutionPrivileges;
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
-$canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
-    OR $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
+//$canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
+//    || $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 ?>
 
 
@@ -36,12 +34,6 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
             <?php echo $this->translate("Ajouter une nouvelle unité de recherche"); ?>
         </a>
     <?php endif ?>
-
-    <a href="<?php echo $this->url('substitution-index-structure', ['type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true) ?>"
-       class="btn btn-outline-secondary float-end"
-       title="<?php echo $this->translate("Accéder à la page des substitutions d'unités de recherche");?>">
-        <?php echo $this->translate("Substitutions d'unités de recherche...");?>
-    </a>
 </p>
 
 <div>
@@ -62,18 +54,20 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
             <?php
             $historisee = (!$unite->estNonHistorise());
-            $hasSousStructure = !($unite->getStructure()->getStructuresSubstituees()->isEmpty());
             $canModifierCetteUnite = $this->isAllowed($unite->getStructure(),StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES);
             ?>
 
             <tr>
                 <td>
-                    <a href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], [], true); ?>">
+                    <a href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $unite->getId()], [], true); ?>">
                         <?php echo $unite->getStructure()->getLibelle(); ?>
-                        <?php if ($unite->getStructure()->estFermee()) : ?>
-                            &nbsp;<span class="badge bg-danger">Structure fermée</span>
-                        <?php endif; ?>
                     </a>
+                    <?php if ($unite->estSubstituant()) : ?>
+                        &nbsp;<span class="badge bg-info" title="Cet enregistrement substitue d'autres enregistrements">Substituant</span>
+                    <?php endif; ?>
+                    <?php if ($unite->getStructure()->estFermee()) : ?>
+                        &nbsp;<span class="badge bg-danger">Structure fermée</span>
+                    <?php endif; ?>
                 </td>
                 <td>
                     <?php echo $unite->getSource(); ?>
@@ -86,21 +80,14 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 <!--                <td> --><?php //echo count($unite->getTheses()); ?><!-- </td>-->
                 <td>
                     <?php if (($canModifier OR $canModifierCetteUnite) && !$historisee) : ?>
-                        <a href="<?php echo $this->url('unite-recherche/supprimer', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
+                        <a href="<?php echo $this->url('unite-recherche/supprimer', ['unite-recherche' => $unite->getId()], [], true); ?>"
                            title="Historiser l'établissement">
                             <span class="icon icon-delete iconly"></span>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($canSubstituer && !$historisee && $hasSousStructure) : ?>
-                        <a href="<?php echo $this->url('substitution-modifier', ['cible' => $unite->getStructure()->getId(), [], true]); ?>"
-                           title="Historiser l'établissement">
-                            <span class="fas fa-link" title="Éditer la substitution"></span>
-                        </a>
-                    <?php endif; ?>
-
                     <?php if (($canModifier OR $canModifierCetteUnite) && $historisee) : ?>
-                        <a href="<?php echo $this->url('unite-recherche/restaurer', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
+                        <a href="<?php echo $this->url('unite-recherche/restaurer', ['unite-recherche' => $unite->getId()], [], true); ?>"
                            title="Restaurer l'établissement">
                             Restaurer
                         </a>

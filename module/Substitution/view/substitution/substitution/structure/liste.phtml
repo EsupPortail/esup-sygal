@@ -6,24 +6,15 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
+ * @var string $type
  * @var \Doctrine\DBAL\Result $result
  *
  * @see \Substitution\Controller\IndexController::structureAction()
  */
 ?>
 
-<?php $this->headTitle($this->translate("Substitutions de structures")) ?>
-
-<h1 class="page-header">
-    <span class="fas fa-object-group"></span>
-    <?php echo $this->translate("Substitutions de structures"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/substitution/_partial/liste', [
+    'type' => $type,
     'result' => $result,
     'attributes' => ['to_code' => 'Code'],
-    'routeName' => null,
-    'routeParamName' => 'structure',
 ]); ?>

@@ -19,8 +19,14 @@ trait StructureConcreteRepositoryTrait
 
         $qb
             ->addSelect('structure')
-            ->join("$alias.structure", 'structure')
-            ->leftJoinStructureSubstituante('structure');
+            ->join("$alias.structure", 'structure');
+
+        // Attention : il FAUT faire explicitement ces jointures sinon Doctrine génèrera d'office 3 select pour
+        // chacune des 3 relations 'one-to-one' (structure=>etablissement, structure=>ecoleDoctorale, structure=>uniteRecherche),
+        // ce qui multiplie le nombre de requêtes par 3 !
+        $qb->addSelect('s_e')->leftJoin('structure.etablissement', 's_e');
+        $qb->addSelect('s_ed')->leftJoin('structure.ecoleDoctorale', 's_ed');
+        $qb->addSelect('s_ur')->leftJoin('structure.uniteRecherche', 's_ur');
 
         return $qb;
     }
@@ -28,23 +34,8 @@ trait StructureConcreteRepositoryTrait
     public function _findAll(DefaultQueryBuilder $qb): array
     {
         $qb
-            ->leftJoin("structure.structuresSubstituees", "sub")->addSelect('sub')
             ->leftJoin("structure.typeStructure", "typ")->addSelect('typ')
             ->andWhere('structure.estFermee = false')
-            ->andWhereStructureEstNonSubstituee('structure')
-            ->orderBy("structure.libelle");
-
-        return $qb->getQuery()->getResult();
-    }
-
-    public function _findSubstituables(DefaultQueryBuilder $qb): array
-    {
-        $qb
-            ->addSelect("typ")
-            ->leftJoin("structure.typeStructure", "typ")
-            ->andWhere('structure.estFermee = false')
-            ->andWhereStructureEstNonSubstituee('structure')
-            ->andWhereStructureEstNonSubstituante('structure')
             ->orderBy("structure.libelle");
 
         return $qb->getQuery()->getResult();
@@ -54,8 +45,7 @@ trait StructureConcreteRepositoryTrait
     {
         $qb
             ->andWhere("structure.id = :structureId")
-            ->setParameter("structureId", $id)
-            ->andWhereNotHistorise();
+            ->setParameter("structureId", $id);
 
         try {
             return $qb->getQuery()->getOneOrNullResult();
@@ -74,8 +64,7 @@ trait StructureConcreteRepositoryTrait
             ->setParameter('term', '%'.$term.'%')
             ->andWhereNotHistorise()
             ->andWhere('structure.estFermee = :false')
-            ->setParameter('false', false)
-            ->andWhereStructureEstNonSubstituee('structure');
+            ->setParameter('false', false);
 
         return $qb->getQuery()->getResult();
     }

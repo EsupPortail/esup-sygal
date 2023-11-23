@@ -313,6 +313,16 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param Individu $individu
      * @return bool
      */
+    public function isActeur(These $these, Individu $individu, ?array $roles = null) : bool
+    {
+        return ($these->getDoctorant()->getIndividu() === $individu);
+    }
+
+    /**
+     * @param These $these
+     * @param Individu $individu
+     * @return bool
+     */
     public function isDirecteur(These $these, Individu $individu) : bool
     {
         $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'D');

@@ -604,7 +604,7 @@ class PropositionService extends BaseService
     public function findSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
     {
         $qb = $this->createQueryBuilder()
-            ->andWhereStructureOuSubstituanteIs($ecole->getStructure(/*false*/), 'structure_ed')
+            ->andWhereStructureIs($ecole->getStructure(), 'structure_ed')
             ->andWhere('etat.code = :autorise')
             ->andWhere('these.dateSoutenance >= :date')
             ->setParameter('autorise', Etat::VALIDEE)

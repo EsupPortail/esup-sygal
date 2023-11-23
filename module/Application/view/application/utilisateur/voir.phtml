@@ -106,7 +106,7 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
                     </h2>
                 </div>
                 <div class="card-body">
-                    <?php echo $this->partial('individu/individu/partial/dl', ['individu' => $individu]) ?>
+                    <?php echo $this->partial('individu/individu/partial/dl', ['entity' => $individu]) ?>
 
                     <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()]) ?>"
                        class="text-center"><i class="icon icon-voir"></i> Voir la fiche détaillée de l'individu</a>

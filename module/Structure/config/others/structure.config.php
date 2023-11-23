@@ -9,7 +9,6 @@ use Structure\Service\Structure\StructureService;
 use Structure\Service\Structure\StructureServiceFactory;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use Structure\Service\StructureDocument\StructureDocumentServiceFactory;
-use Structure\View\Helper\StructureSubstitHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Segment;
@@ -46,6 +45,16 @@ return [
                 [
                     'controller' => StructureController::class,
                     'action'     => [
+                        'voir',
+                    ],
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_CONSULTATION_SES_STRUCTURES,
+                    ],
+                ],
+                [
+                    'controller' => StructureController::class,
+                    'action'     => [
                         'individu-role',
                         'generer-roles-defauts',
                     ],
@@ -78,6 +87,16 @@ return [
                     ],
                 ],
                 'child_routes'  => [
+                    'voir' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/voir/:structure',
+                            'defaults'    => [
+                                /** @see StructureController::voirAction() */
+                                'action' => 'voir',
+                            ],
+                        ],
+                    ],
                     'individu-role' => [
                         'type'          => Segment::class,
                         'options'       => [
@@ -138,11 +157,5 @@ return [
         'factories' => [
             StructureController::class => StructureControllerFactory::class,
         ],
-    ],
-    'view_helpers' => [
-        'invokables' => array(
-            'structureSubstitHelper' => StructureSubstitHelper::class,
-        ),
-        'factories' => [],
     ],
 ];

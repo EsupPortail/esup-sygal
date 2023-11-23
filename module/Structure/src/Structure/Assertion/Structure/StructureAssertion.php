@@ -57,7 +57,9 @@ class StructureAssertion extends AbstractAssertion
             switch (true) {
                 case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES :
                 case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES :
-                    return $structure->updateEnabled();
+                    if ($structure->estSubstituant()) {
+                        return $structure->estSubstituantModifiable();
+                    }
             }
         }
 

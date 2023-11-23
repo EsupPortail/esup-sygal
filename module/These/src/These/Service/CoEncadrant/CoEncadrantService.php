@@ -78,12 +78,12 @@ class CoEncadrantService
             $qb
                 ->join('these.ecoleDoctorale', 'ecoleDoctorale')->addSelect('ecoleDoctorale')
                 ->join('ecoleDoctorale.structure', 'ecoleDoctorale_structure')->addSelect('ecoleDoctorale_structure')
-                ->andWhereStructureOuSubstituanteIs($structureConcrete->getStructure(), 'ecoleDoctorale_structure');
+                ->andWhereStructureIs($structureConcrete->getStructure(), 'ecoleDoctorale_structure');
         } elseif ($structureConcrete instanceof UniteRecherche) {
             $qb
                 ->join('these.uniteRecherche', 'uniteRecherche')->addSelect('uniteRecherche')
                 ->join('uniteRecherche.structure', 'uniteRecherche_structure')->addSelect('uniteRecherche_structure')
-                ->andWhereStructureOuSubstituanteIs($structureConcrete->getStructure(), 'uniteRecherche_structure');
+                ->andWhereStructureIs($structureConcrete->getStructure(), 'uniteRecherche_structure');
         } else {
             throw new InvalidArgumentException("Type de structure spécifié inattendu : " . get_class($structureConcrete));
         }

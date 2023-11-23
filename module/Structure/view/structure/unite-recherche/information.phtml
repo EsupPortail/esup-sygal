@@ -42,7 +42,7 @@ $structure = $unite->getStructure();
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_infos ? 'active' : '' ?>"
-           href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
+           href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
            role="tab"
         >
             Informations générales
@@ -50,7 +50,7 @@ $structure = $unite->getStructure();
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_membres ? 'active' : '' ?>"
-           href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
+           href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
            role="tab"
         >
             Rôles et membres
@@ -58,7 +58,7 @@ $structure = $unite->getStructure();
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_coenc ? 'active' : '' ?>"
-           href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_coenc]], true) ?>"
+           href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_coenc]], true) ?>"
            role="tab"
         >
             Co-encadrants
@@ -66,7 +66,7 @@ $structure = $unite->getStructure();
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_docs ? 'active' : '' ?>"
-           href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
+           href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
            role="tab"
         >
             Documents
@@ -77,65 +77,7 @@ $structure = $unite->getStructure();
 <div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
     <div class="row">
         <div class="col-md-8">
-            <h2>
-                Informations générales
-            </h2>
-            <dl>
-                <dt>Libelle :</dt>
-                <dd><?php echo $unite->getStructure()->getLibelle(); ?></dd>
-                <dt>Sigle :</dt>
-                <dd><?php echo $unite->getStructure()->getSigle(); ?></dd>
-                <dt>Domaine(s) scientifique(s) :</dt>
-                <dd>
-                    <ul>
-                        <?php foreach ($unite->getDomaines() as $domaineScientifique) : ?>
-                            <li> <?php echo $domaineScientifique->getLibelle(); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </dd>
-                <dt>Établissement(s) de rattachement :</dt>
-                <dd>
-                    <ul>
-                        <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
-                            <li> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </dd>
-                <dt>Statut :</dt>
-                <dd>
-                    <?php if ($unite->getStructure()->estFermee()) : ?>
-                        <span class="badge bg-danger">Structure fermée</span>
-                    <?php else : ?>
-                        <span class="badge bg-success">Structure ouverte</span>
-                    <?php endif; ?>
-                </dd>
-            </dl>
-
-            <h2>
-                Informations techniques
-            </h2>
-            <dl>
-                <dt>IdRef :</dt>
-                <dd>
-                    <?php if ($unite->getStructure()->getIdRef() !== null and trim($unite->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $this->idrefLink($unite->getStructure()->getIdRef()); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt>Id HAL :</dt>
-                <dd>
-                    <?php if ($unite->getStructure()->getIdHal() !== null and trim($unite->getStructure()->getIdHal()) !== "") : ?>
-                        <?php echo $unite->getStructure()->getIdHal(); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt>Identifiant RNSR :</dt>
-                <dd><?php echo $unite->getRNSR(); ?></dd>
-                <dt>Code :</dt>
-                <dd><?php echo $unite->getStructure()->getCode(); ?></dd>
-            </dl>
+            <?php echo $this->partial('structure/unite-recherche/partial/information', ['entity' => $unite, 'etablissementsRattachements' => $etablissementsRattachements]) ?>
         </div>
         <div class="col-md-4">
             <dl>
@@ -149,7 +91,7 @@ $structure = $unite->getStructure();
     </div>
 
     <?php if ($canEdit): ?>
-        <a href="<?php echo $this->url('unite-recherche/modifier', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
+        <a href="<?php echo $this->url('unite-recherche/modifier', ['unite-recherche' => $unite->getId()], [], true); ?>"
            class="btn btn-primary action"><span class="icon icon-edit"></span> Modifier l'unité de recherche</a>
     <?php endif; ?>
 

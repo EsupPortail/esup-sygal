@@ -49,7 +49,7 @@ class RoleService extends BaseService
      * Recherche de rôles par structure.
      *
      * @param \Structure\Entity\Db\Structure $structure
-     * @return array
+     * @return Role[]
      */
     public function findRolesForStructure(Structure $structure): array
     {
@@ -57,7 +57,7 @@ class RoleService extends BaseService
         $repo = $this->entityManager->getRepository(Role::class);
         $qb = $repo->createQueryBuilder("r")
             ->join('r.structure', 's')->addSelect('s')
-            ->andWhereStructureOuSubstituanteIs($structure);
+            ->andWhereStructureIs($structure);
 
         return $qb->getQuery()->execute();
     }
@@ -66,13 +66,12 @@ class RoleService extends BaseService
      * Recherche des individus ayant un rôle lié à la structure spécifiée.
      *
      * @param \Structure\Entity\Db\Structure $structure
-     * @return array
+     * @return Individu[]
      */
     public function findIndividuForStructure(Structure $structure): array
     {
         $individuRoles = $this->findIndividuRoleByStructure($structure);
         $individus = [];
-        /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
             $individus[] = $individuRole->getIndividu();
         }
@@ -97,7 +96,7 @@ class RoleService extends BaseService
             ->join("ir.individu", "i")->addSelect('i')
             ->join("ir.role", "r")->addSelect('r')
             ->leftJoin('r.structure', 's')->addSelect('s')
-            ->andWhereStructureOuSubstituanteIs($structure);
+            ->andWhereStructureIs($structure);
 
         if ($role !== null) {
             $qb->andWhere('r.code = :role')->setParameter('role', $role);
@@ -340,9 +339,7 @@ class RoleService extends BaseService
     {
         $qb = $this->getRepository()->createQueryBuilder('r')
             ->addSelect('s')
-            ->leftJoin('r.structure', 's')
-            ->leftJoinStructureSubstituante('s')
-            ->andWhereStructureEstNonSubstituee('s');
+            ->leftJoin('r.structure', 's');
 
         $qb
             ->andWhere('r.roleId <> :roleCode')

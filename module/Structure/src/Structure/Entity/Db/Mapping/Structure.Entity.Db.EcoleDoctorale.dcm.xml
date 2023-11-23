@@ -10,6 +10,19 @@
     <field name="theme"       type="string" column="THEME" length="1024" nullable="true"/>
     <field name="offreThese"  type="string" column="OFFRE_THESE" length="1024" nullable="true"/>
 
+    <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
+
+    <many-to-many field="substitues" target-entity="Structure\Entity\Db\EcoleDoctorale">
+      <join-table name="ecole_doct_substit">
+        <join-columns>
+          <join-column name="to_id" referenced-column-name="ID" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="from_id" referenced-column-name="ID" />
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+
     <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
     <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>

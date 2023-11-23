@@ -28,15 +28,14 @@ interface StructureConcreteInterface
 
     /**
      * @param Structure $structure
-     * @return self
+     * @return StructureConcreteInterface
      */
-    public function setStructure(Structure $structure): self;
+    public function setStructure(Structure $structure): StructureConcreteInterface;
 
     /**
      * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
      *
-     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une ; sinon la structure d'origine.
      * @return Structure|null
      */
-    public function getStructure(bool $returnSubstitIfExists = true): ?Structure;
+    public function getStructure(): ?Structure;
 }

@@ -132,7 +132,7 @@ $structure = $ecole->getStructure();
         </div>
 
         <?php if ($canEdit): ?>
-            <a href="<?php echo $this->url('ecole-doctorale/modifier', ['structure' => $ecole->getStructure()->getId()], [], true); ?>"
+            <a href="<?php echo $this->url('ecole-doctorale/modifier', ['ecole-doctorale' => $ecole->getId()], [], true); ?>"
                class="btn btn-primary action"><span class="icon icon-edit"></span> Modifier l'école doctorale
             </a>
         <?php endif; ?>

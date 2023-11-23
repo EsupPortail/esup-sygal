@@ -2,11 +2,11 @@
 
 namespace Formation\Entity\Db\Traits;
 
-use Structure\Entity\Db\Structure;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
+use Structure\Entity\Db\Structure;
 
-trait HasTypeTrait {
-
+trait HasTypeTrait
+{
     private ?string $type = null;
     private ?Structure $typeStructure = null;
 
@@ -28,21 +28,8 @@ trait HasTypeTrait {
         return $this;
     }
 
-    /**
-     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.typeStructure' puis 'typeStructure.structureSubstituante'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une. Sinon la structure d'origine.
-     * @return Structure|null
-     */
-    public function getTypeStructure(bool $returnSubstitIfExists = true): ?Structure
+    public function getTypeStructure(): ?Structure
     {
-        if ($returnSubstitIfExists && $this->typeStructure && ($sustitut = $this->typeStructure->getStructureSubstituante())) {
-            return $sustitut;
-        }
-
         return $this->typeStructure;
     }
 
@@ -55,8 +42,4 @@ trait HasTypeTrait {
         $this->typeStructure = $typeStructure;
         return $this;
     }
-
-
-
-
 }

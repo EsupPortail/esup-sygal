@@ -1,0 +1,59 @@
+<?php
+/**
+ * @var \Structure\Entity\Db\Structure $entity
+ */
+?>
+
+<h3>
+    Informations générales
+</h3>
+<dl>
+    <dt>Libelle :</dt>
+    <dd><?php echo $entity->getLibelle(); ?></dd>
+    <dt>Code :</dt>
+    <dd><?php echo $entity->getCode(); ?></dd>
+    <dt>Sigle :</dt>
+    <dd><?php echo $entity->getSigle() ?: '(Non renseigné)'; ?></dd>
+    <dt>Statut :</dt>
+    <dd>
+        <?php if ($entity->estFermee()) : ?>
+            <span class="badge bg-danger">Structure fermée</span>
+        <?php else : ?>
+            <span class="badge bg-success">Structure ouverte</span>
+        <?php endif; ?>
+    </dd>
+</dl>
+
+<h3>
+    Informations techniques
+</h3>
+<dl>
+    <dt>Id interne :</dt>
+    <dd><?php echo $entity->getId(); ?></dd>
+    <dt>IdRef :</dt>
+    <dd>
+        <?php if ($entity->getIdRef() !== null and trim($entity->getIdRef()) !== "") : ?>
+            <?php echo $this->idrefLink($entity->getIdRef()); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+    <dt>Id HAL :</dt>
+    <dd>
+        <?php if ($entity->getIdHal() !== null and trim($entity->getIdHal()) !== "") : ?>
+            <?php echo $entity->getIdHal(); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+</dl>
+
+<?php if ($entity->estHistorise()): ?>
+    <h3 class="text-danger">
+        Historisé
+    </h3>
+    <dl class="text-danger">
+        <dt>Date :</dt>
+        <dd><?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></dd>
+    </dl>
+<?php endif ?>

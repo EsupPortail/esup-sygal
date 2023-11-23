@@ -14,6 +14,12 @@ class ForeignKeyController extends AbstractActionController
 {
     use ForeignKeyServiceAwareTrait;
 
+    public function accueilAction(): ViewModel
+    {
+        return (new ViewModel([
+        ]))->setTemplate('substitution/foreign-key/accueil');
+    }
+
     /**
      * @throws \Doctrine\DBAL\Exception
      */

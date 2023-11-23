@@ -64,7 +64,7 @@
         "unicaen/auth-token": "^6.0",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "^3.0",
-        "unicaen/db-import": "^6.0",
+        "unicaen/db-import": "^6.1",
         "unicaen/faq": "^6.0",
         "unicaen/idref": "dev-master",
         "unicaen/ldap": "^6.0",

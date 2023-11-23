@@ -2,17 +2,19 @@
 
 namespace Structure\Controller;
 
+use Application\Service\DomaineScientifiqueServiceAwareTrait;
+use InvalidArgumentException;
+use Laminas\Http\Response;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
-use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
-use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Laminas\Http\Response;
-use Laminas\View\Model\JsonModel;
-use Laminas\View\Model\ViewModel;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 
 class UniteRechercheController extends StructureConcreteController
 {
@@ -27,7 +29,8 @@ class UniteRechercheController extends StructureConcreteController
     /**
      * @var string
      */
-    protected $routeName = 'unite-recherche';
+    protected string $routeName = 'unite-recherche';
+    protected string $routeParamName = 'unite-recherche';
 
     /**
      * @return UniteRechercheService
@@ -58,35 +61,32 @@ class UniteRechercheController extends StructureConcreteController
 
         /** @var UniteRecherche $structureConcrete */
         $structureConcrete = $this->uniteRechercheService->getRepository()->find($id);
+        if ($structureConcrete === null) {
+            throw new InvalidArgumentException("Unite de recherche introuvable avec cet id");
+        }
 
-        return $this->forward()->dispatch(self::class, [
-            'action' => 'information',
-            'structure' => $structureConcrete->getStructure(false)->getId(),
-        ]);
+        $vars = $this->loadInformationForStructure($structureConcrete);
+
+        return (new ViewModel($vars))
+            ->setTemplate('structure/unite-recherche/information');
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function informationAction(): ViewModel
+    protected function loadInformationForStructure(StructureConcreteInterface $structureConcrete): array
     {
-        $viewModel = parent::informationAction();
+        $vars = parent::loadInformationForStructure($structureConcrete);
 
         /** @var UniteRecherche $structureConcrete */
-        $structureConcrete = $viewModel->getVariable('structure');
         $coencadrants = $this->getCoEncadrantService()->findCoEncadrantsByStructureConcrete($structureConcrete, false);
         $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $etablissementsRattachements = $this->uniteRechercheService->findEtablissementRattachement($structureConcrete);
 
-        $viewModel->setVariables([
+        return array_merge($vars, [
             'unite' => $structureConcrete,
             'etablissementsRattachements' => $etablissementsRattachements,
             'coencadrants' => $coencadrants,
             'contenus' => $contenus,
         ]);
-
-        return $viewModel;
     }
 
     /**
@@ -162,7 +162,7 @@ class UniteRechercheController extends StructureConcreteController
             }
         }
 
-        $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
+        $this->redirect()->toRoute("unite-recherche/modifier", ['unite-recherche' => $unite->getId()], [], true);
     }
 
     public function retirerEtablissementRattachementAction()
@@ -176,7 +176,7 @@ class UniteRechercheController extends StructureConcreteController
         $this->getUniteRechercheService()->removeEtablissementRattachement($unite, $etablissement);
         $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getStructure()->getLibelle() . "</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
 
-        $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
+        $this->redirect()->toRoute("unite-recherche/modifier", ['unite-recherche' => $unite->getId()], [], true);
     }
 
     /**
@@ -197,7 +197,7 @@ class UniteRechercheController extends StructureConcreteController
 
             $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> est maintenant un des domaines scientifiques de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
         }
-        $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
+        $this->redirect()->toRoute("unite-recherche/modifier", ['unite-recherche' => $unite->getId()], [], true);
     }
 
     /**
@@ -217,7 +217,7 @@ class UniteRechercheController extends StructureConcreteController
 
         $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> ne fait plus parti des domaines scientifiques de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
 
-        return $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
+        return $this->redirect()->toRoute("unite-recherche/modifier", ['unite-recherche' => $unite->getId()], [], true);
     }
 
     public function rechercherAction()

@@ -120,7 +120,7 @@ return [
                     'supprimer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer/:structure',
+                            'route'       => '/supprimer/:unite-recherche',
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
@@ -129,7 +129,7 @@ return [
                     'restaurer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/restaurer/:structure',
+                            'route'       => '/restaurer/:unite-recherche',
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
@@ -138,7 +138,7 @@ return [
                     'modifier' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/modifier[/:structure]',
+                            'route'       => '/modifier[/:unite-recherche]',
                             'defaults'    => [
                                 'action' => 'modifier',
                             ],

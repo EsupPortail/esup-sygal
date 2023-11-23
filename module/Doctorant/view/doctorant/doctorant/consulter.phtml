@@ -34,7 +34,7 @@ $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTOR
     <div class="card-body">
         <div class="row">
             <div class="col-md-7">
-                <?php echo $this->partial('individu/individu/partial/dl', ['individu' => $doctorant->getIndividu(), 'verbose' => false]) ?>
+                <?php echo $this->partial('individu/individu/partial/dl', ['entity' => $doctorant->getIndividu(), 'verbose' => false]) ?>
 
                 <a href="<?php echo $this->url('individu/voir', ['individu' => $doctorant->getIndividu()->getId()]) ?>"
                    class="btn btn-info"
@@ -43,7 +43,7 @@ $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTOR
                 </a>
             </div>
             <div class="col-md-5">
-                <?php echo $this->partial('doctorant/doctorant/partial/dl', ['doctorant' => $doctorant, 'verbose' => true]) ?>
+                <?php echo $this->partial('doctorant/doctorant/partial/information', ['doctorant' => $doctorant]) ?>
             </div>
         </div>
 

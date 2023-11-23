@@ -12,7 +12,6 @@ use Application\View\Helper\Actualite\ActualiteViewHelper;
 use Structure\View\Helper\EcoleDoctoraleHelper;
 use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\FinancementFormatterHelper;
-use Structure\View\Helper\StructureSubstitHelper;
 use These\View\Helper\Url\UrlTheseHelper;
 use Application\View\Helper\ValidationViewHelper;
 use Depot\View\Helper\Workflow\RoadmapHelper;

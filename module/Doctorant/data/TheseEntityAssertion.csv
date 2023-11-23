@@ -1,6 +1,9 @@
-class;Doctorant\Assertion\These\GeneratedTheseEntityAssertion;;1;2;3;4;;;
-line;enabled;privilege;isRoleDoctorantSelected;isStructureDuRoleRespectee;isTheseEnCours;isUtilisateurEstAuteurDeLaThese;;return;message
-1;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;2:0;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
-2;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;1;
-3;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT;1:1;;;2:0;;0;Vous ne pouvez pas modifier l’adresse de contact car vous n’êtes pas l’auteur de la thèse
-4;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT;;;;;;1;
+use;Doctorant\Provider\Privilege\DoctorantPrivileges;DoctorantPrivileges;;;;;
+class;Doctorant\Assertion\These\GeneratedTheseEntityAssertion;;1;2;3;;
+line;enabled;privilege;isRoleDoctorantSelected;isUtilisateurEstAuteurDeLaThese;isUtilisateurConnaitIndividu;return;message
+1;1;DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;2:0;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
+2;1;DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;1;
+3;1;DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT;1:1;2:0;;0;Vous ne pouvez pas modifier l’adresse de contact car vous n’êtes pas l’auteur de la thèse
+4;1;DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT;;;;1;
+5;1;DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN;;;1:0;0;Vous ne pouvez pas visualiser cette fiche doctorant
+6;1;DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN;;;;1;

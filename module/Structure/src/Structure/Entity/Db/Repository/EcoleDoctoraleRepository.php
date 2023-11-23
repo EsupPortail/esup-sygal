@@ -13,9 +13,6 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
         $qb = $this->_createQueryBuilder($alias);
-        $qb
-            ->addSelect('ecoleDoctoraleSubstituante')
-            ->leftJoin("structureSubstituante.ecoleDoctorale", 'ecoleDoctoraleSubstituante');
 
         return $qb;
     }
@@ -30,23 +27,12 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
         return $this->_findAll($qb);
     }
 
-    /**
-     * @return EcoleDoctorale[]
-     */
-    public function findSubstituables(): array
+    public function findByStructureId($structureId, bool $nonHistorise = true): ?EcoleDoctorale
     {
         $qb = $this->createQueryBuilder("ed");
-
-        return $this->_findSubstituables($qb);
-    }
-
-    /**
-     * @param $structureId
-     * @return \Structure\Entity\Db\EcoleDoctorale|null
-     */
-    public function findByStructureId($structureId): ?EcoleDoctorale
-    {
-        $qb = $this->createQueryBuilder("ed");
+        if ($nonHistorise) {
+            $qb->andWhereNotHistorise('ur');
+        }
 
         return $this->_findByStructureId($qb, $structureId);
     }

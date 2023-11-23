@@ -2,16 +2,17 @@
 
 namespace Formation\Entity\Db;
 
-use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\StructureAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class SessionStructureValide implements HistoriqueAwareInterface {
+class SessionStructureValide implements HistoriqueAwareInterface
+{
     use HistoriqueAwareTrait;
+    use StructureAwareTrait;
 
     private int $id;
     private ?Session $session = null;
-    private ?Structure $structure = null;
     private ?string $lieu = null;
 
     /**
@@ -36,33 +37,6 @@ class SessionStructureValide implements HistoriqueAwareInterface {
     public function setSession(?Session $session): void
     {
         $this->session = $session;
-    }
-
-    /**
-     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.structure' puis 'structure.structureSubstituante'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une ; sinon la structure d'origine.
-     * @see Structure::getStructureSubstituante()
-     * @return Structure|null
-     */
-    public function getStructure(bool $returnSubstitIfExists = true): ?Structure
-    {
-        if ($returnSubstitIfExists && $this->structure && ($sustitut = $this->structure->getStructureSubstituante())) {
-            return $sustitut;
-        }
-
-        return $this->structure;
-    }
-
-    /**
-     * @param Structure|null $structure
-     */
-    public function setStructure(?Structure $structure): void
-    {
-        $this->structure = $structure;
     }
 
     /**

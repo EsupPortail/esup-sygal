@@ -36,10 +36,8 @@ abstract class StructureConcreteController extends AbstractController
      */
     protected $codeTypeStructure;
 
-    /**
-     * @var string
-     */
-    protected $routeName;
+    protected string $routeName;
+    protected string $routeParamName;
 
     /**
      * @var UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm
@@ -83,6 +81,8 @@ abstract class StructureConcreteController extends AbstractController
     /**
      * @return ViewModel
      */
+    abstract public function voirAction(): ViewModel;
+
     public function informationAction(): ViewModel
     {
         $id = $this->params()->fromRoute('structure');
@@ -92,6 +92,13 @@ abstract class StructureConcreteController extends AbstractController
                 sprintf("Aucune structure de type '%s' trouvée avec l'id %s.", $this->codeTypeStructure, $id));
         }
 
+        $vars = $this->loadInformationForStructure($structureConcrete);
+
+        return new ViewModel($vars);
+    }
+
+    protected function loadInformationForStructure(StructureConcreteInterface $structureConcrete): array
+    {
         $consultationToutes = $this->isAllowed(
             StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES),
             StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES);
@@ -107,22 +114,20 @@ abstract class StructureConcreteController extends AbstractController
         $roles = $this->roleService->findRolesForStructure($structureConcrete->getStructure());
         $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
-        /** @var Role $role */
         foreach ($roles as $role) {
             $roleListings[$role->getLibelle()] = 0;
         }
-        /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
             $role = $individuRole->getRole()->getLibelle();
             $roleListings[$role]++;
         }
 
-        return new ViewModel([
+        return [
             'structure'       => $structureConcrete,
             'roleListing'     => $roleListings,
             'individuRoles' => $individuRoles,
             'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
-        ]);
+        ];
     }
 
     /**
@@ -135,8 +140,7 @@ abstract class StructureConcreteController extends AbstractController
      */
     public function modifierAction()
     {
-        $structureId = $this->params()->fromRoute("structure");
-        $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
+        $structureConcrete = $this->getRequestedStructureConcrete();
         $this->structureForm->bind($structureConcrete);
 
         $request = $this->getRequest();
@@ -150,10 +154,9 @@ abstract class StructureConcreteController extends AbstractController
             $cheminLogo = $structureConcrete->getStructure()->getCheminLogo();
             $this->structureForm->setData($data);
             if ($this->structureForm->isValid()) {
-
                 // sauvegarde du logo si fourni
                 if ($file['cheminLogo']['tmp_name'] !== '') {
-                    $this->ajouterLogoStructure($file['cheminLogo']['tmp_name']);
+                    $this->ajouterLogoStructure($file['cheminLogo']['tmp_name'], $structureConcrete);
                 } else {
                     $structureConcrete->getStructure()->setCheminLogo($cheminLogo);
                 }
@@ -163,13 +166,11 @@ abstract class StructureConcreteController extends AbstractController
                 $this->getStructureConcreteService()->update($structureConcrete);
 
                 $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' modifiée avec succès");
-                $test = $this->routeName .'/information';
-                return $this->redirect()->toRoute($this->routeName.'/information', ['structure' => $structureId], [], true);
+
+                return $this->redirect()->toRoute($this->routeName.'/voir', [$this->routeParamName => $structureConcrete->getId()], [], true);
             }
 
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saisies.");
-
-            //return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
         }
 
         return new ViewModel([
@@ -177,6 +178,16 @@ abstract class StructureConcreteController extends AbstractController
             'form' => $this->structureForm,
             'logoContent' => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
         ]);
+    }
+
+    /**
+     * Retourne la structure concrète (etab/ed/ur) spécifiée dans la requête.
+     */
+    protected function getRequestedStructureConcrete(): StructureConcreteInterface
+    {
+        return $this->getStructureConcreteService()->getRepository()->find(
+            $this->params()->fromRoute($this->routeParamName)
+        );
     }
 
     /**
@@ -225,9 +236,7 @@ abstract class StructureConcreteController extends AbstractController
      */
     public function supprimerAction()
     {
-        $structureId = $this->params()->fromRoute("structure");
-        $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
-
+        $structureConcrete = $this->getRequestedStructureConcrete();
         $this->getStructureConcreteService()->deleteSoftly($structureConcrete, $this->userContextService->getIdentityDb());
 
         $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' supprimée avec succès");
@@ -240,14 +249,12 @@ abstract class StructureConcreteController extends AbstractController
      */
     public function restaurerAction()
     {
-        $structureId = $this->params()->fromRoute("structure");
-        $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
-
+        $structureConcrete = $this->getRequestedStructureConcrete();
         $this->getStructureConcreteService()->undelete($structureConcrete);
 
         $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' restaurée avec succès");
 
-        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureConcrete->getId()]], true);
     }
 
     /**
@@ -255,10 +262,10 @@ abstract class StructureConcreteController extends AbstractController
      */
     public function supprimerLogoAction()
     {
-        $structureId = $this->params()->fromRoute("structure");
-        $this->supprimerLogoStructure();
+        $structureConcrete = $this->getRequestedStructureConcrete();
+        $this->supprimerLogoStructure($structureConcrete);
 
-        return $this->redirect()->toRoute($this->routeName."/information", [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute($this->routeName."/voir", [$this->routeParamName => $structureConcrete->getId()], [], true);
     }
 
     /**
@@ -271,14 +278,11 @@ abstract class StructureConcreteController extends AbstractController
      * - effacement du chemin en bdd,
      * - effacement du fichier stocké sur le serveur.
      */
-    protected function supprimerLogoStructure()
+    protected function supprimerLogoStructure(StructureConcreteInterface $structureConcrete): void
     {
-        $structureId = $this->params()->fromRoute("structure");
-        $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
-
         try {
-            // NB : on vise ici la structure liée originale, pas son éventuelle structure substituante.
-            $structure = $structureConcrete->getStructure(false);
+            // NB : on vise ici la structure liée
+            $structure = $structureConcrete->getStructure();
             $fileDeleted = $this->structureService->deleteLogoStructure($structure);
         } catch (RuntimeException $e) {
             $this->flashMessenger()->addErrorMessage(
@@ -300,17 +304,12 @@ abstract class StructureConcreteController extends AbstractController
      * - création du fichier sur le serveur.
      *
      * @param string $cheminLogoUploade chemin vers le fichier temporaire associé au logo
-     * @param \Structure\Entity\Db\StructureConcreteInterface|null $structureConcrete
+     * @param \Structure\Entity\Db\StructureConcreteInterface $structureConcrete
      */
-    protected function ajouterLogoStructure(string $cheminLogoUploade, StructureConcreteInterface $structureConcrete = null)
+    protected function ajouterLogoStructure(string $cheminLogoUploade, StructureConcreteInterface $structureConcrete)
     {
-        if ($structureConcrete === null) {
-            $structureId = $this->params()->fromRoute("structure");
-            $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
-        }
-
         try {
-            // NB : on vise ici la structure liée originale, pas son éventuelle structure substituante.
+            // NB : on vise ici la structure liée
             $structure = $structureConcrete->getStructure(false);
             $this->structureService->updateLogoStructure($structure, $cheminLogoUploade);
         } catch (RuntimeException $e) {
@@ -369,7 +368,8 @@ abstract class StructureConcreteController extends AbstractController
     /**
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function genererRolesDefautsAction() {
+    public function genererRolesDefautsAction()
+    {
         $id   = $this->params()->fromRoute('id');
         $type = $this->params()->fromRoute('type');
 
@@ -377,17 +377,17 @@ abstract class StructureConcreteController extends AbstractController
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($ecole);
-                $this->redirect()->toRoute('ecole-doctorale/information', ['ecoleDoctorale' => $id], ['query' => ['tab' => StructureController::TAB_membres]], true);
+                $this->redirect()->toRoute('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true);
                 break;
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('unite-recherche/information', ['uniteRecherche' => $id], ['query' => ['tab' => StructureController::TAB_membres]], true);
+                $this->redirect()->toRoute('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true);
                 break;
             case TypeStructure::CODE_ETABLISSEMENT :
-                $unite = $this->getEtablissementService()->getRepository()->findByStructureId($id);
-                $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('etablissement/information', ['etablissement' => $id], ['query' => ['tab' => StructureController::TAB_membres]], true);
+                $etab = $this->getEtablissementService()->getRepository()->findByStructureId($id);
+                $this->getRoleService()->addRoleByStructure($etab);
+                $this->redirect()->toRoute('etablissement/voir', ['etablissement' => $etab->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true);
                 break;
         }
     }

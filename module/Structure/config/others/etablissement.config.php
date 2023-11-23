@@ -116,7 +116,7 @@ return [
                     'supprimer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer/:structure',
+                            'route'       => '/supprimer/:etablissement',
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
@@ -125,7 +125,7 @@ return [
                     'restaurer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/restaurer/:structure',
+                            'route'       => '/restaurer/:etablissement',
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
@@ -134,7 +134,7 @@ return [
                     'modifier' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/modifier/:structure',
+                            'route'       => '/modifier/:etablissement',
                             'constraints' => [
                                 'etablissement' => '\d+',
                             ],
@@ -146,7 +146,7 @@ return [
                     'supprimer-logo' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:structure',
+                            'route'       => '/supprimer-logo/:etablissement',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],

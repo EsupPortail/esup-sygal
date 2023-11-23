@@ -8,6 +8,8 @@ use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Structure\Entity\Db\Etablissement;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
@@ -15,10 +17,15 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * Doctorant
  */
-class Doctorant implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
+class Doctorant implements
+    HistoriqueAwareInterface,
+    ResourceInterface,
+    IndividuAwareInterface,
+    SubstitutionAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use SubstitutionAwareTrait;
 
     /**
      * @var integer
@@ -56,21 +63,10 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
 
 
     /**
-     * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
-     * @return Etablissement|null
-     * @see Etablissement::getEtablissementSubstituant()
+     * Retourne l'établissement lié.
      */
-    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
+    public function getEtablissement(): Etablissement
     {
-        if ($returnSubstitIfExists && $this->etablissement && ($sustitut = $this->etablissement->getEtablissementSubstituant())) {
-            return $sustitut;
-        }
-
         return $this->etablissement;
     }
 
@@ -89,6 +85,7 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     {
         $this->theses = new ArrayCollection();
         $this->missionsEnseignements = new ArrayCollection();
+        $this->substitues = new ArrayCollection();
     }
 
     /**

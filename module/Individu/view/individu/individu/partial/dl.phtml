@@ -1,69 +1,93 @@
 <?php
 /**
- * @var \Individu\Entity\Db\Individu $individu
+ * @var \Individu\Entity\Db\Individu $entity
  * @var bool $verbose
  */
 
 if (!isset($verbose)) $verbose = false;
 ?>
+
+<h3>
+    Informations générales
+</h3>
 <dl class="row">
-    <?php if ($individu->getCivilite()): ?>
+    <?php if ($entity->getCivilite()): ?>
         <dt class="col-md-5">Civilité</dt>
-        <dd class="col-md-5"><?php echo $individu->getCiviliteToString() ?></dd>
+        <dd class="col-md-7"><?php echo $entity->getCiviliteToString() ?></dd>
     <?php endif ?>
 
     <dt class="col-md-5">Nom d'usage</dt>
-    <dd class="col-md-5"><strong><?php echo $individu->getNomUsuel() ?></strong></dd>
+    <dd class="col-md-7"><strong><?php echo $entity->getNomUsuel() ?></strong></dd>
 
-    <?php if ($individu->getNomPatronymique() && $individu->getNomPatronymique() !== $individu->getNomUsuel()): ?>
+    <?php if ($entity->getNomPatronymique() && $entity->getNomPatronymique() !== $entity->getNomUsuel()): ?>
         <dt class="col-md-5">Nom patronymique</dt>
-        <dd class="col-md-5"><?php echo $individu->getNomPatronymique() ?></dd>
+        <dd class="col-md-7"><?php echo $entity->getNomPatronymique() ?></dd>
     <?php endif ?>
 
     <dt class="col-md-5">Prénom</dt>
-    <dd class="col-md-5"><?php echo $individu->getPrenom1() ?></dd>
+    <dd class="col-md-7"><?php echo $entity->getPrenom1() ?></dd>
 
-    <?php if ($verbose && $individu->getPrenom2()): ?>
+    <?php if ($verbose && $entity->getPrenom2()): ?>
         <dt class="col-md-5">Deuxième prénom</dt>
-        <dd class="col-md-5"><?php echo $individu->getPrenom2() ?></dd>
+        <dd class="col-md-7"><?php echo $entity->getPrenom2() ?></dd>
     <?php endif ?>
 
     <dt class="col-md-5">Date de naissance</dt>
-    <dd class="col-md-5"><?php echo $individu->getDateNaissanceToString() ?: "(Non renseignée)" ?></dd>
+    <dd class="col-md-7"><?php echo $entity->getDateNaissanceToString() ?: "(Non renseignée)" ?></dd>
 
     <dt class="col-md-5">Adresse électronique</dt>
-    <dd class="col-md-5"><?php echo $individu->getEmailPro() ?: "(Non renseignée)" ?></dd>
+    <dd class="col-md-7"><?php echo $entity->getEmailPro() ?: "(Non renseignée)" ?></dd>
 
     <dt class="col-md-5">Adresse électronique de contact</dt>
-    <dd class="col-md-5"><?php echo $individu->getEmailContact() ?: "(Non renseignée)" ?></dd>
+    <dd class="col-md-7"><?php echo $entity->getEmailContact() ?: "(Non renseignée)" ?></dd>
 
-    <?php if ($verbose): ?>
-        <dt class="col-md-5">Nationalité</dt>
-        <dd class="col-md-5">
-            <?php echo (($pays = $individu->getPaysNationalite()) ? $pays->getLibelleNationalite() : $individu->getNationalite()) ?: "(Non renseignée)" ?>
-        </dd>
+    <dt class="col-md-5">Nationalité</dt>
+    <dd class="col-md-7">
+        <?php echo (($pays = $entity->getPaysNationalite()) ? $pays->getLibelleNationalite() : $entity->getNationalite()) ?: "(Non renseignée)" ?>
+    </dd>
+</dl>
+
+<?php if ($verbose): ?>
+    <h3>
+        Informations techniques
+    </h3>
+    <dl class="row">
+        <dt class="col-md-5">Id</dt>
+        <dd class="col-md-7"><?php echo $entity->getId() ?></dd>
+
+        <dt class="col-md-5">Création</dt>
+        <dd class="col-md-7"><?php echo $entity->getHistoCreation()->format('d/m/Y à H:i:s') ?></dd>
+
+        <?php if ($entity->getHistoModification() && $entity->getHistoModification() <> $entity->getHistoCreation()): ?>
+            <dt class="col-md-5">Modification</dt>
+            <dd class="col-md-7"><?php echo $entity->getHistoModification()->format('d/m/Y à H:i:s') ?></dd>
+        <?php endif ?>
 
         <dt class="col-md-5">Source</dt>
-        <dd class="col-md-5"><?php echo $individu->getSource() ?></dd>
+        <dd class="col-md-7"><?php echo $entity->getSource() ?></dd>
 
         <dt class="col-md-5">Source code</dt>
-        <dd class="col-md-5"><code><?php echo $individu->getSourceCode() ?></code></dd>
+        <dd class="col-md-7"><code><?php echo $entity->getSourceCode() ?></code></dd>
 
         <dt class="col-md-5">Supann Id</dt>
-        <dd class="col-md-5"><?php echo $individu->getSupannId() ?: "(Non renseigné)" ?></dd>
+        <dd class="col-md-7"><?php echo $entity->getSupannId() ?: "(Non renseigné)" ?></dd>
 
         <dt class="col-md-5">IdRef</dt>
-        <dd class="col-md-5"><?php echo $individu->getIdRef() ? $this->idrefLink($individu->getIdRef()) : "(Non renseigné)" ?></dd>
-    <?php endif ?>
+        <dd class="col-md-7"><?php echo $entity->getIdRef() ? $this->idrefLink($entity->getIdRef()) : "(Non renseigné)" ?></dd>
+    </dl>
+<?php endif ?>
 
-    <dt class="col-md-5">Id</dt>
-    <dd class="col-md-5"><?php echo $individu->getId() ?></dd>
+<?php if ($entity->estHistorise()): ?>
+    <h3 class="text-danger">
+        Historisé
+    </h3>
+    <dl class="text-danger">
+        <dt class="col-md-5 text-danger">Date :</dt>
+        <dd class="col-md-7 text-danger"><?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></dd>
+    </dl>
+<?php endif ?>
 
-    <dt class="col-md-5">Dernière modification</dt>
-    <dd class="col-md-5"><?php echo $individu->getHistoModification()->format('d/m/Y H:i:s') ?></dd>
-
-    <?php if ($individu->estHistorise()): ?>
-        <dt class="col-md-5 text-danger">Supprimé le</dt>
-        <dd class="col-md-5 text-danger"><?php echo $individu->getHistoDestruction()->format('d/m/Y H:i:s') ?></dd>
-    <?php endif ?>
-</dl>
+<?php if ($includeGotoDetailsLink ?? false): ?>
+    <a href="<?php echo $this->url('individu/voir', ['individu' => $entity->getId()]) ?>"
+       class="action btn btn-outline-secondary"><span class="icon icon-voir"></span> Voir la fiche détaillée de cet individu</a>
+<?php endif ?>

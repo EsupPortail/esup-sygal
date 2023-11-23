@@ -4,53 +4,46 @@ namespace Application\Assertion\Loader;
 
 class AssertionCsvLoaderResult
 {
-    /**
-     * @var string
-     */
-    private $ruleFilePath;
-
-    /**
-     * @var string
-     */
-    private $assertionClass;
+    private string $ruleFilePath;
+    private string $assertionClass;
 
     /**
      * @var string[]
      */
-    private $testNames;
+    private array $uses;
+
+    /**
+     * @var string[]
+     */
+    private array $testNames;
 
     /**
      * @var array[]
      */
-    private $data;
+    private array $data;
 
-    /**
-     * @param string $ruleFilePath
-     * @return self
-     */
-    public function setRuleFilePath($ruleFilePath)
+    public function setRuleFilePath(string $ruleFilePath): self
     {
         $this->ruleFilePath = $ruleFilePath;
 
         return $this;
     }
 
-    /**
-     * @param string $assertionClass
-     * @return self
-     */
-    public function setAssertionClass($assertionClass)
+    public function setAssertionClass(string $assertionClass): self
     {
         $this->assertionClass = $assertionClass;
 
         return $this;
     }
 
-    /**
-     * @param string[] $testNames
-     * @return self
-     */
-    public function setTestNames($testNames)
+    public function setUses(array $uses): self
+    {
+        $this->uses = $uses;
+
+        return $this;
+    }
+
+    public function setTestNames(array $testNames): self
     {
         $this->testNames = $testNames;
 
@@ -59,27 +52,20 @@ class AssertionCsvLoaderResult
 
     /**
      * @param array[] $data
-     * @return self
      */
-    public function setData($data)
+    public function setData(array $data): self
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRuleFilePath()
+    public function getRuleFilePath(): string
     {
         return $this->ruleFilePath;
     }
 
-    /**
-     * @return string
-     */
-    public function getAssertionClass()
+    public function getAssertionClass(): string
     {
         return $this->assertionClass;
     }
@@ -87,7 +73,15 @@ class AssertionCsvLoaderResult
     /**
      * @return string[]
      */
-    public function getTestNames()
+    public function getUses(): array
+    {
+        return $this->uses;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTestNames(): array
     {
         return $this->testNames;
     }
@@ -95,7 +89,7 @@ class AssertionCsvLoaderResult
     /**
      * @return array[]
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }

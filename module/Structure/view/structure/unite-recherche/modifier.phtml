@@ -138,7 +138,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                             <a
                                     id="supprimer-logo"
                                     class="btn btn-danger"
-                                    href="<?php echo $this->url('unite-recherche/supprimer-logo', ["structure" => $idUniteRecherche]); ?>"
+                                    href="<?php echo $this->url('unite-recherche/supprimer-logo', ["unite-recherche" => $unite->getId()]); ?>"
                             >
                                 <span class="icon icon-delete"></span>
                                 Supprimer le logo

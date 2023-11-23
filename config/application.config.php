@@ -57,7 +57,7 @@ return [
         'UnicaenDbImport',
         'UnicaenFaq',
         'UnicaenIdref',
-//        'UnicaenLivelog',
+        'UnicaenLivelog',
         'UnicaenPdf',
         'UnicaenRenderer',
         'Unicaen\Console',

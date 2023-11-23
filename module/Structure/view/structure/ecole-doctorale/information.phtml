@@ -41,7 +41,7 @@ $structure = $ecole->getStructure();
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_infos ? 'active' : '' ?>"
-           href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
+           href="<?php echo $this->url('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
            role="tab"
         >
             Informations générales
@@ -49,7 +49,7 @@ $structure = $ecole->getStructure();
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_membres ? 'active' : '' ?>"
-           href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
+           href="<?php echo $this->url('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
            role="tab"
         >
             Rôles et membres
@@ -57,7 +57,7 @@ $structure = $ecole->getStructure();
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_coenc ? 'active' : '' ?>"
-           href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_coenc]], true) ?>"
+           href="<?php echo $this->url('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_coenc]], true) ?>"
            role="tab"
         >
             Co-encadrants
@@ -65,7 +65,7 @@ $structure = $ecole->getStructure();
     </li>
     <li role="presentation" class="nav-item">
         <a class="nav-link <?php echo $tab === StructureController::TAB_docs ? 'active' : '' ?>"
-           href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
+           href="<?php echo $this->url('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
            role="tab"
         >
             Documents
@@ -76,57 +76,7 @@ $structure = $ecole->getStructure();
 <div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
     <div class="row">
         <div class="col-md-6">
-            <h2>
-                Informations générales
-            </h2>
-            <dl>
-                <dt> Libelle :</dt>
-                <dd>    <?php echo $ecole->getStructure()->getLibelle(); ?>     </dd>
-                <dt> Sigle :</dt>
-                <dd>    <?php echo $ecole->getStructure()->getSigle(); ?>       </dd>
-                <dt> Thème :</dt>
-                <dd> <?php echo ($ecole->getTheme())?:"(Non renseigné)"; ?></dd>
-                <dt> Lien vers l'offre des thèses :</dt>
-                <dd>
-                    <?php if ($ecole->getOffreThese()) : ?>
-                        <a href="<?php echo $ecole->getOffreThese(); ?>"><?php echo $ecole->getOffreThese(); ?></a>
-                    <?php else: ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt> Statut :</dt>
-                <dd>
-                    <?php if ($ecole->getStructure()->estFermee()) : ?>
-                        <span class="badge bg-danger">Structure fermée</span>
-                    <?php else : ?>
-                        <span class="badge bg-success">Structure ouverte</span>
-                    <?php endif; ?>
-                </dd>
-            </dl>
-
-            <h2>
-                Informations techniques
-            </h2>
-            <dl>
-                <dt> Code :</dt>
-                <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
-                <dt>IdRef :</dt>
-                <dd>
-                    <?php if ($ecole->getStructure()->getIdRef() !== null AND trim($ecole->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $this->idrefLink($ecole->getStructure()->getIdRef()); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt> Id HAL :</dt>
-                <dd>
-                    <?php if ($ecole->getStructure()->getIdHal() !== null AND trim($ecole->getStructure()->getIdHal()) !== "") : ?>
-                        <?php echo $ecole->getStructure()->getIdHal(); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-            </dl>
+            <?php echo $this->partial('structure/ecole-doctorale/partial/information', ['entity' => $ecole]) ?>
         </div>
         <div class="col-md-4">
             <dl>
@@ -140,7 +90,7 @@ $structure = $ecole->getStructure();
     </div>
 
     <?php if ($canEdit): ?>
-        <a href="<?php echo $this->url('ecole-doctorale/modifier', ['structure' => $ecole->getStructure()->getId()], [], true); ?>"
+        <a href="<?php echo $this->url('ecole-doctorale/modifier', ['ecole-doctorale' => $ecole->getId()], [], true); ?>"
            class="btn btn-primary action"><span class="icon icon-edit"></span> Modifier l'école doctorale
         </a>
     <?php endif; ?>

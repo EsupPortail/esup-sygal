@@ -10,6 +10,12 @@ class LogController extends AbstractActionController
 {
     use LogServiceAwareTrait;
 
+    public function accueilAction(): ViewModel
+    {
+        return (new ViewModel([
+        ]))->setTemplate('substitution/log/accueil');
+    }
+
     /**
      * @throws \Doctrine\DBAL\Exception
      */

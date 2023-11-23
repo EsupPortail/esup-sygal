@@ -2,15 +2,17 @@
 
 namespace Structure\Controller;
 
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\TypeStructure;
-use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 
 class EcoleDoctoraleController extends StructureConcreteController
 {
@@ -20,10 +22,8 @@ class EcoleDoctoraleController extends StructureConcreteController
 
     protected $codeTypeStructure = TypeStructure::CODE_ECOLE_DOCTORALE;
 
-    /**
-     * @var string
-     */
-    protected $routeName = 'ecole-doctorale';
+    protected string $routeName = 'ecole-doctorale';
+    protected string $routeParamName = 'ecole-doctorale';
 
     /**
      * @return EcoleDoctoraleService
@@ -54,32 +54,29 @@ class EcoleDoctoraleController extends StructureConcreteController
 
         /** @var EcoleDoctorale $structureConcrete */
         $structureConcrete = $this->ecoleDoctoraleService->getRepository()->find($id);
+        if ($structureConcrete === null) {
+            throw new InvalidArgumentException("Ecole doctorale introuvable avec cet id");
+        }
 
-        return $this->forward()->dispatch(self::class, [
-            'action' => 'information',
-            'structure' => $structureConcrete->getStructure(false)->getId(),
-        ]);
+        $vars = $this->loadInformationForStructure($structureConcrete);
+
+        return (new ViewModel($vars))
+            ->setTemplate('structure/ecole-doctorale/information');
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function informationAction(): ViewModel
+    protected function loadInformationForStructure(StructureConcreteInterface $structureConcrete): array
     {
-        $viewModel = parent::informationAction();
+        $vars = parent::loadInformationForStructure($structureConcrete);
 
         /** @var EcoleDoctorale $structureConcrete */
-        $structureConcrete = $viewModel->getVariable('structure');
         $coencadrants = $this->getCoEncadrantService()->findCoEncadrantsByStructureConcrete($structureConcrete, false);
         $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
-        $viewModel->setVariables([
-            'ecole' => $viewModel->getVariable('structure'),
+        return array_merge($vars, [
+            'ecole' => $structureConcrete,
             'coencadrants' => $coencadrants,
             'contenus' => $contenus,
         ]);
-
-        return $viewModel;
     }
 
     /**

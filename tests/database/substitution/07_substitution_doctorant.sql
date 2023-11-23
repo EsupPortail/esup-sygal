@@ -20,8 +20,10 @@ where target_table = 'doctorant'
 --
 -- Mise à jour table doctorant
 --
-alter table doctorant add substit_update_enabled bool default true not null;
-comment on column doctorant.substit_update_enabled is 'Indique si ce substituant (le cas échéant) peut être mis à jour à partir des attributs des substitués';
+alter table doctorant add est_substituant bool default false not null;
+comment on column doctorant.est_substituant is 'Indique s''il s''agit d''un enregistrement substituant d''autres enregistrements';
+alter table doctorant add est_substituant_modifiable bool default true not null;
+comment on column doctorant.est_substituant_modifiable is 'Indique si ce substituant (le cas échéant) peut être mis à jour à partir des attributs des substitués';
 
 create index doctorant_ine_index on doctorant (ine);
 
@@ -38,7 +40,7 @@ alter table pre_doctorant add constraint pre_doctorant_hc_fk foreign key (histo_
 alter table pre_doctorant add constraint pre_doctorant_hm_fk foreign key (histo_modificateur_id) references utilisateur on delete cascade;
 alter table pre_doctorant add constraint pre_doctorant_hd_fk foreign key (histo_destructeur_id) references utilisateur on delete cascade;
 create sequence if not exists pre_doctorant_id_seq owned by pre_doctorant.id;
-alter table pre_doctorant alter column id set default nextval('pre_doctorant_id_seq');
+alter table pre_doctorant alter column id set default nextval('doctorant_id_seq'); -- NB : utilisation de la sequence de la table finale
 select setval('pre_doctorant_id_seq', (select max(id) from doctorant));
 
 --drop table doctorant_substit cascade;
@@ -71,8 +73,8 @@ create or replace view src_pre_doctorant as
            e.id       AS etablissement_id
     FROM tmp_doctorant tmp
              JOIN source src ON src.id = tmp.source_id
-             JOIN etablissement e ON e.id = src.etablissement_id
-             JOIN individu i ON i.source_code = tmp.individu_id;
+             JOIN pre_etablissement e ON e.id = src.etablissement_id
+             JOIN pre_individu i ON i.source_code = tmp.individu_id;
 
 
 drop view if exists v_diff_doctorant;
@@ -80,7 +82,7 @@ drop view if exists src_doctorant;
 create or replace view src_doctorant as
     select pre.id,
            coalesce(isub.to_id, pre.individu_id) as individu_id,
-           coalesce(esub.id, pre.etablissement_id) as etablissement_id,
+           coalesce(esub.to_id, pre.etablissement_id) as etablissement_id,
            pre.source_code,
            pre.source_id,
            pre.ine,
@@ -125,6 +127,9 @@ create trigger substit_trigger_on_doctorant_substit
     on doctorant_substit
     for each row
 execute procedure substit_trigger_on_substit_fct('doctorant');
+
+alter table pre_doctorant enable trigger substit_trigger_pre_doctorant;
+alter table doctorant_substit enable trigger substit_trigger_on_doctorant_substit;
 
 
 --drop function substit_npd_doctorant cascade
@@ -248,7 +253,9 @@ begin
                            individu_id,
                            ine,
                            code_apprenant_in_source,
-                           etablissement_id)
+                           etablissement_id,
+                           est_substituant,
+                           est_substituant_modifiable)
     select nextval('doctorant_id_seq') as id,
            app_source_id() as source_id,
            app_source_source_code() as source_code,
@@ -256,7 +263,9 @@ begin
            data.individu_id,
            data.ine,
            data.code_apprenant_in_source,
-           data.etablissement_id
+           data.etablissement_id,
+           true,
+           default
     returning id into substituant_id;
 
     raise notice '=> Substituant %', substituant_id;

@@ -6,6 +6,7 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
+ * @var string $type
  * @var \Doctrine\DBAL\Result $result
  *
  * @see \Substitution\Controller\IndexController::doctorantAction()
@@ -13,18 +14,8 @@ use Application\View\Renderer\PhpRenderer;
 
 ?>
 
-<?php $this->headTitle($this->translate("Substitutions de doctorants")) ?>
-
-<h1 class="page-header">
-    <span class="fas fa-object-group"></span>
-    <?php echo $this->translate("Substitutions de doctorants"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/substitution/_partial/liste', [
+    'type' => $type,
     'result' => $result,
     'attributes' => ['to_ine' => 'INE'],
-    'routeName' => 'doctorant/voir',
-    'routeParamName' => 'doctorant',
 ]); ?>

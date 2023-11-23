@@ -71,7 +71,6 @@ class DoctorantRepository extends DefaultEntityRepository
             ->join('d.theses', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->leftJoinStructureSubstituante('s')
             ->andWhere('d.histoDestruction is null')
             ->addOrderBy('i.nomUsuel, i.prenom1');
 
@@ -97,7 +96,7 @@ class DoctorantRepository extends DefaultEntityRepository
             $qb
                 ->join('t.etablissement', 'e')->addSelect('e')
                 ->join('e.structure', 'etab_structure')->addSelect('etab_structure')
-                ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(/*false*/), 'etab_structure');
+                ->andWhereStructureIs($etablissement->getStructure(), 'etab_structure');
         }
 
         return $qb->getQuery()->getResult();

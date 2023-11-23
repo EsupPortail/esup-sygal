@@ -36,7 +36,7 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
                 <h2 class="first">Détails</h2>
             </div>
             <div class="card-body">
-                <?php echo $this->partial('individu/individu/partial/dl', ['individu' => $individu, 'verbose' => true]) ?>
+                <?php echo $this->partial('individu/individu/partial/dl', ['entity' => $individu, 'verbose' => true]) ?>
 
                 <?php if ($canModifier && !$individu->estHistorise()): ?>
                     <a href="<?php echo $this->url('individu/modifier', ['individu' => $individu->getId()]) ?>"

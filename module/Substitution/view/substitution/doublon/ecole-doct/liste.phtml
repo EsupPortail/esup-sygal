@@ -12,16 +12,8 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Doublons d'écoles doctorales")) ?>
-
-<h1 class="page-header">
-    <span class="far fa-clone"></span>
-    <?php echo $this->translate("Doublons d'écoles doctorales"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/doublon/_partial/liste', [
+    'type' => 'ecole-doct',
     'result' => $result,
     'attributes' => ['code' => 'Code'],
     'routeName' => 'ecole-doctorale/voir',

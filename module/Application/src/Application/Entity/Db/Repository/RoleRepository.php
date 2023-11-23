@@ -51,7 +51,7 @@ class RoleRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder("role")
             ->join('role.structure', 's')
             ->andWhere("role.theseDependant = true")
-            ->andWhereStructureOuSubstituanteIs($structureConcrete->getStructure(/*false*/))
+            ->andWhereStructureIs($structureConcrete->getStructure())
             ->orderBy("role.ordreAffichage", "DESC");
 
         return $qb->getQuery()->getResult();
@@ -82,7 +82,7 @@ class RoleRepository extends DefaultEntityRepository
             ->join('r.structure', 's')->addSelect('s')
             ->andWhere('r.code = :code')
             ->setParameter('code', $code)
-            ->andWhereStructureOuSubstituanteIs($structure)
+            ->andWhereStructureIs($structure)
             ->andWhere('r.histoDestruction is null');
 
         try {

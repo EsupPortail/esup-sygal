@@ -7,20 +7,28 @@ use Application\Entity\Db\Source;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use InvalidArgumentException;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Structure
  */
-class Structure implements StructureInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
+class Structure implements
+    StructureInterface,
+    HistoriqueAwareInterface,
+    SourceAwareInterface,
+    ResourceInterface,
+    SubstitutionAwareInterface
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
+    use SubstitutionAwareTrait;
 
     /**
      * @var string $id
@@ -86,11 +94,6 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var ArrayCollection|Structure[]
      */
-    private Collection $structuresSubstituees;
-
-    /**
-     * @var ArrayCollection|Structure[]
-     */
     private  $structureSubstituante;
 
     /** @var ArrayCollection StructureDocument */
@@ -143,25 +146,9 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     public function __construct()
     {
         $this->structureSubstituante = new ArrayCollection();
-        $this->structuresSubstituees = new ArrayCollection();
+        $this->substitues = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
-
-    /**
-     * Indique si cette structure se substitue à d'autres structures.
-     *
-     * @return bool
-     */
-    public function estStructureSubstituante()
-    {
-        return count($this->getStructuresSubstituees()) > 0;
-    }
-
-    public function estSubstituee() : bool
-    {
-        return $this->getStructureSubstituante() !== null;
-    }
-
 
     /**
      * @return string
@@ -370,25 +357,15 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
-     * Retourne les éventuelles structures substituées par celle-ci.
-     *
-     * @see getStructuresConcretesSubstituees()
-     * @return \Doctrine\Common\Collections\Collection|\Structure\Entity\Db\Structure[]
-     */
-    public function getStructuresSubstituees(): Collection
-    {
-        return $this->structuresSubstituees;
-    }
-
-    /**
      * Retourne les éventuelles structures "concrètes" substituées par celle-ci.
      *
-     * @see getStructuresSubstituees()
-     * @return \Doctrine\Common\Collections\Collection|\Structure\Entity\Db\StructureConcreteInterface[]
+     * NB : attention à faire la jointure en cas de parcours de plusieurs structures.
+     *
+     * @see getSubstitues()
      */
     public function getStructuresConcretesSubstituees(): Collection
     {
-        return $this->structuresSubstituees->map(fn(Structure $s) => $s->getStructureConcrete());
+        return $this->substitues->map(fn(Structure $s) => $s->getStructureConcrete());
     }
 
     /**
@@ -397,11 +374,21 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * NB : c'est géré avec une relation to-many mais en pratique il ne peut exister qu'une seule structure substituante
      * (sachant que les substitutions ne sont pas historisées mais supprimées).
      *
-     * @return \Structure\Entity\Db\Structure|null
+     * NB : attention à faire la jointure en cas de parcours de plusieurs structures.
      */
     public function getStructureSubstituante(): ?Structure
     {
         return $this->structureSubstituante->first() ?: null;
+    }
+
+    /**
+     * Indique si cette structure est substituée.
+     *
+     * NB : attention à faire la jointure en cas de parcours de plusieurs structures.
+     */
+    public function estSubstituee() : bool
+    {
+        return $this->getStructureSubstituante() !== null;
     }
 
     /**

@@ -28,18 +28,11 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     private ?These $these = null;
 
-    /**
-     * @param array $context
-     */
-    public function setContext(array $context)
+    public function setContext(array $context): void
     {
         $this->these = $context['these'];
     }
 
-    /**
-     * @param string|null $privilege
-     * @return boolean
-     */
     public function assert(?string $privilege = null): bool
     {
         $allowed = $this->assertAsBoolean($privilege);
@@ -68,9 +61,6 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return $this->these->getEtatThese() === These::ETAT_EN_COURS;
     }
 
-    /**
-     * @return bool
-     */
     protected function isRoleDoctorantSelected(): bool
     {
         return (bool) $this->userContextService->getSelectedRoleDoctorant();
@@ -78,9 +68,6 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected ?Doctorant $identityDoctorant = null;
 
-    /**
-     * @return Doctorant
-     */
     private function getIdentityDoctorant(): ?Doctorant
     {
         if (null === $this->identityDoctorant) {
@@ -88,5 +75,10 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         }
 
         return $this->identityDoctorant;
+    }
+
+    protected function isUtilisateurConnaitIndividu(): bool
+    {
+        return false;
     }
 }

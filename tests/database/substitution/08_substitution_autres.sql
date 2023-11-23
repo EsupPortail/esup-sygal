@@ -199,6 +199,40 @@ from pre
 ;
 
 
+drop view if exists v_diff_these_annee_univ;
+drop view if exists src_these_annee_univ;
+create or replace view src_these_annee_univ(id, source_code, source_id, these_id, annee_univ) as
+SELECT NULL::text AS id,
+       tmp.source_code,
+       src.id     AS source_id,
+       t.id       AS these_id,
+       tmp.annee_univ
+FROM tmp_these_annee_univ tmp
+         JOIN source src ON src.id = tmp.source_id
+         JOIN these t ON t.source_code::text = tmp.these_id::text;
+
+
+drop view if exists v_diff_titre_acces;
+drop view if exists src_titre_acces;
+create or replace view src_titre_acces
+            (id, source_code, source_id, these_id, titre_acces_interne_externe, libelle_titre_acces,
+             type_etb_titre_acces, libelle_etb_titre_acces, code_dept_titre_acces, code_pays_titre_acces)
+as
+SELECT NULL::text AS id,
+       tmp.source_code,
+       src.id     AS source_id,
+       t.id       AS these_id,
+       tmp.titre_acces_interne_externe,
+       tmp.libelle_titre_acces,
+       tmp.type_etb_titre_acces,
+       tmp.libelle_etb_titre_acces,
+       tmp.code_dept_titre_acces,
+       tmp.code_pays_titre_acces
+FROM tmp_titre_acces tmp
+         JOIN source src ON src.id = tmp.source_id
+         JOIN these t ON t.source_code::text = tmp.these_id::text;
+
+
 drop view if exists v_diff_variable;
 drop view if exists src_variable;
 create or replace view src_variable

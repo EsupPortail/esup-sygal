@@ -166,7 +166,7 @@ class StructureDocumentService
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.histoDestruction IS NULL')
-            ->andWhereStructureOuSubstituanteIs($structure, 'structure');
+            ->andWhereStructureIs($structure, 'structure');
 
         return $qb->getQuery()->getResult();
     }

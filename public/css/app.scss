@@ -97,14 +97,8 @@ h2.modal-title {
     }
   }
   .card-body {
-    h2 {
-      font: {
-        size: 150%;
-      }
-    }
     h3 {
       font: {
-        size: 120%;
         weight: bold;
       }
       //border-bottom: #ddd dotted 1px;
@@ -309,7 +303,7 @@ div#contenu-principal {
 }
 
 .page-header small {
-  font-size: 50%;
+  font-size: 75%;
 }
 
 .upload-form {

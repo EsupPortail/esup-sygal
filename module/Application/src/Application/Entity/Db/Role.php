@@ -3,7 +3,7 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\StructureAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -18,6 +18,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
+    use StructureAwareTrait;
 
     // Memento: (&(eduPersonAffiliation=member)(eduPersonAffiliation=student)(eduPersonAffiliation=researcher))
 
@@ -62,11 +63,6 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
      * @var TypeStructure
      */
     protected $typeStructureDependant;
-
-    /**
-     * @var Structure
-     */
-    protected $structure;
 
     /**
      * @var string Code unique *au sein d'un établissement*.
@@ -132,36 +128,6 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
             self::CODE_RAPPORTEUR_ABSENT,
             self::CODE_CO_ENCADRANT,
         ]);
-    }
-
-    /**
-     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.structure' puis 'structure.structureSubstituante'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une ; sinon la structure d'origine.
-     * @see Structure::getStructureSubstituante()
-     * @return Structure|null
-     */
-    public function getStructure(bool $returnSubstitIfExists = true): ?Structure
-    {
-        if ($returnSubstitIfExists && $this->structure && ($sustitut = $this->structure->getStructureSubstituante())) {
-            return $sustitut;
-        }
-
-        return $this->structure;
-    }
-
-    /**
-     * @param Structure $structure
-     * @return Role
-     */
-    public function setStructure(Structure $structure): self
-    {
-        $this->structure = $structure;
-
-        return $this;
     }
 
     /**

@@ -31,7 +31,7 @@ class TableauDeBordController extends AbstractController
 
         $source = $this->sourceService->fetchApplicationSource();
         $etablissements = $this->getEtablissementService()->getRepository()->findAllBySource($source->getCode());
-        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return count($etablissement->getStructure()->getStructuresSubstituees())==0; });
+        $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getStructure()->getSubstitues()->count()===0; });
         $etablissements = array_filter($etablissements, function (Etablissement $etablissement) { return $etablissement->getStructure()->getSigle() != "NU";});
 
         return new ViewModel([

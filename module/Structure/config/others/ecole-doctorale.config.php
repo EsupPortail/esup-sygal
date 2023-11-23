@@ -116,7 +116,7 @@ return [
                     'supprimer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer/:structure',
+                            'route'       => '/supprimer/:ecole-doctorale',
                             'defaults'    => [
                                 'action' => 'supprimer',
                             ],
@@ -125,7 +125,7 @@ return [
                     'restaurer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/restaurer/:structure',
+                            'route'       => '/restaurer/:ecole-doctorale',
                             'defaults'    => [
                                 'action' => 'restaurer',
                             ],
@@ -134,7 +134,7 @@ return [
                     'modifier' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/modifier/:structure',
+                            'route'       => '/modifier/:ecole-doctorale',
                             'defaults'    => [
                                 'action' => 'modifier',
                             ],
@@ -143,7 +143,7 @@ return [
                     'supprimer-logo' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:structure',
+                            'route'       => '/supprimer-logo/:ecole-doctorale',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],

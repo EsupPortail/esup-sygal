@@ -21,6 +21,8 @@
         <field name="idRef"      type="string" column="ID_REF"      length="1024" nullable="true"/>
         <field name="idHal"      type="string" column="ID_HAL"      length="128" nullable="true"/>
 
+        <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
+
         <many-to-one field="typeStructure" target-entity="Structure\Entity\Db\TypeStructure">
             <join-columns>
                 <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
@@ -33,13 +35,13 @@
 
         <one-to-many field="roles" target-entity="Application\Entity\Db\Role" mapped-by="structure"/>
 
-        <many-to-many field="structuresSubstituees" target-entity="Structure\Entity\Db\Structure">
-            <join-table name="STRUCTURE_SUBSTIT">
+        <many-to-many field="substitues" target-entity="Structure\Entity\Db\Structure">
+            <join-table name="structure_substit">
                 <join-columns>
-                    <join-column name="TO_ID" referenced-column-name="ID" />
+                    <join-column name="to_id" referenced-column-name="ID" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="FROM_ID" referenced-column-name="ID" />
+                    <join-column name="from_id" referenced-column-name="ID" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
@@ -47,10 +49,10 @@
         <many-to-many field="structureSubstituante" target-entity="Structure\Entity\Db\Structure">
             <join-table name="STRUCTURE_SUBSTIT">
                 <join-columns>
-                    <join-column name="FROM_ID" referenced-column-name="ID" />
+                    <join-column name="from_id" referenced-column-name="ID" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="TO_ID" referenced-column-name="ID" />
+                    <join-column name="to_id" referenced-column-name="ID" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

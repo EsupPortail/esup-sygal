@@ -46,7 +46,7 @@ $statusColors = [
                 </a>
             </td>
             <td>
-                <a href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $inscription['ecoleDoctorale']['structure']['id']]) ?>">
+                <a href="<?php echo $this->url('ecole-doctorale/voir', ['ecole-doctorale' => $inscription['ecoleDoctorale']['id']]) ?>">
                     <?php echo $inscription['ecoleDoctorale']['structure']['code'] ?>
                 </a>
             </td>

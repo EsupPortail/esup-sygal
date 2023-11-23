@@ -2,10 +2,13 @@
 
 namespace Doctorant;
 
+use Doctorant\Assertion\DoctorantAssertion;
+use Doctorant\Assertion\DoctorantAssertionFactory;
 use Doctorant\Assertion\These\TheseAssertion;
 use Doctorant\Assertion\These\TheseAssertionFactory;
 use Doctorant\Assertion\These\TheseEntityAssertion;
 use Doctorant\Assertion\These\TheseEntityAssertionFactory;
+use Doctorant\Controller\DoctorantController;
 use Doctorant\Controller\DoctorantControllerFactory;
 use Doctorant\Controller\MissionEnseignementController;
 use Doctorant\Controller\MissionEnseignementControllerFactory;
@@ -25,7 +28,6 @@ use Doctorant\Service\MissionEnseignement\MissionEnseignementService;
 use Doctorant\Service\MissionEnseignement\MissionEnseignementServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctorant\Controller\DoctorantController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use These\Provider\Privilege\CoEncadrantPrivileges;
@@ -79,11 +81,26 @@ return [
                 [
                     'controller' => DoctorantController::class,
                     'action' => [
-                        'rechercher',
-                        'lister',
+                        'voir',
                         'consulter',
                     ],
-                    'roles' => 'user',
+                    'privilege' => [
+                        DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT,
+                        DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN,
+                    ],
+                    'assertion'  => DoctorantAssertion::class,
+                ],
+                [
+                    'controller' => DoctorantController::class,
+                    'action' => [
+                        'rechercher',
+                        'lister',
+                    ],
+                    'privilege' => [
+                        DoctorantPrivileges::DOCTORANT_LISTER_TOUT,
+                        DoctorantPrivileges::DOCTORANT_LISTER_SIEN,
+                    ],
+                    'assertion'  => DoctorantAssertion::class,
                 ],
                 [
                     'controller' => MissionEnseignementController::class,
@@ -122,7 +139,7 @@ return [
                     'voir' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/consulter/:doctorant',
+                            'route' => '/voir/:doctorant',
                             'constraints' => [
                                 'doctorant' => '\d+',
                             ],
@@ -289,6 +306,7 @@ return [
         'factories' => [
             'DoctorantService' => DoctorantServiceFactory::class,
             DoctorantSearchService::class => DoctorantSearchServiceFactory::class,
+            DoctorantAssertion::class => DoctorantAssertionFactory::class,
             MissionEnseignementService::class => MissionEnseignementServiceFactory::class,
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,

@@ -12,16 +12,8 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Clés étrangères vers des unités de recherche")) ?>
-
-<h1 class="page-header">
-    <span class="fas fa-key"></span>
-    <?php echo $this->translate("Clés étrangères vers des unités de recherche"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/foreign-key/_partial/liste', [
+    'type' => 'unite-rech',
     'result' => $result,
 ]); ?>
 

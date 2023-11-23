@@ -4,6 +4,8 @@ namespace Structure\Entity\Db;
 
 use Application\Entity\Db\Role;
 use Application\Search\Filter\SearchFilterValueInterface;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -12,12 +14,17 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * Etablissement
  */
-class Etablissement
-    implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, SearchFilterValueInterface
+class Etablissement implements
+    StructureConcreteInterface,
+    HistoriqueAwareInterface,
+    SourceAwareInterface,
+    SearchFilterValueInterface,
+    SubstitutionAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
     use StructureAwareTrait;
+    use SubstitutionAwareTrait;
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
 
@@ -264,23 +271,6 @@ class Etablissement
     {
         $this->estCed = $estCed;
         return $this;
-    }
-
-    /**
-     * Retourne l'éventuel établissement substituant celui-ci.
-     *
-     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
-     *
-     * @return \Structure\Entity\Db\Etablissement|null
-     */
-    public function getEtablissementSubstituant(): ?Etablissement
-    {
-        if ($substit = $this->structure->getStructureSubstituante()) {
-            return $substit->getEtablissement();
-        }
-
-        return null;
     }
 
     /**

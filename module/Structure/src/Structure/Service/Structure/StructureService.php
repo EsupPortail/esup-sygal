@@ -11,7 +11,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -24,7 +23,6 @@ use Structure\Entity\Db\Repository\UniteRechercheRepository;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\StructureInterface;
-use Structure\Entity\Db\StructureSubstit;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -32,7 +30,6 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use Webmozart\Assert\Assert;
 
 /**
  * @author Unicaen
@@ -55,210 +52,6 @@ class StructureService extends BaseService
     }
 
     /**
-     * Enregistre en bdd la substitution de plusieurs structures par une autre structure.
-     * NB: la structure de subsitition est créée et sa source est SYGAL.
-     *
-     * @param StructureConcreteInterface[] $structuresSources
-     * Structures à substituer (Etablissement|EcoleDoctorale|UniteRecherche
-     * @param StructureConcreteInterface   $structureCibleDataObject
-     * Objet contenant les attributs de la structure de substitution à créer
-     * @return StructureConcreteInterface Entités créées (une par substitution)
-     */
-    public function createStructureSubstitutions(array $structuresSources, StructureConcreteInterface $structureCibleDataObject): StructureConcreteInterface
-    {
-        switch (true) {
-            case ($structuresSources[0] instanceOf Etablissement):
-                Assert::allIsInstanceOf($structuresSources, Etablissement::class);
-                break;
-            case ($structuresSources[0] instanceOf EcoleDoctorale):
-                Assert::allIsInstanceOf($structuresSources, EcoleDoctorale::class);
-                break;
-            case ($structuresSources[0] instanceOf UniteRecherche):
-                Assert::allIsInstanceOf($structuresSources, UniteRecherche::class);
-                break;
-            default:
-                throw new RuntimeException("La première structure est de type non connu.");
-        }
-
-        // le source code d'une structure cible est calculé
-        $sourceCode = $structureCibleDataObject->getSourceCode();
-        if ($sourceCode === null) {
-            $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
-        }
-
-        // la source d'une structure cible est forcément SYGAL
-        $sourceSygal = $this->sourceService->fetchApplicationSource();
-
-        // le type de la structure cible dépend du type des données spécifiées (data object)
-        $tsCode = null;
-        if ($structureCibleDataObject instanceof Etablissement) {
-            $tsCode = TypeStructure::CODE_ETABLISSEMENT;
-        } elseif ($structureCibleDataObject instanceof EcoleDoctorale) {
-            $tsCode = TypeStructure::CODE_ECOLE_DOCTORALE;
-        } elseif ($structureCibleDataObject instanceof UniteRecherche) {
-            $tsCode = TypeStructure::CODE_UNITE_RECHERCHE;
-        }
-        $typeStructure = $this->findOneTypeStructureForCode($tsCode);
-
-        $structureCibleDataObject->setSourceCode($sourceCode);
-
-        // si toutes les structures sources ont le même code alors on le réutilise, sinon on en génère un unique
-        $codeExtractor = function($structureSource) {
-            /** @var StructureConcreteInterface $structureSource */
-            return $this->sourceCodeStringHelper->removePrefixFrom($structureSource->getSourceCode());
-        };
-        $codesStructuresSources = array_map($codeExtractor, $structuresSources);
-        if (count(array_unique($codesStructuresSources)) === 1) {
-            $codeStructureCible = reset($codesStructuresSources);
-        } else {
-            $codeStructureCible = uniqid();
-        }
-
-        // instanciation du couple (Etab|ED|UR ; Structure) cible
-        $structureConcreteCibleSourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($codeStructureCible);
-        $structureConcreteCible = Structure::constructFromDataObject($structureCibleDataObject, $typeStructure, $sourceSygal);
-        $structureConcreteCible->setSourceCode($structureConcreteCibleSourceCode);
-        $structureConcreteCible->getStructure()->setSourceCode($structureConcreteCibleSourceCode);
-        $structureConcreteCible->getStructure()->setCode($codeStructureCible);
-        $structureRattachCible = $structureConcreteCible->getStructure(); // StructureSubstitution ne référence que des entités de type Structure
-
-        // instanciations des substitutions
-        $substitutions = StructureSubstit::fromStructures($structuresSources, $structureRattachCible);
-
-        // enregistrement en bdd
-        $this->entityManager->beginTransaction();
-        try {
-            $this->entityManager->persist($structureRattachCible);
-            $this->entityManager->persist($structureConcreteCible);
-            array_map(function(StructureSubstit $ss) {
-                $this->entityManager->persist($ss);
-            }, $substitutions);
-
-            $this->entityManager->flush($structureRattachCible);
-            $this->entityManager->flush($structureConcreteCible);
-            $this->entityManager->flush($substitutions);
-
-            $this->entityManager->commit();
-        } catch (Exception $e) {
-            $this->entityManager->rollback();
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
-        }
-
-        return $structureConcreteCible;
-    }
-
-    /**
-     * Met à jour en bdd la substitution existante de plusieurs structures par une autre structure.
-     *
-     * @param StructureConcreteInterface[] $structuresSources
-     * Structures à substituer (Etablissement|EcoleDoctorale|UniteRecherche
-     * @param Structure                  $structureCible Structure de subsitution existante
-     */
-    public function updateStructureSubstitutions(array $structuresSources, Structure $structureCible)
-    {
-        $source = $this->sourceService->fetchApplicationSource();
-
-        Assert::notEmpty($structuresSources, "La liste des structures à substituer ne peut être vide");
-
-        Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
-        Assert::eq(
-            $code = $source->getCode(),
-            $structureCible->getSource()->getCode(),
-            "La source de la structure de substitution doit être '$code'.");
-
-        switch (true) {
-            case ($structuresSources[0] instanceOf Etablissement):
-                Assert::allIsInstanceOf($structuresSources, Etablissement::class);
-                break;
-            case ($structuresSources[0] instanceOf EcoleDoctorale):
-                Assert::allIsInstanceOf($structuresSources, EcoleDoctorale::class);
-                break;
-            case ($structuresSources[0] instanceOf UniteRecherche):
-                Assert::allIsInstanceOf($structuresSources, UniteRecherche::class);
-                break;
-            default:
-                throw new RuntimeException("La première structure est de type non connu.");
-        }
-
-        // recherche des substitutions existantes
-        $structureSubstitsExistantes =
-            $this->getEntityManager()->getRepository(StructureSubstit::class)->findBy(['toStructure' => $structureCible]);
-
-        // détermination des substitutions à créer et à supprimer
-        $structureSubstitsExistantesParStructure = [];
-        $structuresSourcesExistantes = [];
-        /** @var StructureSubstit[] $structureSubstitsExistantes */
-        foreach ($structureSubstitsExistantes as $ss) {
-            $structureSource = $ss->getFromStructure();
-            $structuresSourcesExistantes[] = $structureSource;
-            $structureSubstitsExistantesParStructure[$structureSource->getId()] = $ss;
-        }
-        /** @var Structure[] $structuresSourcesToAdd */
-        $structuresSourcesToAdd = array_diff($structuresSources, $structuresSourcesExistantes);
-        /** @var Structure[] $structuresSourcesToRem */
-        $structuresSourcesToRem = array_diff($structuresSourcesExistantes, $structuresSources);
-
-        // enregistrement en bdd
-        $structureSubstits = [];
-        $this->getEntityManager()->beginTransaction();
-        try {
-            foreach ($structuresSourcesToAdd as $structureSource) {
-                $ss = StructureSubstit::fromStructures([$structureSource], $structureCible)[0];
-                $this->getEntityManager()->persist($ss);
-                $structureSubstits[] = $ss;
-            }
-            foreach ($structuresSourcesToRem as $structureSource) {
-                $ss = $structureSubstitsExistantesParStructure[$structureSource->getId()];
-                $this->getEntityManager()->remove($ss);
-                $structureSubstits[] = $ss;
-            }
-            $this->getEntityManager()->flush();
-            $this->getEntityManager()->commit();
-        } catch(Exception $e) {
-            $this->getEntityManager()->rollback();
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
-        }
-    }
-
-    /**
-     * Suppression en bdd des substitutions pointant vers la structure spécifiée.
-     *
-     * @param Structure $structureCible Structure de substitution (cible)
-     * @return StructureSubstit[] Substitutions supprimées
-     */
-    public function deleteStructureSubstitutions(Structure $structureCible): array
-    {
-        $source = $this->sourceService->fetchApplicationSource();
-
-        Assert::notNull($structureCible->getId(), "La structure de substitution doit exister en bdd");
-        Assert::eq(
-            $code = $source->getCode(),
-            $structureCible->getSource()->getCode(),
-            "La source de la structure de substitution doit être '$code'.");
-
-        // recherche des substitutions existantes
-        $structureSubstits =
-            $this->getEntityManager()->getRepository(StructureSubstit::class)->findBy(['toStructure' => $structureCible]);
-
-        Assert::notEmpty($structureSubstits, "Aucune substitution trouvée pour la structure cible '$structureCible'");
-
-        // enregistrement en bdd
-        $this->getEntityManager()->beginTransaction();
-        try {
-            foreach ($structureSubstits as $ss) {
-                $this->getEntityManager()->remove($ss);
-            }
-            $this->getEntityManager()->flush($structureSubstits);
-            $this->getEntityManager()->commit();
-        } catch(Exception $e) {
-            $this->getEntityManager()->rollback();
-            throw new RuntimeException("Erreur rencontrée lors de la supression des substitutions", null, $e);
-        }
-
-        return $structureSubstits;
-    }
-
-    /**
      * Fetch un type de structure à partir de son code.
      *
      * @param string $code Ex: TypeStructure::CODE_ECOLE_DOCTORALE
@@ -270,26 +63,6 @@ class StructureService extends BaseService
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => $code]);
 
         return $typeStructure;
-    }
-
-    /**
-     * @param  int $idCible
-     * @return Structure
-     */
-    public function findStructureSubsitutionCibleById($idCible): ?Structure
-    {
-        $qb = $this->getRepository()->createQueryBuilder("s")
-            ->addSelect("ss")
-            ->join("s.structuresSubstituees", "ss")
-            ->andWhere("s.id = :idCible")
-            ->setParameter("idCible", $idCible);
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie plusieurs structure cible trouvée.", 0, $e);
-        }
-
-        return $result;
     }
 
     /**
@@ -326,7 +99,7 @@ class StructureService extends BaseService
     {
         $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
             ->addSelect('substituees')
-            ->join("s.structuresSubstituees", "substituees");
+            ->join("s.substitues", "substituees");
 
         if ($codeType) {
             $qb
@@ -346,7 +119,7 @@ class StructureService extends BaseService
 
         $dictionnaire = [];
         foreach($structuresSubstituantes as $structureSubstituante) {
-            foreach ($structureSubstituante->getStructuresSubstituees() as $structure) {
+            foreach ($structureSubstituante->getSubstitues() as $structure) {
                 $dictionnaire[$structure->getId()] = $structure;
             }
         }
@@ -370,42 +143,6 @@ class StructureService extends BaseService
         $result = $this->getRepository()->findOneBy(["id" => $idCible]);
 
         return $result;
-    }
-
-    /**
-     * Retourne la structure ayant le code spécifié.
-     */
-    public function findStructureByCode(string $code): ?Structure
-    {
-        /** @var Structure|null $result */
-        $result = $this->getRepository()->findOneBy(['code' => $code]);
-
-        return $result;
-    }
-
-    /**
-     * Détruit les substitutions associées à une structure cible dans la table STRUCTURE_SUBSTIT et détruit cette structure cible.
-     *
-     * @param StructureConcreteInterface $cibleConcrete
-     */
-    public function removeSubstitution(StructureConcreteInterface $cibleConcrete)
-    {
-        $qb = $this->getEntityManager()->getRepository(StructureSubstit::class)->createQueryBuilder("ss")
-            ->andWhere("ss.toStructure = :cible")
-            ->setParameter("cible", $cibleConcrete->getStructure());
-
-        $this->getEntityManager()->beginTransaction();
-        try {
-            foreach($qb->getQuery()->getResult() as $entry) {
-                $this->getEntityManager()->remove($entry);
-            }
-            $this->getEntityManager()->remove($cibleConcrete);
-            $this->getEntityManager()->flush();
-            $this->getEntityManager()->commit();
-        } catch (ORMException $e) {
-            $this->getEntityManager()->rollback();
-            throw new RuntimeException("Problème rencontré lors de la suppression de la substitution de structures");
-        }
     }
 
     /**
@@ -448,49 +185,8 @@ class StructureService extends BaseService
         $hydrator = new DoctrineObject($this->getEntityManager());
         $hydrator->hydrate(
             $data,
-            $structure instanceof StructureConcreteInterface ? $structure->getStructure(false) : $structure
+            $structure instanceof StructureConcreteInterface ? $structure->getStructure() : $structure
         );
-    }
-
-    /**
-     * @param ?string $typeStructure
-     * @return StructureConcreteInterface[]
-     */
-    public function findStructuresConcretes(string $typeStructure = null): array
-    {
-        if ($typeStructure === null) {
-            $ecoles = $this->findStructuresConcretes(TypeStructure::CODE_ECOLE_DOCTORALE);
-            $etablissements = $this->findStructuresConcretes(TypeStructure::CODE_ETABLISSEMENT);
-            $unites = $this->findStructuresConcretes(TypeStructure::CODE_UNITE_RECHERCHE);
-
-            return array_merge($ecoles, $etablissements, $unites);
-        }
-
-        /** @var EcoleDoctoraleRepository|EtablissementRepository|UniteRechercheRepository $repo */
-        $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($typeStructure));
-
-        $qb = $repo->createQueryBuilder("s")
-            ->leftJoin("s.structure", "str")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->andWhereStructureEstNonSubstituee('str')
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
-
-        return $qb->getQuery()->getResult();
-    }
-
-    public function findStructuresBySuffixeAndType(string $identifiant, string $typeStructure): array
-    {
-        /** @var EcoleDoctoraleRepository|EtablissementRepository|UniteRechercheRepository $repo */
-        $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($typeStructure));
-
-        $qb = $repo->createQueryBuilder("structureConcrete")
-            ->andWhere("structureConcrete.sourceCode LIKE :criteria")
-            ->setParameter("criteria", "%::".$identifiant)
-            ->andWhereStructureEstNonSubstituee('structure');
-
-        return $qb->getQuery()->getResult();
     }
 
     protected function getEntityClassForType(string $type): string
@@ -511,27 +207,7 @@ class StructureService extends BaseService
     }
 
     /**
-     * Retourne les structures qui peuvent être substituées, **hydratées au format array**.
-     *
-     * @param string $type
-     * @return array[]
-     */
-    public function findStructuresSubstituablesByType(string $type): array
-    {
-        /** @var EcoleDoctoraleRepository|EtablissementRepository|UniteRechercheRepository $repo */
-        $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($type));
-
-        $qb = $repo->createQueryBuilder('structureConcrete')
-            ->leftJoin('structure.structuresSubstituees', 'structuresSubstituees')
-            ->andWhereStructureEstNonSubstituante()
-            //->andWhereStructureEstNonSubstituee()
-            ->orderBy('structure.libelle');
-
-        return $qb->getQuery()->getArrayResult();
-    }
-
-    /**
-     * Les structures non substituées.
+     * Recherche de structures concrètes par leur type.
      *
      * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
      * @param string|null $order Ex: 'libelle'
@@ -543,6 +219,15 @@ class StructureService extends BaseService
     {
         $qb = $this->findAllStructuresAffichablesByTypeQb($type, $order, $includeFermees);
 
+        // NB : il faut faire explicitement ces jointures sinon Doctrine génère à chaque ligne 3 select pour chacune des 3 relations
+        // 'one-to-one' (structure-->etablissement, structure-->ecoleDoctorale, structure-->uniteRecherche), ce qui multiplie
+        // le nombre de requêtes par 3 !
+        $qb->addSelect('se')->leftJoin('structure.etablissement', 'se');
+        $qb->addSelect('sed')->leftJoin('structure.ecoleDoctorale', 'sed');
+        $qb->addSelect('sur')->leftJoin('structure.uniteRecherche', 'sur');
+
+        $qb->addSelect('substitues')->leftJoin('structureConcrete.substitues', 'substitues');
+
         $cacheable = $cacheable && getenv('APPLICATION_ENV') === 'production';
         $qb->getQuery()->setCacheable($cacheable);
         if ($cacheable) {
@@ -553,8 +238,6 @@ class StructureService extends BaseService
     }
 
     /**
-     * Query builder pour Les structures non substituées.
-     *
      * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
      * @param string|null $order Ex: 'libelle'
      * @param bool $includeFermees
@@ -566,8 +249,8 @@ class StructureService extends BaseService
         $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($type));
 
         $qb = $repo->createQueryBuilder('structureConcrete')
-            ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')->addSelect('substitutionFrom')
-            ->andWhereStructureEstNonSubstituee();
+            ->addSelect('source')->join('structureConcrete.source', 'source')
+            ->andWhereNotHistorise('structureConcrete');
 
         if ($order) {
             $qb->orderBy('structure.estFermee , structure.' . $order);
@@ -625,8 +308,7 @@ class StructureService extends BaseService
             ->addSelect('structurec')
             ->join('structureConcrete.structure', 'structurec')
             ->andWhere('structureConcrete.id = :structureId')
-            ->setParameter('structureId', $structureId)
-            ->andWhereStructureEstNonSubstituee();
+            ->setParameter('structureId', $structureId);
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
@@ -639,61 +321,6 @@ class StructureService extends BaseService
         }
 
         return $result;
-    }
-
-    /**
-     * Identifie les structures substituables en comparant les sourceCode sans le prefixe.
-     *
-     * @param string $type
-     * @return array [$identifiant => [$sources, $cible]]
-     */
-    public function findStructuresSubstituablesSelonSourceCode(string $type): array
-    {
-        $structures = [];
-        switch($type) {
-            case (TypeStructure::CODE_ECOLE_DOCTORALE):
-                $structures = $this->getEcoleDoctoraleService()->getRepository()->findSubstituables();
-                break;
-            case (TypeStructure::CODE_ETABLISSEMENT):
-                $structures = $this->getEtablissementService()->getRepository()->findSubstituables();
-                break;
-            case (TypeStructure::CODE_UNITE_RECHERCHE):
-                $structures = $this->getUniteRechercheService()->getRepository()->findSubstituables();
-                break;
-        }
-
-        $dictionnaire = [];
-        foreach ($structures as $structure) {
-            try {
-                $identifiant = $this->sourceCodeStringHelper->removePrefixFrom($structure->getSourceCode());
-            } catch (Exception $e) {
-                $identifiant = $structure->getSourceCode();
-            }
-            if ($identifiant) {
-                $dictionnaire[$identifiant][] = $structure;
-            }
-        }
-
-        $substitutions = [];
-        foreach ($dictionnaire as $identifiant => $structures) {
-            if (count($structures) >= 2) {
-                $cible = null;
-                $substitutions[$identifiant] = [$structures, $cible];
-            }
-        }
-
-        return $substitutions;
-    }
-
-    public function getSubstitutionDictionnary(string $identifiant, string $typeStructure): array
-    {
-        $structures = $this->findStructuresBySuffixeAndType($identifiant, $typeStructure);
-        $cible = null;
-
-        return [
-            "cible" => $cible,
-            "sources" => $structures
-        ];
     }
 
     /**

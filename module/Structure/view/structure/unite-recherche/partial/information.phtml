@@ -1,0 +1,94 @@
+<?php
+/**
+ * @var \Structure\Entity\Db\UniteRecherche $entity
+ * @var \Structure\Entity\Db\EtablissementRattachement[] $etablissementsRattachements
+ * @var bool $includeGotoDetailsLink
+ */
+?>
+
+<h3>
+    Informations générales
+</h3>
+<dl>
+    <dt>Libelle :</dt>
+    <dd><?php echo $entity->getStructure()->getLibelle(); ?></dd>
+    <dt>Code :</dt>
+    <dd><?php echo $entity->getStructure()->getCode(); ?></dd>
+    <dt>Sigle :</dt>
+    <dd><?php echo $entity->getStructure()->getSigle(); ?></dd>
+    <dt>Domaines scientifiques :</dt>
+    <dd>
+        <?php if ($domaines = $entity->getDomaines()): ?>
+        <ul>
+            <?php foreach ($entity->getDomaines() as $domaineScientifique) : ?>
+                <li> <?php echo $domaineScientifique->getLibelle(); ?></li>
+            <?php endforeach; ?>
+        </ul>
+        <?php else: ?>
+            (Non renseignés)
+        <?php endif ?>
+    </dd>
+    <?php if (isset($etablissementsRattachements)): ?>
+    <dt>Établissement(s) de rattachement :</dt>
+    <dd>
+        <ul>
+            <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
+                <li> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </dd>
+    <?php endif; ?>
+    <dt>Statut :</dt>
+    <dd>
+        <?php if ($entity->getStructure()->estFermee()) : ?>
+            <span class="badge bg-danger">Structure fermée</span>
+        <?php else : ?>
+            <span class="badge bg-success">Structure ouverte</span>
+        <?php endif; ?>
+    </dd>
+</dl>
+
+<h3>
+    Informations techniques
+</h3>
+<dl>
+    <dt>Id interne :</dt>
+    <dd><?php echo $entity->getId(); ?></dd>
+    <dt>IdRef :</dt>
+    <dd>
+        <?php if ($entity->getStructure()->getIdRef() !== null and trim($entity->getStructure()->getIdRef()) !== "") : ?>
+            <?php echo $this->idrefLink($entity->getStructure()->getIdRef()); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+    <dt>Id HAL :</dt>
+    <dd>
+        <?php if ($entity->getStructure()->getIdHal() !== null and trim($entity->getStructure()->getIdHal()) !== "") : ?>
+            <?php echo $entity->getStructure()->getIdHal(); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+    </dd>
+    <dt>Identifiant RNSR :</dt>
+    <dd>
+        <?php if ($entity->getRNSR()): ?>
+            <?php echo $this->getRNSR(); ?>
+        <?php else : ?>
+            (Non renseigné)
+        <?php endif; ?>
+
+        <?php echo $entity->getRNSR(); ?></dd>
+</dl>
+
+<?php if ($entity->estHistorise()): ?>
+    <h3>
+        <span class="badge bg-danger">Historisé le <?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></span>
+    </h3>
+<?php endif ?>
+
+<?php if ($includeGotoDetailsLink ?? false): ?>
+    <a href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $entity->getId()], [], true); ?>"
+       class="action"><span class="icon icon-voir"></span> Voir la fiche détaillée de cette unité de recherche
+    </a>
+<?php endif ?>

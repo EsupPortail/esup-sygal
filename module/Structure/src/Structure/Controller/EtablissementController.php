@@ -2,10 +2,12 @@
 
 namespace Structure\Controller;
 
+use InvalidArgumentException;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -15,6 +17,7 @@ use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Util;
 
 /**
  * Class EtablissementController
@@ -27,10 +30,8 @@ class EtablissementController extends StructureConcreteController
 
     protected $codeTypeStructure = TypeStructure::CODE_ETABLISSEMENT;
 
-    /**
-     * @var string
-     */
-    protected $routeName = 'etablissement';
+    protected string $routeName = 'etablissement';
+    protected string $routeParamName = 'etablissement';
 
     /**
      * @return EtablissementService
@@ -77,46 +78,39 @@ class EtablissementController extends StructureConcreteController
 
         /** @var Etablissement $structureConcrete */
         $structureConcrete = $this->etablissementService->getRepository()->find($id);
+        if ($structureConcrete === null) {
+            throw new InvalidArgumentException("Etablissement introuvable avec cet id");
+        }
 
-        return $this->forward()->dispatch(self::class, [
-            'action' => 'information',
-            'structure' => $structureConcrete->getStructure(false)->getId(),
-        ]);
+        $vars = $this->loadInformationForStructure($structureConcrete);
+
+        return (new ViewModel($vars))
+            ->setTemplate('structure/etablissement/information');
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function informationAction(): ViewModel
+    protected function loadInformationForStructure(StructureConcreteInterface $structureConcrete): array
     {
-        $id = $this->params()->fromRoute('structure');
-        /** @var Etablissement $etablissement */
-        $etablissement = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
-        if ($etablissement === null) {
-            throw new RuntimeException("Aucun établissement ne possède l'identifiant renseigné.");
-        }
-        $contenus = $this->getStructureDocumentService()->getContenusFichiers($etablissement->getStructure());
+        $vars = parent::loadInformationForStructure($structureConcrete);
+
+        $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $roleListings = [];
         $individuListings = [];
-        $roles = $this->roleService->findRolesForStructure($etablissement->getStructure());
-        $individus = $this->roleService->findIndividuForStructure($etablissement->getStructure());
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($etablissement->getStructure());
+        $roles = $this->roleService->findRolesForStructure($structureConcrete->getStructure());
+        $individus = $this->roleService->findIndividuForStructure($structureConcrete->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
-        /** @var Role $role */
         foreach ($roles as $role) {
             if (!$role->isTheseDependant()) {
                 $roleListings [$role->getLibelle()] = 0;
             }
         }
 
-        /** @var Individu $individu */
         foreach ($individus as $individu) {
             $denomination = $individu->getNomComplet(false, false, false, true);
             $individuListings[$denomination] = [];
         }
 
-        /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
             if (!$individuRole->getRole()->isTheseDependant()) {
                 $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true);
@@ -126,11 +120,11 @@ class EtablissementController extends StructureConcreteController
             }
         }
 
-        return new ViewModel([
-            'etablissement'   => $etablissement,
+        return array_merge($vars, [
+            'etablissement'   => $structureConcrete,
             'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
-            'logoContent'     => $this->structureService->getLogoStructureContent($etablissement->getStructure()),
+            'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
             'contenus'        => $contenus,
         ]);
     }

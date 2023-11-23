@@ -31,13 +31,10 @@ class SessionRepository extends DefaultEntityRepository
             ->leftJoin($alias . '.etat', 'etat')->addSelect("etat")
             ->leftJoin($alias . '.structuresValides', 'complement')->addSelect("complement")
             ->leftJoin("complement.structure", "structureSessionInscription")->addSelect("structureSessionInscription")
-            ->andWhereStructureEstNonSubstituee('structureSessionInscription')
             ->andWhere("complement.histoDestruction IS NULL");
 
         $qb
-            ->leftJoin('site.structure', 'site_structure')->addSelect('site_structure')
-            ->leftJoinStructureSubstituante('site_structure', 'site_structureSubstituante')
-            ->leftJoinStructureSubstituante('struct', 'struct_structureSubstituante');
+            ->leftJoin('site.structure', 'site_structure')->addSelect('site_structure');
 
         return $qb;
     }
@@ -66,15 +63,15 @@ class SessionRepository extends DefaultEntityRepository
         foreach ($doctorant->getTheses() as $these) {
             if ($these->estNonHistorise() AND $these->getEtatThese() === These::ETAT_EN_COURS) {
                 if ($etablissement = $these->getEtablissement()) {
-                    $structures[] = $etablissement->getStructure(false)->getId(); // structure originale
+                    $structures[] = $etablissement->getStructure()->getId(); // structure originale
                     $structures[] = $etablissement->getStructure()->getId(); // structure substituante éventuelle
                 }
                 if ($ecoleDoctorale = $these->getEcoleDoctorale()) {
-                    $structures[] = $ecoleDoctorale->getStructure(false)->getId();
+                    $structures[] = $ecoleDoctorale->getStructure()->getId();
                     $structures[] = $ecoleDoctorale->getStructure()->getId();
                 }
                 if ($uniteRecherche = $these->getUniteRecherche()) {
-                    $structures[] = $uniteRecherche->getStructure(false)->getId();
+                    $structures[] = $uniteRecherche->getStructure()->getId();
                     $structures[] = $uniteRecherche->getStructure()->getId();
                 }
             }

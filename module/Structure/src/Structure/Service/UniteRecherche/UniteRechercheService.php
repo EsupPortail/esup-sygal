@@ -49,8 +49,7 @@ class UniteRechercheService extends BaseService
             ->join('e.structure', 's')
             ->join('er.unite', 'ur')->addSelect('ur')
             ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
-            ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
-            ->andWhereStructureEstNonSubstituee('ur_structure')
+            ->andWhereStructureIs($unite->getStructure(), 'ur_structure')
             ->orderBy('s.libelle');
 
         return $qb->getQuery()->getResult();
@@ -65,8 +64,8 @@ class UniteRechercheService extends BaseService
             ->join('er.etablissement', 'etab')->addSelect('etab')
             ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
             ->join('etab.structure', 'etab_structure')->addSelect('etab_structure')
-            ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
-            ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(), 'etab_structure')
+            ->andWhereStructureIs($unite->getStructure(), 'ur_structure')
+            ->andWhereStructureIs($etablissement->getStructure(), 'etab_structure')
             ->andWhere("er.unite = :unite")
             ->andWhere("er.etablissement = :etablissement")
             ->setParameter("unite", $unite)

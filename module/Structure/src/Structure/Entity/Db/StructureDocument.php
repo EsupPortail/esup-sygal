@@ -65,21 +65,10 @@ class StructureDocument implements HistoriqueAwareInterface {
     }
 
     /**
-     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.structure' puis 'structure.structureSubstituante'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une ; sinon la structure d'origine.
-     * @see Structure::getStructureSubstituante()
-     * @return Structure|null
+     * Retourne l'éventuelle structure liée.
      */
-    public function getStructure(bool $returnSubstitIfExists = true): ?Structure
+    public function getStructure(): ?Structure
     {
-        if ($returnSubstitIfExists && $this->structure && ($sustitut = $this->structure->getStructureSubstituante())) {
-            return $sustitut;
-        }
-
         return $this->structure;
     }
 
@@ -94,21 +83,10 @@ class StructureDocument implements HistoriqueAwareInterface {
     }
 
     /**
-     * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
-     * @see Etablissement::getEtablissementSubstituant()
-     * @return Etablissement|null
+     * Retourne l'éventuel établissement lié.
      */
-    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
+    public function getEtablissement(): ?Etablissement
     {
-        if ($returnSubstitIfExists && $this->etablissement && ($sustitut = $this->etablissement->getEtablissementSubstituant())) {
-            return $sustitut;
-        }
-
         return $this->etablissement;
     }
 

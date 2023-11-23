@@ -12,16 +12,8 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Doublons d'individus")) ?>
-
-<h1 class="page-header">
-    <span class="far fa-clone"></span>
-    <?php echo $this->translate("Doublons d'individus"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/doublon/_partial/liste', [
+    'type' => 'individu',
     'result' => $result,
     'attributes' => ['nom_patronymique' => 'Nom patronymique', 'prenom1' => 'Prénom 1', 'date_naissance' => 'Date de naissance'],
     'routeName' => 'individu/voir',

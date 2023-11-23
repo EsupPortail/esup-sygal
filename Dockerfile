@@ -6,6 +6,8 @@
 
 FROM debian:bullseye AS distrib
 
+ENV TZ="Europe/Paris"
+
 LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
 
 ARG PHP_VERSION

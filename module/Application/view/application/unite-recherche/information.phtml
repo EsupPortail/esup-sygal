@@ -142,7 +142,7 @@ $structure = $unite->getStructure();
         </div>
 
         <?php if ($canEdit): ?>
-            <a href="<?php echo $this->url('unite-recherche/modifier', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
+            <a href="<?php echo $this->url('unite-recherche/modifier', ['unite-recherche' => $unite->getId()], [], true); ?>"
                class="btn btn-primary action"><span class="icon icon-edit"></span> Modifier l'unité de recherche</a>
         <?php endif; ?>
 

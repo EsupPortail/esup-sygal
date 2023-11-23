@@ -11,6 +11,8 @@ use Structure\Entity\Db\UniteRecherche;
 use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -19,10 +21,13 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * Individu
  */
-class Individu implements HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
+class Individu implements
+    HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface,
+    SubstitutionAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use SubstitutionAwareTrait;
 
     const CIVILITE_M = 'M.';
     const CIVILITE_MME = 'Mme';
@@ -675,26 +680,15 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     }
 
     /**
-     * Retourne l'éventuel établissement lié, ou celui spécifié dans les "compléments", *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un.
-     * @see Etablissement::getEtablissementSubstituant()
-     * @return Etablissement|null
+     * Retourne l'éventuel établissement lié **ou l'établissement du complément d'individu le cas échéant**.
      */
-    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
+    public function getEtablissement(): ?Etablissement
     {
         $etablissement = $this->etablissement;
 
         $complement = $this->getComplement();
         if ($complement AND !$complement->estHistorise() AND $complement->getEtablissement() !== null) {
             $etablissement = $complement->getEtablissement();
-        }
-
-        if ($returnSubstitIfExists && $etablissement && ($sustitut = $etablissement->getEtablissementSubstituant())) {
-            return $sustitut;
         }
 
         return $etablissement;
@@ -729,26 +723,15 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     }
 
     /**
-     * Retourne l'éventuelle UR liée *ou son substitut le cas échéant*.
-     *
-     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
-     * '.uniteRecherche' puis 'uniteRecherche.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.uniteRecherche'.
-     *
-     * @param bool $returnSubstitIfExists À true, retourne l'UR substituante s'il y en a une ; sinon l'UR d'origine.
-     * @see UniteRecherche::getUniteRechercheSubstituante()
-     * @return UniteRecherche|null
+     * Retourne l'éventuelle UR liée *ou celle du complément d'individu le cas échéant*.
      */
-    public function getUniteRecherche(bool $returnSubstitIfExists = true): ?UniteRecherche
+    public function getUniteRecherche(): ?UniteRecherche
     {
         $uniteRecherche = null;
 
         $complement = $this->getComplement();
         if ($complement AND !$complement->estHistorise() AND $complement->getUniteRecherche() !== null) {
             $uniteRecherche = $complement->getUniteRecherche();
-        }
-
-        if ($returnSubstitIfExists && $uniteRecherche && ($sustitut = $uniteRecherche->getUniteRechercheSubstituante())) {
-            return $sustitut;
         }
 
         return $uniteRecherche;

@@ -1,30 +1,36 @@
 <?php
 
 use Application\View\Renderer\PhpRenderer;
+use Substitution\Constants;
 
 /**
  * @var PhpRenderer $this
+ * @var string $type
  * @var \Doctrine\DBAL\Result $result
  * @var string[] $attributes [name => label]
  * @var string $routeName
  * @var string $routeParamName
  */
 
+$tableName = (Constants::USE_TABLE_PREFIX ? 'pre_' : '') . $type;
 $null = '<span class="text-secondary">NULL</span>';
 ?>
 
-<style>
-    .npd-force {
-        font-size: 65%;
-        vertical-align: super;
-        padding-left: 0.15em;
-    }
-</style>
+<?php $this->headTitle($this->translate("Doublons : $type")) ?>
+
+<h1 class="page-header">
+    <span class="far fa-clone"></span>
+    <?php echo $this->translate("Doublons") ?> <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
 <p class="lead">
     Voici la liste des enregistrements considérés en doublon (au regard de leur
     <abbr title="Valeur calculée pour un enregistrement à partir de ses attributs discriminants et utilisé pour trouver les doublons">NPD</abbr>)
-    et non encore détectés et substitués automatiquement.
+    et non encore détectés et substitués automatiquement (ce qui ne devrait pas arriver théoriquement).
+    Si la liste n'est pas vide, vérifiez que le trigger de détection est bien activé sur la table
+    <span class="monospace"><?php echo strtoupper($tableName) ?></span>.
 </p>
 
 <?php if ($count = $result->rowCount()): ?>

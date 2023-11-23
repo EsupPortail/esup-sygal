@@ -15,9 +15,6 @@ class UniteRechercheRepository extends DefaultEntityRepository
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
         $qb = $this->_createQueryBuilder($alias);
-        $qb
-            ->addSelect('uniteRechercheSubstituante')
-            ->leftJoin("structureSubstituante.uniteRecherche", 'uniteRechercheSubstituante');
 
         return $qb;
     }
@@ -32,23 +29,12 @@ class UniteRechercheRepository extends DefaultEntityRepository
         return $this->_findAll($qb);
     }
 
-    /**
-     * @return UniteRecherche[]
-     */
-    public function findSubstituables(): array
+    public function findByStructureId($structureId, bool $nonHistorise = true): ?UniteRecherche
     {
         $qb = $this->createQueryBuilder("ur");
-
-        return $this->_findSubstituables($qb);
-    }
-
-    /**
-     * @param $structureId
-     * @return \Structure\Entity\Db\UniteRecherche|null
-     */
-    public function findByStructureId($structureId): ?UniteRecherche
-    {
-        $qb = $this->createQueryBuilder("ur");
+        if ($nonHistorise) {
+            $qb->andWhereNotHistorise('ur');
+        }
 
         return $this->_findByStructureId($qb, $structureId);
     }

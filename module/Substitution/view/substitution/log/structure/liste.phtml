@@ -13,16 +13,8 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Logs concernant les structures")) ?>
-
-<h1 class="page-header">
-    <span class="fas fa-key"></span>
-    <?php echo $this->translate("Logs concernant les structures"); ?>
-</h1>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
-
 <?php echo $this->partial('substitution/log/_partial/liste', [
+    'type' => 'structure',
     'result' => $result,
     'operations' => $operations,
     'logRoute' => 'substitution/log/structure',
