@@ -8,6 +8,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var string $type
  * @var \Doctrine\DBAL\Result $result
+ * @var int $count
  *
  * @see \Substitution\Controller\IndexController::individuAction()
  */
@@ -16,5 +17,6 @@ use Application\View\Renderer\PhpRenderer;
 <?php echo $this->partial('substitution/substitution/_partial/liste', [
     'type' => $type,
     'result' => $result,
+    'count' => $count,
     'attributes' => ['to_nom_patronymique' => 'Nom patronymique', 'to_prenom1' => 'Prénom 1', 'to_date_naissance' => 'Date de naissance'],
 ]); ?>

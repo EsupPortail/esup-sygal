@@ -7,6 +7,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  * @var \Doctrine\DBAL\Result $result
+ * @var int $count
  *
  * @see \Substitution\Controller\IndexController::doctorantAction()
  */
@@ -16,6 +17,7 @@ use Application\View\Renderer\PhpRenderer;
 <?php echo $this->partial('substitution/doublon/_partial/liste', [
     'type' => 'doctorant',
     'result' => $result,
+    'count' => $count,
     'attributes' => ['ine' => 'INE'],
     'routeName' => 'doctorant/voir',
     'routeParamName' => 'doctorant',

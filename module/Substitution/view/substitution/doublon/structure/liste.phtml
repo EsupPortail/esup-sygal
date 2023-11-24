@@ -7,6 +7,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  * @var \Doctrine\DBAL\Result $result
+ * @var int $count
  *
  * @see \Substitution\Controller\IndexController::structureAction()
  */
@@ -15,6 +16,7 @@ use Application\View\Renderer\PhpRenderer;
 <?php echo $this->partial('substitution/doublon/_partial/liste', [
     'type' => 'structure',
     'result' => $result,
+    'count' => $count,
     'attributes' => ['code' => 'Code'],
     'routeName' => null,
     'routeParamName' => null,

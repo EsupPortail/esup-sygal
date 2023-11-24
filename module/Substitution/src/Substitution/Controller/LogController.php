@@ -22,7 +22,7 @@ class LogController extends AbstractActionController
     public function individuAction(): ViewModel
     {
         return (new ViewModel([
-            'result' => $this->logService->findAllLogsIndividu($this->params()->fromQuery()),
+            'result' => $this->logService->findAllLogsIndividu($this->params()->fromQuery(), 1000),
             'operations' => $this->logService->findDistinctLogsOperationsIndividu()
         ]))->setTemplate('substitution/log/individu/liste');
     }
@@ -33,7 +33,7 @@ class LogController extends AbstractActionController
     public function doctorantAction(): ViewModel
     {
         return (new ViewModel([
-            'result' => $this->logService->findAllLogsDoctorant($this->params()->fromQuery()),
+            'result' => $this->logService->findAllLogsDoctorant($this->params()->fromQuery(), 1000),
             'operations' => $this->logService->findDistinctLogsOperationsDoctorant()
         ]))->setTemplate('substitution/log/doctorant/liste');
     }
@@ -44,7 +44,7 @@ class LogController extends AbstractActionController
     public function structureAction(): ViewModel
     {
         return (new ViewModel([
-            'result' => $this->logService->findAllLogsStructure($this->params()->fromQuery()),
+            'result' => $this->logService->findAllLogsStructure($this->params()->fromQuery(), 1000),
             'operations' => $this->logService->findDistinctLogsOperationsStructure()
         ]))->setTemplate('substitution/log/structure/liste');
     }
@@ -55,7 +55,7 @@ class LogController extends AbstractActionController
     public function etablissementAction(): ViewModel
     {
         return (new ViewModel([
-            'result' => $this->logService->findAllLogsEtablissement($this->params()->fromQuery()),
+            'result' => $this->logService->findAllLogsEtablissement($this->params()->fromQuery(), 1000),
             'operations' => $this->logService->findDistinctLogsOperationsEtablissement()
         ]))->setTemplate('substitution/log/etablissement/liste');
     }
@@ -66,7 +66,7 @@ class LogController extends AbstractActionController
     public function ecoleDoctAction(): ViewModel
     {
         return (new ViewModel([
-            'result' => $this->logService->findAllLogsEcoleDoct($this->params()->fromQuery()),
+            'result' => $this->logService->findAllLogsEcoleDoct($this->params()->fromQuery(), 1000),
             'operations' => $this->logService->findDistinctLogsOperationsEcoleDoct()
         ]))->setTemplate('substitution/log/ecole-doct/liste');
     }
@@ -77,7 +77,7 @@ class LogController extends AbstractActionController
     public function uniteRechAction(): ViewModel
     {
         return (new ViewModel([
-            'result' => $this->logService->findAllLogsUniteRech($this->params()->fromQuery()),
+            'result' => $this->logService->findAllLogsUniteRech($this->params()->fromQuery(), 1000),
             'operations' => $this->logService->findDistinctLogsOperationsUniteRech()
         ]))->setTemplate('substitution/log/unite-rech/liste');
     }

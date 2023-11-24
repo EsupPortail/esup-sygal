@@ -6,6 +6,8 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var string $type
  * @var \Doctrine\DBAL\Result $result
+ * @var int $count
+ * @var int $count
  * @var string[] $attributes [name => label]
  */
 ?>
@@ -35,8 +37,13 @@ use Application\View\Renderer\PhpRenderer;
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
-<?php if ($count = $result->rowCount()): ?>
-    <p><?php echo $count ?> substituants trouvés.</p>
+<?php if ($resultCount = $result->rowCount()): ?>
+    <p>
+        <?php echo $count ?> substituants trouvés.
+        <?php if ($count > $resultCount): ?>
+            <strong>Liste tronquée à <?php echo $resultCount ?>.</strong>
+        <?php endif; ?>
+    </p>
 
     <table class="table table-bordered table-extra-condensed">
         <tr>

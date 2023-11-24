@@ -32,10 +32,10 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllSubstitutionsIndividu(): Result
+    public function findAllSubstitutionsIndividu(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllSubstitutionsIndividu()
+            $this->generateSqlToFindAllSubstitutionsIndividu() . " limit $limit"
         );
     }
 
@@ -62,10 +62,10 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllSubstitutionsDoctorant(): Result
+    public function findAllSubstitutionsDoctorant(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllSubstitutionsDoctorant()
+            $this->generateSqlToFindAllSubstitutionsDoctorant() . " limit $limit"
         );
     }
 
@@ -92,10 +92,10 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllSubstitutionsStructure(): Result
+    public function findAllSubstitutionsStructure(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllSubstitutionsStructureAbstraite()
+            $this->generateSqlToFindAllSubstitutionsStructureAbstraite() . " limit $limit"
         );
     }
 
@@ -122,10 +122,10 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllSubstitutionsEtablissement(): Result
+    public function findAllSubstitutionsEtablissement(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllSubstitutionsStructureConcrete('etablissement')
+            $this->generateSqlToFindAllSubstitutionsStructureConcrete('etablissement') . " limit $limit"
         );
     }
 
@@ -152,10 +152,10 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllSubstitutionsEcoleDoct(): Result
+    public function findAllSubstitutionsEcoleDoct(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllSubstitutionsStructureConcrete('ecole_doct')
+            $this->generateSqlToFindAllSubstitutionsStructureConcrete('ecole_doct') . " limit $limit"
         );
     }
 
@@ -182,10 +182,10 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllSubstitutionsUniteRech(): Result
+    public function findAllSubstitutionsUniteRech(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllSubstitutionsStructureConcrete('unite_rech')
+            $this->generateSqlToFindAllSubstitutionsStructureConcrete('unite_rech') . " limit $limit"
         );
     }
 

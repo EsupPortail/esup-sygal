@@ -32,10 +32,10 @@ class DoublonService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllDoublonsIndividu(): Result
+    public function findAllDoublonsIndividu(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllDoublonsIndividu()
+            $this->generateSqlToFindAllDoublonsIndividu() . " limit $limit"
         );
     }
 
@@ -52,10 +52,10 @@ class DoublonService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllDoublonsDoctorant(): Result
+    public function findAllDoublonsDoctorant(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllDoublonsDoctorant()
+            $this->generateSqlToFindAllDoublonsDoctorant() . " limit $limit"
         );
     }
 
@@ -72,10 +72,10 @@ class DoublonService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllDoublonsStructure(): Result
+    public function findAllDoublonsStructure(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllDoublonsStructureAbstraite()
+            $this->generateSqlToFindAllDoublonsStructureAbstraite() . " limit $limit"
         );
     }
 
@@ -92,30 +92,10 @@ class DoublonService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllDoublonsEtablissement(): Result
+    public function findAllDoublonsEtablissement(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllDoublonsStructureConcrete('etablissement')
-        );
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function countAllDoublonsUniteRech(): int
-    {
-        return $this->entityManager->getConnection()->executeQuery(
-            'select count(*) nb from (' . $this->generateSqlToFindAllDoublonsStructureConcrete('ecole_doct') . ') tmp'
-        )->fetchOne();
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function findAllDoublonsEcoleDoct(): Result
-    {
-        return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllDoublonsStructureConcrete('ecole_doct')
+            $this->generateSqlToFindAllDoublonsStructureConcrete('etablissement') . " limit $limit"
         );
     }
 
@@ -125,6 +105,26 @@ class DoublonService
     public function countAllDoublonsEcoleDoct(): int
     {
         return $this->entityManager->getConnection()->executeQuery(
+            'select count(*) nb from (' . $this->generateSqlToFindAllDoublonsStructureConcrete('ecole_doct') . ') tmp'
+        )->fetchOne();
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findAllDoublonsEcoleDoct(int $limit = 100): Result
+    {
+        return $this->entityManager->getConnection()->executeQuery(
+            $this->generateSqlToFindAllDoublonsStructureConcrete('ecole_doct') . " limit $limit"
+        );
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function countAllDoublonsUniteRech(): int
+    {
+        return $this->entityManager->getConnection()->executeQuery(
             'select count(*) nb from (' . $this->generateSqlToFindAllDoublonsStructureConcrete('unite_rech') . ') tmp'
         )->fetchOne();
     }
@@ -132,10 +132,10 @@ class DoublonService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllDoublonsUniteRech(): Result
+    public function findAllDoublonsUniteRech(int $limit = 100): Result
     {
         return $this->entityManager->getConnection()->executeQuery(
-            $this->generateSqlToFindAllDoublonsStructureConcrete('unite_rech')
+            $this->generateSqlToFindAllDoublonsStructureConcrete('unite_rech') . " limit $limit"
         );
     }
 
@@ -153,7 +153,6 @@ join {$this->tablePrefix}individu pre on pre.id = d.id and pre.histo_destruction
 left join individu_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- sans substitution 
 order by d.npd, d.nom_patronymique, d.prenom1, d.date_naissance
-limit 100
 EOT;
     }
 
@@ -166,7 +165,6 @@ join {$this->tablePrefix}doctorant pre on pre.id = d.id and pre.histo_destructio
 left join doctorant_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- sans substitution 
 order by d.npd, pre.ine
-limit 100
 EOT;
     }
 
@@ -179,7 +177,6 @@ join {$this->tablePrefix}structure pre on pre.id = d.id and pre.histo_destructio
 left join structure_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
 where sub.id is null -- aucune substitution existante
 order by d.npd, d.code
-limit 100
 EOT;
     }
 
@@ -190,10 +187,9 @@ select d.npd, d.id, pre.source_code, pres.libelle
 from v_{$type}_doublon d
 join {$this->tablePrefix}{$type} pre on d.id = pre.id and pre.histo_destruction is null
 join {$this->tablePrefix}structure pres on pre.structure_id = pres.id and pres.histo_destruction is null
-left join {$type}_substit sub on d.id = sub.from_id --and sub.histo_destruction is null
-where sub.id is null -- aucune substitution existante
+left join {$type}_substit sub on d.id = sub.from_id
+where sub.id is null /* aucune substitution existante */
 order by d.npd, pres.libelle
-limit 100
 EOT;
     }
 }

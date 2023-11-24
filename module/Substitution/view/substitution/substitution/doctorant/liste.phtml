@@ -8,6 +8,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var string $type
  * @var \Doctrine\DBAL\Result $result
+ * @var int $count
  *
  * @see \Substitution\Controller\IndexController::doctorantAction()
  */
@@ -17,5 +18,7 @@ use Application\View\Renderer\PhpRenderer;
 <?php echo $this->partial('substitution/substitution/_partial/liste', [
     'type' => $type,
     'result' => $result,
+    'count' => $count,
+    'count' => $count,
     'attributes' => ['to_ine' => 'INE'],
 ]); ?>

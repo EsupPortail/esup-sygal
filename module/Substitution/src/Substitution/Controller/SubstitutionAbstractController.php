@@ -38,6 +38,7 @@ class SubstitutionAbstractController extends AbstractActionController
         $vm = new ViewModel([
             'type' => $type,
             'result' => $this->findAllSubstitutionsForType($type),
+            'count' => $this->countAllSubstitutionsForType($type),
         ]);
 
         return $vm->setTemplate("substitution/substitution/$type/liste");
@@ -99,6 +100,22 @@ class SubstitutionAbstractController extends AbstractActionController
     protected function findAllSubstitutionsForType(string $type): Result
     {
         $method = 'findAllSubstitutions' . ucfirst((new UnderscoreToCamelCase())->filter($type));
+
+        return $this->substitutionService->$method(50);
+    }
+
+    /**
+     * @see \Substitution\Service\SubstitutionService::countAllSubstitutionsStructure()
+     * @see \Substitution\Service\SubstitutionService::countAllSubstitutionsEtablissement()
+     * @see \Substitution\Service\SubstitutionService::countAllSubstitutionsEcoleDoct()
+     * @see \Substitution\Service\SubstitutionService::countAllSubstitutionsUniteRech()
+     * @see \Substitution\Service\SubstitutionService::countAllSubstitutionsIndividu()
+     * @see \Substitution\Service\SubstitutionService::countAllSubstitutionsDoctorant()
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function countAllSubstitutionsForType(string $type): int
+    {
+        $method = 'countAllSubstitutions' . ucfirst((new UnderscoreToCamelCase())->filter($type));
 
         return $this->substitutionService->$method();
     }

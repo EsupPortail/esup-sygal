@@ -12,49 +12,49 @@ class LogService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllLogsIndividu(array $params = []): Result
+    public function findAllLogsIndividu(array $params = [], int $limit = 100): Result
     {
-        return $this->_findAllLogs('individu', 1000, $params);
+        return $this->_findAllLogs('individu', $limit, $params);
     }
 
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllLogsDoctorant(array $params = []): Result
+    public function findAllLogsDoctorant(array $params = [], int $limit = 100): Result
     {
-        return $this->_findAllLogs('doctorant', 1000, $params);
+        return $this->_findAllLogs('doctorant', $limit, $params);
     }
 
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllLogsStructure(array $params = []): Result
+    public function findAllLogsStructure(array $params = [], int $limit = 100): Result
     {
-        return $this->_findAllLogs('structure', 1000, $params);
+        return $this->_findAllLogs('structure', $limit, $params);
     }
 
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllLogsEtablissement(array $params = []): Result
+    public function findAllLogsEtablissement(array $params = [], int $limit = 100): Result
     {
-        return $this->_findAllLogs('etablissement', 1000, $params);
+        return $this->_findAllLogs('etablissement', $limit, $params);
     }
 
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllLogsEcoleDoct(array $params = []): Result
+    public function findAllLogsEcoleDoct(array $params = [], int $limit = 100): Result
     {
-        return $this->_findAllLogs('ecole_doct', 1000, $params);
+        return $this->_findAllLogs('ecole_doct', $limit, $params);
     }
 
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findAllLogsUniteRech(array $params = []): Result
+    public function findAllLogsUniteRech(array $params = [], int $limit = 100): Result
     {
-        return $this->_findAllLogs('unite_rech', 1000, $params);
+        return $this->_findAllLogs('unite_rech', $limit, $params);
     }
 
     /**
