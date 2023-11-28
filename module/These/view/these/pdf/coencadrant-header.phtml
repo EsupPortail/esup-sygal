@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @var array $logos
+ */
+
+$logosComue = (isset($logos['COMUE']) && $logos['COMUE'] !== null) ? $logos['COMUE'] : null;
+$logosEtablissement = (isset($logos['ETAB']) && $logos['ETAB'] !== null) ? $logos['ETAB'] : null;
+
+?>
+
+<?php if ($logosComue) : ?>
+    <img src="<?php echo $logosComue; ?>" style="max-height:40mm; max-width:60mm;" alt="Logo de la COMUE"/>
+<?php endif; ?>
+
+
+<?php if ($logosEtablissement) : ?>
+    <img src="<?php echo $logosEtablissement; ?>" style="max-height:40mm; max-width:60mm;" alt="Logo de l'établissement"/>
+<?php endif; ?>

@@ -3,7 +3,7 @@ Journal des modifications
 
 6.0.8
 -----
-- 
+- [THESE] Ajout de logos sur le document des co-encadrements
 
 6.0.7
 -----

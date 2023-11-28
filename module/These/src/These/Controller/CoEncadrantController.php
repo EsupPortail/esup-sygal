@@ -216,9 +216,8 @@ class CoEncadrantController extends AbstractActionController
         try {
             $export->getMpdf()->SetMargins(0, 0, 60);
             //todo passer un header exploitant les logo
-//        $export->setHeaderScript('pdf/header.phtml', null, $logos);
-            $export->setHeaderScriptToNone();
-            $export->setFooterScriptToNone();
+            $export->setHeaderScript('these/pdf/coencadrant-header.phtml', null, $logos);
+            $export->setFooterScript('these/pdf/coencadrant-footer.phtml');
             $export->addBodyHtml($corps);
             return $export->export($filename);
         } catch (MpdfException $e) {
