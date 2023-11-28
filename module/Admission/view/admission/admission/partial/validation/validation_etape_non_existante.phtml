@@ -22,10 +22,8 @@ $canAjouterOperation =
         <?php
             if($validation_en_attente && $validation_en_attente == $operation->getTypeToString()){ ?>
                 <span class="icon icon-hourglass circle_waiting"></span>
-            <?php }else if(isset($dataCodirection) && $dataCodirection == 1) { ?>
+            <?php }else { ?>
                 <div class="circle"><p><?= $count ?></p></div>
-            <?php } else { ?>
-                <div class="circle"><p><?= $count++ ?></p></div>
             <?php } ?>
             <label><?php echo $operation->getTypeValidation()->getLibelle();?></label>
             <?php

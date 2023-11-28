@@ -522,7 +522,7 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
                         'operation' => $operation,
                         'count' => $count,
                         'individu' => $individu,
-                        'dataCodirection' => $dataForm['inscription']['coDirection'],
+                        'dataCodirection' => isset($dataForm['inscription']['coDirection']) ? $dataForm['inscription']['coDirection'] : null,
                         'validation_en_attente' => $validation_en_attente
                     ]);
                     $count += 1;

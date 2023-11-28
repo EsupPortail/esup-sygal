@@ -90,7 +90,10 @@ class ModuleConfig
                     self::VALIDATION_GESTIONNAIRE => true,
                     self::VALIDATION_DIRECTION_THESE => true
                 ],
-                'enabled' => null,
+                'enabled' => function(Admission $admission) {
+                    return
+                        $admission->getInscription()->first()->getCoDirection() !== null && $admission->getInscription()->first()->getCoDirection() == true;
+                },
                 'enabled_as_dql' => null,
             ],
             /**
