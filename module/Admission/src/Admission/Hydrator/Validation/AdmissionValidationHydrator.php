@@ -7,7 +7,7 @@ use Doctrine\Laminas\Hydrator\DoctrineObject;
 /**
  * @author Unicaen
  */
-class ValidationHydrator extends DoctrineObject
+class AdmissionValidationHydrator extends DoctrineObject
 {
     public function extract(object $object): array
     {

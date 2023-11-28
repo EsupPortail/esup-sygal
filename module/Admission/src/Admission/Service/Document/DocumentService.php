@@ -50,22 +50,32 @@ class DocumentService extends BaseService
     /** Gestion des entités *******************************************************************************************/
 
     /**
+     * @param Document $document
+     * @return Document
+     */
+    public function create(Document $document) : Document
+    {
+        try {
+            $this->getEntityManager()->persist($document);
+            $this->getEntityManager()->flush();
+        } catch(ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Inscription");
+        }
+
+        return $document;
+    }
+
+    /**
      * @param Admission $admission
-     * @param Fichier $fichier
+     * @param Fichier[] $fichiers
      * @return Document
      */
     public function createDocumentFromUpload(Admission $admission, array $fichiers) : Document
     {
-        $user = $this->userContextService->getIdentityDb();
-        $date = $this->getDateTime();
         $fichier = array_pop($fichiers); // il n'y a qu'un fichier
         $document = new Document();
         $document->setAdmission($admission);
         $document->setFichier($fichier);
-        $document->setHistoCreation($date);
-        $document->setHistoCreateur($user);
-        $document->setHistoModification($date);
-        $document->setHistoModificateur($user);
 
         try {
             $this->fichierService->saveFichiers([$fichier]);
@@ -84,12 +94,6 @@ class DocumentService extends BaseService
      */
     public function update(Document $document) : Document
     {
-        $user = $this->userContextService->getIdentityDb();
-        $date = $this->getDateTime();
-
-        $document->setHistoModification($date);
-        $document->setHistoModificateur($user);
-
         try {
             $this->getEntityManager()->flush($document);
         } catch (ORMException $e) {

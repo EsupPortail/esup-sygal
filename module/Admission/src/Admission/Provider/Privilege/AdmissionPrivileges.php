@@ -15,6 +15,10 @@ class AdmissionPrivileges extends Privileges {
 
     const ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-supprimer-tous-dossiers-admission';
     const ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION     = 'admission-admission-supprimer-son-dossier-admission';
+    const ADMISSION_VALIDER_TOUT = 'admission-admission-valider-tout';
+    const ADMISSION_VALIDER_SIEN = 'admission-admission-valider-sien';
+    const ADMISSION_DEVALIDER_TOUT = 'admission-admission-devalider-tout';
+    const ADMISSION_DEVALIDER_SIEN = 'admission-admission-devalider-sien';
 
 
     const ADMISSION_HISTORISER = 'admission-admission-historiser';

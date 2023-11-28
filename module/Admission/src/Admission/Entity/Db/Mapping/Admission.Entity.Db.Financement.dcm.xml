@@ -21,8 +21,8 @@
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-<!--        <one-to-many field="verificationFinancement" target-entity="Admission\Entity\Db\VerificationFinancement" mapped-by="admissionFinancement" />-->
 
+        <one-to-many field="verificationFinancement" target-entity="Admission\Entity\Db\Verification" mapped-by="financement" />
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>

@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -33,6 +34,19 @@ class Financement implements HistoriqueAwareInterface{
      * @var Admission
      */
     private $admission;
+
+    /**
+     * @var Collection
+     */
+    private $verificationFinancement;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->verificationFinancement = new ArrayCollection();
+    }
 
     /**
      * Set contratDoctoral.
@@ -138,5 +152,39 @@ class Financement implements HistoriqueAwareInterface{
     public function getAdmission()
     {
         return $this->admission;
+    }
+
+    /**
+     * Get verificationFinancement.
+     *
+     * @return Collection
+     */
+    public function getVerificationFinancement(): Collection
+    {
+        return $this->verificationFinancement;
+    }
+
+    /**
+     * Add VerificationFinancement.
+     */
+    public function addVerificationFinancement(Collection $verificationFinancements)
+    {
+//        foreach ($verificationFinancements as $vI) {
+//            if (!$this->verificationFinancement->contains($vI)) {
+//                $this->verificationFinancement->add($vI);
+//            }
+//        }
+
+        return $this;
+    }
+
+    /**
+     * Remove VerificationFinancement.
+     */
+    public function removeVerificationFinancement(Collection $verificationFinancements)
+    {
+        foreach ($verificationFinancements as $vI) {
+            $this->verificationFinancement->removeElement($vI);
+        }
     }
 }

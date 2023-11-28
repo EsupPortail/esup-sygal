@@ -1,16 +1,24 @@
 <?php
 
-use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\TypeValidation;
+use Admission\Entity\Db\Verification;
+use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\Fieldset\Validation\AdmissionValidationFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer         $this
- * @var ValidationFieldset    $fieldset
+ * @var AdmissionValidationFieldset    $fieldset
+ * @var AdmissionForm $form
+ * @var Admission $admission
+ * @var array[] $operations
  * @var string              $error
  * @var array               $dataForm
  * @var array               $documents
  */
+$form->prepare();
 $individu = $dataForm["etudiant"]["individu"];
 echo '<script>';
 echo 'var documents = ' . json_encode($documents) . ';';
@@ -24,6 +32,29 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
 </head>
 <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
 <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+<div class="modal hide fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">SyGAL - Admission</h5>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <?php
+                    if ($canVerifierAdmission) {
+                        echo "Souhaitez-vous informer l'étudiant du traitement effectué sur son dossier, afin qu'il puisse prendre en compte les modifications nécessaires ?<br>";
+                    } else {
+                        echo "Souhaitez-vous réellement transmettre votre dossier à vos gestionnaires ? <br> Si vous préférez simplement enregistrer votre dossier, cela se fera automatiquement dès que vous passerez à l'étape suivante.</p>";
+                    } ?>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success confirm-btn" data-bs-dismiss="modal">Poursuivre</button>
+                <button type="button" class="btn btn-danger cancel-btn" data-bs-dismiss="modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Pièces justificatives</h2>
@@ -212,7 +243,7 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
     </div>
     <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2) { ?>
         <div class="row subfield">
-            <div class="col informations-piecesJustificatives">
+            <div class="col informations-pieces_justificatives">
                 <p>Vous avez un autre diplôme qu'un master français (Dérogation)</p>
             </div>
         </div>
@@ -227,7 +258,7 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
     <?php } ?>
     <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 1) { ?>
         <div class="row subfield">
-            <div class="col informations-piecesJustificatives">
+            <div class="col informations-pieces_justificatives">
                 <p>Vous êtes titulaire d'un titre étranger</p>
             </div>
         </div>
@@ -324,7 +355,7 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
     <?php } ?>
     <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 2) { ?>
         <div class="row subfield">
-            <div class="col informations-piecesJustificatives">
+            <div class="col informations-pieces_justificatives">
                 <p>Vous êtes titulaire d'un diplôme français ne conférant pas le grade de master</p>
             </div>
         </div>
@@ -397,7 +428,6 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
                                 <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
                                    class="icon icon-download iconly"
                                    title="Télécharger ?"></a>
-                                
                             </div>
                         <?php } ?>
                     </div>
@@ -432,7 +462,6 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
                                 <a href="<?php echo $this->url('admission/telecharger-document',[], ['query' => ['individu'=>$individu,'codeNatureFichier' => $key]],true) ?>"
                                    class="icon icon-download iconly"
                                    title="Télécharger ?"></a>
-                                
                             </div>
                         <?php } ?>
                     </div>
@@ -441,104 +470,82 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
         <?php } ?>
     <?php } ?>
 </div>
-<?php if($canVerifierAdmission){ ?>
+
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Commentaires</h2>
     </div>
-    <div class="row observations_gestionnaire">
-        <div class="col">
-            <?php echo $fcg($fieldset->get("verificationValidation")->get('estComplet'))?>
+    <?php if ($canVerifierAdmission) { ?>
+        <div class="row observations_gestionnaire">
+            <div class="col">
+                <?php echo $fcg($fieldset->get("verificationDocument")->get('estComplet')) ?>
+            </div>
+            <div class="commentaires_gestionnaire">
+                <?php echo $fcg($fieldset->get("verificationDocument")->get('commentaire')) ?>
+            </div>
         </div>
+    <?php }else{ ?>
         <div class="commentaires_gestionnaire">
-            <?php echo $fcg($fieldset->get("verificationValidation")->get('commentaire')) ?>
+            <div class="partie_etudiant">
+                <?php
+                /** @var Verification $verification */
+                $verification = !empty($admission->getDocument()->first()) ? $admission->getDocument()->first()->getVerificationDocument()->first() : null;
+                $nom = !empty($verification) ? $verification->getIndividu()->getNomUsuel() : null;
+                $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
+                $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
+                $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
+                echo !empty($commentaire) ? "<p class='gestionnaire'>".$nom." ".$prenom." (".$date_verification.")</p><p> :  ".$commentaire." </p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
+                ?>
+            </div>
         </div>
-    </div>
+    <?php  } ?>
 </div>
-<?php } ?>
+
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Signatures</h2>
     </div>
-    <div class="attestation_honneur">
-        <div class="row subfield texte_validation_attestation_honneur">
-            <p>A la validation, mon dossier sera soumis au visa de la direction de thèse, de la co-direction (le cas échéant), de la direction de l'unité de recherche, de la direction de l'école doctorale et de la présidence de l'établissement d'inscription</p>
-        </div>
-        <div class="row subfield validation_attestation">
-            <div class="col-lg-4">
-                <?php echo $fcg($fieldset->get("validation")->get('attestationHonneurInformations')) ?>
-            </div>
-            <div class="col-lg-4 bouton_validation">
-                <?php echo $fcg($fieldset->get("validation")->get('saveAttestationHonneur')) ?>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-lg-6 col-sm-12">
-            <div class="row subfield">
-                <div class="col etape_signature">
-                    <span class="icon icon-checked circle_success"></span>
-                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationGestionnaires')) ?>
+            <?php
+                $count = 1;
+                $dossier_complet = false;
+                $conditionPassed = false;
+                $validation_en_attente = null;
+                foreach ($operations as $i => $operation):
+                    $dossier_complet = ($i == TypeValidation::CODE_VALIDATION_GESTIONNAIRE && $operation->getId()) ? true : $dossier_complet;
+                    if($operation->getId() == null && !$conditionPassed){
+                        $validation_en_attente = ($i !== TypeValidation::CODE_ATTESTATION_HONNEUR) ? $operation->getTypeToString() : null;
+                        $conditionPassed = true;
+                    }
+                    echo $this->partial('admission/partial/validation/operation-card', [
+                        'operation' => $operation,
+                        'count' => $count,
+                        'individu' => $individu,
+                        'dataCodirection' => $dataForm['inscription']['coDirection'],
+                        'validation_en_attente' => $validation_en_attente
+                    ]);
+                    $count += 1;
+                endforeach;
+            ?>
+        </div>
+        <div class="col-lg-6 col-sm-12 cardsValidation">
+            <?php if($dossier_complet){ ?>
+                <div class="card border-success mb-3 dossier_complet">
+                    <div class="card-body text-success">
+                        <i class="icon icon-information"></i>
+                        <p class="card-title">Votre dossier est complet</p>
+                    </div>
                 </div>
-            </div>
-            <div class="row subfield">
-                <div class="col etape_signature">
-                    <span class="icon icon-hourglass circle_waiting"></span>
-                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationDirecteurthese')) ?>
-                </div>
-            </div>
-            <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
-                <div class="row subfield">
-                    <div class="col etape_signature">
-                        <div class="circle"><p>3</p></div>
-                        <?php echo $this->formlabel($fieldset->get("validation")->get('validationCodirecteur')) ?>
+            <?php }
+            if ($validation_en_attente) { ?>
+                <div class="card mb-3 dossier_incomplet">
+                    <div class="card-body text-warning">
+                        <i class="icon icon-information"></i>
+                        <p class="card-title">En attente de la <?= strtolower($validation_en_attente); ?></p>
                     </div>
                 </div>
             <?php } ?>
-            <div class="row subfield">
-                <div class="col etape_signature">
-                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
-                        <div class="circle"><p>4</p></div>
-                    <?php }else{ ?>
-                        <div class="circle"><p>3</p></div>
-                    <?php } ?>
-                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationUniterecherche')) ?>
-                </div>
-            </div>
-            <div class="row subfield">
-                <div class="col etape_signature">
-                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
-                        <div class="circle"><p>5</p></div>
-                    <?php }else{ ?>
-                        <div class="circle"><p>4</p></div>
-                    <?php } ?>
-                    <?php echo $this->formlabel($fieldset->get("validation")->get('validationEcoledoctorale')) ?>
-                </div>
-            </div>
-            <div class="row subfield">
-                <div class="col etape_signature">
-                    <?php if (isset($dataForm['inscription']['coDirection']) && $dataForm['inscription']['coDirection'] == 1) { ?>
-                        <div class="circle"><p>6</p></div>
-                    <?php }else{ ?>
-                        <div class="circle"><p>5</p></div>
-                    <?php } ?>
-                    <?php echo $this->formlabel($fieldset->get("validation")->get('signaturePresident')) ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6 col-sm-12 cardsValidation">
-            <div class="card border-success mb-3 dossier_complet">
-                <div class="card-body text-success">
-                    <i class="icon icon-information"></i>
-                    <p class="card-title">Votre dossier est complet</p>
-                </div>
-            </div>
-            <div class="card mb-3 dossier_incomplet">
-                <div class="card-body text-warning">
-                    <i class="icon icon-information"></i>
-                    <p class="card-title">En attente de la validation de la direction de thèse</p>
-                </div>
-            </div>
         </div>
     </div>
 </div>

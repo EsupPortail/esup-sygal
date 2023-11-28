@@ -4,9 +4,15 @@ namespace Admission\Entity\Db;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class TypeValidation implements HistoriqueAwareInterface{
+class TypeValidation{
 
-    use HistoriqueAwareTrait;
+    const CODE_ATTESTATION_HONNEUR = 'ATTESTATION_HONNEUR';
+    const CODE_VALIDATION_GESTIONNAIRE = 'VALIDATION_GESTIONNAIRE';
+    const CODE_VALIDATION_DIRECTION_THESE = 'VALIDATION_DIRECTION_THESE';
+    const CODE_VALIDATION_CO_DIRECTION_THESE = 'VALIDATION_CO_DIRECTION_THESE';
+    const CODE_VALIDATION_UR = 'VALIDATION_UR';
+    const CODE_VALIDATION_ED = 'VALIDATION_ED';
+    const CODE_SIGNATURE_PRESIDENT = 'SIGNATURE_PRESIDENT';
 
     /**
      * @var string|null
@@ -19,14 +25,14 @@ class TypeValidation implements HistoriqueAwareInterface{
     private $libelle;
 
     /**
-     * @var string|null
-     */
-    private $detailContratDoctoral;
-
-    /**
      * @var int
      */
     private $id;
+
+    public function __toString()
+    {
+        return $this->getLibelle();
+    }
 
     /**
      * Set code.
@@ -74,30 +80,6 @@ class TypeValidation implements HistoriqueAwareInterface{
     public function getLibelle()
     {
         return $this->libelle;
-    }
-
-    /**
-     * Set detailContratDoctoral.
-     *
-     * @param string|null $detailContratDoctoral
-     *
-     * @return TypeValidation
-     */
-    public function setDetailContratDoctoral($detailContratDoctoral = null)
-    {
-        $this->detailContratDoctoral = $detailContratDoctoral;
-
-        return $this;
-    }
-
-    /**
-     * Get detailContratDoctoral.
-     *
-     * @return string|null
-     */
-    public function getDetailContratDoctoral()
-    {
-        return $this->detailContratDoctoral;
     }
 
     /**

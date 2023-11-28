@@ -1,9 +1,11 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Admission\Service\Operation\AdmissionOperationService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
+use Notification\Exception\RuntimeException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -43,10 +45,8 @@ class Admission implements HistoriqueAwareInterface{
      */
     private $inscription;
 
-    /**
-     * @var Collection
-     */
-    private $validation;
+    /** @var Collection|AdmissionValidation[] */
+    private $admissionValidations;
 
     /**
      * @var Collection
@@ -58,17 +58,26 @@ class Admission implements HistoriqueAwareInterface{
      */
     private $individu;
 
+    /** @var AdmissionValidation|null */
+    private $operationPossible = null;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->financement = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->etudiant = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->inscription = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->validation = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->document = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->financement = new ArrayCollection();
+        $this->etudiant = new ArrayCollection();
+        $this->inscription = new ArrayCollection();
+        $this->admissionValidations = new ArrayCollection();
+        $this->document = new ArrayCollection();
     }
+
+    public function __toString(): string
+    {
+        return "Dossier d'admission";
+    }
+
 
     public function getEtat(): ?Etat
     {
@@ -189,33 +198,46 @@ class Admission implements HistoriqueAwareInterface{
     /**
      * Add validation.
      */
-    public function addValidation(Collection $validations): self
+    public function getAdmissionValidationOfType(TypeValidation $typeValidation): ?AdmissionValidation
     {
-        foreach ($validations as $v) {
-            $this->validation->add($v);
+        $admissionValidations = $this->getAdmissionValidations()->filter(function(AdmissionValidation $v) use ($typeValidation) {
+            return $v->getTypeValidation() === $typeValidation;
+        });
+
+        if (count($admissionValidations) > 1) {
+            throw new \RuntimeException("Anomalie : plusieurs admissionValidations du même type trouvées");
         }
+
+        return $admissionValidations->first() ?: null;
+    }
+
+    /**
+     * @param bool $includeHistorises
+     * @return Collection
+     */
+    public function getAdmissionValidations(bool $includeHistorises = false): Collection
+    {
+        if ($includeHistorises) {
+            return $this->admissionValidations;
+        }
+
+        return $this->admissionValidations->filter(function(AdmissionValidation $v) {
+            return $v->estNonHistorise();
+        });
+    }
+
+    public function addAdmissionValidation(AdmissionValidation $validation): self
+    {
+        $this->admissionValidations->add($validation);
 
         return $this;
     }
 
-    /**
-     * Remove validation.
-     */
-    public function removeValidation(Collection $validations): void
+    public function removeAdmissionValidation(AdmissionValidation $validation): self
     {
-        foreach ($validations as $v) {
-            $this->validation->removeElement($v);
-        }
-    }
+        $this->admissionValidations->removeElement($validation);
 
-    /**
-     * Get validation.
-     *
-     * @return Collection
-     */
-    public function getValidation()
-    {
-        return $this->validation;
+        return $this;
     }
 
     /**
@@ -276,5 +298,23 @@ class Admission implements HistoriqueAwareInterface{
     public function getIndividu()
     {
         return $this->individu;
+    }
+
+    /**
+     * Injecte l'opération éventuelle qu'il est possible de réaliser sur ce dossier d'admission.
+     */
+    public function setOperationPossible(?AdmissionOperationInterface $operation = null): self
+    {
+        $this->operationPossible = $operation;
+        if ($this->operationPossible) {
+            $this->operationPossible->setAdmission($this);
+        }
+
+        return $this;
+    }
+
+    public function getOperationPossible()
+    {
+        return $this->operationPossible;
     }
 }

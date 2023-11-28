@@ -15,7 +15,7 @@ class AdmissionHydrator extends DoctrineObject
         $data['inscription'] = $object->getInscription()->first() ?: null;
         $data['financement'] = $object->getFinancement()->first() ?: null;
         $data['etudiant'] = $object->getEtudiant()->first() ?: null;
-        $data['validation'] = $object->getValidation()->first() ?: null;
+        $data['validation'] = $object->getAdmissionValidations()->first() ?: null;
         $data['document'] = $object->getDocument()->first() ?: null;
 
         return $data;

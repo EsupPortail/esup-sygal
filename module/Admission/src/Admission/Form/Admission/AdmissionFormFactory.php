@@ -18,7 +18,6 @@ class AdmissionFormFactory
     {
         /** @var AdmissionHydrator $admissionHydrator */
         $admissionHydrator = $container->get('HydratorManager')->get(AdmissionHydrator::class);
-//        $admissionHydrator = $container->get('doctrine.entitymanager.orm_default')->get(AdmissionHydrator::class);
         $form = new AdmissionForm();
         $form->setHydrator($admissionHydrator);
         $form->setObject(new Admission());

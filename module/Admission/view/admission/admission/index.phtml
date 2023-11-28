@@ -17,6 +17,7 @@ use Application\View\Renderer\PhpRenderer;
 <p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral.
     <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.<br>
 </p>
+<?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <div class="form_admission">
     <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">

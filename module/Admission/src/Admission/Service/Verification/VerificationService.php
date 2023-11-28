@@ -6,7 +6,7 @@ use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Repository\VerificationRepository;
 use Admission\Entity\Db\Verification;
-use Admission\Entity\Db\Repository\ValidationRepository;
+use Admission\Entity\Db\Repository\AdmissionValidationRepository;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -42,10 +42,8 @@ class VerificationService extends BaseService
     public function create(Verification $verification) : Verification
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $verification->setHistoModification($date);
-            $verification->setHistoModificateur($user);
+            $individu = $this->userContextService->getIdentityIndividu();
+            $verification->setIndividu($individu);
             $this->getEntityManager()->persist($verification);
             $this->getEntityManager()->flush();
         } catch(ORMException $e) {
@@ -64,10 +62,8 @@ class VerificationService extends BaseService
     public function update(Verification $verification)  :Verification
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $verification->setHistoModification($date);
-            $verification->setHistoModificateur($user);
+            $individu = $this->userContextService->getIdentityIndividu();
+            $verification->setIndividu($individu);
             $this->getEntityManager()->flush();
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Verification");

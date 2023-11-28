@@ -1,6 +1,12 @@
+DROP TABLE IF EXISTS admission_etat;
+DROP TABLE IF EXISTS admission_admission;
+DROP TABLE IF EXISTS admission_etudiant;
+DROP TABLE IF EXISTS admission_inscription;
+DROP TABLE IF EXISTS admission_financement;
+DROP TABLE IF EXISTS admission_document;
+DROP TABLE IF EXISTS admission_validation;
+DROP TABLE IF EXISTS admission_type_validation;
 
-
--- Nouvelle table
 create table IF NOT EXISTS admission_etat
 (
     code        varchar(1) not null primary key,
@@ -10,6 +16,12 @@ create table IF NOT EXISTS admission_etat
     couleur     varchar(1024),
     ordre       bigint
 );
+
+INSERT INTO admission_etat (code, libelle, description, icone, couleur, ordre)
+VALUES ('C', 'En cours', 'Dossier d''admission en cours de saisie', '', '', 1),
+       ('A', 'Abandonné', 'Dossier d''admission abandonné', '', '', 3),
+       ('V', 'Validé', 'Dossier d''admission validé', '', '', 2)
+ON CONFLICT DO NOTHING;
 
 create table IF NOT EXISTS admission_admission
 (
@@ -122,17 +134,26 @@ create table IF NOT EXISTS admission_financement
 
 create table IF NOT EXISTS admission_type_validation
 (
-    id                    bigserial                                                    not null
+    id      bigserial   not null
         primary key,
-    code                  varchar(50)                                                  not null,
-    libelle               varchar(100),
-    histo_createur_id     bigint                                                       not null REFERENCES utilisateur (id),
-    histo_creation        timestamp default ('now'::text)::timestamp without time zone not null,
-    histo_modificateur_id bigint REFERENCES utilisateur (id),
-    histo_modification    timestamp,
-    histo_destructeur_id  bigint REFERENCES utilisateur (id),
-    histo_destruction     timestamp
+    code    varchar(50) not null,
+    libelle varchar(100)
 );
+
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('ATTESTATION_HONNEUR', 'Attestation sur l''honneur de la part de l''étudiant');
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('VALIDATION_GESTIONNAIRE', 'Validation effectuée par les gestionnaires');
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('VALIDATION_DIRECTION_THESE', 'Validation par la direction de thèse');
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('VALIDATION_CO_DIRECTION_THESE', 'Validation par la codirection de thèse');
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('VALIDATION_UR', 'Validation par l''unité de recherche');
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('VALIDATION_ED', 'Validation par l''école doctorale');
+INSERT INTO admission_type_validation (code, libelle)
+VALUES ('SIGNATURE_PRESIDENT', 'Signature de la présidence de l''établissement d''inscription');
 
 create table IF NOT EXISTS admission_validation
 (
@@ -140,7 +161,7 @@ create table IF NOT EXISTS admission_validation
         primary key,
     admission_id          bigint REFERENCES admission_admission (id),
     type_validation_id    bigint                                                       not null REFERENCES admission_type_validation (id),
-    individu_id           bigint                                                       not null REFERENCES utilisateur (id),
+    individu_id           bigint                                                       not null REFERENCES individu (id),
     histo_createur_id     bigint                                                       not null REFERENCES utilisateur (id),
     histo_creation        timestamp default ('now'::text)::timestamp without time zone not null,
     histo_modificateur_id bigint REFERENCES utilisateur (id),
@@ -148,42 +169,6 @@ create table IF NOT EXISTS admission_validation
     histo_destructeur_id  bigint REFERENCES utilisateur (id),
     histo_destruction     timestamp
 );
-
-INSERT INTO admission_etat (code, libelle, description, icone, couleur, ordre)
-VALUES ('C', 'En cours', 'Dossier d''admission en cours de saisie', '', '', 1),
-       ('A', 'Abandonné', 'Dossier d''admission abandonné', '', '', 3),
-       ('V', 'Validé', 'Dossier d''admission validé', '', '', 2)
-ON CONFLICT DO NOTHING;
-
--- Changement de nom de la colonne etat_id en etat_code
-DO
-$$
-    BEGIN
-        IF EXISTS (SELECT 1
-                   FROM information_schema.columns
-                   WHERE table_name = 'admission_admission'
-                     AND column_name = 'etat_id') THEN
-            ALTER TABLE admission_admission
-                RENAME COLUMN etat_id TO etat_code;
-        END IF;
-    END
-$$;
-
--- Création de la clé étrangère d'admission_admission(etat_code) vers admission_etat(code)
-DO
-$$
-    BEGIN
-        IF NOT EXISTS (SELECT 1
-                       FROM information_schema.table_constraints
-                       WHERE table_name = 'admission_admission'
-                         AND constraint_name = 'fk_admission_etat') THEN
-            ALTER TABLE admission_admission
-                ADD CONSTRAINT fk_admission_etat
-                    FOREIGN KEY (etat_code)
-                        REFERENCES admission_etat (code);
-        END IF;
-    END
-$$;
 
 create table IF NOT EXISTS admission_document
 (
@@ -276,7 +261,15 @@ with d(ordre, code, lib) as (select 1,
                              union
                              select 6, 'admission-supprimer-son-dossier-admission', 'Supprimer son dossier d''admission'
                              union
-                             select 7, 'admission-verifier', 'Ajouter des commentaires au dossier d''admission')
+                             select 7, 'admission-verifier', 'Ajouter des commentaires au dossier d''admission'
+                             union
+                             select 8, 'admission-valider-tout', 'Valider un dossier d''admission'
+                             union
+                             select 9, 'admission-valider-sien', 'Valider son dossier d''admission'
+                             union
+                             select 10, 'admission-devalider-tout', 'Dévalider son dossier d''admission'
+                             union
+                             select 11, 'admission-devalider-sien', 'Dévalider un dossier d''admission')
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
          join CATEGORIE_PRIVILEGE cp on cp.CODE = 'admission'
@@ -306,12 +299,25 @@ with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-a
                            union
                            select 'admission', 'admission-supprimer-son-dossier-admission'
                            union
+                           select 'admission', 'admission-valider-tout'
+                           union
+                           select 'admission', 'admission-valider-sien'
+                           union
+                           select 'admission', 'admission-devalider-tout'
+                           union
+                           select 'admission', 'admission-devalider-sien'
+                           union
                            select 'admission', 'admission-verifier')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
                                            'ADMIN_TECH',
-                                           'GEST_ED'
+                                           'GEST_ED',
+                                           'GEST_UR',
+                                           'RESP_UR',
+                                           'RESP_ED',
+                                           'D',
+                                           'K'
     )
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
@@ -324,7 +330,11 @@ with data(categ, priv) as (select 'admission', 'admission-lister-son-dossier-adm
                            union
                            select 'admission', 'admission-modifier-modifier-son-dossier-admission'
                            union
-                           select 'admission', 'admission-supprimer-son-dossier-admission')
+                           select 'admission', 'admission-supprimer-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-valider-sien'
+                           union
+                           select 'admission', 'admission-devalider-sien')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (

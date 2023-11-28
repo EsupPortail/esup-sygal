@@ -36,6 +36,17 @@ class DocumentRepository extends DefaultEntityRepository{
         return $queryBuilder->getQuery()->getSingleResult();
     }
 
+    public function findOneWhereNoFichierByAdmission($admission)
+    {
+        $queryBuilder = $this->createQueryBuilder('d')
+            ->leftJoin('d.fichier', 'f') // Utilisation de leftJoin pour récupérer les entités sans fichier
+            ->where('d.admission = :admission_id')
+            ->andWhere('d.fichier IS NULL') // Utilisation de IS NULL pour filtrer les résultats sans fichier
+            ->setParameter('admission_id', $admission->getId());
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function fetchNatureFichier($code): ?NatureFichier
     {
         /** @var ?NatureFichier $nature */

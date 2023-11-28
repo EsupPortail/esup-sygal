@@ -4,7 +4,7 @@ namespace Admission\Service\Notification;
 
 trait NotificationFactoryAwareTrait
 {
-    private NotificationFactory $notificationFactory;
+    protected NotificationFactory $notificationFactory;
 
     public function getNotificationFactory(): NotificationFactory
     {

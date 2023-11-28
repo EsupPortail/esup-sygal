@@ -29,8 +29,6 @@ class AdmissionAbstractController extends AbstractActionController
             return $response;
         }
 
-        $form->prepare(); // requis
-
         return new ViewModel($response);
     }
 

@@ -1,0 +1,30 @@
+<?php
+/**
+ * @var AdmissionOperationInterface $operation
+ * @var int $count
+ * @var int $individu
+ * @var string $validation_en_attente
+ */
+
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\AdmissionValidation;
+
+if ($operation instanceof AdmissionValidation) {
+    if ($operation->getId() !== null) {
+        echo $this->partial('admission/partial/validation/validation_etape_existante', [
+            'operation' => $operation,
+            'count' => $count,
+            'individu' => $individu,
+        ]);
+    } else {
+        echo $this->partial('admission/partial/validation/validation_etape_non_existante', [
+            'operation' => $operation,
+            'count' => $count,
+            'individu' => $individu,
+            'dataCodirection' => $dataCodirection,
+            'validation_en_attente' => $validation_en_attente
+        ]);
+    }
+} else {
+    throw new InvalidArgumentException("Type inattendu");
+}

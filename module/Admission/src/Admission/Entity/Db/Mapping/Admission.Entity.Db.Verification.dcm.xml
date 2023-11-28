@@ -20,7 +20,7 @@
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="etudiant" target-entity="Admission\Entity\Db\Etudiant" inversed-by="verificationEtudiant">
+        <many-to-one field="etudiant" target-entity="Admission\Entity\Db\Etudiant">
             <join-column name="ADMISSION_ETUDIANT_ID" referenced-column-name="ID"/>
         </many-to-one>
         <many-to-one field="inscription" target-entity="Admission\Entity\Db\Inscription">

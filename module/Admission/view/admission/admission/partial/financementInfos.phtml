@@ -1,5 +1,8 @@
 <?php
 
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Verification;
+use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -7,10 +10,12 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer         $this
  * @var FinancementFieldset    $fieldset
+ * @var AdmissionForm $form
+ * @var Admission $admission
  * @var string              $error
  *
  */
-
+$form->prepare();
 $fcg = $this->formControlGroup();
 $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
 ?>
@@ -42,18 +47,32 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
         </div>
     </div>
 </div>
-<?php if($canVerifierAdmission){ ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Commentaires</h2>
     </div>
-    <div class="row observations_gestionnaire">
-        <div class="col">
-            <?php echo $fcg($fieldset->get("verificationFinancement")->get('estComplet'))?>
+    <?php if ($canVerifierAdmission) { ?>
+        <div class="row observations_gestionnaire">
+            <div class="col">
+                <?php echo $fcg($fieldset->get("verificationFinancement")->get('estComplet')) ?>
+            </div>
+            <div class="commentaires_gestionnaire">
+                <?php echo $fcg($fieldset->get("verificationFinancement")->get('commentaire')) ?>
+            </div>
         </div>
+    <?php }else{ ?>
         <div class="commentaires_gestionnaire">
-            <?php echo $fcg($fieldset->get("verificationFinancement")->get('commentaire')) ?>
+            <div class="partie_etudiant">
+                <?php
+                /** @var Verification $verification */
+                $verification = !empty($admission->getFinancement()->first()) ? $admission->getFinancement()->first()->getVerificationFinancement()->first() : null;
+                $nom = !empty($verification) ? $verification->getIndividu()->getNomUsuel() : null;
+                $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
+                $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
+                $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
+                echo !empty($commentaire) ? "<p class='gestionnaire'>".$nom." ".$prenom." (".$date_verification.")</p><p> :  ".$commentaire." </p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
+                ?>
+            </div>
         </div>
-    </div>
+    <?php  } ?>
 </div>
-<?php } ?>

@@ -2,6 +2,7 @@
 namespace Admission\Controller;
 
 use Admission\Form\Admission\AdmissionForm;
+use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
@@ -9,7 +10,8 @@ use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
-use Admission\Service\Validation\ValidationService;
+use Admission\Service\TypeValidation\TypeValidationService;
+use Admission\Service\Validation\AdmissionValidationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
 use Fichier\Entity\Db\VersionFichier;
@@ -47,7 +49,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $individuService = $container->get(IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $financementService = $container->get(FinancementService::class);
-        $validationService = $container->get(ValidationService::class);
+        $admissionValidationService = $container->get(AdmissionValidationService::class);
         $verificationService = $container->get(VerificationService::class);
         $admissionService = $container->get(AdmissionService::class);
         $disciplineService = $container->get(DisciplineService::class);
@@ -58,7 +60,11 @@ class AdmissionControllerFactory implements FactoryInterface
         $documentService = $container->get(DocumentService::class);
         $versionFichierService = $container->get(VersionFichierService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        /** @var TypeValidationService $typeValidationService */
+        $typeValidationService = $container->get(TypeValidationService::class);
 
+        /** @var AdmissionOperationRule $admissionOperationRule */
+        $admissionOperationRule = $container->get(AdmissionOperationRule::class);
 
         /**
          * @var AdmissionForm $etudiantForm
@@ -71,8 +77,9 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setEtudiantService($etudiantService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setIndividuService($individuService);
+        $controller->setTypeValidationService($typeValidationService);
         $controller->setFinancementService($financementService);
-        $controller->setValidationService($validationService);
+        $controller->setAdmissionValidationService($admissionValidationService);
         $controller->setVerificationService($verificationService);
         $controller->setAdmissionService($admissionService);
         $controller->setDisciplineService($disciplineService);
@@ -84,6 +91,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setDocumentService($documentService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setAdmissionForm($admissionForm);
+        $controller->setAdmissionOperationRule($admissionOperationRule);
 
         return $controller;
     }

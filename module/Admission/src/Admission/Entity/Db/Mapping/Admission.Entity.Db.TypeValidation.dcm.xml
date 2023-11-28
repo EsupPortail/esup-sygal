@@ -10,27 +10,5 @@
 
         <field name="code" type="string" column="CODE" length="50" nullable="true"/>
         <field name="libelle" type="string" column="LIBELLE" length="100" nullable="true"/>
-        <field name="detailContratDoctoral" type="string" column="DETAIL_CONTRAT_DOCTORAL" length="1024"
-               nullable="true"/>
-
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-
-        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
-            <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
-            <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
-            <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
     </entity>
 </doctrine-mapping>

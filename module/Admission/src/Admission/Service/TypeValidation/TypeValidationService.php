@@ -41,10 +41,6 @@ class TypeValidationService extends BaseService
     public function create(TypeValidation $typeTypeValidation) : TypeValidation
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $typeTypeValidation->setHistoModification($date);
-            $typeTypeValidation->setHistoModificateur($user);
             $this->getEntityManager()->persist($typeTypeValidation);
             $this->getEntityManager()->flush($typeTypeValidation);
         } catch(ORMException $e) {
@@ -54,8 +50,6 @@ class TypeValidationService extends BaseService
         return $typeTypeValidation;
     }
 
-
-
     /**
      * @param TypeValidation $typeTypeValidation
      * @return TypeValidation
@@ -63,10 +57,6 @@ class TypeValidationService extends BaseService
     public function update(TypeValidation $typeTypeValidation)  :TypeValidation
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $typeTypeValidation->setHistoModification($date);
-            $typeTypeValidation->setHistoModificateur($user);
             $this->getEntityManager()->flush($typeTypeValidation);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un TypeValidation");
@@ -133,4 +123,22 @@ class TypeValidationService extends BaseService
         $typeTypeValidation = $this->getRepository()->find($id);
         return $typeTypeValidation;
     }
+
+    /**
+     * Fetch le type de validation spécifié par son code.
+     *
+     * @param string $code
+     * @return TypeValidation
+     */
+    public function findTypeValidationByCode(string $code): TypeValidation
+    {
+        /** @var TypeValidation $type */
+        $type = $this->getRepository()->findOneBy(['code' => $code]);
+        if ($type === null) {
+            throw new RuntimeException("Type de validation introuvable avec ce code : " . $code);
+        }
+
+        return $type;
+    }
+
 }

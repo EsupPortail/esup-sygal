@@ -1,0 +1,49 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Laminas\Form\ElementInterface;
+
+/**
+ * @var int $count
+ * @var AdmissionValidation $operation
+ * @var int $individu
+ * @var string $validation_en_attente
+ */
+
+$canAjouterOperation =
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_VALIDER_SIEN) ||
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_VALIDER_TOUT);
+//$canAjouterOperation = true;
+?>
+<div class="row subfield">
+    <div class="col etape_signature">
+        <?php
+            if($validation_en_attente && $validation_en_attente == $operation->getTypeToString()){ ?>
+                <span class="icon icon-hourglass circle_waiting"></span>
+            <?php }else if(isset($dataCodirection) && $dataCodirection == 1) { ?>
+                <div class="circle"><p><?= $count ?></p></div>
+            <?php } else { ?>
+                <div class="circle"><p><?= $count++ ?></p></div>
+            <?php } ?>
+            <label><?php echo $operation->getTypeValidation()->getLibelle();?></label>
+            <?php
+            $returnUrl = $this->url('admission/ajouter', ['action' => "document",
+                    'individu' => $individu]
+            );
+            if($canAjouterOperation){
+            ?>
+            <a href="<?php echo $this->url('admission/valider', [
+                'admission' => $operation->getAdmission()->getId(),
+                'typeValidation' => $operation->getTypeValidation()->getId(),
+            ], [
+                'query' => ['redirect' => $returnUrl],
+            ]) ?>"
+           class="card-link btn btn-success btn-sm action"
+           title="Valider ce rapport ?"
+           data-toggle="confirmationx"
+           data-message="Confirmez-vous la validation de ce dossier d'admission ? Do you confirm the validation of this admission form?">Valider</span></a>
+        <?php } ?>
+    </div>
+</div>

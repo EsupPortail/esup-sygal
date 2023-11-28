@@ -49,6 +49,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     public function setSpecialites(array $specialites): void
     {
         $this->specialites = $specialites;
+        $this->get('specialiteDoctorat')->setEmptyOption('Sélectionnez une option');
         $this->get('specialiteDoctorat')->setValueOptions($this->specialites);
     }
 
@@ -60,6 +61,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             $options[$ecole->getId()] = $ecole->getStructure()->getLibelle();
         }
         $this->ecolesDoctorales = $options;
+        $this->get('ecoleDoctorale')->setEmptyOption('Sélectionnez une option');
         $this->get('ecoleDoctorale')->setValueOptions($this->ecolesDoctorales);
     }
 
@@ -71,6 +73,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             $options[$unite->getId()] = $unite->getStructure()->getLibelle();
         }
         $this->unitesRecherche = $options;
+        $this->get('uniteRecherche')->setEmptyOption('Sélectionnez une option');
         $this->get('uniteRecherche')->setValueOptions($this->unitesRecherche);
     }
 

@@ -26,8 +26,8 @@ class VerificationHydrator extends DoctrineObject
      */
     public function hydrate(array $data, object $object): object
     {
-        $estComplet = isset($data['estComplet']) ? $data['estComplet']:null;
-        if((isset($data['commentaire']) && trim($data['commentaire']) !== '') && ($estComplet !== null && $estComplet == false)){
+        $data['estComplet'] = isset($data['estComplet']) ? $data['estComplet']:null;
+        if((isset($data['commentaire']) && trim($data['commentaire']) !== '') && ($data['estComplet'] !== null && !$data['estComplet'])){
             $data['commentaire'] = trim($data['commentaire']);
         }else{
             $data['commentaire'] = null;

@@ -6,7 +6,7 @@ use Admission\Service\Document\DocumentService;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Inscription\InscriptionService;
-use Admission\Service\Validation\ValidationService;
+use Admission\Service\Validation\AdmissionValidationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
@@ -33,7 +33,7 @@ class AdmissionServiceFactory {
         $etudiantService = $container->get(EtudiantService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $financementService = $container->get(FinancementService::class);
-        $validationService = $container->get(ValidationService::class);
+        $admissionValidationService = $container->get(AdmissionValidationService::class);
         $documentService = $container->get(DocumentService::class);
         $userContextService = $container->get('UserContextService');
 
@@ -48,7 +48,7 @@ class AdmissionServiceFactory {
         $service->setEtudiantService($etudiantService);
         $service->setInscriptionService($inscriptionService);
         $service->setFinancementService($financementService);
-        $service->setValidationService($validationService);
+        $service->setAdmissionValidationService($admissionValidationService);
         $service->setDocumentService($documentService);
         $service->setUserContextService($userContextService);
         $service->setSourceCodeStringHelper($sourceCodeStringHelper);

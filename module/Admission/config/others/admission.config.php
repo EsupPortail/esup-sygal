@@ -53,7 +53,7 @@ return array(
 //            EtudiantFieldset::class => InvokableFactory::class,
 //            InscriptionFieldset::class => InvokableFactory::class,
 //            FinancementFieldset::class => InvokableFactory::class,
-//            ValidationFieldset::class => InvokableFactory::class
+//            AdmissionValidationFieldset::class => InvokableFactory::class
         ],
     ],
 

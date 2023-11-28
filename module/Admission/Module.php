@@ -2,11 +2,32 @@
 
 namespace Admission;
 
+use Admission\Event\AdmissionEventListener;
+use Admission\Event\Validation\AdmissionValidationEventListener;
 use Laminas\Config\Factory as ConfigFactory;
+use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 
 class Module
 {
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function onBootstrap(MvcEvent $e)
+    {
+        $eventManager = $e->getApplication()->getEventManager();
+
+        $container = $e->getApplication()->getServiceManager();
+
+//        /** @var AdmissionEventListener $admissionListener */
+//        $admissionListener = $container->get(AdmissionEventListener::class);
+//        $admissionListener->attach($eventManager);
+        
+//        /** @var AdmissionValidationEventListener $admissionValidationListener */
+//        $admissionValidationListener = $container->get(AdmissionValidationEventListener::class);
+//        $admissionValidationListener->attach($eventManager);
+    }
     public function getConfig()
     {
         $paths = array_merge(

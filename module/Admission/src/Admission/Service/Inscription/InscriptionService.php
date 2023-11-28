@@ -39,10 +39,6 @@ class InscriptionService extends BaseService
     public function create(Inscription $inscription) : Inscription
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $inscription->setHistoModification($date);
-            $inscription->setHistoModificateur($user);
             $this->getEntityManager()->persist($inscription);
             $this->getEntityManager()->flush();
         } catch(ORMException $e) {
@@ -52,8 +48,6 @@ class InscriptionService extends BaseService
         return $inscription;
     }
 
-
-
     /**
      * @param Inscription $inscription
      * @return Inscription
@@ -61,10 +55,6 @@ class InscriptionService extends BaseService
     public function update(Inscription $inscription)  :Inscription
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $inscription->setHistoModification($date);
-            $inscription->setHistoModificateur($user);
             $this->getEntityManager()->flush($inscription);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Inscription");

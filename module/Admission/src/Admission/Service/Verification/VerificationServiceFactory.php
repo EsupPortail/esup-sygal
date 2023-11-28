@@ -2,7 +2,6 @@
 
 namespace Admission\Service\Verification;
 
-use Admission\Service\Validation\ValidationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;

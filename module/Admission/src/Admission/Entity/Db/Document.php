@@ -1,6 +1,8 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -29,6 +31,19 @@ class Document implements HistoriqueAwareInterface{
      * @var Fichier
      */
     private $fichier;
+
+    /**
+     * @var Collection
+     */
+    private $verificationDocument;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->verificationDocument = new ArrayCollection();
+    }
 
     /**
      * Get id.
@@ -110,5 +125,39 @@ class Document implements HistoriqueAwareInterface{
     public function getFichier()
     {
         return $this->fichier;
+    }
+
+    /**
+     * Get verificationDocument.
+     *
+     * @return Collection
+     */
+    public function getVerificationDocument(): Collection
+    {
+        return $this->verificationDocument;
+    }
+
+    /**
+     * Add VerificationInscription.
+     */
+    public function addVerificationDocument(Collection $verificationDocuments)
+    {
+//        foreach ($verificationDocuments as $vD) {
+//            if (!$this->verificationDocument->contains($vD)) {
+//                $this->verificationDocument->add($vD);
+//            }
+//        }
+
+        return $this;
+    }
+
+    /**
+     * Remove VerificationInscription.
+     */
+    public function removeVerificationDocument(Collection $verificationDocuments)
+    {
+        foreach ($verificationDocuments as $vD) {
+            $this->verificationDocument->removeElement($vD);
+        }
     }
 }

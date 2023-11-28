@@ -1056,7 +1056,7 @@ class Etudiant implements HistoriqueAwareInterface{
      *
      * @return Collection
      */
-    public function getVerificationEtudiant()
+    public function getVerificationEtudiant(): ArrayCollection|Collection
     {
         return $this->verificationEtudiant;
     }

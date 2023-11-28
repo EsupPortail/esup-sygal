@@ -7,7 +7,7 @@ use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
-use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Admission\Form\Fieldset\Validation\AdmissionValidationFieldset;
 use Laminas\Form\Element\Collection;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Form\MultipageForm;
@@ -33,14 +33,9 @@ class AdmissionForm extends MultipageForm
         $financementFieldset->setName("financement");
         $this->add($financementFieldset);
 
-//        $validationFieldset = $this->getFormFactory()->getFormElementManager()->get(ValidationFieldset::class);
-//        $validationFieldset->setName("validation");
-//        $this->add($validationFieldset);
-
         $documentFieldset = $this->getFormFactory()->getFormElementManager()->get(DocumentFieldset::class);
         $documentFieldset->setName("document");
         $this->add($documentFieldset);
-
 
 //        $this->addConfirmFieldset();
 
@@ -52,22 +47,22 @@ class AdmissionForm extends MultipageForm
     protected function createNavigationFieldsetPrototype()
     {
         $navigationElement = MultipageFormNavFieldset::create();
-
+        $navigationElement->setCancelEnabled(false);
         $nextButton = $navigationElement->getNextButton();
         $prevButton = $navigationElement->getPreviousButton();
-        $cancelButton = $navigationElement->getCancelButton();
         $submitButton = $navigationElement->getSubmitButton();
         $confirmButton = $navigationElement->getConfirmButton();
+        $cancelButton = $navigationElement->getCancelButton();
 
         // ajouts de classes CSS
         $nextButton->setAttribute('class', $nextButton->getAttribute('class') . ' btn btn-primary');
         $nextButton->setValue('Suivant et enregistrer >');
 
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
-        $cancelButton->setAttribute('class', $cancelButton->getAttribute('class') . ' btn btn-danger');
         $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
-        $submitButton->setValue('Envoyer aux gestionnaires');
+        $submitButton->setValue('Terminer');
         $confirmButton->setAttribute('class', $confirmButton->getAttribute('class') . ' btn btn-success');
+        $cancelButton->setAttribute('class', $confirmButton->getAttribute('class') . ' visually-hidden');
 
         return $navigationElement;
     }

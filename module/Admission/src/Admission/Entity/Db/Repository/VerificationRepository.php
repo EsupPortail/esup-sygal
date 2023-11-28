@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db\Repository;
 
+use Admission\Entity\Db\Document;
 use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Inscription;
@@ -31,7 +32,7 @@ class VerificationRepository extends DefaultEntityRepository{
     }
 
     /**
-     * Recherche d'un fieldset Verification à partir d'un fieldset Inscription.
+     * Recherche d'un fieldset Verification à partir d'un fieldset Financement.
      *
      * @param Financement $financement
      * @return Verification|null
@@ -40,4 +41,17 @@ class VerificationRepository extends DefaultEntityRepository{
     {
         return $this->findOneBy(['financement' => $financement]);
     }
+
+    /**
+     * Recherche d'un fieldset Verification à partir d'un fieldset Document.
+     *
+     * @param Document $document
+     * @return Verification|null
+     */
+    public function findOneByDocument(Document $document): Verification|null
+    {
+        return $this->findOneBy(['document' => $document]);
+    }
+
+
 }

@@ -8,7 +8,7 @@ use Admission\Service\Document\DocumentServiceAwareTrait;
 use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
-use Admission\Service\Validation\ValidationServiceAwareTrait;
+use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Application\Application\Form\Hydrator\IndividuRecrutementObject;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -30,7 +30,7 @@ class AdmissionService extends BaseService
     use EtudiantServiceAwareTrait;
     use InscriptionServiceAwareTrait;
     use FinancementServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use AdmissionValidationServiceAwareTrait;
     use DocumentServiceAwareTrait;
 
     /**
@@ -65,9 +65,9 @@ class AdmissionService extends BaseService
     {
         try {
             $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $admission->setHistoModification($date);
-            $admission->setHistoModificateur($user);
+//            $user = $this->userContextService->getIdentityDb();
+//            $admission->setHistoModification($date);
+//            $admission->setHistoModificateur($user);
             $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->flush($admission);
         } catch(ORMException $e) {
@@ -85,9 +85,9 @@ class AdmissionService extends BaseService
     {
         try {
             $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $admission->setHistoModification($date);
-            $admission->setHistoModificateur($user);
+//            $user = $this->userContextService->getIdentityDb();
+//            $admission->setHistoModification($date);
+//            $admission->setHistoModificateur($user);
             $this->getEntityManager()->flush($admission);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Admission");

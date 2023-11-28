@@ -1,27 +1,3 @@
-//ajouter une div englobant les boutons de navigations du formulaire
-function englob_nav(type_formulaire){
-    const boutons = [
-        'next',
-        'previous',
-        'cancel',
-        'submit'
-    ];
-
-    const divParent = document.createElement('div');
-    divParent.classList.add("nav_formulaire");
-
-    boutons.forEach(function(bouton) {
-        const boutonElement = document.querySelector('input[name="' + type_formulaire + '[_nav][_' + bouton + ']"]');
-
-        if (boutonElement) {
-            divParent.appendChild(boutonElement);
-        }
-    });
-
-    const container = document.querySelector('form');
-    container.appendChild(divParent);
-}
-
 //fonction affichant ou non les div en fonction de boutons radios
 function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
     radiobutton.forEach(function (radio) {
@@ -40,13 +16,6 @@ function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
 }
 const currentUrl = window.location.href;
 document.addEventListener("DOMContentLoaded", function() {
-    const parts = currentUrl.split("/");
-    const typeFormulaire = parts[parts.length - 1];
-
-    setTimeout(function () {
-        englob_nav(typeFormulaire); // Appel de la fonction avec les arguments
-    }, 100);
-
     //permet de afficher/cacher le textarea observations pour le gestionnaire
     const commentairesDiv = document.querySelector(".commentaires_gestionnaire");
     const radioButtons = document.querySelectorAll('.observations_gestionnaire .multicheckbox input[type="radio"]');
@@ -103,21 +72,6 @@ setTimeout(function () {
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            let i;
-            const inputElements = document.querySelectorAll('input');
-
-            for (i = 0; i < inputElements.length; i++) {
-                const input = inputElements[i];
-
-                if (((input.type !== 'radio' && input.type !== 'submit') && input.value.trim() !== '') || input.type === 'radio' && input.checked) {
-                    break;
-                }
-            }
-
-            if (i === inputElements.length) {
-                $('.modal').modal('show');
-            }
-
             diplomeRadios.forEach(function (radio) {
                 if (radio.checked && radio.value === "1") {
                     additionalFieldsDiplome.style.display = 'block';
@@ -222,6 +176,7 @@ setTimeout(function () {
                             });
                         }
                     },
+                    beforeRemoveFile: function () { return confirm("Êtes-vous sûr de vouloir supprimer ce fichier ?"); },
                     labelFileProcessingError: () => {
                         return serverResponse.errors;
                     },
@@ -264,10 +219,26 @@ setTimeout(function () {
                     pond.addFiles([fichier]);
                 }
             });
+
+            const submitButton = document.querySelector('input[name="document[_nav][_submit]"]');
+            var count = 0;
+            if (submitButton) {
+                submitButton.addEventListener('click', function(event) {
+                    if(count === 0){
+                        event.preventDefault();
+                        $('.modal').modal('show');
+                    }
+
+                    $('.modal').on('click', '.confirm-btn', function() {
+                        count = 1;
+                        $(submitButton).click();
+                    });
+                });
+            }
+
         });
     }
 }, 100)
-
 
 $(document).ready(function () {
     if (currentUrl.indexOf("/inscription") !== -1) {

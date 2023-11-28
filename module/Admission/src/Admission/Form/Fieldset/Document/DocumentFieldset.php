@@ -1,7 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Document;
 
-use Admission\Form\Fieldset\Validation\ValidationFieldset;
+use Admission\Form\Fieldset\Validation\AdmissionValidationFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
@@ -99,12 +99,8 @@ class DocumentFieldset extends Fieldset implements InputFilterProviderInterface
         );
 
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
-        $verificationFieldset->setName("verificationValidation");
+        $verificationFieldset->setName("verificationDocument");
         $this->add($verificationFieldset);
-
-        $validationFieldset = $this->getFormFactory()->getFormElementManager()->get(ValidationFieldset::class);
-        $validationFieldset->setName("validation");
-        $this->add($validationFieldset);
     }
 
     /**
@@ -112,159 +108,6 @@ class DocumentFieldset extends Fieldset implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification(): array
     {
-        return [
-//            'diplomeBac' => [
-//                'name' => 'diplomeBac',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'curicculumVitae' => [
-//                'name' => 'curicculumVitae',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'financement' => [
-//                'name' => 'financement',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'projetThese' => [
-//                'name' => 'projetThese',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'exemplairesConvention' => [
-//                'name' => 'exemplairesConvention',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'exemplairesCharteDoctorat' => [
-//                'name' => 'exemplairesCharteDoctorat',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'diplomesRelevesNotesTraduits' => [
-//                'name' => 'diplomesRelevesNotesTraduits',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'argumentaireDirecteurThese' => [
-//                'name' => 'argumentaireDirecteurThese',
-//                'required' => false,
-//                'filters' => [
-//                    ['name' => StripTags::class],
-//                    ['name' => StringTrim::class],
-//                ],
-//            ],
-//            'acteNaissance' => [
-//                'name' => 'acteNaissance',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'photocopiePasseport' => [
-//                'name' => 'photocopiePasseport',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'diplomesTravauxExperiencePro' => [
-//                'name' => 'diplomesTravauxExperiencePro',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'documentsCotutelle' => [
-//                'name' => 'documentsCotutelle',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'documentsCoencadrement' => [
-//                'name' => 'documentsCoencadrement',
-//                'required' => false,
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['pdf','jpg', 'png'],
-//                        ],
-//                    ],
-//                ],
-//            ],
-        ];
+        return [];
     }
 }

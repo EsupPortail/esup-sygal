@@ -1,6 +1,9 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Application\Entity\Db\Pays;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
@@ -44,7 +47,7 @@ class Inscription implements HistoriqueAwareInterface{
     private $coTutelle;
 
     /**
-     * @var \Application\Entity\Db\Pays
+     * @var Pays
      */
     private $paysCoTutelle;
 
@@ -79,7 +82,7 @@ class Inscription implements HistoriqueAwareInterface{
     private $confidentialite;
 
     /**
-     * @var int
+     * @var ?int
      */
     private ?int $id = null;
 
@@ -122,6 +125,19 @@ class Inscription implements HistoriqueAwareInterface{
      * @var Individu
      */
     private $coDirecteur;
+
+    /**
+     * @var Collection
+     */
+    private $verificationInscription;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->verificationInscription = new ArrayCollection();
+    }
 
 
     /**
@@ -296,11 +312,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set paysCoTutelle.
      *
-     * @param \Application\Entity\Db\Pays|null $paysCoTutelle
+     * @param Pays|null $paysCoTutelle
      *
      * @return Inscription
      */
-    public function setPaysCoTutelle(\Application\Entity\Db\Pays $paysCoTutelle = null)
+    public function setPaysCoTutelle(Pays $paysCoTutelle = null)
     {
         $this->paysCoTutelle = $paysCoTutelle;
 
@@ -310,7 +326,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get paysCoTutelle.
      *
-     * @return \Application\Entity\Db\Pays|null
+     * @return Pays|null
      */
     public function getPaysCoTutelle()
     {
@@ -637,5 +653,39 @@ class Inscription implements HistoriqueAwareInterface{
     public function getEmailCodirecteurThese()
     {
         return $this->emailCodirecteurThese;
+    }
+
+    /**
+     * Get verificationInscription.
+     *
+     * @return Collection
+     */
+    public function getVerificationInscription(): Collection
+    {
+        return $this->verificationInscription;
+    }
+
+    /**
+     * Add VerificationInscription.
+     */
+    public function addVerificationInscription(Collection $verificationInscriptions)
+    {
+//        foreach ($verificationInscriptions as $vI) {
+//            if (!$this->verificationInscription->contains($vI)) {
+//                $this->verificationInscription->add($vI);
+//            }
+//        }
+
+        return $this;
+    }
+
+    /**
+     * Remove VerificationInscription.
+     */
+    public function removeVerificationInscription(Collection $verificationInscriptions)
+    {
+        foreach ($verificationInscriptions as $vI) {
+            $this->verificationInscription->removeElement($vI);
+        }
     }
 }

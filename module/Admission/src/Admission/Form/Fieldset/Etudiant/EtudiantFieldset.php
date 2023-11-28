@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Etudiant;
 
+use Admission\Entity\Db\Admission;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Individu\Entity\Db\Individu;
@@ -19,6 +20,7 @@ use Laminas\Form\Element\Tel;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
+use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\GreaterThan;
 use Laminas\Validator\Regex;
@@ -295,7 +297,7 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add(
             (new Text('etablissementDobtentionDiplomeAutre'))
-                ->setLabel("Intitulé")
+                ->setLabel("Etablissement")
         );
 
 //        if($this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER))){

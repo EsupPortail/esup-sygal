@@ -20,14 +20,6 @@ class EtudiantHydrator extends DoctrineObject
         /** @var Etudiant $object */
         $data = parent::extract($object);
 
-        if (array_key_exists($key = 'paysNaissanceId', $data) && $data[$key] instanceof Pays) {
-            $data['paysNaissance'] = $object->getPaysNaissance()->getLibelle();
-        }
-
-        if (array_key_exists($key = 'nationaliteId', $data) && $data[$key] instanceof Pays) {
-            $data['nationalite'] = $object->getPaysNaissance()->getLibelle();
-        }
-
         $data['verificationEtudiant'] = $object->getVerificationEtudiant()->first();
 
         return $data;

@@ -59,7 +59,7 @@
         "webmozart/assert": "^1.3",
 
         "unicaen/alerte": "^2.0",
-        "unicaen/app": "dev-feature_SearchAndSelectFilter as 6.0.7",
+        "unicaen/app": "6.0.*",
         "unicaen/auth": "^6.0",
         "unicaen/auth-token": "^6.0",
         "unicaen/console": "^6.0",

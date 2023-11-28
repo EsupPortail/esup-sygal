@@ -20,7 +20,7 @@
             <join-column name="FICHIER_ID" referenced-column-name="ID"/>
         </many-to-one>
 
-<!--        <one-to-many field="verificationDocument" target-entity="Admission\Entity\Db\VerificationDocument" mapped-by="admissionDocument" />-->
+        <one-to-many field="verificationDocument" target-entity="Admission\Entity\Db\Verification" mapped-by="document" />
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

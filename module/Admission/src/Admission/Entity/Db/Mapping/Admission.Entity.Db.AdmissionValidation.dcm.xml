@@ -2,8 +2,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Admission\Entity\Db\Validation" table="ADMISSION_VALIDATION"
-            repository-class="Admission\Entity\Db\Repository\ValidationRepository">
+    <entity name="Admission\Entity\Db\AdmissionValidation" table="ADMISSION_VALIDATION"
+            repository-class="Admission\Entity\Db\Repository\AdmissionValidationRepository">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
@@ -18,12 +18,12 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="typeValidationId" target-entity="Application\Entity\Db\TypeValidation">
+        <many-to-one field="typeValidation" target-entity="Admission\Entity\Db\TypeValidation">
             <join-columns>
                 <join-column name="TYPE_VALIDATION_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="individuId" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>

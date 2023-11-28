@@ -29,4 +29,8 @@ class AdmissionRepository extends DefaultEntityRepository{
 
         return $admissionId ? $this->find($admissionId) : null;
     }
+
+    public function findOneById(int $id){
+        return $this->find($id);
+    }
 }

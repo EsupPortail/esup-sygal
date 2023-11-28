@@ -5,7 +5,7 @@ namespace Admission\Service\Etudiant;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Repository\EtudiantRepository;
-use Admission\Entity\Db\Repository\ValidationRepository;
+use Admission\Entity\Db\Repository\AdmissionValidationRepository;
 use Admission\Entity\Db\Verification;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -44,10 +44,6 @@ class EtudiantService extends BaseService
     public function create(Etudiant $etudiant, Admission $admission) : Etudiant
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $etudiant->setHistoModification($date);
-            $etudiant->setHistoModificateur($user);
             $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->persist($etudiant);
             $this->getEntityManager()->flush();
@@ -65,10 +61,6 @@ class EtudiantService extends BaseService
     public function update(Etudiant $etudiant)  :Etudiant
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-            $etudiant->setHistoModification($date);
-            $etudiant->setHistoModificateur($user);
             $this->getEntityManager()->flush();
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Etudiant");

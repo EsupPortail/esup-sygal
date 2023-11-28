@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
-class ValidationHydratorFactory implements FactoryInterface
+class AdmissionValidationHydratorFactory implements FactoryInterface
 {
     /**
      * Create hydrator
@@ -15,7 +15,7 @@ class ValidationHydratorFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return ValidationHydrator
+     * @return AdmissionValidationHydrator
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -24,6 +24,6 @@ class ValidationHydratorFactory implements FactoryInterface
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
 
-        return new ValidationHydrator($entityManager);
+        return new AdmissionValidationHydrator($entityManager);
     }
 }

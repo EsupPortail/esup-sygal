@@ -1,0 +1,44 @@
+<?php
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Laminas\Form\ElementInterface;
+
+/**
+ * @var ElementInterface $element
+ * @var int $individu
+ * @var AdmissionValidation $operation
+ * @var bool $ajaxModalEvent
+ */
+
+$canSupprimerOperation =
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_DEVALIDER_SIEN) ||
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_DEVALIDER_TOUT);
+//$canSupprimerOperation = true;
+?>
+<div class="row subfield">
+    <div class="col etape_signature">
+        <span class="icon icon-checked circle_success"></span>
+        <label><?php echo $operation->getTypeValidation()->getLibelle();?></label>
+        <div class="text-sm text-muted info_validation">
+            Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+            le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(\Application\Constants::DATETIME_FORMAT) ?>
+        </div>
+        <?php
+        $returnUrl = $this->url('admission/ajouter', ['action' => "document",
+                'individu' => $individu]
+        );
+
+        if($canSupprimerOperation){ ?>
+        <a href="<?php echo $this->url('admission/devalider', [
+            'admissionValidation' => $operation->getId(),
+            'typeValidation' => $operation->getTypeValidation()->getId(),
+        ], [
+            'query' => ['redirect' => $returnUrl],
+        ]) ?>"
+           class="btn btn-danger collapsable-action"
+           title="Dévalider ce rapport ?"
+           data-toggle="confirmationx"
+           data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
+        <?php } ?>
+    </div>
+</div>

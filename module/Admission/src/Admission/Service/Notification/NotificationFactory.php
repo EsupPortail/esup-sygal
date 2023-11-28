@@ -2,6 +2,10 @@
 
 namespace Admission\Service\Notification;
 
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Notification\AdmissionOperationAttenduNotification;
+use Admission\Notification\AdmissionValidationAjouteeNotification;
+use Admission\Notification\AdmissionValidationSupprimeeNotification;
 use Admission\Provider\Template\MailTemplates;
 use Application\Service\UserContextServiceAwareTrait;
 use Notification\Exception\RuntimeException;
@@ -38,4 +42,26 @@ class NotificationFactory extends NF
 
         return $notif;
     }
+
+    public function createNotificationOperationAttendue(): AdmissionOperationAttenduNotification
+    {
+        return new AdmissionOperationAttenduNotification();
+    }
+
+    public function createNotificationValidationAjoutee(AdmissionValidation $rapportActiviteValidation): AdmissionValidationAjouteeNotification
+    {
+        $notif = new AdmissionValidationAjouteeNotification();
+        $notif->setAdmissionValidation($rapportActiviteValidation);
+
+        return $notif;
+    }
+
+    public function createNotificationValidationSupprimee(AdmissionValidation $rapportActiviteValidation): AdmissionValidationSupprimeeNotification
+    {
+        $notif = new AdmissionValidationSupprimeeNotification();
+        $notif->setAdmissionValidation($rapportActiviteValidation);
+
+        return $notif;
+    }
+
 }

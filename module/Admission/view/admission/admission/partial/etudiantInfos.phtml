@@ -1,39 +1,28 @@
 <?php
 
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Verification;
+use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
 
 /**
- * @var EtudiantFieldset    $fieldset
+ * @var EtudiantFieldset $fieldset
+ * @var PhpRenderer $this
+ * @var AdmissionForm $form
+ * @var Admission $admission
  * @var Individu $individu
- * @var string              $error
+ * @var string $error
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
  */
 
+$form->prepare();
 $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
-
 $fcg = $this->formControlGroup();
 ?>
-<div class="modal hide fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">SyGAL - Admission</h5>
-            </div>
-            <div class="modal-body">
-                <p>
-                    Les données que vous saisissez dans ce formulaire sont automatiquement sauvegardées dès que vous avancez vers l'étape suivante. Si vous effectuez des modifications sans passer à l'étape suivante, ces données sont temporairement enregistrées en mémoire.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Étudiant</h2>
@@ -160,21 +149,37 @@ $fcg = $this->formControlGroup();
     </div>
 
 </div>
-<?php if($canVerifierAdmission){ ?>
-    <div class="row_sous_partie">
+
+<div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Commentaires</h2>
     </div>
-    <div class="row observations_gestionnaire">
-        <div class="col">
-            <?php echo $fcg($fieldset->get("verificationEtudiant")->get('estComplet'))?>
+    <?php if ($canVerifierAdmission) { ?>
+        <div class="row observations_gestionnaire">
+            <div class="col">
+                <?php echo $fcg($fieldset->get("verificationEtudiant")->get('estComplet')) ?>
+            </div>
+            <div class="commentaires_gestionnaire">
+                <?php echo $fcg($fieldset->get("verificationEtudiant")->get('commentaire')) ?>
+            </div>
         </div>
+    <?php }else{ ?>
         <div class="commentaires_gestionnaire">
-            <?php echo $fcg($fieldset->get("verificationEtudiant")->get('commentaire')) ?>
+            <div class="partie_etudiant">
+                <?php
+                /** @var Verification $verification */
+                $verification = !empty($admission->getEtudiant()->first()) ? $admission->getEtudiant()->first()->getVerificationEtudiant()->first() : null;
+                $nom = !empty($verification) ? $verification->getIndividu()->getNomUsuel() : null;
+                $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
+                $commentaire = !empty($verification) ? $verification->getCommentaire() : null;
+                $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
+                echo !empty($commentaire) ? "<p class='gestionnaire'>".$nom." ".$prenom." (".$date_verification.")</p><p> :  ".$commentaire." </p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
+                ?>
+            </div>
         </div>
-    </div>
+    <?php  } ?>
 </div>
-<?php } ?>
+
 
 <?php ///** @see \Admission\Controller\AdmissionController::envoyerMailAction() */ ?>
 <!--<a href="--><?php //echo $this->url('admission/envoyer-mail', [], [], true); ?><!--"-->

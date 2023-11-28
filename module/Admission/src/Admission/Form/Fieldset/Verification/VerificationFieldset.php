@@ -2,11 +2,11 @@
 namespace Admission\Form\Fieldset\Verification;
 
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Callback;
 
 class VerificationFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -60,10 +60,30 @@ class VerificationFieldset extends Fieldset implements InputFilterProviderInterf
             'commentaire' => [
                 'name' => 'commentaire',
                 'required' => false,
+
             ],
             'estComplet' => [
                 'name' => 'estComplet',
                 'required' => false,
+                //Si le gestionnaire signale le fieldset comme incomplet, il doit obligatoirement fournir un commentaire
+                'validators' => [
+                    [
+                        'name' => Callback::class,
+                        'options' => [
+                            'messages' => [
+                                Callback::INVALID_VALUE => "Le commentaire est requis lorsque le formulaire est signalé comme incomplet.",
+                            ],
+                            'callback' => function ($value, $context = []) {
+                                if ((isset($context['estComplet']) && $context['estComplet'] == 0) && empty($context['commentaire'])) {
+                                    return false;
+                                }
+
+                                return true;
+                            },
+                            'break_chain_on_failure' => true,
+                        ],
+                    ],
+                ],
             ],
         ];
     }
