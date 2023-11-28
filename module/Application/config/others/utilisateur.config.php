@@ -52,6 +52,7 @@ return [
                         'ajouter-role',
                         'ajouter',
                         'ajouterFromIndividu',
+                        'supprimer',
                         'lier-individu',
                         'lier-nouvel-individu',
                         'delier-individu',
@@ -114,6 +115,15 @@ return [
                             'route'       => '/ajouter',
                             'defaults'    => [
                                 'action' => 'ajouter',
+                            ],
+                        ],
+                    ],
+                    'supprimer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/supprimer/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'supprimer',
                             ],
                         ],
                     ],

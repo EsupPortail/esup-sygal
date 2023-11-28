@@ -4,6 +4,7 @@ Journal des modifications
 6.0.8
 -----
 - [THESE] Ajout de logos sur le document des co-encadrements
+- [UTILISATEUR] Possibilité de supprimer un compte utilisateur.
 
 6.0.7
 -----

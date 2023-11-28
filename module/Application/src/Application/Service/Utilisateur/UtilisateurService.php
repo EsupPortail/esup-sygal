@@ -2,6 +2,8 @@
 
 namespace Application\Service\Utilisateur;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Exception;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
@@ -181,15 +183,19 @@ class UtilisateurService extends BaseService
     }
 
     /**
-     * Fonction utilisée lors de la déassociation d'un utilisateur/individu et un membre d'un jury de thèse
-     * @param AbstractUser $utilisateur
+     * @throws \Exception
      */
-    public function supprimerUtilisateur(AbstractUser $utilisateur) {
+    public function supprimerUtilisateur(AbstractUser $utilisateur): void
+    {
         try {
-            $this->getEntityManager()->remove($utilisateur);
-            $this->getEntityManager()->flush($utilisateur);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
+            $this->entityManager->remove($utilisateur);
+            $this->entityManager->flush();
+        } catch (Exception $e) {
+            $precision = '';
+            if ($e instanceof ForeignKeyConstraintViolationException) {
+                $precision = " car il est référencé dans d'autres tables de données";
+            }
+            throw new Exception(sprintf("Impossible de supprimer ce compte utilisateur%s.", $precision), null, $e);
         }
     }
 
