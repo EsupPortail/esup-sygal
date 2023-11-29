@@ -3,8 +3,9 @@ Journal des modifications
 
 6.0.8
 -----
-- [THESE] Ajout de logos sur le document des co-encadrements
-- [UTILISATEUR] Possibilité de supprimer un compte utilisateur.
+- Ajout de logos sur le document des co-encadrements
+- Possibilité de supprimer un compte utilisateur.
+- [FIX] Rapports d'activité : le rôle Maison du doctorat ne pouvait pas dévalider un rapport d'activité (en cas de validation du Doctorant). 
 
 6.0.7
 -----

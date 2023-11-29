@@ -105,6 +105,12 @@ class RapportActiviteValidationAssertion extends RapportActiviteOperationAbstrac
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
                     $this->assertEtatThese($rapportActiviteValidation->getRapportActivite()->getThese());
+                    break;
+            }
+
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
                     $this->assertAppartenanceThese($rapportActiviteValidation->getRapportActivite()->getThese());
                     break;
             }

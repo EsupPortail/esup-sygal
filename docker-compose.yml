@@ -1,5 +1,10 @@
 version: '3.7'
 
+networks:
+  sygalnet:
+    name: sygalnet
+    driver: bridge
+
 # Settings and configurations that are common for all containers
 x-minio-common: &minio-common
   image: minio/minio
@@ -122,7 +127,3 @@ volumes:
   data3-2:
   data4-1:
   data4-2:
-
-networks:
-  sygalnet:
-    driver: bridge
