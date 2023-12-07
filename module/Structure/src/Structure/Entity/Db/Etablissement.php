@@ -4,8 +4,9 @@ namespace Structure\Entity\Db;
 
 use Application\Entity\Db\Role;
 use Application\Search\Filter\SearchFilterValueInterface;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
-use Substitution\Entity\Db\SubstitutionAwareTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -19,12 +20,12 @@ class Etablissement implements
     HistoriqueAwareInterface,
     SourceAwareInterface,
     SearchFilterValueInterface,
-    SubstitutionAwareInterface
+    SubstitutionAwareEntityInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
     use StructureAwareTrait;
-    use SubstitutionAwareTrait;
+    use SubstitutionAwareEntityTrait;
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
 
@@ -75,6 +76,7 @@ class Etablissement implements
     public function __construct()
     {
         $this->structure = new Structure();
+        $this->substitues = new ArrayCollection();
     }
 
     /**
@@ -92,6 +94,14 @@ class Etablissement implements
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->structure->getCode();
     }
 
     /**

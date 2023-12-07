@@ -21,6 +21,7 @@
         <field name="prenom3" column="PRENOM3"/>
         <field name="idRef" column="ID_REF" nullable="true"/>
 
+        <field name="npdForce" type="string" column="npd_force"/>
         <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
 
         <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
@@ -56,7 +57,7 @@
         </many-to-one>
 
         <many-to-many field="substitues" target-entity="Individu\Entity\Db\Individu">
-            <join-table name="individu_substit">
+            <join-table name="substit_individu">
                 <join-columns>
                     <join-column name="to_id" referenced-column-name="ID" />
                 </join-columns>

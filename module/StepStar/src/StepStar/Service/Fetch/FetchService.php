@@ -122,11 +122,6 @@ class FetchService
             ->andWhereNotHistorise()
             ->orderBy('es.code, t.id');
 
-        $qb
-            ->addSelect('et_ss')->leftJoin('es.structureSubstituante', 'et_ss')
-            ->addSelect('ed_ss')->leftJoin('eds.structureSubstituante', 'ed_ss')
-            ->addSelect('ur_ss')->leftJoin('urs.structureSubstituante', 'ur_ss');
-
         try {
             $qb->indexBy('t', 't.id');
         } catch (QueryException $e) {

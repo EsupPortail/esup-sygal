@@ -6,7 +6,7 @@
 
 use Substitution\Constants;
 
-$this->headTitle($this->translate("Module &laquo; Substitution &raquo;"))
+$this->headTitle($this->translate("Module &laquo; Substitutions &raquo;"))
 
 ?>
 
@@ -17,62 +17,78 @@ $this->headTitle($this->translate("Module &laquo; Substitution &raquo;"))
 </p>
 
 <div class="row">
-    <div class="col-md-8 mb-1">
+    <div class="col-md-10 mb-1">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Structures</h5>
-                <!--<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                <a class="card-link" href="<?php echo $this->url('substitution/substitution/liste', ['type' => Constants::TYPE_structure]) ?>">Substitutions existantes
-                    <span class="badge bg-secondary"><?php echo $substitutionsCount['structure'] ?></span></a><br>
-                <a class="card-link" href="<?php echo $this->url('substitution/doublon/structure') ?>">Substitutions possibles
-                    <span class="badge bg-secondary"><?php echo $doublonsCount['structure'] ?></span></a><br>
-                <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/structure') ?>">Clés étrangères</a><br>
-                <a class="card-link" href="<?php echo $this->url('substitution/log/structure') ?>">Logs</a>
+                <a class="card-link" href="<?php echo $this->url('substitution/substitution/lister', ['type' => Constants::TYPE_structure]) ?>">
+                    Substitutions existantes <span class="badge bg-secondary"><?php echo $substitutionsCount['structure'] ?> substituants</span>
+                </a><br>
+                <a class="card-link" href="<?php echo $this->url('substitution/doublon/lister', ['type' => Constants::TYPE_structure]) ?>">
+                    Substitutions possibles <span class="badge bg-secondary"><?php echo $doublonsCount['structure'] ?> doublons</span>
+                </a><br>
+                <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/lister', ['type' => Constants::TYPE_structure]) ?>">
+                    Clés étrangères
+                </a><br>
+                <a class="card-link" href="<?php echo $this->url('substitution/log/lister', ['type' => Constants::TYPE_structure]) ?>">
+                    Logs
+                </a>
             </div>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-8 mb-1">
+    <div class="col-md-10 mb-1">
         <div class="card-group mb-5">
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Établissements</h5>
-                    <!--<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/liste', ['type' => Constants::TYPE_etablissement]) ?>">Substitutions existantes
-                        <span class="badge bg-secondary"><?php echo $substitutionsCount['etablissement'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/etablissement') ?>">Substitutions possibles
-                        <span class="badge bg-secondary"><?php echo $doublonsCount['etablissement'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/etablissement') ?>">Clés étrangères</a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/log/etablissement') ?>">Logs</a>
+                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/lister', ['type' => Constants::TYPE_etablissement]) ?>">
+                        Substitutions existantes <span class="badge bg-secondary"><?php echo $substitutionsCount['etablissement'] ?> substituants</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/lister', ['type' => Constants::TYPE_etablissement]) ?>">
+                        Substitutions possibles <span class="badge bg-secondary"><?php echo $doublonsCount['etablissement'] ?> doublons</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/lister', ['type' => Constants::TYPE_etablissement]) ?>">
+                        Clés étrangères
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/log/lister', ['type' => Constants::TYPE_etablissement]) ?>">
+                        Logs
+                    </a>
                 </div>
             </div>
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Écoles doctorales</h5>
-                    <!--<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/liste', ['type' => Constants::TYPE_ecole_doct]) ?>">Substitutions existantes
-                        <span class="badge bg-secondary"><?php echo $substitutionsCount['ecole-doct'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/ecole-doct') ?>">Substitutions possibles
-                        <span class="badge bg-secondary"><?php echo $doublonsCount['ecole-doct'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/ecole-doct') ?>">Clés étrangères</a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/log/ecole-doct') ?>">Logs</a>
+                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/lister', ['type' => Constants::TYPE_ecole_doct]) ?>">
+                        Substitutions existantes <span class="badge bg-secondary"><?php echo $substitutionsCount['ecole-doct'] ?> substituants</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/lister', ['type' => Constants::TYPE_ecole_doct]) ?>">
+                        Substitutions possibles <span class="badge bg-secondary"><?php echo $doublonsCount['ecole-doct'] ?> doublons</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/lister', ['type' => Constants::TYPE_ecole_doct]) ?>">
+                        Clés étrangères
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/log/lister', ['type' => Constants::TYPE_ecole_doct]) ?>">
+                        Logs
+                    </a>
                 </div>
             </div>
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Unités de recherche</h5>
-                    <!--<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/liste', ['type' => Constants::TYPE_unite_rech]) ?>">Substitutions existantes
-                        <span class="badge bg-secondary"><?php echo $substitutionsCount['unite-rech'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/unite-rech') ?>">Substitutions possibles
-                        <span class="badge bg-secondary"><?php echo $doublonsCount['unite-rech'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/unite-rech') ?>">Clés étrangères</a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/log/unite-rech') ?>">Logs</a>
+                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/lister', ['type' => Constants::TYPE_unite_rech]) ?>">
+                        Substitutions existantes <span class="badge bg-secondary"><?php echo $substitutionsCount['unite-rech'] ?> substituants</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/lister', ['type' => Constants::TYPE_unite_rech]) ?>">
+                        Substitutions possibles <span class="badge bg-secondary"><?php echo $doublonsCount['unite-rech'] ?> doublons</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/lister', ['type' => Constants::TYPE_unite_rech]) ?>">
+                        Clés étrangères
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/log/lister', ['type' => Constants::TYPE_unite_rech]) ?>">
+                        Logs
+                    </a>
                 </div>
             </div>
         </div>
@@ -80,18 +96,22 @@ $this->headTitle($this->translate("Module &laquo; Substitution &raquo;"))
 </div>
 
 <div class="row">
-    <div class="col-md-8 mb-1">
+    <div class="col-md-10 mb-1">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Individus</h5>
-                <!--<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                <a class="card-link" href="<?php echo $this->url('substitution/substitution/liste', ['type' => Constants::TYPE_individu]) ?>">Substitutions existantes
-                    <span class="badge bg-secondary"><?php echo $substitutionsCount['individu'] ?></span></a><br>
-                <a class="card-link" href="<?php echo $this->url('substitution/doublon/individu') ?>">Substitutions possibles
-                    <span class="badge bg-secondary"><?php echo $doublonsCount['individu'] ?></span></a><br>
-                <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/individu') ?>">Clés étrangères</a><br>
-                <a class="card-link" href="<?php echo $this->url('substitution/log/individu') ?>">Logs</a>
+                <a class="card-link" href="<?php echo $this->url('substitution/substitution/lister', ['type' => Constants::TYPE_individu]) ?>">
+                    Substitutions existantes <span class="badge bg-secondary"><?php echo $substitutionsCount['individu'] ?> substituants</span>
+                </a><br>
+                <a class="card-link" href="<?php echo $this->url('substitution/doublon/lister', ['type' => Constants::TYPE_individu]) ?>">
+                    Substitutions possibles <span class="badge bg-secondary"><?php echo $doublonsCount['individu'] ?> doublons</span>
+                </a><br>
+                <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/lister', ['type' => Constants::TYPE_individu]) ?>">
+                    Clés étrangères
+                </a><br>
+                <a class="card-link" href="<?php echo $this->url('substitution/log/lister', ['type' => Constants::TYPE_individu]) ?>">
+                    Logs
+                </a>
             </div>
         </div>
     </div>
@@ -102,14 +122,18 @@ $this->headTitle($this->translate("Module &laquo; Substitution &raquo;"))
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Doctorants</h5>
-                    <!--<h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/liste', ['type' => Constants::TYPE_doctorant]) ?>">Substitutions existantes
-                        <span class="badge bg-secondary"><?php echo $substitutionsCount['doctorant'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/doctorant') ?>">Substitutions possibles
-                        <span class="badge bg-secondary"><?php echo $doublonsCount['doctorant'] ?></span></a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/doctorant') ?>">Clés étrangères</a><br>
-                    <a class="card-link" href="<?php echo $this->url('substitution/log/doctorant') ?>">Logs</a>
+                    <a class="card-link" href="<?php echo $this->url('substitution/substitution/lister', ['type' => Constants::TYPE_doctorant]) ?>">
+                        Substitutions existantes <span class="badge bg-secondary"><?php echo $substitutionsCount['doctorant'] ?> substituants</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/doublon/lister', ['type' => Constants::TYPE_doctorant]) ?>">
+                        Substitutions possibles <span class="badge bg-secondary"><?php echo $doublonsCount['doctorant'] ?> doublons</span>
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/foreign-key/lister', ['type' => Constants::TYPE_doctorant]) ?>">
+                        Clés étrangères
+                    </a><br>
+                    <a class="card-link" href="<?php echo $this->url('substitution/log/lister', ['type' => Constants::TYPE_doctorant]) ?>">
+                        Logs
+                    </a>
                 </div>
             </div>
         </div>

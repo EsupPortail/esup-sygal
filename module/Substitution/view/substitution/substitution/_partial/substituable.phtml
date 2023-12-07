@@ -1,0 +1,48 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituable
+ * @var string[] $npdAttributes [name => label]
+ */
+
+use Laminas\Filter\Word\UnderscoreToCamelCase;
+
+$attributeToGetterFilter = new UnderscoreToCamelCase();
+?>
+
+<div class="card substituable">
+    <div class="card-header">
+        <h3>
+            Substituable<br><?php echo $substituable->getId() ?>
+        </h3>
+        <dl>
+            <?php foreach ($substituable->extractAttributeValues($npdAttributes) as $label => $value): ?>
+                <dt><?php echo $label ?></dt>
+                <dd><?php echo $value ?></dd>
+            <?php endforeach ?>
+        </dl>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <dl>
+                <dt>Source</dt>
+                <dd><?php echo $substituable->getSource()->getCode() ?></dd>
+                <dt class="non-applicable">Substitué le</dt>
+                <dd class="non-applicable">-</dd>
+                <dt class="non-applicable">NPD calculé</dt>
+                <dd class="non-applicable">-</dd>
+                <dt class="text-break">NPD forcé</dt>
+                <dd>
+                    <?php if ($npdForce = $substituable->getNpdForce()): ?>
+                        <span class="text-danger fw-bold"><?php echo $npdForce ?></span>
+                    <?php else: ?>
+                        (Aucun)
+                    <?php endif ?>
+                </dd>
+            </dl>
+        </li>
+        <li class="list-group-item">
+            <?php echo $this->placeholder('substituable') ?>
+        </li>
+    </ul>
+</div>

@@ -3,8 +3,8 @@
 namespace Substitution\Controller;
 
 use Psr\Container\ContainerInterface;
-use Substitution\Service\DoublonService;
-use Substitution\Service\SubstitutionService;
+use Substitution\Service\Doublon\DoublonService;
+use Substitution\Service\Substitution\SubstitutionService;
 
 class IndexControllerFactory
 {
@@ -16,11 +16,11 @@ class IndexControllerFactory
     {
         $controller = new IndexController();
 
-        /** @var \Substitution\Service\DoublonService $doublonService */
+        /** @var \Substitution\Service\Doublon\DoublonService $doublonService */
         $doublonService = $container->get(DoublonService::class);
         $controller->setDoublonService($doublonService);
 
-        /** @var \Substitution\Service\SubstitutionService $substitutionService */
+        /** @var \Substitution\Service\Substitution\SubstitutionService $substitutionService */
         $substitutionService = $container->get(SubstitutionService::class);
         $controller->setSubstitutionService($substitutionService);
 

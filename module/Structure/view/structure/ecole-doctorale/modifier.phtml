@@ -21,12 +21,11 @@ use UnicaenIdref\ParamsFactory;
 /** @var EcoleDoctorale $ecole */
 $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
-$estSubstituee = $ecole->getStructure()->estSubstituee();
 $estModifiable = !($ecole->getSource() !== null AND $ecole->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
-$editable = $isNew || (!$estSubstituee AND $estModifiable);
+$editable = $isNew || $estModifiable;
 $form->get('libelle')->setAttribute('readonly', !$editable);
 $form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
@@ -45,16 +44,11 @@ $form->get('code')->setAttribute('readonly', !$editable);
 <?php if (!$editable) : ?>
 <div class="alert alert-warning">
         <p>
-        <?php if (!$estModifiable) : ?>
-            <span class="icon icon-attention"></span>
-            <strong>La source (<?php echo $ecole->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
-            <br/>
-        <?php endif; ?>
-        <?php if ($estSubstituee) : ?>
-            <span class="icon icon-attention"></span>
-            <strong>La structure est substituée et ne doit pas être modifiée.</strong>
-            <br/>
-        <?php endif; ?>
+            <?php if (!$estModifiable) : ?>
+                <span class="icon icon-attention"></span>
+                <strong>La source (<?php echo $ecole->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
+                <br/>
+            <?php endif; ?>
         </p>
 
     <p>

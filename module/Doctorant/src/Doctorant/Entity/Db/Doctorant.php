@@ -8,8 +8,8 @@ use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Structure\Entity\Db\Etablissement;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
-use Substitution\Entity\Db\SubstitutionAwareTrait;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
@@ -21,11 +21,11 @@ class Doctorant implements
     HistoriqueAwareInterface,
     ResourceInterface,
     IndividuAwareInterface,
-    SubstitutionAwareInterface
+    SubstitutionAwareEntityInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
-    use SubstitutionAwareTrait;
+    use SubstitutionAwareEntityTrait;
 
     /**
      * @var integer

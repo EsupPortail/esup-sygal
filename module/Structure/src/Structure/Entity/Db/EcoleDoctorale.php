@@ -3,9 +3,10 @@
 namespace Structure\Entity\Db;
 
 use Application\Search\Filter\SearchFilterValueInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
-use Substitution\Entity\Db\SubstitutionAwareTrait;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -20,12 +21,12 @@ class EcoleDoctorale implements
     SourceAwareInterface,
     ResourceInterface,
     SearchFilterValueInterface,
-    SubstitutionAwareInterface
+    SubstitutionAwareEntityInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
     use StructureAwareTrait;
-    use SubstitutionAwareTrait;
+    use SubstitutionAwareEntityTrait;
 
     const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
 
@@ -55,6 +56,7 @@ class EcoleDoctorale implements
     public function __construct()
     {
         $this->structure = new Structure();
+        $this->substitues = new ArrayCollection();
     }
 
     /**
@@ -83,6 +85,14 @@ class EcoleDoctorale implements
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->structure->getCode();
     }
 
     /**

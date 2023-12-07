@@ -40,10 +40,7 @@ class UniteRechercheController extends StructureConcreteController
         return $this->uniteRechercheService;
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
         $viewModel = parent::indexAction();
 

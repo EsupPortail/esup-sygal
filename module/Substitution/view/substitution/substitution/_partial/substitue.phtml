@@ -1,0 +1,71 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ *
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substitue
+ * @var int $id
+ * @var string $fromSource
+ * @var string $fromDateCreation
+ * @var string $fromNpdCalcule
+ * @var string $fromNpdForce
+ * @var string[] $npdAttributes [name => label]
+ *
+ * @var string $informationPartial
+ * @var bool $includeGotoDetailsLink
+ */
+
+use Laminas\Filter\Word\UnderscoreToCamelCase;
+
+$attributeToGetterFilter = new UnderscoreToCamelCase();
+?>
+
+<div class="card substitue">
+    <div class="card-header">
+        <h3 class="card-title">
+            Substitué
+            <?php if ($fromNpdForce): ?>
+                <?php echo $this->partial('substitution/substitution/_partial/badge-substitue-force', ['npdForce' => $fromNpdForce]); ?>
+            <?php endif; ?>
+            <br><?php echo $id ?>
+        </h3>
+        <dl>
+            <?php foreach ($substitue->extractAttributeValues($npdAttributes) as $label => $value): ?>
+                <dt><?php echo $label ?></dt>
+                <dd><?php echo $value ?></dd>
+            <?php endforeach ?>
+        </dl>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <dl>
+                <dt>Source</dt>
+                <dd><?php echo $fromSource ?></dd>
+                <dt>Substitué le</dt>
+                <dd><?php echo $fromDateCreation ?></dd>
+                <dt>NPD calculé</dt>
+                <dd class="text-break"><?php echo $fromNpdCalcule ?></dd>
+                <dt>NPD forcé</dt>
+                <dd class="text-break">
+                    <?php if ($fromNpdForce): ?>
+                        <span class="text-danger fw-bold"><?php echo $fromNpdForce ?></span>
+                        <?php if ($fromNpdForce === $fromNpdCalcule): ?>
+                            <a tabindex="0" class="fas fa-info-circle" role="button"
+                               data-bs-toggle="popover" data-bs-trigger="focus" title="NPD forcé inutile"
+                               data-bs-placement="bottom" data-bs-html="true"
+                               data-bs-custom-class="substitue"
+                               data-bs-content="Le NPD forcé de cet enregistrement est égal à son NPD calculé, <br>
+                                                son ajout manuel à la substitution est donc superfétatoire et devrait être annulé <br>
+                                                en retirant manuellement cet enregistrement de la substitution <br>
+                                                (pour laisser le moteur de substitutions gérer automatiquement la situation)."></a>
+                        <?php endif ?>
+                    <?php else: ?>
+                        (Aucun)
+                    <?php endif ?>
+                </dd>
+            </dl>
+        </li>
+        <li class="list-group-item">
+            <?php echo $this->partial($informationPartial, ['entity' => $substitue, 'verbose' => true, 'includeGotoDetailsLink' => $includeGotoDetailsLink]) ?>
+        </li>
+    </ul>
+</div>

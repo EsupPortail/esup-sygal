@@ -4,9 +4,10 @@ namespace Structure\Entity\Db;
 
 use Application\Entity\Db\DomaineScientifique;
 use Application\Search\Filter\SearchFilterValueInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
-use Substitution\Entity\Db\SubstitutionAwareTrait;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -22,12 +23,12 @@ class UniteRecherche implements
     SourceAwareInterface,
     ResourceInterface,
     SearchFilterValueInterface,
-    SubstitutionAwareInterface
+    SubstitutionAwareEntityInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
     use StructureAwareTrait;
-    use SubstitutionAwareTrait;
+    use SubstitutionAwareEntityTrait;
 
     /**
      * @var string
@@ -63,7 +64,8 @@ class UniteRecherche implements
     public function __construct()
     {
         $this->structure = new Structure();
-        $this->domaines = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->domaines = new ArrayCollection();
+        $this->substitues = new ArrayCollection();
     }
 
     /**
@@ -92,6 +94,14 @@ class UniteRecherche implements
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->structure->getCode();
     }
 
     /**

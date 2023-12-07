@@ -12,9 +12,7 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
 
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
-        $qb = $this->_createQueryBuilder($alias);
-
-        return $qb;
+        return $this->_createQueryBuilder($alias);
     }
 
     /**
@@ -38,10 +36,9 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param string|null $term
-     * @return EcoleDoctorale[]
+     * @return array[]
      */
-    public function findByText(?string $term) : array
+    public function findByText(string $term) : array
     {
         $qb = $this->createQueryBuilder("ed");
 

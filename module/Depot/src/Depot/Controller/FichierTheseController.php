@@ -440,22 +440,6 @@ class FichierTheseController extends AbstractController
             ->andWhere('t = :these')
             ->setParameter('these', $theseId);
 
-        $qb
-            ->addSelect('etab_structureSubstituante')
-            ->leftJoin("edstr.structureSubstituante", "etab_structureSubstituante")
-            ->addSelect('etablissementSubstituante')
-            ->leftJoin("etab_structureSubstituante.etablissement", "etablissementSubstituante");
-        $qb
-            ->addSelect('edstr_structureSubstituante')
-            ->leftJoin("edstr.structureSubstituante", "edstr_structureSubstituante")
-            ->addSelect('ecoleDoctoraleSubstituante')
-            ->leftJoin("edstr_structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituante");
-        $qb
-            ->addSelect('urstr_structureSubstituante')
-            ->leftJoin("urstr.structureSubstituante", "urstr_structureSubstituante")
-            ->addSelect('uniteRechercheSubstituante')
-            ->leftJoin("urstr_structureSubstituante.uniteRecherche", "uniteRechercheSubstituante");
-
         try {
             $these = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {

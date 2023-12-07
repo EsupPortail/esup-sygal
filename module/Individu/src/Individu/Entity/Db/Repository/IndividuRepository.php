@@ -56,13 +56,13 @@ class IndividuRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche textuelle d'individus à l'aide de la table INDIVIDU_RECH, en SQL pure.
+     * Recherche textuelle d'individus à l'aide de la table INDIVIDU_RECH, en SQL pur.
      *
      * @param string $text
-     * @param string|null $type (doctorant, acteur, ...)
+     * @param string|null $type Ex : 'doctorant'
      * @param integer $limit
      *
-     * @return Individu[]
+     * @return array[]
      */
     public function findByText(string $text, ?string $type = null, int $limit = 100): array
     {
@@ -72,30 +72,27 @@ class IndividuRepository extends DefaultEntityRepository
         $criteres = explode(' ', $text);
 
         $sql =
-            "SELECT * FROM INDIVIDU i " .
+            "SELECT i.*, src.libelle as source_libelle, src.importable as source_importable " .
+            "FROM INDIVIDU i " .
             "JOIN INDIVIDU_RECH ir on ir.id = i.id " .
+            "JOIN SOURCE src on src.id = i.source_id " .
             "WHERE i.HISTO_DESTRUCTION IS NULL";
+
         if ($type !== null) {
             $sql .= sprintf(" AND i.type = '%s'", $type);
-            $tmp = null;
         }
 
         $sqlCri = [];
         foreach ($criteres as $c) {
-            //$sqlCri[] = "ir.haystack LIKE LOWER(q'[%" . $c . "%]')"; // q'[] : double les quotes
             $sqlCri[] = "ir.haystack LIKE str_reduce($$%" . $c . "%$$)";
         }
         $sqlCri = implode(' AND ', $sqlCri);
 
-        $orc = [];
-        if ($sqlCri !== '') {
-            $orc[] = '(' . $sqlCri . ')';
+        $sql .= ' AND (' . $sqlCri . ') ';
+
+        if ($limit > 0) {
+            $sql .= " LIMIT " . $limit;
         }
-        $orc = implode(' OR ', $orc);
-
-        $sql .= ' AND (' . $orc . ') ';
-
-        $sql .= sprintf(" LIMIT %d", (int)$limit);
 
         try {
             $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);
@@ -106,7 +103,7 @@ class IndividuRepository extends DefaultEntityRepository
 
         try {
             return $stmt->fetchAllAssociative();
-        } catch (\Doctrine\DBAL\Driver\Exception $e) {
+        } catch (Exception $e) {
             throw new RuntimeException(
                 "Impossible d'obtenir les résultats de la requête de recherche d'individu", null, $e);
         }

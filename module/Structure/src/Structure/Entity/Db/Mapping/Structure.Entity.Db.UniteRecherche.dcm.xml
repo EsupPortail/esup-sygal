@@ -10,10 +10,11 @@
     <field name="etablissementsSupport" type="string" column="ETAB_SUPPORT" length="500" nullable="true"/>
     <field name="autresEtablissements" type="string" column="AUTRES_ETAB" length="500" nullable="true"/>
 
+    <field name="npdForce" type="string" column="npd_force"/>
     <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
 
     <many-to-many field="substitues" target-entity="Structure\Entity\Db\UniteRecherche">
-      <join-table name="unite_rech_substit">
+      <join-table name="substit_unite_rech">
         <join-columns>
           <join-column name="to_id" referenced-column-name="ID" />
         </join-columns>

@@ -15,6 +15,7 @@ use Application\Entity\UserWrapperFactoryFactory;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Navigation\NavigationFactoryFactory;
+use Application\ORM\Query\Functions\Npd;
 use Application\ORM\Query\Functions\StrReduce;
 use Application\ORM\Query\Functions\ToNumber;
 use Application\ORM\Query\Functions\Year;
@@ -102,6 +103,7 @@ return array(
                     'strReduce' => StrReduce::class,
                     'toNumber' => ToNumber::class,
                     'year' => Year::class,
+                    'npd' => Npd::class,
                 ],
             ]
         ],

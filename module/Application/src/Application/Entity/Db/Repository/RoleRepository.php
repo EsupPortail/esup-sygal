@@ -33,9 +33,7 @@ class RoleRepository extends DefaultEntityRepository
             ->andWhere($qb->expr()->in('r.code', $rolesCodes))
             ->addSelect('s')
             ->leftJoin('r.structure', 's')
-            ->addSelect('structureSubstituante')
-            ->leftJoin('s.structureSubstituante', 'structureSubstituante')
-            ->orderBy('r.libelle, structureSubstituante.libelle, s.libelle');
+            ->orderBy('r.libelle, s.libelle');
 
         return $qb->getQuery()->getResult();
     }

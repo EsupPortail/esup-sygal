@@ -3,7 +3,7 @@
 namespace Substitution\Controller;
 
 use Psr\Container\ContainerInterface;
-use Substitution\Service\LogService;
+use Substitution\Service\Log\LogService;
 
 class LogControllerFactory
 {
@@ -15,7 +15,7 @@ class LogControllerFactory
     {
         $controller = new LogController;
 
-        /** @var \Substitution\Service\LogService $service */
+        /** @var \Substitution\Service\Log\LogService $service */
         $service = $container->get(LogService::class);
         $controller->setLogService($service);
 

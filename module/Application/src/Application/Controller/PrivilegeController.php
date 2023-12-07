@@ -51,9 +51,6 @@ class PrivilegeController extends AbstractController
         /** @var Privilege[] $privileges */
         $privileges = $qbPrivileges->getQuery()->execute();
 
-        // Retrait des rôles associés à des structures historisées ou substituées
-        $roles = $this->cleanRoles($roles);
-
         return new ViewModel([
             'roles'          => $roles,
             'privileges'     => $privileges,
@@ -73,36 +70,6 @@ class PrivilegeController extends AbstractController
 
         /** @var Role[] $roles */
         $roles = $qb->getQuery()->getResult();
-
-        return $roles;
-    }
-
-    /**
-     * Retrait des rôles associés à des structures historisées ou substituées
-     *
-     * @param Role[] $roles
-     * @return Role[]
-     */
-    private function cleanRoles($roles)
-    {
-        $substituees = $this->structureService->findStructuresSubstituees();
-
-        // Retrait des rôles associés à des structures historisées ou substituées
-        $roles = array_filter($roles, function (Role $role) use ($substituees) {
-            $structure = $role->getStructure();
-            if (array_search($structure, $substituees)) {
-                return false;
-            }
-            if ($structure === null) {
-                return true;
-            }
-            $structureConcrete = $this->structureService->findStructureConcreteFromStructure($structure);
-            if ($structureConcrete === null) {
-                return true;
-            }
-
-            return $structureConcrete->estNonHistorise();
-        });
 
         return $roles;
     }

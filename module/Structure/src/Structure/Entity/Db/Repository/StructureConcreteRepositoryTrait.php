@@ -19,7 +19,9 @@ trait StructureConcreteRepositoryTrait
 
         $qb
             ->addSelect('structure')
-            ->join("$alias.structure", 'structure');
+            ->join("$alias.structure", 'structure')
+            ->addSelect('src')
+            ->join("$alias.source", 'src');
 
         // Attention : il FAUT faire explicitement ces jointures sinon Doctrine génèrera d'office 3 select pour
         // chacune des 3 relations 'one-to-one' (structure=>etablissement, structure=>ecoleDoctorale, structure=>uniteRecherche),
@@ -54,18 +56,28 @@ trait StructureConcreteRepositoryTrait
         }
     }
 
-    public function _findByText(DefaultQueryBuilder $qb, ?string $term): array
+    /**
+     * @return array[]
+     */
+    public function _findByText(DefaultQueryBuilder $qb, string $text): array
     {
+        if (strlen($text) < 2) return [];
+
+        $params = [];
+        foreach (array_filter(explode(' ', $text)) as $term) {
+            $paramName = uniqid('t_');
+            $qb->andWhere($qb->expr()->orX(
+                "strReduce(structure.libelle) LIKE strReduce(:$paramName)",
+                "strReduce(structure.sigle)   LIKE strReduce(:$paramName)",
+            ));
+            $params[$paramName] = '%' . trim($term) . '%';
+        }
         $qb
-            ->andWhere($qb->expr()->orX(
-                'strReduce(structure.libelle) LIKE strReduce(:term)',
-                'strReduce(structure.sigle)   LIKE strReduce(:term)'
-            ))
-            ->setParameter('term', '%'.$term.'%')
+            ->setParameters($params)
             ->andWhereNotHistorise()
             ->andWhere('structure.estFermee = :false')
             ->setParameter('false', false);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getArrayResult();
     }
 }

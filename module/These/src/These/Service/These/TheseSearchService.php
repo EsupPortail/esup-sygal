@@ -95,21 +95,8 @@ class TheseSearchService extends SearchService
             ->addSelect('a')->leftJoin('these.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
             ->addSelect('r')->leftJoin('a.role', 'r')
-            ->addSelect('am')->leftJoin('a.membre', 'am') // todo : pas trouvé pourquoi mais réduit le nombre de requêtes !
+            ->addSelect('am')->leftJoin('a.membre', 'am') // réduit le nombre de requêtes car a.membre est un one-to-one
             ->andWhereNotHistorise('these');
-
-        $qb
-            ->addSelect('etab_structure')->leftJoin("etab.structure", "etab_structure")
-            ->addSelect('etab_structureSubstituante')->leftJoin("etab_structure.structureSubstituante", "etab_structureSubstituante")
-            ->addSelect('etab_substituant')->leftJoin("etab_structureSubstituante.etablissement", "etab_substituant");
-        $qb
-            ->addSelect('ed_structure')->leftJoin("ed.structure", "ed_structure")
-            ->addSelect('ed_structureSubstituante')->leftJoin("ed_structure.structureSubstituante", "ed_structureSubstituante")
-            ->addSelect('ed_substituant')->leftJoin("ed_structureSubstituante.ecoleDoctorale", "ed_substituant");
-        $qb
-            ->addSelect('ur_structure')->leftJoin("ur.structure", "ur_structure")
-            ->addSelect('ur_structureSubstituante')->leftJoin("ur_structure.structureSubstituante", "ur_structureSubstituante")
-            ->addSelect('ur_substituant')->leftJoin("ur_structureSubstituante.uniteRecherche", "ur_substituant");
 
         return $qb;
     }
@@ -409,13 +396,13 @@ EOS;
     private function fetchEcolesDoctorales(SelectSearchFilter $filter): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true);
     }
 
     private function fetchUnitesRecherches(SelectSearchFilter $filter): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_UNITE_RECHERCHE, 'code', true, true);
+            TypeStructure::CODE_UNITE_RECHERCHE, 'code', true);
     }
 
     private function fetchOriginesFinancements(SelectSearchFilter $filter): array
@@ -625,7 +612,7 @@ EOS;
         $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('etab_structureSubstituante.code, etab_structure.code', $sorter->getDirection());
+                $qb->addOrderBy('etab_structure.code', $sorter->getDirection());
             }
         );
 
@@ -637,7 +624,7 @@ EOS;
         $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('ed_structureSubstituante.sigle, ed_structure.sigle', $sorter->getDirection());
+                $qb->addOrderBy('ed_structure.sigle', $sorter->getDirection());
             }
         );
 
@@ -649,7 +636,7 @@ EOS;
         $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('ur_structureSubstituante.code, ur_structure.code', $sorter->getDirection());
+                $qb->addOrderBy('ur_structure.code', $sorter->getDirection());
             }
         );
 

@@ -9,6 +9,9 @@ use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\Repository\DoctorantRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Individu\Entity\Db\Individu;
 use RuntimeException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 
@@ -99,5 +102,18 @@ class DoctorantService extends BaseService
         return $result;
 
 
+    }
+
+    /**
+     * Enregistre le Doctorant en base de données.
+     */
+    public function saveDoctorant(Doctorant $doctorant): void
+    {
+        try {
+            $this->entityManager->persist($doctorant);
+            $this->entityManager->flush();
+        } catch (\Doctrine\ORM\Exception\ORMException $e) {
+            throw new \UnicaenApp\Exception\RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
+        }
     }
 }

@@ -19,6 +19,7 @@
         <field name="estComue" type="boolean" column="EST_COMUE"/>
         <field name="estCed" type="boolean" column="EST_CED"/>
 
+        <field name="npdForce" type="string" column="npd_force"/>
         <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
 
         <one-to-many field="theses"         target-entity="These\Entity\Db\These"     mapped-by="etablissement"/>
@@ -35,7 +36,7 @@
         </one-to-one>
 
         <many-to-many field="substitues" target-entity="Structure\Entity\Db\Etablissement">
-            <join-table name="etablissement_substit">
+            <join-table name="substit_etablissement">
                 <join-columns>
                     <join-column name="to_id" referenced-column-name="ID" />
                 </join-columns>

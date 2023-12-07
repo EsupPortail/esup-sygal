@@ -2,12 +2,12 @@
 
 namespace Structure\Service\Structure;
 
-use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -19,6 +19,7 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Structure\Entity\Db\Repository\EtablissementRepository;
+use Structure\Entity\Db\Repository\StructureRepository;
 use Structure\Entity\Db\Repository\UniteRechercheRepository;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureConcreteInterface;
@@ -43,9 +44,9 @@ class StructureService extends BaseService
     use UniteRechercheServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
 
-    public function getRepository(): DefaultEntityRepository
+    public function getRepository(): StructureRepository
     {
-        /** @var DefaultEntityRepository $repo */
+        /** @var \Structure\Entity\Db\Repository\StructureRepository $repo */
         $repo = $this->entityManager->getRepository(Structure::class);
 
         return $repo;
@@ -88,48 +89,6 @@ class StructureService extends BaseService
         }
 
         return $structureConcrete;
-    }
-
-    /**
-     * Cette fonction retourne la liste des structures qui substituent d'autres structures.
-     *
-     * @return Structure[]
-     */
-    public function findStructuresSubstituantes(string $codeType = null, string $order = null): array
-    {
-        $qb = $this->getEntityManager()->getRepository(Structure::class)->createQueryBuilder("s")
-            ->addSelect('substituees')
-            ->join("s.substitues", "substituees");
-
-        if ($codeType) {
-            $qb
-                ->join('s.typeStructure', 'ts', Join::WITH, 'ts.code = :code')
-                ->setParameter("code", $codeType);
-        }
-        if ($order) {
-            $qb->orderBy('s.' . $order);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    public function findStructuresSubstituees(): array
-    {
-        $structuresSubstituantes = $this->findStructuresSubstituantes();
-
-        $dictionnaire = [];
-        foreach($structuresSubstituantes as $structureSubstituante) {
-            foreach ($structureSubstituante->getSubstitues() as $structure) {
-                $dictionnaire[$structure->getId()] = $structure;
-            }
-        }
-
-        $result = [];
-        foreach ($dictionnaire as $structure) {
-            $result[] = $structure;
-        }
-
-        return $result;
     }
 
     /**
@@ -176,17 +135,14 @@ class StructureService extends BaseService
         return $structureCibleDataObject;
     }
 
-    /**
-     * @param \Structure\Entity\Db\StructureInterface|\Structure\Entity\Db\StructureConcreteInterface $structure
-     * @param array $data
-     */
-    public function updateFromPostData($structure, array $data)
+    public function saveStructure(Structure $structure): void
     {
-        $hydrator = new DoctrineObject($this->getEntityManager());
-        $hydrator->hydrate(
-            $data,
-            $structure instanceof StructureConcreteInterface ? $structure->getStructure() : $structure
-        );
+        try {
+            $this->entityManager->persist($structure);
+            $this->entityManager->flush();
+        } catch (\Doctrine\ORM\Exception\ORMException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la structure", null, $e);
+        }
     }
 
     protected function getEntityClassForType(string $type): string
@@ -212,29 +168,13 @@ class StructureService extends BaseService
      * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
      * @param string|null $order Ex: 'libelle'
      * @param bool $includeFermees
-     * @param bool $cacheable
      * @return StructureConcreteInterface[]
      */
-    public function findAllStructuresAffichablesByType(string $type, ?string $order = null, ?bool $includeFermees = true, bool $cacheable = false): array
+    public function findAllStructuresAffichablesByType(string $type, ?string $order = null, ?bool $includeFermees = true): array
     {
         $qb = $this->findAllStructuresAffichablesByTypeQb($type, $order, $includeFermees);
 
-        // NB : il faut faire explicitement ces jointures sinon Doctrine génère à chaque ligne 3 select pour chacune des 3 relations
-        // 'one-to-one' (structure-->etablissement, structure-->ecoleDoctorale, structure-->uniteRecherche), ce qui multiplie
-        // le nombre de requêtes par 3 !
-        $qb->addSelect('se')->leftJoin('structure.etablissement', 'se');
-        $qb->addSelect('sed')->leftJoin('structure.ecoleDoctorale', 'sed');
-        $qb->addSelect('sur')->leftJoin('structure.uniteRecherche', 'sur');
-
-        $qb->addSelect('substitues')->leftJoin('structureConcrete.substitues', 'substitues');
-
-        $cacheable = $cacheable && getenv('APPLICATION_ENV') === 'production';
-        $qb->getQuery()->setCacheable($cacheable);
-        if ($cacheable) {
-            $qb->getQuery()->setCacheRegion(__METHOD__ . '_' . $type . '_' . $order);
-        }
-
-        return $qb->getQuery()->useQueryCache($cacheable)->enableResultCache($cacheable)->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -246,7 +186,7 @@ class StructureService extends BaseService
     public function findAllStructuresAffichablesByTypeQb(string $type, string $order = null, bool $includeFermees = true): QueryBuilder
     {
         /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository $repo */
-        $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($type));
+        $repo = $this->entityManager->getRepository($this->getEntityClassForType($type));
 
         $qb = $repo->createQueryBuilder('structureConcrete')
             ->addSelect('source')->join('structureConcrete.source', 'source')

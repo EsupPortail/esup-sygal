@@ -1,0 +1,29 @@
+<p>
+    Lorsque la &laquo; Mise à jour automatique du substituant &raquo; est <strong class="text-success">activée</strong> (valeur par défaut),
+    dès lors qu'un événement survient dans la substitution (un substitué apparaît/disparaît, certaines caractéristiques
+    d'un des substitués changent, etc.), le moteur de substitutions mettra à jour en conséquence les caractéristiques
+    du substituant.
+</p>
+<p>
+    La stratégie utilisée par le moteur de substitutions pour mettre à jour les caractéristiques du substituant
+    d'après les "meilleures valeurs élues" des caractéristiques des substitués est celle de la valeur majoritaire
+    ou première dans l'ordre alphabétique ou non vide. Techniquement il s'agit de la
+    <a href="http://www.postgresql.org/docs/current/interactive/functions-aggregate.html#FUNCTIONS-ORDEREDSET-TABLE"
+    >fonction Postgres mode() </a>.
+</p>
+<p>
+    En revanche lorsque la &laquo; Mise à jour automatique du substituant &raquo; est <strong class="text-danger">désactivée</strong>,
+    si les caractéristiques d'un substitué changent, le moteur de substitutions ne mettra pas à jour celles du substituant,
+    ce qui est intéressant dans le cas où l'on veut pouvoir conserver des modifications faites manuellement sur un substituant.
+</p>
+<p>
+    <strong>Attention</strong>, la <strong class="text-danger">désactivation</strong> de la mise à jour automatique
+    doit rester exceptionnelle car cela entraîne une désynchronisation complète du substituant par rapport aux substitués
+    qui ont sans doute vocation à être corrigés/enrichis dans leur source de données.
+</p>
+<p>
+    <strong>NB</strong> : Si la mise à jour automatique est <strong class="text-success">réactivée</strong> après avoir été un temps
+    <strong class="text-danger">désactivée</strong>, les caractéristiques du substituant ne sont pas "remises à jour" immédiatement
+    par le moteur de substitutions à partir des substitués. Elles ne seront mises à jour qu'au prochain événement survenant
+    dans la substitution.
+</p>

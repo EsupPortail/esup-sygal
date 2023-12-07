@@ -1,8 +1,15 @@
 <?php
 /**
  * @var \Individu\Entity\Db\Individu $entity
+ * @var bool $horizontal
  * @var bool $verbose
  */
+
+$horizontal = $horizontal ?? false;
+
+$dlClass = $horizontal ? 'row' : '';
+$dtClass = $horizontal ? 'col-md-5' : '';
+$ddClass = $horizontal ? 'col-md-7' : '';
 
 if (!isset($verbose)) $verbose = false;
 ?>
@@ -10,39 +17,37 @@ if (!isset($verbose)) $verbose = false;
 <h3>
     Informations générales
 </h3>
-<dl class="row">
+<dl class="<?php echo $dlClass ?>">
     <?php if ($entity->getCivilite()): ?>
-        <dt class="col-md-5">Civilité</dt>
-        <dd class="col-md-7"><?php echo $entity->getCiviliteToString() ?></dd>
+        <dt class="<?php echo $dtClass ?>">Civilité</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getCiviliteToString() ?></dd>
     <?php endif ?>
 
-    <dt class="col-md-5">Nom d'usage</dt>
-    <dd class="col-md-7"><strong><?php echo $entity->getNomUsuel() ?></strong></dd>
+    <dt class="<?php echo $dtClass ?>">Nom d'usage</dt>
+    <dd class="<?php echo $ddClass ?>"><strong><?php echo $entity->getNomUsuel() ?></strong></dd>
 
-    <?php if ($entity->getNomPatronymique() && $entity->getNomPatronymique() !== $entity->getNomUsuel()): ?>
-        <dt class="col-md-5">Nom patronymique</dt>
-        <dd class="col-md-7"><?php echo $entity->getNomPatronymique() ?></dd>
+    <dt class="<?php echo $dtClass ?>">Nom patronymique</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getNomPatronymique() ?></dd>
+
+    <dt class="<?php echo $dtClass ?>">Prénom</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getPrenom1() ?></dd>
+
+    <?php if ($verbose): ?>
+        <dt class="<?php echo $dtClass ?>">Deuxième prénom</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getPrenom2() ?: "(Non renseigné)" ?></dd>
     <?php endif ?>
 
-    <dt class="col-md-5">Prénom</dt>
-    <dd class="col-md-7"><?php echo $entity->getPrenom1() ?></dd>
+    <dt class="<?php echo $dtClass ?>">Date de naissance</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getDateNaissanceToString() ?: "(Non renseignée)" ?></dd>
 
-    <?php if ($verbose && $entity->getPrenom2()): ?>
-        <dt class="col-md-5">Deuxième prénom</dt>
-        <dd class="col-md-7"><?php echo $entity->getPrenom2() ?></dd>
-    <?php endif ?>
+    <dt class="<?php echo $dtClass ?>">Adresse électronique</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getEmailPro() ?: "(Non renseignée)" ?></dd>
 
-    <dt class="col-md-5">Date de naissance</dt>
-    <dd class="col-md-7"><?php echo $entity->getDateNaissanceToString() ?: "(Non renseignée)" ?></dd>
+    <dt class="<?php echo $dtClass ?>">Adresse électronique de contact</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getEmailContact() ?: "(Non renseignée)" ?></dd>
 
-    <dt class="col-md-5">Adresse électronique</dt>
-    <dd class="col-md-7"><?php echo $entity->getEmailPro() ?: "(Non renseignée)" ?></dd>
-
-    <dt class="col-md-5">Adresse électronique de contact</dt>
-    <dd class="col-md-7"><?php echo $entity->getEmailContact() ?: "(Non renseignée)" ?></dd>
-
-    <dt class="col-md-5">Nationalité</dt>
-    <dd class="col-md-7">
+    <dt class="<?php echo $dtClass ?>">Nationalité</dt>
+    <dd class="<?php echo $ddClass ?>">
         <?php echo (($pays = $entity->getPaysNationalite()) ? $pays->getLibelleNationalite() : $entity->getNationalite()) ?: "(Non renseignée)" ?>
     </dd>
 </dl>
@@ -51,29 +56,31 @@ if (!isset($verbose)) $verbose = false;
     <h3>
         Informations techniques
     </h3>
-    <dl class="row">
-        <dt class="col-md-5">Id</dt>
-        <dd class="col-md-7"><?php echo $entity->getId() ?></dd>
+    <dl class="<?php echo $dlClass ?>">
+        <dt class="<?php echo $dtClass ?>">Id</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getId() ?></dd>
 
-        <dt class="col-md-5">Création</dt>
-        <dd class="col-md-7"><?php echo $entity->getHistoCreation()->format('d/m/Y à H:i:s') ?></dd>
+        <dt class="<?php echo $dtClass ?>">Création</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getHistoCreation()->format('d/m/Y à H:i:s') ?></dd>
 
+        <dt class="<?php echo $dtClass ?>">Modification</dt>
         <?php if ($entity->getHistoModification() && $entity->getHistoModification() <> $entity->getHistoCreation()): ?>
-            <dt class="col-md-5">Modification</dt>
-            <dd class="col-md-7"><?php echo $entity->getHistoModification()->format('d/m/Y à H:i:s') ?></dd>
+            <dd class="<?php echo $ddClass ?>"><?php echo $entity->getHistoModification()->format('d/m/Y à H:i:s') ?></dd>
+        <?php else: ?>
+            <dd class="<?php echo $ddClass ?>">(Aucune)</dd>
         <?php endif ?>
 
-        <dt class="col-md-5">Source</dt>
-        <dd class="col-md-7"><?php echo $entity->getSource() ?></dd>
+        <dt class="<?php echo $dtClass ?>">Source</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getSource() ?></dd>
 
-        <dt class="col-md-5">Source code</dt>
-        <dd class="col-md-7"><code><?php echo $entity->getSourceCode() ?></code></dd>
+        <dt class="<?php echo $dtClass ?>">Source code</dt>
+        <dd class="<?php echo $ddClass ?>"><code><?php echo $entity->getSourceCode() ?></code></dd>
 
-        <dt class="col-md-5">Supann Id</dt>
-        <dd class="col-md-7"><?php echo $entity->getSupannId() ?: "(Non renseigné)" ?></dd>
+        <dt class="<?php echo $dtClass ?>">Supann Id</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getSupannId() ?: "(Non renseigné)" ?></dd>
 
-        <dt class="col-md-5">IdRef</dt>
-        <dd class="col-md-7"><?php echo $entity->getIdRef() ? $this->idrefLink($entity->getIdRef()) : "(Non renseigné)" ?></dd>
+        <dt class="<?php echo $dtClass ?>">IdRef</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getIdRef() ? $this->idrefLink($entity->getIdRef()) : "(Non renseigné)" ?></dd>
     </dl>
 <?php endif ?>
 
@@ -81,9 +88,9 @@ if (!isset($verbose)) $verbose = false;
     <h3 class="text-danger">
         Historisé
     </h3>
-    <dl class="text-danger">
-        <dt class="col-md-5 text-danger">Date :</dt>
-        <dd class="col-md-7 text-danger"><?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></dd>
+    <dl class="<?php echo $dlClass ?> text-danger">
+        <dt class="<?php echo $dtClass ?> text-danger">Date :</dt>
+        <dd class="<?php echo $ddClass ?> text-danger"><?php echo $entity->getHistoDestruction()->format('d/m/Y à H:i:s') ?></dd>
     </dl>
 <?php endif ?>
 

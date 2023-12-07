@@ -12,7 +12,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\StructureInterface;
 use Structure\Provider\Privilege\StructurePrivileges;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 
@@ -53,7 +53,7 @@ class StructureAssertion extends AbstractAssertion
                 return $role->getStructure() === $structure;
         }
 
-        if ($structure instanceof SubstitutionAwareInterface) {
+        if ($structure instanceof SubstitutionAwareEntityInterface) {
             switch (true) {
                 case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES :
                 case $privilege === StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES :

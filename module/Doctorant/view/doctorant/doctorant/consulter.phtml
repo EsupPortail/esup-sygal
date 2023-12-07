@@ -34,7 +34,7 @@ $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTOR
     <div class="card-body">
         <div class="row">
             <div class="col-md-7">
-                <?php echo $this->partial('individu/individu/partial/dl', ['entity' => $doctorant->getIndividu(), 'verbose' => false]) ?>
+                <?php echo $this->partial('individu/individu/partial/dl', ['entity' => $doctorant->getIndividu(), 'horizontal' => true, 'verbose' => false]) ?>
 
                 <a href="<?php echo $this->url('individu/voir', ['individu' => $doctorant->getIndividu()->getId()]) ?>"
                    class="btn btn-info"

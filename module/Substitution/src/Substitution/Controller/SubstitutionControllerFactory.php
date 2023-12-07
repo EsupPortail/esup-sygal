@@ -3,7 +3,7 @@
 namespace Substitution\Controller;
 
 use Psr\Container\ContainerInterface;
-use Substitution\Service\SubstitutionService;
+use Substitution\Service\Substitution\SubstitutionService;
 
 class SubstitutionControllerFactory
 {
@@ -15,7 +15,7 @@ class SubstitutionControllerFactory
     {
         $controller = new SubstitutionController();
 
-        /** @var \Substitution\Service\SubstitutionService $substitutionService */
+        /** @var \Substitution\Service\Substitution\SubstitutionService $substitutionService */
         $substitutionService = $container->get(SubstitutionService::class);
         $controller->setSubstitutionService($substitutionService);
 

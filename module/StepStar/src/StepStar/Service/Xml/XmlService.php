@@ -581,23 +581,17 @@ class XmlService
 
     private function extractStructureEtablissement(array $these): array
     {
-        return
-            $these['etablissement']['structure']['structureSubstituante'][0] ??
-            $these['etablissement']['structure'];
+        return $these['etablissement']['structure'];
     }
 
     private function extractStructureEcoleDoctorale(array $these): array
     {
-        return
-            $these['ecoleDoctorale']['structure']['structureSubstituante'][0] ??
-            $these['ecoleDoctorale']['structure'];
+        return $these['ecoleDoctorale']['structure'];
     }
 
     private function extractStructureUniteRecherche(array $these): array
     {
-        return
-            $these['uniteRecherche']['structure']['structureSubstituante'][0] ??
-            $these['uniteRecherche']['structure'];
+        return $these['uniteRecherche']['structure'];
     }
 
     private function explodeMotsClefs(?string $motsClefs): array

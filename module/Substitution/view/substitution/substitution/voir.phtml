@@ -1,0 +1,73 @@
+
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var string $type
+ * @var array $substitution
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituant
+ * @var ?\Substitution\Entity\Db\SubstitutionAwareEntityInterface[] $substitues
+ * @var string[] $npdAttributes [name => label]
+ *
+ * @var string $informationPartial
+ * @var bool $includeGotoDetailsLink
+ *
+ * @see \Substitution\Controller\SubstitutionController::voirAction()
+ */
+
+use Substitution\Controller\SubstitutionController;
+use UnicaenAuth\Guard\PrivilegeController;
+
+$fromDatesCreations = array_combine(array_keys($substitues), explode('|', $substitution['from_dates_creations']));
+$fromNpdCalcules = array_combine(array_keys($substitues), explode('|', $substitution['from_npd_calcs']));
+$fromNpdForces = array_combine(array_keys($substitues), explode('|', $substitution['from_npd_forces']));
+$fromSources = array_combine(array_keys($substitues), explode('|', $substitution['from_sources']));
+
+$canEdit = $this->isAllowed(PrivilegeController::getResourceId(SubstitutionController::class, 'modifier'));
+
+$this->headTitle("Substitution par " . $substituant->getId());
+?>
+
+<?php echo $this->messenger()->setMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<?php if ($canEdit): ?>
+    <a href="<?php echo $this->url('substitution/substitution/voir/modifier', ['type' => $type, 'id' => $substitution['to_id']]) ?>"
+       title="Modifier cette substitution"
+       class="btn btn-primary float-end">Modifier cette substitution</span></a>
+<?php endif; ?>
+
+<h1 class="page-header">
+    Détails de la substitution
+    <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span>
+    <code><abbr title="NPD"><?php echo $substitution['npd'] ?></abbr></code>
+</h1>
+
+<p>
+    <?php echo count($substitues) ?> enregistrements substitués.
+</p>
+
+<div class="row align-items-start">
+    <div class="col">
+        <?php echo $this->partial('substitution/substitution/_partial/substituant', [
+            'type' => $type,
+            'substituant' => $substituant,
+            'npdAttributes' => $npdAttributes,
+            'informationPartial' => $informationPartial,
+            'includeGotoDetailsLink' => true,
+        ]) ?>
+    </div>
+    <?php foreach ($substitues as $id => $substitue): ?>
+        <div class="col px-1">
+            <?php echo $this->partial('substitution/substitution/_partial/substitue', [
+                'substitue' => $substitue,
+                'npdAttributes' => $npdAttributes,
+                'id' => $id,
+                'fromSource' => $fromSources[$id],
+                'fromDateCreation' => $fromDatesCreations[$id],
+                'fromNpdCalcule' => $fromNpdCalcules[$id],
+                'fromNpdForce' => $fromNpdForces[$id],
+                'informationPartial' => $informationPartial,
+                'includeGotoDetailsLink' => true,
+            ]) ?>
+        </div>
+    <?php endforeach; ?>
+</div>

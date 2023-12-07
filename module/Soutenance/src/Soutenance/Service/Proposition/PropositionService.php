@@ -551,23 +551,20 @@ class PropositionService extends BaseService
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
                 $qb = $qb
-                    ->leftJoin('structure_ur.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
-                    ->andWhere('structure_ur.id = :structure OR structureSubstituante = :structure')
+                    ->andWhere('structure_ur.id = :structure')
                     ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
                 break;
             case Role::CODE_RESP_ED :
             case Role::CODE_GEST_ED :
                 $qb = $qb
-                    ->leftJoin('structure_ed.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
-                    ->andWhere('structure_ed.id = :structure OR structureSubstituante = :structure')
+                    ->andWhere('structure_ed.id = :structure')
                     ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
                 break;
             case Role::CODE_BDD :
                 $qb = $qb
-                    ->leftJoin('structure_etab.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
-                    ->andWhere('structure_etab.id = :structure OR structureSubstituante = :structure')
+                    ->andWhere('structure_etab.id = :structure')
                     ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
                 break;

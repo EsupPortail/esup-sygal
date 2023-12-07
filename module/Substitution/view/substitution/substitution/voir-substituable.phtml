@@ -1,0 +1,28 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ *
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituable
+ * @var string $type
+ * @var string $informationPartial
+ * @var string[] $npdAttributes [name => label]
+ *
+ * @see \Substitution\Controller\SubstitutionController::voirSubstituableAction()
+ */
+?>
+
+<!----------------- Capture du rendu du substituable ----------------->
+<?php $this->placeholder('substituable')->captureStart(); ?>
+    <?php echo $this->partial($informationPartial, [
+        'entity' => $substituable,
+        'verbose' => true,
+        'includeGotoDetailsLink' => false,
+    ]) ?>
+<?php $this->placeholder('substituable')->captureEnd() ?>
+<!-------------------------------------------------------------------->
+
+<?php echo $this->partial('substitution/substitution/_partial/substituable', [
+    'type' => $type,
+    'substituable' => $substituable,
+    'npdAttributes' => $npdAttributes,
+]) ?>

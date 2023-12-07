@@ -111,11 +111,6 @@ class ActeurRepository extends DefaultEntityRepository
     /**
      * Recherche d'acteurs selon leur rôle.
      *
-     * NB : les seules ED prises en compte sont celles non substituées.
-     *
-     * NB : ici pas de jointure vers l'éventuelle établissement substitué, charge à l'appelant de passer un
-     * l'établissement adéquat (substitué ou non).
-     *
      * @param Role|string $role Rôle, ou code du rôle (ex: {@see Role::CODE_DIRECTEUR_THESE})
      * @param Etablissement|null $etablissement Etablissement éventuel
      * @param EcoleDoctorale|string|array|null $ecoleDoctorale {@see EcoleDoctorale}, code structure de l'ED, ou ['s.sigle' => 'ED 591 NBISE'] par ex.

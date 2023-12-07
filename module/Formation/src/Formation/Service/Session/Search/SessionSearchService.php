@@ -85,7 +85,7 @@ class SessionSearchService extends SearchService
             ->setLabel("Site")
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
                 $qb
-                    ->andWhere('site.sourceCode = :sourceCodeSite OR site_structureSubstituante.sourceCode = :sourceCodeSite')
+                    ->andWhere('site.sourceCode = :sourceCodeSite')
                     ->setParameter('sourceCodeSite', $filter->getValue());
             });
     }
@@ -95,7 +95,7 @@ class SessionSearchService extends SearchService
         $filter = new SelectSearchFilter("Structure associée", self::NAME_structure);
         $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
             $qb
-                ->andWhere("struct = :structure OR struct_structureSubstituante = :structure")
+                ->andWhere("struct = :structure")
                 ->setParameter('structure', $filter->getValue());
         });
 
@@ -141,7 +141,7 @@ class SessionSearchService extends SearchService
     public function createSiteSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Site", self::NAME_site);
-        $sorter->setOrderByField("site_structureSubstituante.code, site_structure.code");
+        $sorter->setOrderByField("site_structure.code");
 
         return $sorter;
     }
@@ -149,7 +149,7 @@ class SessionSearchService extends SearchService
     private function createStructureSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Structure associée", self::NAME_structure);
-        $sorter->setOrderByField("struct_structureSubstituante.libelle, struct.libelle");
+        $sorter->setOrderByField("struct.libelle");
 
         return $sorter;
     }

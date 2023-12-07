@@ -4,23 +4,14 @@ namespace Individu\Service;
 
 trait IndividuServiceAwareTrait
 {
-    /**
-     * @var IndividuService
-     */
-    protected $individuService;
+    protected IndividuService $individuService;
 
-    /**
-     * @return IndividuService
-     */
-    public function getIndividuService()
+    public function getIndividuService(): IndividuService
     {
         return $this->individuService;
     }
 
-    /**
-     * @param IndividuService $individuService
-     */
-    public function setIndividuService(IndividuService $individuService)
+    public function setIndividuService(IndividuService $individuService): void
     {
         $this->individuService = $individuService;
     }

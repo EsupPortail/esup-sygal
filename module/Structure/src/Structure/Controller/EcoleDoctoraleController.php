@@ -33,10 +33,7 @@ class EcoleDoctoraleController extends StructureConcreteController
         return $this->ecoleDoctoraleService;
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
         $vm = parent::indexAction();
 

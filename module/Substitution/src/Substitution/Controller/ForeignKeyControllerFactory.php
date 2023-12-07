@@ -3,7 +3,7 @@
 namespace Substitution\Controller;
 
 use Psr\Container\ContainerInterface;
-use Substitution\Service\ForeignKeyService;
+use Substitution\Service\ForeignKey\ForeignKeyService;
 
 class ForeignKeyControllerFactory
 {
@@ -15,7 +15,7 @@ class ForeignKeyControllerFactory
     {
         $controller = new ForeignKeyController();
 
-        /** @var \Substitution\Service\ForeignKeyService $foreignKeyService */
+        /** @var \Substitution\Service\ForeignKey\ForeignKeyService $foreignKeyService */
         $foreignKeyService = $container->get(ForeignKeyService::class);
         $controller->setForeignKeyService($foreignKeyService);
 

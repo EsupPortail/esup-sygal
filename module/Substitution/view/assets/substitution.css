@@ -1,0 +1,59 @@
+.card.substituant {
+  border-width: 4px; }
+
+.col .card.substituant dl dd,
+.col .card.substituable dl dd,
+.col .card.substitue dl dd {
+  margin-bottom: 4px; }
+.col .card.substituant .card-header,
+.col .card.substituable .card-header,
+.col .card.substitue .card-header {
+  padding: .5rem; }
+.col .card.substituant .list-group-item,
+.col .card.substituable .list-group-item,
+.col .card.substitue .list-group-item {
+  line-height: 100%;
+  font-size: 90%;
+  padding: .5rem; }
+  .col .card.substituant .list-group-item h3,
+  .col .card.substituable .list-group-item h3,
+  .col .card.substitue .list-group-item h3 {
+    font-size: 16px; }
+.col .card.substituant .list-group-item:first-of-type,
+.col .card.substituable .list-group-item:first-of-type,
+.col .card.substitue .list-group-item:first-of-type {
+  line-height: 110%;
+  font-size: 100%; }
+  .col .card.substituant .list-group-item:first-of-type dl dd,
+  .col .card.substituable .list-group-item:first-of-type dl dd,
+  .col .card.substitue .list-group-item:first-of-type dl dd {
+    margin-bottom: 6px; }
+.col .card.substitue {
+  opacity: 70%; }
+.col input[type=submit] {
+  width: 100%; }
+
+.popover.substituant,
+.popover.substitue {
+  max-width: 50%; }
+  .popover.substituant .popover-header,
+  .popover.substitue .popover-header {
+    font-size: 110%; }
+
+.complement-substitue {
+  font-size: 75%;
+  opacity: 75%;
+  line-height: normal;
+  margin-bottom: 0; }
+
+.badge.substitue {
+  font-size: 60%;
+  padding: 2px;
+  margin-bottom: 2px;
+  vertical-align: middle;
+  cursor: help; }
+
+.non-applicable {
+  visibility: hidden; }
+
+/*# sourceMappingURL=substitution.css.map */

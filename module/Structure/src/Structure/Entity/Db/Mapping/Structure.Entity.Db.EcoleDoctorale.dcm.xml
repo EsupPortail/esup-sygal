@@ -10,10 +10,11 @@
     <field name="theme"       type="string" column="THEME" length="1024" nullable="true"/>
     <field name="offreThese"  type="string" column="OFFRE_THESE" length="1024" nullable="true"/>
 
+    <field name="npdForce" type="string" column="npd_force"/>
     <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
 
     <many-to-many field="substitues" target-entity="Structure\Entity\Db\EcoleDoctorale">
-      <join-table name="ecole_doct_substit">
+      <join-table name="substit_ecole_doct">
         <join-columns>
           <join-column name="to_id" referenced-column-name="ID" />
         </join-columns>

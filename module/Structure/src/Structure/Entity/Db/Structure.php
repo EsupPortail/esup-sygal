@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
-use Substitution\Entity\Db\SubstitutionAwareTrait;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -24,11 +24,11 @@ class Structure implements
     HistoriqueAwareInterface,
     SourceAwareInterface,
     ResourceInterface,
-    SubstitutionAwareInterface
+    SubstitutionAwareEntityInterface
 {
     use SourceAwareTrait;
     use HistoriqueAwareTrait;
-    use SubstitutionAwareTrait;
+    use SubstitutionAwareEntityTrait;
 
     /**
      * @var string $id
@@ -91,11 +91,6 @@ class Structure implements
      */
     protected $roles;
 
-    /**
-     * @var ArrayCollection|Structure[]
-     */
-    private  $structureSubstituante;
-
     /** @var ArrayCollection StructureDocument */
     private $documents;
 
@@ -145,7 +140,6 @@ class Structure implements
 
     public function __construct()
     {
-        $this->structureSubstituante = new ArrayCollection();
         $this->substitues = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -354,41 +348,6 @@ class Structure implements
     public function getUniteRecherche(): ?UniteRecherche
     {
         return $this->uniteRecherche;
-    }
-
-    /**
-     * Retourne les éventuelles structures "concrètes" substituées par celle-ci.
-     *
-     * NB : attention à faire la jointure en cas de parcours de plusieurs structures.
-     *
-     * @see getSubstitues()
-     */
-    public function getStructuresConcretesSubstituees(): Collection
-    {
-        return $this->substitues->map(fn(Structure $s) => $s->getStructureConcrete());
-    }
-
-    /**
-     * Retourne l'éventuelle "structure substituante", càd qui substitue celle-ci.
-     *
-     * NB : c'est géré avec une relation to-many mais en pratique il ne peut exister qu'une seule structure substituante
-     * (sachant que les substitutions ne sont pas historisées mais supprimées).
-     *
-     * NB : attention à faire la jointure en cas de parcours de plusieurs structures.
-     */
-    public function getStructureSubstituante(): ?Structure
-    {
-        return $this->structureSubstituante->first() ?: null;
-    }
-
-    /**
-     * Indique si cette structure est substituée.
-     *
-     * NB : attention à faire la jointure en cas de parcours de plusieurs structures.
-     */
-    public function estSubstituee() : bool
-    {
-        return $this->getStructureSubstituante() !== null;
     }
 
     /**

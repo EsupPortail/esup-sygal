@@ -24,11 +24,10 @@ $fcg = $this->formControlGroup();
 $etablissement = $form->getObject();
 $idEtablissement = $etablissement->getStructure()->getId();
 $isNew = $etablissement->getId() === null;
-$estSubstituee = $etablissement->getStructure()->estSubstituee();
 $estModifiable = !($etablissement->getSource() !== null AND $etablissement->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 
-$editable = $isNew || (!$estSubstituee AND $estModifiable);
+$editable = $isNew || $estModifiable;
 $form->get('libelle')->setAttribute('readonly', !$editable);
 $form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
@@ -50,11 +49,6 @@ $form->get('code')->setAttribute('readonly', !$editable);
             <?php if (!$estModifiable) : ?>
                 <span class="icon icon-attention"></span>
                 <strong>La source (<?php echo $etablissement->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
-                <br/>
-            <?php endif; ?>
-            <?php if ($estSubstituee) : ?>
-                <span class="icon icon-attention"></span>
-                <strong>La structure est substituée et ne doit pas être modifiée.</strong>
                 <br/>
             <?php endif; ?>
         </p>

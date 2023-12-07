@@ -148,12 +148,12 @@ class RapportSearchService extends SearchService
     private function fetchEcolesDoctorales(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true);
     }
 
     private function fetchUnitesRecherches(): array
     {
-        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
+        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false);
     }
 
     private function fetchOriginesFinancements(): array
@@ -386,9 +386,6 @@ class RapportSearchService extends SearchService
                 $qb
                     ->addSelect('s_sort')
                     ->join('etab.structure', 's_sort')
-                    ->addSelect('structureSubstituante_sort')
-                    ->leftJoin('s_sort.structureSubstituante', 'structureSubstituante_sort')
-                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('s_sort.code', $sorter->getDirection());
             }
         );
@@ -404,9 +401,6 @@ class RapportSearchService extends SearchService
                 $qb
                     ->addSelect('ed_s_sort')
                     ->leftJoin("ed.structure", 'ed_s_sort')
-                    ->addSelect('structureSubstituante_sort')
-                    ->leftJoin('ed_s_sort.structureSubstituante', 'structureSubstituante_sort')
-                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
             }
         );
@@ -423,9 +417,6 @@ class RapportSearchService extends SearchService
                 $qb
                     ->addSelect('ur_s_sort')
                     ->leftJoin("ur.structure", 'ur_s_sort')
-                    ->addSelect('structureSubstituante_sort')
-                    ->leftJoin('ur_s_sort.structureSubstituante', 'structureSubstituante_sort')
-                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('ur_s_sort.code', $direction);
             }
         );

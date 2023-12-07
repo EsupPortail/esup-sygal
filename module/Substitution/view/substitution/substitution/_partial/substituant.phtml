@@ -1,0 +1,88 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ *
+ * @var string $type
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituant
+ * @var string[] $npdAttributes [name => label]
+ * @var bool $canEdit
+ *
+ * @var string $informationPartial
+ * @var bool $includeGotoDetailsLink
+ */
+
+use Laminas\Filter\Word\UnderscoreToCamelCase;
+use Substitution\Controller\SubstitutionController;
+use UnicaenAuth\Guard\PrivilegeController;
+
+$canEdit = ($canEdit ?? false) && $this->isAllowed(PrivilegeController::getResourceId(SubstitutionController::class, 'modifier'));
+
+$attributeToGetterFilter = new UnderscoreToCamelCase();
+?>
+
+<div class="card substituant">
+    <div class="card-header">
+        <h3 class="card-title">
+            Substituant<br><?php echo $substituant->getId() ?>
+        </h3>
+        <dl>
+            <?php foreach ($substituant->extractAttributeValues($npdAttributes) as $label => $value): ?>
+                <dt><?php echo $label ?></dt>
+                <dd><?php echo $value ?></dd>
+            <?php endforeach ?>
+        </dl>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <dl>
+                <dt>Source</dt>
+                <dd><?php echo $substituant->getSource()->getCode() ?></dd>
+                <dt>Créé le</dt>
+                <dd><?php echo $substituant->getHistoCreation()->format('d/m/Y à H:i:s') ?></dd>
+                <dt>Modifié ou mis à jour le</dt>
+                <?php if ($substituant->getHistoModification() && $substituant->getHistoModification() <> $substituant->getHistoCreation()): ?>
+                    <dd><?php echo $substituant->getHistoModification()->format('d/m/Y à H:i:s') ?></dd>
+                <?php else: ?>
+                    <dd>-</dd>
+                <?php endif ?>
+                <dt>Mise à jour automatique
+                    <a tabindex="10" class="fas fa-info-circle" role="button"
+                       data-bs-toggle="popover" data-bs-trigger="focus" title="À propos de la &laquo; Mise à jour automatique du substituant &raquo;"
+                       data-bs-placement="right" data-bs-html="true"
+                       data-bs-custom-class="substituant"
+                       data-bs-content="<?php echo htmlspecialchars($this->partial('substitution/substitution/_partial/laius-mise-a-jour-substituant')) ?>"></a>
+                </dt>
+                <dd>
+                    <?php if ($canEdit): ?>
+                        <!-- NB : ce formulaire est sans bouton submit car il n'a que l'élément de formulaire 'mise à jour automatique'
+                             présent, donc on a choisi de poster le formulaire à chaque modif de celui-ci (cf. js dans la vue parente). -->
+                        <form method="post" class="substituant"
+                              action="<?php echo $this->url('substitution/substitution/voir/modifier-substituant', ['type' => $type, 'id' => $substituant->getId()]) ?>">
+                            <?php $activee = $substituant->estSubstituantModifiable() ?>
+                            <input type="hidden" value="<?php echo $substituant->getId() ?>" name="substituant"/>
+                            <input type="radio" class="btn-check" name="majAutomatiqueSubstituant" id="majAutomatiqueSubstituantOui"
+                                   value="1" autocomplete="off" <?php echo $activee ? 'checked' : ''; ?>
+                                   title="Activer la mise à jour automatique"
+                                   onclick="return confirm('Êtes-vous certain·e de vouloir activer la mise à jour automatique ?')">
+                            <label class="btn btn-sm btn-outline-success" for="majAutomatiqueSubstituantOui">Activée</label>
+                            <input type="radio" class="btn-check" name="majAutomatiqueSubstituant" id="majAutomatiqueSubstituantNon"
+                                   value="0" autocomplete="off" <?php echo !$activee ? 'checked' : ''; ?>
+                                   title="Désactiver la mise à jour automatique"
+                                   onclick="return confirm('Êtes-vous certain·e de vouloir désactiver la mise à jour automatique ?')">
+                            <label class="btn btn-sm btn-outline-danger" for="majAutomatiqueSubstituantNon">Désactivée</label>
+                        </form>
+                    <?php else: ?>
+                        <?php if ($substituant->estSubstituantModifiable()): ?>
+                            <span class="badge bg-success">Activée</span>
+                        <?php else: ?>
+                            <span class="badge bg-danger">Désactivée</span>
+                        <?php endif ?>
+                    <?php endif; ?>
+                </dd>
+            </dl>
+        </li>
+        <li class="list-group-item">
+            <?php echo $this->partial($informationPartial, ['entity' => $substituant, 'verbose' => true, 'includeGotoDetailsLink' => $includeGotoDetailsLink]) ?>
+        </li>
+    </ul>
+</div>

@@ -11,8 +11,8 @@ use Structure\Entity\Db\UniteRecherche;
 use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Substitution\Entity\Db\SubstitutionAwareInterface;
-use Substitution\Entity\Db\SubstitutionAwareTrait;
+use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
+use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -23,11 +23,11 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
  */
 class Individu implements
     HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface,
-    SubstitutionAwareInterface
+    SubstitutionAwareEntityInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
-    use SubstitutionAwareTrait;
+    use SubstitutionAwareEntityTrait;
 
     const CIVILITE_M = 'M.';
     const CIVILITE_MME = 'Mme';
@@ -172,6 +172,7 @@ class Individu implements
         $this->mailsConfirmations = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
         $this->complements = new ArrayCollection();
+        $this->substitues = new ArrayCollection();
     }
 
     /**

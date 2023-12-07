@@ -52,10 +52,7 @@ abstract class StructureConcreteController extends AbstractController
         $this->structureForm = $form;
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
         $consultationToutes = $this->isAllowed(
             StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES),
@@ -63,9 +60,12 @@ abstract class StructureConcreteController extends AbstractController
 
         $structures = [];
         if ($consultationToutes) {
-            $structures = $this->structureService->findAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
+            $qb = $this->structureService->findAllStructuresAffichablesByTypeQb($this->codeTypeStructure, 'libelle');
+            $qb // jointure nécessaire pour pouvoir appeler sur chaque enregistrement `estSubstituant()` sans requêtes surnuméraires
+                ->addSelect('substitues') /** @see \Substitution\Entity\Db\SubstitutionAwareEntityTrait::estSubstituant() */
+                ->leftJoin('structureConcrete.substitues', 'substitues');
+            $structures = $qb->getQuery()->getResult();
         } else {
-            /** @var Role $role*/
             $role = $this->userContextService->getSelectedIdentityRole();
             if ($role->isEcoleDoctoraleDependant() || $role->isUniteRechercheDependant() || $role->isEtablissementDependant()) {
                 $structure = $this->getStructureConcreteService()->getRepository()->findByStructureId($role->getStructure()->getId());

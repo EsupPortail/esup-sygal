@@ -4,6 +4,7 @@ namespace Doctorant\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Doctorant\Entity\Db\Doctorant;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
@@ -11,12 +12,13 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Util;
 
 class DoctorantRepository extends DefaultEntityRepository
 {
     /**
      * @param string $sourceCode
-     * @return Doctorant
+     * @return \Doctorant\Entity\Db\Doctorant|null
      */
     public function findOneBySourceCode(string $sourceCode): ?Doctorant
     {
@@ -51,7 +53,57 @@ class DoctorantRepository extends DefaultEntityRepository
         try {
             return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie rencontrée : 2 doctorants liés au même individu !");
+            throw new RuntimeException("Anomalie rencontrée : 2 doctorants non historisés liés au même individu " . $individu->getId());
+        }
+    }
+
+    /**
+     * Recherche textuelle de doctorants à l'aide de la table INDIVIDU_RECH, en SQL pur.
+     *
+     * @param string $text
+     * @param integer $limit
+     *
+     * @return array[]
+     */
+    public function findByText(string $text, int $limit = 0): array
+    {
+        if (strlen($text) < 2) return [];
+
+        $text = Util::reduce($text);
+        $criteres = explode(' ', $text);
+
+        $sql =
+            "SELECT i.*, d.*/*indispensable*/, src.libelle as source_libelle, src.importable as source_importable " .
+            "FROM INDIVIDU i " .
+            "JOIN INDIVIDU_RECH ir on ir.id = i.id " .
+            "JOIN DOCTORANT d on d.individu_id = i.id " .
+            "JOIN SOURCE src on src.id = d.source_id " .
+            "WHERE d.HISTO_DESTRUCTION IS NULL";
+
+        $sqlCri = [];
+        foreach ($criteres as $c) {
+            $sqlCri[] = "(concat(ir.haystack,' ',d.ine)) LIKE str_reduce($$%" . $c . "%$$)";
+        }
+        $sqlCri = implode(' AND ', $sqlCri);
+
+        $sql .= ' AND (' . $sqlCri . ') ';
+
+        if ($limit > 0) {
+            $sql .= " LIMIT " . $limit;
+        }
+
+        try {
+            $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);
+        } catch (Exception $e) {
+            throw new RuntimeException(
+                "Erreur rencontrée lors de l'exécution de la requête de recherche de doctorant", null, $e);
+        }
+
+        try {
+            return $stmt->fetchAllAssociative();
+        } catch (Exception $e) {
+            throw new RuntimeException(
+                "Impossible d'obtenir les résultats de la requête de recherche de doctorant", null, $e);
         }
     }
 
@@ -77,17 +129,17 @@ class DoctorantRepository extends DefaultEntityRepository
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {
                 $qb
-                    ->andWhere('s = :structure OR structureSubstituante = :structure')
+                    ->andWhere('s = :structure')
                     ->setParameter('structure', $ecoleDoctorale->getStructure(/*false*/));
             } elseif (is_array($ecoleDoctorale)) {
                 $leftPart = key($ecoleDoctorale);
                 $rightPart = current($ecoleDoctorale);
                 $qb
-                    ->andWhere(sprintf($leftPart, 's') . ' = :value OR ' . sprintf($leftPart, 'structureSubstituante'). ' = :value')
+                    ->andWhere(sprintf($leftPart, 's') . ' = :value')
                     ->setParameter('value', $rightPart);
             } else {
                 $qb
-                    ->andWhere('s.code = :code OR structureSubstituante.code = :code')
+                    ->andWhere('s.code = :code')
                     ->setParameter('code', $ecoleDoctorale);
             }
         }

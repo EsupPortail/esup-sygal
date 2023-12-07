@@ -11,8 +11,6 @@ use Structure\Provider\Privilege\StructurePrivileges;
 
 $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
-//$canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_TOUTES_STRUCTURES))
-//    || $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 ?>
 
 
@@ -61,7 +59,9 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
                         <?php echo $ecole->getStructure()->getLibelle(); ?>
                     </a>
                     <?php if ($ecole->estSubstituant()) : ?>
-                        &nbsp;<span class="badge bg-info" title="Cet enregistrement substitue d'autres enregistrements">Substituant</span>
+                        <a href="<?php echo $this->url('substitution/substitution/voir', ['type' => \Substitution\Constants::TYPE_ecole_doct, 'id' => $ecole->getId()]) ?>"
+                           title="Accéder aux détails de cette substitution">
+                            <span class="badge bg-info" title="Cet enregistrement substitue d'autres enregistrements">S</span></a>
                     <?php endif; ?>
                     <?php if ($ecole->getStructure()->estFermee()) : ?>
                         &nbsp;<span class="badge bg-danger">Structure fermée</span>

@@ -76,19 +76,19 @@ class RapportActiviteSearchService extends SearchService
         $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('etab.sourceCode = :sourceCodeEtab OR etab_substituant.sourceCode = :sourceCodeEtab')
+                    ->andWhere('etab.sourceCode = :sourceCodeEtab')
                     ->setParameter('sourceCodeEtab', $filter->getValue());
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('ed.sourceCode = :sourceCodeED OR ed_substituant.sourceCode = :sourceCodeED')
+                    ->andWhere('ed.sourceCode = :sourceCodeED')
                     ->setParameter('sourceCodeED', $filter->getValue());
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('ur.sourceCode = :sourceCodeUR OR ur_substituant.sourceCode = :sourceCodeUR')
+                    ->andWhere('ur.sourceCode = :sourceCodeUR')
                     ->setParameter('sourceCodeUR', $filter->getValue());
             });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
@@ -166,23 +166,20 @@ class RapportActiviteSearchService extends SearchService
 
     private function fetchEtablissements(): array
     {
-        // ETAB non substitués
         return $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true);
     }
 
     private function fetchEcolesDoctorales(): array
     {
-        // ED non substituées
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true
         );
     }
 
     private function fetchUnitesRecherches(): array
     {
-        // UR non substituées
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true
+            TypeStructure::CODE_UNITE_RECHERCHE, 'code', false
         );
     }
 
@@ -499,7 +496,7 @@ class RapportActiviteSearchService extends SearchService
     public function createSorterEtablissement(): SearchSorter
     {
         $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
-        $sorter->setOrderByField("etab_structureSubstituante.code, etab_structure.code");
+        $sorter->setOrderByField("etab_structure.code");
 
         return $sorter;
     }
@@ -507,7 +504,7 @@ class RapportActiviteSearchService extends SearchService
     public function createSorterEcoleDoctorale(): SearchSorter
     {
         $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
-        $sorter->setOrderByField("toNumber(ed_structureSubstituante.code, '9999999'), toNumber(ed_structure.code, '9999999')");
+        $sorter->setOrderByField("toNumber(ed_structure.code, '9999999')");
 
         return $sorter;
     }
@@ -515,7 +512,7 @@ class RapportActiviteSearchService extends SearchService
     public function createSorterUniteRecherche(): SearchSorter
     {
         $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
-        $sorter->setOrderByField("ur_structureSubstituante.code, ur_structure.code");
+        $sorter->setOrderByField("ur_structure.code");
 
         return $sorter;
     }

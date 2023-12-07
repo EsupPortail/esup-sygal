@@ -41,12 +41,11 @@ class EtablissementController extends StructureConcreteController
         return $this->etablissementService;
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
-        $etablissements = $this->structureService->findAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
+        $viewModel = parent::indexAction();
+
+        $etablissements = $viewModel->getVariable('structures');
 
         $etablissementsPrincipaux = array_filter($etablissements, function (Etablissement $e) {
             return $e->estMembre();
@@ -63,7 +62,7 @@ class EtablissementController extends StructureConcreteController
         }
 
         return new ViewModel([
-            'etablissementsSygal'    => $etablissementsPrincipaux,
+            'etablissementsSygal' => $etablissementsPrincipaux,
             'etablissementsExternes' => $etablissementsExternes,
             'etablissementsCeds' => $etablissementsCeds,
         ]);

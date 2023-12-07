@@ -16,7 +16,6 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
-use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
@@ -39,32 +38,6 @@ class StructureController extends AbstractController
     use NatureFichierServiceAwareTrait;
     use FichierServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
-
-    /**
-     * @return ViewModel
-     */
-    public function indexAction()
-    {
-        $consultationToutes = $this->isAllowed(
-            StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES),
-            StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES);
-
-        $structures = [];
-        if ($consultationToutes) {
-            $structures = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
-        } else {
-            /** @var Role $role*/
-            $role = $this->userContextService->getSelectedIdentityRole();
-            if ($role->isEcoleDoctoraleDependant()) {
-                $ecole = $this->getUniteRechercheService()->getRepository()->findByStructureId($role->getStructure()->getId());
-                $structures[] = $ecole;
-            }
-        }
-
-        return new ViewModel([
-            'structures' => $structures,
-        ]);
-    }
 
     public function voirAction(): ViewModel
     {

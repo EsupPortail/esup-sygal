@@ -19,6 +19,11 @@ interface StructureConcreteInterface
     /**
      * @return string
      */
+    public function getCode(): string;
+
+    /**
+     * @return string
+     */
     public function getSourceCode();
 
     /**

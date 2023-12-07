@@ -15,14 +15,38 @@ use Substitution\Controller\LogControllerFactory;
 use Substitution\Controller\SubstitutionController;
 use Substitution\Controller\SubstitutionControllerFactory;
 use Substitution\Provider\Privilege\SubstitutionPrivileges;
-use Substitution\Service\DoublonService;
-use Substitution\Service\DoublonServiceFactory;
-use Substitution\Service\ForeignKeyService;
-use Substitution\Service\ForeignKeyServiceFactory;
-use Substitution\Service\LogService;
-use Substitution\Service\LogServiceFactory;
-use Substitution\Service\SubstitutionService;
-use Substitution\Service\SubstitutionServiceFactory;
+use Substitution\Service\Doublon\Doctorant\DoctorantDoublonService;
+use Substitution\Service\Doublon\Doctorant\DoctorantDoublonServiceFactory;
+use Substitution\Service\Doublon\DoublonService;
+use Substitution\Service\Doublon\DoublonServiceFactory;
+use Substitution\Service\Doublon\EcoleDoctorale\EcoleDoctoraleDoublonService;
+use Substitution\Service\Doublon\EcoleDoctorale\EcoleDoctoraleDoublonServiceFactory;
+use Substitution\Service\Doublon\Etablissement\EtablissementDoublonService;
+use Substitution\Service\Doublon\Etablissement\EtablissementDoublonServiceFactory;
+use Substitution\Service\Doublon\Individu\IndividuDoublonService;
+use Substitution\Service\Doublon\Individu\IndividuDoublonServiceFactory;
+use Substitution\Service\Doublon\Structure\StructureDoublonService;
+use Substitution\Service\Doublon\Structure\StructureDoublonServiceFactory;
+use Substitution\Service\Doublon\UniteRecherche\UniteRechercheDoublonService;
+use Substitution\Service\Doublon\UniteRecherche\UniteRechercheDoublonServiceFactory;
+use Substitution\Service\ForeignKey\ForeignKeyService;
+use Substitution\Service\ForeignKey\ForeignKeyServiceFactory;
+use Substitution\Service\Log\LogService;
+use Substitution\Service\Log\LogServiceFactory;
+use Substitution\Service\Substitution\Doctorant\DoctorantSubstitutionService;
+use Substitution\Service\Substitution\Doctorant\DoctorantSubstitutionServiceFactory;
+use Substitution\Service\Substitution\EcoleDoctorale\EcoleDoctoraleSubstitutionService;
+use Substitution\Service\Substitution\EcoleDoctorale\EcoleDoctoraleSubstitutionServiceFactory;
+use Substitution\Service\Substitution\Etablissement\EtablissementSubstitutionService;
+use Substitution\Service\Substitution\Etablissement\EtablissementSubstitutionServiceFactory;
+use Substitution\Service\Substitution\Individu\IndividuSubstitutionService;
+use Substitution\Service\Substitution\Individu\IndividuSubstitutionServiceFactory;
+use Substitution\Service\Substitution\Structure\StructureSubstitutionService;
+use Substitution\Service\Substitution\Structure\StructureSubstitutionServiceFactory;
+use Substitution\Service\Substitution\SubstitutionService;
+use Substitution\Service\Substitution\SubstitutionServiceFactory;
+use Substitution\Service\Substitution\UniteRecherche\UniteRechercheSubstitutionService;
+use Substitution\Service\Substitution\UniteRecherche\UniteRechercheSubstitutionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [
@@ -34,44 +58,64 @@ return [
                     'action' => [
                         'accueil',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
                     ],
                 ],
                 [
                     'controller' => SubstitutionController::class,
                     'action' => [
-                        'accueil', 'liste', 'voir', 'voir-substitue', 'voir-substituant',
-                        'individu', 'doctorant', 'structure', 'etablissement', 'ecole-doct', 'unite-rech',
+                        'accueil',
+                        'lister',
+                        'voir',
+                        'voirSubstitue',
+                        'voirSubstituant',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
+                    ],
+                ],
+                [
+                    'controller' => SubstitutionController::class,
+                    'action' => [
+                        'modifier',
+                        'modifierSubstituant',
+                        'ajouterSubstitue',
+                        'retirerSubstitue',
+                        'rechercherSubstituable',
+                        'voirSubstituable',
+                    ],
+                    'privileges' => [
+                        SubstitutionPrivileges::SUBSTITUTION_MODIFIER,
                     ],
                 ],
                 [
                     'controller' => DoublonController::class,
                     'action' => [
-                        'accueil', 'individu', 'doctorant', 'structure', 'etablissement', 'ecole-doct', 'unite-rech',
+                        'accueil',
+                        'lister',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
                     ],
                 ],
                 [
                     'controller' => ForeignKeyController::class,
                     'action' => [
-                        'accueil', 'individu', 'doctorant', 'structure', 'etablissement', 'ecole-doct', 'unite-rech',
+                        'accueil',
+                        'lister',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
                     ],
                 ],
                 [
                     'controller' => LogController::class,
                     'action' => [
-                        'accueil', 'individu', 'doctorant', 'structure', 'etablissement', 'ecole-doct', 'unite-rech',
+                        'accueil',
+                        'lister',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
                     ],
                 ],
@@ -102,10 +146,22 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'lister' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/lister/:type',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'lister',
+                                    ],
+                                ],
+                            ],
                             'voir' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/[:type]/voir/[:id]',
+                                    'route' => '/:type/voir/:id',
                                     'constraints' => [
                                         'type' => Constants::TYPES_REGEXP_CONSTRAINT,
                                         'id' => '\d+',
@@ -114,16 +170,73 @@ return [
                                         'action' => 'voir',
                                     ],
                                 ],
-                            ],
-                            'liste' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/liste/[:type]',
-                                    'constraints' => [
-                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'modifier' => [
+                                        'type' => Segment::class,
+                                        'options' => [
+                                            'route' => '/modifier',
+                                            'defaults' => [
+                                                /** @see SubstitutionController::modifierAction() */
+                                                'action' => 'modifier',
+                                            ],
+                                        ],
                                     ],
-                                    'defaults' => [
-                                        'action' => 'liste',
+                                    'modifier-substituant' => [
+                                        'type' => Literal::class,
+                                        'options' => [
+                                            'route' => '/modifier-substituant',
+                                            'defaults' => [
+                                                /** @see SubstitutionController::modifierSubstituantAction() */
+                                                'action' => 'modifierSubstituant',
+                                            ],
+                                        ],
+                                    ],
+                                    'ajouter-substitue' => [
+                                        'type' => Segment::class,
+                                        'options' => [
+                                            'route' => '/ajouter-substitue',
+                                            'defaults' => [
+                                                /** @see SubstitutionController::ajouterSubstitueAction() */
+                                                'action' => 'ajouterSubstitue',
+                                            ],
+                                        ],
+                                    ],
+                                    'rechercher-substituable' => [
+                                        'type' => Literal::class,
+                                        'options' => [
+                                            'route' => '/rechercher-substituable',
+                                            'defaults' => [
+                                                /** @see SubstitutionController::rechercherSubstituableAction() */
+                                                'action' => 'rechercherSubstituable',
+                                            ],
+                                        ],
+                                    ],
+                                    'voir-substituable' => [
+                                        'type' => Segment::class,
+                                        'options' => [
+                                            'route' => '/voir-substituable/[:substituableId]',
+                                            'constraints' => [
+                                                'substituableId' => '\d+',
+                                            ],
+                                            'defaults' => [
+                                                /** @see SubstitutionController::voirSubstituableAction() */
+                                                'action' => 'voirSubstituable',
+                                            ],
+                                        ],
+                                    ],
+                                    'retirer-substitue' => [
+                                        'type' => Segment::class,
+                                        'options' => [
+                                            'route' => '/retirer-substitue[/:substitue]',
+                                            'constraints' => [
+                                                'substitue' => '\d+',
+                                            ],
+                                            'defaults' => [
+                                                /** @see SubstitutionController::retirerSubstitueAction() */
+                                                'action' => 'retirerSubstitue',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -140,57 +253,15 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'individu' => [
+                            'lister' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/individu',
-                                    'defaults' => [
-                                        'action' => 'individu',
+                                    'route' => '/lister/:type',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
                                     ],
-                                ],
-                            ],
-                            'doctorant' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/doctorant',
                                     'defaults' => [
-                                        'action' => 'doctorant',
-                                    ],
-                                ],
-                            ],
-                            'structure' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/structure',
-                                    'defaults' => [
-                                        'action' => 'structure',
-                                    ],
-                                ],
-                            ],
-                            'etablissement' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/etablissement',
-                                    'defaults' => [
-                                        'action' => 'etablissement',
-                                    ],
-                                ],
-                            ],
-                            'ecole-doct' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/ecole-doct',
-                                    'defaults' => [
-                                        'action' => 'ecole-doct',
-                                    ],
-                                ],
-                            ],
-                            'unite-rech' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/unite-rech',
-                                    'defaults' => [
-                                        'action' => 'unite-rech',
+                                        'action' => 'lister',
                                     ],
                                 ],
                             ],
@@ -207,57 +278,15 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'individu' => [
+                            'lister' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/individu',
-                                    'defaults' => [
-                                        'action' => 'individu',
+                                    'route' => '/lister/:type',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
                                     ],
-                                ],
-                            ],
-                            'doctorant' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/doctorant',
                                     'defaults' => [
-                                        'action' => 'doctorant',
-                                    ],
-                                ],
-                            ],
-                            'structure' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/structure',
-                                    'defaults' => [
-                                        'action' => 'structure',
-                                    ],
-                                ],
-                            ],
-                            'etablissement' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/etablissement',
-                                    'defaults' => [
-                                        'action' => 'etablissement',
-                                    ],
-                                ],
-                            ],
-                            'ecole-doct' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/ecole-doct',
-                                    'defaults' => [
-                                        'action' => 'ecole-doct',
-                                    ],
-                                ],
-                            ],
-                            'unite-rech' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/unite-rech',
-                                    'defaults' => [
-                                        'action' => 'unite-rech',
+                                        'action' => 'lister',
                                     ],
                                 ],
                             ],
@@ -274,57 +303,15 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'individu' => [
+                            'lister' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/individu',
-                                    'defaults' => [
-                                        'action' => 'individu',
+                                    'route' => '/lister/:type',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
                                     ],
-                                ],
-                            ],
-                            'doctorant' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/doctorant',
                                     'defaults' => [
-                                        'action' => 'doctorant',
-                                    ],
-                                ],
-                            ],
-                            'structure' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/structure',
-                                    'defaults' => [
-                                        'action' => 'structure',
-                                    ],
-                                ],
-                            ],
-                            'etablissement' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/etablissement',
-                                    'defaults' => [
-                                        'action' => 'etablissement',
-                                    ],
-                                ],
-                            ],
-                            'ecole-doct' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/ecole-doct',
-                                    'defaults' => [
-                                        'action' => 'ecole-doct',
-                                    ],
-                                ],
-                            ],
-                            'unite-rech' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/unite-rech',
-                                    'defaults' => [
-                                        'action' => 'unite-rech',
+                                        'action' => 'lister',
                                     ],
                                 ],
                             ],
@@ -353,33 +340,33 @@ return [
                                         'pages' => [
                                             'structure' => [
                                                 'label' => 'Structures',
-                                                'route' => 'substitution/substitution/liste',
-                                                'params' => ['type' => Constants::TYPE_structure]
+                                                'route' => 'substitution/substitution/lister',
+                                                'params' => ['type' => Constants::TYPE_structure],
                                             ],
                                             'etablissement' => [
                                                 'label' => 'Etablissements',
-                                                'route' => 'substitution/substitution/liste',
-                                                'params' => ['type' => Constants::TYPE_etablissement]
+                                                'route' => 'substitution/substitution/lister',
+                                                'params' => ['type' => Constants::TYPE_etablissement],
                                             ],
-                                            'ecole-doct' => [
+                                            'ecole_doct' => [
                                                 'label' => 'Ecoles doctorales',
-                                                'route' => 'substitution/substitution/liste',
-                                                'params' => ['type' => Constants::TYPE_ecole_doct]
+                                                'route' => 'substitution/substitution/lister',
+                                                'params' => ['type' => Constants::TYPE_ecole_doct],
                                             ],
                                             'unite-rech' => [
                                                 'label' => 'Unités de recherche',
-                                                'route' => 'substitution/substitution/liste',
-                                                'params' => ['type' => Constants::TYPE_unite_rech]
+                                                'route' => 'substitution/substitution/lister',
+                                                'params' => ['type' => Constants::TYPE_unite_rech],
                                             ],
                                             'individu' => [
                                                 'label' => 'Individus',
-                                                'route' => 'substitution/substitution/liste',
-                                                'params' => ['type' => Constants::TYPE_individu]
+                                                'route' => 'substitution/substitution/lister',
+                                                'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
                                                 'label' => 'Doctorants',
-                                                'route' => 'substitution/substitution/liste',
-                                                'params' => ['type' => Constants::TYPE_doctorant]
+                                                'route' => 'substitution/substitution/lister',
+                                                'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
                                         ],
                                     ],
@@ -387,29 +374,35 @@ return [
                                         'label' => 'Substitutions possibles',
                                         'route' => 'substitution/doublon',
                                         'pages' => [
-                                            'individu' => [
-                                                'label' => 'Individus',
-                                                'route' => 'substitution/doublon/individu',
-                                            ],
-                                            'doctorant' => [
-                                                'label' => 'Doctorants',
-                                                'route' => 'substitution/doublon/doctorant',
-                                            ],
                                             'structure' => [
                                                 'label' => 'Structures',
-                                                'route' => 'substitution/doublon/structure',
+                                                'route' => 'substitution/doublon/lister',
+                                                'params' => ['type' => Constants::TYPE_structure],
                                             ],
                                             'etablissement' => [
                                                 'label' => 'Etablissements',
-                                                'route' => 'substitution/doublon/etablissement',
+                                                'route' => 'substitution/doublon/lister',
+                                                'params' => ['type' => Constants::TYPE_etablissement],
                                             ],
-                                            'ecole-doct' => [
+                                            'ecole_doct' => [
                                                 'label' => 'Ecoles doctorales',
-                                                'route' => 'substitution/doublon/ecole-doct',
+                                                'route' => 'substitution/doublon/lister',
+                                                'params' => ['type' => Constants::TYPE_ecole_doct],
                                             ],
-                                            'unite-rech' => [
+                                            'unite_rech' => [
                                                 'label' => 'Unités de recherche',
-                                                'route' => 'substitution/doublon/unite-rech',
+                                                'route' => 'substitution/doublon/lister',
+                                                'params' => ['type' => Constants::TYPE_unite_rech],
+                                            ],
+                                            'individu' => [
+                                                'label' => 'Individus',
+                                                'route' => 'substitution/doublon/lister',
+                                                'params' => ['type' => Constants::TYPE_individu],
+                                            ],
+                                            'doctorant' => [
+                                                'label' => 'Doctorants',
+                                                'route' => 'substitution/doublon/lister',
+                                                'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
                                         ],
                                     ],
@@ -417,29 +410,35 @@ return [
                                         'label' => 'Clés étrangères',
                                         'route' => 'substitution/foreign-key',
                                         'pages' => [
-                                            'individu' => [
-                                                'label' => 'Individus',
-                                                'route' => 'substitution/foreign-key/individu',
-                                            ],
-                                            'doctorant' => [
-                                                'label' => 'Doctorants',
-                                                'route' => 'substitution/foreign-key/doctorant',
-                                            ],
                                             'structure' => [
                                                 'label' => 'Structures',
-                                                'route' => 'substitution/foreign-key/structure',
+                                                'route' => 'substitution/foreign-key/lister',
+                                                'params' => ['type' => Constants::TYPE_structure],
                                             ],
                                             'etablissement' => [
                                                 'label' => 'Etablissements',
-                                                'route' => 'substitution/foreign-key/etablissement',
+                                                'route' => 'substitution/foreign-key/lister',
+                                                'params' => ['type' => Constants::TYPE_etablissement],
                                             ],
-                                            'ecole-doct' => [
+                                            'ecole_doct' => [
                                                 'label' => 'Ecoles doctorales',
-                                                'route' => 'substitution/foreign-key/ecole-doct',
+                                                'route' => 'substitution/foreign-key/lister',
+                                                'params' => ['type' => Constants::TYPE_ecole_doct],
                                             ],
-                                            'unite-rech' => [
+                                            'unite_rech' => [
                                                 'label' => 'Unités de recherche',
-                                                'route' => 'substitution/foreign-key/unite-rech',
+                                                'route' => 'substitution/foreign-key/lister',
+                                                'params' => ['type' => Constants::TYPE_unite_rech],
+                                            ],
+                                            'individu' => [
+                                                'label' => 'Individus',
+                                                'route' => 'substitution/foreign-key/lister',
+                                                'params' => ['type' => Constants::TYPE_individu],
+                                            ],
+                                            'doctorant' => [
+                                                'label' => 'Doctorants',
+                                                'route' => 'substitution/foreign-key/lister',
+                                                'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
                                         ],
                                     ],
@@ -449,27 +448,33 @@ return [
                                         'pages' => [
                                             'individu' => [
                                                 'label' => 'Individus',
-                                                'route' => 'substitution/log/individu',
+                                                'route' => 'substitution/log/lister',
+                                                'params' => ['type' => Constants::TYPE_individu],
                                             ],
                                             'doctorant' => [
                                                 'label' => 'Doctorants',
-                                                'route' => 'substitution/log/doctorant',
+                                                'route' => 'substitution/log/lister',
+                                                'params' => ['type' => Constants::TYPE_doctorant],
                                             ],
                                             'structure' => [
                                                 'label' => 'Structures',
-                                                'route' => 'substitution/log/structure',
+                                                'route' => 'substitution/log/lister',
+                                                'params' => ['type' => Constants::TYPE_structure],
                                             ],
                                             'etablissement' => [
                                                 'label' => 'Etablissements',
-                                                'route' => 'substitution/log/etablissement',
+                                                'route' => 'substitution/log/lister',
+                                                'params' => ['type' => Constants::TYPE_etablissement],
                                             ],
-                                            'ecole-doct' => [
+                                            'ecole_doct' => [
                                                 'label' => 'Ecoles doctorales',
-                                                'route' => 'substitution/log/ecole-doct',
+                                                'route' => 'substitution/log/lister',
+                                                'params' => ['type' => Constants::TYPE_ecole_doct],
                                             ],
                                             'unite-rech' => [
                                                 'label' => 'Unités de recherche',
-                                                'route' => 'substitution/log/unite-rech',
+                                                'route' => 'substitution/log/lister',
+                                                'params' => ['type' => Constants::TYPE_unite_rech],
                                             ],
                                         ],
                                     ],
@@ -493,7 +498,21 @@ return [
     'service_manager' => [
         'factories' => [
             SubstitutionService::class => SubstitutionServiceFactory::class,
+            IndividuSubstitutionService::class => IndividuSubstitutionServiceFactory::class,
+            DoctorantSubstitutionService::class => DoctorantSubstitutionServiceFactory::class,
+            StructureSubstitutionService::class => StructureSubstitutionServiceFactory::class,
+            EtablissementSubstitutionService::class => EtablissementSubstitutionServiceFactory::class,
+            EcoleDoctoraleSubstitutionService::class => EcoleDoctoraleSubstitutionServiceFactory::class,
+            UniteRechercheSubstitutionService::class => UniteRechercheSubstitutionServiceFactory::class,
+
             DoublonService::class => DoublonServiceFactory::class,
+            IndividuDoublonService::class => IndividuDoublonServiceFactory::class,
+            DoctorantDoublonService::class => DoctorantDoublonServiceFactory::class,
+            StructureDoublonService::class => StructureDoublonServiceFactory::class,
+            EtablissementDoublonService::class => EtablissementDoublonServiceFactory::class,
+            EcoleDoctoraleDoublonService::class => EcoleDoctoraleDoublonServiceFactory::class,
+            UniteRechercheDoublonService::class => UniteRechercheDoublonServiceFactory::class,
+
             ForeignKeyService::class => ForeignKeyServiceFactory::class,
             LogService::class => LogServiceFactory::class,
         ],
@@ -501,6 +520,11 @@ return [
     'view_manager' => [
         'template_path_stack' => [
             __DIR__ . '/../view',
+        ],
+    ],
+    'public_files' => [
+        'stylesheets' => [
+            '080_substitution' => '/css/substitution.css',
         ],
     ],
 ];

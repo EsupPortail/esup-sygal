@@ -46,6 +46,16 @@
             (Non renseigné)
         <?php endif; ?>
     </dd>
+
+    <dt>Création</dt>
+    <dd><?php echo $entity->getHistoCreation()->format('d/m/Y à H:i:s') ?></dd>
+
+    <dt>Modification</dt>
+    <?php if ($entity->getHistoModification() && $entity->getHistoModification() <> $entity->getHistoCreation()): ?>
+        <dd><?php echo $entity->getHistoModification()->format('d/m/Y à H:i:s') ?></dd>
+    <?php else: ?>
+        <dd>(Aucune)</dd>
+    <?php endif ?>
 </dl>
 
 <?php if ($entity->estHistorise()): ?>

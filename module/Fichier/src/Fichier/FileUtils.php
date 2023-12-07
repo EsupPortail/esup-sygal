@@ -3,12 +3,12 @@
 namespace Fichier;
 
 use Application\Command\ShellCommandRunner;
+use Exception;
 use Fichier\Command\ConvertShellCommand;
 use ImagickException;
 use Laminas\Http\Response;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use UnicaenLdap\Exception;
 
 class FileUtils
 {
@@ -20,7 +20,7 @@ class FileUtils
      *
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
-     * @throws \UnicaenLdap\Exception
+     * @throws \Exception
      */
     static public function generateFirstPagePreviewPngImageFromPdf(string $inputFilePath): string
     {

@@ -3,7 +3,7 @@
 namespace Substitution\Controller;
 
 use Psr\Container\ContainerInterface;
-use Substitution\Service\DoublonService;
+use Substitution\Service\Doublon\DoublonService;
 
 class DoublonControllerFactory
 {
@@ -15,7 +15,7 @@ class DoublonControllerFactory
     {
         $controller = new DoublonController();
 
-        /** @var \Substitution\Service\DoublonService $doublonService */
+        /** @var \Substitution\Service\Doublon\DoublonService $doublonService */
         $doublonService = $container->get(DoublonService::class);
         $controller->setDoublonService($doublonService);
 
