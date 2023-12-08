@@ -79,8 +79,10 @@ return [
             'xsl_template_params' => [
                 'etablissementStepStar' => 'XXXX',
                 'autoriteSudoc_etabSoutenance' => '123456789',
-                'thesesRootTag' => 'THESES',
-                'theseTag' => 'THESE',
+                'these' => [
+                    'rootTag' => 'THESES',
+                    'tag' => 'THESE',
+                ],
 //                'resultDocumentHref' => '{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}.tef.xml',
             ],
         ],

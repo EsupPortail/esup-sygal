@@ -31,11 +31,11 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
     <xsl:param name="langue_de_these">fr</xsl:param>
 
     <xsl:template match="/">
-        <xsl:apply-templates select="//{{ thesesRootTag }}"/>
+        <xsl:apply-templates select="//{{ these.rootTag }}"/>
     </xsl:template>
 
     <!-- Thèse -->
-    <xsl:template match="{{ theseTag }}">
+    <xsl:template match="{{ these.tag }}">
         <!-- -->
         <xsl:result-document href="{{ resultDocumentHref }}">
             <!-- -->

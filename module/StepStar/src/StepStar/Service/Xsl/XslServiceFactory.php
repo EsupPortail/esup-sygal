@@ -34,8 +34,7 @@ class XslServiceFactory implements FactoryInterface
         $keys = [
             'etablissementStepStar',
             'autoriteSudoc_etabSoutenance',
-            'thesesRootTag',
-            'theseTag',
+            'these',
 //            'resultDocumentHref',
         ];
 
