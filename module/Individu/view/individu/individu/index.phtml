@@ -83,12 +83,6 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
                     <?php endif ?>
                 </td>
                 <td class="action">
-                    <?php if ($canModifier): ?>
-                        <a href="<?php echo $this->url('individu/modifier', ['individu' => $individu->getId()], [], true); ?>"
-                           title="Modifier cet individu"
-                           class="ajax-modal" data-event="modification">
-                            <span class="icon icon-modifier"></span></a>
-                    <?php endif ?>
                     <?php if ($canSupprimer): ?>
                         <?php if ($individu->estHistorise()): ?>
                             <a href="<?php echo $this->url('individu/restaurer', ['individu' => $individu->getId()], [], true); ?>"

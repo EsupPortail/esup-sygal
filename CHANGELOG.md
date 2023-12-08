@@ -6,8 +6,10 @@ Journal des modifications
 - Ajout de logos sur le document des co-encadrements
 - Possibilité de supprimer un compte utilisateur.
 - Envoi vers Step-Star : le type de partenaire de recherche est désormais configurable.
+- Page de recherche d'individus : suppression du bouton de modification qui ouvrait une modale n'enregistrant pas correctement 
+  les modifications éventuelles de l'individu et dans laquelle l'iframe de recherche d'idref s'ouvrait dessous.
 - [FIX] Rapports d'activité : le rôle Maison du doctorat ne pouvait pas dévalider un rapport d'activité (en cas de validation du Doctorant). 
-- [FIX] Envoi vers Step-Star : faux positif pour le témoin 'contrat doctoral'.
+- [FIX] Envoi vers Step-Star : faux positif pour le témoin 'contrat doctoral'. 
 
 6.0.7
 -----
