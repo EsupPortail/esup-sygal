@@ -125,4 +125,5 @@ volumes:
 
 networks:
   sygalnet:
+    name: sygalnet
     driver: bridge
