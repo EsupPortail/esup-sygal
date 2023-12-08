@@ -5,6 +5,8 @@ namespace Admission\Service\Financement;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Repository\FinancementRepository;
+use Admission\Entity\Db\Verification;
+use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -21,6 +23,7 @@ class FinancementService extends BaseService
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
+    use VerificationServiceAwareTrait;
 
     /**
      * @return FinancementRepository
@@ -103,25 +106,17 @@ class FinancementService extends BaseService
     public function delete(Financement $financement) : Financement
     {
         try {
+            $verification = $financement->getVerificationFinancement()->first();
+            if($verification instanceof Verification){
+                $this->verificationService->delete($verification);
+            }
+
             $this->getEntityManager()->remove($financement);
             $this->getEntityManager()->flush($financement);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de la suppression en base d'un Financement");
         }
 
-        return $financement;
-    }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Financement
-     */
-    public function getRequestedFinancement(AbstractActionController $controller, string $param='Financement')
-    {
-        $id = $controller->params()->fromRoute($param);
-        /** @var Financement $financement */
-        $financement = $this->getRepository()->find($id);
         return $financement;
     }
 }

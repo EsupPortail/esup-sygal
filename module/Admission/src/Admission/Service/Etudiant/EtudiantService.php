@@ -7,6 +7,7 @@ use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Repository\EtudiantRepository;
 use Admission\Entity\Db\Repository\AdmissionValidationRepository;
 use Admission\Entity\Db\Verification;
+use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -24,6 +25,7 @@ class EtudiantService extends BaseService
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
+    use VerificationServiceAwareTrait;
 
     /**
      * @return EtudiantRepository
@@ -61,7 +63,7 @@ class EtudiantService extends BaseService
     public function update(Etudiant $etudiant)  :Etudiant
     {
         try {
-            $this->getEntityManager()->flush();
+            $this->getEntityManager()->flush($etudiant);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Etudiant");
         }
@@ -106,6 +108,11 @@ class EtudiantService extends BaseService
     public function delete(Etudiant $etudiant) : Etudiant
     {
         try {
+            $verification = $etudiant->getVerificationEtudiant()->first();
+            if($verification instanceof Verification){
+                $this->verificationService->delete($verification);
+            }
+
             $this->getEntityManager()->remove($etudiant);
             $this->getEntityManager()->flush($etudiant);
         } catch(ORMException $e) {
@@ -113,23 +120,5 @@ class EtudiantService extends BaseService
         }
 
         return $etudiant;
-    }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Etudiant
-     */
-    public function getRequestedEtudiant(AbstractActionController $controller, string $param='Etudiant')
-    {
-        $id = $controller->params()->fromRoute($param);
-        /** @var Etudiant $etudiant */
-        $etudiant = $this->getRepository()->find($id);
-        return $etudiant;
-    }
-
-    public function setEntityClass(string $entityClass)
-    {
-        // TODO: Implement setEntityClass() method.
     }
 }

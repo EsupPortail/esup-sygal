@@ -6,6 +6,7 @@ use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\Repository\AdmissionValidationRepository;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Event\AdmissionEvent;
+use Admission\Event\Validation\AdmissionValidationEvent;
 use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -68,7 +69,7 @@ class AdmissionValidationService extends BaseService
         }
     }
 
-    public function triggerEventValidationAjoutee(AdmissionValidation $admissionValidation, array $params = []): AdmissionEvent
+    public function triggerEventValidationAjoutee(AdmissionValidation $admissionValidation, array $params = []): AdmissionValidationEvent
     {
         return $this->triggerEvent(
             self::ADMISSION__VALIDATION_AJOUTE__EVENT,
@@ -92,7 +93,7 @@ class AdmissionValidationService extends BaseService
         }
     }
 
-    public function triggerEventValidationSupprimee(AdmissionValidation $admissionValidation, array $params = []): AdmissionEvent
+    public function triggerEventValidationSupprimee(AdmissionValidation $admissionValidation, array $params = []): AdmissionValidationEvent
     {
         return $this->triggerEvent(
             self::ADMISSION__VALIDATION_SUPPRIME__EVENT,
@@ -120,7 +121,7 @@ class AdmissionValidationService extends BaseService
         }
     }
 
-    private function triggerEvent(string $name, $target, array $params = []): AdmissionEvent
+    private function triggerEvent(string $name, $target, array $params = []): AdmissionValidationEvent
     {
         $messages = [];
         if (isset($params['messages'])) {
@@ -128,7 +129,7 @@ class AdmissionValidationService extends BaseService
             unset($params['messages']);
         }
 
-        $event = new AdmissionEvent($name, $target, $params);
+        $event = new AdmissionValidationEvent($name, $target, $params);
         if ($messages) {
             $event->addMessages($messages);
         }

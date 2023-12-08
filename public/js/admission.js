@@ -51,6 +51,13 @@ document.addEventListener("DOMContentLoaded", function() {
 setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
+        if(readOnly){
+            $('input:radio[name="etudiant[niveauEtude]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="etudiant[situationHandicap]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="etudiant[typeDiplomeAutre]"]:not(:checked)').attr('disabled', true);
+            $('select[name="etudiant[anneeDobtentionDiplomeAutre]"]').attr('disabled', true);
+            $('select[name="etudiant[anneeDobtentionDiplomeNational]"]').attr('disabled', true);
+        }
         $('input:radio[name="etudiant[civilite]"]:not(:checked)').attr('disabled', true);
         const diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
         const additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
@@ -86,6 +93,16 @@ setTimeout(function () {
     }
 
     if (currentUrl.indexOf("/inscription") !== -1) {
+        if(readOnly){
+            $('input:radio[name="inscription[confidentialite]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="inscription[coTutelle]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="inscription[coDirection]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="inscription[coEncadrement]"]:not(:checked)').attr('disabled', true);
+            $('select[name="inscription[ecoleDoctorale]"]').attr('disabled', true);
+            $('select[name="inscription[specialiteDoctorat]"]').attr('disabled', true);
+            $('select[name="inscription[uniteRecherche]"]').attr('disabled', true);
+        }
+
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
         const cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
         const codirectionRadios = document.querySelectorAll('input[name="inscription[coDirection]"]');
@@ -108,6 +125,10 @@ setTimeout(function () {
     }
 
     if (currentUrl.indexOf("/financement") !== -1) {
+        if(readOnly){
+            $('input:radio[name="financement[contratDoctoral]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="financement[employeurContrat]"]:not(:checked)').attr('disabled', true);
+        }
         const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
         const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
 
@@ -133,25 +154,25 @@ setTimeout(function () {
                     server: {
                         url: '/admission',
                         process: {
-                            url: '/enregistrer-document',
-                            ondata: (formData) => {
-                                formData.append('individu', individuId);
-                                formData.append('codeNatureFichier', inputId);
-                                return formData;
-                            },
+                            url: '/enregistrer-document/'+ individuId + '/' + inputId,
+                            // ondata: (formData) => {
+                            //     formData.append('individu', individuId);
+                            //     formData.append('codeNatureFichier', inputId);
+                            //     return formData;
+                            // },
                             onerror: (response) =>
                                 serverResponse = JSON.parse(response),
                         },
                         revert: {
-                            url: '/supprimer-document?individu=' + individuId + '&codeNatureFichier=' + inputId,
+                            url: '/supprimer-document/'+ individuId + '/' + inputId,
                             onerror: (response) =>
                                 serverResponse = JSON.parse(response),
                         },
                         load: {
-                            url: '/telecharger-document?individu=' + individuId + '&codeNatureFichier=' + inputId + '&name=',
+                            url: '/telecharger-document/'+ individuId + '/' + inputId +'?name=',
                         },
                         remove: (source, load, error) => {
-                            fetch('/admission/supprimer-document?individu=' + individuId + '&codeNatureFichier=' + inputId, {
+                            fetch('/admission/supprimer-document/'+ individuId + '/' + inputId, {
                                 method: 'DELETE',
                             }).then(response => {
                                 if (!response.ok) {
@@ -196,11 +217,12 @@ setTimeout(function () {
                     labelTapToUndo: "Appuyez pour revenir en arrière",
                     labelTapToRetry: "Appuyez pour réessayer",
                     labelTapToCancel: "Appuyez pour annuler",
-                    labelIdle: "Drag & Drop votre Document ou <span class='filepond--label-action'> Parcourir </span>",
+                    labelIdle: "Glissez-déposez votre document ou <span class='filepond--label-action'> parcourir </span>",
                     forceRevert: true,
                     allowRemove: true,
                     allowMultiple: false,
                     allowReplace: false,
+                    disabled: !!readOnly,
                     credits: false,
                     maxFiles: 1,
                 });
@@ -223,17 +245,17 @@ setTimeout(function () {
             const submitButton = document.querySelector('input[name="document[_nav][_submit]"]');
             var count = 0;
             if (submitButton) {
-                submitButton.addEventListener('click', function(event) {
-                    if(count === 0){
-                        event.preventDefault();
-                        $('.modal').modal('show');
-                    }
-
-                    $('.modal').on('click', '.confirm-btn', function() {
-                        count = 1;
-                        $(submitButton).click();
-                    });
-                });
+                // submitButton.addEventListener('click', function(event) {
+                //     if(count === 0){
+                //         event.preventDefault();
+                //         $('.modal').modal('show');
+                //     }
+                //
+                //     $('.modal').on('click', '.confirm-btn', function() {
+                //         count = 1;
+                //         $(submitButton).click();
+                //     });
+                // });
             }
 
         });
@@ -252,18 +274,26 @@ $(document).ready(function () {
     //permet de split la paire nom/prénom dans chaque input correspondant
     $(function() {
         $("#nomDirecteurThese-autocomplete, #prenomDirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
-            console.log(data.item.extras);
             setTimeout(function() {
                 $("#nomDirecteurThese-autocomplete").val(data.item.extras.nom);
+                $("#nomDirecteurThese").val(data.item.id);
+            }, 50);
+            setTimeout(function() {
+                $("#prenomDirecteurThese-autocomplete").val(data.item.extras.prenoms);
+                $("#prenomDirecteurThese").val(data.item.id);
             }, 50);
             $("#prenomDirecteurThese-autocomplete").val(data.item.extras.prenoms);
             $("#emailDirecteurThese").val(data.item.extras.email);
         })
 
         $("#nomCodirecteurThese-autocomplete, #prenomCodirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
-            console.log(data.item.extras);
             setTimeout(function() {
                 $("#nomCodirecteurThese-autocomplete").val(data.item.extras.nom);
+                $("#nomCodirecteurThese").val(data.item.id);
+            }, 50);
+            setTimeout(function() {
+                $("#prenomCodirecteurThese-autocomplete").val(data.item.extras.prenoms);
+                $("#prenomCodirecteurThese").val(data.item.id);
             }, 50);
             $("#prenomCodirecteurThese-autocomplete").val(data.item.extras.prenoms);
             $("#emailCodirecteurThese").val(data.item.extras.email);

@@ -9,14 +9,7 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle($this->translate($title = "Admission")) ?>
-
-<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
-
-<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral.
-    <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.<br>
-    Les données que vous saisissez dans ce formulaire sont automatiquement sauvegardées dès que vous avancez vers l'étape suivante. Si vous effectuez des modifications sans passer à l'étape suivante, ces données sont temporairement enregistrées en mémoire.
-</p>
+<?php echo $this->partial('admission/admission/partial/header', []); ?>
 
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 

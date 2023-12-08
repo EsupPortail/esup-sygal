@@ -44,6 +44,7 @@ class AdmissionControllerFactory implements FactoryInterface
          * @var NotifierService $notifierService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get('UserContextService');
         $structureService = $container->get(StructureService::class);
         $etudiantService = $container->get(EtudiantService::class);
         $individuService = $container->get(IndividuService::class);
@@ -55,11 +56,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $disciplineService = $container->get(DisciplineService::class);
         $notificationFactory = $container->get(NotificationFactory::class);
         $notifierService = $container->get(NotifierService::class);
-        $natureFichierService = $container->get(NatureFichierService::class);
-        $fichierService = $container->get(FichierService::class);
         $documentService = $container->get(DocumentService::class);
-        $versionFichierService = $container->get(VersionFichierService::class);
-        $fichierStorageService = $container->get(FichierStorageService::class);
         /** @var TypeValidationService $typeValidationService */
         $typeValidationService = $container->get(TypeValidationService::class);
 
@@ -73,6 +70,7 @@ class AdmissionControllerFactory implements FactoryInterface
 
         $controller = new AdmissionController();
         $controller->setEntityManager($entityManager);
+        $controller->setUserContextService($userContextService);
         $controller->setStructureService($structureService);
         $controller->setEtudiantService($etudiantService);
         $controller->setInscriptionService($inscriptionService);
@@ -85,11 +83,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setDisciplineService($disciplineService);
         $controller->setNotificationFactory($notificationFactory);
         $controller->setNotifierService($notifierService);
-        $controller->setNatureFichierService($natureFichierService);
-        $controller->setFichierService($fichierService);
-        $controller->setFichierStorageService($fichierStorageService);
         $controller->setDocumentService($documentService);
-        $controller->setVersionFichierService($versionFichierService);
         $controller->setAdmissionForm($admissionForm);
         $controller->setAdmissionOperationRule($admissionOperationRule);
 

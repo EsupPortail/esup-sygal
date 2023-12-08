@@ -7,7 +7,7 @@ use Application\Entity\Db\Repository\DefaultEntityRepository;
 
 class FinancementRepository extends DefaultEntityRepository{
     /**
-     * Recherche d'un fieldset Financement à partir de l'ID de son créateur.
+     * Recherche d'un fieldset Financement à partir de son dossier d'admission.
      *
      * @param Admission $admission
      * @return Financement|null

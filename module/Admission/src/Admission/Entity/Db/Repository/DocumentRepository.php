@@ -1,11 +1,7 @@
 <?php
 namespace Admission\Entity\Db\Repository;
 
-use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\Document;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Application\QueryBuilder\DefaultQueryBuilder;
-use Doctrine\ORM\Exception\NotSupported;
 use Fichier\Entity\Db\NatureFichier;
 use Doctrine\ORM\Query\Expr;
 

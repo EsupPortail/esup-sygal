@@ -112,19 +112,6 @@ class TypeValidationService extends BaseService
     }
 
     /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return TypeValidation
-     */
-    public function getRequestedTypeValidation(AbstractActionController $controller, string $param='TypeValidation')
-    {
-        $id = $controller->params()->fromRoute($param);
-        /** @var TypeValidation $typeTypeValidation */
-        $typeTypeValidation = $this->getRepository()->find($id);
-        return $typeTypeValidation;
-    }
-
-    /**
      * Fetch le type de validation spécifié par son code.
      *
      * @param string $code

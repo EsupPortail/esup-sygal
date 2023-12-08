@@ -1,6 +1,7 @@
 <?php
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\Verification;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
@@ -17,9 +18,21 @@ use Application\View\Renderer\PhpRenderer;
  */
 $form->prepare();
 $fcg = $this->formControlGroup();
-$canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
+$canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
+$canModifierAdmission  =
+    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
+    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+if(!empty($admission)){
+    if(!$canModifierAdmission){
+        foreach($fieldset->getElements() as $element){
+            $element->setAttribute('readonly', true);
+        }
+    }
+}
 ?>
-
+    <script>
+        var readOnly = <?php echo $canModifierAdmission ? 0 : 1 ?>
+    </script>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Financement</h2>
@@ -47,32 +60,14 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
         </div>
     </div>
 </div>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Commentaires</h2>
-    </div>
-    <?php if ($canVerifierAdmission) { ?>
-        <div class="row observations_gestionnaire">
-            <div class="col">
-                <?php echo $fcg($fieldset->get("verificationFinancement")->get('estComplet')) ?>
-            </div>
-            <div class="commentaires_gestionnaire">
-                <?php echo $fcg($fieldset->get("verificationFinancement")->get('commentaire')) ?>
-            </div>
-        </div>
-    <?php }else{ ?>
-        <div class="commentaires_gestionnaire">
-            <div class="partie_etudiant">
-                <?php
-                /** @var Verification $verification */
-                $verification = !empty($admission->getFinancement()->first()) ? $admission->getFinancement()->first()->getVerificationFinancement()->first() : null;
-                $nom = !empty($verification) ? $verification->getIndividu()->getNomUsuel() : null;
-                $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
-                $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
-                $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
-                echo !empty($commentaire) ? "<p class='gestionnaire'>".$nom." ".$prenom." (".$date_verification.")</p><p> :  ".$commentaire." </p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
-                ?>
-            </div>
-        </div>
-    <?php  } ?>
-</div>
+<?php
+if($canModifierAdmission) {
+    echo $this->partial('admission/partial/verification/verification', [
+        'canVerifierAdmission' => $canVerifierAdmission,
+        'fcg' => $fcg,
+        'fieldset' => $fieldset->get("verificationFinancement"),
+        'element' => !empty($admission->getFinancement()->first()) ? $admission->getFinancement() : null,
+        'elementVerification' => !empty($admission->getFinancement()->first()) ? $admission->getFinancement()->first()->getVerificationFinancement() : null
+    ]);
+}
+?>

@@ -1,13 +1,22 @@
 <?php
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\TypeValidation;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
 
 /**
  * @var PhpRenderer $this
  * @var Admission[] $admissions
- * @see \Admission\Controller\AdmissionController::inscriptionAction()
+ * @var array $operations
+ * @var Individu $individu
+ * @see \Admission\Controller\AdmissionController::indexAction()
  */
+
+$canListerDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION));
+$canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION));
+
 ?>
 
 <?php $this->headTitle($this->translate($title = "Admission")) ?>
@@ -19,42 +28,68 @@ use Application\View\Renderer\PhpRenderer;
 </p>
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<div class="form_admission">
-    <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
-        <div class="row">
-            <div class="col-lg-4 col-sm-12">
-                <label for="individuId">Entrez l'ID de l'individu :</label>
+<?php if($canAfficherDossiersAdmission) { ?>
+    <div class="form_admission">
+        <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
+            <div class="row">
+                <div class="col-lg-4 col-sm-12">
+                    <label for="individuId">Entrez l'ID de l'individu :</label>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <input class="form-control" type="text" id="individuId" name="individuId">
+                </div>
+                <div class="col-lg-5 col-sm-12">
+                    <button type="submit" class="btn btn-primary">Accéder à son dossier d'admission</button>
+                </div>
             </div>
-            <div class="col-lg-3 col-sm-12">
-                <input class="form-control" type="text" id="individuId" name="individuId">
-            </div>
-            <div class="col-lg-5 col-sm-12">
-                <button type="submit" class="btn btn-primary">Accéder à son dossier d'admission</button>
-            </div>
-        </div>
-    </form>
-</div>
-<h2>Dossiers d'admissions en cours</h2>
-<p><?php echo count($admissions)." dossier(s) d'admission(s) trouvé(s)";?></p>
-<table class="table table-sm">
-    <thead>
-    <tr>
-        <th>Nom de l'étudiant</th>
-        <th>Statut</th>
-        <th>Titre provisoire de la thèse</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($admissions as $admission): ?>
+        </form>
+    </div>
+<?php }else if(!empty($operations)){ ?>
+    <h2>Statut de votre dossier d'admission</h2>
+    <?php
+        $returnUrl = $this->url('admission', ['individu' => $individu]);
+        echo $this->partial('admission/admission/partial/validation/circuit_validation', [
+            'operations' => $operations,
+            'individu' => $individu->getId(),
+            'returnUrl' => $returnUrl
+        ]);
+    } ?>
+<?php if($canListerDossiersAdmission) { ?>
+    <h2>Dossiers d'admissions en cours</h2>
+    <p><?php echo count($admissions)." dossier(s) d'admission(s) trouvé(s)";?></p>
+    <table class="table table-sm">
+        <thead>
         <tr>
-            <td><?php echo $admission->getIndividu()->getNomUsuel()." ".$admission->getIndividu()->getPrenom(); ?></td>
-            <td><?php echo $admission->getEtat()->getLibelle() ?></td>
-            <td><?php echo $admission->getInscription()->first() ? $admission->getInscription()->first()->getTitreThese() : ""; ?></td>
-            <td>
-                <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>">Accéder</a>
-            </td>
+            <th>Nom de l'étudiant</th>
+            <th>Statut</th>
+            <th>Titre provisoire de la thèse</th>
+            <th>Action</th>
         </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <?php foreach ($admissions as $admission): ?>
+            <tr>
+                <td><?php echo $admission->getIndividu()->getNomUsuel()." ".$admission->getIndividu()->getPrenom(); ?></td>
+                <td><?php echo $admission->getEtat()->getLibelle() ?></td>
+                <td><?php echo $admission->getInscription()->first() ? $admission->getInscription()->first()->getTitreThese() : ""; ?></td>
+                <td>
+                    <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>"
+                       title="Accéder au dossier d'admission #<?php echo $admission->getId(); ?>"
+                       data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-voir"></span>
+                    </a>
+                    <a href="<?php echo $this->url('admission/ajouter',['action' => 'supprimer', 'individu' => $admission->getIndividu()->getId()], [], true); ?>"
+                       data-toggle="confirmationx" data-event="modification"
+                       title="Suppression du dossier d'admission #<?php echo $admission->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-historiser text-danger"></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php }else{ ?>
+    <div class="row bouton_acces_dossier">
+        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces_dossier">Accéder à votre dossier d'admission</a>
+    </div>
+<?php } ?>

@@ -10,6 +10,7 @@ use Application\Rule\RuleInterface;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Closure;
 use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Individu\Entity\Db\IndividuRoleAwareInterface;
 use InvalidArgumentException;
 use RuntimeException;
@@ -19,7 +20,7 @@ use UnicaenApp\Traits\MessageAwareTrait;
 use Webmozart\Assert\Assert;
 
 /**
- * Règles métiers concernant la notification en cas d'opération attendue sur un rapport d'activité.
+ * Règles métiers concernant la notification en cas d'opération attendue sur un dossier d'admission.
  */
 class OperationAttendueNotificationRule implements RuleInterface
 {
@@ -51,7 +52,9 @@ class OperationAttendueNotificationRule implements RuleInterface
 
     public function __construct()
     {
-        $this->emailAddressExtractor = fn(Individu $i) => $i->getEmailContact() ?: $i->getEmailPro() ?: $i->getEmailUtilisateur();
+        $this->emailAddressExtractor = fn($i) => ($i instanceof Individu)
+            ? ($i->getEmailContact() ?: $i->getEmailPro() ?: $i->getEmailUtilisateur())
+            : '';
     }
 
     public function setOperationRealisee(AdmissionOperationInterface $operationRealisee): self
@@ -97,7 +100,7 @@ class OperationAttendueNotificationRule implements RuleInterface
         $this->notificationRequired = true;
         $this->to = $to;
         $this->cc = $cc;
-        $this->cc = [];
+
         $this->subject = sprintf("%s de %s",
             $this->operationAttendue->getAdmission(),
             $admission->getIndividu()->getNomComplet(),
@@ -110,8 +113,7 @@ class OperationAttendueNotificationRule implements RuleInterface
         $etudiant = $admission->getIndividu();
 
         // disposer de l'email de l'étudiant est le minimum !
-//        $emailEtudiant = $this->emailAddressExtractor->__invoke($etudiant);
-        $emailEtudiant = "thomas.hamel@unicaen.fr";
+        $emailEtudiant = $this->emailAddressExtractor->__invoke($etudiant);
         if (!$emailEtudiant) {
             throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour l'étudiant {$etudiant}");
         }
@@ -120,38 +122,61 @@ class OperationAttendueNotificationRule implements RuleInterface
         foreach ((array) $operationConfig['role'] as $codeRole) {
             switch ($codeRole) {
                 case Role::CODE_ADMIN_TECH:
+                    $emails["thomas.hamel@unicaen.fr"] = "Thomas Hamel";
+                    break;
                 case Role::CODE_DOCTORANT:
                     $emails[$emailEtudiant] = $etudiant . "(étudiant)";
                     break;
 
+                case Role::CODE_GEST_ED:
+                case Role::CODE_GEST_UR:
+                    $structureConcrete = ($codeRole === Role::CODE_GEST_UR) ?
+                        $admission->getInscription()->first()->getUniteRecherche() :
+                        $admission->getInscription()->first()->getEcoleDoctorale();
+                    // Recherche des individus ayant le rôle attendu.
+                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
+                    if (!empty($individusRoles) && !count($individusRoles)) {
+                        // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
+                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
+                    }
+                    if (!empty($individusRoles) && count($individusRoles)) {
+                        $emailsIndividuRoles = $this->collectEmails($individusRoles);
+                    } else {
+                        $emailsIndividuRoles = $this->collectFallbackEmails($codeRole, $structureConcrete);
+                    }
+                    $emails = array_merge($emails, $emailsIndividuRoles);
+                    break;
+
                 case Role::CODE_DIRECTEUR_THESE:
                 case Role::CODE_CODIRECTEUR_THESE:
-//                    $acteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($admission, $codeRole);
-//                    if (count($acteurs)) {
-//                        $emailsActeurs = $this->collectEmails($acteurs);
-//                    } else {
-//                        $emailsActeurs = $this->collectFallbackEmails($codeRole);
-//                    }
-//                    $emails = array_merge($emails, $emailsActeurs);
-//                    break;
+                    $acteurs[] = ($codeRole === Role::CODE_DIRECTEUR_THESE) ?
+                        $admission->getInscription()->first()->getDirecteur() :
+                        $admission->getInscription()->first()->getCoDirecteur();
+                    if (count($acteurs)) {
+                        $emailsActeurs = $this->collectEmails($acteurs);
+                    } else {
+                        $emailsActeurs = $this->collectFallbackEmails($codeRole);
+                    }
+                    $emails = array_merge($emails, $emailsActeurs);
+                    break;
 
                 case Role::CODE_RESP_UR:
                 case Role::CODE_RESP_ED:
-//                    $structureConcrete = ($codeRole === Role::CODE_RESP_UR) ?
-//                        $admission->getInscription()->first()->getUniteRecherche() :
-//                        $admission->getInscription()->first()->getEcoleDoctorale();
-//                    // Recherche des individus ayant le rôle attendu.
-//                    $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getEtablissement());
-//                    if (!count($individusRoles)) {
-//                        // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-//                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
-//                    }
-//                    if (count($individusRoles)) {
-//                        $emailsIndividuRoles = $this->collectEmails($individusRoles);
-//                    } else {
-//                        $emailsIndividuRoles = $this->collectFallbackEmails($codeRole, $structureConcrete);
-//                    }
-//                    $emails = array_merge($emails, $emailsIndividuRoles);
+                    $structureConcrete = ($codeRole === Role::CODE_RESP_UR) ?
+                        $admission->getInscription()->first()->getUniteRecherche() :
+                        $admission->getInscription()->first()->getEcoleDoctorale();
+                    // Recherche des individus ayant le rôle attendu.
+                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
+                    if (!empty($individusRoles) && !count($individusRoles)) {
+                        // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
+                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
+                    }
+                    if (!empty($individusRoles) && count($individusRoles)) {
+                        $emailsIndividuRoles = $this->collectEmails($individusRoles);
+                    } else {
+                        $emailsIndividuRoles = $this->collectFallbackEmails($codeRole, $structureConcrete);
+                    }
+                    $emails = array_merge($emails, $emailsIndividuRoles);
                     break;
 
                 default:
@@ -178,7 +203,7 @@ class OperationAttendueNotificationRule implements RuleInterface
         $emailEtudiant = $this->emailAddressExtractor->__invoke($etudiant);
 
         $emailsTmp = [];
-        $emailsTmp[$emailEtudiant] = $etudiant . " (étudiant)";
+        $emailsTmp[$emailEtudiant] = $etudiant . " (étudiant(e))";
         $this->anomalies[] = sprintf($this->anomalieAucunePersonneTemplate, $roleToString);
 
         return $emailsTmp;
@@ -189,25 +214,25 @@ class OperationAttendueNotificationRule implements RuleInterface
         $role = null;
         $roleToString = null;
 
-//        // Si une structure est spécifiée, on cherche un rôle "structure dépendant".
-//        if ($structureConcrete !== null) {
-//            $role = $this->roleService->getRepository()->findOneByCodeAndStructure($codeRole, $structureConcrete->getStructure());
-//            $roleToString = $role ? (string) $role : null;
-//        }
-//        // Si on n'a aucun rôle sous la main, on recherche le 1er rôle existant ayant ce code, juste pour son libellé.
-//        if ($role === null) {
-//            $role = $this->roleService->getRepository()->findByCode($codeRole);
-//            $roleToString = $role ? $role->getLibelle() : null; // NB : faut bien prendre le libellé
-//        }
-//
-//        if ($roleToString === null) {
-//            // Cas très peu probable.
-//            $roleToString = $codeRole;
-//        }
-//
-//        if ($structureConcrete !== null) {
-//            $roleToString .= ' ' . $structureConcrete;
-//        }
+        // Si une structure est spécifiée, on cherche un rôle "structure dépendant".
+        if ($structureConcrete !== null) {
+            $role = $this->roleService->getRepository()->findOneByCodeAndStructure($codeRole, $structureConcrete->getStructure());
+            $roleToString = $role ? (string) $role : null;
+        }
+        // Si on n'a aucun rôle sous la main, on recherche le 1er rôle existant ayant ce code, juste pour son libellé.
+        if ($role === null) {
+            $role = $this->roleService->getRepository()->findByCode($codeRole);
+            $roleToString = $role ? $role->getLibelle() : null; // NB : faut bien prendre le libellé
+        }
+
+        if ($roleToString === null) {
+            // Cas très peu probable.
+            $roleToString = $codeRole;
+        }
+
+        if ($structureConcrete !== null) {
+            $roleToString .= ' ' . $structureConcrete;
+        }
 
         return $roleToString;
     }
@@ -229,8 +254,9 @@ class OperationAttendueNotificationRule implements RuleInterface
         $emailsTmp = [];
         $identites = [];
         foreach ($individuRoleAwares as $ir) {
-            $individu = $ir->getIndividu();
-            $identite = sprintf("%s (%s)", $individu, $ir->getRole());
+            $individu = ($ir instanceof IndividuRole) ? $ir->getIndividu() : $ir;
+//            $identite = sprintf("%s (%s)", $individu, $ir->getRole());
+            $identite = sprintf("%s", $individu);
             $identites[] = $identite;
             $email = $this->emailAddressExtractor->__invoke($individu);
             if ($email) {
@@ -238,7 +264,7 @@ class OperationAttendueNotificationRule implements RuleInterface
             }
         }
         if (!$emailsTmp) {
-            $emailsTmp[$emailEtudiant] = $etudiant . "(étudiant)";
+            $emailsTmp[$emailEtudiant] = $etudiant . "(étudiant(e))";
             $this->anomalies[] = sprintf($this->anomalieAucuneAdresseTemplate, implode(', ', $identites));
         }
 

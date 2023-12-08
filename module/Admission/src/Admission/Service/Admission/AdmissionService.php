@@ -3,6 +3,9 @@
 namespace Admission\Service\Admission;
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Etudiant;
+use Admission\Entity\Db\Financement;
+use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\AdmissionRepository;
 use Admission\Service\Document\DocumentServiceAwareTrait;
 use Admission\Service\Financement\FinancementServiceAwareTrait;
@@ -46,28 +49,12 @@ class AdmissionService extends BaseService
     }
 
     /**
-     * @throws NotSupported
-     */
-    public function findIfCurrentUserAlreadyHasAdmission(){
-        $userId = $this->userContextService->getIdentityDb()->getId();
-        $admission = $this->getRepository()->findOneByIndividu($userId);
-        if($admission !== null){
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * @param Admission $admission
      * @return Admission
      */
     public function create(Admission $admission) : Admission
     {
         try {
-            $date = new DateTime();
-//            $user = $this->userContextService->getIdentityDb();
-//            $admission->setHistoModification($date);
-//            $admission->setHistoModificateur($user);
             $this->getEntityManager()->persist($admission);
             $this->getEntityManager()->flush($admission);
         } catch(ORMException $e) {
@@ -84,10 +71,6 @@ class AdmissionService extends BaseService
     public function update(Admission $admission)  :Admission
     {
         try {
-            $date = new DateTime();
-//            $user = $this->userContextService->getIdentityDb();
-//            $admission->setHistoModification($date);
-//            $admission->setHistoModificateur($user);
             $this->getEntityManager()->flush($admission);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Admission");
@@ -128,30 +111,46 @@ class AdmissionService extends BaseService
 
     /**
      * @param Admission $admission
-     * @return Admission
+     * @return void
+     * @throws ORMException
      */
-    public function delete(Admission $admission) : Admission
+    public function delete(Admission $admission) : void
     {
+        $this->getEntityManager()->beginTransaction();
+
         try {
+            $etudiant = $admission->getEtudiant()->first();
+
+            if($etudiant instanceof Etudiant){
+                $this->etudiantService->delete($etudiant);
+            }
+
+            $inscription = $admission->getInscription()->first();
+            if($inscription instanceof Inscription){
+                $this->inscriptionService->delete($inscription);
+            }
+
+            $financement = $admission->getFinancement()->first();
+            if($financement instanceof Financement){
+                $this->financementService->delete($financement);
+            }
+
+            $documents = $admission->getDocument();
+            foreach($documents as $document){
+                $this->documentService->delete($document);
+            }
+
+            $this->admissionValidationService->deleteValidationForAdmission($admission);
+
             $this->getEntityManager()->remove($admission);
             $this->getEntityManager()->flush($admission);
-        } catch(ORMException $e) {
-            throw new RuntimeException("Un problème est survenue lors de la suppression en base d'un Admission");
+
+            // commit
+            $this->commit();
         }
-
-        return $admission;
-    }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Admission
-     */
-    public function getRequestedAdmission(AbstractActionController $controller, string $param='Admission')
-    {
-        $id = $controller->params()->fromRoute($param);
-        /** @var Admission $admission */
-        $admission = $this->getRepository()->find($id);
-        return $admission;
+        catch (ORMException $e) {
+            $this->rollBack();
+            throw $e;
+        }
     }
 }

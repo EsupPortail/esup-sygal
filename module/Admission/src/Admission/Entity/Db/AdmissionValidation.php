@@ -144,4 +144,34 @@ class AdmissionValidation implements HistoriqueAwareInterface, AdmissionOperatio
     {
         return "AdmissionValidation";
     }
+
+    /** Fonction pour les macros du module UnicaenRenderer ************************************************************/
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getAuteurToString() : string
+    {
+        $displayname = $this->getIndividu()->getNomComplet(false, false, false, true);
+        return $displayname;
+    }
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getDateToString() : string
+    {
+        $date = $this->getHistoCreation()->format('d/m/Y à H:i');
+        return $date;
+    }
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getDestructeurToString() : string
+    {
+        return "par ".$this->getHistoDestructeur();
+    }
 }

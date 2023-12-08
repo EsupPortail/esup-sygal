@@ -4,6 +4,8 @@ namespace Admission\Service\Inscription;
 
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\InscriptionRepository;
+use Admission\Entity\Db\Verification;
+use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -20,6 +22,7 @@ class InscriptionService extends BaseService
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
+    use VerificationServiceAwareTrait;
 
     /**
      * @return InscriptionRepository
@@ -100,25 +103,17 @@ class InscriptionService extends BaseService
     public function delete(Inscription $inscription) : Inscription
     {
         try {
+            $verification = $inscription->getVerificationInscription()->first();
+            if($verification instanceof Verification){
+                $this->verificationService->delete($verification);
+            }
+
             $this->getEntityManager()->remove($inscription);
             $this->getEntityManager()->flush($inscription);
         } catch(ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de la suppression en base d'un Inscription");
         }
 
-        return $inscription;
-    }
-
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Inscription
-     */
-    public function getRequestedInscription(AbstractActionController $controller, string $param='Inscription')
-    {
-        $id = $controller->params()->fromRoute($param);
-        /** @var Inscription $inscription */
-        $inscription = $this->getRepository()->find($id);
         return $inscription;
     }
 }

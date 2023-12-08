@@ -5,11 +5,12 @@ use Admission\Service\Operation\AdmissionOperationService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Notification\Exception\RuntimeException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Admission implements HistoriqueAwareInterface{
+class Admission implements HistoriqueAwareInterface, ResourceInterface{
 
     use HistoriqueAwareTrait;
 
@@ -75,7 +76,7 @@ class Admission implements HistoriqueAwareInterface{
 
     public function __toString(): string
     {
-        return "Dossier d'admission";
+        return "dossier d'admission";
     }
 
 
@@ -316,5 +317,20 @@ class Admission implements HistoriqueAwareInterface{
     public function getOperationPossible()
     {
         return $this->operationPossible;
+    }
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getDateToString() : string
+    {
+        $date = $this->getHistoCreation()->format('d/m/Y à H:i');
+        return $date;
+    }
+
+    public function getResourceId()
+    {
+        return "Admission";
     }
 }

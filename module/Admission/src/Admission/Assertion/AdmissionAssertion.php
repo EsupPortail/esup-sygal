@@ -11,16 +11,14 @@ use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use GuzzleHttp\Psr7\ServerRequest;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use RapportActivite\Entity\Db\RapportActivite;
-use These\Entity\Db\These;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 
 class AdmissionAssertion extends AbstractAssertion implements UserContextServiceAwareInterface, MessageCollectorAwareInterface
 {
     private ?Admission $admission = null;
-    private ?RapportActivite $rapportActivite = null;
     use ThrowsFailedAssertionExceptionTrait;
     use MessageCollectorAwareTrait;
     use AdmissionServiceAwareTrait;
@@ -56,66 +54,42 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             return false;
         }
 
-//        $these = $this->getRequestedThese();
-//        if ($these === null) {
-//            return true;
-//        }
+        $this->admission = $this->getRequestedAdmission();
 
-//        if (!$this->initForControllerAction($action)) {
-//            return false;
-//        }
+        try {
+            switch ($action) {
+                case 'etudiant':
+                case 'inscription':
+                case 'financement':
+                case 'document':
+                case 'supprimer':
+                case 'telecharger-document':
+                case 'enregistrer-document':
+                case 'supprimer-document':
+                case 'notifier-commentaires-ajoutes':
+                case 'notifier-gestionnaire':
+                    if ($this->admission !== null) {
+                        $this->assertAppartenanceAdmission($this->admission);
+                    }
+                    break;
+            }
 
-//        try {
-//            switch ($action) {
-//                case 'lister':
-//                    // je ne comprends pas pourquoi : on peut arriver ici sans thèse spécifiée dans l'URL !
-//                    if ($this->these !== null) {
-//                        $this->assertAppartenanceThese($this->these);
-//                    }
-//                    break;
-//
-//                case 'ajouter':
-//                case 'financement':
-//                    if ($this->admission !== null) {
-//                        $this->assertAppartenanceAdmission($this->admission);
-//                    }
-//                break;
-//                case 'modifier':
-//                case 'supprimer':
-//                case 'consulter':
-//                case 'telecharger':
-//                case 'generer':
-//                    $this->assertAppartenanceThese($this->rapportActivite->getThese());
-//                    break;
-//            }
-//        } catch (FailedAssertionException $e) {
-//            if ($e->getMessage()) {
-//                $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
-//            }
-//            return false;
-//        }
-
-        return true;
-    }
-
-    private function initForControllerAction(string $action): bool
-    {
-        switch ($action) {
-            case 'lister':
-//                $this->admission = $this->getRequestedThese();
-//                break;
-            case 'financement':
-                $this->admission = $this->getRequestedAdmission();
-                break;
-//            case 'consulter':
-//            case 'modifier':
-//            case 'supprimer':
-//            case 'ajouter':
-//                $this->rapportActivite = $this->rapportActiviteService->newRapportActivite($this->getRequestedThese());
-//                break;
-
-            default:
-                throw new \InvalidArgumentException(__METHOD__ . " : Action inattendue : " . $action);
+            switch ($action) {
+                case 'enregistrer-document':
+                case 'supprimer' :
+                case 'supprimer-document':
+                case 'notifier-commentaires-ajoutes':
+                case 'notifier-gestionnaire':
+                    if ($this->admission !== null) {
+                        $this->assertEtatAdmission($this->admission);
+                    }
+                    break;
+            }
+        } catch (FailedAssertionException $e) {
+            if ($e->getMessage()) {
+                $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
+            }
+            return false;
         }
 
         return true;
@@ -135,24 +109,33 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
 
         try {
 
-//            switch ($privilege) {
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_TOUT:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
-//                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-//                    $this->assertEtatThese($this->rapportActivite->getThese());
-//            }
+            switch ($privilege) {
+                case AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION:
+                case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
+                case AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION:
+                case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION:
+                case AdmissionPrivileges::ADMISSION_VERIFIER:
+                case AdmissionPrivileges::ADMISSION_TELEVERSER_TOUT_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUT_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
+                    $this->assertEtatAdmission($this->admission);
+            }
 
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
-                    $this->assertAppartenanceAdmission($this->admission->getIndividu());
+                case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
+                case AdmissionPrivileges::ADMISSION_VERIFIER:
+                    $this->assertAppartenanceAdmission($this->admission);
             }
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -164,14 +147,6 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
         return true;
     }
 
-//    private function assertEtatThese(These $these)
-//    {
-//        $this->assertTrue(
-//            in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]),
-//            "La thèse doit être en cours ou soutenue"
-//        );
-//    }
-
     private function assertAppartenanceAdmission(Admission $admission)
     {
         $role = $this->userContextService->getSelectedIdentityRole();
@@ -180,31 +155,85 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
         }
 
         if ($role->isDoctorant()) {
-            $doctorant = $this->userContextService->getIdentityDoctorant();
+            $individu = $this->userContextService->getIdentityIndividu();
             $this->assertTrue(
-                $admission->getIndividu()->getId() === $doctorant->getId(),
-                "Le dossier d'admission n'appartient pas à l'individu " . $doctorant
+                $admission->getIndividu()->getId() === $individu->getId(),
+                "Le dossier d'admission n'appartient pas à l'individu " . $individu
             );
+        }elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
+            $message = "Le dossier d'admission n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode();
+            if(!empty($admission->getInscription()->first()->getEcoleDoctorale())){
+                $this->assertTrue(
+                    $admission->getInscription()->first()->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
+                    $message
+                );
+            }else{
+                throw new FailedAssertionException($message);
+            }
+        }elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
+            $message = "Le dossier d'admission n'est pas rattaché à l'UR " . $roleUniteRech->getStructure()->getCode();
+            if(!empty($admission->getInscription()->first()->getUniteRecherche())){
+                $this->assertTrue(
+                    $admission->getInscription()->first()->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
+                    $message
+                );
+            }else{
+                throw new FailedAssertionException($message);
+            }
+        }elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
+            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            $message = "Le dossier d'admission n'est pas dirigé par " . $individuUtilisateur;
+            if(!empty($admission->getInscription()->first()->getDirecteur())){
+                $this->assertTrue(
+                    $admission->getInscription()->first()->getDirecteur()->getId() === $individuUtilisateur,
+                    $message
+                );
+            }else{
+                throw new FailedAssertionException($message);
+            }
+        }elseif ($this->userContextService->getSelectedRoleCodirecteurThese()) {
+            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            $message = "Le dossier d'admission n'est pas codirigé par " . $individuUtilisateur;
+            if(!empty($admission->getInscription()->first()->getCoDirecteur())){
+                $this->assertTrue(
+                    $admission->getInscription()->first()->getCoDirecteur()->getId() === $individuUtilisateur,
+                    $message
+                );
+            }else{
+                throw new FailedAssertionException($message);
+            }
         }
     }
 
-    private function getRequestedThese(): ?These
+    protected function assertEtatAdmission(Admission $admission)
     {
-        if ($rapportActivite = $this->getRequestedRapport()) {
-            return $rapportActivite->getThese();
-        } elseif ($routeMatch = $this->getRouteMatch()) {
-            return $routeMatch->getThese();
-        } else {
-            return null;
+        $this->assertTrue(
+            in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS]),
+            "Le dossier d'admission doit être en cours"
+        );
+    }
+
+    private function assertModificationPossible(Admission $admission)
+    {
+        if ($admission->getAdmissionValidations()->count()) {
+            // modif impossible si une validation existe
+            throw new FailedAssertionException("La modification n'est plus possible car le dossier d'admission a été validé.");
         }
     }
 
     private function getRequestedAdmission(): ?Admission
     {
         $admission = null;
-        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('individu')) {
+        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('individu') ) {
             $admission = $this->admissionService->getRepository()->findOneByIndividu($id);
         }
+
+        if(empty($admission)){
+            if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('admission') ) {
+                $admission = $this->admissionService->getRepository()->findOneById($id);
+            }
+        }
+
         return $admission;
     }
 

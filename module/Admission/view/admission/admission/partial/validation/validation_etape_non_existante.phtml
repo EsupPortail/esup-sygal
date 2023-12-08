@@ -10,12 +10,12 @@ use Laminas\Form\ElementInterface;
  * @var AdmissionValidation $operation
  * @var int $individu
  * @var string $validation_en_attente
+ * @var string $returnUrl
  */
 
 $canAjouterOperation =
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_VALIDER_SIEN) ||
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_VALIDER_TOUT);
-//$canAjouterOperation = true;
 ?>
 <div class="row subfield">
     <div class="col etape_signature">
@@ -27,9 +27,6 @@ $canAjouterOperation =
             <?php } ?>
             <label><?php echo $operation->getTypeValidation()->getLibelle();?></label>
             <?php
-            $returnUrl = $this->url('admission/ajouter', ['action' => "document",
-                    'individu' => $individu]
-            );
             if($canAjouterOperation){
             ?>
             <a href="<?php echo $this->url('admission/valider', [
@@ -39,7 +36,7 @@ $canAjouterOperation =
                 'query' => ['redirect' => $returnUrl],
             ]) ?>"
            class="card-link btn btn-success btn-sm action"
-           title="Valider ce rapport ?"
+           title="Valider ce dossier d'admission ?"
            data-toggle="confirmationx"
            data-message="Confirmez-vous la validation de ce dossier d'admission ? Do you confirm the validation of this admission form?">Valider</span></a>
         <?php } ?>

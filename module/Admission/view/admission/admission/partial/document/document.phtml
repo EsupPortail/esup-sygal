@@ -1,0 +1,44 @@
+<?php
+/**
+ * @var $fieldset
+ * @var array $documents
+ * @var int $individu
+ */
+
+use Admission\Provider\Privilege\AdmissionPrivileges;
+
+$canTelechargerDocument =
+    $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_TOUT_DOCUMENT)) ||
+    $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT));
+
+?>
+<div class="row subfield">
+    <div class="col-lg-3 col-sm-12 label-file">
+        <?php echo $this->formlabel($fieldset) ?>
+    </div>
+    <div class="col-lg-9 col-sm-12">
+        <div class="row detail_file">
+            <div class="col-lg-5 upload_file">
+                <?php echo $this->formfile($fieldset) ?>
+            </div>
+            <?php
+            $key = $fieldset->getAttribute('id');
+            if(array_key_exists($key, $documents)){?>
+                <div class="col-lg-3 date_televersement">
+                    <p>Téléversé le
+                        <?php
+                        echo $documents[$key]['televersement'];
+                        ?>
+                    </p>
+                </div>
+                <?php if($canTelechargerDocument){ ?>
+                    <div class="col-lg-1 action_file">
+                        <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $key], [],true) ?>"
+                           class="icon icon-download iconly"
+                           title="Télécharger ?"></a>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+        </div>
+    </div>
+</div>

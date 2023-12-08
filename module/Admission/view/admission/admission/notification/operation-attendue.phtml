@@ -1,0 +1,42 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var AdmissionOperationInterface $operationAttendue
+ * @var string[] $anomalies
+ *
+ * @see AdmissionOperationAttenduNotification
+ */
+
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Application\Constants;
+use Application\View\Renderer\PhpRenderer;
+
+$admission = $operationAttendue->getAdmission();
+?>
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<?php if ($anomalies): ?>
+    <p>
+        <em><?php echo implode('<br>', $anomalies) ?></em>
+    </p>
+<?php endif ?>
+<p>
+    Le <strong><?php echo lcfirst($admission) ?></strong>
+    de <strong><?php echo $admission->getIndividu() ?></strong>
+    complété à la date du
+    <?php echo ($admission->getHistoModification() ?: $admission->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+    est en attente de l'opération suivante de votre part :
+    <strong><?php echo $operationAttendue->getTypeToString() ?></strong>.
+</p>
+<p>
+    Merci de vous connecter sur la plateforme <?php echo $this->appInfos()->nom ?> via le lien suivant :
+    <a href="<?php $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], ['force_canonical' => true]) ?>">lien</a>.
+</p>
+<p>
+    <strong>Note importante : une fois connecté, pensez à vérifier le rôle que vous endossez (en cliquant sur votre nom en haut à droite
+    des pages de l'application) et le cas échéant à sélectionner celui permettant de réaliser l'opération attendue.</strong>
+</p>

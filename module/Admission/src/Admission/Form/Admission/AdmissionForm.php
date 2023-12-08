@@ -60,7 +60,7 @@ class AdmissionForm extends MultipageForm
 
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
         $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
-        $submitButton->setValue('Terminer');
+        $submitButton->setValue('Enregistrer');
         $confirmButton->setAttribute('class', $confirmButton->getAttribute('class') . ' btn btn-success');
         $cancelButton->setAttribute('class', $confirmButton->getAttribute('class') . ' visually-hidden');
 

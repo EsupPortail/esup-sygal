@@ -24,9 +24,9 @@ class Module
 //        $admissionListener = $container->get(AdmissionEventListener::class);
 //        $admissionListener->attach($eventManager);
         
-//        /** @var AdmissionValidationEventListener $admissionValidationListener */
-//        $admissionValidationListener = $container->get(AdmissionValidationEventListener::class);
-//        $admissionValidationListener->attach($eventManager);
+        /** @var AdmissionValidationEventListener $admissionValidationListener */
+        $admissionValidationListener = $container->get(AdmissionValidationEventListener::class);
+        $admissionValidationListener->attach($eventManager);
     }
     public function getConfig()
     {

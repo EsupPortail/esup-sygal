@@ -27,8 +27,6 @@ use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Financement\FinancementFieldsetFactory;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldsetFactory;
-use Admission\Form\Fieldset\Validation\AdmissionValidationFieldset;
-use Admission\Form\Fieldset\Validation\AdmissionValidationFieldsetFactory;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldsetFactory;
 use Admission\Hydrator\Admission\AdmissionHydrator;
@@ -64,6 +62,8 @@ use Admission\Service\Operation\AdmissionOperationService;
 use Admission\Service\Operation\AdmissionOperationServiceFactory;
 use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\TypeValidation\TypeValidationServiceFactory;
+use Admission\Service\Url\UrlService;
+use Admission\Service\Url\UrlServiceFactory;
 use Admission\Service\Validation\AdmissionValidationService;
 use Admission\Service\Validation\AdmissionValidationServiceFactory;
 use Admission\Service\Verification\VerificationService;
@@ -97,7 +97,6 @@ return array(
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'Admission' => [],
-                'AdmissionValidation' => []
             ],
         ],
         'rule_providers'     => [
@@ -115,19 +114,11 @@ return array(
                             AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION,
                             AdmissionPrivileges::ADMISSION_HISTORISER,
                             AdmissionPrivileges::ADMISSION_VERIFIER,
+                            AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
+                            AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES
                         ],
                         'resources'  => ['Admission'],
                         'assertion'  => AdmissionAssertion::class,
-                    ],
-                    [
-                        'privileges' => [
-                            AdmissionPrivileges::ADMISSION_VALIDER_SIEN,
-                            AdmissionPrivileges::ADMISSION_VALIDER_TOUT,
-                            AdmissionPrivileges::ADMISSION_DEVALIDER_SIEN,
-                            AdmissionPrivileges::ADMISSION_DEVALIDER_TOUT
-                        ],
-                        'resources'  => ['AdmissionValidation'],
-                        'assertion'  => AdmissionValidationAssertion::class,
                     ],
                 ],
             ],
@@ -138,12 +129,7 @@ return array(
                     'controller' => AdmissionController::class,
                     'action' => [
                         'index',
-                        'confirmer',
-                        'enregistrer',
-                        'rechercher-individu',
-                        'enregistrer-document',
-                        'supprimer-document',
-                        'telecharger-document'
+                        'rechercher-individu'
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION,
@@ -154,23 +140,17 @@ return array(
                 [
                     'controller' => AdmissionController::class,
                     'action' => [
-                        'ajouter',
-                    ],
-                    'privileges' => [
-                        AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION,
-                    ],
-                ],
-                [
-                    'controller' => AdmissionController::class,
-                    'action' => [
                         'etudiant',
                         'inscription',
                         'financement',
                         'document',
+                        'enregistrer',
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
                         AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION,
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
@@ -178,34 +158,34 @@ return array(
                     'controller' => AdmissionController::class,
                     'action' => [
                         'annuler',
+                        'supprimer',
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION,
                         AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION,
                     ],
+                    'assertion' => AdmissionAssertion::class,
                 ],
                 [
-                    'controller' => AdmissionValidationController::class,
+                    'controller' => AdmissionController::class,
                     'action' => [
-                        'valider',
+                        'notifier-gestionnaire',
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_VALIDER_TOUT,
-                        AdmissionPrivileges::ADMISSION_VALIDER_SIEN,
+                        AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES,
                     ],
-                    'assertion' => AdmissionValidationAssertion::class,
+                    'assertion' => AdmissionAssertion::class,
                 ],
                 [
-                    'controller' => AdmissionValidationController::class,
+                    'controller' => AdmissionController::class,
                     'action' => [
-                        'devalider',
+                        'notifier-commentaires-ajoutes',
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_DEVALIDER_TOUT,
-                        AdmissionPrivileges::ADMISSION_DEVALIDER_SIEN,
+                        AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
                     ],
-                    'assertion' => AdmissionValidationAssertion::class,
-                ],
+                    'assertion' => AdmissionAssertion::class,
+                ]
             ]
         ],
     ],
@@ -232,99 +212,59 @@ return array(
                                  * @see AdmissionController::inscriptionAction()
                                  * @see AdmissionController::financementAction()
                                  * @see AdmissionController::documentAction()
+                                 * @see AdmissionController::supprimerAction()
                                  */
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'admission' => '[0-9]*'
                             ],
                         ],
                     ],
-                    'valider' => [
+                    'notifier-commentaires-ajoutes' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/valider/:admission/type/:typeValidation',
+                            'route' => '/notifier-commentaires-ajoutes/:admission',
                             'constraints' => [
-                                'admission' => '\d+',
-                                'typeValidation' => '\d+',
+                                'admission' => '[0-9]*'
                             ],
                             'defaults' => [
-                                'controller' => AdmissionValidationController::class,
-                                'action' => 'valider',
-                                /* @see AdmissionValidationController::validerAction() */
+                                'controller' => AdmissionController::class,
+                                'action' => 'notifier-commentaires-ajoutes',
+                                /* @see AdmissionController::notifierCommentairesAjoutesAction() */
                             ],
                         ],
                     ],
-                    'devalider' => [
+                    'notifier-gestionnaire' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/devalider/:admissionValidation',
+                            'route' => '/notifier-gestionnaire/:admission',
                             'constraints' => [
-                                'admissionValidation' => '\d+',
+                                'admission' => '[0-9]*'
                             ],
                             'defaults' => [
-                                'controller' => AdmissionValidationController::class,
-                                'action' => 'devalider',
-                                /* @see AdmissionValidationController::devaliderAction() */
+                                'controller' => AdmissionController::class,
+                                'action' => 'notifier-gestionnaire',
+                                /* @see AdmissionController::notifierGestionnaireAction() */
                             ],
                         ],
                     ],
-                    /**
-                     * @see AdmissionController::rechercherIndividuAction()
-                     */
                     'rechercher-individu' => [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
                                 'action' => 'rechercher-individu',
-                            ],
-                        ],
-                    ],
-                    /**
-                     * @see AdmissionController::enregistrerDocumentAction()
-                     */
-                    'enregistrer-document' => [
-                        'type'          => Literal::class,
-                        'options'       => [
-                            'route'       => '/enregistrer-document',
-                            'defaults'    => [
-                                'action' => 'enregistrer-document',
-                            ],
-                        ],
-                    ],
-                    /**
-                     * @see AdmissionController::supprimerDocumentAction()
-                     */
-                    'supprimer-document' => [
-                        'type'          => Literal::class,
-                        'options'       => [
-                            'route'       => '/supprimer-document',
-                            'defaults'    => [
-                                'action' => 'supprimer-document',
-                            ],
-                        ],
-                    ],
-                    /**
-                     * @see AdmissionController::telechargerDocumentAction()
-                     */
-                    'telecharger-document' => [
-                        'type'          => Literal::class,
-                        'options'       => [
-                            'route'       => '/telecharger-document',
-                            'defaults'    => [
-                                'action' => 'telecharger-document',
+                                /* @see AdmissionController::rechercherIndividuAction() */
                             ],
                         ],
                     ],
                 ],
             ],
-
         ],
     ],
 
     'controllers' => [
         'factories' => [
             AdmissionController::class => AdmissionControllerFactory::class,
-            AdmissionValidationController::class => AdmissionValidationControllerFactory::class,
         ],
     ],
 
@@ -334,7 +274,6 @@ return array(
             EtudiantFieldset::class => EtudiantFieldsetFactory::class,
             InscriptionFieldset::class => InscriptionFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,
-            AdmissionValidationFieldset::class => AdmissionValidationFieldsetFactory::class,
             VerificationFieldset::class => VerificationFieldsetFactory::class,
             DocumentFieldset::class => DocumentFieldsetFactory::class
         ],
@@ -354,8 +293,6 @@ return array(
 
     'service_manager' => [
         'factories' => [
-            ModuleConfig::class => ModuleConfigFactory::class,
-
             AdmissionService::class => AdmissionServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,
             EtudiantService::class => EtudiantServiceFactory::class,
@@ -363,17 +300,12 @@ return array(
             TypeValidationService::class => TypeValidationServiceFactory::class,
             DocumentService::class => DocumentServiceFactory::class,
             VerificationService::class => VerificationServiceFactory::class,
-            AdmissionValidationService::class => AdmissionValidationServiceFactory::class,
-            AdmissionOperationService::class => AdmissionOperationServiceFactory::class,
 
             AdmissionEventListener::class => AdmissionEventListenerFactory::class,
-            AdmissionValidationEventListener::class => AdmissionValidationEventListenerFactory::class,
 
-            OperationAttendueNotificationRule::class => OperationAttendueNotificationRuleFactory::class,
-            AdmissionOperationRule::class => AdmissionOperationRuleFactory::class,
-
-            AdmissionValidationAssertion::class => AdmissionValidationAssertionFactory::class,
             AdmissionAssertion::class => AdmissionAssertionFactory::class,
+
+            UrlService::class => UrlServiceFactory::class,
         ],
     ],
 

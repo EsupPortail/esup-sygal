@@ -50,6 +50,7 @@ abstract class AdmissionOperationAbstractEventListener implements ListenerAggreg
 
         $notif = $this->notificationFactory->createNotificationOperationAttendue();
         $this->admissionOperationAttendueNotificationRule->configureNotification($notif);
+        $notif = $this->notificationFactory->addOperationAttendueToTemplateOperationAttendue($notif->getOperationAttendue(), $notif);
 
         $result = $this->notifierService->trigger($notif);
 

@@ -18,8 +18,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 class InscriptionFieldset extends Fieldset implements InputFilterProviderInterface
 {
     //Informations Inscription
-    private ?string $urlDirecteurThese = null;
-    private ?string $urlCoDirecteurThese = null;
+    private ?string $urlIndividuThese = null;
     private ?string $urlEtablissement = null;
     /** @var array */
     private $ecolesDoctorales = null;
@@ -28,16 +27,14 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     private $specialites = null;
 
 
-    public function setUrlDirecteurThese(string $urlDirecteurThese): void
+    public function setUrlIndividuThese(string $urlIndividuThese): void
     {
-        $this->urlDirecteurThese = $urlDirecteurThese;
-        $this->get('nomDirecteurThese')->setAutocompleteSource($this->urlDirecteurThese);
-    }
+        $this->urlIndividuThese = $urlIndividuThese;
+        $this->get('nomDirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+        $this->get('prenomDirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
 
-    public function setUrlCoDirecteurThese(string $urlCoDirecteurThese): void
-    {
-        $this->urlCoDirecteurThese = $urlCoDirecteurThese;
-        $this->get('nomCodirecteurThese')->setAutocompleteSource($this->urlCoDirecteurThese);
+        $this->get('nomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+        $this->get('prenomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
     }
 
     public function setUrlEtablissement(string $urlEtablissement): void
@@ -164,9 +161,8 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             (new Hidden('directeur'))
         );
 
-        $nomDirecteurThese = new SearchAndSelect('nomDirecteurThese', ['label' => "Nom du directeur de thèse"]);
+        $nomDirecteurThese = new SearchAndSelect('nomDirecteurThese', []);
         $nomDirecteurThese
-            ->setAutocompleteSource($this->urlDirecteurThese)
             ->setSelectionRequired()
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
@@ -178,7 +174,6 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $prenomDirecteurThese = new SearchAndSelect('prenomDirecteurThese', ['label' => "Prénom du directeur de thèse"]);
         $prenomDirecteurThese
-            ->setAutocompleteSource($this->urlDirecteurThese)
             ->setSelectionRequired()
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
@@ -200,7 +195,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             (new Hidden('coDirecteur'))
         );
 
-        $nomCodirecteurThese = new SearchAndSelect('nomCodirecteurThese', ['label' => "Nom du co-directeur de thèse"]);
+        $nomCodirecteurThese = new SearchAndSelect('nomCodirecteurThese', []);
         $nomCodirecteurThese
             ->setSelectionRequired()
             ->setAttributes([
@@ -213,7 +208,6 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $prenomCodirecteurThese = new SearchAndSelect('prenomCodirecteurThese', ['label' => "Prénom du co-directeur de thèse"]);
         $prenomCodirecteurThese
-            ->setAutocompleteSource($this->urlDirecteurThese)
             ->setSelectionRequired()
             ->setAttributes([
                 'class' => 'selectpicker show-tick',

@@ -33,16 +33,16 @@ class InscriptionHydrator extends DoctrineObject
         }
 
         if (array_key_exists($key = 'directeur', $data) && $data[$key] instanceof Individu) {
-            $data["nomDirecteurThese"] = array("id" => $object->getDirecteur()->getId(), "label" => $object->getNomDirecteurThese());
-            $data["prenomDirecteurThese"] = array("id" => $object->getDirecteur()->getId(), "label" => $object->getPrenomDirecteurThese());
+            $data["nomDirecteurThese"] = array("id" => $object->getDirecteur()->getId(), "label" => $object->getDirecteur()->getNomUsuel());
+            $data["prenomDirecteurThese"] = array("id" => $object->getDirecteur()->getId(), "label" => $object->getDirecteur()->getPrenom());
         }else{
             $data["nomDirecteurThese"] = array("id" => null, "label" => $object->getNomDirecteurThese());
             $data["prenomDirecteurThese"] = array("id" => null, "label" => $object->getPrenomDirecteurThese());
         }
 
         if (array_key_exists($key = 'coDirecteur', $data) && $data[$key] instanceof Individu) {
-            $data["nomCodirecteurThese"] = array("id" => $object->getCoDirecteur()->getId(), "label" => $object->getNomCoDirecteurThese());
-            $data["prenomCodirecteurThese"] = array("id" => $object->getCoDirecteur()->getId(), "label" => $object->getPrenomCodirecteurThese());
+            $data["nomCodirecteurThese"] = array("id" => $object->getCoDirecteur()->getId(), "label" => $object->getCoDirecteur()->getNomUsuel());
+            $data["prenomCodirecteurThese"] = array("id" => $object->getCoDirecteur()->getId(), "label" => $object->getCoDirecteur()->getPrenom());
         }else{
             $data["nomCodirecteurThese"] = array("id" => null, "label" => $object->getNomCoDirecteurThese());
             $data["prenomCodirecteurThese"] = array("id" => null, "label" => $object->getPrenomCoDirecteurThese());
@@ -69,25 +69,35 @@ class InscriptionHydrator extends DoctrineObject
         $data["uniteRecherche"] = !empty($data["uniteRecherche"]) ? $data["uniteRecherche"] : null;
         $data["specialiteDoctorat"] = !empty($data["specialiteDoctorat"]) ? $data["specialiteDoctorat"] : null;
 
-        if (!empty($data["nomCodirecteurThese"]["id"])) {
+        if (!empty($data["nomCodirecteurThese"]["id"]) && !empty($data["nomCodirecteurThese"]["label"])) {
             $data["coDirecteur"] = $data["nomCodirecteurThese"]["id"];
-        } elseif (!empty($data["prenomCodirecteurThese"]["id"])) {
+        } elseif (!empty($data["prenomCodirecteurThese"]["id"]) && !empty($data["prenomCodirecteurThese"]["label"])) {
             $data["coDirecteur"] = $data["prenomCodirecteurThese"]["id"];
         } else {
             $data["coDirecteur"] = null;
         }
+
+        if(empty($data["nomCodirecteurThese"]["id"]) || empty($data["prenomCodirecteurThese"]["id"])){
+            $data["coDirecteur"] = null;
+        }
+
         $data["prenomCodirecteurThese"] = (array_key_exists("prenomCodirecteurThese", $data) && empty($data["prenomCodirecteurThese"]["label"])) ? null : $data["prenomCodirecteurThese"]["label"];
         $data["nomCodirecteurThese"] = (array_key_exists("nomCodirecteurThese", $data) && empty($data["nomCodirecteurThese"]["label"])) ? null : $data["nomCodirecteurThese"]["label"];
 
-        if (!empty($data["nomDirecteurThese"]["id"])) {
+        if (!empty($data["nomDirecteurThese"]["id"]) && !empty($data["nomDirecteurThese"]["label"])) {
             $data["directeur"] = $data["nomDirecteurThese"]["id"];
-        } elseif (!empty($data["prenomDirecteurThese"]["id"])) {
+        } elseif (!empty($data["prenomDirecteurThese"]["id"]) && !empty($data["prenomDirecteurThese"]["label"])) {
             $data["directeur"] = $data["prenomDirecteurThese"]["id"];
         } else {
             $data["directeur"] = null;
         }
+
+        if(empty($data["nomDirecteurThese"]["id"]) || empty($data["prenomDirecteurThese"]["id"])){
+            $data["directeur"] = null;
+        }
+
         $data["prenomDirecteurThese"] = (array_key_exists("prenomDirecteurThese", $data) && empty($data["prenomDirecteurThese"]["label"])) ? null : $data["prenomDirecteurThese"]["label"];
-        $data["nomDirecteurThese"] = (array_key_exists("prenomDirecteurThese", $data) && empty($data["nomDirecteurThese"]["label"])) ? null : $data["nomDirecteurThese"]["label"];
+        $data["nomDirecteurThese"] = (array_key_exists("nomDirecteurThese", $data) && empty($data["nomDirecteurThese"]["label"])) ? null : $data["nomDirecteurThese"]["label"];
         $data["paysCoTutelle"] = (array_key_exists("paysCoTutelle", $data) && empty($data["paysCoTutelle"]["id"])) ? null : $data["paysCoTutelle"]["id"];
 
         //Si la case confidentialite est décochée, on met à null les valeurs des champs reliés

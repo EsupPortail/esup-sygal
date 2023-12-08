@@ -69,11 +69,23 @@ h1 {
   display: flex; }
 
 .commentaires_gestionnaire .gestionnaire {
-  margin-left: 30px;
-  font-style: italic; }
+  margin-left: 30px; }
+
+.commentaires_gestionnaire .info-commentaire {
+  margin-left: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
 
 .pas_de_commentaire {
   margin-left: 30px; }
+
+.notifier_commentaires_ajoutes, .notifier_gestionnaires {
+  display: flex;
+  justify-content: flex-end; }
+
+.notifier_commentaires_ajoutes > a, .notifier_gestionnaires > a {
+  width: auto; }
 
 .partie_etudiant > p {
   margin-top: 30px; }
@@ -88,6 +100,17 @@ h1 {
   justify-content: center;
   min-height: 40vh;
   position: relative; }
+
+.bouton_acces_dossier {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  /* Pour centrer verticalement sur toute la hauteur de la fenêtre - ajustez selon vos besoins */ }
+
+.acces_dossier {
+  text-align: center;
+  width: fit-content; }
 
 .checkbox_admission > .mb-2 > .multicheckbox > .form-check-label {
   display: inline-block;
@@ -128,6 +151,9 @@ div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
 .titre_these > div {
   display: inline;
   float: left; }
+
+.individu_non_enregistre {
+  color: darkred; }
 
 .mb-2 > .multicheckbox > .form-check-label {
   display: inline-block;
@@ -242,46 +268,6 @@ i:hover {
 .circle > p {
   color: #8E8E8E; }
 
-.etape_signature {
-  display: flex;
-  align-items: center; }
-
-.etape_signature > label {
-  color: #707070;
-  font-size: 15px;
-  margin-left: 15px; }
-
-.etape_signature .info_validation {
-  margin-left: 10px; }
-
-.etape_signature > a {
-  margin-left: 10px; }
-
-.dossier_complet {
-  border: 3px solid #37AF37;
-  border-radius: 11px;
-  max-width: 18rem; }
-
-.dossier_incomplet {
-  border: 3px solid #E69B18;
-  border-radius: 11px;
-  max-width: 25rem; }
-
-.dossier_complet > div > p, .dossier_incomplet > div > p {
-  color: #707070;
-  font-size: 15px; }
-
-.dossier_complet > div > i, .dossier_incomplet > div > i {
-  font-style: unset; }
-
-.card-body.text-success i.icon, .card-body.text-warning i.icon {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px; }
-
-.card-body.text-success p.card-title, .card-body.text-warning p.card-title {
-  display: inline-block; }
-
 textarea {
   width: 100%; }
 
@@ -313,6 +299,61 @@ input[name="validation[saveAttestationHonneur]"] {
 .validation_attestation {
   margin-top: revert !important; }
 
+.circle_etape {
+  width: fit-content;
+  padding-right: unset; }
+
+.etape_signature {
+  display: flex;
+  align-items: center;
+  width: auto;
+  padding-left: unset; }
+
+.etape_signature > label {
+  color: #707070;
+  font-size: 15px;
+  margin-left: 15px; }
+
+.etape_signature .info_validation {
+  margin-left: 10px; }
+
+.info_validation {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.info_validation > p {
+  margin-bottom: unset;
+  margin-top: unset; }
+
+.etape_signature > a {
+  margin-left: 10px; }
+
+.dossier_complet {
+  border: 3px solid #37AF37;
+  border-radius: 11px;
+  max-width: 18rem; }
+
+.dossier_incomplet {
+  border: 3px solid #E69B18;
+  border-radius: 11px;
+  max-width: 25rem; }
+
+.dossier_complet > div > p, .dossier_incomplet > div > p {
+  color: #707070;
+  font-size: 15px; }
+
+.dossier_complet > div > i, .dossier_incomplet > div > i {
+  font-style: unset; }
+
+.card-body.text-success i.icon, .card-body.text-warning i.icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px; }
+
+.card-body.text-success p.card-title, .card-body.text-warning p.card-title {
+  display: inline-block; }
+
 @media (max-width: 768px) {
   .inner.show {
     position: absolute;
@@ -336,6 +377,31 @@ input[name="validation[saveAttestationHonneur]"] {
     float: none; }
 
   .bouton_validation {
-    justify-content: center; } }
+    justify-content: center; }
+
+  .libelle_etape {
+    display: flex;
+    align-items: center; }
+
+  .libelle_etape > label {
+    color: #707070;
+    font-size: 1.453vh;
+    margin-left: unset; }
+
+  .circle_etape {
+    margin-right: 10px; }
+
+  .info_validation {
+    margin-bottom: 10px;
+    margin-top: 10px; }
+
+  .info_validation > p {
+    margin-bottom: 10px;
+    margin-top: 10px; }
+
+  .bouton_etape_validation {
+    display: flex;
+    justify-content: center;
+    align-items: center; } }
 
 /*# sourceMappingURL=admission.css.map */

@@ -15,7 +15,6 @@ class AdmissionHydrator extends DoctrineObject
         $data['inscription'] = $object->getInscription()->first() ?: null;
         $data['financement'] = $object->getFinancement()->first() ?: null;
         $data['etudiant'] = $object->getEtudiant()->first() ?: null;
-        $data['validation'] = $object->getAdmissionValidations()->first() ?: null;
         $data['document'] = $object->getDocument()->first() ?: null;
 
         return $data;
@@ -31,9 +30,6 @@ class AdmissionHydrator extends DoctrineObject
         }
         if (isset($data['financement']) && !is_array($data['financement'])) {
             $data['financement'] = [$data['financement']];
-        }
-        if (isset($data['validation']) && !is_array($data['validation'])) {
-            $data['validation'] = [$data['validation']];
         }
         if (isset($data['document']) && !is_array($data['document'])) {
             $data['document'] = [$data['document']];

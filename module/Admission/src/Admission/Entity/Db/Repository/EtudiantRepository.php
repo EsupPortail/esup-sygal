@@ -3,29 +3,28 @@ namespace Admission\Entity\Db\Repository;
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Etudiant;
-use Admission\Entity\Db\Individu;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Application\Service\UserContextServiceAwareTrait;
+use Individu\Entity\Db\Individu;
 
 class EtudiantRepository extends DefaultEntityRepository{
     /**
-     * Recherche d'un fieldset Etudiant à partir de l'ID de son créateur.
+     * Recherche d'un fieldset Etudiant à partir de son dossier d'admission.
      *
-     * @param string $id
+     * @param Admission $admission
      * @return Etudiant
      */
-    public function findOneByAdmission($id): Etudiant
+    public function findOneByAdmission($admission): Etudiant
     {
-        return $this->findOneBy(['admission' => $id]);
+        return $this->findOneBy(['admission' => $admission]);
     }
 
     /**
-     * Recherche d'un fieldset Etudiant à partir de l'ID de son créateur.
+     * Recherche d'un fieldset Etudiant à partir de son créateur.
      *
-     * @param string $id
+     * @param Individu $individu
      * @return Etudiant
      */
-    public function findOneByIndividu($id){
-        return $this->findOneBy(['individu' => $id]);
+    public function findOneByIndividu(Individu $individu){
+        return $this->findOneBy(['individu' => $individu]);
     }
 }

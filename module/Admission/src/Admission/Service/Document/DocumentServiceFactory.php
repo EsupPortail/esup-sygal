@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Document;
 
+use Admission\Service\Verification\VerificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
@@ -32,6 +33,7 @@ class DocumentServiceFactory {
         $userContextService = $container->get('UserContextService');
         $fichierService = $container->get(FichierService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        $verificationService = $container->get(VerificationService::class);
         /**
          * @var SourceCodeStringHelper $sourceCodeStringHelper;
          */
@@ -45,6 +47,7 @@ class DocumentServiceFactory {
         $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);
         $service->setSourceCodeStringHelper($sourceCodeStringHelper);
+        $service->setVerificationService($verificationService);
 
         return $service;
     }

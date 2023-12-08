@@ -3,11 +3,12 @@
 namespace Admission\Notification;
 
 use Admission\Entity\Db\AdmissionValidation;
+use Individu\Entity\Db\Individu;
 use Notification\Notification;
 
 class AdmissionValidationSupprimeeNotification extends Notification
 {
-    protected ?string $templatePath = 'admission/notification/validation-supprimee';
+    protected ?string $templatePath = 'admission/admission/notification/validation-supprimee';
     private AdmissionValidation $admissionValidation;
 
     public function setAdmissionValidation(AdmissionValidation $admissionValidation): void
@@ -25,13 +26,18 @@ class AdmissionValidationSupprimeeNotification extends Notification
         $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
         $this->setTo([$email => $admission->getIndividu()->getNomComplet()]);
-//        $this->setCc($these->getDirecteursTheseEmails());
+        if(!empty($admission->getInscription()->first()->getDirecteur())){
+            /** @var Individu $directeur */
+            $directeur = $admission->getInscription()->first()->getDirecteur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+            $this->setCc($emailDirecteur);
+        }
         $this->setSubject(sprintf("Votre %s a été dévalidé", $this->admissionValidation));
 
         $this->setSubject(sprintf(
             "%s de %s dévalidé",
             $this->admissionValidation->getAdmission(),
-            $this->admissionValidation->getHistoModificateur() ?: $this->admissionValidation->getHistoCreateur()
+            $individu->getNomComplet()
         ));
 
         $successMessage = sprintf(

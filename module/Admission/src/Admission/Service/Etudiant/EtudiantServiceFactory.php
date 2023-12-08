@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Etudiant;
 
+use Admission\Service\Verification\VerificationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
@@ -26,6 +27,7 @@ class EtudiantServiceFactory {
         $roleService = $container->get(RoleService::class);
         $sourceService = $container->get(SourceService::class);
         $userContextService = $container->get('UserContextService');
+        $verificationService = $container->get(VerificationService::class);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeStringHelper;
@@ -37,6 +39,7 @@ class EtudiantServiceFactory {
         $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);
         $service->setSourceCodeStringHelper($sourceCodeStringHelper);
+        $service->setVerificationService($verificationService);
         return $service;
     }
 }

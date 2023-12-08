@@ -3,18 +3,21 @@
 namespace Admission\Controller\Validation;
 
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Laminas\Http\Response;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class AdmissionValidationController extends AbstractController
 {
     use AdmissionServiceAwareTrait;
     use AdmissionValidationServiceAwareTrait;
     use TypeValidationServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     public function validerAction(): Response
     {
@@ -26,9 +29,21 @@ class AdmissionValidationController extends AbstractController
 
         $redirectUrl = $this->params()->fromQuery('redirect');
 
+        if(empty($admission->getInscription()->first())){
+            $this->flashMessenger()->addErrorMessage("Vous devez d'abord renseigner les informations du formulaire avant de pouvoir valider le formulaire");
+            return $this->redirect()->toUrl($redirectUrl);
+        }
+
         $admissionValidation = $this->admissionValidationService->newAdmissionValidation($admission, $typeValidation);
         $this->admissionValidationService->saveNewAdmissionValidation($admissionValidation);
         $event = $this->admissionValidationService->triggerEventValidationAjoutee($admissionValidation);
+
+        if($typeValidation->getCode() == TypeValidation::CODE_SIGNATURE_PRESIDENT){
+            /** @var Etat $valide */
+            $valide = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_VALIDE]);
+            $admission->setEtat($valide);
+            $this->admissionService->update($admission);
+        }
 
         if ($messages = $event->getMessages()) {
             foreach ($messages as $namespace => $message) {
@@ -51,6 +66,11 @@ class AdmissionValidationController extends AbstractController
         /** @var AdmissionValidation $admissionValidation */
         $admissionValidation = $this->admissionValidationService->getRepository()->find($admissionValidationId);
         $redirectUrl = $this->params()->fromQuery('redirect');
+
+        if(empty($admissionValidation->getAdmission()->getInscription()->first())){
+            $this->flashMessenger()->addErrorMessage("Vous devez d'abord renseigner les informations du formulaire avant de pouvoir valider le formulaire");
+            return $this->redirect()->toUrl($redirectUrl);
+        }
 
         $this->admissionValidationService->deleteAdmissionValidation($admissionValidation);
         $event = $this->admissionValidationService->triggerEventValidationSupprimee($admissionValidation);

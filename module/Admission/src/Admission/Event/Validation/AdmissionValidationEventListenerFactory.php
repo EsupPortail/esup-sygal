@@ -33,9 +33,9 @@ class AdmissionValidationEventListenerFactory
         $notifierService = $container->get(NotifierService::class);
         $listener->setNotifierService($notifierService);
 
-        /** @var AdmissionOperationRule $rapportActiviteOperationRule */
-        $rapportActiviteOperationRule = $container->get(AdmissionOperationRule::class);
-        $listener->setAdmissionOperationRule($rapportActiviteOperationRule);
+        /** @var AdmissionOperationRule $admissionOperationRule */
+        $admissionOperationRule = $container->get(AdmissionOperationRule::class);
+        $listener->setAdmissionOperationRule($admissionOperationRule);
 
         /** @var OperationAttendueNotificationRule $operationAttendueNotificationRule */
         $operationAttendueNotificationRule = $container->get(OperationAttendueNotificationRule::class);

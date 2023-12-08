@@ -2,6 +2,8 @@
 
 namespace Admission\Service\Notification;
 
+use Admission\Service\Url\UrlService;
+use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -36,6 +38,14 @@ class NotificationFactoryFactory extends NFF
         $userContextService = $container->get(UserContextService::class);
         $factory->setRenduService($renduService);
         $factory->setUserContextService($userContextService);
+
+        /** @var RoleService $roleService */
+        $roleService = $container->get(RoleService::class);
+        $factory->setRoleService($roleService);
+
+        /** @var UrlService $urlService */
+        $urlService = $container->get(UrlService::class);
+        $factory->setUrlService($urlService);
 
         return $factory;
     }

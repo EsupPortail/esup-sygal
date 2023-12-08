@@ -7,10 +7,6 @@ use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\TypeValidation;
 use Application\Entity\Db\Role;
 use InvalidArgumentException;
-use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
-use RapportActivite\Entity\Db\RapportActiviteValidation;
-use These\Entity\Db\Acteur;
 
 class ModuleConfig
 {
@@ -91,8 +87,11 @@ class ModuleConfig
                     self::VALIDATION_DIRECTION_THESE => true
                 ],
                 'enabled' => function(Admission $admission) {
-                    return
-                        $admission->getInscription()->first()->getCoDirection() !== null && $admission->getInscription()->first()->getCoDirection() == true;
+                    if(!empty($admission->getInscription()->first())){
+                        return
+                            $admission->getInscription()->first()->getCoDirection() !== null && $admission->getInscription()->first()->getCoDirection() == true;
+                    }
+                    return false;
                 },
                 'enabled_as_dql' => null,
             ],

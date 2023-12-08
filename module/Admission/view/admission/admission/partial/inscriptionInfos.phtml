@@ -1,6 +1,7 @@
 <?php
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Verification;
 use Admission\Form\Admission\AdmissionForm;
@@ -18,8 +19,22 @@ use Application\View\Renderer\PhpRenderer;
  */
 $form->prepare();
 $fcg = $this->formControlGroup();
-$canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_VERIFIER));
+$canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
+$canModifierAdmission  =
+    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
+    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+if(!empty($admission)){
+    if(!$canModifierAdmission){
+        foreach($fieldset->getElements() as $element){
+            $element->setAttribute('readonly', true);
+        }
+    }
+}
 ?>
+    <script>
+        var readOnly = <?php echo $canModifierAdmission ? 0 : 1 ?>
+    </script>
+
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Inscription demandée</h2>
@@ -48,6 +63,15 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
     <div class="row subfield">
         <?php echo $this->formControlGroup($fieldset->get('directeur')) ?>
         <div class="col-lg-4 col-sm-12">
+            <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getNomDirecteurThese()) && empty($admission->getInscription()->first()->getDirecteur()))){ ?>
+                <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label>
+                <span class="icon icon-warning" data-toggle="tooltip" title="" data-bs-original-title="Merci d'enregistrer l'individu en base de données" aria-label="Merci d'enregistrer l'individu en base de données"></span>
+            <?php }else{ ?>
+                    <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label>
+                        <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getDirecteur()))){ ?>
+                            <span class="icon icon-information" data-toggle="tooltip" title="l'individu renseigné est enregistré en base de données"></span>
+                <?php } ?>
+            <?php } ?>
             <?php echo $this->formControlGroup($fieldset->get('nomDirecteurThese')) ?>
         </div>
         <div class="col-lg-4 col-sm-12">
@@ -129,6 +153,15 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
                     <div class="row">
                         <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
                         <div class="col-lg-4 col-sm-12">
+                            <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getNomCodirecteurThese()) && empty($admission->getInscription()->first()->getCoDirecteur()))){ ?>
+                                <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label>
+                                <span class="icon icon-warning individu_non_enregistre" data-toggle="tooltip" title="" data-bs-original-title="Merci d'enregistrer l'individu en base de données" aria-label="Merci d'enregistrer l'individu en base de données"></span>
+                            <?php }else{ ?>
+                                <label class="form-label" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label>
+                                <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getCoDirecteur()))){ ?>
+                                    <span class="icon icon-information" data-toggle="tooltip" title="l'individu renseigné est enregistré en base de données"></span>
+                                <?php } ?>
+                            <?php } ?>
                             <?php echo $this->formControlGroup($fieldset->get('nomCodirecteurThese')) ?>
                         </div>
                         <div class="col-lg-4 col-sm-12">
@@ -153,32 +186,14 @@ $canVerifierAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(Adm
         </div>
     </div>
 </div>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Commentaires</h2>
-    </div>
-    <?php if ($canVerifierAdmission) { ?>
-        <div class="row observations_gestionnaire">
-            <div class="col">
-                <?php echo $fcg($fieldset->get("verificationInscription")->get('estComplet')) ?>
-            </div>
-            <div class="commentaires_gestionnaire">
-                <?php echo $fcg($fieldset->get("verificationInscription")->get('commentaire')) ?>
-            </div>
-        </div>
-    <?php }else{ ?>
-        <div class="commentaires_gestionnaire">
-            <div class="partie_etudiant">
-                <?php
-                /** @var Verification $verification */
-                $verification = !empty($admission->getInscription()->first()) ? $admission->getInscription()->first()->getVerificationInscription()->first() : null;
-                $nom = !empty($verification) ? $verification->getIndividu()->getNomUsuel() : null;
-                $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
-                $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
-                $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
-                echo !empty($commentaire) ? "<p class='gestionnaire'>".$nom." ".$prenom." (".$date_verification.")</p><p> :  ".$commentaire." </p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
-                ?>
-            </div>
-        </div>
-    <?php  } ?>
-</div>
+<?php
+if($canModifierAdmission) {
+    echo $this->partial('admission/partial/verification/verification', [
+        'canVerifierAdmission' => $canVerifierAdmission,
+        'fcg' => $fcg,
+        'fieldset' => $fieldset->get("verificationInscription"),
+        'element' => !empty($admission) && !empty($admission->getInscription()) ? $admission->getInscription() : null,
+        'elementVerification' => !empty($admission) && !empty($admission->getInscription()->first()) ? $admission->getInscription()->first()->getVerificationInscription() : null
+    ]);
+}
+?>

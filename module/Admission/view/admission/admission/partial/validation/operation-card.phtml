@@ -4,6 +4,7 @@
  * @var int $count
  * @var int $individu
  * @var string $validation_en_attente
+ * @var string $returnUrl
  */
 
 use Admission\Entity\Db\AdmissionOperationInterface;
@@ -11,17 +12,19 @@ use Admission\Entity\Db\AdmissionValidation;
 
 if ($operation instanceof AdmissionValidation) {
     if ($operation->getId() !== null) {
-        echo $this->partial('admission/partial/validation/validation_etape_existante', [
+        echo $this->partial('admission/admission/partial/validation/validation_etape_existante', [
             'operation' => $operation,
             'count' => $count,
             'individu' => $individu,
+            'returnUrl' => $returnUrl
         ]);
     } else {
-        echo $this->partial('admission/partial/validation/validation_etape_non_existante', [
+        echo $this->partial('admission/admission/partial/validation/validation_etape_non_existante', [
             'operation' => $operation,
             'count' => $count,
             'individu' => $individu,
-            'validation_en_attente' => $validation_en_attente
+            'validation_en_attente' => $validation_en_attente,
+            'returnUrl' => $returnUrl
         ]);
     }
 } else {

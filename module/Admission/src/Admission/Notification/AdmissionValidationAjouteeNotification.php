@@ -3,12 +3,13 @@
 namespace Admission\Notification;
 
 use Admission\Entity\Db\AdmissionValidation;
+use Individu\Entity\Db\Individu;
 use Notification\Notification;
 use RuntimeException;
 
 class AdmissionValidationAjouteeNotification extends Notification
 {
-    protected ?string $templatePath = 'admission/notification/validation';
+    protected ?string $templatePath = 'admission/admission/notification/validation';
     private AdmissionValidation $admissionValidation;
 
     /**
@@ -32,11 +33,16 @@ class AdmissionValidationAjouteeNotification extends Notification
         }
 
         $this->setTo([$email => $admission->getIndividu()->getNomComplet()]);
-//        $this->setCc($admission->getDirecteursTheseEmails());
+        if(!empty($admission->getInscription()->first()->getDirecteur())){
+            /** @var Individu $directeur */
+            $directeur = $admission->getInscription()->first()->getDirecteur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+            $this->setCc($emailDirecteur);
+        }
         $this->setSubject(sprintf(
             "%s de %s validé",
             $this->admissionValidation->getAdmission(),
-            $this->admissionValidation->getHistoModificateur() ?: $this->admissionValidation->getHistoCreateur()
+            $individu->getNomComplet()
         ));
 
         $successMessage = sprintf(

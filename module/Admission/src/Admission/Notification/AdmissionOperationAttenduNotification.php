@@ -7,7 +7,7 @@ use Notification\Notification;
 
 class AdmissionOperationAttenduNotification extends Notification
 {
-    protected ?string $templatePath = 'admission/notification/operation-attendue';
+    protected ?string $templatePath = 'admission/admission/notification/operation-attendue';
     private AdmissionOperationInterface $operationAttendue;
     private array $anomalies = [];
 
@@ -16,9 +16,19 @@ class AdmissionOperationAttenduNotification extends Notification
         $this->operationAttendue = $operationAttendue;
     }
 
+    public function getOperationAttendue(): AdmissionOperationInterface
+    {
+        return $this->operationAttendue;
+    }
+
     public function setAnomalies(array $anomalies)
     {
         $this->anomalies = $anomalies;
+    }
+
+    public function getAnomalies()
+    {
+        return implode('<br>', $this->anomalies);
     }
 
     public function prepare(): self

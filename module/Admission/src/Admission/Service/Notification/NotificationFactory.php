@@ -2,12 +2,17 @@
 
 namespace Admission\Service\Notification;
 
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Notification\AdmissionOperationAttenduNotification;
-use Admission\Notification\AdmissionValidationAjouteeNotification;
-use Admission\Notification\AdmissionValidationSupprimeeNotification;
 use Admission\Provider\Template\MailTemplates;
+use Admission\Service\Url\UrlServiceAwareTrait;
+use Application\Entity\Db\Role;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
@@ -22,21 +27,68 @@ class NotificationFactory extends NF
 {
     use RenduServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use UrlServiceAwareTrait;
 
-    public function createNotificationEnvoyerMail(): Notification
+    public function createNotificationCommentairesAjoutes(Admission $admission): Notification
     {
-        $vars = [
-        ];
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::ENVOYER_MAIL, $vars);
-        $mail = $this->userContextService->getIdentityDb()->getEmail();
-
-        if (!$mail) {
-            throw new RuntimeException("Aucune adresse mail.");
+        $notif = new Notification();
+        $individu = $admission->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        if (!$email) {
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour le doctorant {$individu}");
         }
 
+        //Création du lien vers le dossier d'admission
+        $vars = ['admission' => $admission];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $vars['individu'] = $individu;
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::COMMENTAIRES_AJOUTES, $vars);
+        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps());
+
+        return $notif;
+    }
+
+    public function createNotificationGestionnaire(Admission $admission): Notification
+    {
         $notif = new Notification();
-        $notif
-            ->setTo($mail)
+
+        $structureConcrete = $admission->getInscription()->first()->getEcoleDoctorale();
+        // Recherche des individus ayant le rôle attendu.
+        $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), Role::CODE_GEST_ED, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
+        if (!empty($individusRoles) && !count($individusRoles)) {
+            // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
+            $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), Role::CODE_GEST_ED);
+        }
+        $emails = [];
+        if (!empty($individusRoles) && count($individusRoles)) {
+            foreach($individusRoles as $individuRole){
+                $individu = ($individuRole instanceof IndividuRole) ? $individuRole->getIndividu() : $individuRole;
+                $email = $individu->getEmailContact() ? $individu->getEmailContact() : $individu->getEmailPro();
+                if ($email) {
+                    $emails[] = $email;
+                }
+            }
+        }
+
+        if (!$emails) {
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour les gestionnaires de ce dossier d'admission");
+        }
+
+        //Création du lien vers le dossier d'admission
+        $vars = ['admission' => $admission];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $individu = $admission->getIndividu();
+        $vars['individu'] = $individu;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::NOTIFICATION_GESTIONNAIRE, $vars);
+        $notif->setTo($emails)
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
@@ -48,18 +100,112 @@ class NotificationFactory extends NF
         return new AdmissionOperationAttenduNotification();
     }
 
-    public function createNotificationValidationAjoutee(AdmissionValidation $rapportActiviteValidation): AdmissionValidationAjouteeNotification
+    public function addOperationAttendueToTemplateOperationAttendue(AdmissionOperationInterface $operationAttendue, AdmissionOperationAttenduNotification $notificationOperationAttendue): AdmissionOperationAttenduNotification
     {
-        $notif = new AdmissionValidationAjouteeNotification();
-        $notif->setAdmissionValidation($rapportActiviteValidation);
+        $admission = $operationAttendue->getAdmission();
+        $individu = $admission->getIndividu();
+        $vars = [
+            'individu' => $individu,
+            'admission' => $admission,
+            'typeValidation' => $operationAttendue,
+            'anomalies' => $notificationOperationAttendue
+        ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::OPERATION_ATTENDUE, $vars);
+        $notificationOperationAttendue->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps());
+
+        return $notificationOperationAttendue;
+    }
+
+    public function createNotificationValidationAjoutee(AdmissionValidation $admissionValidation): Notification
+    {
+        $admission = $admissionValidation->getAdmission();
+        $individu = $admission->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        if (!$email) {
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour le doctorant {$individu}");
+        }
+
+        $vars = [
+            'admission' => $admission,
+            'admissionValidation' => $admissionValidation,
+            'individu' => $individu
+        ];
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_AJOUTEE, $vars);
+
+        $notif = new Notification();
+        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps());
+
+        if(!empty($admission->getInscription()->first()->getDirecteur())){
+            /** @var Individu $directeur */
+            $directeur = $admission->getInscription()->first()->getDirecteur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+            $notif->setCc($emailDirecteur);
+        }
+
+        $successMessage = sprintf(
+            "Un mail de notification vient d'être envoyé à %s",
+            implode(', ', array_reduce(array_keys($notif->getTo()), function(array $accu, string $key) use ($notif) {
+                $accu[] = sprintf('%s (%s)', $notif->getTo()[$key], $key);
+                return $accu;
+            }, [])),
+        );
+
+        if ($notif->getCc()) {
+            $successMessage .= sprintf(
+                " et en copie à %s",
+                implode(', ', array_reduce(array_keys($notif->getTo()), function(array $accu, string $key) use ($notif) {
+                    $accu[] = sprintf('%s (%s)', $notif->getTo()[$key], $key);
+                    return $accu;
+                }, [])),
+            );
+        }
+
+        $notif->addSuccessMessage($successMessage);
 
         return $notif;
     }
 
-    public function createNotificationValidationSupprimee(AdmissionValidation $rapportActiviteValidation): AdmissionValidationSupprimeeNotification
+    public function createNotificationValidationSupprimee(AdmissionValidation $admissionValidation): Notification
     {
-        $notif = new AdmissionValidationSupprimeeNotification();
-        $notif->setAdmissionValidation($rapportActiviteValidation);
+        $admission = $admissionValidation->getAdmission();
+        $individu = $admission->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+
+        $vars = [
+            'admission' => $admission,
+            'admissionValidation' => $admissionValidation,
+            'individu' => $individu,
+            'typeValidation' => $admissionValidation->getTypeValidation()
+        ];
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SUPPRIMEE, $vars);
+
+        $notif = new Notification();
+        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps());
+
+        if(!empty($admission->getInscription()->first()->getDirecteur())){
+            /** @var Individu $directeur */
+            $directeur = $admission->getInscription()->first()->getDirecteur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+            $notif->setCc($emailDirecteur);
+        }
+
+        $successMessage = sprintf(
+            "Un mail de notification vient d'être envoyé aux personnes suivantes : %s",
+            implode(', ', array_reduce(array_keys($notif->getTo()), function(array $accu, string $key) use ($notif) {
+                $accu[] = sprintf('%s (%s)', $notif->getTo()[$key], $key);
+                return $accu;
+            }, []))
+        );
+
+        $notif->addSuccessMessage($successMessage);
 
         return $notif;
     }

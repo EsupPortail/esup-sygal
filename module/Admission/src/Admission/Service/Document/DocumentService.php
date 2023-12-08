@@ -5,6 +5,8 @@ namespace Admission\Service\Document;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Document;
 use Admission\Entity\Db\Repository\DocumentRepository;
+use Admission\Entity\Db\Verification;
+use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\DateTimeAwareTrait;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
@@ -35,6 +37,7 @@ class DocumentService extends BaseService
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
     use DateTimeAwareTrait;
+    use VerificationServiceAwareTrait;
 
     /**
      * @return DocumentRepository
@@ -151,11 +154,18 @@ class DocumentService extends BaseService
      */
     public function delete(Document $document) : Document
     {
-        $fichier = $document->getFichier();
+
         try {
+            $verification = $document->getVerificationDocument()->first();
+            if($verification instanceof Verification){
+                $this->verificationService->delete($verification);
+            }
             $this->getEntityManager()->remove($document);
             $this->getEntityManager()->flush($document);
-            $this->fichierService->supprimerFichiers([$fichier]);
+            $fichier = $document->getFichier();
+            if($fichier instanceof Fichier){
+                $this->fichierService->supprimerFichiers([$fichier]);
+            }
         } catch (ORMException $e) {
             throw new RuntimeException('Un problème est survenu lors de la suppression d\'un document', $e);
         }

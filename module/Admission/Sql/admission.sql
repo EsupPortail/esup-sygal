@@ -1,11 +1,12 @@
 DROP TABLE IF EXISTS admission_etat;
-DROP TABLE IF EXISTS admission_admission;
+DROP TABLE IF EXISTS admission_validation;
+DROP TABLE IF EXISTS admission_type_validation;
+DROP TABLE IF EXISTS admission_verification;
 DROP TABLE IF EXISTS admission_etudiant;
 DROP TABLE IF EXISTS admission_inscription;
 DROP TABLE IF EXISTS admission_financement;
 DROP TABLE IF EXISTS admission_document;
-DROP TABLE IF EXISTS admission_validation;
-DROP TABLE IF EXISTS admission_type_validation;
+DROP TABLE IF EXISTS admission_admission;
 
 create table IF NOT EXISTS admission_etat
 (
@@ -250,7 +251,7 @@ with d(ordre, code, lib) as (select 1,
                              select 4, 'admission-modifier-tous-dossiers-admission', 'Modifier un dossier d''admission'
                              union
                              select 4,
-                                    'admission-modifier-modifier-son-dossier-admission',
+                                    'admission-modifier-son-dossier-admission',
                                     'Modifier son dossier d''admission'
                              union
                              select 5, 'admission-historiser', 'Historiser un dossier d''admission'
@@ -269,7 +270,39 @@ with d(ordre, code, lib) as (select 1,
                              union
                              select 10, 'admission-devalider-tout', 'Dévalider son dossier d''admission'
                              union
-                             select 11, 'admission-devalider-sien', 'Dévalider un dossier d''admission')
+                             select 11, 'admission-devalider-sien', 'Dévalider un dossier d''admission'
+                             union
+                             select 12,
+                                    'admission-televerser-tout-document',
+                                    'Téléverser un document dans un dossier d''admission'
+                             union
+                             select 13,
+                                    'admission-televerser-son-document',
+                                    'Téléverser un document dans son d''admission'
+                             union
+                             select 14,
+                                    'admission-supprimer-tout-document',
+                                    'Supprimer un document dans un dossier d''admission'
+                             union
+                             select 15,
+                                    'admission-supprimer-son-document',
+                                    'Supprimer un document dans son dossier d''admission'
+                             union
+                             select 16,
+                                    'admission-telecharger-tout-document',
+                                    'Télécharger un document dans un dossier d''admission'
+                             union
+                             select 17,
+                                    'admission-telecharger-son-document',
+                                    'Télécharger un document dans son dossier d''admission'
+                             union
+                             select 18,
+                                    'admission-notifier-gestionnaires',
+                                    'Notifier ses gestionnaires de la fin de saisie de son dossier d''admission'
+                             union
+                             select 19,
+                                    'admission-commentaires-ajoutes',
+                                    'Notifier l''étudiant des commentaires ajoutés sur son dossier d''admission')
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
          join CATEGORIE_PRIVILEGE cp on cp.CODE = 'admission'
@@ -291,7 +324,7 @@ with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-a
                            union
                            select 'admission', 'admission-modifier-tous-dossiers-admission'
                            union
-                           select 'admission', 'admission-modifier-modifier-son-dossier-admission'
+                           select 'admission', 'admission-modifier-son-dossier-admission'
                            union
                            select 'admission', 'admission-historiser'
                            union
@@ -307,11 +340,54 @@ with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-a
                            union
                            select 'admission', 'admission-devalider-sien'
                            union
-                           select 'admission', 'admission-verifier')
+                           select 'admission', 'admission-verifier'
+                           union
+                           select 'admission', 'admission-televerser-tout-document'
+                           union
+                           select 'admission', 'admission-televerser-son-document'
+                           union
+                           select 'admission', 'admission-supprimer-tout-document'
+                           union
+                           select 'admission', 'admission-supprimer-son-document'
+                           union
+                           select 'admission', 'admission-telecharger-tout-document'
+                           union
+                           select 'admission', 'admission-telecharger-son-document'
+                           union
+                           select 'admission', 'admission-notifier-gestionnaires'
+                           union
+                           select 'admission', 'admission-commentaires-ajoutes')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
-                                           'ADMIN_TECH',
+    'ADMIN_TECH'
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'admission', 'admission-lister-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-modifier-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-supprimer-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-valider-sien'
+                           union
+                           select 'admission', 'admission-devalider-sien'
+                           union
+                           select 'admission', 'admission-televerser-son-document'
+                           union
+                           select 'admission', 'admission-supprimer-son-document'
+                           union
+                           select 'admission', 'admission-telecharger-son-document')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+                                           'DOCTORANT',
                                            'GEST_ED',
                                            'GEST_UR',
                                            'RESP_UR',
@@ -324,22 +400,22 @@ from data
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'admission', 'admission-lister-son-dossier-admission'
-                           union
-                           select 'admission', 'admission-afficher-son-dossier-admission'
-                           union
-                           select 'admission', 'admission-modifier-modifier-son-dossier-admission'
-                           union
-                           select 'admission', 'admission-supprimer-son-dossier-admission'
-                           union
-                           select 'admission', 'admission-valider-sien'
-                           union
-                           select 'admission', 'admission-devalider-sien')
+with data(categ, priv) as (select 'admission', 'admission-notifier-gestionnaires')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
-    'DOCTORANT'
-    )
+    'DOCTORANT')
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'admission', 'admission-commentaires-ajoutes')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+                                           'GEST_ED',
+                                           'GEST_UR')
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
