@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Ajout de logos sur le document des co-encadrements
 - Possibilité de supprimer un compte utilisateur.
+- Envoi vers Step-Star : le type de partenaire de recherche est désormais configurable.
 - [FIX] Rapports d'activité : le rôle Maison du doctorat ne pouvait pas dévalider un rapport d'activité (en cas de validation du Doctorant). 
 - [FIX] Envoi vers Step-Star : faux positif pour le témoin 'contrat doctoral'.
 

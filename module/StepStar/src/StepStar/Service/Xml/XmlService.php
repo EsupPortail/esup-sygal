@@ -95,6 +95,7 @@ class XmlService
     const CONVENTION_CIFRE_1 = 'CONVENTION_CIFRE_1';
 
     // partenaire recherche : établissement
+    const PARTENAIRE_RECHERCHE_TYPE_LIBELLE = 'PARTENAIRE_RECHERCHE_TYPE_LIBELLE';
     const PPN_PARTENAIRE_RECHERCHE_ETAB = 'PPN_PARTENAIRE_RECHERCHE_ETAB';
     const CODE_PARTENAIRE_RECHERCHE_ETAB = 'CODE_PARTENAIRE_RECHERCHE_ETAB';
     const LIBELLE_PARTENAIRE_RECHERCHE_ETAB = 'LIBELLE_PARTENAIRE_RECHERCHE_ETAB';
@@ -129,6 +130,11 @@ class XmlService
      * @var array Codes des types de financement identifiant une convention CIFRE
      */
     private array $codesOrigFinancCifre = [];
+
+    /**
+     * @var array Type et libellé pour le partenaire de recherche.
+     */
+    private array $paramsPartenaireRecherche = [];
 
     /**
      * @var XmlServiceException[] Liste des exceptions rencontrées lors de la génération XML.
@@ -180,6 +186,15 @@ class XmlService
     public function setCodesOrigFinancCifre(array $codesOrigFinancCifre): void
     {
         $this->codesOrigFinancCifre = $codesOrigFinancCifre;
+    }
+
+    /**
+     * @param array $paramsPartenaireRecherche
+     */
+    public function setParamsPartenaireRecherche(array $paramsPartenaireRecherche): void
+    {
+        Assert::keyExists($paramsPartenaireRecherche, 'libelle');
+        $this->paramsPartenaireRecherche = $paramsPartenaireRecherche;
     }
 
     /**
@@ -492,7 +507,8 @@ class XmlService
         $data[self::CODE_EQUIPE_RECHERCHE_1] = $dataStructureUniteRecherche['code'];
         $data[self::LIBELLE_EQUIPE_RECHERCHE_1] = $dataStructureUniteRecherche['libelle'];
 
-        // ajout de l'établissement comme partenaire de recherche typé "Autre"
+        // ajout de l'établissement comme partenaire de recherche
+        $data[self::PARTENAIRE_RECHERCHE_TYPE_LIBELLE] = $this->paramsPartenaireRecherche['libelle'];
         $data[self::CONVENTION_CIFRE_ETAB] = $conventionCifre;
         $data[self::PPN_PARTENAIRE_RECHERCHE_ETAB] = $dataStructureEtablissement['idRef'] ?? null;
         $data[self::CODE_PARTENAIRE_RECHERCHE_ETAB] = $dataStructureEtablissement['code'];

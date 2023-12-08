@@ -20,12 +20,14 @@ class XmlServiceFactory implements FactoryInterface
         $codesSiseDisciplinesToCodesDomaines = $config['step_star']['oai']['sise_oai_set'];
         $codesTypeFinancContratDoctoral = $config['step_star']['xml']['codes_type_financ_contrat_doctoral'];
         $codesOrigFinancCifre = $config['step_star']['xml']['codes_orig_financ_cifre'];
+        $paramsPartenaireRecherche = $config['step_star']['xml']['params_partenaire_recherche'];
 
         $service = new XmlService();
         $service->setWriter(new XMLWriter());
         $service->setCodesSiseDisciplinesToCodesDomaines($codesSiseDisciplinesToCodesDomaines);
         $service->setCodesTypeFinancContratDoctoral($codesTypeFinancContratDoctoral);
         $service->setCodesOrigFinancCifre($codesOrigFinancCifre);
+        $service->setParamsPartenaireRecherche($paramsPartenaireRecherche);
 
         return $service;
     }

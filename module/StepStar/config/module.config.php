@@ -73,6 +73,9 @@ return [
             'codes_orig_financ_cifre' => [
                 '31', // Conventions CIFRE
             ],
+            'params_partenaire_recherche' => [
+                'libelle' => "Établissement co-accrédité",
+            ],
         ],
         'tef' => [
             'xsl_template_path' => __DIR__ . '/xml2tef.xsl.twig',

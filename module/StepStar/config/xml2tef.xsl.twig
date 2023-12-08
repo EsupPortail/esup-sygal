@@ -424,7 +424,11 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                     </xsl:for-each>
 
                                     <!-- Partenaire de recherche : établissement -->
-                                    <tef:partenaireRecherche type="autreType" autreType="Établissement de préparation">
+                                    <tef:partenaireRecherche type="autreType">
+                                        <xsl:attribute name="autreType">
+                                            <xsl:value-of select="PARTENAIRE_RECHERCHE_TYPE_LIBELLE"/>
+                                        </xsl:attribute>
+
                                         <tef:nom>
                                             <xsl:value-of select="LIBELLE_PARTENAIRE_RECHERCHE_ETAB"/>
                                         </tef:nom>
