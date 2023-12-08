@@ -8868,7 +8868,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/idref.git",
-                "reference": "e450dfebe9c1f744773e6c80ced1a9e6096f63ad"
+                "reference": "2c432d45f9f4f56e0734129c084815d3f49e47b3"
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^2.1",
@@ -8893,7 +8893,7 @@
                 ]
             },
             "description": "Module d'interrogation des autorités Sudoc (IDRef)",
-            "time": "2023-04-12T12:18:17+00:00"
+            "time": "2023-12-08T09:59:15+00:00"
         },
         {
             "name": "unicaen/ldap",
