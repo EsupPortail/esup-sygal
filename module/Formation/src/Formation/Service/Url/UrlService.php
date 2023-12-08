@@ -4,6 +4,7 @@ namespace Formation\Service\Url;
 
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
 use Laminas\View\Renderer\PhpRenderer;
 use Structure\Entity\Db\Etablissement;
@@ -15,9 +16,13 @@ class UrlService {
     use StructureDocumentServiceAwareTrait;
 
     /** @var PhpRenderer */
-    protected $renderer;
+    protected PhpRenderer $renderer;
     protected array $variables = [];
 
+    public function setRenderer(PhpRenderer $renderer): void
+    {
+        $this->renderer = $renderer;
+    }
     public function setVariables(array $variables) : void
     {
         $this->variables = $variables;
@@ -42,5 +47,16 @@ class UrlService {
             throw new RuntimeException("Un problème est survenu lors de la récupération de la signature !", 0, $e);
         }
         return '<img src="data:image/png;base64,'. base64_encode($content). '" style="max-width:5cm;"/>';
+    }
+
+    /** @noinspection PhpUnused */
+    public function getUrlEnquete(): string
+    {
+        if (!isset($this->vars['inscription'])) throw new RuntimeException("Variable inscription non fournie à [".UrlService::class."]");
+        /** @var Inscription $inscription */
+        $inscription = $this->vars['inscription'];
+
+        $url = $this->renderer->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true);
+        return "<a href='".$url."'>Formulaire d'enquête de retour de formation</a>";
     }
 }

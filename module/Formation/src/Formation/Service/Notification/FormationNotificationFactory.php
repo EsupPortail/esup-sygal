@@ -206,6 +206,7 @@ class FormationNotificationFactory extends NotificationFactory
             'doctorant' => $inscription->getDoctorant(),
             'formation' => $inscription->getSession()->getFormation(),
             'session'   => $inscription->getSession(),
+            'inscription'   => $inscription,
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_TERMINEE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
@@ -220,7 +221,6 @@ class FormationNotificationFactory extends NotificationFactory
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps())
         ;
-
         return $notif;
     }
 
