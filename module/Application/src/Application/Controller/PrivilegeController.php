@@ -36,7 +36,7 @@ class PrivilegeController extends AbstractController
             ->leftJoin('r.structure', 's')
             ->addSelect('ts')
             ->leftJoin('s.typeStructure', 'ts')
-            ->orderBy("r.typeStructureDependant, r.libelle, r.structure", 'asc');
+            ->orderBy("r.typeStructureDependant, r.ordreAffichage, r.structure", 'asc');
         $this->applyFilterDependance($qbRoles, $depend);
         $this->applyFilterRole($qbRoles, $role);
         /** @var Role[] $roles */

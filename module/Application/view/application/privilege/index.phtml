@@ -44,7 +44,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
                 $depend = "";
                 if ($role->isTheseDependant()) {
                     $depend = "these";
-                } else {
+                } elseif ($role->isStructureDependant()) {
                     if ($role->getStructure() === null) {
                         $sigleStructure = "structure manquante";
                     } else {
@@ -53,12 +53,14 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
                 }
 
                 $sigleStructure = "";
-                if ($role->getStructure() === null) {
-                    $sigleStructure = "structure manquante";
-                } elseif ($role->getStructure()->getSigle() === null || $role->getStructure()->getSigle() === "") {
-                    $sigleStructure = "sigle manquant";
-                } else {
-                    $sigleStructure = $role->getStructure()->getSigle();
+                if ($role->isStructureDependant()) {
+                    if ($role->getStructure() === null) {
+                        $sigleStructure = "structure manquante";
+                    } elseif (!$role->getStructure()->getSigle()) {
+                        $sigleStructure = "sigle manquant";
+                    } else {
+                        $sigleStructure = $role->getStructure()->getSigle();
+                    }
                 }
                 ?>
                 <?php echo $role->getLibelle(); ?>
@@ -69,7 +71,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
                           } ?>"></span>
                 <?php else : ?>
                     <span class="fas fa-exclamation-triangle text-warning"
-                          title="Aucun profil d'assigné à ce rôle"></span>
+                          title="Aucun profil assigné à ce rôle"></span>
                 <?php endif; ?>
 
                 <br/>
@@ -102,9 +104,9 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
                 ?>
                 <td class="droit" id="<?php echo $id; ?>" title="<?php echo $title; ?>">
                     <?php if (array_search($role, $privilegeRoles) !== false) : ?>
-                        <span class="icon icon-oui text-success"></span>
+                        <span class="icon icon-checked text-success"></span>
                     <?php else: ?>
-                        <span class="icon icon-delete iconly text-danger"></span>
+                        <span class="icon icon-unchecked iconly text-danger"></span>
                     <?php endif; ?>
                 </td>
             <?php endforeach; ?>
@@ -139,8 +141,8 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
                 success:
                     function (retour) {
                         var texte = "";
-                        if (retour == 1) texte = "<span class='icon icon-oui text-success'></span>";
-                        else var texte = "<span class='icon icon-delete iconly text-danger'></span>";
+                        if (retour == 1) texte = "<span class='icon icon-checked text-success'></span>";
+                        else var texte = "<span class='icon icon-unchecked iconly text-danger'></span>";
                         document.getElementById(id).innerHTML = texte;
                     }
             });
