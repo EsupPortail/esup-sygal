@@ -2,9 +2,8 @@
 
 namespace StepStar;
 
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Unicaen\Console\Router\Simple;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use StepStar\Controller\Envoi\EnvoiConsoleController;
 use StepStar\Controller\Envoi\EnvoiConsoleControllerFactory;
 use StepStar\Controller\Envoi\EnvoiController;
@@ -43,6 +42,7 @@ use StepStar\Service\Xslt\XsltService;
 use StepStar\Service\Xslt\XsltServiceFactory;
 use StepStar\Service\Zip\ZipService;
 use StepStar\Service\Zip\ZipServiceFactory;
+use Unicaen\Console\Router\Simple;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [
@@ -64,7 +64,7 @@ return [
                 'T', // Contrat doctoral EPST
                 'U', // 14-Contrat Doctoral : financerment privé
                 'U', // Contrat doctoral autre organisme
-                'V', // Sans contrat doctoral
+                //'V', // Sans contrat doctoral
                 'W', // Contrat Doctoral  Région 50%
                 'W', // Contrat doctoral Région RIN 100%
                 'Y', // Contrat Doctoral Etablissement
