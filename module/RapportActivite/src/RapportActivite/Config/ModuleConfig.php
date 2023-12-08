@@ -32,6 +32,7 @@ class ModuleConfig
         Role::CODE_RESP_UR,
         Role::CODE_RESP_ED,
         Role::CODE_GEST_ED,
+        Role::CODE_BDD,
     ];
 
     public function __construct()
@@ -43,7 +44,7 @@ class ModuleConfig
             self::VALIDATION_DOCTORANT => [
                 'type' => RapportActiviteValidation::class,
                 'code' => TypeValidation::CODE_RAPPORT_ACTIVITE_DOCTORANT,
-                'role' => [Role::CODE_DOCTORANT, Role::CODE_DIRECTEUR_THESE, Role::CODE_GEST_ED],
+                'role' => [Role::CODE_DOCTORANT, Role::CODE_DIRECTEUR_THESE, Role::CODE_GEST_ED, Role::CODE_BDD],
                 'pre_condition' => null,
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return $rapportActivite->getFichier() === null;

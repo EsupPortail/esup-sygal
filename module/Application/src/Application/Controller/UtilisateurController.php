@@ -10,6 +10,7 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
+use Exception;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -41,6 +42,7 @@ use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use Webmozart\Assert\Assert;
 
 /**
  * @method \Application\Controller\Plugin\Forward forward()
@@ -282,6 +284,25 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return new ViewModel([
             'form' => $this->creationUtilisateurForm,
         ]);
+    }
+
+    public function supprimerAction(): Response|ViewModel
+    {
+        if ($post = $this->params()->fromPost()) {
+            Assert::keyExists($post, 'utilisateur');
+            Assert::eq($post['utilisateur'], $this->params()->fromRoute('utilisateur'));
+            $id = $post['utilisateur'];
+            $utilisateur = $this->utilisateurService->getRepository()->find($id); /** @var Utilisateur $utilisateur */
+            try {
+                $this->utilisateurService->supprimerUtilisateur($utilisateur);
+                $this->flashMessenger()->addSuccessMessage("Compte utilisateur suivant supprimé avec succès : " . $utilisateur->getUsername());
+            } catch (Exception $e) {
+                $this->flashMessenger()->addErrorMessage("Le compte utilisateur '{$utilisateur->getUsername()}' n'a pas pu être supprimé. " . $e->getMessage());
+                return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()]);
+            }
+        }
+
+        return $this->redirect()->toRoute('utilisateur');
     }
 
     /**

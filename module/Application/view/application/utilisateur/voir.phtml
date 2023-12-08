@@ -2,8 +2,10 @@
 
 namespace Application;
 
+use Application\Controller\PrivilegeController;
 use Application\Controller\UtilisateurController;
 use Application\Entity\Db\Utilisateur;
+use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
 use UnicaenApp\Util;
@@ -21,6 +23,8 @@ use UnicaenAuthToken\Entity\Db\UserToken;
  *
  * @see \Application\Controller\UtilisateurController::voirAction()
  */
+
+$canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
 ?>
 
 <?php $this->headTitle($this->translate("Compte utilisateur"))->append($utilisateur->getUsername()) ?>
@@ -72,6 +76,15 @@ use UnicaenAuthToken\Entity\Db\UserToken;
                         <dd class="col-md-5"><?php echo Util::truncatedString($token, 8) ?></dd>
                     <?php endif ?>
                 </dl>
+
+                <?php if ($canEdit): ?>
+                    <form method="post" action="<?php echo $this->url('utilisateur/supprimer', ['utilisateur' => $utilisateur->getId()]) ?>">
+                        <input type="hidden" name="utilisateur" value="<?php echo $utilisateur->getId() ?>">
+                        <input type="submit" value="<?php echo $this->translate("Supprimer ce compte utilisateur") ?>"
+                               onclick="return confirm('Êtes-vous certain·e de vouloir supprimer ce compte utilisateur ?')"
+                               class="btn btn-danger float-end"/>
+                    </form>
+                <?php endif ?>
             </div>
         </div>
 
