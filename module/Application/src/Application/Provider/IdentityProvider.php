@@ -100,7 +100,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $roleAuthentifie = $this->roleService->getRepository()->findByCode('user')/*->setLibelle("coucou")*/;
+        $roleAuthentifie = $this->roleService->getRepository()->findByCode('user');
 
         $this->roles = array_merge(
             [$roleAuthentifie],

@@ -22,6 +22,7 @@ use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Entity\Db\RoleInterface;
 
 /**
  * Class RoleService
@@ -342,6 +343,10 @@ class RoleService extends BaseService
             ->leftJoin('r.structure', 's')
             ->leftJoinStructureSubstituante('s')
             ->andWhereStructureEstNonSubstituee('s');
+
+        $qb
+            ->andWhere('r.roleId <> :roleCode')
+            ->setParameter('roleCode', 'user'); // rôle 'Authentifié' écarté
 
         return $qb->getQuery()->getResult();
     }
