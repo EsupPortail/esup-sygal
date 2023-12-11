@@ -45,7 +45,7 @@ class Verification implements HistoriqueAwareInterface
      */
     private $document;
 
-    private ?bool $estComplet = false;
+    private ?bool $estComplet = null;
 
     /**
      * Set commentaire.

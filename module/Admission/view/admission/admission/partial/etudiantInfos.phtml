@@ -27,16 +27,14 @@ $canModifierAdmission  =
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
 
 $fcg = $this->formControlGroup();
-if(!empty($admission)){
-    if(!$canModifierAdmission){
-        foreach($fieldset->getElements() as $element){
-            $element->setAttribute('readonly', true);
-        }
+if(!empty($admission) && !$canModifierAdmission) {
+    foreach ($fieldset->getElements() as $element) {
+        $element->setAttribute('readonly', true);
     }
 }
 ?>
 <script>
-    var readOnly = <?php echo $canModifierAdmission ? 0 : 1 ?>
+    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? 1 : 0 ?>
 </script>
 <div class="row_sous_partie">
     <div class="title_sous_partie">

@@ -28,18 +28,16 @@ $canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, Admissi
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-if(!empty($admission)){
-    if(!$canModifierAdmission){
-        foreach($fieldset->getElements() as $element){
-            $element->setAttribute('readonly', true);
-        }
+if(!empty($admission) && !$canModifierAdmission) {
+    foreach ($fieldset->getElements() as $element) {
+        $element->setAttribute('readonly', true);
     }
 }
 $individu = $dataForm["etudiant"]["individu"];
 ?>
 
 <script>
-    var readOnly = <?php echo $canModifierAdmission ? '0' : '1'; ?>;
+    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? '1' : '0'; ?>;
     var documents = <?php echo json_encode($documents); ?>;
     var individuId = <?php echo $individu; ?>;
 </script>

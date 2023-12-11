@@ -23,17 +23,15 @@ $canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMIS
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-if(!empty($admission)){
-    if(!$canModifierAdmission){
-        foreach($fieldset->getElements() as $element){
-            $element->setAttribute('readonly', true);
-        }
+if(!empty($admission) && !$canModifierAdmission) {
+    foreach ($fieldset->getElements() as $element) {
+        $element->setAttribute('readonly', true);
     }
 }
 ?>
-    <script>
-        var readOnly = <?php echo $canModifierAdmission ? 0 : 1 ?>
-    </script>
+<script>
+    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? 1 : 0 ?>
+</script>
 
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -63,12 +61,17 @@ if(!empty($admission)){
     <div class="row subfield">
         <?php echo $this->formControlGroup($fieldset->get('directeur')) ?>
         <div class="col-lg-4 col-sm-12">
-            <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getNomDirecteurThese()) && empty($admission->getInscription()->first()->getDirecteur()))){ ?>
+            <?php
+            $inscriptionExist = $admission && $admission->getInscription()->first();
+            if($inscriptionExist &&
+                ($admission->getInscription()->first()->getNomDirecteurThese() &&
+                empty($admission->getInscription()->first()->getDirecteur()))){ ?>
                 <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label>
                 <span class="icon icon-warning" data-toggle="tooltip" title="" data-bs-original-title="Merci d'enregistrer l'individu en base de données" aria-label="Merci d'enregistrer l'individu en base de données"></span>
             <?php }else{ ?>
                     <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label>
-                        <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getDirecteur()))){ ?>
+                        <?php if($inscriptionExist &&
+                              $admission->getInscription()->first()->getDirecteur()){ ?>
                             <span class="icon icon-information" data-toggle="tooltip" title="l'individu renseigné est enregistré en base de données"></span>
                 <?php } ?>
             <?php } ?>
@@ -153,13 +156,16 @@ if(!empty($admission)){
                     <div class="row">
                         <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
                         <div class="col-lg-4 col-sm-12">
-                            <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getNomCodirecteurThese()) && empty($admission->getInscription()->first()->getCoDirecteur()))){ ?>
-                                <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label>
-                                <span class="icon icon-warning individu_non_enregistre" data-toggle="tooltip" title="" data-bs-original-title="Merci d'enregistrer l'individu en base de données" aria-label="Merci d'enregistrer l'individu en base de données"></span>
+                            <?php if($inscriptionExist &&
+                                    $admission->getInscription()->first()->getNomCodirecteurThese() &&
+                                    empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
+                                    <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label>
+                                    <span class="icon icon-warning individu_non_enregistre" data-toggle="tooltip" title="" data-bs-original-title="Merci d'enregistrer l'individu en base de données" aria-label="Merci d'enregistrer l'individu en base de données"></span>
                             <?php }else{ ?>
                                 <label class="form-label" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label>
-                                <?php if(!empty($admission->getInscription()->first()) && (!empty($admission->getInscription()->first()->getCoDirecteur()))){ ?>
-                                    <span class="icon icon-information" data-toggle="tooltip" title="l'individu renseigné est enregistré en base de données"></span>
+                                <?php if($inscriptionExist &&
+                                        $admission->getInscription()->first()->getCoDirecteur()){ ?>
+                                        <span class="icon icon-information" data-toggle="tooltip" title="l'individu renseigné est enregistré en base de données"></span>
                                 <?php } ?>
                             <?php } ?>
                             <?php echo $this->formControlGroup($fieldset->get('nomCodirecteurThese')) ?>
