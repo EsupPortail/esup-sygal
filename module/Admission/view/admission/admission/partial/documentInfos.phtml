@@ -105,7 +105,7 @@ $individu = $dataForm["etudiant"]["individu"];
             </div>
         </div>
     <?php }
-    if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 1) { ?>
+    if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && (isset($dataForm['etudiant']['typeDiplomeAutre']) && $dataForm['etudiant']['typeDiplomeAutre'] == 1)) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
                 <p>Vous êtes titulaire d'un titre étranger</p>
@@ -128,7 +128,7 @@ $individu = $dataForm["etudiant"]["individu"];
             'individu' => $individu,
         ]);
     } ?>
-    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && $dataForm['etudiant']['typeDiplomeAutre'] == 2) {
+    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && (isset($dataForm['etudiant']['typeDiplomeAutre']) && $dataForm['etudiant']['typeDiplomeAutre'] == 2)) {
         echo $this->partial('admission/partial/document/document', [
             'fieldset' => $fieldset->get('diplomesTravauxExperiencePro'),
             'documents' => $documents,

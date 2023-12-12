@@ -35,7 +35,7 @@
         <field name="intituleDuDiplomeNational" type="string" column="INTITULE_DU_DIPLOME_NATIONAL" length="128" nullable="true"/>
         <field name="anneeDobtentionDiplomeNational" type="integer" column="ANNEE_DOBTENTION_DIPLOME_NATIONAL" nullable="true"/>
         <field name="etablissementDobtentionDiplomeNational" type="string" column="ETABLISSEMENT_DOBTENTION_DIPLOME_NATIONAL" length="128" nullable="true"/>
-        <field name="typeDiplomeAutre" type="boolean" column="TYPE_DIPLOME_AUTRE" nullable="true"/>
+        <field name="typeDiplomeAutre" type="integer" column="TYPE_DIPLOME_AUTRE" nullable="true"/>
         <field name="intituleDuDiplomeAutre" type="string" column="INTITULE_DU_DIPLOME_AUTRE" nullable="true"/>
         <field name="anneeDobtentionDiplomeAutre" type="integer" column="ANNEE_DOBTENTION_DIPLOME_AUTRE" nullable="true"/>
         <field name="etablissementDobtentionDiplomeAutre" type="string" column="ETABLISSEMENT_DOBTENTION_DIPLOME_AUTRE" length="128" nullable="true"/>

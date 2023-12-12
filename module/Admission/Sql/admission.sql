@@ -72,7 +72,7 @@ create table IF NOT EXISTS admission_etudiant
     intitule_du_diplome_national              varchar(128),
     annee_dobtention_diplome_national         integer,
     etablissement_dobtention_diplome_national varchar(128),
-    type_diplome_autre                        boolean,
+    type_diplome_autre                        integer,
     intitule_du_diplome_autre                 varchar(128),
     annee_dobtention_diplome_autre            integer,
     etablissement_dobtention_diplome_autre    varchar(128),

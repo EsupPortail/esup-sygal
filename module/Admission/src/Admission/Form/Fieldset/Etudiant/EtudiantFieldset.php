@@ -437,8 +437,16 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
             'numeroTelephone1' => [
                 'name' => 'numeroTelephone1',
                 'required' => false,
-                'filters' => [
-                    ['name' => Digits::class],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^\d+$/',
+                            'messages' => [
+                                Regex::NOT_MATCH => 'Le numéro de téléphone doit contenir uniquement des chiffres.',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'numeroTelephone2' => [

@@ -147,7 +147,7 @@ class Etudiant implements HistoriqueAwareInterface{
     private $etablissementDobtentionDiplomeNational;
 
     /**
-     * @var bool|null
+     * @var integer|null
      */
     private $typeDiplomeAutre;
 
@@ -851,7 +851,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Set typeDiplomeAutre.
      *
-     * @param bool|null $typeDiplomeAutre
+     * @param integer|null $typeDiplomeAutre
      *
      * @return Etudiant
      */
@@ -865,7 +865,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Get typeDiplomeAutre.
      *
-     * @return bool|null
+     * @return integer|null
      */
     public function getTypeDiplomeAutre()
     {

@@ -3,6 +3,7 @@
 namespace Admission\Assertion;
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\TypeValidation;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Assertion\AbstractAssertion;
@@ -11,7 +12,7 @@ use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
-use GuzzleHttp\Psr7\ServerRequest;
+use Doctrine\Common\Collections\Collection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -82,6 +83,15 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
                 case 'notifier-gestionnaire':
                     if ($this->admission !== null) {
                         $this->assertEtatAdmission($this->admission);
+                    }
+                    break;
+            }
+
+            switch ($action) {
+                case 'notifier-commentaires-ajoutes':
+                case 'notifier-gestionnaire':
+                    if ($this->admission !== null) {
+                        $this->assertCanNotifierCommentairesAjoutes($this->admission->getAdmissionValidations());
                     }
                     break;
             }
@@ -185,7 +195,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             $message = "Le dossier d'admission n'est pas dirigé par " . $individuUtilisateur;
             if(!empty($admission->getInscription()->first()->getDirecteur())){
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getDirecteur()->getId() === $individuUtilisateur,
+                    $admission->getInscription()->first()->getDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
             }else{
@@ -196,7 +206,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             $message = "Le dossier d'admission n'est pas codirigé par " . $individuUtilisateur;
             if(!empty($admission->getInscription()->first()->getCoDirecteur())){
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getCoDirecteur()->getId() === $individuUtilisateur,
+                    $admission->getInscription()->first()->getCoDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
             }else{
@@ -211,6 +221,17 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS]),
             "Le dossier d'admission doit être en cours"
         );
+    }
+
+    protected function assertCanNotifierCommentairesAjoutes(Collection $admissionValidations)
+    {
+        foreach($admissionValidations as $admissionValidation){
+            $this->assertTrue(
+                TypeValidation::CODE_VALIDATION_GESTIONNAIRE !== $admissionValidation->getTypeValidation()->getCode(),
+                "L'envoi de commentaires n'est possible que lorsque la validation des gestionnaires
+                                 n'a pas encore été effectuée"
+            );
+        }
     }
 
     private function assertModificationPossible(Admission $admission)

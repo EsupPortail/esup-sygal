@@ -47,7 +47,7 @@ class VerificationService extends BaseService
             $this->getEntityManager()->persist($verification);
             $this->getEntityManager()->flush();
         } catch(ORMException $e) {
-            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un Verification");
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'une Vérification");
         }
 
         return $verification;

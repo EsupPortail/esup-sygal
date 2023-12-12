@@ -56,7 +56,6 @@ class AdmissionForm extends MultipageForm
 
         // ajouts de classes CSS
         $nextButton->setAttribute('class', $nextButton->getAttribute('class') . ' btn btn-primary');
-        $nextButton->setValue('Suivant et enregistrer >');
 
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
         $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
