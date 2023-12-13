@@ -1,6 +1,16 @@
 Journal des modifications
 =========================
 
+7.0.0
+-----
+- Nouveau module Substitutions (moteur de dédoublonnage automatique d'individus et de structures importés en doublons).
+
+
+
+
+
+
+
 6.0.8
 -----
 - Ajout de logos sur le document des co-encadrements
