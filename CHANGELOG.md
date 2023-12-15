@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.9
+-----
+- [FIX] Création en bdd d'un privilège manquant.
+
 6.0.8
 -----
 - Ajout de logos sur le document des co-encadrements
