@@ -1,0 +1,31 @@
+<?php
+use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
+
+/**
+  * @var These $these
+  * @var Proposition $proposition
+*/
+
+$adresse = $proposition->getAdresseActive();
+
+?>
+
+<?php if ($adresse !== null) : ?>
+    <?php echo $adresse->format(); ?>
+<?php else :?>
+    <?php if ($proposition->getAdresse() !== null) : ?>
+        <div class="alert alert-warning"> Adresse récupérer de l'ancien système. </div>
+        <?php echo $proposition->getAdresse(); ?>
+    <?php else : ?>
+        <p class="lead">L'adresse exacte n'a pas encore été saisie dans la partie proposition.</p>
+    <?php endif; ?>
+
+    <?php /** @see \Soutenance\Controller\PropositionController::demanderAdresseAction() */ ?>
+    <a href="<?php echo $this->url('soutenance/proposition/demander-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+       class="btn btn-primary">
+        <span class="icon icon-notifier"></span>
+        Demander la saisie de l'adresse exacte
+    </a>
+<?php endif; ?>
+

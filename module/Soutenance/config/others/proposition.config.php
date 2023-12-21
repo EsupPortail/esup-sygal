@@ -127,6 +127,7 @@ return [
                     'controller' => PropositionController::class,
                     'action' => [
                         'supprimer-adresse',
+                        'demander-adresse',
                     ],
                     'privileges' => [
                         PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
@@ -286,6 +287,18 @@ return [
                                         /** @see PropositionController::supprimerAdresseAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'supprimer-adresse',
+                                    ],
+                                ],
+                            ],
+                            'demander-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/demander-adresse/:proposition',
+                                    'defaults' => [
+                                        /** @see PropositionController::demanderAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'demander-adresse',
                                     ],
                                 ],
                             ],

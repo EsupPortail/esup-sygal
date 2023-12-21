@@ -956,6 +956,25 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
+    public function demanderAdresseAction(): Response
+    {
+        $proposition = $this->getPropositionService()->getRequestedProposition($this);
+        $these = $proposition->getThese();
+
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAdresse($proposition);
+            if (empty($notif->getTo())) {
+                throw new RuntimeException(
+                    "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$these->getEtablissement()}'");
+            }
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire , todo : cas à gérer !
+        }
+
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
+
     /** Error *********************************************************************************************************/
 
     /**

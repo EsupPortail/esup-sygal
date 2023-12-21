@@ -255,25 +255,24 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
     <!-- Adresse et PV ------------------------------------------------------------------------------------------------>
 
+    <?php if (true): ?>
+    <div class="box card">
+        <div class="card-header bg-dark text-white">
+            <h2>  Adresse exacte de la soutenance</h2>
+        </div>
+        <div class="card-body">
+
+            <?php echo $this->partial('partial/adresse', ['these' => $these, 'proposition' => $proposition]); ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET OR $proposition->getEtat()->getCode() === Etat::VALIDEE): ?>
     <div class="box card">
         <div class="card-header bg-dark text-white">
-            <h2>  Adresse de soutenance et édition du procès verbal de soutenance </h2>
+            <h2>  Édition du procès verbal de soutenance </h2>
         </div>
         <div class="card-body">
-            <?php if ($proposition->getAdresse() === null) : ?>
-                <p class="lead">
-                    L'adresse exacte de la soutenance est nécessaire pour la génération des documents.
-                    Veuillez renseigner celle-ci.
-                </p>
-            <?php else : ?>
-                <p class="lead">Adresse exacte de la soutenance : </p>
-                <div class="adresse-block">
-                    <?php echo $proposition->getAdresse(); ?>
-                </div>
-            <?php endif; ?>
-
-            <br/>
 
             <div class="row">
                 <div class="col-md-3">
