@@ -612,4 +612,26 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         return $notif;
     }
+
+    public function createNotificationDemandeAdresse(?Proposition $proposition): Notification
+    {
+        $these = $proposition->getThese();
+        $vars = ['these' => $these, 'proposition' => $proposition, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_ADRESSE_EXACTE, $vars);
+        $emails = $this->emailTheseService->fetchEmailActeursDirects($these);
+        if (count($emails) === 0) {
+            throw new RuntimeException("Aucun mail trouvés pour les acteurs directs");
+        }
+
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+
+        return $notif;
+    }
 }

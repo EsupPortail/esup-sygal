@@ -1,0 +1,56 @@
+<?php
+
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
+
+/**
+ * @var These $these
+ * @var Proposition $proposition
+ */
+
+$adresse = $proposition->getAdresseActive();
+?>
+
+<div class="card">
+    <div class="card-header bg-dark text-white">
+         Adresse exacte du lieu de soutenance
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <p><strong>Cette adresse exacte figurera sur les convacations et autres documents officiels.</strong></p>
+
+            <p>Vous pouvez modifier celle-ci sans annulation du dossier tant que les convocations non pas été éditées.</p>
+        </div>
+
+        <div>
+            <?php if ($adresse === null && $proposition->getEtat()->getCode() !== Etat::COMPLET) : ?>
+                <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/proposition/ajouter-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+                   class="btn btn-primary ajax-modal" data-event="modification">
+                    <span class="icon icon-ajouter"> Ajouter une adresse</span>
+                </a>
+            <?php else: ?>
+                <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                   class="btn btn-primary ajax-modal" data-event="modification">
+                    <span class="icon icon-ajouter"> Modifier l'adresse</span>
+                </a>
+                <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/proposition/historiser-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                   class="btn btn-danger">
+                    <span class="icon icon-historiser"> Supprimer l'adresse</span>
+                </a>
+            <?php endif; ?>
+        </div>
+
+        <?php if ($adresse !== null) : ?>
+            <?php echo $adresse->format(); ?>
+        <?php else: ?>
+            <span class="text-warning">
+                <span class="icon icon-attention"></span>
+                Aucune adresse de renseignée !
+            </span>
+        <?php endif; ?>
+    </div>
+</div>

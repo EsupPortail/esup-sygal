@@ -5,6 +5,7 @@ namespace Soutenance\Entity;
 use Doctrine\Common\Collections\Collection;
 use Horodatage\Entity\Interfaces\HasHorodatagesInterface;
 use Horodatage\Entity\Traits\HasHorodatagesTrait;
+use http\Exception\RuntimeException;
 use JetBrains\PhpStorm\Pure;
 use These\Entity\Db\These;
 use DateTime;
@@ -21,6 +22,7 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     private ?DateTime $date = null;
     private ?string $lieu = null;
     private ?string $adresse = null;
+    private Collection $adresses;
     private bool $exterieur = false;
 
     private Collection $membres;
@@ -51,6 +53,7 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
 
         $this->justificatifs = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->adresses = new ArrayCollection();
         $this->horodatages = new ArrayCollection();
     }
 
@@ -383,6 +386,24 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
             if ($membre->isVisio()) return true;
         }
         return false;
+    }
+
+    /** Adresse ********************************/
+
+    public function getAdresseActive() : ?Adresse
+    {
+        $result = null;
+        /** @var Adresse $adresse */
+        foreach ($this->adresses as $adresse) {
+            if ($adresse->estNonHistorise()) {
+                if ($result === null) {
+                    $result = $adresse;
+                } else {
+                    throw new RuntimeException("Plusieurs [".Adresse::class."] sont actives pour la proposition [".$this->getId()."]");
+                }
+            }
+        }
+        return $result;
     }
 
     /** FONCTIONS POUR LES MACROS *************************************************************************************/

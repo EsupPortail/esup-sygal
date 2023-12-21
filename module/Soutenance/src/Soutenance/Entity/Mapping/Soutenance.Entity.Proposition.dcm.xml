@@ -40,6 +40,7 @@
         <field name="sursis"              type="string"        length="1"       column="SURSIS"       nullable="true"/>
 
         <one-to-many field="avis" target-entity="Soutenance\Entity\Avis" mapped-by="proposition"/>
+        <one-to-many field="adresses" target-entity="Soutenance\Entity\Adresse" mapped-by="proposition"/>
 
         <many-to-many field="horodatages" target-entity="Horodatage\Entity\Db\Horodatage">
             <join-table name="SOUTENANCE_HORODATAGE">

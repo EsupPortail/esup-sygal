@@ -113,9 +113,23 @@ return [
                         'anglais',
                         'confidentialite',
                         'changement-titre',
+                        'ajouter-adresse',
+                        'modifier-adresse',
+                        'historiser-adresse',
+                        'restaurer-adresse',
                     ],
                     'privileges' => [
                         PropositionPrivileges::PROPOSITION_MODIFIER,
+                        PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
+                    ],
+                ],
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
+                        'supprimer-adresse',
+                        'demander-adresse',
+                    ],
+                    'privileges' => [
                         PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
                     ],
                 ],
@@ -216,6 +230,78 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'ajouter-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/ajouter-adresse/:proposition',
+                                    'defaults' => [
+                                        /** @see PropositionController::ajouterAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'ajouter-adresse',
+                                    ],
+                                ],
+                            ],
+                            'modifier-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/modifier-adresse/:adresse',
+                                    'defaults' => [
+                                        /** @see PropositionController::modifierAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'modifier-adresse',
+                                    ],
+                                ],
+                            ],
+                            'historiser-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/historiser-adresse/:adresse',
+                                    'defaults' => [
+                                        /** @see PropositionController::historiserAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'historiser-adresse',
+                                    ],
+                                ],
+                            ],
+                            'restaurer-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/restaurer-adresse/:adresse',
+                                    'defaults' => [
+                                        /** @see PropositionController::restaurerAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'restaurer-adresse',
+                                    ],
+                                ],
+                            ],
+                            'supprimer-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/supprimer-adresse/:adresse',
+                                    'defaults' => [
+                                        /** @see PropositionController::supprimerAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'supprimer-adresse',
+                                    ],
+                                ],
+                            ],
+                            'demander-adresse' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/demander-adresse/:proposition',
+                                    'defaults' => [
+                                        /** @see PropositionController::demanderAdresseAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'demander-adresse',
+                                    ],
+                                ],
+                            ],
                             'horodatages' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,

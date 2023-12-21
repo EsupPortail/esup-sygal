@@ -21,9 +21,11 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Assertion\PropositionAssertionAwareTrait;
+use Soutenance\Entity\Adresse;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
 use Soutenance\Form\ChangementTitre\ChangementTitreFormAwareTrait;
 use Soutenance\Form\Confidentialite\ConfidentialiteFormAwareTrait;
@@ -35,6 +37,7 @@ use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Template\PdfTemplates;
 use Soutenance\Provider\Validation\TypeValidation;
+use Soutenance\Service\Adresse\AdresseServiceAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
 use Soutenance\Service\Horodatage\HorodatageService;
@@ -50,7 +53,6 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Db\RoleInterface;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
@@ -58,6 +60,7 @@ use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use AdresseServiceAwareTrait;
     use AvisServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
@@ -75,6 +78,7 @@ class PropositionController extends AbstractController
     use RenduServiceAwareTrait;
     use ValidatationServiceAwareTrait;
 
+    use AdresseSoutenanceFormAwareTrait;
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
     use LabelEuropeenFormAwareTrait;
@@ -851,6 +855,124 @@ class PropositionController extends AbstractController
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
         ]);
         return $vm;
+    }
+
+    /** Adresse de la soutenance **************************************************************************************/
+
+    public function ajouterAdresseAction(): ViewModel
+    {
+        $proposition = $this->getPropositionService()->getRequestedProposition($this);
+        $these = $proposition->getThese();
+
+        $adresse = new Adresse();
+        $adresse->setProposition($proposition);
+        $form = $this->getAdresseSoutenanceForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/ajouter-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true));
+        $form->bind($adresse);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getAdresseService()->create($adresse);
+                exit();
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Ajout de l'adresse exacte de soutenance",
+            'form' => $form,
+        ]);
+        $vm->setTemplate('soutenance/default/default-form');
+        return $vm;
+    }
+
+    public function modifierAdresseAction(): ViewModel
+    {
+        $adresse = $this->getAdresseService()->getRequestedAdresse($this);
+        $form = $this->getAdresseSoutenanceForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-adresse', ['these' => $adresse->getAssociatedThese()->getId(), 'adresse' => $adresse->getId()], [], true));
+        $form->bind($adresse);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getAdresseService()->update($adresse);
+                exit();
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Modification de l'adresse exacte de soutenance",
+            'form' => $form,
+        ]);
+        $vm->setTemplate('soutenance/default/default-form');
+        return $vm;
+    }
+
+    public function historiserAdresseAction(): Response
+    {
+        $adresse = $this->getAdresseService()->getRequestedAdresse($this);
+        $this->getAdresseService()->historise($adresse);
+
+        $retour = $this->params()->fromQuery('retour');
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $adresse->getAssociatedThese()->getId()], [], true);
+    }
+
+    public function restaurerAdresseAction(): Response
+    {
+        $adresse = $this->getAdresseService()->getRequestedAdresse($this);
+        $this->getAdresseService()->restore($adresse);
+
+        $retour = $this->params()->fromQuery('retour');
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $adresse->getAssociatedThese()->getId()], [], true);
+    }
+
+    public function supprimerAdresseAction(): ViewModel
+    {
+        $adresse = $this->getAdresseService()->getRequestedAdresse($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") $this->getAdresseService()->delete($adresse);
+            exit();
+        }
+
+        $vm = new ViewModel();
+        if ($adresse !== null) {
+            $vm->setTemplate('soutenance/default/confirmation');
+            $vm->setVariables([
+                'title' => "Suppression de l'adresse exacte",
+                'text' => "La suppression est définitive êtes-vous sûr&middot;e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('soutenance/proposition/supprimer-adresse', ['these' => $adresse->getAssociatedThese()->getId(), "adresse" => $adresse->getId()], [], true),
+            ]);
+        }
+        return $vm;
+    }
+
+    public function demanderAdresseAction(): Response
+    {
+        $proposition = $this->getPropositionService()->getRequestedProposition($this);
+        $these = $proposition->getThese();
+
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAdresse($proposition);
+            if (empty($notif->getTo())) {
+                throw new RuntimeException(
+                    "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$these->getEtablissement()}'");
+            }
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire , todo : cas à gérer !
+        }
+
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
     /** Error *********************************************************************************************************/
