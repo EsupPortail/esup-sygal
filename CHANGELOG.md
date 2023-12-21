@@ -4,6 +4,8 @@ Journal des modifications
 6.0.9
 -----
 - [FIX] Création en bdd d'un privilège manquant.
+- [Soutenance] Saisi de l'adresse exacte par le doctorant 
+- [Soutenance] Nouvelle notification pour la demande de saisi de l'adresse exacte
 
 6.0.8
 -----
