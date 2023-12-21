@@ -183,6 +183,13 @@ echo $this->partial('partial/validations-structures', [
 ]); ?>
 
 <?php
+echo $this->partial('partial/adresse', [
+    'these' => $these,
+    'proposition' => $proposition,
+]);
+?>
+
+<?php
 echo $this->partial('partial/pre-rapports', [
     'these' => $these,
     'avis' => $avis,

@@ -16,6 +16,8 @@ use Soutenance\Form\DateRenduRapport\DateRenduRapportHydrator;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use Soutenance\Service\Adresse\AdresseService;
+use Soutenance\Service\Adresse\AdresseServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Literal;
@@ -388,6 +390,7 @@ return [
     'service_manager' => [
         'factories' => [
             PresoutenanceAssertion::class => PresoutenanceAssertionFactory::class,
+            AdresseService::class => AdresseServiceFactory::class,
         ],
     ],
     'controllers' => [
