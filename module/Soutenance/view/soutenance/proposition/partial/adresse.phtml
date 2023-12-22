@@ -24,23 +24,25 @@ $adresse = $proposition->getAdresseActive();
         </div>
 
         <div>
-            <?php if ($adresse === null && $proposition->getEtat()->getCode() !== Etat::COMPLET) : ?>
-                <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
-                <a href="<?php echo $this->url('soutenance/proposition/ajouter-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
-                   class="btn btn-primary ajax-modal" data-event="modification">
-                    <span class="icon icon-ajouter"> Ajouter une adresse</span>
-                </a>
-            <?php else: ?>
-                <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
-                <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
-                   class="btn btn-primary ajax-modal" data-event="modification">
-                    <span class="icon icon-ajouter"> Modifier l'adresse</span>
-                </a>
-                <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
-                <a href="<?php echo $this->url('soutenance/proposition/historiser-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
-                   class="btn btn-danger">
-                    <span class="icon icon-historiser"> Supprimer l'adresse</span>
-                </a>
+            <?php if ($proposition->getEtat()->getCode() !== Etat::VALIDEE) : ?>
+                <?php if ($adresse === null) : ?>
+                    <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/proposition/ajouter-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+                       class="btn btn-primary ajax-modal" data-event="modification">
+                        <span class="icon icon-ajouter"> Ajouter une adresse</span>
+                    </a>
+                <?php else: ?>
+                    <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                       class="btn btn-primary ajax-modal" data-event="modification">
+                        <span class="icon icon-ajouter"> Modifier l'adresse</span>
+                    </a>
+                    <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/proposition/historiser-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                       class="btn btn-danger">
+                        <span class="icon icon-historiser"> Supprimer l'adresse</span>
+                    </a>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
