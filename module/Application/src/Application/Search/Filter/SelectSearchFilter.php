@@ -5,6 +5,7 @@ namespace Application\Search\Filter;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 /**
  * Représente un filtre de type liste déroulante.
@@ -58,6 +59,24 @@ class SelectSearchFilter extends SearchFilter
         $this
             ->setAttributes($attributes)
             ->setDefaultValue($defaultValue);
+    }
+
+    public function setValue($value = null): SearchFilter
+    {
+        // si la liste de valeurs possibles est pré-remplie, verification que la valeur spécifiée est dedans.
+        if ($value !== null && is_array($this->data)) {
+            $options = $this->createValueOptionsFromData($this->data);
+            $found = false;
+            foreach ($options as $item) {
+                if ($item['value'] === $value) {
+                    $found = true;
+                    break;
+                }
+            }
+            Assert::true($found, "Valeur de filtre illégale : " . $value);
+        }
+
+        return parent::setValue($value);
     }
 
     /**
@@ -142,23 +161,29 @@ class SelectSearchFilter extends SearchFilter
             $options[] = static::valueOptionUnknown($this->getNoneOptionLabel());
         }
         foreach ($data as $key => $value) {
-            if ($value instanceof SearchFilterValueInterface) {
-                $options[] = $value->createSearchFilterValueOption();
-            } else {
-                try {
-                    $valueToString = (string) $value;
-                } catch (Throwable $e) {
-                    throw new InvalidArgumentException(sprintf(
-                        "Impossible de convertir en string les valeurs de type '%s'. Vous pouvez implémenter l'interface '%s'.",
-                        is_object($value) ? get_class($value) : gettype($value),
-                        SearchFilterValueInterface::class
-                    ));
-                }
-                $options[] = static::valueOption($valueToString, (string) $key);
-            }
+            $options[] = $this->createValueOption($value, $key);
         }
 
         return $options;
+    }
+
+    public function createValueOption($value, $key): array
+    {
+        if ($value instanceof SearchFilterValueInterface) {
+            return $value->createSearchFilterValueOption();
+        }
+
+        try {
+            $valueToString = (string) $value;
+        } catch (Throwable $e) {
+            throw new InvalidArgumentException(sprintf(
+                "Impossible de convertir en string les valeurs de type '%s'. Vous pouvez implémenter l'interface '%s'.",
+                is_object($value) ? get_class($value) : gettype($value),
+                SearchFilterValueInterface::class
+            ));
+        }
+
+        return static::valueOption($valueToString, (string) $key);
     }
 
     /**

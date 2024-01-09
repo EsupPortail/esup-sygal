@@ -6,13 +6,13 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Rapport;
-use Fichier\Entity\FichierArchivable;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
+use Application\Service\Rapport\RapportSearchService;
+use Fichier\Entity\FichierArchivable;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierServiceException;
-use Application\Service\Rapport\RapportSearchService;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;
@@ -73,6 +73,7 @@ abstract class RapportRechercheController extends AbstractController implements 
     public function indexAction()
     {
         $this->restrictEcolesDoctorales();
+        $this->restrictUnitesRecherches();
 
         $text = $this->params()->fromQuery('text');
 
@@ -128,6 +129,7 @@ abstract class RapportRechercheController extends AbstractController implements 
     public function filtersAction(): ViewModel
     {
         $this->restrictEcolesDoctorales();
+        $this->restrictUnitesRecherches();
 
         $this->searchService->getValidationSearchFilter()->setVisible(false);
 
@@ -160,12 +162,31 @@ abstract class RapportRechercheController extends AbstractController implements 
         }
     }
 
+    private function restrictUnitesRecherches()
+    {
+        $filter = $this->searchService->getUniteRechercheSearchFilter();
+        $protoRapport = new Rapport($this->typeRapport);
+
+        if ($this->isAllowed($protoRapport, $this->privilege_LISTER_TOUT)) {
+            // aucune restriction sur les UR sélectionnables
+        } elseif ($this->isAllowed($protoRapport, $this->privilege_LISTER_SIEN)) {
+            // restrictions en fonction du rôle
+            if ($role = $this->userContextService->getSelectedRoleUniteRecherche()) {
+                $ur = $role->getStructure()->getUniteRecherche();
+                $filter->setData([$ur]);
+                $filter->setDefaultValueAsObject($ur);
+                $filter->setAllowsEmptyOption(false);
+            }
+        }
+    }
+
     /**
      * @return void|Response
      */
     public function telechargerZipAction(): Response
     {
         $this->restrictEcolesDoctorales();
+        $this->restrictUnitesRecherches();
 
         $result = $this->search();
         if ($result instanceof Response) {

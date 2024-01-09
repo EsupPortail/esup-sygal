@@ -276,6 +276,16 @@ class ApplicationNavigationFactory extends NavigationFactory
         $page['query'] = array_merge($page['query'], $query);
         $newPages[] = $page;
 
+        // génération d'une page fille emmenant vers les rapports CSI
+        $protoPage = $parentPage['pages']['RAPPORTS_CSI'];
+        $page = $protoPage;
+        // label
+        $page['label'] = "Rapports CSI " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
+        $newPages[] = $page;
+
         // génération d'une page fille emmenant vers les soutenances
         $protoPage = $parentPage['pages']['SOUTENANCES'];
         $page = $protoPage;
