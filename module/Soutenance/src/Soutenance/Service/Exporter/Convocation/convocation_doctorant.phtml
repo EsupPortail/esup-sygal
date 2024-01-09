@@ -100,13 +100,17 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
                 Date manquante,
         </span>
     <?php endif; ?> à l'adresse suivante : <br/>
-    <?php if ($proposition->getAdresse() !== null): ?>
-        <?php echo $proposition->getAdresse(); ?>
+    <?php if ($proposition->getAdresseActive() !== null): ?>
+        <?php echo $proposition->getAdresseActive()->format(); ?>
     <?php else : ?>
+        <?php if ($proposition->getAdresse() !== null) : ?>
+            <?php echo $proposition->getAdresse(); ?>
+        <?php else : ?>
         <span style='background-color:red;'>
                     Adresse manquante
             </span>
         <br/>
+        <?php endif; ?>
     <?php endif; ?>
 </p>
 

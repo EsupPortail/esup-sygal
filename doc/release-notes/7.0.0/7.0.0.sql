@@ -2,6 +2,40 @@
 -- Version 7.0.0
 --
 
+insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+with d(ordre, code, lib) as (
+    select 3100, 'consultation-version-papier-corrigee', 'Consultation de la page consacrée à la version papier corrigée'
+)
+select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
+from d join CATEGORIE_PRIVILEGE cp on cp.CODE = 'these';
+
+select privilege__grant_privilege_to_profile('these', 'consultation-version-papier-corrigee', 'ADMIN_TECH');
+select privilege__grant_privilege_to_profile('these', 'consultation-version-papier-corrigee', 'BDD');
+select privilege__grant_privilege_to_profile('these', 'consultation-version-papier-corrigee', 'BU');
+select privilege__grant_privilege_to_profile('these', 'consultation-version-papier-corrigee', 'D');
+select privilege__grant_privilege_to_profile('these', 'consultation-version-papier-corrigee', 'DOCTORANT');
+
+create table soutenance_adresse
+(
+    id                    integer   default nextval('soutenance_adresse_id_seq'::regclass) not null,
+    proposition_id        integer                                                          not null,
+    ligne1                text                                                             not null,
+    ligne2                text                                                             not null,
+    ligne3                text,
+    ligne4                text                                                             not null,
+    histo_creation        timestamp default now()                                          not null,
+    histo_createur_id     integer   default 1                                              not null,
+    histo_modification    timestamp,
+    histo_modificateur_id integer,
+    histo_destruction     timestamp,
+    histo_destructeur_id  integer
+);
+comment on column soutenance_adresse.ligne1 is 'Salle et batiment';
+comment on column soutenance_adresse.ligne2 is 'Rue et numéro';
+comment on column soutenance_adresse.ligne3 is 'complements';
+comment on column soutenance_adresse.ligne4 is 'code postal et ville';
+
+
 --
 -- Nouvelles fonctions d'ajout/retrait de privileges.
 --

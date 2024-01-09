@@ -12,6 +12,7 @@ use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Assertion\PropositionAssertion;
+use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -19,6 +20,7 @@ use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Refus\RefusForm;
+use Soutenance\Service\Adresse\AdresseService;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifService;
@@ -45,6 +47,7 @@ class PropositionControllerFactory
     {
         /**
          * @var ActeurService $acteurService
+         * @var AdresseService $adresseService
          * @var AvisService $avisService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var EtablissementService $etablissementService
@@ -62,6 +65,7 @@ class PropositionControllerFactory
          * @var RenduService $renduService
          */
         $acteurService = $container->get(ActeurService::class);
+        $adresseService = $container->get(AdresseService::class);
         $avisService = $container->get(AvisService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $etablissementService = $container->get(EtablissementService::class);
@@ -79,6 +83,7 @@ class PropositionControllerFactory
         $renduService = $container->get(RenduService::class);
 
         /**
+         * @var AdresseSoutenanceForm $adresseForm
          * @var DateLieuForm $dateLieuForm
          * @var MembreForm $membreForm
          * @var LabelEuropeenForm $labelEuropeenForm
@@ -87,6 +92,7 @@ class PropositionControllerFactory
          * @var RefusForm $refusForm
          * @var ChangementTitreForm $changementTitreForm
          */
+        $adresseForm = $container->get('FormElementManager')->get(AdresseSoutenanceForm::class);
         $dateLieuForm = $container->get('FormElementManager')->get(DateLieuForm::class);
         $membreForm = $container->get('FormElementManager')->get(MembreForm::class);
         $labelEuropeenForm = $container->get('FormElementManager')->get(LabelEuropeenForm::class);
@@ -106,6 +112,7 @@ class PropositionControllerFactory
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
+        $controller->setAdresseService($adresseService);
         $controller->setAvisService($avisService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEtablissementService($etablissementService);
@@ -122,6 +129,7 @@ class PropositionControllerFactory
         $controller->setParametreService($parametreService);
         $controller->setRenduService($renduService);
 
+        $controller->setAdresseSoutenanceForm($adresseForm);
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);
         $controller->setLabelEuropeenForm($labelEuropeenForm);
@@ -134,7 +142,7 @@ class PropositionControllerFactory
 
         $controller->setPropositionAssertion($propositionAssertion);
 
-        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
+        /** @var SoutenanceNotificationFactory $soutenanceNotificationFactory */
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
 

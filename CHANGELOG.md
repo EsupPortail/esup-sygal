@@ -4,12 +4,9 @@ Journal des modifications
 7.0.0
 -----
 - Nouveau module Substitutions (moteur de dédoublonnage automatique d'individus et de structures importés en doublons).
-
-
-
-
-
-
+- [FIX] Création en bdd d'un privilège manquant.
+- [Soutenance] Saisi de l'adresse exacte par le doctorant 
+- [Soutenance] Nouvelle notification pour la demande de saisi de l'adresse exacte
 
 6.0.8
 -----

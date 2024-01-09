@@ -130,16 +130,20 @@ $texte_directeur = implode(" et ", $encadrement);
         <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
     <?php else : ?>
         <span style='background-color:red;'>
-                Date manquante
+                Date manquante,
         </span>
     <?php endif; ?> à l'adresse suivante : <br/>
-    <?php if ($proposition->getAdresse() !== null): ?>
-        <?php echo $proposition->getAdresse(); ?>
+    <?php if ($proposition->getAdresseActive() !== null): ?>
+        <?php echo $proposition->getAdresseActive()->format(); ?>
     <?php else : ?>
-        <span style='background-color:red;'>
+        <?php if ($proposition->getAdresse() !== null) : ?>
+            <?php echo $proposition->getAdresse(); ?>
+        <?php else : ?>
+            <span style='background-color:red;'>
                     Adresse manquante
             </span>
-        <br/>
+            <br/>
+        <?php endif; ?>
     <?php endif; ?>
 </p>
 
