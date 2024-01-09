@@ -21,6 +21,7 @@ use Application\Form\Factory\RapportMiparcoursFormFactory;
 use Application\Form\Rapport\RapportAvisForm;
 use Application\Form\RapportCsiForm;
 use Application\Form\RapportMiparcoursForm;
+use Application\Navigation\ApplicationNavigationFactory;
 use Application\Provider\Privilege\RapportPrivileges;
 use Application\Search\Controller\SearchControllerPluginFactory;
 use Application\Service\Rapport\Avis\RapportAvisService;
@@ -422,6 +423,28 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
+
+                    /**
+                     * Cette page aura une page fille 'these-1', 'these-2', etc. générées automatiquement.
+                     * @see ApplicationNavigationFactory::processPage()
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::NOS_THESES_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 2
+                            'RAPPORTS_CSI' => [
+                                'label' => '(Rapports CSI Structure)',
+                                'route'    => 'rapport-csi/recherche/index',
+                                'resource' => PrivilegeController::getResourceId(RapportCsiRechercheController::class, 'index'),
+                                'privilege' => [
+                                    RapportPrivileges::RAPPORT_CSI_RECHERCHER_TOUT,
+                                    RapportPrivileges::RAPPORT_CSI_RECHERCHER_SIEN,
+                                ],
+                                'visible' => 'Assertion\\Rapport',
+                            ],
+                        ],
+                    ],
+
                     'admin' => [
                         'pages' => [
                             '-----------' => [
