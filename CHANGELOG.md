@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.10
+-----
+- Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
+
 6.0.9
 -----
 - [FIX] Création en bdd d'un privilège manquant.
