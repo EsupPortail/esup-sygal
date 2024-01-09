@@ -29,7 +29,7 @@ alter table doctorant add column if not exists synchro_undelete_enabled boolean 
 alter table doctorant add column if not exists synchro_update_on_deleted_enabled boolean default false not null;
 
 -- sauvegarde table doctorant
-create table doctorant_sav as select * from doctorant;
+create table sav__doctorant as select * from doctorant;
 
 --drop table substit_doctorant cascade;
 create table substit_doctorant

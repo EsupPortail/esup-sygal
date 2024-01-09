@@ -37,7 +37,7 @@ alter table unite_rech add column if not exists synchro_undelete_enabled boolean
 alter table unite_rech add column if not exists synchro_update_on_deleted_enabled boolean default false not null;
 
 -- sauvegardes tables
-create table unite_rech_sav as select * from unite_rech;
+create table sav__unite_rech as select * from unite_rech;
 
 --drop table substit_unite_rech cascade;
 create table substit_unite_rech

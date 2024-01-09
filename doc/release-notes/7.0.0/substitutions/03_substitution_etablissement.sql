@@ -37,7 +37,7 @@ alter table etablissement add column if not exists synchro_undelete_enabled bool
 alter table etablissement add column if not exists synchro_update_on_deleted_enabled boolean default false not null;
 
 -- sauvegardes tables
-create table if not exists etablissement_sav as select * from etablissement;
+create table sav__etablissement as select * from etablissement;
 
 --drop table substit_etablissement cascade;
 create table substit_etablissement

@@ -9,19 +9,18 @@ alter table source alter column id set default nextval('source_id_seq');
 alter table tmp_doctorant add column code_apprenant_in_source varchar(128);
 alter table doctorant add column code_apprenant_in_source varchar(128);
 
----
-
-alter table source add synchro_insert_enabled boolean default true not null;
-alter table source add synchro_update_enabled boolean default true not null;
-alter table source add synchro_undelete_enabled boolean default true not null;
-alter table source add synchro_delete_enabled boolean default true not null;
-comment on column source.synchro_insert_enabled is 'Indique si dans le cadre d''une synchro l''opération ''insert'' est autorisée.';
-comment on column source.synchro_update_enabled is 'Indique si dans le cadre d''une synchro l''opération ''update'' est autorisée.';
-comment on column source.synchro_undelete_enabled is 'Indique si dans le cadre d''une synchro l''opération ''undelete'' est autorisée.';
-comment on column source.synchro_delete_enabled is 'Indique si dans le cadre d''une synchro l''opération ''delete'' est autorisée.';
 
 
-create or replace view v_extract_theses(date_extraction, id, civilite, nom_usuel, nom_patronymique, prenom1, date_naissance, nationalite, email_pro, email_contact, ine, num_etudiant, num_these, titre, code_sise_disc, lib_disc, dirs, codirs, coencs, etab_lib, ed_code, ed_lib, ur_code, ur_lib, lib_etab_cotut, lib_pays_cotut, libelle_titre_acces, libelle_etb_titre_acces, financ_origs_visibles, financ_annees, financ_origs, financ_compls, financ_types, domaines, date_prem_insc, date_abandon, date_transfert, date_prev_soutenance, date_soutenance, date_fin_confid, duree_these_mois, date_depot_vo, date_depot_voc, etat_these, soutenance_autoris, confidentielle, resultat, correc_autorisee, depot_pdf, depot_annexe, autoris_mel, autoris_embargo_duree, autoris_motif, dernier_rapport_activite, dernier_rapport_csi) as
+create or replace view v_extract_theses
+            (date_extraction, id, civilite, nom_usuel, nom_patronymique, prenom1, date_naissance, nationalite,
+             email_pro, email_contact, ine, num_etudiant, num_these, titre, code_sise_disc, lib_disc, dirs, codirs,
+             coencs, etab_lib, ed_code, ed_lib, ur_code, ur_lib, lib_etab_cotut, lib_pays_cotut, libelle_titre_acces,
+             libelle_etb_titre_acces, financ_origs_visibles, financ_annees, financ_origs, financ_compls, financ_types,
+             domaines, date_prem_insc, date_abandon, date_transfert, date_prev_soutenance, date_soutenance,
+             date_fin_confid, duree_these_mois, date_depot_vo, date_depot_voc, etat_these, soutenance_autoris,
+             confidentielle, resultat, correc_autorisee, depot_pdf, depot_annexe, autoris_mel, autoris_embargo_duree,
+             autoris_motif, dernier_rapport_activite, dernier_rapport_csi)
+as
 WITH mails_contacts AS (
     SELECT DISTINCT mail_confirmation.individu_id,
                     first_value(mail_confirmation.email) OVER (PARTITION BY mail_confirmation.individu_id ORDER BY mail_confirmation.id DESC) AS email
@@ -39,7 +38,7 @@ WITH mails_contacts AS (
     SELECT a.these_id,
            string_agg(concat(i.nom_usuel, ' ', i.prenom1), ' ; '::text) AS identites
     FROM acteur a
-             JOIN role r ON a.role_id = r.id AND (r.code::text = ANY (ARRAY['C'::character varying, 'K'::character varying]::text[]))
+             JOIN role r ON a.role_id = r.id AND (r.code::text = ANY (ARRAY['C'::character varying::text, 'K'::character varying::text]))
              JOIN individu i ON a.individu_id = i.id
     WHERE a.histo_destruction IS NULL
     GROUP BY a.these_id
@@ -47,7 +46,7 @@ WITH mails_contacts AS (
     SELECT a.these_id,
            string_agg(concat(i.nom_usuel, ' ', i.prenom1), ' ; '::text) AS identites
     FROM acteur a
-             JOIN role r ON a.role_id = r.id AND (r.code::text = ANY (ARRAY['B'::character varying, 'N'::character varying]::text[]))
+             JOIN role r ON a.role_id = r.id AND (r.code::text = ANY (ARRAY['B'::character varying::text, 'N'::character varying::text]))
              JOIN individu i ON a.individu_id = i.id
     WHERE a.histo_destruction IS NULL
     GROUP BY a.these_id
@@ -95,13 +94,13 @@ WITH mails_contacts AS (
     FROM fichier_these ft
              JOIN fichier f_1 ON ft.fichier_id = f_1.id AND f_1.histo_destruction IS NULL
              JOIN nature_fichier nf ON f_1.nature_id = nf.id AND nf.code::text = 'FICHIER_NON_PDF'::text
-             JOIN version_fichier vf ON f_1.version_fichier_id = vf.id AND (vf.code::text = ANY (ARRAY['VO'::character varying, 'VOC'::character varying]::text[]))
+             JOIN version_fichier vf ON f_1.version_fichier_id = vf.id AND (vf.code::text = ANY (ARRAY['VO'::character varying::text, 'VOC'::character varying::text]))
 ), diffusion AS (
     SELECT DISTINCT d_1.these_id,
                     first_value(d_1.autoris_mel) OVER (PARTITION BY d_1.these_id ORDER BY d_1.version_corrigee DESC, d_1.id DESC) AS autoris_mel,
                     first_value(d_1.autoris_embargo_duree) OVER (PARTITION BY d_1.these_id ORDER BY d_1.version_corrigee DESC, d_1.id DESC) AS autoris_embargo_duree,
                     first_value(d_1.autoris_motif) OVER (PARTITION BY d_1.these_id ORDER BY d_1.version_corrigee DESC, d_1.id DESC) AS autoris_motif
-    FROM public.diffusion d_1
+    FROM diffusion d_1
     WHERE d_1.histo_destruction IS NULL
 ), dernier_rapport_activite AS (
     SELECT DISTINCT ra.these_id,
@@ -115,7 +114,7 @@ WITH mails_contacts AS (
              JOIN type_rapport tr ON r.type_rapport_id = tr.id AND tr.code::text = 'RAPPORT_CSI'::text
     WHERE r.histo_destruction IS NULL
 )
-SELECT to_char(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS'::text) AS date_extraction,
+SELECT to_char(now(), 'DD/MM/YYYY HH24:MI:SS'::text) AS date_extraction,
        th.id,
        di.civilite,
        di.nom_usuel,
@@ -134,11 +133,11 @@ SELECT to_char(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS'::text) AS date_extract
        dirs.identites AS dirs,
        codirs.identites AS codirs,
        coencs.identites AS coencs,
-       COALESCE(se2.libelle, se.libelle) AS etab_lib,
-       COALESCE(sed2.code, sed.code) AS ed_code,
-       COALESCE(sed2.libelle, sed.libelle) AS ed_lib,
-       COALESCE(sur2.code, sur.code) AS ur_code,
-       COALESCE(sur2.libelle, sur.libelle) AS ur_lib,
+       se.libelle AS etab_lib,
+       sed.code AS ed_code,
+       sed.libelle AS ed_lib,
+       sur.code AS ur_code,
+       sur.libelle AS ur_lib,
        th.lib_etab_cotut,
        th.lib_pays_cotut,
        ta.libelle_titre_acces,
@@ -167,7 +166,7 @@ SELECT to_char(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS'::text) AS date_extract
            END AS etat_these,
        th.soutenance_autoris,
        CASE
-           WHEN th.date_fin_confid IS NULL OR th.date_fin_confid < CURRENT_TIMESTAMP THEN 'N'::text
+           WHEN th.date_fin_confid IS NULL OR th.date_fin_confid < now() THEN 'N'::text
            ELSE 'O'::text
            END AS confidentielle,
        th.resultat,
@@ -206,16 +205,10 @@ FROM these th
          LEFT JOIN mails_contacts mc ON mc.individu_id = di.id
          JOIN etablissement e ON d.etablissement_id = e.id
          JOIN structure se ON e.structure_id = se.id
-         LEFT JOIN substit_structure ses ON se.id = ses.from_structure_id --AND ses.histo_destruction IS NULL
-         LEFT JOIN structure se2 ON se2.id = ses.to_structure_id
          LEFT JOIN ecole_doct ed ON th.ecole_doct_id = ed.id
          LEFT JOIN structure sed ON ed.structure_id = sed.id
-         LEFT JOIN substit_structure seds ON sed.id = seds.from_structure_id --AND seds.histo_destruction IS NULL
-         LEFT JOIN structure sed2 ON sed2.id = seds.to_structure_id
          LEFT JOIN unite_rech ur ON th.unite_rech_id = ur.id
          LEFT JOIN structure sur ON ur.structure_id = sur.id
-         LEFT JOIN substit_structure surs ON sur.id = surs.from_structure_id --AND surs.histo_destruction IS NULL
-         LEFT JOIN structure sur2 ON sur2.id = surs.to_structure_id
          LEFT JOIN domaines dom ON dom.unite_id = ur.id
          LEFT JOIN titre_acces ta ON th.id = ta.these_id AND ta.histo_destruction IS NULL
          LEFT JOIN financements f ON th.id = f.these_id
@@ -230,24 +223,3 @@ FROM these th
          LEFT JOIN dernier_rapport_csi rcsi ON rcsi.these_id = th.id
 WHERE th.histo_destruction IS NULL;
 
-/*
-drop view v_diff_pre_structure;
-drop view v_diff_structure;
-drop view v_diff_pre_etablissement;
-drop view v_diff_etablissement;
-drop view v_diff_pre_ecole_doct;
-drop view v_diff_ecole_doct;
-drop view v_diff_pre_unite_rech;
-drop view v_diff_unite_rech;
-drop view v_diff_pre_individu;
-drop view v_diff_individu;
-drop view v_diff_pre_doctorant;
-drop view v_diff_doctorant;
-drop view v_diff_pre_doctorant;
-drop view v_diff_doctorant;
-drop view v_diff_these_annee_univ;
-drop view v_diff_origine_financement;
-drop view v_diff_financement;
-drop view v_diff_titre_acces;
-alter table source drop synchro_insert_enabled ;
-*/

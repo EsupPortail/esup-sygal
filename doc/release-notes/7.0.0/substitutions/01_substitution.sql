@@ -351,7 +351,7 @@ begin
     -- Parcours de la table des substitutions pour remplacer les valeurs de clés étrangères.
     --
 
-    open v_cursor for execute format('select from_id, to_id from %I --where histo_destruction is null', type || '_substit');
+    open v_cursor for execute format('select from_id, to_id from %I --where histo_destruction is null', 'substit_'||type);
     fetch next from v_cursor into v_substit;
     while found loop
         select substit_replace_foreign_keys_values(type, v_substit.from_id, v_substit.to_id) into v_count;
@@ -385,7 +385,7 @@ begin
     --
 
     open v_cursor for execute
-        format('select * from v_substit_foreign_keys_%s where target_table = %L and source_table <> %L order by source_table', type, type, type||'_substit');
+        format('select * from v_substit_foreign_keys_%s where target_table = %L and source_table <> %L order by source_table', type, type, 'substit_'||type);
     fetch next from v_cursor into v_substit_fk;
     while found loop
         v_tab_name = v_substit_fk.source_table;
@@ -454,7 +454,7 @@ begin
 
     open v_cursor for execute format('select * from v_substit_foreign_keys_%s ' ||
                                      'where target_table = %L and source_table <> %L ' ||
-                                     'order by source_table', type, type, type||'_substit');
+                                     'order by source_table', type, type, 'substit_'||type);
     fetch next from v_cursor into v_substit_fk;
     while found loop
             select substit_restore_foreign_key_value(

@@ -34,7 +34,7 @@ alter table individu add column if not exists synchro_undelete_enabled boolean d
 alter table individu add column if not exists synchro_update_on_deleted_enabled boolean default false not null;
 
 -- sauvegarde table individu
-create table individu_sav as select * from individu;
+create table sav__individu as select * from individu;
 
 --drop table substit_individu cascade;
 create table substit_individu

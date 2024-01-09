@@ -37,7 +37,7 @@ alter table ecole_doct add column if not exists synchro_undelete_enabled boolean
 alter table ecole_doct add column if not exists synchro_update_on_deleted_enabled boolean default false not null;
 
 -- sauvegardes tables
-create table ecole_doct_sav as select * from ecole_doct;
+create table sav__ecole_doct as select * from ecole_doct;
 
 --drop table substit_ecole_doct cascade;
 create table substit_ecole_doct

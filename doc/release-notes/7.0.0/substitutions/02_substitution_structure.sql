@@ -38,11 +38,11 @@ alter table structure add column if not exists synchro_undelete_enabled boolean 
 alter table structure add column if not exists synchro_update_on_deleted_enabled boolean default false not null;
 
 -- sauvegardes tables
-create table if not exists structure_sav as select * from structure;
-create table if not exists structure_substit_sav as select * from substit_structure;
+create table sav__structure as select * from structure;
+create table sav__structure_substit as select * from structure_substit;
 
+alter table structure_substit rename to substit_structure;
 delete from substit_structure where histo_destruction is not null;
-
 alter table substit_structure drop column histo_destructeur_id; -- les substit_xxx ne sont pas historisés mais supprimés
 alter table substit_structure drop column histo_destruction;
 alter table substit_structure rename column from_structure_id to from_id;
