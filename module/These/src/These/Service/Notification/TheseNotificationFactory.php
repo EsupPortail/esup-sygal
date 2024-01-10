@@ -10,11 +10,10 @@ use Import\Model\ImportObservResult;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
-use Notification\NotificationResult;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Notification\ChangementsResultatsThesesNotification;
-use These\Notification\ResultatTheseAdmisNotification;
+use These\Notification\ResultatTheseAdmisDoctorantNotification;
 
 /**
  * Classe de construction de notifications par mail.
@@ -30,7 +29,7 @@ class TheseNotificationFactory extends NotificationFactory
      *
      * @param array $data Données concernant les thèses dont le résultat a changé
      */
-    public function createNotificationChangementResultatTheses(array $data): Notification
+    public function createNotificationChangementResultatThesesGestionnaires(array $data): Notification
     {
         $these = current($data)['these'];
 
@@ -54,10 +53,9 @@ class TheseNotificationFactory extends NotificationFactory
     /**
      * Crée les notifications à propos de résultats de thèses passés à 'Admis'.
      *
-     * @param array $data
      * @return \Notification\Notification[]
      */
-    public function createNotificationsChangementResultatThesesAdmis(array $data): array
+    public function createNotificationsChangementResultatThesesAdmisDoctorant(array $data): array
     {
         $notifs = [];
 
@@ -70,7 +68,7 @@ class TheseNotificationFactory extends NotificationFactory
                 throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
             }
 
-            $notif = new ResultatTheseAdmisNotification();
+            $notif = new ResultatTheseAdmisDoctorantNotification();
             $notif->setThese($these);
             $notif->setEmailsBdd($emailsBdd);
 
