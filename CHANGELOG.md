@@ -4,6 +4,7 @@ Journal des modifications
 6.0.10
 -----
 - Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
+- [FIX] Correction de l'appel de getNomComplet qui etait utiliser sur un acteur plus qu'un individu lors de l'envoi des convocations
 
 6.0.9
 -----
