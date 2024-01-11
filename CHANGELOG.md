@@ -4,14 +4,15 @@ Journal des modifications
 6.0.10
 -----
 - Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
-- [FIX] Correction de l'appel de getNomComplet qui etait utiliser sur un acteur plus qu'un individu lors de l'envoi des convocations
+- [FIX] Correction de l'appel de getNomComplet qui etait utilisée sur un acteur plus qu'un individu lors de l'envoi des convocations
+- [FIX] Changement d'action pour la modification de l'adresse de soutenance dans la partie preparation de la soutenance
 
 6.0.9
 -----
 - [FIX] Création en bdd d'un privilège manquant.
 - [Soutenance] Saisi de l'adresse exacte par le doctorant 
 - [Soutenance] Nouvelle notification pour la demande de saisi de l'adresse exacte
-
+ 
 6.0.8
 -----
 - Ajout de logos sur le document des co-encadrements

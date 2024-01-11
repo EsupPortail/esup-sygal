@@ -9,6 +9,7 @@
  * @var Membre[] $rapporteurs
  * @var Validation[] $engagements
  * @var Avis[] $avis
+ * @var Adresse $adresse
  * @var bool $justificatifsOk
  * @var array $justificatifs
  * @var UrlFichierThese $urlFichierThese
@@ -21,6 +22,7 @@
 use Application\Constants;
 use Application\Entity\Db\Validation;
 use Depot\Controller\Plugin\UrlFichierThese;
+use Soutenance\Entity\Adresse;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Justificatif;
@@ -270,26 +272,51 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET OR $proposition->getEtat()->getCode() === Etat::VALIDEE): ?>
     <div class="box card">
         <div class="card-header bg-dark text-white">
-            <h2>  Édition du procès verbal de soutenance </h2>
+            <h2>  Adresse de soutenance et édition du procès-verbal de soutenance </h2>
         </div>
         <div class="card-body">
 
             <div class="row">
                 <div class="col-md-3">
                     <?php if ($canModifierAdresse) : ?>
-                        <a
-                            <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
-                            href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
-                            class="btn btn-primary ajax-modal" data-event="modification-adresse">
-                            <span class="icon icon-editer"></span>
-                            Modifier l'adresse
-                        </a>
+                        <?php if ($adresse === null) : ?>
+                            <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
+                            <a href="<?php echo $this->url('soutenance/proposition/ajouter-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+                               class="btn btn-primary ajax-modal" data-event="modification">
+                                <span class="icon icon-ajouter"> Ajouter une adresse</span>
+                            </a>
+                        <?php else: ?>
+                            <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
+                            <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                               class="btn btn-primary ajax-modal" data-event="modification">
+                                <span class="icon icon-ajouter"> Modifier l'adresse</span>
+                            </a>
+                            <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
+                            <a href="<?php echo $this->url('soutenance/proposition/historiser-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                               class="btn btn-danger">
+                                <span class="icon icon-historiser"> Supprimer l'adresse</span>
+                            </a>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
                 <div class="col-md-9">
-                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
+                    <?php if ($adresse !== null) : ?>
+                        <?php echo $adresse->format(); ?>
+                    <?php else: ?>
+                        <span class="text-warning">
+                            <span class="icon icon-attention"></span>
+                            Aucune adresse de renseignée !
+                        </span>
+                    <?php endif; ?>
                 </div>
             </div>
+
+            <br/>
+
+            <div>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
+            </div>
+
             <div class="row">
                 <div class="col-md-3">
                     <?php if ($canGenererDocument) : ?>

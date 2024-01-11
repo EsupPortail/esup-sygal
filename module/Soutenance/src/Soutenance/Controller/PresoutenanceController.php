@@ -133,6 +133,7 @@ class PresoutenanceController extends AbstractController
             'proposition' => $proposition,
             'rapporteurs' => $rapporteurs,
             'engagements' => $engagements,
+            'adresse' => $proposition->getAdresseActive(),
             'avis' => $avis,
             'tousLesEngagements' => count($engagements) === $nbRapporteurs,
             'tousLesAvis' => count($avis) === $nbRapporteurs,
@@ -429,33 +430,6 @@ class PresoutenanceController extends AbstractController
             ]);
         }
         return $vm;
-
-    }
-
-    public function modifierAdresseAction() : ViewModel
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-
-        $form = $this->getAdresseSoutenanceForm();
-        $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [], true));
-        $form->bind($proposition);
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance");
-            }
-        }
-
-        return new ViewModel([
-            'title' => "Modifier l'adresse exacte de la soutenance",
-            'these' => $these,
-            'form' => $form,
-        ]);
 
     }
 
