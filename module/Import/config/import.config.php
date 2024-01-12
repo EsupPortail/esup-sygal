@@ -81,7 +81,7 @@ return [
                 ],
                 'process-observed-import-results' => [
                     'options' => [
-                        'route'    => 'process-observed-import-results --etablissement= [--import-observ=] [--source-code=] [--force]',
+                        'route'    => 'process-observed-import-results --source= [--import-observ=] [--source-code=]',
                         'defaults' => [
                             /**
                              * @see \Import\Controller\ImportObserverController::processObservedImportResultsAction()

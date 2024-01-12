@@ -2,27 +2,30 @@
 
 namespace Import\Controller;
 
-use Application\Controller\AbstractController;
-use Import\Model\ImportObserv;
-use These\Entity\Db\These;
+use Application\Entity\Db\Source;
 use Application\EventRouterReplacerAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
-use Assert\Assertion;
+use Application\Service\Source\SourceServiceAwareTrait;
+use Import\Model\ImportObserv;
 use Import\Model\Service\ImportObservResultServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
+use Unicaen\Console\Controller\AbstractConsoleController;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservServiceAwareTrait;
+use Webmozart\Assert\Assert;
 
 /**
  *
  *
  * @author Unicaen
  */
-class ImportObserverController extends AbstractController
+class ImportObserverController extends AbstractConsoleController
 {
     use ImportObservServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
     use ImportObservResultServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use SourceServiceAwareTrait;
 
     /**
      * Console action.
@@ -33,21 +36,18 @@ class ImportObserverController extends AbstractController
      * Cette action doit être lancée périodiquement (au moins une fois par jour).
      *
      * Ligne de commande :
-     * php ./public/index.php process-observed-import-results --etablissement=UCN
-     *
-     * Exemple de config CRON :
-     * 0 5-17 * * 1-5 root /usr/bin/php /home/gauthierb/workspace/sygal/public/index.php process-observed-import-results 1> /tmp/sodoctlog.txt 2>&1
-     * i.e. du lundi au vendredi, à 05:00, 06:00 ... 17:00
+     * php ./public/index.php process-observed-import-results --source=UCN::apogee [--import-observ=12345] [--source-code=UCN::1234]
      */
-    public function processObservedImportResultsAction()
+    public function processObservedImportResultsAction(): void
     {
+        $codeSource = $this->params('source'); // ex : 'UCN::apogee'
         $codeImportObserv = $this->params('import-observ');
         $sourceCodeThese = $this->params('source-code');
 
         if ($codeImportObserv === null) {
             $codes = ImportObserv::CODES;
         } else {
-            Assertion::inArray($codeImportObserv, ImportObserv::CODES);
+            Assert::inArray($codeImportObserv, ImportObserv::CODES);
             $codes = (array) $codeImportObserv;
         }
 
@@ -60,6 +60,17 @@ class ImportObserverController extends AbstractController
             }
         }
 
+        /** @var Source $source */
+        $source = null;
+        if ($codeSource !== null) {
+            $source = $this->sourceService->getRepository()->findOneBy(['code' => $codeSource]);
+            if ($source === null) {
+                throw new RuntimeException("Aucune Source trouvée avec le code '$codeSource''");
+            }
+        }
+
+        $criteria = array_filter(compact('source', 'these'));
+
         $this->eventRouterReplacer->replaceEventRouter($this->getEvent());
 
         foreach ($codes as $code) {
@@ -69,7 +80,7 @@ class ImportObserverController extends AbstractController
                 throw new RuntimeException("Aucun enregistrement ImportObserv trouvé avec le code '$code'");
             }
 
-            $this->importObservResultService->processImportObservForThese($importObserv, $these);
+            $this->importObservResultService->processImportObserv($importObserv, $criteria);
         }
 
         $this->eventRouterReplacer->restoreEventRouter();

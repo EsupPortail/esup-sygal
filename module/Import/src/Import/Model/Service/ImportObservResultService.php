@@ -45,17 +45,19 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
     /**
      * Traitement des résultats d'observation des changements lors de la synchro.
      */
-    public function processImportObservForThese(ImportObserv $importObserv, These $these = null): void
+    public function processImportObserv(ImportObserv $importObserv, array $criteria = []): void
     {
+        $this->logger->info("###################################################################");
+
         switch ($importObserv->getCode()) {
             case ImportObserv::CODE_RESULTAT_PASSE_A_ADMIS:
-                $this->processImportObservResultsForResultatAdmis($importObserv, $these);
+                $this->processImportObservResultsForResultatAdmis($importObserv, $criteria);
                 break;
             case ImportObserv::CODE_CORRECTION_PASSE_A_FACULTATIVE:
-                $this->processImportObservResultsForCorrectionFacultative($importObserv, $these);
+                $this->processImportObservResultsForCorrectionFacultative($importObserv, $criteria);
                 break;
             case ImportObserv::CODE_CORRECTION_PASSE_A_OBLIGATOIRE:
-                $this->processImportObservResultsForCorrectionObligatoire($importObserv, $these);
+                $this->processImportObservResultsForCorrectionObligatoire($importObserv, $criteria);
                 break;
             default:
                 throw new RuntimeException("Cas non prévu!");
@@ -66,14 +68,14 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses dont le résultat est passé à "admis".
      */
-    private function processImportObservResultsForResultatAdmis(ImportObserv $importObserv, These $these = null): void
+    private function processImportObservResultsForResultatAdmis(ImportObserv $importObserv, array $criteria = []): void
     {
         $this->logger->info(
             "# Traitement des résultats d'import : " .
             "notifications au sujet des thèses dont le résultat est passé à \"admis\""
         );
 
-        $records = $this->getRepository()->fetchImportObservResults($importObserv, $these);
+        $records = $this->getRepository()->fetchImportObservResults($importObserv, $criteria);
 
         $this->logger->info(sprintf("%d résultat(s) d'import trouvé(s) à traiter.", count($records)));
 
@@ -189,14 +191,14 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "facultative".
      */
-    private function processImportObservResultsForCorrectionFacultative(ImportObserv $importObserv, These $these = null): void
+    private function processImportObservResultsForCorrectionFacultative(ImportObserv $importObserv, array $criteria = []): void
     {
         $this->logger->info(
             "# Traitement des résultats d'import : " .
             "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"facultative\""
         );
 
-        $records = $this->getRepository()->fetchImportObservResults($importObserv, $these);
+        $records = $this->getRepository()->fetchImportObservResults($importObserv, $criteria);
 
         $this->_processImportObservResultsForCorrection($records);
     }
@@ -205,14 +207,14 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
      * Traitement des résultats d'observation des changements lors de la synchro :
      * notifications au sujet des thèses pour lesquelles le témoin "correction autorisée" est passé à "obligatoire".
      */
-    private function processImportObservResultsForCorrectionObligatoire(ImportObserv $importObserv, These $these = null): void
+    private function processImportObservResultsForCorrectionObligatoire(ImportObserv $importObserv, array $criteria = []): void
     {
         $this->logger->info(
             "# Traitement des résultats d'import : " .
             "notifications au sujet des thèses pour lesquelles le témoin \"correction autorisée\" est passé à \"obligatoire\""
         );
 
-        $records = $this->getRepository()->fetchImportObservResults($importObserv, $these);
+        $records = $this->getRepository()->fetchImportObservResults($importObserv, $criteria);
 
         $this->_processImportObservResultsForCorrection($records);
     }
