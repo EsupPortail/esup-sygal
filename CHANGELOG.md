@@ -2,18 +2,22 @@ Journal des modifications
 =========================
 
 6.0.10
------
+------
 - Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
+- Petites améliorations autour des notifs concernant les changements détectés lors de l'import (admission, corrections attendues).
+- [FIX] Observation des résultats d'import/synchro : correction du filtrage par source de données (anciennement 'etablissement') non pris en compte.
+- [FIX] Upgrade d'unicaen/app pour corriger le lien Ajouter dysfonctionnel dans le formulaire Rapport d'activité.
+- [FIX] Appel de fonction erroné faisant planter la notification 'correction attendue'.
 - [FIX] Correction de l'appel de getNomComplet qui etait utilisée sur un acteur plus qu'un individu lors de l'envoi des convocations
 - [FIX] Changement d'action pour la modification de l'adresse de soutenance dans la partie preparation de la soutenance
-- [FiX] Correction de l'oubli de l'adresse (nouveau format) dans l'avis de soutenance
+- [FIX] Correction de l'oubli de l'adresse (nouveau format) dans l'avis de soutenance
 
 6.0.9
 -----
 - [FIX] Création en bdd d'un privilège manquant.
 - [Soutenance] Saisi de l'adresse exacte par le doctorant 
 - [Soutenance] Nouvelle notification pour la demande de saisi de l'adresse exacte
- 
+
 6.0.8
 -----
 - Ajout de logos sur le document des co-encadrements
