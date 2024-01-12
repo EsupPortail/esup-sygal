@@ -6,6 +6,7 @@ Journal des modifications
 - Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
 - [FIX] Correction de l'appel de getNomComplet qui etait utilisée sur un acteur plus qu'un individu lors de l'envoi des convocations
 - [FIX] Changement d'action pour la modification de l'adresse de soutenance dans la partie preparation de la soutenance
+- [FiX] Correction de l'oubli de l'adresse (nouveau format) dans l'avis de soutenance
 
 6.0.9
 -----
