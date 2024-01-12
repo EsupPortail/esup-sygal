@@ -200,7 +200,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_structure',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -228,7 +229,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_etablissement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -256,7 +258,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_ecole_doct',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -284,7 +287,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_unite_rech',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -323,7 +327,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_individu',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -352,7 +357,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_doctorant',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -400,7 +406,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_these',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -429,7 +436,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_these_annee_univ',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -458,7 +466,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_role',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -495,7 +504,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_acteur',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -525,7 +535,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_origine_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -561,7 +572,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -595,7 +607,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_titre_acces',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -627,7 +640,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_variable',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
 ];
@@ -654,6 +668,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -672,6 +688,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -690,6 +708,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -708,6 +728,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -727,6 +749,8 @@ const CONFIG_SYNCHROS = [
             'source_code_column' => 'SOURCE_CODE',
 //            'where'              => "d.source_code like 'UCN::%'", // todo: à virer
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -745,6 +769,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -763,6 +789,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -781,6 +809,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -799,6 +829,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -817,6 +849,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -835,6 +869,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -853,6 +889,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -871,6 +909,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -889,6 +929,8 @@ const CONFIG_SYNCHROS = [
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
 ];

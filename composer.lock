@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0dc24b3bc56c1578234ed8168b399e7",
+    "content-hash": "951ef75066bb14428b192b3abb35c4df",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -8911,11 +8911,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "6.0.3",
+            "version": "dev-release_6.1.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "fa75f61b9e2d95514e8e37b3e72a3e842bcf24be"
+                "reference": "fc1fe29080020853982df65d5dc425eb2bc56dc9"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -8948,7 +8948,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2023-07-13T10:11:51+00:00"
+            "time": "2024-01-15T09:33:02+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -9737,6 +9737,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "unicaen/db-import": 20,
         "unicaen/idref": 20
     },
     "prefer-stable": true,
