@@ -75,21 +75,16 @@ class FinancementFormatter
             }
             if ($origine = $financement->getOrigineFinancement()) {
                 if ($this->isOrigineVisible($origine)) {
-                    $infos[] = $origine->getLibelleLong();
+                    $infos[] = 'Origine : ' . $origine->getLibelleLong();
                 }
             }
             if ($this->displayComplement && $financement->getComplementFinancement()) {
-                $infos[] = $financement->getComplementFinancement();
+                $infos[] = "Complément : " . $financement->getComplementFinancement();
             }
             if ($financement->getQuotiteFinancement()) {
-                $infos[] = $financement->getQuotiteFinancement();
+                $infos[] = 'Quotité : ' . $financement->getQuotiteFinancement();
             }
-            if ($financement->getDateDebut()) {
-                $infos[] = $financement->getDateDebut()->format('d/m/Y');
-            }
-            if ($financement->getDateFin()) {
-                $infos[] = $financement->getDateFin()->format('d/m/Y');
-            }
+            $infos[] = $this->formatDates($financement);
             $infos[] = $this->formatTypeFinancement($financement);
 
             $data[] = array_filter($infos);
@@ -100,7 +95,7 @@ class FinancementFormatter
         switch ($this->displayAs) {
             case FinancementFormatter::DISPLAY_AS_HTML_LINES :
                 foreach ($data as $infos) {
-                    $line = implode(", ", $infos);
+                    $line = implode(" ; ", $infos);
                     $output .= $line . "<br/>";
                 }
                 break;
@@ -134,6 +129,20 @@ class FinancementFormatter
             return null;
         }
 
-        return sprintf("%s (%s)", $financement->getLibelleTypeFinancement(), $financement->getCodeTypeFinancement());
+        return sprintf("Type de financement = %s (%s)", $financement->getLibelleTypeFinancement(), $financement->getCodeTypeFinancement());
+    }
+
+    private function formatDates(Financement $financement): ?string
+    {
+        if ($financement->getDateDebut() && $financement->getDateFin()) {
+            return 'Du ' . $financement->getDateDebut()->format('d/m/Y') . ' au ' . $financement->getDateFin()->format('d/m/Y');
+        }
+        if ($financement->getDateDebut()) {
+            return 'À partir du ' . $financement->getDateDebut()->format('d/m/Y');
+        }
+        if ($financement->getDateFin()) {
+            return "Jusqu'au " . $financement->getDateFin()->format('d/m/Y');
+        }
+        return null;
     }
 }

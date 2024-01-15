@@ -5,6 +5,7 @@ Journal des modifications
 ------
 - Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
 - Petites améliorations autour des notifs concernant les changements détectés lors de l'import (admission, corrections attendues).
+- Financements sur la fiche Thèse : afficher la nature devant chaque info (type, origine, quotité).
 - [FIX] Observation des résultats d'import/synchro : correction du filtrage par source de données (anciennement 'etablissement') non pris en compte.
 - [FIX] Upgrade d'unicaen/app pour corriger le lien Ajouter dysfonctionnel dans le formulaire Rapport d'activité.
 - [FIX] Appel de fonction erroné faisant planter la notification 'correction attendue'.
