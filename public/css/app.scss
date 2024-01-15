@@ -1070,8 +1070,7 @@ span.sas-highlight {
 
 
 .div-connexion {
-  width: 60%;
-  text-align: center;
+  width: 70%;
   margin: auto auto 30px;
   .page-header {
     font-size: 40px;
@@ -1089,7 +1088,6 @@ span.sas-highlight {
   }
   .connect-description {
     margin-bottom: 25px;
-    font-weight: 450;
   }
   .connect-identity, .connect-credentials {
     width: 75%;
@@ -1097,6 +1095,7 @@ span.sas-highlight {
     margin: auto;
   }
   .connect-submit {
+    text-align: center;
     margin-top: 20px;
     button {
       height: auto;
