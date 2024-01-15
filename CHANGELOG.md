@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] Correction de l'appel de getNomComplet qui etait utilisée sur un acteur plus qu'un individu lors de l'envoi des convocations
 - [FIX] Changement d'action pour la modification de l'adresse de soutenance dans la partie preparation de la soutenance
 - [FIX] Correction de l'oubli de l'adresse (nouveau format) dans l'avis de soutenance
+- [Formation] Complétion de la case 'lieu' sur les convocations en fonction du contexte (mention "Distanciel" ou "Pas de lieu")
 
 6.0.9
 -----
