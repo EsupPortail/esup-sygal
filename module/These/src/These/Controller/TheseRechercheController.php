@@ -16,8 +16,6 @@ use These\Service\These\TheseSearchService;
 use These\Service\These\TheseServiceAwareTrait;
 
 /**
- * Class TheseRechercheController
- *
  * @property TheseSearchService $searchService
  */
 class TheseRechercheController extends AbstractController implements SearchControllerInterface
@@ -28,21 +26,12 @@ class TheseRechercheController extends AbstractController implements SearchContr
     use RoleServiceAwareTrait;
     use TheseServiceAwareTrait;
 
-    /**
-     * @var array
-     */
-    private $queryParams;
+    private bool $searchIfRequired = false; // todo : ne pas mettre à true car impossible de dépasser la page 1 !! :-(
 
-    /**
-     * @var array
-     */
-    private $searchIfRequired = false; // todo : ne pas mettre à true car impossible de dépasser la page 1 !! :-(
-
-    /**
-     * @return ViewModel|Response
-     */
-    public function indexAction()
+    public function indexAction(): Response|ViewModel
     {
+        $this->restrictFiltersByStructure();
+
         $text = $this->params()->fromQuery('text');
 
         /** @see TheseSearchService */
@@ -67,11 +56,10 @@ class TheseRechercheController extends AbstractController implements SearchContr
         ]);
     }
 
-    /**
-     * @return ViewModel
-     */
     public function indexFiltersAction(): ViewModel
     {
+        $this->restrictFiltersByStructure();
+
         $filters = $this->filters();
 
         $vm = new ViewModel([
@@ -82,34 +70,6 @@ class TheseRechercheController extends AbstractController implements SearchContr
 
         return $vm;
     }
-
-//    /**
-//     * Pour les acteurs de thèses en général (Doctorant, Dir, Codir, etc.)
-//     *
-//     * @return ViewModel|Response
-//     */
-//    public function miennesAction()
-//    {
-//        /** @var Role $role */
-//        $role = $this->userContextService->getSelectedIdentityRole();
-//        $individu = $this->userContextService->getIdentityIndividu();
-//        $etats = [These::ETAT_EN_COURS];
-//
-//        switch (true) {
-//            case $role->isDoctorant() :
-//                $theses = $this->theseService->getRepository()->findThesesByDoctorantAsIndividu($individu, $etats);
-//                break;
-//            case $role->isActeurDeThese() :
-//                $theses = $this->theseService->getRepository()->findThesesByActeur($individu, $role, $etats);
-//                break;
-//            default:
-//                return $this->redirect()->toRoute('home');
-//        }
-//
-//        return new ViewModel([
-//            'theses' => $theses,
-//        ]);
-//    }
 
     /**
      * Prévu pour ED, UR, MDD.
@@ -175,5 +135,24 @@ class TheseRechercheController extends AbstractController implements SearchContr
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
             ->setAllowsEmptyOption(false);
+    }
+
+    private function restrictFiltersByStructure(): void
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        if ($role->isEcoleDoctoraleDependant()) {
+            $filter = $this->searchService->getEcoleDoctoraleSearchFilter();
+            $sc = $role->getStructure()->getEcoleDoctorale();
+            $filter->setDefaultValueAsObject($sc);
+        } elseif ($role->isUniteRechercheDependant()) {
+            $filter = $this->searchService->getUniteRechercheSearchFilter();
+            $sc = $role->getStructure()->getUniteRecherche();
+            $filter->setDefaultValueAsObject($sc);
+        } elseif ($role->isEtablissementDependant()) {
+            $filter = $this->searchService->getEtablissementInscSearchFilter();
+            $sc = $role->getStructure()->getEtablissement();
+            $filter->setDefaultValueAsObject($sc);
+        }
     }
 }
