@@ -355,6 +355,22 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         }
     }
 
+    public function isAttestationsVersionInitialeSaisies(These $these): bool
+    {
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $attestation = $these->getAttestationForVersion($version);
+
+        return $attestation !== null;
+    }
+
+    public function isAttestationsVersionCorrigeeSaisies(These $these): bool
+    {
+        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        $attestation = $these->getAttestationForVersion($version);
+
+        return $attestation !== null;
+    }
+
     /**
      * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
      * l'exemplaire papier est pertinent ou non.

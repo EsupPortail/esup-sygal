@@ -251,8 +251,8 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
         $notification = new ValidationRdvBuNotification();
         $notification->setThese($these);
 
-        $notification->setEmailsBdd($this->emailTheseService->fetchEmailAspectsDoctorat($these));
-        $notification->setEmailsBu($this->emailTheseService->fetchEmailAspectsBibliotheque($these));
+        $notification->setEmailsAspectsDoctorat($this->emailTheseService->fetchEmailAspectsDoctorat($these));
+        $notification->setEmailsAspectsBibliotheque($this->emailTheseService->fetchEmailAspectsBibliotheque($these));
 
         return $notification;
     }

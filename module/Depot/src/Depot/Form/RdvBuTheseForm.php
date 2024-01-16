@@ -15,12 +15,12 @@ class RdvBuTheseForm extends Form
     const SEPARATEUR_MOTS_CLES_RAMEAU = RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU;
     const SEPARATEUR_MOTS_CLES_RAMEAU_LIB = RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU_LIB;
 
-    private $disableExemplPapierFourni = false;
+    private bool $disableExemplPapierFourni = false;
 
     /**
      * @param bool $disable
      */
-    public function disableExemplPapierFourni(bool $disable = true)
+    public function disableExemplPapierFourni(bool $disable = true): void
     {
         $this->disableExemplPapierFourni = $disable;
     }
@@ -28,7 +28,7 @@ class RdvBuTheseForm extends Form
     /**
      * NB: hydrateur injecté par la factory
      */
-    public function init()
+    public function init(): void
     {
         $this->setObject(new RdvBu());
 
@@ -68,6 +68,14 @@ class RdvBuTheseForm extends Form
             ->setLabelOptions([
                 'disable_html_escape' => true,
             ])
+        );
+
+        $this->add((new Checkbox('attestationsRemplies'))
+            ->setLabel("Attestations remplies")
+            ->setLabelOptions([
+                'disable_html_escape' => true,
+            ])
+            ->setAttribute('disabled', 'disabled')
         );
 
         $this->add([
@@ -153,6 +161,10 @@ class RdvBuTheseForm extends Form
                 'name' => 'versionArchivableFournie',
                 'required' => false,
             ],
+            'attestationsRemplies' => [
+                'name' => 'attestationsRemplies',
+                'required' => true,
+            ],
             'conventionMelSignee' => [
                 'name' => 'conventionMelSignee',
                 'required' => false,
@@ -182,10 +194,7 @@ class RdvBuTheseForm extends Form
         ]));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function prepare()
+    public function prepare(): self
     {
         if ($this->disableExemplPapierFourni) {
             $this->remove('exemplPapierFourni');

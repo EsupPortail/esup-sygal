@@ -574,7 +574,7 @@ class DepotController extends AbstractController
         return $viewModel;
     }
 
-    public function modifierRdvBuAction()
+    public function modifierRdvBuAction(): Response|ViewModel
     {
         $these = $this->requestedThese();
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
@@ -590,12 +590,17 @@ class DepotController extends AbstractController
         $form = $estDoctorant ? $this->rdvBuTheseDoctorantForm : $this->rdvBuTheseForm;
         $form->bind($rdvBu);
 
+        // Attestations remplies ?
+        $isAttestationsSaisies = $this->depotService->isAttestationsVersionInitialeSaisies($these);
+        $form->get('attestationsRemplies')->setValue($isAttestationsSaisies);
+
         if ($form instanceof RdvBuTheseForm && ! $this->depotService->isExemplPapierFourniPertinent($these)) {
             $form->disableExemplPapierFourni();
         }
 
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
+            $post['attestationsRemplies'] = $isAttestationsSaisies; // pour que le formulaire soit valide
             $form->setData($post);
             if ($form->isValid()) {
                 /** @var RdvBu $formRdvBu */
