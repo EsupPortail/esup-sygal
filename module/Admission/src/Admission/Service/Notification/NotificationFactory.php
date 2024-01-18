@@ -5,6 +5,7 @@ namespace Admission\Service\Notification;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
 use Admission\Notification\AdmissionOperationAttenduNotification;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Service\Url\UrlServiceAwareTrait;
@@ -36,7 +37,7 @@ class NotificationFactory extends NF
         $individu = $admission->getIndividu();
         $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
         if (!$email) {
-            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour le doctorant {$individu}");
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour l'étudiant {$individu}");
         }
 
         //Création du lien vers le dossier d'admission
@@ -53,6 +54,29 @@ class NotificationFactory extends NF
         return $notif;
     }
 
+    public function createNotificationDossierComplet(Admission $admission): Notification
+    {
+        $notif = new Notification();
+        $individu = $admission->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        if (!$email) {
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour l'étudiant {$individu}");
+        }
+
+        //Création du lien vers le dossier d'admission
+        $vars = ['admission' => $admission];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $vars['individu'] = $individu;
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::NOTIFICATION_DOSSIER_COMPLET, $vars);
+        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps());
+
+        return $notif;
+    }
+
     public function createNotificationGestionnaire(Admission $admission): Notification
     {
         $notif = new Notification();
@@ -60,7 +84,7 @@ class NotificationFactory extends NF
         $structureConcrete = $admission->getInscription()->first()->getEcoleDoctorale();
         // Recherche des individus ayant le rôle attendu.
         $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), Role::CODE_GEST_ED, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
-        if (!empty($individusRoles) && !count($individusRoles)) {
+        if (empty($individusRoles)) {
             // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
             $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), Role::CODE_GEST_ED);
         }
@@ -126,7 +150,7 @@ class NotificationFactory extends NF
         $individu = $admission->getIndividu();
         $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
         if (!$email) {
-            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour le doctorant {$individu}");
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour l'étudiant {$individu}");
         }
 
         $vars = [
@@ -134,7 +158,12 @@ class NotificationFactory extends NF
             'admissionValidation' => $admissionValidation,
             'individu' => $individu
         ];
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_AJOUTEE, $vars);
+
+        if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_SIGNATURE_PRESIDENT){
+            $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
+        }else{
+            $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_AJOUTEE, $vars);
+        }
 
         $notif = new Notification();
         $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
@@ -144,7 +173,7 @@ class NotificationFactory extends NF
         if(!empty($admission->getInscription()->first()->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
             $notif->setCc($emailDirecteur);
         }
 
@@ -159,8 +188,8 @@ class NotificationFactory extends NF
         if ($notif->getCc()) {
             $successMessage .= sprintf(
                 " et en copie à %s",
-                implode(', ', array_reduce(array_keys($notif->getTo()), function(array $accu, string $key) use ($notif) {
-                    $accu[] = sprintf('%s (%s)', $notif->getTo()[$key], $key);
+                implode(', ', array_reduce(array_keys($notif->getCc()), function(array $accu, string $key) use ($notif) {
+                    $accu[] = sprintf('%s (%s)', $notif->getCc()[$key], $key);
                     return $accu;
                 }, [])),
             );
@@ -193,7 +222,7 @@ class NotificationFactory extends NF
         if(!empty($admission->getInscription()->first()->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
             $notif->setCc($emailDirecteur);
         }
 

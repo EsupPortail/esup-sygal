@@ -1,8 +1,6 @@
 <?php
 
 use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\Etat;
-use Admission\Entity\Db\Verification;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
@@ -21,6 +19,7 @@ use Individu\Entity\Db\Individu;
  */
 
 $form->prepare();
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canVerifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER);
 $canModifierAdmission  =
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
@@ -38,11 +37,18 @@ if(!empty($admission) && !$canModifierAdmission) {
 </script>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Étudiant</h2>
+        <h2 class="titre_sous_partie">Étudiant<label class="titre_sous_partie_en">&nbsp; / Student</label></h2>
     </div>
     <div class="row subfield">
         <div class="col-md-6">
-            <?php echo $fcg($fieldset->get('ine')) ?>
+            <div class="col-mb-2">
+                <label class='label_ine form-label'
+                       data-after=" / I.N.E number (number appearing on a French higher education transcript)"><?php echo $fieldset->get('ine')->getLabel() ?></label>
+                <button class="icon icon-information info_ine" data-toggle="tooltip"
+                        title="Appuyez pour avoir plus d'informations"></button>
+                <?php echo $this->formInput($fieldset->get('ine')) ?>
+            </div>
+
         </div>
         <div class="col-md-6">
             <?php echo $fcg($fieldset->get('numeroEtudiant')) ?>
@@ -87,10 +93,10 @@ if(!empty($admission) && !$canModifierAdmission) {
         <div class="col-md-3">
             <?php echo $fcg($fieldset->get('adresseLigne3Bvoie')) ?>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-2">
             <?php echo $fcg($fieldset->get('adresseCodePostal')) ?>
         </div>
-        <div class="col-lg-3 col-sm-12">
+        <div class="col-lg-2 col-sm-12">
             <?php echo $fcg($fieldset->get('adresseCodeCommune')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
@@ -115,7 +121,7 @@ if(!empty($admission) && !$canModifierAdmission) {
 </div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Niveau d'étude permettant l'accès en doctorat</h2>
+        <h2 class="titre_sous_partie">Niveau d'étude permettant l'accès en doctorat<label class="titre_sous_partie_en">&nbsp; /  Level of study for access to PhD</label></h2>
     </div>
     <div class="row subfield">
         <div class="checkbox_admission">
@@ -160,11 +166,10 @@ if(!empty($admission) && !$canModifierAdmission) {
             </div>
         </div>
     </div>
-
 </div>
 
 <?php
-if($canModifierAdmission){
+if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'canVerifierAdmission' => $canVerifierAdmission,
         'fcg' => $fcg,
@@ -174,3 +179,63 @@ if($canModifierAdmission){
     ]);
 }
 ?>
+
+<div class="modal fade" id="modalInfosIne" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Comment trouver son I.N.E</h4>
+            </div>
+            <div class="modal-body">
+                L'I.N.E (Identifiant National Étudiant) est un identifiant unique attribué à chaque étudiant en France. Pour le trouver, vous avez plusieurs options :
+                <br>
+                <ul>
+                    <li>
+                        1. Document d'inscription universitaire : L'I.N.E figure généralement sur votre document d'inscription universitaire. Vous pouvez le trouver sur votre carte d'étudiant ou dans les documents officiels de votre établissement.
+                    </li>
+                    <li>
+                        2. Courriers officiels de l'éducation nationale : Si vous avez reçu des courriers ou des notifications officielles de l'éducation nationale, votre I.N.E pourrait y être mentionné.
+                    </li>
+                </ul>
+
+                <b>À quoi ressemble-t-il ?</b>
+                <br>
+
+                L'I.N.E est composé de chiffres et de lettres : il peut être sous la forme de
+                <ul>
+                    <li>
+                        10 chiffres + 1 lettre
+                    </li>
+                    <li>
+                        9 chiffres + 2 lettres
+                    </li>
+                </ul>
+                <br>
+                <br>
+                The I.N.E (Identifiant National Étudiant) is a unique identifier assigned to every student in France. To find it, you have several options:                <br>
+                <ul>
+                    <li>
+                        1. University registration document: The I.N.E is usually printed on your university registration document. You can find it on your student card or in your institution's official documents.                    </li>
+                    <li>
+                        2. Official letters from the Ministry of Education: If you have received official letters or notifications from the Ministry of Education, your I.N.E. may be mentioned.                    </li>
+                </ul>
+
+                <b>What does it look like?</b>
+                <br>
+
+                The I.N.E is made up of numbers and letters: it can be in the format of
+                <ul>
+                    <li>
+                        10 digits + 1 letter
+                    </li>
+                    <li>
+                        9 digits + 2 letters
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

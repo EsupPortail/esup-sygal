@@ -2,6 +2,7 @@
 
 namespace Admission\Rule\Operation;
 
+use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\TypeValidation;
@@ -9,6 +10,7 @@ use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Application\Entity\Db\Role;
 use InvalidArgumentException;
 use Admission\Entity\Db\Admission;
+use UnicaenAvis\Entity\Db\AvisType;
 use Webmozart\Assert\Assert;
 
 class AdmissionOperationRule
@@ -179,6 +181,17 @@ class AdmissionOperationRule
     }
 
     /**
+     * @param AdmissionOperationInterface $operation
+     * @return bool
+     */
+    public function isOperationAuto(AdmissionOperationInterface $operation): bool
+    {
+        $name = $this->findOperationName($operation);
+
+        return $this->operationsConfig[$name]['is_auto'] ?? false;
+    }
+
+    /**
      * Recherche dans la config le nom d'une opération, avec comme critères :
      *   - le 'type'
      *   - le 'code'
@@ -189,7 +202,11 @@ class AdmissionOperationRule
             $comparator = fn(AdmissionValidation $ope, array $config) =>
                 $ope instanceof $config['type'] &&
                 $config['code'] ===  $ope->getTypeValidation()->getCode();
-        } else {
+        } elseif ($operation instanceof AdmissionAvis) {
+            $comparator = fn(AdmissionAvis $ope, array $config) =>
+                $ope instanceof $config['type'] &&
+                $config['code'] ===  $ope->getAvis()->getAvisType()->getCode();
+        }else {
             throw new InvalidArgumentException("Type d'opération inattendu : " . get_class($operation));
         }
 
@@ -210,7 +227,7 @@ class AdmissionOperationRule
     }
 
     /**
-     * @param TypeValidation|string $typeOperation
+     * @param TypeValidation|AvisType|string $typeOperation
      * @return array
      */
     public function getConfigForTypeOperation($typeOperation): array
@@ -352,7 +369,7 @@ class AdmissionOperationRule
     }
 
     /**
-     * @return TypeValidation[]
+     * @return TypeValidation[]|AvisType[]
      */
     public function fetchTypesOperation(): array
     {

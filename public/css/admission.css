@@ -1,4 +1,9 @@
 @charset "UTF-8";
+label:not(:empty):not(:has(*))::after, .label_en::after, .titre_sous_partie_en {
+  content: attr(data-after);
+  font-style: italic;
+  font-weight: bold; }
+
 h1 {
   color: #004980; }
 
@@ -101,6 +106,16 @@ h1 {
   min-height: 40vh;
   position: relative; }
 
+.label_ine {
+  display: initial; }
+
+input[name="etudiant[ine]"] {
+  margin-bottom: 0.8rem;
+  margin-top: 0.18rem; }
+
+.label_index, .input_index, .bouton_acces_dossier_index {
+  width: auto; }
+
 .bouton_acces_dossier {
   display: flex;
   justify-content: center;
@@ -111,6 +126,16 @@ h1 {
 .acces_dossier {
   text-align: center;
   width: fit-content; }
+
+.aucune_ecole_doctorale {
+  color: #a94442;
+  font-style: italic;
+  margin-bottom: unset; }
+
+.info_ine {
+  border-width: inherit;
+  padding: unset;
+  background-color: unset; }
 
 .checkbox_admission > .mb-2 > .multicheckbox > .form-check-label {
   display: inline-block;
@@ -196,6 +221,10 @@ i:hover {
 .upload_file {
   margin-top: 20px; }
 
+.file_charte_doctorat {
+  display: none;
+  width: auto; }
+
 .date_televersement:empty {
   display: none; }
 
@@ -218,9 +247,10 @@ i:hover {
   line-height: 25px;
   font-size: 12px;
   font-weight: bold;
-  content: "1"; }
+  content: "1";
+  margin-right: 15px; }
 
-.circle_success {
+.circle_icon-ok {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -250,12 +280,13 @@ i:hover {
   padding-right: unset;
   margin-right: unset; }
 
-.circle_incomplete {
+.circle_icon-ko {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   border: 2px solid #d23544;
   background-color: #d23544;
+  color: white;
   color: white;
   text-align: center;
   line-height: 25px;
@@ -299,9 +330,13 @@ input[name="validation[saveAttestationHonneur]"] {
 .validation_attestation {
   margin-top: revert !important; }
 
+.dossier_incomplet_validation_impossible {
+  margin-left: 10px; }
+
 .circle_etape {
   width: fit-content;
-  padding-right: unset; }
+  padding-right: unset;
+  margin-right: 15px; }
 
 .etape_signature {
   display: flex;
@@ -311,8 +346,7 @@ input[name="validation[saveAttestationHonneur]"] {
 
 .etape_signature > label {
   color: #707070;
-  font-size: 15px;
-  margin-left: 15px; }
+  font-size: 15px; }
 
 .etape_signature .info_validation {
   margin-left: 10px; }
@@ -339,11 +373,16 @@ input[name="validation[saveAttestationHonneur]"] {
   border-radius: 11px;
   max-width: 25rem; }
 
-.dossier_complet > div > p, .dossier_incomplet > div > p {
+.dossier_refuse {
+  border: 3px solid #d23544;
+  border-radius: 11px;
+  max-width: 25rem; }
+
+.dossier_complet > div > p, .dossier_incomplet > div > p, .dossier_refuse > div > p {
   color: #707070;
   font-size: 15px; }
 
-.dossier_complet > div > i, .dossier_incomplet > div > i {
+.dossier_complet > div > i, .dossier_incomplet > div > i, .dossier_refuse > div > i {
   font-style: unset; }
 
 .card-body.text-success i.icon, .card-body.text-warning i.icon {
@@ -355,6 +394,10 @@ input[name="validation[saveAttestationHonneur]"] {
   display: inline-block; }
 
 @media (max-width: 768px) {
+  .individu_recherche_index {
+    display: flex;
+    justify-content: center; }
+
   .inner.show {
     position: absolute;
     max-height: calc(100vh - 50px);
@@ -385,7 +428,7 @@ input[name="validation[saveAttestationHonneur]"] {
 
   .libelle_etape > label {
     color: #707070;
-    font-size: 1.453vh;
+    font-size: 1.45vh;
     margin-left: unset; }
 
   .circle_etape {
@@ -395,9 +438,8 @@ input[name="validation[saveAttestationHonneur]"] {
     margin-bottom: 10px;
     margin-top: 10px; }
 
-  .info_validation > p {
-    margin-bottom: 10px;
-    margin-top: 10px; }
+  .cardsValidation {
+    margin-top: 20px; }
 
   .bouton_etape_validation {
     display: flex;

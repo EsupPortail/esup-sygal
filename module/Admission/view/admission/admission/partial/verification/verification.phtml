@@ -9,7 +9,7 @@ use UnicaenApp\Form\View\Helper\FormControlGroup;
 ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Commentaires</h2>
+        <h2 class="titre_sous_partie">Commentaires<label class="titre_sous_partie_en">&nbsp; /  Comments</label></h2>
     </div>
     <?php if ($canVerifierAdmission) { ?>
         <div class="row observations_gestionnaire">
@@ -30,9 +30,7 @@ use UnicaenApp\Form\View\Helper\FormControlGroup;
                 $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
                 $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
                 $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
-//                echo !empty($commentaire) ? "<p class='gestionnaire'>Par ".$nom." ".$prenom.", le ".$date_verification." </p><p> :  ".$commentaire." </p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
-                echo !empty($commentaire) ? "<p class='gestionnaire'>".$commentaire."<p class='text-muted text-sm info-commentaire'>(Par ".$nom." ".$prenom.", le ".$date_verification.")</p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par vos gestionnaires</p>";
-
+                echo !empty($commentaire) ? "<p class='gestionnaire'>".$commentaire."<p class='text-muted text-sm info-commentaire'>(Par ".$nom." ".$prenom.", le ".$date_verification.")</p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par votre gestionnaire</p>";
                 ?>
             </div>
         </div>

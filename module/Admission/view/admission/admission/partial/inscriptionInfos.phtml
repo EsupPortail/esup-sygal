@@ -1,9 +1,6 @@
 <?php
 
 use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\Etat;
-use Admission\Entity\Db\Inscription;
-use Admission\Entity\Db\Verification;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
@@ -19,6 +16,7 @@ use Application\View\Renderer\PhpRenderer;
  */
 $form->prepare();
 $fcg = $this->formControlGroup();
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
@@ -35,7 +33,8 @@ if(!empty($admission) && !$canModifierAdmission) {
 
 <div class="row_sous_partie">
     <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Inscription demandée</h2>
+        <h2 class="titre_sous_partie">Inscription demandée<label class="titre_sous_partie_en">&nbsp; /  Application for registration</label></h2>
+        </h2>
     </div>
     <div class="row subfield">
         <div class="col">
@@ -97,8 +96,8 @@ if(!empty($admission) && !$canModifierAdmission) {
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <div class="row">
-            <div class="col-lg-4 col-sm-12">
-                <h2 class="titre_sous_partie">Spécificités envisagées</h2>
+            <div class="col-lg-5 col-sm-12">
+                <h2 class="titre_sous_partie">Spécificités envisagées<label class="titre_sous_partie_en">&nbsp; / Specificity(ies) planned</label></h2>
             </div>
             <div class="col">
                 <p class="informations-title-sous-partie">Demande de spécificité(s) à émettre obligatoirement via le(s) formulaire(s) téléchargeable(s) sur le site internet UNICAEN</p>
@@ -107,12 +106,12 @@ if(!empty($admission) && !$canModifierAdmission) {
     </div>
     <div class="row">
         <div class="row subfield">
-            <div class="col-lg-2 col-sm-12">
+            <div class="col-lg-3 col-sm-12">
                 <div class="checkbox_admission">
                     <?php echo $this->formControlGroup($fieldset->get('confidentialite')) ?>
                 </div>
             </div>
-            <div class="col-lg-10 col-sm-12">
+            <div class="col-lg-9 col-sm-12">
                 <div id="additionalFieldsConfidentialite">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
@@ -127,12 +126,12 @@ if(!empty($admission) && !$canModifierAdmission) {
         </div>
 
         <div class="row subfield">
-            <div class="col-lg-2 col-sm-12">
+            <div class="col-lg-3 col-sm-12">
                 <div class="checkbox_admission">
                     <?php echo $this->formControlGroup($fieldset->get('coTutelle')) ?>
                 </div>
             </div>
-            <div class="col-lg-10 col-sm-12">
+            <div class="col-lg-9 col-sm-12">
                 <div id="additionalFieldsCotutelle">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
@@ -146,12 +145,12 @@ if(!empty($admission) && !$canModifierAdmission) {
             </div>
         </div>
         <div class="row subfield">
-            <div class="col-lg-2 col-sm-12">
+            <div class="col-lg-3 col-sm-12">
                 <div class="checkbox_admission">
                     <?php echo $this->formControlGroup($fieldset->get('coDirection')) ?>
                 </div>
             </div>
-            <div class="col-lg-10 col-sm-12">
+            <div class="col-lg-9 col-sm-12">
                 <div id="additionalFieldsCodirection">
                     <div class="row">
                         <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
@@ -181,19 +180,19 @@ if(!empty($admission) && !$canModifierAdmission) {
             </div>
         </div>
         <div class="row subfield">
-            <div class="col-lg-2 col-sm-12">
+            <div class="col-lg-3 col-sm-12">
                 <div class="checkbox_admission">
                     <?php echo $this->formControlGroup($fieldset->get('coEncadrement')) ?>
                 </div>
             </div>
-            <div class="col-lg-10 col-sm-12">
+            <div class="col-lg-9 col-sm-12">
                 <p class="informations">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D.R. Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
             </div>
         </div>
     </div>
 </div>
 <?php
-if($canModifierAdmission) {
+if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'canVerifierAdmission' => $canVerifierAdmission,
         'fcg' => $fcg,

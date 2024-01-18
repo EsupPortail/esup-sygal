@@ -173,7 +173,31 @@ class DocumentService extends BaseService
         return $document;
     }
 
+    /**
+     * Supprime en bdd tous les documents sur un dossier d'admission.
+     *
+     * @param Admission $admission
+     */
+    public function deleteAllDocumentsForAdmission(Admission $admission)
+    {
+        try {
+            foreach ($admission->getDocument() as $document) {
+                $this->delete($document);
+            }
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de la suppression en bdd", null, $e);
+        }
+    }
 
+    public function getPathFile(Fichier $fichier){
+        return $this->fichierStorageService->getFileForFichier($fichier);
+    }
+
+    public function getExtensionDocument(Fichier $fichier){
+        $pathParts = pathinfo($fichier->getNomOriginal());
+
+        return mb_strtolower($pathParts['extension']);
+    }
 
     /**
      * @throws FichierServiceException
@@ -192,5 +216,49 @@ class DocumentService extends BaseService
         $fichier = Fichier::fromFilepath($filePath);
         $fichier->setNom($document->getFichier()->getNom());
         return $fichier;
+    }
+
+    public function createDocumentWithoutFichier(Admission $admission){
+        /** @var Document $document */
+        $document = $this->getRepository()->findOneWhereNoFichierByAdmission($admission)[0] ?? null;
+
+        //on en crée un Fieldset Document sans fichier
+        //afin de relier une Vérification à celui-ci
+        if (!$document instanceof Document) {
+            try {
+                $document = new Document();
+                $document->setAdmission($admission);
+                $this->create($document);
+            } catch (\Exception $e) {
+                throw new RuntimeException("Impossible d'enregistrer ce document", $e);
+            }
+        }
+    }
+
+    public function addCharteDoctoraleToAdmission(Admission $admission)
+    {
+        try {
+            /** @var Fichier $charteDoctorat */
+            $charteDoctorat = $this->fichierService->getRepository()->findOneBy(["idPermanent" => "CHARTE_DOCTORAT"]);
+
+            if ($charteDoctorat) {
+                $nature = $this->getRepository()->fetchNatureFichier("ADMISSION_CHARTE_DOCTORAT");
+                $charteDoctoratPath = $this->getPathFile($charteDoctorat);
+                $extension = $this->getExtensionDocument($charteDoctorat);
+
+                $newCharteDoctorat = new Fichier();
+                $newCharteDoctorat->setPath($charteDoctoratPath);
+                $newCharteDoctorat->setNomOriginal($charteDoctorat->getNomOriginal());
+                $newCharteDoctorat->setTypeMime($charteDoctorat->getTypeMime());
+                $newCharteDoctorat->setTaille($charteDoctorat->getTaille());
+                $newCharteDoctorat->setNature($nature);
+                $newCharteDoctorat->setVersion($charteDoctorat->getVersion());
+                $newCharteDoctorat->setNom($charteDoctorat->getIdPermanent() . "-" . $newCharteDoctorat->getShortUuid() . "." . $extension);
+
+                $this->createDocumentFromUpload($admission, [$newCharteDoctorat]);
+            }
+        } catch (\Exception $die) {
+            return $die->getMessage();
+        }
     }
 }

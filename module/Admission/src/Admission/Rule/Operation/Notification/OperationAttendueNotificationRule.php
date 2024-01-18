@@ -124,7 +124,7 @@ class OperationAttendueNotificationRule implements RuleInterface
                 case Role::CODE_ADMIN_TECH:
                     $emails["thomas.hamel@unicaen.fr"] = "Thomas Hamel";
                     break;
-                case Role::CODE_DOCTORANT:
+                case Role::ROLE_ID_USER:
                     $emails[$emailEtudiant] = $etudiant . "(étudiant)";
                     break;
 
@@ -135,9 +135,9 @@ class OperationAttendueNotificationRule implements RuleInterface
                         $admission->getInscription()->first()->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
                     $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
-                    if (!empty($individusRoles) && !count($individusRoles)) {
+                    if (empty($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
+                        $individusRoles = $structureConcrete ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     }
                     if (!empty($individusRoles) && count($individusRoles)) {
                         $emailsIndividuRoles = $this->collectEmails($individusRoles);
@@ -167,9 +167,9 @@ class OperationAttendueNotificationRule implements RuleInterface
                         $admission->getInscription()->first()->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
                     $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
-                    if (!empty($individusRoles) && !count($individusRoles)) {
+                    if (empty($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
+                        $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     }
                     if (!empty($individusRoles) && count($individusRoles)) {
                         $emailsIndividuRoles = $this->collectEmails($individusRoles);

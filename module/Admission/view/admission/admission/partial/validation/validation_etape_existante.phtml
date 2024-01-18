@@ -1,14 +1,14 @@
 <?php
+
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Laminas\Form\ElementInterface;
 
 /**
- * @var ElementInterface $element
- * @var int $individu
  * @var AdmissionValidation $operation
  * @var bool $ajaxModalEvent
  * @var string $returnUrl
+ * @var string $libelleOperation
  */
 
 $canSupprimerOperation =
@@ -17,10 +17,10 @@ $canSupprimerOperation =
 ?>
 <div class="row subfield">
     <div class="col-lg-2 circle_etape etape_signature">
-        <span class="icon icon-checked circle_success"></span>
+        <span class="icon icon-checked circle_icon-ok"></span>
     </div>
     <div class="col-lg-6 libelle_etape etape_signature">
-        <label><?php echo $operation->getTypeValidation()->getLibelle();?></label>
+        <label><?php echo $libelleOperation ?: $operation->getTypeValidation()->getLibelle(); ?></label>
     </div>
     <div class="col-lg-2 text-sm text-muted info_validation etape_signature">
         <p>
@@ -29,7 +29,7 @@ $canSupprimerOperation =
         </p>
     </div>
     <?php
-    if ($canSupprimerOperation) { ?>
+    if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
         <div class="col-lg-2 bouton_etape_validation">
             <a href="<?php echo $this->url('admission/devalider', [
                 'admissionValidation' => $operation->getId(),
@@ -38,7 +38,7 @@ $canSupprimerOperation =
                 'query' => ['redirect' => $returnUrl],
             ]) ?>"
                class="btn btn-danger collapsable-action"
-               title="Dévalider ce dossier d'admission ?"
+               title="Dévalider cette étape du dossier d'admission ?"
                data-toggle="confirmationx"
                data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
         </div>

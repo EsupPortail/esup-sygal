@@ -5,14 +5,14 @@ namespace Admission\Provider\Privilege;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 class AdmissionPrivileges extends Privileges {
-    const ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-lister-tous-dossiers-admission';
-    const ADMISSION_LISTER_SON_DOSSIER_ADMISSION  = 'admission-admission-lister-son-dossier-admission';
+    const ADMISSION_LISTER_MES_DOSSIERS_ADMISSION  = 'admission-admission-lister-mes-dossiers-admission';
     const ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-afficher-tous-dossiers-admission';
     const ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION = 'admission-admission-afficher-son-dossier-admission';
     const ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-modifier-tous-dossiers-admission';
     const ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION     = 'admission-admission-modifier-son-dossier-admission';
     const ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-supprimer-tous-dossiers-admission';
     const ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION     = 'admission-admission-supprimer-son-dossier-admission';
+    const ADMISSION_GENERER_RECAPITULATIF     = 'admission-admission-generer-recapitulatif';
 
     //validation
     const ADMISSION_VALIDER_TOUT = 'admission-admission-valider-tout';
@@ -21,6 +21,15 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_DEVALIDER_SIEN = 'admission-admission-devalider-sien';
     const ADMISSION_HISTORISER = 'admission-admission-historiser';
     const ADMISSION_VERIFIER  = 'admission-admission-verifier';
+    const ADMISSION_ACCEDER_COMMENTAIRES  = 'admission-admission-acceder-commentaires';
+
+    //validation
+    const ADMISSION_AJOUTER_AVIS_TOUT = 'admission-admission-ajouter-avis-tout';
+    const ADMISSION_AJOUTER_AVIS_SIEN = 'admission-admission-ajouter-avis-sien';
+    const ADMISSION_MODIFIER_AVIS_TOUT = 'admission-admission-modifier-avis-tout';
+    const ADMISSION_MODIFIER_AVIS_SIEN = 'admission-admission-modifier-avis-sien';
+    const ADMISSION_SUPPRIMER_AVIS_TOUT = 'admission-admission-supprimer-avis-tout';
+    const ADMISSION_SUPPRIMER_AVIS_SIEN = 'admission-admission-supprimer-avis-sien';
 
     //gestion des documents
     const ADMISSION_TELEVERSER_TOUT_DOCUMENT = 'admission-admission-televerser-tout-document';
@@ -33,4 +42,5 @@ class AdmissionPrivileges extends Privileges {
     //notification
     const ADMISSION_NOTIFIER_GESTIONNAIRES  = 'admission-admission-notifier-gestionnaires';
     const ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES  = 'admission-admission-commentaires-ajoutes';
+    const ADMISSION_NOTIFIER_DOSSIER_COMPLET  = 'admission-admission-notifier-dossier-complet';
 }

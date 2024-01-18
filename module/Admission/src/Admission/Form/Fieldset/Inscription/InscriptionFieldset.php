@@ -106,6 +106,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Select("specialiteDoctorat"))
                 ->setLabel("Code et libellé de la spécialité d'inscription en doctorat souhaitée")
+                ->setLabelAttributes(['data-after' => ""])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
@@ -117,6 +118,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Select("disciplineDoctorat"))
                 ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
+                ->setLabelAttributes(['data-after' => " / Discipline code"])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
@@ -127,6 +129,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $composanteDoctorat = new SearchAndSelect('composanteDoctorat', ['label' => "Composante de rattachement (U.F.R., instituts…)"]);
         $composanteDoctorat
             ->setAutocompleteSource($this->urlEtablissement )
+            ->setLabelAttributes(['data-after' => " / Component of attachment"])
             ->setSelectionRequired()
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
@@ -139,6 +142,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Select("ecoleDoctorale"))
                 ->setLabel("Ecole doctorale")
+                ->setLabelAttributes(['data-after' => " / Doctoral school"])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
@@ -149,6 +153,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Select("uniteRecherche"))
                 ->setLabel("Unité de recherche")
+                ->setLabelAttributes(['data-after' => " /   Laboratory"])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
@@ -164,6 +169,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $nomDirecteurThese = new SearchAndSelect('nomDirecteurThese', []);
         $nomDirecteurThese
             ->setSelectionRequired()
+            ->setLabelAttributes(['data-after' => " / Name of thesis supervisor"])
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
@@ -175,6 +181,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $prenomDirecteurThese = new SearchAndSelect('prenomDirecteurThese', ['label' => "Prénom du directeur de thèse"]);
         $prenomDirecteurThese
             ->setSelectionRequired()
+            ->setLabelAttributes(['data-after' => " / First name of thesis supervisor"])
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
@@ -186,6 +193,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Email('emailDirecteurThese'))
                 ->setLabel("Mail du directeur de thèse")
+                ->setLabelAttributes(['data-after' => " / Email of thesis supervisor"])
                 ->setAttributes([
                     'id' => 'emailDirecteurThese',
                 ])
@@ -198,6 +206,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $nomCodirecteurThese = new SearchAndSelect('nomCodirecteurThese', []);
         $nomCodirecteurThese
             ->setSelectionRequired()
+            ->setLabelAttributes(['data-after' => " / Name of thesis co-supervisor"])
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
@@ -209,6 +218,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $prenomCodirecteurThese = new SearchAndSelect('prenomCodirecteurThese', ['label' => "Prénom du co-directeur de thèse"]);
         $prenomCodirecteurThese
             ->setSelectionRequired()
+            ->setLabelAttributes(['data-after' => " / First name of thesis co-supervisor"])
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
@@ -220,6 +230,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Email('emailCodirecteurThese'))
                 ->setLabel("Mail du co-directeur de thèse")
+                ->setLabelAttributes(['data-after' => " / Email of thesis supervisor"])
                 ->setAttributes([
                     'id' => 'emailCodirecteurThese',
                 ])
@@ -227,6 +238,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(
             (new Textarea('titreThese'))
+                ->setLabelAttributes(['data-after' => " / Temporary Phd Title"])
         );
 
         //Spécifités envisagées
@@ -236,11 +248,13 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     1 => "Oui",
                     0 => "Non"])
                 ->setLabel("Confidentialité souhaitée")
+                ->setLabelAttributes(['data-after' => " / Privacy desired"])
         );
 
         $this->add(
             (new Date('dateConfidentialite'))
                 ->setLabel("Date de fin de confidentialité souhaitée (limitée à 10 ans)")
+                ->setLabelAttributes(['data-after' => " / Desired end date of confidentiality (Limited to 10 years)"])
                 ->setAttributes([
                     'min'  => $this->dateDuJourFormatee,
                     'max'  => $this->dateDans10Ans,
@@ -254,11 +268,13 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     1 => "Oui",
                     0 => "Non"])
                 ->setLabel("Cotutelle envisagée")
+                ->setLabelAttributes(['data-after' => " / Planned cotutelle"])
         );
 
         $paysCoTutelle = new SearchAndSelect('paysCoTutelle', ['label' => "Pays concerné"]);
         $paysCoTutelle
             ->setAutocompleteSource($this->urlPaysCoTutelle)
+            ->setLabelAttributes(['data-after' => " / Country"])
             ->setSelectionRequired()
             ->setAttributes([
                 'class' => 'selectpicker show-tick',
@@ -273,6 +289,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     1 => "Oui",
                     0 => "Non"])
                 ->setLabel("Co-encadrement envisagé")
+                ->setLabelAttributes(['data-after' => " / Co-supervision envisaged"])
         );
 
         $this->add(
@@ -281,6 +298,7 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     1 => "Oui",
                     0 => "Non"])
                 ->setLabel("Co-direction demandée")
+                ->setLabelAttributes(['data-after' => " / Co-direction asked"])
         );
 
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);

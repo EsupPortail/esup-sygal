@@ -1,7 +1,6 @@
 <?php
 namespace Admission\Entity\Db;
 
-use Admission\Service\Operation\AdmissionOperationService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
@@ -9,17 +8,20 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Notification\Exception\RuntimeException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenAvis\Entity\Db\AvisType;
 
 class Admission implements HistoriqueAwareInterface, ResourceInterface{
 
     use HistoriqueAwareTrait;
 
-    const ETAT_EN_COURS   = 'C';
+    const ETAT_EN_COURS_SAISIE   = 'C';
+    const ETAT_EN_COURS_VALIDATION   = 'E';
     const ETAT_ABANDONNE = 'A';
     const ETAT_VALIDE = 'V';
 
     const ETATS = [
-        self::ETAT_EN_COURS => self::ETAT_EN_COURS,
+        self::ETAT_EN_COURS_SAISIE => self::ETAT_EN_COURS_SAISIE,
+        self::ETAT_EN_COURS_VALIDATION => self::ETAT_EN_COURS_VALIDATION,
         self::ETAT_ABANDONNE => self::ETAT_ABANDONNE,
         self::ETAT_VALIDE => self::ETAT_VALIDE,
     ];
@@ -48,6 +50,12 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
 
     /** @var Collection|AdmissionValidation[] */
     private $admissionValidations;
+    /** @var Collection|AdmissionAvis[] */
+    private $admissionAvis;
+    /**
+     * @var Collection
+     */
+    private $conventionFormationDoctorale;
 
     /**
      * @var Collection
@@ -59,7 +67,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
      */
     private $individu;
 
-    /** @var AdmissionValidation|null */
+    /** @var AdmissionAvis | AdmissionValidation|null */
     private $operationPossible = null;
 
     /**
@@ -71,6 +79,8 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
         $this->etudiant = new ArrayCollection();
         $this->inscription = new ArrayCollection();
         $this->admissionValidations = new ArrayCollection();
+        $this->admissionAvis = new ArrayCollection();
+        $this->conventionFormationDoctorale = new ArrayCollection();
         $this->document = new ArrayCollection();
     }
 
@@ -194,6 +204,50 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function getInscription()
     {
         return $this->inscription;
+    }
+
+    /**
+     * @return AdmissionAvis[]|Collection
+     */
+    public function getAdmissionAvis(bool $includeHistorises = false): Collection
+    {
+        if ($includeHistorises) {
+            return $this->admissionAvis;
+        }
+
+        return $this->admissionAvis->filter(function(AdmissionAvis $admissionAvis) {
+            return $admissionAvis->estNonHistorise();
+        });
+    }
+
+    /**
+     * Retourne l'éventuel avis sur ce dossier d'admission, du type spécifié.
+     */
+    public function getAdmissionAvisOfType(AvisType $avisType): ?AdmissionAvis
+    {
+        $aviss = $this->getAdmissionAvis()->filter(function(AdmissionAvis $avis) use ($avisType) {
+            return $avis->getAvis()->getAvisType() === $avisType;
+        });
+
+        if (count($aviss) > 1) {
+            throw new RuntimeException("Anomalie : plusieurs avis de dossier d'admission du même type trouvées");
+        }
+
+        return $aviss->first() ?: null;
+    }
+
+    public function addAdmissionAvis(AdmissionAvis $admissionAvis): self
+    {
+        $this->admissionAvis->add($admissionAvis);
+
+        return $this;
+    }
+
+    public function removeAdmissionAvis(AdmissionAvis $admissionAvis): self
+    {
+        $this->admissionAvis->removeElement($admissionAvis);
+
+        return $this;
     }
 
     /**
@@ -332,5 +386,98 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function getResourceId()
     {
         return "Admission";
+    }
+
+    public function isDossierComplet(){
+        /** @var Verification $verificationEtudiant */
+        $verificationEtudiant = $this->getEtudiant()->first()->getVerificationEtudiant()->first()
+            ? $this->getEtudiant()->first()->getVerificationEtudiant()->first()
+            : null;
+        $isCompletEtudiant = $verificationEtudiant && $verificationEtudiant->getEstComplet();
+
+        /** @var Verification $verificationInscription */
+        $verificationInscription = $this->getInscription()->first() && $this->getInscription()->first()->getVerificationInscription()->first()
+        ? $this->getInscription()->first()->getVerificationInscription()->first()
+        : null;
+        $isCompletInscription = $verificationInscription && $verificationInscription->getEstComplet();
+
+        /** @var Verification $verificationFinancement */
+        $verificationFinancement = $this->getFinancement()->first() && $this->getFinancement()->first()->getVerificationFinancement()->first()
+            ? $this->getFinancement()->first()->getVerificationFinancement()->first()
+        : null;
+        $isCompletFinancement = $verificationFinancement && $verificationFinancement->getEstComplet();
+//        var_dump($this->getDocument());
+//        var_dump($this->getDocument()->first() );
+        /** @var Verification $verificationDocument */
+        $verificationDocument = $this->getDocument()->first() && $this->getDocument()->first()->getVerificationDocument()->first()
+        ? $this->getDocument()->first()->getVerificationDocument()->first()
+        : null;
+        $isCompletDocument = $verificationDocument && $verificationDocument->getEstComplet();
+
+        return $isCompletEtudiant && $isCompletInscription && $isCompletFinancement && $isCompletDocument;
+    }
+
+    public function hasComments(){
+        /** @var Verification $verificationEtudiant */
+        $verificationEtudiant = $this->getEtudiant()->first() && $this->getEtudiant()->first()->getVerificationEtudiant()->first()
+            ? $this->getEtudiant()->first()->getVerificationEtudiant()->first()
+            : null;
+        $hasCommentairesEtudiant = $verificationEtudiant && $verificationEtudiant->getCommentaire();
+
+        /** @var Verification $verificationInscription */
+        $verificationInscription = $this->getInscription()->first() && $this->getInscription()->first()->getVerificationInscription()->first()
+            ? $this->getInscription()->first()->getVerificationInscription()->first()
+            : null;
+        $hasCommentairesInscription = $verificationInscription && $verificationInscription->getCommentaire();
+
+        /** @var Verification $verificationFinancement */
+        $verificationFinancement = $this->getFinancement()->first() && $this->getFinancement()->first()->getVerificationFinancement()->first()
+            ? $this->getFinancement()->first()->getVerificationFinancement()->first()
+            : null;
+        $hasCommentairesFinancement = $verificationFinancement && $verificationFinancement->getCommentaire();
+
+        /** @var Verification $verificationDocument */
+        $verificationDocument = $this->getDocument()->first() && $this->getDocument()->first()->getVerificationDocument()->first()
+            ? $this->getDocument()->first()->getVerificationDocument()->first()
+            : null;
+        $hasCommentairesDocument = $verificationDocument && $verificationDocument->getCommentaire();
+
+        return $hasCommentairesEtudiant || $hasCommentairesInscription || $hasCommentairesFinancement || $hasCommentairesDocument;
+    }
+
+    /**
+     * Add conventionFormationDoctorale.
+     *
+     * @param ConventionFormationDoctorale $conventionFormationDoctorale
+     *
+     * @return Admission
+     */
+    public function addConventionFormationDoctorale(ConventionFormationDoctorale $conventionFormationDoctorale)
+    {
+        $this->conventionFormationDoctorale[] = $conventionFormationDoctorale;
+
+        return $this;
+    }
+
+    /**
+     * Remove conventionFormationDoctorale.
+     *
+     * @param ConventionFormationDoctorale $conventionFormationDoctorale
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeConventionFormationDoctorale(ConventionFormationDoctorale $conventionFormationDoctorale)
+    {
+        return $this->conventionFormationDoctorale->removeElement($conventionFormationDoctorale);
+    }
+
+    /**
+     * Get conventionFormationDoctorale.
+     *
+     * @return Collection
+     */
+    public function getConventionFormationDoctorale()
+    {
+        return $this->conventionFormationDoctorale;
     }
 }

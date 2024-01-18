@@ -7,6 +7,7 @@ use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\AdmissionRepository;
+use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
 use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
@@ -35,6 +36,7 @@ class AdmissionService extends BaseService
     use FinancementServiceAwareTrait;
     use AdmissionValidationServiceAwareTrait;
     use DocumentServiceAwareTrait;
+    use AdmissionAvisServiceAwareTrait;
 
     /**
      * @return AdmissionRepository
@@ -120,7 +122,6 @@ class AdmissionService extends BaseService
 
         try {
             $etudiant = $admission->getEtudiant()->first();
-
             if($etudiant instanceof Etudiant){
                 $this->etudiantService->delete($etudiant);
             }
@@ -135,12 +136,9 @@ class AdmissionService extends BaseService
                 $this->financementService->delete($financement);
             }
 
-            $documents = $admission->getDocument();
-            foreach($documents as $document){
-                $this->documentService->delete($document);
-            }
-
+            $this->documentService->deleteAllDocumentsForAdmission($admission);
             $this->admissionValidationService->deleteValidationForAdmission($admission);
+            $this->admissionAvisService->deleteAllAvisForAdmission($admission);
 
             $this->getEntityManager()->remove($admission);
             $this->getEntityManager()->flush($admission);

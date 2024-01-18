@@ -1,5 +1,5 @@
 //fonction affichant ou non les div en fonction de boutons radios
-function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
+function showOrNotDiv(radiobutton, additionnalFields) {
     radiobutton.forEach(function (radio) {
         radio.addEventListener('change', function () {
             if (radio.checked && radio.value === "1") {
@@ -9,7 +9,7 @@ function showOrNotDiv(radiobutton, additionnalFields, ifItsAtLoadingPage) {
             }
         });
 
-        if (ifItsAtLoadingPage && radio.checked && radio.value === "1") {
+        if (radio.checked && radio.value === "1") {
             additionnalFields.style.display = 'block';
         }
     });
@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function() {
             label.classList.add('selected');
         });
 
-        // Sélectionnez le label parent et ajoutez la classe "selected"
         const label = radioButton.parentElement;
         if (radioButton.checked) {
             label.classList.add('selected');
@@ -45,10 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
             commentairesDiv.style.display = "none";
         }
     });
-});
 
-
-setTimeout(function () {
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
         if(readOnly){
@@ -59,12 +55,32 @@ setTimeout(function () {
             $('select[name="etudiant[anneeDobtentionDiplomeNational]"]').attr('disabled', true);
         }
         $('input:radio[name="etudiant[civilite]"]:not(:checked)').attr('disabled', true);
+
+        const btn_infos_ine = document.querySelector('.info_ine');
+        if (btn_infos_ine) {
+            btn_infos_ine.addEventListener('click', function (e) {
+                e.preventDefault()
+                $('#modalInfosIne').modal('show');
+            })
+        }
+
         const diplomeRadios = document.querySelectorAll('input[name="etudiant[niveauEtude]"]');
         const additionalFieldsDiplome = document.getElementById('additional_fields_diplome');
         const additionalFieldsAutre = document.getElementById('additional_fields_autre');
 
         additionalFieldsDiplome.style.display = 'none';
         additionalFieldsAutre.style.display = 'none';
+
+        diplomeRadios.forEach(function (radio) {
+            if (radio.checked && radio.value === "1") {
+                additionalFieldsDiplome.style.display = 'block';
+                additionalFieldsAutre.style.display = 'none';
+            }
+            if (radio.checked && radio.value === "2") {
+                additionalFieldsDiplome.style.display = 'none';
+                additionalFieldsAutre.style.display = 'block';
+            }
+        });
 
         diplomeRadios.forEach(function (radio) {
             radio.addEventListener('change', function () {
@@ -77,19 +93,6 @@ setTimeout(function () {
                 }
             });
         });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            diplomeRadios.forEach(function (radio) {
-                if (radio.checked && radio.value === "1") {
-                    additionalFieldsDiplome.style.display = 'block';
-                    additionalFieldsAutre.style.display = 'none';
-                }
-                if (radio.checked && radio.value === "2") {
-                    additionalFieldsDiplome.style.display = 'none';
-                    additionalFieldsAutre.style.display = 'block';
-                }
-            });
-        })
     }
 
     if (currentUrl.indexOf("/inscription") !== -1) {
@@ -110,18 +113,12 @@ setTimeout(function () {
         const additionalFieldsCotutelle = document.getElementById('additionalFieldsCotutelle');
         const additionalFieldsCodirection = document.getElementById('additionalFieldsCodirection');
 
-        document.addEventListener('DOMContentLoaded', function () {
-            additionalFieldsConfidentialite.style.display = 'none';
-            additionalFieldsCotutelle.style.display = 'none';
-            additionalFieldsCodirection.style.display = 'none';
-            showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite, true)
-            showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle, true)
-            showOrNotDiv(codirectionRadios, additionalFieldsCodirection, true)
-        })
-
-        showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite, false)
-        showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle, false)
-        showOrNotDiv(codirectionRadios, additionalFieldsCodirection, false)
+        additionalFieldsConfidentialite.style.display = 'none';
+        additionalFieldsCotutelle.style.display = 'none';
+        additionalFieldsCodirection.style.display = 'none';
+        showOrNotDiv(confidentialiteRadios, additionalFieldsConfidentialite)
+        showOrNotDiv(cotutelleRadios, additionalFieldsCotutelle)
+        showOrNotDiv(codirectionRadios, additionalFieldsCodirection)
     }
 
     if (currentUrl.indexOf("/financement") !== -1) {
@@ -134,133 +131,133 @@ setTimeout(function () {
 
         additionalFieldscontratDoctoral.style.display = 'none';
 
-        document.addEventListener('DOMContentLoaded', function () {
-            showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral, true)
-        })
-
-        showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral, false)
+        showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral)
     }
 
     if (currentUrl.indexOf("/document") !== -1) {
-        $(document).ready(function () {
-            FilePond.registerPlugin(FilePondPluginFileValidateType);
+        FilePond.registerPlugin(FilePondPluginFileValidateType);
+        FilePond.registerPlugin(FilePondPluginPdfPreview);
 
-            let serverResponse = '';
-            // Sélectionner tous les champs de fichier et les transformer en champs FilePond
-            $('input[type="file"]').each(function () {
-                const inputId = $(this).attr('id');
-                const pond = FilePond.create(this, {
-                    acceptedFileTypes: ['application/pdf', 'image/png', 'image/jpeg'],
-                    server: {
-                        url: '/admission',
-                        process: {
-                            url: '/enregistrer-document/'+ individuId + '/' + inputId,
-                            // ondata: (formData) => {
-                            //     formData.append('individu', individuId);
-                            //     formData.append('codeNatureFichier', inputId);
-                            //     return formData;
-                            // },
-                            onerror: (response) =>
-                                serverResponse = JSON.parse(response),
-                        },
-                        revert: {
-                            url: '/supprimer-document/'+ individuId + '/' + inputId,
-                            onerror: (response) =>
-                                serverResponse = JSON.parse(response),
-                        },
-                        load: {
-                            url: '/telecharger-document/'+ individuId + '/' + inputId +'?name=',
-                        },
-                        remove: (source, load, error) => {
-                            fetch('/admission/supprimer-document/'+ individuId + '/' + inputId, {
-                                method: 'DELETE',
-                            }).then(response => {
-                                if (!response.ok) {
-                                    error("Erreur de suppression")
-                                    throw new Error("Erreur de suppression");
-                                }
-                                load();
-                                const admissionFileDiv = document.getElementById(inputId);
-                                if (admissionFileDiv) {
-                                    const uploadFileDiv = admissionFileDiv.parentElement;
-                                    if (uploadFileDiv) {
-                                        const dateTeleversementDiv = uploadFileDiv.nextElementSibling;
-                                        const actionFileDiv = dateTeleversementDiv.nextElementSibling;
-                                        if (dateTeleversementDiv && actionFileDiv) {
-                                            dateTeleversementDiv.style.display = 'none';
-                                            actionFileDiv.style.display = 'none';
-                                        }
+        let serverResponse = '';
+        // Sélectionner tous les champs de fichier et les transformer en champs FilePond
+        $('input[type="file"]').each(function () {
+            const inputId = $(this).attr('id');
+            const pond = FilePond.create(this, {
+                acceptedFileTypes: ['application/pdf', 'image/png', 'image/jpeg'],
+                server: {
+                    url: '/admission',
+                    process: {
+                        url: '/enregistrer-document/' + individuId + '/' + inputId,
+                        onerror: (response) =>
+                            serverResponse = JSON.parse(response),
+                    },
+                    revert: {
+                        url: '/supprimer-document/' + individuId + '/' + inputId,
+                        onerror: (response) =>
+                            serverResponse = JSON.parse(response),
+                    },
+                    load: {
+                        url: '/telecharger-document/' + individuId + '/' + inputId + '?name=',
+                    },
+                    remove: (source, load, error) => {
+                        fetch('/admission/supprimer-document/' + individuId + '/' + inputId, {
+                            method: 'DELETE',
+                        }).then(response => {
+                            if (!response.ok) {
+                                error("Erreur de suppression")
+                                throw new Error("Erreur de suppression");
+                            }
+                            load();
+                            const admissionFileDiv = document.getElementById(inputId);
+                            if (admissionFileDiv) {
+                                const uploadFileDiv = admissionFileDiv.parentElement;
+                                if (uploadFileDiv) {
+                                    const dateTeleversementDiv = uploadFileDiv.nextElementSibling;
+                                    const actionFileDiv = dateTeleversementDiv.nextElementSibling;
+                                    if (dateTeleversementDiv && actionFileDiv) {
+                                        dateTeleversementDiv.style.display = 'none';
+                                        actionFileDiv.style.display = 'none';
                                     }
                                 }
-                            }).catch(error => {
-                                console.log(error)
-                            });
-                        }
-                    },
-                    beforeRemoveFile: function () { return confirm("Êtes-vous sûr de vouloir supprimer ce fichier ?"); },
-                    labelFileProcessingError: () => {
-                        return serverResponse.errors;
-                    },
-                    labelFileProcessingRevertError: () => {
-                        return serverResponse.errors;
-                    },
-                    labelFileRemoveError: () => {
-                        return serverResponse.errors;
-                    },
-                    labelFileLoadError: "Erreur durant le chargement",
-                    labelFileProcessing: "En cours de téléversement",
-                    labelFileLoading: "Chargement",
-                    labelFileProcessingComplete: "Téléversement terminé",
-                    labelFileProcessingAborted: "Téléversement annulé",
-                    labelFileWaitingForSize: "En attente de la taille",
-                    labelFileSizeNotAvailable: "Taille non disponible",
-                    labelTapToUndo: "Appuyez pour revenir en arrière",
-                    labelTapToRetry: "Appuyez pour réessayer",
-                    labelTapToCancel: "Appuyez pour annuler",
-                    labelIdle: "Glissez-déposez votre document ou <span class='filepond--label-action'> parcourir </span>",
-                    forceRevert: true,
-                    allowRemove: true,
-                    allowMultiple: false,
-                    allowReplace: false,
-                    disabled: !!readOnly,
-                    credits: false,
-                    maxFiles: 1,
-                });
-
-
-                // Vérifier si l'ID d'input correspond à une entrée dans le tableau de documents
-                if (documents.hasOwnProperty(inputId)) {
-                    // Construire l'objet de fichier
-                    var fichier = {
-                        source: documents[inputId].libelle,
-                        options: {
-                            type: 'local', // Type de fichier local
-                        }
-                    };
-                    // Ajouter le fichier à FilePond
-                    pond.addFiles([fichier]);
-                }
+                            }
+                        }).catch(error => {
+                            console.log(error)
+                        });
+                    }
+                },
+                beforeRemoveFile: function () {
+                    return confirm("Êtes-vous sûr de vouloir supprimer ce fichier ?");
+                },
+                labelFileProcessingError: () => {
+                    return serverResponse.errors;
+                },
+                labelFileProcessingRevertError: () => {
+                    return serverResponse.errors;
+                },
+                labelFileRemoveError: () => {
+                    return serverResponse.errors;
+                },
+                labelFileLoadError: "Erreur durant le chargement",
+                labelFileProcessing: "En cours de téléversement",
+                labelFileLoading: "Chargement",
+                labelFileProcessingComplete: "Téléversement terminé",
+                labelFileProcessingAborted: "Téléversement annulé",
+                labelFileWaitingForSize: "En attente de la taille",
+                labelFileSizeNotAvailable: "Taille non disponible",
+                labelTapToUndo: "Appuyez pour revenir en arrière",
+                labelTapToRetry: "Appuyez pour réessayer",
+                labelTapToCancel: "Appuyez pour annuler",
+                labelIdle: "Glissez-déposez votre document ou <span class='filepond--label-action'> parcourir </span>",
+                forceRevert: true,
+                allowRemove: inputId !== "ADMISSION_CHARTE_DOCTORAT",
+                allowMultiple: false,
+                allowReplace: false,
+                disabled: !!readOnly,
+                credits: false,
+                maxFiles: 1,
+                pdfPreviewHeight: inputId === "ADMISSION_CHARTE_DOCTORAT" ? 500 : false,
+                pdfComponentExtraParams: inputId === "ADMISSION_CHARTE_DOCTORAT" ? 'toolbar=0&page=1' : false,
+                allowPdfPreview: inputId === "ADMISSION_CHARTE_DOCTORAT",
             });
 
-            const submitButton = document.querySelector('input[name="document[_nav][_submit]"]');
-            var count = 0;
-            if (submitButton) {
-                // submitButton.addEventListener('click', function(event) {
-                //     if(count === 0){
-                //         event.preventDefault();
-                //         $('.modal').modal('show');
-                //     }
-                //
-                //     $('.modal').on('click', '.confirm-btn', function() {
-                //         count = 1;
-                //         $(submitButton).click();
-                //     });
-                // });
+
+            // Vérifier si l'ID d'input correspond à une entrée dans le tableau de documents
+            if (documents.hasOwnProperty(inputId)) {
+                // Construire l'objet de fichier
+                var fichier = {
+                    source: documents[inputId].libelle,
+                    options: {
+                        type: 'local', // Type de fichier local
+                    }
+                }
+                // Ajouter le fichier à FilePond
+                pond.addFiles([fichier]);
             }
 
+            var accessButton = document.querySelector('.access_charte_doctorat');
+            var fileDiv = document.querySelector('.file_charte_doctorat');
+
+            accessButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                $('#modalShowCharteDoctorale').modal('show');
+                fileDiv.style.display = 'block';
+            });
+
+            //Si aucune école doctorale n'est renseignée
+            const parentDiv = document.querySelector('.notifier_gestionnaires');
+            const lien = parentDiv ? parentDiv.querySelector('a.btn.btn-primary') : null;
+            if (lien && !ecoleDoctoraleRenseignee) {
+                lien.dataset.message = 'Veuillez renseigner votre École doctorale';
+                lien.style.opacity = '0.5';
+                lien.removeAttribute('data-toggle');
+                lien.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    $('#modalErreurNotification').modal('show');
+                })
+            }
         });
     }
-}, 100)
+})
 
 $(document).ready(function () {
     if (currentUrl.indexOf("/inscription") !== -1) {
@@ -300,4 +297,3 @@ $(document).ready(function () {
         })
     })
 });
-

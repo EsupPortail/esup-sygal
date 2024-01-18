@@ -1,9 +1,8 @@
 <?php
 
 use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\Etat;
+use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\TypeValidation;
-use Admission\Entity\Db\Verification;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
@@ -18,13 +17,18 @@ use Application\View\Renderer\PhpRenderer;
  * @var string              $error
  * @var array               $dataForm
  * @var array               $documents
+ * @var boolean $dossierValideParGestionnaire
+ * @var AdmissionOperationInterface $operationEnAttente
  */
 $form->prepare();
 $fcg = $this->formControlGroup();
-
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
 $canNotifierGestionnairesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES);
 $canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
+$canNotifierDossierComplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET);
+$canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
+
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
@@ -33,67 +37,75 @@ if(!empty($admission) && !$canModifierAdmission) {
         $element->setAttribute('readonly', true);
     }
 }
-$individu = $dataForm["etudiant"]["individu"];
+$individu = $admission->getIndividu()->getId();
+$ecoleDoctoraleRenseignee = $admission && $admission->getInscription()->first()->getEcoleDoctorale() ? 1 : 0;
 ?>
 
 <script>
     var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? '1' : '0'; ?>;
     var documents = <?php echo json_encode($documents); ?>;
     var individuId = <?php echo $individu; ?>;
+    var ecoleDoctoraleRenseignee = <?php echo $ecoleDoctoraleRenseignee; ?>;
 </script>
 
 <head>
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.css" rel="stylesheet">
 </head>
 <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.js"></script>
 <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 
 <div class="row_sous_partie">
     <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Pièces justificatives</h2>
+        <h2 class="titre_sous_partie">Pièces justificatives<label class="titre_sous_partie_en">&nbsp; /  Supporting documents</label></h2>
     </div>
     <div class="row subfield">
         <div class="col informations-pieces_justificatives">
-            <p>Obligatoires</p>
+            <p>Obligatoires<label class="titre_sous_partie_en">&nbsp; / Required</label></p>
         </div>
     </div>
     <?php
-        echo $this->partial('admission/partial/document/document', [
+    echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('diplomeBac'),
         'documents' => $documents,
         'individu' => $individu,
-        ]);
-        echo $this->partial('admission/partial/document/document', [
-            'fieldset' => $fieldset->get('curicculumVitae'),
-            'documents' => $documents,
-            'individu' => $individu,
-        ]);
-        echo $this->partial('admission/partial/document/document', [
-            'fieldset' => $fieldset->get('financement'),
-            'documents' => $documents,
-            'individu' => $individu,
-        ]);
-        echo $this->partial('admission/partial/document/document', [
-            'fieldset' => $fieldset->get('projetThese'),
-            'documents' => $documents,
-            'individu' => $individu,
-        ]);
-        echo $this->partial('admission/partial/document/document', [
-            'fieldset' => $fieldset->get('exemplairesConvention'),
-            'documents' => $documents,
-            'individu' => $individu,
-        ]);
-        echo $this->partial('admission/partial/document/document', [
-            'fieldset' => $fieldset->get('exemplairesCharteDoctorat'),
-            'documents' => $documents,
-            'individu' => $individu,
-        ]);
-    ?>
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('curicculumVitae'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('financement'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('projetThese'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('exemplairesConvention'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    $returnUrl = $this->url('admission/ajouter', ['action' => "document",
+            'individu' => $individu]
+    );
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('exemplairesCharteDoctorat'),
+        'documents' => $documents,
+        'individu' => $individu,
+        'validation_charte_doctorat' => $operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE],
+        'returnUrl' => $returnUrl
+    ]);
 
-    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2) { ?>
+    if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
-                <p>Vous avez un autre diplôme qu'un master français (Dérogation)</p>
+                <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="titre_sous_partie_en">&nbsp; / If other than a French Master's degree (Derogation)</label></p>
             </div>
         </div>
         <div class="row subfield">
@@ -108,7 +120,7 @@ $individu = $dataForm["etudiant"]["individu"];
     if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && (isset($dataForm['etudiant']['typeDiplomeAutre']) && $dataForm['etudiant']['typeDiplomeAutre'] == 1)) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
-                <p>Vous êtes titulaire d'un titre étranger</p>
+                <p>Vous êtes titulaire d'un titre étranger<label class="titre_sous_partie_en">&nbsp; / If the student has a foreign qualification</label></p>
             </div>
         </div>
         <?php
@@ -143,7 +155,7 @@ $individu = $dataForm["etudiant"]["individu"];
     if ($confidentialiteChecked || $coTutelleChecked || $coEncadrementChecked || $coDirectionChecked) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
-                <p>Spécificité(s) demandée(s)</p>
+                <p>Spécificité(s) demandée(s)<label class="titre_sous_partie_en">&nbsp; /  Specificities requested</label></p>
             </div>
         </div>
         <?php if ($confidentialiteChecked) { ?>
@@ -169,8 +181,9 @@ $individu = $dataForm["etudiant"]["individu"];
         }
     } ?>
 </div>
+
 <?php
-if($canModifierAdmission) {
+if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'canVerifierAdmission' => $canVerifierAdmission,
         'fcg' => $fcg,
@@ -180,16 +193,15 @@ if($canModifierAdmission) {
     ]);
 }
 ?>
+
 <div class="row notifier_commentaires_ajoutes">
     <?php
-    $dossier_complet = false;
-    foreach ($operations as $i => $operation):
-        $dossier_complet = ($i == TypeValidation::CODE_VALIDATION_GESTIONNAIRE && $operation->getId()) ? true : $dossier_complet;
-    endforeach;
-    if($canNotifierCommentairesAjoutesAdmission && !$dossier_complet){
-        $returnUrl = $this->url('admission/ajouter', ['action' => "document",
-                'individu' => $individu]
-        ); ?>
+    $returnUrl = $this->url('admission/ajouter', ['action' => "document",
+            'individu' => $individu]
+    );
+    //Permettre aux gestionnaires de notifier l'étudiant que des commentaires ont été rentrés, seulement
+    //si le dossier n'est pas encore noté comme complet et que des commentaires ont été renseignés
+    if($canNotifierCommentairesAjoutesAdmission && !$admission->isDossierComplet() && $admission->hasComments()){ ?>
         <a href="<?php echo $this->url('admission/notifier-commentaires-ajoutes', [
             'admission' => $admission->getId(),
         ], [
@@ -200,6 +212,19 @@ if($canModifierAdmission) {
            data-toggle="confirmationx"
            data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant des commentaires ajoutés à son dossier ?">Notifier
             l'étudiant des commentaires ajoutés</span></a>
+    <?php }
+    //Permettre aux gestionnaires de notifier l'étudiant que son dossier est complet
+    else if($canNotifierDossierComplet && $admission->isDossierComplet() && !$dossierValideParGestionnaire){ ?>
+        <a href="<?php echo $this->url('admission/notifier-dossier-complet', [
+            'admission' => $admission->getId(),
+        ], [
+            'query' => ['redirect' => $returnUrl],
+        ]) ?>"
+           class="btn btn-primary collapsable-action"
+           title="Notifier l'étudiant que son dossier est complet ?"
+           data-toggle="confirmationx"
+           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant que son dossier est complet ?">Notifier
+            l'étudiant que son dossier est complet</span></a>
     <?php } ?>
 </div>
 <div class="row_sous_partie">
@@ -210,16 +235,25 @@ if($canModifierAdmission) {
         $returnUrl = $this->url('admission/ajouter', ['action' => "document",
                 'individu' => $individu]
         );
-        echo $this->partial('admission/admission/partial/validation/circuit_validation', [
+        echo $this->partial('admission/admission/partial/circuit-signatures', [
             'operations' => $operations,
             'individu' => $individu,
-            'returnUrl' => $returnUrl
+            'returnUrl' => $returnUrl,
+            'operationEnAttente' => $operationEnAttente,
+            'admission' => $admission,
+            'showActionButtons' => true
         ]);
-    ?>
+    if($canGenererRecapitulatif){ ?>
+        <a class="btn btn-primary" href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>" target="_blank">
+            <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
+            Télécharger le récapitulatif du dossier d'admission
+        </a>
+    <?php } ?>
 </div>
+
 <?php
-//Permet à l'étudiant de notifier les gestionnaires de son dossier, seulement si le dossier n'est pas complet
-if ($canNotifierGestionnairesAdmission && !$dossier_complet) {
+//Permet à l'étudiant de notifier les gestionnaires de son dossier, seulement si la validation par la gestionnaire n'a pas encore été effectuée
+if ($canNotifierGestionnairesAdmission && !$dossierValideParGestionnaire) {
     $returnUrl = $this->url('admission/ajouter', ['action' => "document", 'individu' => $individu]); ?>
     <div class="row notifier_gestionnaires">
         <a href="<?php echo $this->url('admission/notifier-gestionnaire', [
@@ -227,10 +261,25 @@ if ($canNotifierGestionnairesAdmission && !$dossier_complet) {
         ], [
             'query' => ['redirect' => $returnUrl],
         ]) ?>"
-           class="btn btn-primary collapsable-action"
-           title="Notifier vos gestionnaires de la saisie de vos informations, afin qu'ils vérifient votre dossier ?"
+           class="btn btn-primary"
+           title="Notifier votre gestionnaire de la saisie de vos informations, afin qu'ils vérifient votre dossier ?"
            data-toggle="confirmationx"
-           data-message="Êtes-vous sûr·e de vouloir notifier vos gestionnaires de la saisie de vos informations, afin qu'ils vérifient votre dossier ?">Notifier
-            vos gestionnaires</span></a>
+           data-message="Êtes-vous sûr·e de vouloir notifier votre gestionnaire de la saisie de vos informations, afin qu'il vérifie votre dossier ?">Notifier
+            votre gestionnaire</span></a>
+    </div>
+    <div class="modal fade" id="modalErreurNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Erreur dans l'envoi de la notification à votre gestionnaire</h4>
+                </div>
+                <div class="modal-body">
+                    Veuillez renseigner votre école doctorale, avant de pouvoir envoyer une notification à votre gestionnaire
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
     </div>
 <?php } ?>

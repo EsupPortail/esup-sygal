@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Admission\Notification;
 
 use Admission\Entity\Db\AdmissionOperationInterface;
@@ -7,7 +8,6 @@ use Notification\Notification;
 
 class AdmissionOperationAttenduNotification extends Notification
 {
-    protected ?string $templatePath = 'admission/admission/notification/operation-attendue';
     private AdmissionOperationInterface $operationAttendue;
     private array $anomalies = [];
 
@@ -35,7 +35,7 @@ class AdmissionOperationAttenduNotification extends Notification
     {
         $successMessage = sprintf(
             "Un mail de notification vient d'être envoyé aux personnes suivantes : %s",
-            implode(', ', array_reduce(array_keys($this->to), function(array $accu, string $key) {
+            implode(', ', array_reduce(array_keys($this->to), function (array $accu, string $key) {
                 $accu[] = sprintf('%s (%s)', $this->to[$key], $key);
                 return $accu;
             }, []))

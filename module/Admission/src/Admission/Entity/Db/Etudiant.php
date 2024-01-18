@@ -1060,4 +1060,108 @@ class Etudiant implements HistoriqueAwareInterface{
     {
         return $this->verificationEtudiant;
     }
+
+    /** Pour macro ****************************************************************************************************/
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getDenominationEtudiant() : string
+    {
+        return $this->getCivilite()." ".$this->getNomUsuel()." ".$this->getPrenom();
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getDateNaissanceFormat()
+    {
+        return $this->getDateNaissance() ? $this->getDateNaissance()->format("d/m/Y") : null;
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getNationaliteLibelle()
+    {
+        return $this->getNationalite() ? $this->getNationalite()->getLibelleNationalite() : null;
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getPaysNaissanceLibelle()
+    {
+        return $this->getPaysNaissance() ? $this->getPaysNaissance()->getLibelle() : null;
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getSituationHandicapLibelle()
+    {
+        if(empty($this->getSituationHandicap())){
+            return "<b>Non renseigné</b>";
+        }else{
+            return $this->getSituationHandicap() ? "Oui" : "Non";
+        }
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getNiveauEtudeInformations(){
+        if($this->niveauEtude == 1){
+            return "Diplôme national tel que le master";
+        }else if($this->niveauEtude == 2){
+            return "Diplôme autre qu'un diplôme national - à titre dérogatoire";
+        }else{
+            return "<b>Non renseigné</b>";
+        }
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getDiplomeIntituleInformations()
+    {
+        if ($this->getNiveauEtude() == 1) {
+            $str = "<table>
+                       <tr>
+                        <th>Intitulé</th>
+                        <th>Année d'obtention</th>
+                        <th>Établissement d'obtention</th>
+                       </tr>
+                       <tr>
+                          <td>".$this->getIntituleDuDiplomeNational()."</td>
+                          <td>".$this->getAnneeDobtentionDiplomeNational()."</td>
+                          <td>".$this->getEtablissementDobtentionDiplomeNational()."</td>
+                        </tr>
+                     </table>";
+            return $str;
+        }else if($this->getNiveauEtude() == 2){
+            $typeDiplome = null;
+            if($this->getTypeDiplomeAutre() == 1){
+                $typeDiplome = "Diplôme obtenu à l'étranger";
+            }else if($this->getTypeDiplomeAutre() == 2){
+                $typeDiplome = "Diplôme français ne conférant pas le grade de master";
+            }
+
+            $str = "<table>
+                       <tr>
+                        <th>Intitulé</th>
+                        <th>Année d'obtention</th>
+                        <th>Etablissement d'obtention</th>
+                        <th>Informations supplémentaires</th>
+                       </tr>
+                       <tr>
+                          <td>".$this->getIntituleDuDiplomeAutre()."</td>
+                          <td>".$this->getAnneeDobtentionDiplomeAutre()."</td>
+                          <td>".$this->getEtablissementDobtentionDiplomeAutre()."</td>
+                          <td>".$typeDiplome."</td>
+                        </tr>
+                     </table>";
+            return $str;
+        }
+    }
 }

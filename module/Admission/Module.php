@@ -3,6 +3,7 @@
 namespace Admission;
 
 use Admission\Event\AdmissionEventListener;
+use Admission\Event\Avis\AdmissionAvisEventListener;
 use Admission\Event\Validation\AdmissionValidationEventListener;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Mvc\MvcEvent;
@@ -23,6 +24,10 @@ class Module
 //        /** @var AdmissionEventListener $admissionListener */
 //        $admissionListener = $container->get(AdmissionEventListener::class);
 //        $admissionListener->attach($eventManager);
+
+        /** @var AdmissionAvisEventListener $admissionAvisListener */
+        $admissionAvisListener = $container->get(AdmissionAvisEventListener::class);
+        $admissionAvisListener->attach($eventManager);
         
         /** @var AdmissionValidationEventListener $admissionValidationListener */
         $admissionValidationListener = $container->get(AdmissionValidationEventListener::class);

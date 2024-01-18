@@ -4,6 +4,7 @@ namespace Admission\Hydrator\Inscription;
 
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Verification;
+use Application\Entity\Db\Discipline;
 use Application\Entity\Db\Pays;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
@@ -54,6 +55,10 @@ class InscriptionHydrator extends DoctrineObject
 
         if (array_key_exists($key = 'ecoleDoctorale', $data) && $data[$key] instanceof EcoleDoctorale) {
             $data["ecoleDoctorale"] = $data["ecoleDoctorale"]->getId();
+        }
+
+        if (array_key_exists($key = 'specialiteDoctorat', $data) && $data[$key] instanceof Discipline) {
+            $data["specialiteDoctorat"] = $data["specialiteDoctorat"]->getCode();
         }
 
 

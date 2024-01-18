@@ -3,6 +3,7 @@
 namespace Admission\Config;
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\TypeValidation;
 use Application\Entity\Db\Role;
@@ -10,21 +11,22 @@ use InvalidArgumentException;
 
 class ModuleConfig
 {
+    const ATTESTATION_HONNEUR_CHARTE_DOCTORALE = 'ATTESTATION_HONNEUR_CHARTE_DOCTORALE';
     const ATTESTATION_HONNEUR = 'ATTESTATION_HONNEUR';
     const VALIDATION_GESTIONNAIRE = 'VALIDATION_GESTIONNAIRE';
-    const VALIDATION_DIRECTION_THESE = 'VALIDATION_DIRECTION_THESE';
-    const VALIDATION_CO_DIRECTION_THESE = 'VALIDATION_CO_DIRECTION_THESE';
-    const VALIDATION_UR = 'VALIDATION_UR';
-    const VALIDATION_ED = 'VALIDATION_ED';
+    const AVIS_DIR_THESE = 'AVIS_DIR_THESE';
+    const AVIS_CODIR_THESE = 'AVIS_CODIR_THESE';
+    const AVIS_DIR_UR = 'AVIS_DIR_UR';
+    const AVIS_DIR_ED = 'AVIS_DIR_ED';
     const SIGNATURE_PRESIDENT = 'SIGNATURE_PRESIDENT';
 
     /**
-     * Config de l'enchaînement des opérations (validations) attendus.
+     * Config de l'enchaînement des opérations (validations/avis) attendus.
      */
     private array $operationsConfig;
 
     private array $allowedRoles = [
-        Role::CODE_DOCTORANT,
+        Role::ROLE_ID_USER,
         Role::CODE_DIRECTEUR_THESE,
         Role::CODE_CODIRECTEUR_THESE,
         Role::CODE_RESP_UR,
@@ -37,13 +39,37 @@ class ModuleConfig
     {
         $this->setOperationsConfig([
             /**
+             * Attestation sur l'honneur par l'étudiant de la bonne lecture de sa charte doctorale.
+             */
+            self::ATTESTATION_HONNEUR_CHARTE_DOCTORALE => [
+                'type' => AdmissionValidation::class,
+                'code' => TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE,
+                'role' => [Role::CODE_ADMIN_TECH, Role::ROLE_ID_USER],
+                'pre_condition' => null,
+                'enabled' => null,
+                'enabled_as_dql' => null,
+            ],
+            /**
              * Attestation sur l'honneur par l'étudiant.
              */
             self::ATTESTATION_HONNEUR => [
                 'type' => AdmissionValidation::class,
                 'code' => TypeValidation::CODE_ATTESTATION_HONNEUR,
-                'role' => [Role::CODE_ADMIN_TECH, Role::CODE_DOCTORANT],
-                'pre_condition' => null,
+                'role' => [Role::CODE_ADMIN_TECH, Role::ROLE_ID_USER],
+                'pre_condition' => function(Admission $admission) {
+                    $condition_verified = [];
+                    if($admission->isDossierComplet()){
+                        $condition_verified[] = $admission->isDossierComplet();
+                    }
+
+                    if(self::ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
+                        $condition_verified[] = self::ATTESTATION_HONNEUR_CHARTE_DOCTORALE;
+                    }
+
+                    return count($condition_verified) == 2;
+                },
+                //pas de notif, peut-être à enlever si changement d'ordre des validations
+                'readonly' => true,
                 'enabled' => null,
                 'enabled_as_dql' => null,
             ],
@@ -61,11 +87,11 @@ class ModuleConfig
                 'enabled_as_dql' => null,
             ],
             /**
-             * Validation par la direction de thèse
+             * Avis par la direction de thèse
              */
-            self::VALIDATION_DIRECTION_THESE => [
-                'type' => AdmissionValidation::class,
-                'code' => TypeValidation::CODE_VALIDATION_DIRECTION_THESE,
+            self::AVIS_DIR_THESE => [
+                'type' => AdmissionAvis::class,
+                'code' => AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_THESE,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_DIRECTEUR_THESE],
                 'pre_condition' => [
                     self::ATTESTATION_HONNEUR => true,
@@ -73,18 +99,23 @@ class ModuleConfig
                 ],
                 'enabled' => null,
                 'enabled_as_dql' => null,
+                'extra' => [
+                    // Si un avis "dossier d'admssion incomplet" est émis, on supprimera toutes les validations précédentes.
+                    'validation_etudiant_operation_name' => self::ATTESTATION_HONNEUR,
+                    'validation_gestionnaire_operation_name' => self::VALIDATION_GESTIONNAIRE,
+                ],
             ],
             /**
-             * Validation par la co-direction de thèse
+             * Avis par la co-direction de thèse
              */
-            self::VALIDATION_CO_DIRECTION_THESE => [
-                'type' => AdmissionValidation::class,
-                'code' => TypeValidation::CODE_VALIDATION_CO_DIRECTION_THESE,
+            self::AVIS_CODIR_THESE => [
+                'type' => AdmissionAvis::class,
+                'code' => AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_CODIR_THESE,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_CODIRECTEUR_THESE],
                 'pre_condition' => [
                     self::ATTESTATION_HONNEUR => true,
                     self::VALIDATION_GESTIONNAIRE => true,
-                    self::VALIDATION_DIRECTION_THESE => true
+                    self::AVIS_DIR_THESE => true
                 ],
                 'enabled' => function(Admission $admission) {
                     if(!empty($admission->getInscription()->first())){
@@ -96,34 +127,34 @@ class ModuleConfig
                 'enabled_as_dql' => null,
             ],
             /**
-             * Validation par l'unité de recherche
+             * Avis par l'unité de recherche
              */
-            self::VALIDATION_UR => [
-                'type' => AdmissionValidation::class,
-                'code' => TypeValidation::CODE_VALIDATION_UR,
+            self::AVIS_DIR_UR => [
+                'type' => AdmissionAvis::class,
+                'code' => AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_UR,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_RESP_UR],
                 'pre_condition' => [
                     self::ATTESTATION_HONNEUR => true,
                     self::VALIDATION_GESTIONNAIRE => true,
-                    self::VALIDATION_DIRECTION_THESE => true,
-                    self::VALIDATION_CO_DIRECTION_THESE => true
+                    self::AVIS_DIR_THESE => true,
+                    self::AVIS_CODIR_THESE => true
                 ],
                 'enabled' => null,
                 'enabled_as_dql' => null,
             ],
             /**
-             * Validation par l'école doctorale
+             * Avis par l'école doctorale
              */
-            self::VALIDATION_ED => [
-                'type' => AdmissionValidation::class,
-                'code' => TypeValidation::CODE_VALIDATION_ED,
+            self::AVIS_DIR_ED => [
+                'type' => AdmissionAvis::class,
+                'code' => AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_ED,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_RESP_ED],
                 'pre_condition' => [
                     self::ATTESTATION_HONNEUR => true,
                     self::VALIDATION_GESTIONNAIRE => true,
-                    self::VALIDATION_DIRECTION_THESE => true,
-                    self::VALIDATION_CO_DIRECTION_THESE => true,
-                    self::VALIDATION_UR => true
+                    self::AVIS_DIR_THESE => true,
+                    self::AVIS_CODIR_THESE => true,
+                    self::AVIS_DIR_UR => true
                 ],
                 'enabled' => null,
                 'enabled_as_dql' => null,
@@ -134,13 +165,14 @@ class ModuleConfig
             self::SIGNATURE_PRESIDENT => [
                 'type' => AdmissionValidation::class,
                 'code' => TypeValidation::CODE_SIGNATURE_PRESIDENT,
-                'role' => [Role::CODE_ADMIN_TECH, Role::CODE_ADMIN_TECH],
+                'role' => [Role::CODE_ADMIN_TECH, Role::CODE_GEST_ED],
                 'pre_condition' => [
                     self::ATTESTATION_HONNEUR => true,
                     self::VALIDATION_GESTIONNAIRE => true,
-                    self::VALIDATION_DIRECTION_THESE => true,
-                    self::VALIDATION_CO_DIRECTION_THESE => true,
-                    self::VALIDATION_UR => true
+                    self::AVIS_DIR_THESE => true,
+                    self::AVIS_CODIR_THESE => true,
+                    self::AVIS_DIR_UR => true,
+                    self::AVIS_DIR_ED => true
                 ],
                 'enabled' => null,
                 'enabled_as_dql' => null,

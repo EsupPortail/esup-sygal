@@ -4,6 +4,7 @@ namespace Admission\Assertion;
 
 use Admission\Service\Admission\AdmissionService;
 use Application\Assertion\AbstractAssertion;
+use Individu\Service\IndividuService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -18,12 +19,14 @@ class AdmissionAssertionFactory
     {
         $userContext = $container->get('UnicaenAuth\Service\UserContext');
         $admission = $container->get(AdmissionService::class);
+        $individu = $container->get(IndividuService::class);
         $messageCollector = $container->get('MessageCollector');
 
         /** @var  $assertion */
         $assertion = new AdmissionAssertion();
         $assertion->setUserContextService($userContext);
         $assertion->setAdmissionService($admission);
+        $assertion->setIndividuService($individu);
         $assertion->setServiceMessageCollector($messageCollector);
 
         $this->injectCommons($assertion, $container);

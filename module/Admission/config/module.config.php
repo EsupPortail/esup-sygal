@@ -44,33 +44,26 @@ use Admission\Hydrator\Validation\AdmissionValidationHydratorFactory;
 use Admission\Hydrator\Verification\VerificationHydrator;
 use Admission\Hydrator\Verification\VerificationHydratorFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
-use Admission\Rule\Operation\AdmissionOperationRule;
-use Admission\Rule\Operation\AdmissionOperationRuleFactory;
-use Admission\Rule\Operation\Notification\OperationAttendueNotificationRule;
-use Admission\Rule\Operation\Notification\OperationAttendueNotificationRuleFactory;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Etudiant\EtudiantServiceFactory;
+use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporter;
+use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporterFactory;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Financement\FinancementServiceFactory;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Inscription\InscriptionServiceFactory;
-use Admission\Service\Operation\AdmissionOperationService;
-use Admission\Service\Operation\AdmissionOperationServiceFactory;
 use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\TypeValidation\TypeValidationServiceFactory;
 use Admission\Service\Url\UrlService;
 use Admission\Service\Url\UrlServiceFactory;
-use Admission\Service\Validation\AdmissionValidationService;
-use Admission\Service\Validation\AdmissionValidationServiceFactory;
 use Admission\Service\Verification\VerificationService;
 use Admission\Service\Verification\VerificationServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
-use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -104,8 +97,7 @@ return array(
                 'allow' => [
                     [
                         'privileges' => [
-                            AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION,
-                            AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION,
+                            AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION,
                             AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION,
                             AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
                             AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION,
@@ -114,8 +106,11 @@ return array(
                             AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION,
                             AdmissionPrivileges::ADMISSION_HISTORISER,
                             AdmissionPrivileges::ADMISSION_VERIFIER,
+                            AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
-                            AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES
+                            AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES,
+                            AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET,
+                            AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF
                         ],
                         'resources'  => ['Admission'],
                         'assertion'  => AdmissionAssertion::class,
@@ -132,8 +127,8 @@ return array(
                         'rechercher-individu'
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_LISTER_SON_DOSSIER_ADMISSION,
-                        AdmissionPrivileges::ADMISSION_LISTER_TOUS_DOSSIERS_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION,
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
@@ -145,6 +140,7 @@ return array(
                         'financement',
                         'document',
                         'enregistrer',
+                        'generer-statut-dossier'
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
@@ -185,7 +181,27 @@ return array(
                         AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
                     ],
                     'assertion' => AdmissionAssertion::class,
-                ]
+                ],
+                [
+                    'controller' => AdmissionController::class,
+                    'action' => [
+                        'notifier-dossier-complet',
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET,
+                    ],
+                    'assertion' => AdmissionAssertion::class,
+                ],
+                [
+                'controller' => AdmissionController::class,
+                'action' => [
+                    'generer-recapitulatif',
+                ],
+                'privileges' => [
+                    AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF,
+                ],
+                'assertion' => AdmissionAssertion::class,
+            ],
             ]
         ],
     ],
@@ -212,6 +228,7 @@ return array(
                                  * @see AdmissionController::inscriptionAction()
                                  * @see AdmissionController::financementAction()
                                  * @see AdmissionController::documentAction()
+                                 * @see AdmissionController::enregistrerAction()
                                  * @see AdmissionController::supprimerAction()
                                  */
                                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
@@ -244,6 +261,44 @@ return array(
                                 'controller' => AdmissionController::class,
                                 'action' => 'notifier-gestionnaire',
                                 /* @see AdmissionController::notifierGestionnaireAction() */
+                            ],
+                        ],
+                    ],
+                    'notifier-dossier-complet' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/notifier-dossier-complet/:admission',
+                            'constraints' => [
+                                'admission' => '[0-9]*'
+                            ],
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+                                'action' => 'notifier-dossier-complet',
+                                /* @see AdmissionController::notifierDossierCompletAction() */
+                            ],
+                        ],
+                    ],
+                    'generer-recapitulatif' => [
+                        'type'  => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/generer-recapitulatif/:admission/signature-presidence',
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+                                'action'     => 'generer-recapitulatif',
+                                /* @see AdmissionController::genererRecapitulatifAction() */
+                            ],
+                        ],
+                    ],
+                    'generer-statut-dossier' => [
+                        'type'  => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/generer-statut-dossier/:admission',
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+                                'action'     => 'generer-statut-dossier',
+                                /* @see AdmissionController::genererStatutDossierAction() */
                             ],
                         ],
                     ],
@@ -306,6 +361,8 @@ return array(
             AdmissionAssertion::class => AdmissionAssertionFactory::class,
 
             UrlService::class => UrlServiceFactory::class,
+
+            RecapitulatifExporter::class => RecapitulatifExporterFactory::class
         ],
     ],
 

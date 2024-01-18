@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Admission;
 
+use Admission\Service\Avis\AdmissionAvisService;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
@@ -34,6 +35,7 @@ class AdmissionServiceFactory {
         $inscriptionService = $container->get(InscriptionService::class);
         $financementService = $container->get(FinancementService::class);
         $admissionValidationService = $container->get(AdmissionValidationService::class);
+        $admissionAvisService = $container->get(AdmissionAvisService::class);
         $documentService = $container->get(DocumentService::class);
         $userContextService = $container->get('UserContextService');
 
@@ -49,6 +51,7 @@ class AdmissionServiceFactory {
         $service->setInscriptionService($inscriptionService);
         $service->setFinancementService($financementService);
         $service->setAdmissionValidationService($admissionValidationService);
+        $service->setAdmissionAvisService($admissionAvisService);
         $service->setDocumentService($documentService);
         $service->setUserContextService($userContextService);
         $service->setSourceCodeStringHelper($sourceCodeStringHelper);

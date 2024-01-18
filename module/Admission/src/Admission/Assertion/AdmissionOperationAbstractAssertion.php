@@ -3,10 +3,13 @@
 namespace Admission\Assertion;
 
 use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
+use Application\Entity\Db\Role;
 use Application\Service\UserContextServiceAwareInterface;
 use Admission\Entity\Db\Admission;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
@@ -42,8 +45,20 @@ class AdmissionOperationAbstractAssertion extends AbstractAssertion
     protected function assertEtatAdmission(Admission $admission)
     {
         $this->assertTrue(
-            in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS]),
+            in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE, Admission::ETAT_EN_COURS_VALIDATION]),
             "Le dossier d'admission doit être en cours"
+        );
+    }
+
+    protected function assertDossierCompletAdmission(AdmissionValidation $admissionValidation)
+    {
+        //cette condition ne concerne pas la première validation du dossier
+        if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
+            return;
+        }
+        $this->assertTrue(
+            $admissionValidation->getAdmission()->isDossierComplet() === true,
+            "Le dossier d'admission doit être en complet"
         );
     }
 
@@ -54,12 +69,12 @@ class AdmissionOperationAbstractAssertion extends AbstractAssertion
     {
         $role = $this->userContextService->getSelectedIdentityRole();
 
-        // rôle doctorant
-        if ($role->isDoctorant()) {
-            $doctorant = $this->userContextService->getIdentityDoctorant();
+        if ($role->getRoleId() == Role::ROLE_ID_USER) {
+            $individu = $this->userContextService->getIdentityIndividu();
+
             $this->assertTrue(
-                $admission->getIndividu()->getId() === $doctorant->getIndividu()->getId(),
-                "Le dossier d'admission n'appartient pas à l'étudiant " . $doctorant
+                $admission->getIndividu()->getId() === $individu->getId(),
+                "Le dossier d'admission n'appartient pas à l'individu " . $individu
             );
         }
 

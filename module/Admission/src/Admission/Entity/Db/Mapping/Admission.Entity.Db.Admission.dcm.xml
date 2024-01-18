@@ -27,8 +27,11 @@
         <one-to-many field="financement" target-entity="Admission\Entity\Db\Financement" mapped-by="admission" />
         <one-to-many field="etudiant" target-entity="Admission\Entity\Db\Etudiant" mapped-by="admission"/>
         <one-to-many field="inscription" target-entity="Admission\Entity\Db\Inscription" mapped-by="admission"/>
-        <one-to-many field="admissionValidations" target-entity="Admission\Entity\Db\AdmissionValidation" mapped-by="admission"/>
         <one-to-many field="document" target-entity="Admission\Entity\Db\Document" mapped-by="admission"/>
+        <one-to-many field="conventionFormationDoctorale" target-entity="Admission\Entity\Db\ConventionFormationDoctorale" mapped-by="admission"/>
+
+        <one-to-many field="admissionValidations" target-entity="Admission\Entity\Db\AdmissionValidation" mapped-by="admission"/>
+        <one-to-many field="admissionAvis" target-entity="Admission\Entity\Db\AdmissionAvis" mapped-by="admission"/>
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>

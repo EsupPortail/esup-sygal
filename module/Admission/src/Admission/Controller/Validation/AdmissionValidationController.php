@@ -36,15 +36,26 @@ class AdmissionValidationController extends AbstractController
 
         $admissionValidation = $this->admissionValidationService->newAdmissionValidation($admission, $typeValidation);
         $this->admissionValidationService->saveNewAdmissionValidation($admissionValidation);
-        $event = $this->admissionValidationService->triggerEventValidationAjoutee($admissionValidation);
 
-        if($typeValidation->getCode() == TypeValidation::CODE_SIGNATURE_PRESIDENT){
-            /** @var Etat $valide */
-            $valide = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_VALIDE]);
-            $admission->setEtat($valide);
-            $this->admissionService->update($admission);
+        switch ($typeValidation->getCode()) {
+            //Remise du dossier d'admission dans l'état "En cours de validation"
+            case TypeValidation::CODE_VALIDATION_GESTIONNAIRE:
+                $enCoursDeValidation = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_VALIDATION]);
+                $admission->setEtat($enCoursDeValidation);
+                $this->admissionService->update($admission);
+                break;
+            //Remise du dossier d'admission dans l'état "Validé"
+            case TypeValidation::CODE_SIGNATURE_PRESIDENT:
+                $valide = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_VALIDE]);
+                $admission->setEtat($valide);
+                $this->admissionService->update($admission);
+                break;
+
+            default:
+                break;
         }
 
+        $event = $this->admissionValidationService->triggerEventValidationAjoutee($admissionValidation);
         if ($messages = $event->getMessages()) {
             foreach ($messages as $namespace => $message) {
                 $this->flashMessenger()->addMessage($message, $namespace);
@@ -74,6 +85,14 @@ class AdmissionValidationController extends AbstractController
 
         $this->admissionValidationService->deleteAdmissionValidation($admissionValidation);
         $event = $this->admissionValidationService->triggerEventValidationSupprimee($admissionValidation);
+
+        //Remise du dossier d'admission dans l'état "En cours de saisie"
+        if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_VALIDATION_GESTIONNAIRE){
+            /** @var Etat $enCoursDeValidation */
+            $enCoursDeValidation = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
+            $admissionValidation->getAdmission()->setEtat($enCoursDeValidation);
+            $this->admissionService->update($admissionValidation->getAdmission());
+        }
 
         $this->flashMessenger()->addSuccessMessage(sprintf(
             "%s supprimée avec succès.",

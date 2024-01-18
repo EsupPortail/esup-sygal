@@ -1,0 +1,29 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\Etat;
+use Admission\Entity\Db\Verification;
+use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\Fieldset\Financement\FinancementFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
+
+/**
+ *  @var array $operations
+ * * @var Individu $individu
+ * * @var string $returnUrl
+ * * @var AdmissionOperationInterface $operationEnAttente
+ * * @var bool $dossierComplet
+ * * @var Admission $admission
+ * @var boolean $showActionButtons
+ */
+echo $this->partial('admission/admission/partial/circuit-signatures', [
+    'operations' => $operations,
+    'individu' => $admission->getIndividu(),
+    'returnUrl' => "",
+    'operationEnAttente' => $operationEnAttente,
+    'admission' => $admission,
+    'showActionButtons' => $showActionButtons
+]);

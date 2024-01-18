@@ -3,40 +3,88 @@
  * @var $fieldset
  * @var array $documents
  * @var int $individu
+ * @var AdmissionValidation $validation_charte_doctorat
+ * @var string $returnUrl
  */
 
+use Admission\Entity\Db\AdmissionValidation;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+
+$ajaxModalEvent = 'EVENT_AVIS_SAISI';
 
 $canTelechargerDocument =
     $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_TOUT_DOCUMENT)) ||
     $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT));
 
 ?>
+
 <div class="row subfield">
     <div class="col-lg-3 col-sm-12 label-file">
         <?php echo $this->formlabel($fieldset) ?>
     </div>
     <div class="col-lg-9 col-sm-12">
         <div class="row detail_file">
-            <div class="col-lg-5 upload_file">
-                <?php echo $this->formfile($fieldset) ?>
-            </div>
             <?php
             $key = $fieldset->getAttribute('id');
-            if(array_key_exists($key, $documents)){?>
-                <div class="col-lg-3 date_televersement">
-                    <p>Téléversé le
-                        <?php
-                        echo $documents[$key]['televersement'];
-                        ?>
-                    </p>
-                </div>
-                <?php if($canTelechargerDocument){ ?>
-                    <div class="col-lg-1 action_file">
-                        <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $key], [],true) ?>"
-                           class="icon icon-download iconly"
-                           title="Télécharger ?"></a>
+            if($key=="ADMISSION_CHARTE_DOCTORAT"){ ?>
+                <div class="col-lg-12 upload_file">
+                    <a class="btn btn-primary access_charte_doctorat">Lire la charte du doctorat</a>
+                    <div class="modal fade" id="modalShowCharteDoctorale" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">Charte du doctorat</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-lg-5 upload_file file_charte_doctorat">
+                                        <?php
+                                        echo $this->formfile($fieldset); ?>
+                                    </div>
+                                    <?php
+                                    $libelleOperation = "J'atteste sur l'honneur avoir pris connaissance de l'intégralité de la charte doctorale mentionnée ci-dessus.";
+                                    echo $this->partial('admission/admission/partial/operation-card', [
+                                        'operation' => $validation_charte_doctorat,
+                                        'count' => 1,
+                                        'individu' => $individu,
+                                        'operationEnAttente' => null,
+                                        'returnUrl' => $returnUrl,
+                                        'libelleOperation' => $libelleOperation,
+                                        'showRangOperation' => false
+                                    ]);
+                                    ?>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            <?php }else if($key=="ADMISSION_CONVENTION") { ?>
+<!--                <div class="col-lg-12 upload_file">-->
+<!--                    <a class="btn btn-primary access_charte_doctorat">Accéder à la convention de formation doctorale</a>-->
+<!--                </div>-->
+
+            <?php }else{ ?>
+                <div class="col-lg-5 upload_file">
+                    <?php echo $this->formfile($fieldset) ?>
+                </div>
+                <?php
+                if(array_key_exists($key, $documents)){?>
+                    <div class="col-lg-3 date_televersement">
+                        <p>Téléversé le
+                            <?php
+                            echo $documents[$key]['televersement'];
+                            ?>
+                        </p>
+                    </div>
+                    <?php if($canTelechargerDocument){ ?>
+                        <div class="col-lg-1 action_file">
+                            <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $key], [],true) ?>"
+                               class="icon icon-download iconly"
+                               title="Télécharger ?"></a>
+                        </div>
+                    <?php } ?>
                 <?php } ?>
             <?php } ?>
         </div>

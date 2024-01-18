@@ -1,44 +1,55 @@
 <?php
 
-use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
 use Admission\Provider\Privilege\AdmissionPrivileges;
-use Laminas\Form\ElementInterface;
 
 /**
  * @var int $count
  * @var AdmissionValidation $operation
- * @var int $individu
- * @var string $validation_en_attente
+ * @var AdmissionOperationInterface $operationEnAttente
  * @var string $returnUrl
+ * @var string $libelleOperation
+ * @var bool $showRangOperation
+ * @var boolean $showActionButtons
  */
 
-$canAjouterOperation =
+$canValiderOperation =
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_VALIDER_SIEN) ||
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_VALIDER_TOUT);
 ?>
 <div class="row subfield">
     <div class="col etape_signature">
         <?php
-            if($validation_en_attente && $validation_en_attente == $operation->getTypeToString()){ ?>
-                <span class="icon icon-hourglass circle_waiting"></span>
-            <?php }else { ?>
+        if ($showRangOperation) {
+            if ($operationEnAttente && $operationEnAttente->getTypeToString() == $operation->getTypeToString()) { ?>
+                <div class="col-lg-2 circle_etape etape_signature">
+                    <span class="icon icon-hourglass circle_waiting"></span>
+                </div>
+            <?php } else { ?>
                 <div class="circle"><p><?= $count ?></p></div>
-            <?php } ?>
-            <label><?php echo $operation->getTypeValidation()->getLibelle();?></label>
-            <?php
-            if($canAjouterOperation){
-            ?>
+            <?php }
+        } ?>
+        <div class="col-lg-6 libelle_etape etape_signature">
+            <label><?php echo $libelleOperation ?: $operation->getTypeValidation()->getLibelle(); ?></label>
+            <?php if ($operation->getId() == null && $operation->getTypeValidation()->getCode() == TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE) {
+                echo '<span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip" title="Vous devez prendre connaissance de votre charte doctorale afin de valider cette étape"></span>';
+            } ?>
+        </div>
+        <?php if ($canValiderOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
             <a href="<?php echo $this->url('admission/valider', [
                 'admission' => $operation->getAdmission()->getId(),
                 'typeValidation' => $operation->getTypeValidation()->getId(),
             ], [
                 'query' => ['redirect' => $returnUrl],
             ]) ?>"
-           class="card-link btn btn-success btn-sm action"
-           title="Valider ce dossier d'admission ?"
-           data-toggle="confirmationx"
-           data-message="Confirmez-vous la validation de ce dossier d'admission ? Do you confirm the validation of this admission form?">Valider</span></a>
-        <?php } ?>
+               class="card-link btn btn-success btn-sm action"
+               title="Valider cette étape du dossier d'admission ?"
+               data-toggle="confirmationx"
+               data-message="Confirmez-vous la validation de ce dossier d'admission ? Do you confirm the validation of this admission form?">Valider</span></a>
+        <?php } else if (!$canValiderOperation && $operation->getTypeValidation()->getCode() == TypeValidation::CODE_ATTESTATION_HONNEUR) {
+            echo '<span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip" title="Votre dossier doit-être noté comme complet par votre gestionnaire et vous devez également avoir lu la charte doctorale, pour pouvoir attester sur l\'honneur"></span>';
+        } ?>
     </div>
 </div>

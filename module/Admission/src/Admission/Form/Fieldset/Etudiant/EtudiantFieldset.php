@@ -35,7 +35,6 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
     {
         $currentYear = date('Y');
         $options = [];
-
         for ($year = $currentYear; $year >= $currentYear - 50; $year--) {
             $options[$year] = $year;
         }
@@ -64,19 +63,22 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add(
             (new Text('nomUsuel'))
-                ->setLabel("Nom d'usage:")
+                ->setLabel("Nom d'usage")
                 ->setAttributes(['readonly' => true])
+                ->setLabelAttributes(['data-after' => " / Usage name"])
         );
 
         $this->add(
             (new Text('nomFamille'))
-                ->setLabel("Nom :")
+                ->setLabel("Nom")
+                ->setLabelAttributes(['data-after' => " / Name"])
                 ->setAttributes(['readonly' => true])
         );
 
         $this->add(
             (new Text('prenom'))
-                ->setLabel("Prénom :")
+                ->setLabel("Prénom")
+                ->setLabelAttributes(['data-after' => " / Firstname"])
                 ->setAttributes(['readonly' => true])
         );
 
@@ -90,12 +92,16 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add(
             (new Text('ine'))
-                ->setLabel("Numéro I.N.E (Numéro inscrit au verso de la carte)")
+                ->setLabel("Numéro I.N.E (Numéro inscrit sur un relevé de notes de l'enseignement supérieur français)")
+                ->setLabelAttributes(['data-after' => " / I.N.E number (number appearing on a French higher education transcript)"
+                    ])
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Text('numeroEtudiant'))
                 ->setLabel("Numéro Etudiant (pour les étudiants déjà inscrits à UNICAEN)")
+                ->setLabelAttributes(['data-after' => " / Student number (for students already registered at UNICAEN)"])
         );
 
         $this->add(
@@ -106,7 +112,8 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add(
             (new Date('dateNaissance'))
-                ->setLabel("Date de naissance :")
+                ->setLabel("Date de naissance")
+                ->setLabelAttributes(['data-after' => " / Birth date"])
                 ->setAttributes(['readonly' => true])
         );
 
@@ -116,19 +123,22 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add(
             (new Text('paysNaissance'))
-                ->setLabel("Pays de naissance :")
+                ->setLabel("Pays de naissance")
+                ->setLabelAttributes(['data-after' => " / Country of origin"])
                 ->setAttributes(['readonly' => true])
         );
 
         $this->add(
             (new Text('villeNaissance'))
                 ->setLabel("Ville de naissance")
+                ->setLabelAttributes(['data-after' => " / City of birth"])
                 ->setAttributes(['readonly' => true])
         );
 
         $this->add(
             (new Text('codePaysNaissance'))
                 ->setLabel("Nationalité")
+                ->setLabelAttributes(['data-after' => " / Nationality"])
         );
 
         $this->add(
@@ -138,6 +148,7 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Text('nationalite'))
                 ->setLabel("Nationalité")
+                ->setLabelAttributes(['data-after' => " / Nationality"])
                 ->setAttributes(['readonly' => true])
         );
 
@@ -157,6 +168,7 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Text('adresseLigne1Etage'))
                 ->setLabel("Adresse")
+                ->setLabelAttributes(['data-after' => " / Address"])
         );
 
         $this->add(
@@ -172,6 +184,7 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Text('adresseLigne3Bvoie'))
                 ->setLabel("Adresse")
+                ->setLabelAttributes(['data-after' => " / Address"])
         );
 
         $this->add(
@@ -182,21 +195,25 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Number('adresseCodePostal'))
                 ->setLabel("Code postal")
+                ->setLabelAttributes(['data-after' => " / Postal code"])
         );
 
         $this->add(
             (new Text('adresseCodeCommune'))
                 ->setLabel("Ville")
+                ->setLabelAttributes(['data-after' => " / City"])
         );
 
         $this->add(
             (new Number('adresseCpVilleEtrangere'))
                 ->setLabel("Code postal")
+                ->setLabelAttributes(['data-after' => " / Postal code"])
         );
 
         $this->add(
             (new Tel('numeroTelephone1'))
                 ->setLabel("Numéro de téléphone")
+                ->setLabelAttributes(['data-after' => " / Phone"])
         );
 
         $this->add(
@@ -211,37 +228,43 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
                     0 => "Non",
                 ])
                 ->setLabel("Êtes-vous en situation de handicap ?")
+                ->setLabelAttributes(['data-after' => " / Have you a disability recognition"])
         );
 
         //Niveau d'Étude
         $this->add(
             (new Radio('niveauEtude'))
                 ->setValueOptions([
-                    1 => "Diplôme national tel que Master",
-                    2 => "Autre - à titre dérogatoire (Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire)"
+                    1 => "Diplôme national tel que Master /  National degree such as Master",
+                    2 => "Autre - à titre dérogatoire (Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire)
+                    / Other - by way of derogation (Argument of the thesis director for the council of the doctoral school required)"
                 ])
         );
 
         $this->add(
             (new Text('intituleDuDiplomeNational'))
                 ->setLabel("Intitulé")
+                ->setLabelAttributes(['data-after' => " / Title"])
         );
 
         $this->add(
             (new Select("anneeDobtentionDiplomeNational"))
                 ->setLabel("Année d'obtention")
+                ->setLabelAttributes(['data-after' => " / Year of graduation"])
                 ->setValueOptions($this->generateYearOptions())
+                ->setEmptyOption("Sélectionner une année")
         );
 
         $this->add(
             (new Text("etablissementDobtentionDiplomeNational"))
                 ->setLabel("Etablissement d'obtention")
+                ->setLabelAttributes(['data-after' => " / Awarding institution"])
         );
 
         $this->add(
             (new Radio('typeDiplomeAutre'))
                 ->setValueOptions([
-                    1 => "Diplôme obtenu à l'étranger",
+                    1 => "Diplôme obtenu à l'étranger / Diploma from abroad",
                     2 => "Diplôme français ne conférant pas le grade de master"
                 ])
         );
@@ -249,17 +272,21 @@ class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
         $this->add(
             (new Text('intituleDuDiplomeAutre'))
                 ->setLabel("Intitulé")
+                ->setLabelAttributes(['data-after' => " / Title"])
         );
 
         $this->add(
             (new Select("anneeDobtentionDiplomeAutre"))
-                ->setLabel("Année d'obtention")
+                ->setLabel("Année d'obtention ")
+                ->setLabelAttributes(['data-after' => "/ Year of graduation"])
                 ->setValueOptions($this->generateYearOptions())
+                ->setEmptyOption("Sélectionner une année")
         );
 
         $this->add(
             (new Text('etablissementDobtentionDiplomeAutre'))
                 ->setLabel("Etablissement")
+                ->setLabelAttributes(['data-after' => " / Awarding institution"])
         );
 
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);

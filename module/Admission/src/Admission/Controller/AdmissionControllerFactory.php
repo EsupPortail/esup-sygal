@@ -6,6 +6,7 @@ use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
+use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporter;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Inscription\InscriptionService;
@@ -25,6 +26,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 
 class AdmissionControllerFactory implements FactoryInterface
@@ -57,8 +59,12 @@ class AdmissionControllerFactory implements FactoryInterface
         $notificationFactory = $container->get(NotificationFactory::class);
         $notifierService = $container->get(NotifierService::class);
         $documentService = $container->get(DocumentService::class);
+        $fichierService = $container->get(FichierService::class);
         /** @var TypeValidationService $typeValidationService */
         $typeValidationService = $container->get(TypeValidationService::class);
+        $recapitulatifExporter = $container->get(RecapitulatifExporter::class);
+        $etablissementService = $container->get(EtablissementService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -84,8 +90,13 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setNotificationFactory($notificationFactory);
         $controller->setNotifierService($notifierService);
         $controller->setDocumentService($documentService);
+        $controller->setFichierService($fichierService);
+        $controller->setEtablissementService($etablissementService);
+        $controller->setFichierStorageService($fichierStorageService);
+        $controller->setRecapitulatifExporter($recapitulatifExporter);
         $controller->setAdmissionForm($admissionForm);
         $controller->setAdmissionOperationRule($admissionOperationRule);
+
 
         return $controller;
     }

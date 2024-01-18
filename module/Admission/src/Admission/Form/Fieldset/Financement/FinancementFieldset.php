@@ -18,10 +18,12 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->add(
             (new Radio('contratDoctoral'))
                 ->setLabel("Avez-vous un contrat doctoral ?")
+                ->setLabelAttributes(['data-after' => " / Do you have a PhD contract?"])
                 ->setValueOptions([
                     1 => "Oui",
                     0 => "Non"
                 ])
+                ->setLabelAttributes(['data-after' => " / Name of thesis supervisor"])
         );
 
         $this->add(

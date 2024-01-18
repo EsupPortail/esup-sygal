@@ -1,0 +1,91 @@
+<?php
+/**
+ * @var array $operations
+ * @var Individu $individu
+ * @var string $returnUrl
+ * @var AdmissionOperationInterface $operationEnAttente
+ * @var bool $dossierComplet
+ * @var Admission $admission
+ * @var boolean $showActionButtons
+ */
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionAvis;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\TypeValidation;
+use Individu\Entity\Db\Individu;
+
+$ajaxModalEvent = 'EVENT_AVIS_SAISI';
+?>
+<div class="row">
+    <div class="col-lg-7 col-sm-12">
+        <?php
+        $count = 1;
+        foreach ($operations as $i => $operation):
+            if($i !== TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
+                echo $this->partial('admission/admission/partial/operation-card', [
+                    'operation' => $operation,
+                    'count' => $count,
+                    'individu' => $individu,
+                    'operationEnAttente' => $operationEnAttente,
+                    'returnUrl' => $returnUrl,
+                    'ajaxModalEvent' => $ajaxModalEvent,
+                    'libelleOperation' => null,
+                    'showRangOperation' => true,
+                    'showActionButtons' => $showActionButtons
+                ]);
+                $count += 1;
+            }
+        endforeach;
+        ?>
+    </div>
+    <div class="col-lg-5 col-sm-12 cardsValidation">
+        <?php if ($admission->isDossierComplet() && $admission->getEtat()->getCode() !== Admission::ETAT_VALIDE) { ?>
+            <div class="card border-success mb-3 dossier_complet">
+                <div class="card-body text-success">
+                    <i class="icon icon-information"></i>
+                    <p class="card-title">Le dossier est complet</p>
+                </div>
+            </div>
+        <?php }else if($admission->getEtat()->getCode() === Admission::ETAT_VALIDE){?>
+            <div class="card border-success mb-3 dossier_complet">
+                <div class="card-body text-success">
+                    <i class="icon icon-information"></i>
+                    <p class="card-title">Le dossier est validé</p>
+                </div>
+            </div>
+        <?php }
+
+        if ($operationEnAttente) { ?>
+            <div class="card mb-3 dossier_incomplet">
+                <div class="card-body text-warning">
+                    <i class="icon icon-information"></i>
+                    <?php if($operationEnAttente instanceof AdmissionAvis){ ?>
+                        <p class="card-title">En attente de l'<?= strtolower($operationEnAttente->getTypeToString()); ?></p>
+                    <?php }else{ ?>
+                        <p class="card-title">En attente de la <?= strtolower($operationEnAttente->getTypeToString()); ?></p>
+                    <?php } ?>
+                </div>
+            </div>
+        <?php }
+
+        //Si la dernière opération a été déclarée comme réservée / incomplete
+        else if ($operationEnAttente === false){ ?>
+            <div class="card mb-3 dossier_refuse">
+                <div class="card-body text-danger">
+                    <i class="icon icon-unchecked"></i>
+                        <p class="card-title">Un avis réservé / incomplet a été déclaré sur le dossier</p>
+                </div>
+            </div>
+        <?php }
+
+        if (isset($admission) && $admission->hasComments()) { ?>
+            <div class="card mb-3 dossier_incomplet">
+                <div class="card-body text-warning">
+                    <i class="icon icon-information"></i>
+                    <p class="card-title">Des commentaires ont été ajoutés au dossier</p>
+                </div>
+            </div>
+        <?php } ?>
+    </div>
+</div>

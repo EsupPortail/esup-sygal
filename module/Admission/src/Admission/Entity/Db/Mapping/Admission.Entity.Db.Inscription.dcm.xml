@@ -9,7 +9,6 @@
         </id>
 
         <field name="disciplineDoctorat" type="string" column="DISCIPLINE_DOCTORAT" length="60" nullable="true"/>
-        <field name="specialiteDoctorat" type="string" column="SPECIALITE_DOCTORAT" length="60" nullable="true"/>
         <field name="nomDirecteurThese" type="string" column="NOM_DIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="prenomDirecteurThese" type="string" column="PRENOM_DIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="emailDirecteurThese" type="string" column="MAIL_DIRECTEUR_THESE" length="60" nullable="true"/>
@@ -35,6 +34,11 @@
         <many-to-one field="paysCoTutelle" target-entity="Application\Entity\Db\Pays">
             <join-columns>
                 <join-column name="PAYS_CO_TUTELLE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="specialiteDoctorat" target-entity="Application\Entity\Db\Discipline">
+            <join-columns>
+                <join-column name="SPECIALITE_DOCTORAT" referenced-column-name="code"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="composanteDoctorat" target-entity="Structure\Entity\Db\Etablissement">
