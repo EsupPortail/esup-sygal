@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 disabled: !!readOnly,
                 credits: false,
                 maxFiles: 1,
-                pdfPreviewHeight: inputId === "ADMISSION_CHARTE_DOCTORAT" ? 500 : false,
+                pdfPreviewHeight: inputId === "ADMISSION_CHARTE_DOCTORAT" ? "8000" : false,
                 pdfComponentExtraParams: inputId === "ADMISSION_CHARTE_DOCTORAT" ? 'toolbar=0&page=1' : false,
                 allowPdfPreview: inputId === "ADMISSION_CHARTE_DOCTORAT",
             });

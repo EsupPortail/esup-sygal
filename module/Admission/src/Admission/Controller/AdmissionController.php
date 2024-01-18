@@ -138,11 +138,11 @@ class AdmissionController extends AdmissionAbstractController {
         if ($response instanceof Response) {
             return $response;
         }
-        $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
 
         //Récupération de l'objet Admission en BDD
         $admission = $this->getAdmission();
         if(!empty($admission)) {
+            $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
             if($data['_fieldset'] == "inscription"){
                 //Enregistrement des informations de l'inscription
@@ -200,13 +200,13 @@ class AdmissionController extends AdmissionAbstractController {
         if ($response instanceof Response) {
             return $response;
         }
-        $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
 
         //Récupération de l'objet Admission en BDD
         /** @var Admission $admission */
         $admission = $this->getAdmission();
 
         if(!empty($admission)) {
+            $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
             if($data['_fieldset'] == "inscription"){
                 //Enregistrement des informations de l'inscription
@@ -234,7 +234,6 @@ class AdmissionController extends AdmissionAbstractController {
         if ($response instanceof Response) {
             return $response;
         }
-        $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
 
         //Récupération de l'objet Admission en BDD
         /** @var Admission $admission */
@@ -244,6 +243,7 @@ class AdmissionController extends AdmissionAbstractController {
         $operations = [];
         $dossierValideParGestionnaire = null;
         if(!empty($admission)){
+            $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
             //Enregistrement des informations de Financement
             $this->enregistrerFinancement($data, $admission);
@@ -262,7 +262,6 @@ class AdmissionController extends AdmissionAbstractController {
             }
         }
 
-        $response->setVariable('dataForm', $data);
         $response->setVariable('admission', $admission);
         $response->setVariable('operations', $operations);
         $response->setVariable('documents', $documentsAdmission);

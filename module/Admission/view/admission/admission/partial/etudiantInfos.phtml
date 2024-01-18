@@ -19,13 +19,14 @@ use Individu\Entity\Db\Individu;
  */
 
 $form->prepare();
+$fcg = $this->formControlGroup();
+
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canVerifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER);
 $canModifierAdmission  =
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
 
-$fcg = $this->formControlGroup();
 if(!empty($admission) && !$canModifierAdmission) {
     foreach ($fieldset->getElements() as $element) {
         $element->setAttribute('readonly', true);

@@ -5,6 +5,7 @@
  * @var int $individu
  * @var AdmissionValidation $validation_charte_doctorat
  * @var string $returnUrl
+ * @var boolean $showActionButtons
  */
 
 use Admission\Entity\Db\AdmissionValidation;
@@ -36,6 +37,7 @@ $canTelechargerDocument =
                                     <h4 class="modal-title" id="myModalLabel">Charte du doctorat</h4>
                                 </div>
                                 <div class="modal-body">
+                                    <i>Il est nécessaire de lire l'intégralité de cette charte, puis de certifier avoir effectivement pris connaissance de son contenu à la fin du document.</i>
                                     <div class="col-lg-5 upload_file file_charte_doctorat">
                                         <?php
                                         echo $this->formfile($fieldset); ?>
@@ -49,7 +51,8 @@ $canTelechargerDocument =
                                         'operationEnAttente' => null,
                                         'returnUrl' => $returnUrl,
                                         'libelleOperation' => $libelleOperation,
-                                        'showRangOperation' => false
+                                        'showRangOperation' => false,
+                                        'showActionButtons' => $showActionButtons
                                     ]);
                                     ?>
                                 </div>

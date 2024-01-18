@@ -2,6 +2,8 @@
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\Etudiant;
+use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
@@ -15,20 +17,19 @@ use Application\View\Renderer\PhpRenderer;
  * @var Admission $admission
  * @var array[] $operations
  * @var string              $error
- * @var array               $dataForm
  * @var array               $documents
  * @var boolean $dossierValideParGestionnaire
  * @var AdmissionOperationInterface $operationEnAttente
  */
 $form->prepare();
 $fcg = $this->formControlGroup();
+
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
 $canNotifierGestionnairesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES);
 $canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
 $canNotifierDossierComplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET);
 $canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
-
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
@@ -39,6 +40,10 @@ if(!empty($admission) && !$canModifierAdmission) {
 }
 $individu = $admission->getIndividu()->getId();
 $ecoleDoctoraleRenseignee = $admission && $admission->getInscription()->first()->getEcoleDoctorale() ? 1 : 0;
+/** @var Etudiant $etudiant */
+$etudiant = $admission->getEtudiant()->first();
+/** @var Inscription $inscription */
+$inscription = $admission->getInscription()->first();
 ?>
 
 <script>
@@ -99,10 +104,11 @@ $ecoleDoctoraleRenseignee = $admission && $admission->getInscription()->first()-
         'documents' => $documents,
         'individu' => $individu,
         'validation_charte_doctorat' => $operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE],
-        'returnUrl' => $returnUrl
+        'returnUrl' => $returnUrl,
+        'showActionButtons' => true
     ]);
 
-    if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2) { ?>
+    if ($etudiant->getNiveauEtude() == 2) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
                 <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="titre_sous_partie_en">&nbsp; / If other than a French Master's degree (Derogation)</label></p>
@@ -117,7 +123,7 @@ $ecoleDoctoraleRenseignee = $admission && $admission->getInscription()->first()-
             </div>
         </div>
     <?php }
-    if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && (isset($dataForm['etudiant']['typeDiplomeAutre']) && $dataForm['etudiant']['typeDiplomeAutre'] == 1)) { ?>
+    if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 1) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
                 <p>Vous êtes titulaire d'un titre étranger<label class="titre_sous_partie_en">&nbsp; / If the student has a foreign qualification</label></p>
@@ -140,39 +146,40 @@ $ecoleDoctoraleRenseignee = $admission && $admission->getInscription()->first()-
             'individu' => $individu,
         ]);
     } ?>
-    <?php if (isset($dataForm['etudiant']['niveauEtude']) && $dataForm['etudiant']['niveauEtude'] == 2 && (isset($dataForm['etudiant']['typeDiplomeAutre']) && $dataForm['etudiant']['typeDiplomeAutre'] == 2)) {
+    <?php if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 2){ ?>
+        <div class="row subfield">
+            <div class="col informations-pieces_justificatives">
+                <p>Si l'étudiant est titulaire d'un diplôme français ne conférant pas le grade de master</p>
+            </div>
+        </div>
+    <?php
         echo $this->partial('admission/partial/document/document', [
             'fieldset' => $fieldset->get('diplomesTravauxExperiencePro'),
             'documents' => $documents,
             'individu' => $individu,
         ]);
     } ?>
-    <?php
-    $confidentialiteChecked = isset($dataForm['inscription']['confidentialite']) && $dataForm['inscription']['confidentialite'] == 1;
-    $coTutelleChecked = isset($dataForm['inscription']['coTutelle']) && $dataForm['inscription']['coTutelle'] == 1;
-    $coEncadrementChecked = isset($dataForm['inscription']['coEncadrement']) && $dataForm['inscription']['coEncadrement'] == 1;
-    $coDirectionChecked = isset($dataForm['inscription']['co-direction']) && $dataForm['inscription']['co-direction'] == 1;
-    if ($confidentialiteChecked || $coTutelleChecked || $coEncadrementChecked || $coDirectionChecked) { ?>
+    <?php if ($inscription->getConfidentialite() || $inscription->getCoTutelle() || $inscription->getCoEncadrement()) { ?>
         <div class="row subfield">
             <div class="col informations-pieces_justificatives">
                 <p>Spécificité(s) demandée(s)<label class="titre_sous_partie_en">&nbsp; /  Specificities requested</label></p>
             </div>
         </div>
-        <?php if ($confidentialiteChecked) { ?>
+        <?php if ($inscription->getConfidentialite()) { ?>
             <div class="row subfield">
                 <div class="col-lg-3 col-sm-12 label-file">
                     <?php echo $this->formlabel($fieldset->get('documentsDemandeConfidentialite')) ?>
                 </div>
             </div>
         <?php } ?>
-        <?php if ($coTutelleChecked) {
+        <?php if ($inscription->getCoTutelle()) {
             echo $this->partial('admission/partial/document/document', [
                 'fieldset' => $fieldset->get('documentsCotutelle'),
                 'documents' => $documents,
                 'individu' => $individu,
             ]);
         } ?>
-        <?php if ($coEncadrementChecked) {
+        <?php if ($inscription->getCoEncadrement()) {
             echo $this->partial('admission/partial/document/document', [
                 'fieldset' => $fieldset->get('documentsCoencadrement'),
                 'documents' => $documents,
