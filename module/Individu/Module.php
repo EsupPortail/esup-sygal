@@ -12,6 +12,8 @@ class Module
             __DIR__ . '/config/module.config.php',
             __DIR__ . '/config/individu.config.php',
             __DIR__ . '/config/individu-compl.config.php',
+            __DIR__ . '/config/individu-role.config.php',
+            __DIR__ . '/config/individu-role-etablissement.config.php',
         ]);
     }
 

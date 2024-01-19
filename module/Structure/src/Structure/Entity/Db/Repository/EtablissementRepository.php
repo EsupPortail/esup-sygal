@@ -29,6 +29,7 @@ class EtablissementRepository extends DefaultEntityRepository
     public function findAll(): array
     {
         $qb = $this->createQueryBuilder("e");
+        $qb->orderBy("structure.libelle");
 
         return $this->_findAll($qb);
     }
@@ -49,9 +50,18 @@ class EtablissementRepository extends DefaultEntityRepository
      */
     public function findByText(?string $term) : array
     {
+        if (strlen($term) < 2) return [];
+
+        $qb = $this->findByTextQb($term);
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function findByTextQb(?string $term): DefaultQueryBuilder
+    {
         $qb = $this->createQueryBuilder("e");
 
-        return $this->_findByText($qb, $term);
+        return $this->_findByTextQb($qb, $term);
     }
 
     /**

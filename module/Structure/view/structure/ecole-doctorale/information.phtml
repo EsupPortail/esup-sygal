@@ -2,6 +2,8 @@
 
 /**
  * @see \Structure\Controller\EcoleDoctoraleController::informationAction()
+ *
+ * @var \Application\View\Renderer\PhpRenderer $this
  * @var EcoleDoctorale $ecole
  * @var array          $roleListing     (string => int)
  * @var IndividuRole[] $individuRoles
@@ -10,6 +12,7 @@
  * @var string[]       $contenus
  */
 
+use Individu\Entity\Db\IndividuRoleEtablissement;
 use These\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
 use These\Provider\Privilege\CoEncadrantPrivileges;
@@ -33,10 +36,10 @@ $structure = $ecole->getStructure();
 ?>
 
 <h1 class="page-header">
-    École doctorale &laquo; <?php echo $ecole->getStructure()->getLibelle(); ?> &raquo;
+    École doctorale &laquo; <?php echo $ecole->getStructure()->getLibelle(); ?> &raquo; - <?php echo $ecole->getStructure()->getSigle() ?>
 </h1>
 
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+<?php echo $this->alertes()->addAlertesFromFlashMessenger()->renderAsBootstrapToasts() ?>
 
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item">
@@ -101,31 +104,33 @@ $structure = $ecole->getStructure();
         Rôles et membres
     </h2>
 
-    <table class="table table-sm">
-        <thead>
-        <tr>
-            <th> Libellé du rôle</th>
-            <th> Effectif</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($roleListing as $libelle => $count): ?>
-            <tr>
-                <td> <?php echo $libelle; ?> </td>
-                <td> <?php echo $count; ?> </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col-md-7">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>Rôle</th>
+                    <th>Nombre d'individus ayant ce rôle</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($roleListing as $libelle => $count): ?>
+                    <tr>
+                        <td> <?php echo $libelle; ?> </td>
+                        <td> <?php echo $count; ?> </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <table class="table table-sm">
         <thead>
         <tr>
-            <th> Dénomination</th>
-            <th> Adresse électronique</th>
-            <th> Établissement d'inscription</th>
-            <th> Rôle</th>
-            <th> &nbsp; </th>
+            <th>Rôle</th>
+            <th>Périmètre</th>
+            <th>Individu</th>
         </tr>
         </thead>
         <tbody>
@@ -136,14 +141,45 @@ $structure = $ecole->getStructure();
                 $role = $individuRole->getRole();
             ?>
             <tr>
-                <td> <?php echo $individu->getNomComplet(); ?> </td>
-                <td> <?php echo $individu->getEmailPro(); ?> </td>
-                <td> <?php echo $individu->getEtablissement(); ?> </td>
-                <td> <?php echo $role->getLibelle(); ?> </td>
+                <td><?php echo $role->getLibelle(); ?></td>
                 <td>
+                    <?php $perimetres = $individuRole->getIndividuRoleEtablissementToString('<br>', fn(IndividuRoleEtablissement $irp) =>
+                        '<span class="text-structure etablissement">' . $irp->getEtablissement() . '</span>'); ?>
+                    <?php if ($perimetres) : ?>
+                        <?php echo $perimetres ?>
+                    <?php else: ?>
+                        <abbr title="Pas de restriction selon l'établissement d'inscription">Aucun</abbr>
+                    <?php endif; ?>
+
                     <?php if ($canEdit) : ?>
-                        <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $individu->getId()], [], true); ?>" class="ajax-modal" data-event="modification">
-                            <span class="icon icon-editer" title="Ajouter/Modifier un complément"></span></a>
+                        <a href="<?php echo $this->url("individu-role/modifier", ['individu' => $individu->getId(), 'role' => $role->getId()], [], true); ?>"
+                           class="ajax-modal" data-event="modification"
+                           title="Modifier cette attribution de rôle">
+                            <span class="icon icon-editer"></span></a>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php echo $individu->getNomComplet(); ?> &ndash;
+                    <?php if ($email = $individu->getEmailProComplement()) : ?>
+                        <em title="Valeur forcée issue du complément d'individu"><a href="mailto:<?php echo $email ?>"><?php echo $email ?></a></em>
+                    <?php elseif ($email = $individu->getEmailPro()): ?>
+                        <a href="mailto:<?php echo $email ?>"><?php echo $email ?></a>
+                    <?php else: ?>
+                        Adresse électronique inconnue
+                    <?php endif; ?>
+
+                    <?php if ($canEdit) : ?>
+                        <?php if ($compl = $individu->getComplement()): ?>
+                            <a href="<?php echo $this->url("individu-compl/modifier", ['individu-compl' => $compl->getId()], [], true); ?>"
+                               class="ajax-modal" data-event="modification" title="Modifier ou supprimer un complément d'individu">
+                                <span class="icon icon-edit"></span>
+                            </a>
+                        <?php else: ?>
+                            <a href="<?php echo $this->url("individu-compl/ajouter", ['individu' => $individu->getId()], [], true); ?>"
+                               class="ajax-modal" data-event="modification" title="Créer un complément d'individu">
+                                <span class="icon icon-plus"></span>
+                            </a>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </td>
             </tr>

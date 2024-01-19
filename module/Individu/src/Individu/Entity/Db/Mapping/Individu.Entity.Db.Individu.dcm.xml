@@ -45,11 +45,6 @@
         <one-to-many target-entity="Application\Entity\Db\Utilisateur" mapped-by="individu" field="utilisateurs"/>
         <one-to-many target-entity="Individu\Entity\Db\IndividuCompl" mapped-by="individu" field="complements"/>
 
-        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
-            <join-columns>
-                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
         <many-to-one field="paysNationalite" target-entity="Application\Entity\Db\Pays">
             <join-columns>
                 <join-column name="PAYS_ID_NATIONALITE" referenced-column-name="ID"/>

@@ -4,9 +4,10 @@ namespace These\Filter;
 
 use Laminas\Filter\AbstractFilter;
 use Laminas\View\Helper\HtmlList;
+use LogicException;
 use These\Entity\Db\Acteur;
 
-/** --- Class ActeursFormatteur ---
+/**
  * @var bool $asUl                      returned data type as unordered list (html)
  * @var bool $asSeparated               returned data type as separated value
  * @var bool $asArray                   returned data type as array
@@ -14,31 +15,30 @@ use These\Entity\Db\Acteur;
  */
 class ActeursFormatter extends AbstractFilter {
 
-    /** @var bool */
-    private $asUl = false;
-    /** @var bool */
-    private $asSeparated = true;
-    /** @var bool */
-    private $asArray = true;
-    /** @var string */
-    private $separator;
+    private bool $asUl = false;
+    private bool $asSeparated = true;
+    private bool $asArray = true;
+    private bool $indexedByRole = false;
+    private string $separator = ', ';
 
-    private $displayRole = false;
-    private $displayRoleLibelle = false;
-    private $displayRoleComplement = false;
-    private $displayQualite = false;
-    private $displayEtablissement = false;
+    private bool $displayRole = false;
+    private bool $displayRoleLibelle = false;
+    private bool $displayRoleComplement = false;
+    private bool $displayQualite = false;
+    private bool $displayEtablissement = false;
+    private bool $displayUniteRecherche = false;
 
     private $contrainteRole = null;
     private $contrainteRoleLibelle = null;
     private $contrainteRoleComplement = null;
     private $contrainteQualite = null;
     private $contrainteEtablissement = null;
+    private $contrainteUniteRecherche = null;
 
-    /** Set the returned data type to unordered list
-     *  @return $this
+    /**
+     * Set the returned data type to unordered list
      */
-    public function asUl()
+    public function asUl(): static
     {
         $this->asUl = true;
         $this->asSeparated = false;
@@ -47,11 +47,10 @@ class ActeursFormatter extends AbstractFilter {
         return $this;
     }
 
-    /** Set the returned data type to separated value format and set the separator
-     * @param string $separator (default = ", ")
-     * @return $this
+    /**
+     * Set the returned data type to separated value format and set the separator
      */
-    public function asSeparated($separator = ", ")
+    public function asSeparated(string $separator = ", "): static
     {
         $this->asUl = false;
         $this->asSeparated = true;
@@ -61,24 +60,27 @@ class ActeursFormatter extends AbstractFilter {
         return $this;
     }
 
-    /** Set the returned data type to separated value format and set the separator
-     * @return $this
+    /**
+     * Set the returned data type to separated value format and set the separator
      */
-    public function asArray()
+    public function asArray(bool $indexedByRole = false): self
     {
         $this->asUl = false;
         $this->asSeparated = false;
         $this->asArray = true;
+        $this->indexedByRole = $indexedByRole;
 
         return $this;
     }
 
 
-    /** Set the displayed keys
+    /**
+     * Set the displayed keys
+     *
      * @param array $params of keys [role, complement, qualite, etablissement] and boolean
-     * @return $this
      */
-    public function paramDisplay(array $params) {
+    public function paramDisplay(array $params): static
+    {
         foreach ($params as $key => $value) {
             switch ($key) {
                 case "role": $this->displayRole = $value;
@@ -91,17 +93,20 @@ class ActeursFormatter extends AbstractFilter {
                     break;
                 case "etablissement": $this->displayEtablissement = $value;
                     break;
+                case "uniteRecherche": $this->displayUniteRecherche = $value;
+                    break;
             }
         }
 
         return $this;
     }
 
-    /** Format n array of acteurs
+    /**
+     * Format n array of acteurs
+     *
      * @param Acteur[] $acteurs
-     * @return string
      */
-    public function doFormat($acteurs)
+    public function doFormat(array $acteurs): array|string
     {
         if ($this->asUl) {
             $acteurs = $this->doFormatUnorderedList($acteurs);
@@ -113,35 +118,40 @@ class ActeursFormatter extends AbstractFilter {
 //            $result = implode($this->separator, $acteurs);
             $result = $acteurs;
         }
-        elseif ($this->asArray()) {
+        elseif ($this->asArray) {
             $result = $this->doFormatArray($acteurs);
         }
         else {
-            throw new \LogicException("Cas inattendu !");
+            throw new LogicException("Cas inattendu !");
         }
 
         return $result;
     }
 
-    /** This function format an array of acteurs as a unordered list
+    /**
+     * This function format an array of acteurs as a unordered list
+     *
      * @param Acteur[] $acteurs
-     * @return string
      */
-    private function doFormatUnorderedList($acteurs) {
+    private function doFormatUnorderedList(array $acteurs): string
+    {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
         $helper = new HtmlList();
-        $results = $helper($acteurs, $ordered = false, ['class' => 'row'], $escape = false);
-        return $results;
+
+        return $helper($acteurs, $ordered = false, ['class' => 'row'], $escape = false);
     }
 
-    /** This function format an array of acteurs as Separated Values object
+    /**
+     * This function format an array of acteurs as Separated Values object
+     *
      * @param  Acteur[] $acteurs
      * @return string Separated Values object
      */
-    private function doFormatSeparated($acteurs) {
+    private function doFormatSeparated(array $acteurs): string
+    {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
-        $results = implode($this->separator, $acteurs);
-        return $results;
+
+        return implode($this->separator, $acteurs);
     }
 
     /**
@@ -150,9 +160,10 @@ class ActeursFormatter extends AbstractFilter {
      * @param Acteur[] $acteurs
      * @return array Array of array with key => value
      */
-    private function doFormatArray($acteurs) {
+    private function doFormatArray(array $acteurs): array
+    {
         $results = [];
-        /** @var Acteur $acteur */
+
         foreach ($acteurs as $acteur) {
             $result = [];
             $result["acteur"] = $acteur;
@@ -168,6 +179,10 @@ class ActeursFormatter extends AbstractFilter {
             }
             if ($this->displayEtablissement === true) {
                 $result["etablissement"] = ($etab = $acteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : "(Établissement non renseigné)";
+                $result["etablissementForce"] = ($etab = $acteur->getEtablissementForce()) ? $etab->getStructure()->getLibelle() : null;
+            }
+            if ($this->displayUniteRecherche === true && $acteur->getUniteRecherche()) {
+                $result["uniteRecherche"] = $acteur->getUniteRecherche()->getStructure()->getLibelle();
             }
             if ($acteur->getIndividu()->getSupannId() === null) {
                 $result['alerte-supann-id'] = sprintf(
@@ -175,16 +190,19 @@ class ActeursFormatter extends AbstractFilter {
                     $acteur->getIndividu()->getSource(),
                     $acteur->getIndividu()->getSourceCode());
             }
-            $results[] = $result;
+
+            if ($this->indexedByRole) {
+                $results[$result["role"]] = $results[$result["role"]] ?? [];
+                $results[$result["role"]][] = $result;
+            } else {
+                $results[] = $result;
+            }
         }
+
         return $results;
     }
 
-    /**
-     * @param Acteur $a
-     * @return string HTML
-     */
-    public function htmlifyActeur(Acteur $a)
+    public function htmlifyActeur(Acteur $a): string
     {
         $str = (string)$a->getIndividu();
 
@@ -198,17 +216,23 @@ class ActeursFormatter extends AbstractFilter {
             $str .= ", " . $a->getQualite();
         }
         if ($this->displayEtablissement) {
-            $str .= (($etab = $a->getEtablissement()) ? ", " . $etab->getStructure()->getLibelle() : "Établissement non renseigné");
+            $etab = $a->getEtablissementForce() ?: $a->getEtablissement();
+            $str .= $etab ? ", " . $etab->getStructure()->getLibelle() : "Établissement non renseigné";
+        }
+        if ($this->displayUniteRecherche) {
+            $str .= ($ur = $a->getUniteRecherche()) ? ", " . $ur->getStructure()->getLibelle() : "UR non renseignée";
         }
 
         return $str;
     }
 
-    /** Set the displayed keys
+    /**
+     * Set the displayed keys
+     *
      * @param array $params of keys [role, complement, qualite, etablissement] and boolean
-     * @return ActeursFormatter
      */
-    public function paramFilter(array $params) {
+    public function paramFilter(array $params): static
+    {
         foreach ($params as $key => $value) {
             switch ($key) {
                 case "role": $this->contrainteRole = $value;
@@ -221,24 +245,28 @@ class ActeursFormatter extends AbstractFilter {
                     break;
                 case "etablissement": $this->contrainteEtablissement = $value;
                     break;
+                case "uniteRecherche": $this->contrainteUniteRecherche = $value;
+                    break;
             }
         }
 
         return $this;
     }
 
-    public function filter($acteurs) {
-
+    public function filter($acteurs): array
+    {
         $results = [];
 
         /** @var Acteur $acteur */
         foreach($acteurs as $acteur) {
+            $etab = $acteur->getEtablissementForce() ?: $acteur->getEtablissement();
             $keep = true;
             if ($keep && $this->contrainteRole != null && $acteur->getRole()->getCode() != $this->contrainteRole) $keep = false;
             if ($keep && $this->contrainteRoleLibelle != null && $acteur->getRole()->getLibelle() != $this->contrainteRoleLibelle) $keep = false;
             if ($keep && $this->contrainteRoleComplement != null && $acteur->getLibelleRoleComplement() != $this->contrainteRoleComplement) $keep = false;
             if ($keep && $this->contrainteQualite != null && $acteur->getQualite() != $this->contrainteQualite) $keep = false;
-            if ($keep && $this->contrainteEtablissement != null && (! $acteur->getEtablissement() || $acteur->getEtablissement()->getStructure()->getLibelle() != $this->contrainteEtablissement)) $keep = false;
+            if ($keep && $this->contrainteEtablissement != null && (! $etab || $etab->getStructure()->getLibelle() != $this->contrainteEtablissement)) $keep = false;
+            if ($keep && $this->contrainteUniteRecherche != null && (! ($ur = $acteur->getUniteRecherche()) || $ur->getStructure()->getLibelle() != $this->contrainteUniteRecherche)) $keep = false;
             if ($keep) $results[] = $acteur;
         }
 

@@ -141,9 +141,6 @@ p.appname-subtitle {
   margin-top: -25px;
   margin-bottom: 30px; }
 
-body.loading * {
-  cursor: wait; }
-
 div.loading {
   background-image: url("//gest.unicaen.fr/images/ajax-loader-r.gif");
   background-position: center center;
@@ -262,7 +259,12 @@ dl dt {
   border-bottom: 1px lightgray dotted; }
 dl dd {
   padding-left: 10px;
-  margin-bottom: 8px; }
+  margin-bottom: 0; }
+  dl dd p.acteurs {
+    padding-bottom: 0.2em;
+    margin-bottom: 0; }
+  dl dd p.acteurs:not(:nth-last-of-type(1)) {
+    border-bottom: 1px lightgray dotted; }
 
 dl.metadonnees .resume {
   max-height: 200px;
@@ -287,6 +289,32 @@ input[type="checkbox"] {
 
 .text-sm {
   font-size: 80%; }
+
+.text-structure {
+  border: black 1px dotted;
+  border-radius: 5px 5px;
+  padding: 0 3px 0 0;
+  white-space: nowrap; }
+
+.text-structure:before {
+  font-family: "Font Awesome 5 Free", serif;
+  content: "\f1ad";
+  font-weight: 900;
+  font-size: 90%;
+  color: grey;
+  display: inline-block;
+  border-right: black 1px dotted;
+  padding: 0 3px 0 3px;
+  margin-right: 4px; }
+
+.text-structure.etablissement:before {
+  content: "\f19c"; }
+
+.text-structure.ed:before {
+  content: "\f549"; }
+
+.text-structure.ur:before {
+  content: "\f0c3"; }
 
 .alert .icon {
   float: left;
@@ -373,6 +401,11 @@ table.these-fiche {
 .these-card {
   margin-top: 1em;
   margin-bottom: 1.5em; }
+
+dl.these dt, dl.these dd {
+  margin-bottom: .5rem; }
+dl.these ul {
+  margin-bottom: 0; }
 
 .popover {
   max-width: 100%;
@@ -461,7 +494,7 @@ form.form-retraiter {
 @media (min-width: 1500px) {
   .container {
     max-width: 1470px; } }
-form input[type='submit'] {
+form [type='submit'] {
   margin-top: 20px; }
 
 /******** Boutons ***********/
@@ -645,7 +678,8 @@ span.sas-highlight {
 .individu-usurpation-form {
   display: inline; }
   .individu-usurpation-form input[type="submit"] {
-    margin: 0 0 0 8px; }
+    margin: 0 0 0 8px;
+    padding: 2px 3px; }
 
 /********** à déplacer... ************/
 .user-profile-select-form label {

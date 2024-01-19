@@ -61,7 +61,21 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const ROLE_ID_ADMISSION_CODIRECTEUR_THESE = "Potentiel co-directeur de thèse";
     const CODE_ADMISSION_CODIRECTEUR_THESE = "ADMISSION_CODIRECTEUR_THESE";
 
+    /**
+     * Convertit la collection d'entités spécifiée en un tableau d'options injectable dans un <select>.
+     *
+     * @param object[] $entities
+     * @return string[] id => libelle
+     */
+    static public function toValueOptions(iterable $entities): array
+    {
+        $options = [];
+        foreach ($entities as $entity) {
+            $options[$entity->getId()] = (string) $entity;
+        }
 
+        return $options;
+    }
 
     /**
      * @var string
@@ -137,6 +151,14 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
             self::CODE_RAPPORTEUR_ABSENT,
             self::CODE_CO_ENCADRANT,
         ]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCoEncadrant(): bool
+    {
+        return $this->getCode() === self::CODE_CO_ENCADRANT;
     }
 
     /**

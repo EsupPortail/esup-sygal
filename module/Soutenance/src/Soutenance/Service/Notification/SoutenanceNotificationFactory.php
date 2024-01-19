@@ -99,8 +99,15 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationUniteRechercheProposition(These $these): Notification
     {
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        $emails = $this->emailTheseService->fetchEmailsByEtablissement($individuRoles, $these);
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
+        //
+        // todo : quid si rien pour l'établissement spécifié ? => il faut bien pouvoir notifier qqun, non ?!
+        // if (!$individuRoles) {
+        //     // tentative sans contrainte sur l'établissement
+        //     $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        // }
+        //
+        $emails = $this->emailTheseService->collectEmailsFromIndividuRoles($individuRoles);
 
         if (empty($emails)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour l'unité de recherche de la thèse {$these->getId()}");
@@ -121,8 +128,8 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationEcoleDoctoraleProposition(These $these): Notification
     {
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        $emails = $this->emailTheseService->fetchEmailsByEtablissement($individuRoles, $these);
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
+        $emails = $this->emailTheseService->collectEmailsFromIndividuRoles($individuRoles);
 
         if (empty($emails)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour l'école doctorale de la thèse {$these->getId()}");

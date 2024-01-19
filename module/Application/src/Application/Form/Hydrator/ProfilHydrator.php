@@ -35,7 +35,7 @@ class ProfilHydrator implements HydratorInterface
         $object->setRoleCode($data['code']);
         $object->setDescription($data['description']);
 
-        $type = $this->getStructureService()->getTypeStructureByCode($data['structure']);
+        $type = $this->getStructureService()->fetchTypeStructureByCode($data['structure']);
         $object->setStructureType($type);
 
         return $object;

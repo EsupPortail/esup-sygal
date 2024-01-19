@@ -426,6 +426,92 @@ $.widget("unicaen.widgetImageLoader", {
     }
 });
 
+/**
+ * Widget pour forçage dans le formulaire d'édition d'un Acteur.
+ *
+ * Exemple d'usage avec une classe "etablissementForce" :
+ * ```
+ * <div class="forcage from etablissementForce">
+ *     <div class="inputs">
+ *         <?php echo $this->formControlGroup($fieldset->get('etablissement')); ?>
+ *     </div>
+ * </div>
+ * ...
+ * <div class="forcage to etablissementForce">
+ *     <a href="#" class="trigger forcer btn btn-secondary" title="Forcer l'établissement" style="display: none">Forcer...</a>
+ *     <a href="#" class="trigger deforcer" title="Supprimer le forçage" style="display: none"><span class="icon icon-non text-danger"></span></a>
+ *     <div class="inputs" style="display: none">
+ *         <?php echo $this->formControlGroup($fieldset->get('etablissementForce')); ?>
+ *     </div>
+ * </div>
+ *
+ * <script>
+ *     $(function() {
+ *         const widget = ForcageWidget.create('etablissementForce');
+ *         // possibilité de surcharge d'une fonction si besoin
+ *         widget.clearForcage = function() {
+ *             $("#" + this.name).val('');
+ *             $("#" + this.name + "-autocomplete").val('');
+ *         };
+ *         // initialisation requise
+ *         widget.init();
+ *     });
+ * </script>
+ * ```
+ */
+const ForcageWidget = {
+    name: null,
+    selector: null,
+    create: function(classe) {
+        this.classe = classe;
+        this.selector = ".forcage." + classe;
+        return this;
+    },
+    init: function() {
+        this.getForcageValue() ? this.forcer() : this.deforcer();
+        const that = this;
+        this.getButtonForcer().on('click', function() { that.forcer.call(that) });
+        this.getButtonDeforcer().on('click', function() { that.deforcer.call(that) });
+    },
+    getButtonForcer: function() {
+        return $(this.selector + " .trigger.forcer");
+    },
+    getButtonDeforcer: function() {
+        return $(this.selector + " .trigger.deforcer");
+    },
+    getForcageInputFrom: function() {
+        return $(this.selector + ".from .inputs");
+    },
+    getForcageInputTo: function() {
+        return $(this.selector + ".to .inputs");
+    },
+    clearForcage: function() {
+        this.getForcageInputTo().find(":input").val('');
+    },
+    getForcageValue: function() {
+        return this.getForcageInputTo().find(":input").first().val();
+    },
+    hideForcage: function() {
+        this.getForcageInputTo().hide();
+    },
+    showForcage: function() {
+        this.getForcageInputTo().show();
+    },
+    forcer: function() {
+        this.getButtonForcer().hide();
+        this.getButtonDeforcer().show();
+        this.showForcage();
+        this.getForcageInputFrom().css('opacity', '0.5');
+    },
+    deforcer: function() {
+        this.hideForcage();
+        this.clearForcage();
+        this.getButtonForcer().show();
+        this.getButtonDeforcer().hide();
+        this.getForcageInputFrom().css('opacity', '1.0');
+    },
+};
+
 
 $(function () {
     WidgetInitializer.add('widget-autorisation-mise-en-ligne', 'widgetAutorisationMiseEnLigne');
@@ -441,15 +527,13 @@ $(function () {
     $('[data-bs-toggle="tooltip"]').tooltip();
 
     // le plugin bootstrap-confirmation n'est pas compatible avec Bootstrap 5 donc on l'a remplacé par ça !
-    $('[data-toggle="confirmationx"]').each(function () {
-        $(this).on("click", function () {
-            $(this).addClass("loading");
-            const ok = confirm($(this).data('message') || "Êtes-vous sûr·e ?");
-            if (!ok) {
-                $(this).removeClass("loading");
-            }
-            return ok;
-        });
+    $("body").on("click", '[data-toggle="confirmationx"]', function () {
+        $(this).addClass("loading");
+        const ok = confirm($(this).data('message') || "Êtes-vous sûr·e ?");
+        if (!ok) {
+            $(this).removeClass("loading");
+        }
+        return ok;
     });
 });
 

@@ -54,6 +54,9 @@
 <dl>
     <dt>Id interne :</dt>
     <dd><?php echo $entity->getId(); ?></dd>
+    <dt>Id interne structure :</dt>
+    <dd><?php echo $entity->getStructure()->getId(); ?></dd>
+
     <dt>IdRef :</dt>
     <dd>
         <?php if ($entity->getStructure()->getIdRef() !== null and trim($entity->getStructure()->getIdRef()) !== "") : ?>

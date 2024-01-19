@@ -85,7 +85,7 @@ class IndividuController extends AbstractActionController implements SearchContr
 
         return new ViewModel([
             'individu' => $individu,
-            'rolesData' => $this->rolesAction(),
+            'rolesData' => $this->rolesAction()->getVariables(),
         ]);
     }
 
@@ -93,8 +93,12 @@ class IndividuController extends AbstractActionController implements SearchContr
     {
         $individu = $this->individuService->getRequestedIndividu($this);
 
-        $roles = $this->roleService->findAllRoles();
+        $rolesEtablissement = $this->roleService->findRolesByTypeStructureDependant(TypeStructure::CODE_ETABLISSEMENT);
+        $rolesEcoleDoctorale = $this->roleService->findRolesByTypeStructureDependant(TypeStructure::CODE_ECOLE_DOCTORALE);
+        $rolesUniteRecherche = $this->roleService->findRolesByTypeStructureDependant(TypeStructure::CODE_UNITE_RECHERCHE);
+        $rolesStatiques = $this->roleService->findRolesByTypeStructureDependant(null);
 
+        $individusRoles = $this->roleService->findIndividuRolesByIndividu($individu);
         $rolesAffectes = $individu->getRoles();
         $rolesAffectesAuto = $this->collectRolesDynamiquesForIndividu($individu);
 
@@ -108,13 +112,16 @@ class IndividuController extends AbstractActionController implements SearchContr
 
         return new ViewModel([
             'individu' => $individu,
-            'roles' => $roles,
+            'rolesEtablissement' => $rolesEtablissement,
+            'rolesEcoleDoctorale' => $rolesEcoleDoctorale,
+            'rolesUniteRecherche' => $rolesUniteRecherche,
+            'rolesStatiques' => $rolesStatiques,
+            'individusRoles' => $individusRoles,
             'rolesAffectes' => $rolesAffectes,
             'rolesAffectesAuto' => $rolesAffectesAuto,
             'etablissements' => $etablissements,
             'ecoles' => $ecoles,
             'unites' => $unites,
-//            'redirect' => $this->url()->fromRoute(null, [], [], true),
         ]);
     }
 

@@ -190,40 +190,11 @@ class EtablissementService extends BaseService
         return $etablissement;
     }
 
-    public function getEtablissementsInscriptionsAsOptions() : array
-    {
-        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions(true);
-        $result = [];
-        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
-        return $result;
-    }
-
-    private function flush(): void
-    {
-    }
-
     /**
      * @return array
      */
     public function getEtablissementInscriptionAsOption() : array
     {
-        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions();
-        $array = [];
-        foreach ($etablissements as $etablissement) {
-            $array[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
-        }
-        return $array;
-    }
-
-    //todo faire les filtrage et considerer que les UR internes
-    public function getEtablissementsAsOptions() : array
-    {
-        $etablissements = $this->getRepository()->findAll();
-
-        $options = [];
-        foreach ($etablissements as $etablissement) {
-            $options[$etablissement->getId()] = $etablissement->getStructure()->getLibelle() . " " ."<span class='badge'>".$etablissement->getStructure()->getSigle()."</span>";
-        }
-        return $options;
+        return Etablissement::toValueOptions($this->getRepository()->findAllEtablissementsInscriptions());
     }
 }

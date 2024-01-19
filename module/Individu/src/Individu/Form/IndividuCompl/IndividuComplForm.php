@@ -4,82 +4,55 @@ namespace Individu\Form\IndividuCompl;
 
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Email;
+use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
-use Laminas\InputFilter\Factory;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Callback;
 use Laminas\Validator\EmailAddress;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
-class IndividuComplForm extends Form {
+class IndividuComplForm extends Form implements InputFilterProviderInterface
+{
+    private string $urlIndividu;
+    private bool $emailRequired = true;
 
-    /** @var string */
-    private $urlIndividu;
-
-    public function setUrlIndividu(string $urlIndividu)
+    public function setUrlIndividu(string $urlIndividu): void
     {
         $this->urlIndividu = $urlIndividu;
     }
 
-    /** @var string */
-    private $urlEtablissement;
-
-    public function setUrlEtablissement(string $urlEtablissement)
-    {
-        $this->urlEtablissement = $urlEtablissement;
-    }
-
-    /** @var string */
-    private $urlUniteRecherche;
-
-    public function setUrlUniteRecherche(string $urlUniteRecherche)
-    {
-        $this->urlUniteRecherche = $urlUniteRecherche;
-    }
-
-    public function init()
+    public function init(): void
     {
         //sas individu
         $individu = new SearchAndSelect('individu', ['label' => "Individu * :"]);
         $individu
             ->setAutocompleteSource($this->urlIndividu)
-            ->setSelectionRequired(true)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'individu',
                 'placeholder' => "Agent à ajouter comme individu ...",
             ]);
         $this->add($individu);
-        //text email
+
+        // adresse email initiale
+        $this->add(
+            (new Text('individuEmail'))
+                ->setLabel("Adresse électronique professionnelle initiale :")
+        );
+
+        // adresse email de remplacement
         $mailValidator = new EmailAddress();
         $mailValidator->setMessages([
-            EmailAddress::INVALID_FORMAT =>  'Adresse électronique non valide !',
+            EmailAddress::INVALID_FORMAT => 'Adresse électronique non valide !',
         ]);
         $this->add(
             (new Email('email'))
-                ->setLabel("Adresse électronique professionnelle * :")
-                ->setAttribute('placeholder' , "Adresse électronique professionnelle associée à l'individu ...")
+                ->setLabel("Adresse électronique professionnelle de remplacement * :")
+                ->setAttribute('placeholder' , "Adresse électronique professionnelle")
+                ->setAttribute('required', $this->emailRequired)
                 ->setValidator($mailValidator)
         );
-        //sas etablissement
-        $individu = new SearchAndSelect('etablissement', ['label' => "Établissement :"]);
-        $individu
-            ->setAutocompleteSource($this->urlEtablissement)
-            ->setSelectionRequired(true)
-            ->setAttributes([
-                'id' => 'etablissement',
-                'placeholder' => "Établissement associé à l'individu ...",
-            ]);
-        $this->add($individu);
-        //sas unite
-        $individu = new SearchAndSelect('uniteRecherche', ['label' => "Unité de recherche :"]);
-        $individu
-            ->setAutocompleteSource($this->urlUniteRecherche)
-            ->setSelectionRequired(true)
-            ->setAttributes([
-                'id' => 'uniteRecherche',
-                'placeholder' => "Unité de recherche associée à l'individu ...",
-            ]);
-        $this->add($individu);
 
-        //bouton
         $this->add([
             'type' => Button::class,
             'name' => 'enregistrer',
@@ -90,35 +63,56 @@ class IndividuComplForm extends Form {
                 ],
             ],
             'attributes' => [
+                'value' => 'enregistrer',
                 'type' => 'submit',
                 'class' => 'btn btn-success',
             ],
         ]);
+        $this->add([
+            'type' => Button::class,
+            'name' => 'detruire',
+            'options' => [
+                'label' => "<i class='fas fa-trash'></i> Supprimer ce complément d'individu",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
+            ],
+            'attributes' => [
+                'value' => 'detruire',
+                'type' => 'submit',
+                'class' => 'btn btn-danger',
+            ],
+        ]);
+    }
 
-        //input
-        $this->setInputFilter((new Factory())->createInputFilter([
+    public function getInputFilterSpecification(): array
+    {
+        return [
             'individu' => [
                 'name' => 'individu',
                 'required' => true,
             ],
             'email' => [
                 'name' => 'email',
-                'required' => true,
-                'validator' => [
-                    'name' => EmailAddress::class,
-                    'messages' => [
-                        EmailAddress::INVALID_FORMAT => '',
+                'required' => $this->emailRequired,
+                'validators' => [
+                    [
+                        'name' => EmailAddress::class,
+                        'messages' => [
+                            EmailAddress::INVALID_FORMAT => 'Adresse électronique non valide.',
+                        ],
+                    ],
+                    [
+                        'name' => Callback::class,
+                        'options' => [
+                            'messages' => [
+                                Callback::INVALID_VALUE => "L'adresse de remplacement doit être différente de l'adresse initiale.",
+                            ],
+                            'callback' => fn($value) => $value <> $this->get('individuEmail')->getValue(),
+                        ],
                     ],
                 ],
             ],
-            'etablissement' => [
-                'name' => 'etablissement',
-                'required' => false,
-            ],
-            'uniteRecherche' => [
-                'name' => 'uniteRecherche',
-                'required' => false,
-            ],
-        ]));
+        ];
     }
 }

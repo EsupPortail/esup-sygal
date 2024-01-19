@@ -72,20 +72,6 @@ $canHistoriser = $canAjouter;
                 <?php endif; ?>
             </td>
             <td>
-                <?php if ($complement->getEtablissement()) : ?>
-                    <?php echo $complement->getEtablissement()->getStructure()->getLibelle(); ?>
-                <?php else: ?>
-                    (Non renseigné&middot;e)
-                <?php endif; ?>
-            </td>
-            <td>
-                <?php if ($complement->getUniteRecherche()) : ?>
-                    <?php echo $complement->getUniteRecherche()->getStructure()->getLibelle(); ?>
-                <?php else: ?>
-                    (Non renseigné&middot;e)
-                <?php endif; ?>
-            </td>
-            <td>
                 <?php if ($canAfficher) : ?>
                     <a href="<?php echo $this->url('individu-compl/afficher', ['individu-compl' => $complement->getId()], [], true); ?>"
                        class="ajax-modal">

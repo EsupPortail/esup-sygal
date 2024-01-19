@@ -108,7 +108,7 @@ class TheseSaisieForm extends Form
             'name' => 'directeur-etablissement',
             'options' => [
                 'label' => "Établissement :",
-                'value_options' => $this->getEtablissementService()->getEtablissementsAsOptions(),
+                'value_options' => $this->getEtablissementsAsOptions(),
                 'empty_option' => "Sélectionner un établissement",
             ],
             'attributes' => [
@@ -150,7 +150,7 @@ class TheseSaisieForm extends Form
                 'name' => 'codirecteur' . $i . '-etablissement',
                 'options' => [
                     'label' => "Établissement :",
-                    'value_options' => $this->getEtablissementService()->getEtablissementsAsOptions(),
+                    'value_options' => $this->getEtablissementsAsOptions(),
                     'empty_option' => "Sélectionner un établissement",
                 ],
                 'attributes' => [
@@ -168,7 +168,7 @@ class TheseSaisieForm extends Form
             'name' => 'unite-recherche',
             'options' => [
                 'label' => "Unité de recherche :",
-                'value_options' => $this->getUniteRechercheService()->getUnitesRecherchesAsOptions(),
+                'value_options' => $this->getUnitesRecherchesAsOptions(),
                 'empty_option' => "Sélectionner l'unité de recherche",
             ],
             'attributes' => [
@@ -184,7 +184,7 @@ class TheseSaisieForm extends Form
             'name' => 'ecole-doctorale',
             'options' => [
                 'label' => "École doctorale :",
-                'value_options' => $this->getEcoleDoctoraleService()->getEcolesDoctoralsAsOptions(),
+                'value_options' => $this->getEcolesDoctoralsAsOptions(),
                 'empty_option' => "Sélectionner l'école doctorale",
             ],
             'attributes' => [
@@ -200,7 +200,7 @@ class TheseSaisieForm extends Form
             'name' => 'etablissement',
             'options' => [
                 'label' => "Établissement :",
-                'value_options' => $this->getEtablissementService()->getEtablissementsInscriptionsAsOptions(),
+                'value_options' => $this->getEtablissementsInscriptionsAsOptions(),
                 'empty_option' => "Sélectionner l'établissement",
             ],
             'attributes' => [
@@ -336,5 +336,46 @@ class TheseSaisieForm extends Form
                 'required' => false,
             ],
         ]));
+    }
+
+    public function getEtablissementsInscriptionsAsOptions() : array
+    {
+        $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true);
+        $result = [];
+        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
+        return $result;
+    }
+
+    public function getEtablissementsAsOptions() : array
+    {
+        $etablissements = $this->etablissementService->getRepository()->findAll();
+
+        $options = [];
+        foreach ($etablissements as $etablissement) {
+            $options[$etablissement->getId()] = $etablissement->getStructure()->getLibelle() . " " ."<span class='badge'>".$etablissement->getStructure()->getSigle()."</span>";
+        }
+        return $options;
+    }
+
+    private function getEcolesDoctoralsAsOptions() : array
+    {
+        $ecoles = $this->ecoleDoctoraleService->getRepository()->findAll();
+
+        $options = [];
+        foreach ($ecoles as $ecole) {
+            $options[$ecole->getId()] = $ecole->getStructure()->getLibelle() . " " ."<span class='badge'>".$ecole->getStructure()->getSigle()."</span>";
+        }
+        return $options;
+    }
+
+    public function getUnitesRecherchesAsOptions() : array
+    {
+        $unites = $this->uniteRechercheService->getRepository()->findAll();
+
+        $options = [];
+        foreach ($unites as $unite) {
+            $options[$unite->getId()] = $unite->getStructure()->getLibelle() . " " ."<span class='badge'>".$unite->getStructure()->getSigle()."</span>";
+        }
+        return $options;
     }
 }

@@ -19,8 +19,6 @@ use These\Controller\Plugin\Url\UrlThesePluginFactory;
 use These\Controller\TheseController;
 use These\Controller\TheseRechercheController;
 use These\Provider\Privilege\ThesePrivileges;
-use These\Service\Acteur\ActeurService;
-use These\Service\Acteur\ActeurServiceFactory;
 use These\Service\These\Factory\TheseSearchServiceFactory;
 use These\Service\These\Factory\TheseServiceFactory;
 use These\Service\These\TheseSearchService;
@@ -369,7 +367,6 @@ return [
         'factories' => [
             UrlTheseService::class => UrlTheseServiceFactory::class,
 
-            ActeurService::class => ActeurServiceFactory::class,
             'TheseService' => TheseServiceFactory::class,
             TheseSearchService::class => TheseSearchServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,

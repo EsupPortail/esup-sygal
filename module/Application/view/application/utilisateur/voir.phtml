@@ -13,7 +13,6 @@ use UnicaenAuth\View\Helper\UserUsurpationHelper;
 use UnicaenAuthToken\Entity\Db\UserToken;
 
 /**
- * @see UtilisateurController::voirAction()
  * @var PhpRenderer $this
  * @var Utilisateur $utilisateur
  * @var Individu $individu
@@ -30,10 +29,10 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
 <?php $this->headTitle($this->translate("Compte utilisateur"))->append($utilisateur->getUsername()) ?>
 
 <h1 class="page-header">
-    <?php echo $this->translate("Compte utilisateur") ?> &laquo; <?php echo $utilisateur->getUsername() ?> &raquo;
+    <?php echo $this->translate("Compte utilisateur") ?> <code><?php echo $utilisateur->getUsername() ?></code>
 </h1>
 
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+<?php echo $this->alertes()->addAlertesFromFlashMessenger()->renderAsBootstrapToasts() ?>
 
 <div class="row">
 
@@ -154,20 +153,19 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
     </div>
 </div>
 
-<?php if ($rolesData) : ?>
+<!-- ROLES ----------------------------------------------------------------------------------------->
 
-    <div class="box card">
-        <div class="card-header bg-dark text-white">
-            <h2 class="first">
-                <?php echo $this->translate("Rôles de l'individu") ?>
-            </h2>
-        </div>
-        <div class="row card-body">
-            <?php echo $this->partial('individu/individu/partial/roles', $rolesData) ?>
-        </div>
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2 class="first">
+            <?php echo $this->translate("Rôles de l'individu") ?>
+        </h2>
     </div>
-
-<?php endif ?>
+    <div class="card-body">
+        Rendez-vous sur la <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()]) ?>"
+        >fiche détaillée de l'individu</a>...
+    </div>
+</div>
 
 
 <script>

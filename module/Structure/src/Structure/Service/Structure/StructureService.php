@@ -192,7 +192,8 @@ class StructureService extends BaseService
 
         $qb = $repo->createQueryBuilder('structureConcrete')
             ->addSelect('source')->join('structureConcrete.source', 'source')
-            ->andWhereNotHistorise('structureConcrete');
+            ->andWhereNotHistorise('structureConcrete')
+            ->andWhereNotHistorise('structure');
 
         if ($orders) {
             $qb->orderBy('structure.estFermee');
@@ -368,12 +369,11 @@ class StructureService extends BaseService
      * @param string $code
      * @return TypeStructure
      */
-    public function getTypeStructureByCode(string $code): TypeStructure
+    public function fetchTypeStructureByCode(string $code): TypeStructure
     {
         $qb = $this->getEntityManager()->getRepository(TypeStructure::class)->createQueryBuilder('type')
             ->andWhere('type.code = :code')
-            ->setParameter('code', $code)
-            ;
+            ->setParameter('code', $code);
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
