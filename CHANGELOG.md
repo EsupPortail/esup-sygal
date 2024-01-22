@@ -3,6 +3,7 @@ Journal des modifications
 
 6.0.10
 ------
+- Génération de la page de couverture de la thèse : refonte graphique dans le sens de la sobriété.
 - Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
 - Petites améliorations autour des notifs concernant les changements détectés lors de l'import (admission, corrections attendues).
 - Financements sur la fiche Thèse : afficher la nature devant chaque info (type, origine, quotité).

@@ -1,145 +1,152 @@
-body { background-color: white; }
 
-div.logo-comue {
-    width:5cm;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+html {
+    font-family: Arial, Helvetica, sans-serifl, serif;
+}
+
+body {
+    background-color: white;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0.2cm;
+}
+
+.gras {
+    font-weight: bold;
 }
 
 .bandeau-these {
-    width:18cm;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #5B2268;
-
-    font-family: Arial, Helvetica, sans-serifl;
-    font-weight: bold;
-    font-size:16pt;
-    color:white;
-    text-align: center;
+    width: 18.5cm;
+    margin: 0.75cm auto 0.5cm auto;
+    border: 3px solid black;
 }
+
+.bandeau-these h1 {
+    font-weight: bold;
+    font-size: 18pt;
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 0.2cm 0;
+}
+
 .infos-diplome {
-    width:18cm;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-
-
-    font-family: Arial, Helvetica, sans-serifl;
-    font-weight: bold;
-    font-size:12pt;
+    width: 18.5cm;
+    font-family: Arial, Helvetica, sans-serifl, serif;
+    font-size: 12pt;
     text-align: center;
-    line-height: 2em;
-    margin-top: 1ex;
-    margin-bottom: 1ex;
-}
-.larger-infos {
-    font-size:14pt;
+    margin: 0.25cm auto;
 }
 
 .bandeau-titre {
-    width:18cm;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    width: 16cm;
+    background-color: #e8e8e8;
+    border: 1px solid black;
+    padding: 0.25cm;
+    margin: 2ex auto 1ex;
+}
 
-    background-color: #BFBFBF;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: bold;
-    font-size:15pt;
-    padding: 0.1cm;
-    color:black;
-    line-height: 1.3;
+.bandeau-titre p {
+    font-size: 14pt;
     text-align: center;
-    margin-top: 2ex;
-    margin-bottom: 1ex;
+    margin-bottom: 0;
 }
 
 .infos-doctorant {
-    width:18cm;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-
-    font-family: Arial, Helvetica, sans-serifl;
-    font-weight: bold;
-    font-size:14pt;
+    width: 18.5cm;
+    font-size: 16pt;
     text-align: center;
-    margin-top: 1ex;
-    margin-bottom: 1ex;
+    margin: 1ex auto;
+}
+
+.infos-soutenance {
+    width: 18.5cm;
+    font-size: 13pt;
+    text-align: center;
+    margin: 1ex auto 0;
 }
 
 table.jury {
     border-collapse: collapse;
-    width:18.5cm;
-    display: block;
+    width: 18.5cm;
     margin-left: auto;
     margin-right: auto;
 }
-table.jury th {
-    background-color: #F5A756;
-    width: 18cm;
-    font-family: Arial, Helvetica, sans-serifl;
-    font-weight: bold;
-    font-size:12pt;
-    text-align: center;
 
-    border-width: 0.3mm;
-    border-color: #F5A756;
-    border: solid;
+table.jury th {
+    width: 18.5cm;
+    font-family: Arial, Helvetica, sans-serifl, serif;
+    font-weight: normal;
+    font-size: 12pt;
+    text-align: center;
+    border: 1px solid black;
     border-collapse: collapse;
 }
+
 table.jury td {
     font-size: 10pt;
     min-width: 4cm;
-
-    font-family: Arial, Helvetica, sans-serifl;
-
-    border-width: 0.3mm;
-    border-color: #F5A756;
-    border: solid;
+    font-family: Arial, Helvetica, sans-serifl, serif;
+    border: 1px solid black;
     border-collapse: collapse;
     padding: 1mm;
 }
 
-.infos-encadrement{
-    width:18cm;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+table.jury td.individu {
+    width: 5cm;
+}
+table.jury td.qualite {
 
-    font-family: Arial, Helvetica, sans-serifl;
-    font-weight: bold;
-    font-size:12pt;
-    text-align: left;
+}
+table.jury td.role {
 
-    border-left: solid;
-    border-width: 1.5mm;
+}
+
+.infos-encadrement {
+    width: 18.5cm;
     padding-left: 2mm;
-    border-color: #F5A756;
+    margin-left: 0.25cm;
+    margin-top: 0.25cm;
+    margin-right: auto;
+    font-size: 12pt;
+    text-align: left;
+    border-left: solid;
+    border-width: 2px;
+    border-color: black;
 }
 
-div.logos {
-    position: absolute;
-    top: 25cm;
-    left:1.5cm;
-}
 table.logos {
-    width:18cm;
+    width: 18.5cm;
     margin-left: auto;
     margin-right: auto;
 }
+
 table.logos td {
-    /*border: solid;*/
-    /*border-color: black;*/
-    width:6cm;
-    height:4.5cm;
     text-align: center;
 }
+
+table.logos.header td {
+    width: 10cm;
+    vertical-align: top;
+}
+
+table.logos.footer td {
+    height: 3cm;
+    width: 6cm;
+    vertical-align: bottom;
+}
+
+img.logo {
+    max-height: 4cm;
+    max-width: 4cm;
+}
+
 img.logo_small {
-    max-width:4cm;
-    max-height:4cm;
-    text-align: center;
+    max-width: 3cm;
+    max-height: 3cm;
+}
+
+div.footer {
+    position: absolute;
+    top: 25.5cm;
 }

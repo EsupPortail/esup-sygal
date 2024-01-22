@@ -83,8 +83,8 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         }
 
         /** informations générales */
-        $titre = $these->getTitre();
-        $titre = str_replace("\n","<br/>", $titre);
+        $titre = trim($these->getTitre());
+        $titre = str_replace("\n",' ', $titre);
         $pdcData->setTitre($titre);
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) {
@@ -234,20 +234,20 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         }
 
         /** Directeurs de thèses */
-        $nomination = [];
+        $listing = [];
         foreach ($directeurs as $directeur) {
             $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
             $structure = ($these->getUniteRecherche())?:$directeur->getIndividu()->getUniteRecherche()?:$directeur->getIndividu()->getEtablissement();
-            if ($structure !== null) $current .= " (". $structure->getStructure()->getLibelle() .")";
-            $nomination[] = $current;
+            if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
+            $listing[] = ['individu' => $current, 'structure' => $structure];
         }
         foreach ($codirecteurs as $directeur) {
             $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
             $structure = ($directeur->getIndividu()->getUniteRecherche())?:$directeur->getIndividu()->getEtablissement();
-            if ($structure !== null) $current .= " (". $structure->getStructure()->getLibelle() .")";
-            $nomination[] = $current;
+            if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
+            $listing[] = ['individu' => $current, 'structure' => $structure];
         }
-        $pdcData->setListing(implode(" et ", $nomination));
+        $pdcData->setListingDirection($listing);
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
 

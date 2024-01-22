@@ -63,8 +63,7 @@ class PdcData
     /** @var string */
     private $logoUniteRecherche;
 
-    /** @var string */
-    private $listing;
+    private array $listingDirection = [];
     /** @var string */
     private $uniteRecherche;
     /** @var string */
@@ -511,20 +510,14 @@ class PdcData
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getListing()
+    public function getDirection(): array
     {
-        return $this->listing;
+        return $this->listingDirection;
     }
 
-    /**
-     * @param string $listing
-     */
-    public function setListing($listing)
+    public function setListingDirection(array $listing): void
     {
-        $this->listing = $listing;
+        $this->listingDirection = $listing;
     }
 
     public function getWarnings() {
