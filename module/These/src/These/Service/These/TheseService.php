@@ -237,13 +237,13 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $listing = [];
         foreach ($directeurs as $directeur) {
             $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
-            $structure = ($these->getUniteRecherche())?:$directeur->getIndividu()->getUniteRecherche()?:$directeur->getIndividu()->getEtablissement();
+            $structure = $these->getUniteRecherche();
             if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
             $listing[] = ['individu' => $current, 'structure' => $structure];
         }
         foreach ($codirecteurs as $directeur) {
             $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
-            $structure = ($directeur->getIndividu()->getUniteRecherche())?:$directeur->getIndividu()->getEtablissement();
+            $structure = ($directeur->getIndividu()->getUniteRecherche())/*?:$directeur->getIndividu()->getEtablissement()*/?:$directeur->getEtablissement();
             if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
             $listing[] = ['individu' => $current, 'structure' => $structure];
         }

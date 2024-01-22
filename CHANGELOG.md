@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Nouveau module Substitutions (moteur de dédoublonnage automatique d'individus et de structures importés en doublons).
 - [FIX] Création en bdd d'un privilège manquant.
+- [FIX] Page de couverture générée pour la thèse : correction de l'établissement mentionné pour un codirecteur (exploitation de l'info acteur).
 
 6.0.10
 ------
