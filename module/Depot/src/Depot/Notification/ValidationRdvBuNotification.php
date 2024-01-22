@@ -28,34 +28,34 @@ class ValidationRdvBuNotification extends Notification
         return $this;
     }
 
-    private array $emailsBdd = [];
+    private array $emailsAspectsDoctorat = [];
 
     /**
-     * @param string[] $emailsBdd
+     * @param string[] $emails
      */
-    public function setEmailsBdd(array $emailsBdd): self
+    public function setEmailsAspectsDoctorat(array $emails): self
     {
-        $this->emailsBdd = $emailsBdd;
+        $this->emailsAspectsDoctorat = $emails;
 
         return $this;
     }
 
-    private array $emailsBu = [];
+    private array $emailsAspectsBibliotheque = [];
 
     /**
-     * @param string[] $emailsBu
+     * @param string[] $emails
      */
-    public function setEmailsBu(array $emailsBu): self
+    public function setEmailsAspectsBibliotheque(array $emails): self
     {
-        $this->emailsBu = $emailsBu;
+        $this->emailsAspectsBibliotheque = $emails;
 
         return $this;
     }
 
     public function prepare(): self
     {
-        $emailsBDD = $this->emailsBdd;
-        $emailsBU = $this->emailsBu;
+        $emailsBDD = $this->emailsAspectsDoctorat;
+        $emailsBU = $this->emailsAspectsBibliotheque;
 
         $doctorant = $this->these->getDoctorant();
         $individu = $doctorant->getIndividu();
@@ -105,20 +105,20 @@ class ValidationRdvBuNotification extends Notification
         if ($this->estDevalidation) {
             $this->addSuccessMessage(sprintf(
                 "Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s) avec copie à la Maison du doctorat (%s).",
-                $this->getTo(),
-                $this->getCc()
+                implode(', ', $this->getTo()),
+                implode(', ', $this->getCc()),
             ));
         } else {
             if ($this->notifierDoctorant) {
                 $this->addSuccessMessage(sprintf(
                     "Un mail de notification vient d'être envoyé à %s avec copie à la Maison du doctorat (%s)",
                     $this->these->getDoctorant(),
-                    $this->getCc()
+                    implode(', ', $this->getCc()),
                 ));
             } else {
                 $this->addSuccessMessage(sprintf(
                     "Un mail de notification vient d'être envoyé à la Maison du doctorat (%s).",
-                    $this->getTo()
+                    implode(', ', $this->getTo()),
                 ));
             }
         }

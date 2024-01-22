@@ -47,14 +47,19 @@ $fcg = $this->formControlGroup();
 
     <div class="row">
         <div class="col-md-6">
-            <label for="" class="form-label">Conformité de la page de couverture</label><br/>
-            <?php echo $fcg($form->get('pageTitreConforme')->setValue($pageCouvValidee)) ?>
-            <label for="" class="form-label">Version en ligne et papier</label><br/>
-            <?php echo $fcg($form->get('versionArchivableFournie')) ?>
-            <?php echo $fcg($form->get('conventionMelSignee')) ?>
-            <?php if ($form->has('exemplPapierFourni')): ?>
-            <?php echo $fcg($form->get('exemplPapierFourni')) ?>
-            <?php endif ?>
+            <p>
+                <strong>Conformité de la page de couverture</strong>
+                <?php echo $fcg($form->get('pageTitreConforme')->setValue($pageCouvValidee)) ?>
+            </p>
+            <p>
+                <strong>Version en ligne et papier</strong>
+                <?php echo $fcg($form->get('versionArchivableFournie')) ?>
+                <?php echo $fcg($form->get('attestationsRemplies')) ?>
+                <?php echo $fcg($form->get('conventionMelSignee')) ?>
+                <?php if ($form->has('exemplPapierFourni')): ?>
+                    <?php echo $fcg($form->get('exemplPapierFourni')) ?>
+                <?php endif ?>
+            </p>
         </div>
         <div class="col-md-6">
             <?php echo $fcg($form->get('divers')->setAttribute('rows', 2)) ?>

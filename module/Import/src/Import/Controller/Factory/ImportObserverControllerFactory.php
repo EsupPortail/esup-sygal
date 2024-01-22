@@ -3,22 +3,23 @@
 namespace Import\Controller\Factory;
 
 use Application\EventRouterReplacer;
-use These\Service\These\TheseService;
+use Application\Service\Source\SourceService;
 use Import\Controller\ImportObserverController;
 use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;
-use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservService;
 use Laminas\Router\Http\TreeRouteStack;
+use These\Service\These\TheseService;
+use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservService;
 
 class ImportObserverControllerFactory
 {
     /**
      * Create service
      *
-     * @param ContainerInterface $container
-     * @return ImportObserverController
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ImportObserverController
     {
         /** @var TreeRouteStack $httpRouter */
         $httpRouter = $container->get('HttpRouter');
@@ -41,20 +42,24 @@ class ImportObserverControllerFactory
         $controller->setImportObservResultService($importObservResultEtabService);
         $controller->setTheseService($theseService);
 
+        /** @var SourceService $sourceService */
+        $sourceService = $container->get(SourceService::class);
+        $controller->setSourceService($sourceService);
+
         return $controller;
     }
 
     /**
-     * @param ContainerInterface $container
-     * @return array
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    private function getCliConfig(ContainerInterface $container)
+    private function getCliConfig(ContainerInterface $container): array
     {
         $config = $container->get('Config');
 
         return [
-            'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,
-            'scheme' => isset($config['cli_config']['scheme']) ? $config['cli_config']['scheme'] : null,
+            'domain' => $config['cli_config']['domain'] ?? null,
+            'scheme' => $config['cli_config']['scheme'] ?? null,
         ];
     }
 }

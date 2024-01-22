@@ -96,7 +96,7 @@ class EmailTheseService
     }
 
     /**
-     * Retourne l'éventuelle adresse mail pour les aspects "Doctorat".
+     * Retourne les éventuelles adresses mails pour les aspects "Doctorat".
      *
      * @param These $these
      * @return string[]
@@ -104,13 +104,13 @@ class EmailTheseService
     public function fetchEmailAspectsDoctorat(These $these) : array
     {
         if ($email = $these->getEtablissement()->getEmailDoctorat()) {
-            return [$email];
+            return array_map('trim', explode(',', $email));
         }
         return [];
     }
 
     /**
-     * Retourne l'éventuelle adresse mail pour les aspects "Bibliothèque".
+     * Retourne les éventuelles adresses mails pour les aspects "Bibliothèque".
      *
      * @param These $these
      * @return string[]
@@ -118,7 +118,7 @@ class EmailTheseService
     public function fetchEmailAspectsBibliotheque(These $these) : array
     {
         if ($email = $these->getEtablissement()->getEmailBibliotheque()) {
-            return [$email];
+            return array_map('trim', explode(',', $email));
         }
         return [];
     }

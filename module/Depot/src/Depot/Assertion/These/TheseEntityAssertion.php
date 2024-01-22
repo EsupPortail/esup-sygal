@@ -17,6 +17,7 @@ use Fichier\Entity\Db\VersionFichier;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareInterface;
 use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\Exception\LogicException;
 
 class TheseEntityAssertion extends GeneratedTheseEntityAssertion
     implements ValidationServiceAwareInterface, FichierTheseServiceAwareInterface, TheseServiceAwareInterface
@@ -250,5 +251,27 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
             }
         }
         return true;
+    }
+
+    protected ?bool $isAttestationsVersionInitialeSaisies = null;
+
+    protected function isAttestationsVersionInitialeSaisies(): bool
+    {
+        if ($this->isAttestationsVersionInitialeSaisies === null) {
+            $this->isAttestationsVersionInitialeSaisies = $this->depotService->isAttestationsVersionInitialeSaisies($this->these);
+        }
+
+        return $this->isAttestationsVersionInitialeSaisies;
+    }
+
+    protected ?bool $isAttestationsVersionCorrigeeSaisies = null;
+
+    protected function isAttestationsVersionCorrigeeSaisies(): bool
+    {
+        if ($this->isAttestationsVersionCorrigeeSaisies === null) {
+            $this->isAttestationsVersionCorrigeeSaisies = $this->depotService->isAttestationsVersionCorrigeeSaisies($this->these);
+        }
+
+        return $this->isAttestationsVersionCorrigeeSaisies;
     }
 }

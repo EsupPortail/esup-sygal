@@ -5,6 +5,28 @@ Journal des modifications
 -----
 - Nouveau module Substitutions (moteur de dédoublonnage automatique d'individus et de structures importés en doublons).
 - [FIX] Création en bdd d'un privilège manquant.
+
+6.0.10
+------
+- Génération de la page de couverture de la thèse : refonte graphique dans le sens de la sobriété.
+- Nouvelle entrée 'Rapports CSI' dans le menu 'Nos thèses' des gestionnaires/responsables d'ED/UR.
+- Petites améliorations autour des notifs concernant les changements détectés lors de l'import (admission, corrections attendues).
+- Financements sur la fiche Thèse : afficher la nature devant chaque info (type, origine, quotité).
+- Page de connexion : amélioration du texte expliquant l'authentification via la fédération d'identité (NB : le texte est dans la config locale).
+- Annuaire des thèses : initialisation du filtre ED/UR/Etab avec la structure du rôle utilisateur (avec possibilité de changer).
+- [FIX] Observation des résultats d'import/synchro : correction du filtrage par source de données (anciennement 'etablissement') non pris en compte.
+- [FIX] Upgrade d'unicaen/app pour corriger le lien Ajouter dysfonctionnel dans le formulaire Rapport d'activité.
+- [FIX] Appel de fonction erroné faisant planter la notification 'correction attendue'.
+- [FIX] Correction de l'appel de getNomComplet qui etait utilisée sur un acteur plus qu'un individu lors de l'envoi des convocations
+- [FIX] Changement d'action pour la modification de l'adresse de soutenance dans la partie preparation de la soutenance
+- [FIX] Correction de l'oubli de l'adresse (nouveau format) dans l'avis de soutenance
+- [FIX] Formulaire RDV BU : impossible d'enregistrer si les attestations manquent (une case à cocher disabled le signale) ;
+  corrige le bug des attestations manquantes bloquant le dépôt de la version corrigée. Correction d'un bug dans la notification 'RDV BU validé'.
+- [Formation] Complétion de la case 'lieu' sur les convocations en fonction du contexte (mention "Distanciel" ou "Pas de lieu")
+
+6.0.9
+-----
+- [FIX] Création en bdd d'un privilège manquant.
 - [Soutenance] Saisi de l'adresse exacte par le doctorant 
 - [Soutenance] Nouvelle notification pour la demande de saisi de l'adresse exacte
 

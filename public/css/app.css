@@ -671,8 +671,7 @@ span.sas-highlight {
   height: auto; }
 
 .div-connexion {
-  width: 60%;
-  text-align: center;
+  width: 70%;
   margin: auto auto 30px; }
   .div-connexion .page-header {
     font-size: 40px;
@@ -684,13 +683,13 @@ span.sas-highlight {
   .div-connexion .tab-content {
     padding-top: 25px; }
   .div-connexion .connect-description {
-    margin-bottom: 25px;
-    font-weight: 450; }
+    margin-bottom: 25px; }
   .div-connexion .connect-identity, .div-connexion .connect-credentials {
     width: 75%;
     max-width: 250px;
     margin: auto; }
   .div-connexion .connect-submit {
+    text-align: center;
     margin-top: 20px; }
     .div-connexion .connect-submit button {
       height: auto;

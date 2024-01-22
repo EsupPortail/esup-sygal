@@ -1515,7 +1515,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /** @noinspection PhpUnused */
     public function toStringEncadrement() : string {
-        $encadrement = $this->getEncadrements();
+        /** @var Individu[] $encadrement */
+        $encadrement = $this->getEncadrements(true);
         $texte = [];
         foreach ($encadrement as $directeur) { $texte[] = $directeur->getNomComplet();}
         return implode (" et ", $texte);

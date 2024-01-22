@@ -5,21 +5,15 @@ namespace These\Notification;
 use Notification\Notification;
 use These\Entity\Db\Interfaces\TheseAwareTrait;
 
-class ResultatTheseAdmisNotification extends Notification
+class ResultatTheseAdmisDoctorantNotification extends Notification
 {
     use TheseAwareTrait;
 
     protected ?string $templatePath = 'these/these/mail/notif-resultat-admis-doctorant';
 
-    /**
-     * @var bool
-     */
-    protected $emailDoctorantAbsent;
+    protected bool $emailDoctorantAbsent;
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $toString = parent::__toString();
 
@@ -30,10 +24,7 @@ class ResultatTheseAdmisNotification extends Notification
         return $toString;
     }
 
-    /**
-     * @return static
-     */
-    public function prepare()
+    public function prepare(): static
     {
         $individu = $this->these->getDoctorant()->getIndividu();
         $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();

@@ -162,13 +162,19 @@ use Soutenance\Entity\Proposition;
     <?php endif; ?>
     </strong>
     à l'adresse suivante : <br/>
-    <?php if ($proposition->getAdresse() !== null): ?>
-        <?php echo $proposition->getAdresse(); ?>
+    <?php if ($proposition->getAdresseActive() !== null): ?>
+        <?php echo $proposition->getAdresseActive()->format(); ?>
     <?php else : ?>
-        <span style='background-color:red;'>
-                Adresse manquante
-        </span>
+        <?php if ($proposition->getAdresse() !== null) : ?>
+            <?php echo $proposition->getAdresse(); ?>
+        <?php else : ?>
+            <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+            <br/>
+        <?php endif; ?>
     <?php endif; ?>
+</p>
     <br/>
     en vue de l'obtention du diplôme de <strong>Doctorat spécialité
 

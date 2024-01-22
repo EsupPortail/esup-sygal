@@ -41,7 +41,7 @@ class ChangementCorrectionAttendueNotification extends Notification
             $cc = array_merge($this->these->getDirecteursTheseEmails(), $this->these->getCoDirecteursTheseEmails());
         }
 
-        $subject = "Dépôt de thèse, corrections " . lcfirst($this->these->getCorrectionAutoriseeToString()) . "s attendues";
+        $subject = "Dépôt de thèse, corrections " . lcfirst($this->these->getCorrectionAutoriseeToString(true)) . " attendues";
 
         $this->setSubject($subject);
         $this->setTo($to);

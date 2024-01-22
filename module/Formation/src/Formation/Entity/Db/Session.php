@@ -13,6 +13,7 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
+use JetBrains\PhpStorm\Pure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -266,10 +267,7 @@ class Session implements HistoriqueAwareInterface,
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function getCode() : string
+    #[Pure] public function getCode() : string
     {
         $formation = $this->getFormation();
         $module = $formation->getModule();
@@ -301,9 +299,7 @@ class Session implements HistoriqueAwareInterface,
 
     /** Pour les macros ********************************************************************************/
 
-    /**
-     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     */
+    /** @noinspection PhpUnused */
     public function getPeriode() : string {
         $jour_debut = $this->getDateDebut()->format('d/m/Y');
         $jour_fin = $this->getDateFin()->format('d/m/Y');
@@ -312,9 +308,7 @@ class Session implements HistoriqueAwareInterface,
         return $jour_debut." au ".$jour_fin;
     }
 
-    /**
-     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     */
+    /** @noinspection PhpUnused */
     public function getSeancesAsTable() : string
     {
         $seances = $this->getSeances()->toArray();
@@ -334,7 +328,17 @@ class Session implements HistoriqueAwareInterface,
             $texte .= '<td>'.$seance->getDebut()->format('d/m/Y').'</td>';
             $texte .= '<td>'.$seance->getDebut()->format('H:i').'</td>';
             $texte .= '<td>'.$seance->getFin()->format('H:i').'</td>';
-            $texte .= '<td>'.$seance->getLieu().'</td>';
+            $texte .= '<td>';
+            if ($seance->getLieu() !== null) {
+                $texte .= $seance->getLieu();
+            } else {
+                if ($this->getModalite() === self::MODALITE_PRESENTIEL) {
+                    $texte .= "<em> Lieu non renseigné </em>";
+                } else {
+                    $texte .= "Distanciel";
+                }
+            }
+            $texte .='</td>';
             $texte .= '</tr>';
         }
         $texte .= '</tbody>';
@@ -342,12 +346,14 @@ class Session implements HistoriqueAwareInterface,
         return $texte;
     }
 
-    public function isFinInscription() : bool
+    /** @noinspection PhpUnused */
+    #[Pure] public function isFinInscription() : bool
     {
         $etatCode = $this->getEtat()->getCode();
         return ($etatCode === Session::ETAT_INSCRIPTION_CLOSE OR $etatCode === Session::ETAT_IMMINENTE);
     }
 
+    /** @noinspection PhpUnused */
     public function getDenominationResponsable() : string
     {
         $responsable = $this->getResponsable();

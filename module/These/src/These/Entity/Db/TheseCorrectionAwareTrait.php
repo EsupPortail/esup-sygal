@@ -8,6 +8,7 @@ use BadMethodCallException;
 use DateInterval;
 use DateTime;
 use UnicaenApp\Exception\RuntimeException;
+use Webmozart\Assert\Assert;
 
 trait TheseCorrectionAwareTrait
 {
@@ -123,14 +124,10 @@ trait TheseCorrectionAwareTrait
     /**
      * Change la valeur du témoin de corrections autorisées importé.
      * NB: cette méthode ne devrait pas être utilisée, sauf pour les tests unitaires.
-     *
-     * @param string|null $correctionAutorisee
-     * @return self
-     * @throws \Assert\AssertionFailedException
      */
     public function setCorrectionAutorisee(string $correctionAutorisee = null): self
     {
-        Assertion::inArray($correctionAutorisee, [
+        Assert::inArray($correctionAutorisee, [
             null,
             self::$CORRECTION_AUTORISEE_FACULTATIVE,
             self::$CORRECTION_AUTORISEE_OBLIGATOIRE,

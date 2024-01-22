@@ -71,7 +71,6 @@ return [
                         'stopper-demarche',
                         'avis-soutenance',
                         'convocations',
-                        'modifier-adresse',
                         'envoyer-convocation',
                         'transmettre-documents-direction-these',
                     ],
@@ -366,17 +365,6 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'stopper-demarche',
-                                    ],
-                                ],
-                            ],
-                            'modifier-adresse' => [
-                                'type' => Literal::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/modifier-adresse',
-                                    'defaults' => [
-                                        'controller' => PresoutenanceController::class,
-                                        'action' => 'modifier-adresse',
                                     ],
                                 ],
                             ],

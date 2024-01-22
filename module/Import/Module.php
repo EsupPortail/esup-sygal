@@ -37,9 +37,9 @@ class Module
             ['--em', "Facultatif. Nom de l'EntityManager à utiliser. Valeur par défaut: 'orm_default'."],
 
             // command
-            'process-observed-import-results --etablissement= [--import-observ=] [--source-code=]' => "Traitement des résultats d'observation de certains changements durant la synchro.",
+            'process-observed-import-results --source= [--import-observ=] [--source-code=]' => "Traitement des résultats d'observation de certains changements durant la synchro.",
             // parameters
-            ['--etablissement', "Requis. Identifiant de l'établissement, ex: 'UCN'"],
+            ['--source', "Obligatoire. Codes des sources de données concernées, séparés par une virgule, ex : 'UCN::apogee,URN::apogee'."],
             ['--import-observ', "Facultatif. Code de la seule observation voulue. Valeurs possibles: " . implode(', ', ImportObserv::CODES)],
             ['--source-code', "Facultatif. Source code de la seule thèse à prendre en compte."],
         ];
