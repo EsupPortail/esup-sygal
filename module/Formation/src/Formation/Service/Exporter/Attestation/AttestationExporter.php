@@ -72,6 +72,14 @@ class AttestationExporter extends PdfExporter
         $this->setHeaderScript('header.phtml', null, $logos);
         $this->setFooterScript('footer.phtml');
         $this->addBodyHtml($rendu->getCorps());
+
+        // Modification d'une option de config PCRE pour éviter l'erreur
+        // "The HTML code size is larger than pcre.backtrack_limit 1000000.
+        // You should use WriteHTML() with smaller string lengths. Pass your HTML in smaller chunks."
+        // (cf. https://mpdf.github.io/troubleshooting/known-issues.html#blank-pages-or-some-sections-missing)
+        // TODO : trouver pourquoi l'erreur est rencontrée lors de cet export et pas les autres.
+        ini_set("pcre.backtrack_limit", "5000000");
+
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }

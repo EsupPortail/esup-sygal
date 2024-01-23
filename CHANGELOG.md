@@ -6,6 +6,8 @@ Journal des modifications
 - Nouveau module Substitutions (moteur de dédoublonnage automatique d'individus et de structures importés en doublons).
 - [FIX] Création en bdd d'un privilège manquant.
 - [FIX] Page de couverture générée pour la thèse : correction de l'établissement mentionné pour un codirecteur (exploitation de l'info acteur).
+- [FIX] Génération PDF des convocation et attestation de formation : augmentation de 'pcre.backtrack_limit' pour éviter l'erreur 
+'The HTML code size is larger than pcre.backtrack_limit 1000000. You should use WriteHTML() with smaller string lengths. Pass your HTML in smaller chunks'. 
 
 6.0.10
 ------
