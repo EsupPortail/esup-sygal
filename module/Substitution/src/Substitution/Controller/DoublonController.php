@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use Substitution\Service\Doublon\DoublonServiceAwareTrait;
+use Substitution\Service\Substitution\SubstitutionServiceAwareTrait;
 use Substitution\TypeAwareTrait;
 
 /**
@@ -14,6 +15,7 @@ use Substitution\TypeAwareTrait;
 class DoublonController extends AbstractActionController
 {
     use TypeAwareTrait;
+    use SubstitutionServiceAwareTrait;
     use DoublonServiceAwareTrait;
 
     public function accueilAction(): array
@@ -28,13 +30,11 @@ class DoublonController extends AbstractActionController
     {
         $type = $this->getRequestedType();
 
-        $result = $this->doublonService->findAllDoublonsForType($type, 50);
-        $count = $this->doublonService->countAllDoublonsForType($type);
-
         return new ViewModel([
             'type' => $type,
-            'result' => $result,
-            'count' => $count,
+            'result' => $this->doublonService->findAllDoublonsForType($type, 50),
+            'count' => $this->doublonService->countAllDoublonsForType($type),
+            'npdAttributes' => $this->substitutionService->computeEntityNpdAttributesForType($type),
         ]);
     }
 }

@@ -9,8 +9,6 @@ use Substitution\Constants;
  * @var \Doctrine\DBAL\Result $result
  * @var int $count
  * @var string[] $npdAttributes [name => label]
- * @var string $routeName
- * @var string $routeParamName
  */
 
 $tableName = $type;
@@ -50,16 +48,9 @@ $null = '<span class="text-secondary">NULL</span>';
             <th><?php echo implode(', ', $npdAttributes) ?></th>
         </tr>
         <?php while ($row = $result->fetchAssociative()): ?>
-            <?php
-            $url = sprintf(
-                '<a href="%s"><span title="Accéder à la fiche détaillée de cet enregistrement en doublon">%s</span></a>',
-                $routeName ? $this->url($routeName, [$routeParamName => $row['id']]) : "#",
-                $row['id'],
-            );
-            ?>
             <tr>
                 <td><?php echo $row['npd'] ?></td>
-                <td><?php echo $url ?></td>
+                <td><?php echo $row['id'] ?></td>
                 <td><?php echo $row['source_code'] ?></td>
                 <td><?php echo implode(', ', array_map(fn($name) => $row[$name] ?? $null, array_keys($npdAttributes))) ?></td>
             </tr>

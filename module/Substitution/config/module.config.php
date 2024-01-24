@@ -247,6 +247,7 @@ return [
                         'options' => [
                             'route' => '/doublon',
                             'defaults' => [
+                                /** @see DoublonController::accueilAction() */
                                 'controller' => DoublonController::class,
                                 'action' => 'accueil',
                             ],
@@ -261,6 +262,7 @@ return [
                                         'type' => Constants::TYPES_REGEXP_CONSTRAINT,
                                     ],
                                     'defaults' => [
+                                        /** @see DoublonController::listerAction() */
                                         'action' => 'lister',
                                     ],
                                 ],

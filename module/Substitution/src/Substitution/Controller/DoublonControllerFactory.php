@@ -4,6 +4,7 @@ namespace Substitution\Controller;
 
 use Psr\Container\ContainerInterface;
 use Substitution\Service\Doublon\DoublonService;
+use Substitution\Service\Substitution\SubstitutionService;
 
 class DoublonControllerFactory
 {
@@ -14,6 +15,10 @@ class DoublonControllerFactory
     public function __invoke(ContainerInterface $container) : DoublonController
     {
         $controller = new DoublonController();
+
+        /** @var \Substitution\Service\Substitution\SubstitutionService $substitutionService */
+        $substitutionService = $container->get(SubstitutionService::class);
+        $controller->setSubstitutionService($substitutionService);
 
         /** @var \Substitution\Service\Doublon\DoublonService $doublonService */
         $doublonService = $container->get(DoublonService::class);
