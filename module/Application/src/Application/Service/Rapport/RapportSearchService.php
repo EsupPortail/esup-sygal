@@ -83,7 +83,7 @@ class RapportSearchService extends SearchService
         $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('etab.sourceCode = :sourceCodeEtab OR etab_substituant.sourceCode = :sourceCodeEtab')
+                    ->andWhere('etab.sourceCode = :sourceCodeEtab')
                     ->setParameter('sourceCodeEtab', $filter->getValue());
             })
             ->setDataProvider(function() {
@@ -96,7 +96,7 @@ class RapportSearchService extends SearchService
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('ur.sourceCode = :sourceCodeUR OR ur_substituant.sourceCode = :sourceCodeUR')
+                    ->andWhere('ur.sourceCode = :sourceCodeUR')
                     ->setParameter('sourceCodeUR', $filter->getValue());
             })
             ->setDataProvider(function() {
@@ -105,7 +105,7 @@ class RapportSearchService extends SearchService
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('ed.sourceCode = :sourceCodeED OR ed_substituant.sourceCode = :sourceCodeED')
+                    ->andWhere('ed.sourceCode = :sourceCodeED')
                     ->setParameter('sourceCodeED', $filter->getValue());
             })
             ->setDataProvider(function() {
@@ -315,13 +315,7 @@ class RapportSearchService extends SearchService
         $qb
             ->leftJoin('etab.structure', 'etab_structure')->addSelect('etab_structure')
             ->leftJoin('ed.structure', 'ed_structure')->addSelect('ed_structure')
-            ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure')
-            ->leftJoinStructureSubstituante('etab_structure', 'etab_structureSubstituante')
-            ->leftJoinStructureSubstituante('ed_structure', 'ed_structureSubstituante')
-            ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante')
-            ->leftJoin('etab_structureSubstituante.etablissement', 'etab_substituant')->addSelect('etab_substituant')
-            ->leftJoin('ed_structureSubstituante.ecoleDoctorale', 'ed_substituant')->addSelect('ed_substituant')
-            ->leftJoin('ur_structureSubstituante.uniteRecherche', 'ur_substituant')->addSelect('ur_substituant');
+            ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure');
 
         if ($this->typeRapport !== null) {
             $qb->andWhere('tr = :type')->setParameter('type', $this->typeRapport);

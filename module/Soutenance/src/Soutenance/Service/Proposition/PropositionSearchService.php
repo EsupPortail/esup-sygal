@@ -74,7 +74,7 @@ class PropositionSearchService extends SearchService
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
                 $qb
-                    ->andWhere($qb->expr()->orX('etab.sourceCode = :sourceCodeEtab', 'etab_substituant.sourceCode = :sourceCodeEtab'))
+                    ->andWhere('etab.sourceCode = :sourceCodeEtab')
                     ->setParameter('sourceCodeEtab', $filter->getValue());
             });
 
@@ -84,7 +84,7 @@ class PropositionSearchService extends SearchService
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
                 $qb
-                    ->andWhere($qb->expr()->orX('ed.sourceCode = :sourceCodeED', 'ed_substituant.sourceCode = :sourceCodeED'))
+                    ->andWhere('ed.sourceCode = :sourceCodeED')
                     ->setParameter('sourceCodeED', $filter->getValue());
             });
 
@@ -94,7 +94,7 @@ class PropositionSearchService extends SearchService
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
                 $qb
-                    ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
+                    ->andWhere('ur.sourceCode = :sourceCodeUR')
                     ->setParameter('sourceCodeUR', $filter->getValue());
             });
 

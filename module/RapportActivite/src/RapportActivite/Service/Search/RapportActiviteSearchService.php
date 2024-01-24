@@ -153,13 +153,7 @@ class RapportActiviteSearchService extends SearchService
         $qb
             ->leftJoin('etab.structure', 'etab_structure')->addSelect('etab_structure')
             ->leftJoin('ed.structure', 'ed_structure')->addSelect('ed_structure')
-            ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure')
-            ->leftJoinStructureSubstituante('etab_structure', 'etab_structureSubstituante')
-            ->leftJoinStructureSubstituante('ed_structure', 'ed_structureSubstituante')
-            ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante')
-            ->leftJoin('etab_structureSubstituante.etablissement', 'etab_substituant')
-            ->leftJoin('ed_structureSubstituante.ecoleDoctorale', 'ed_substituant')
-            ->leftJoin('ur_structureSubstituante.uniteRecherche', 'ur_substituant');
+            ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure');
 
         return $qb;
     }
