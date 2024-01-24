@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+7.1.0
+-----
+- 
+
 7.0.1
 -----
 - [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles).
