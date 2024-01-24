@@ -56,7 +56,6 @@ $this->headTitle("Proposition de soutenance");
 ?>
 
 <?php echo $this->alertes()
-    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
     ->withMatchingPlanning()
     ->renderAsBootstrapToasts() ?>
 

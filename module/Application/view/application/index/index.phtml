@@ -18,7 +18,6 @@ $subtitle = $this->appInfos()->desc;
 <?php $this->headTitle($this->translate("Accueil")); ?>
 
 <?php echo $this->alertes()
-    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
     ->withMatchingPlanning()
     ->renderAsBootstrapToasts() ?>
 

@@ -58,7 +58,6 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <?php echo $this->alertes()
-    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
     ->withMatchingPlanning()
     ->renderAsBootstrapToasts() ?>
 
