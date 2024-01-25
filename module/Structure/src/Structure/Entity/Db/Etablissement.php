@@ -55,10 +55,7 @@ class Etablissement implements
      */
     protected $estAssocie = false;
 
-    /**
-     * @var bool
-     */
-    protected $estInscription = false;
+    protected bool $estInscription = false;
 
     /**
      * @var bool
@@ -322,7 +319,12 @@ class Etablissement implements
      */
     public function createSearchFilterValueOption(): array
     {
-        $label = ($this->structure->getCode() ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
+        if ($this->estInscription) {
+            $label = $this->structure->getSigle() ?: $this->structure->getSourceCode();
+        } else {
+            $label = ($this->structure->getCode() ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
+        }
+
         if ($this->structure->estFermee()) {
             $label .= "&nbsp; FERMÉ";
         }

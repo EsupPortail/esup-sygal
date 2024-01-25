@@ -72,19 +72,11 @@ class Structure implements
     protected $typeStructure;
 
     /**
-     * @var \Structure\Entity\Db\Etablissement|null
+     * Relations one-to-many traités en comme des one-to-one (car un seul enregistrement cible non historisé)
      */
-    protected ?Etablissement $etablissement = null;
-
-    /**
-     * @var \Structure\Entity\Db\EcoleDoctorale|null
-     */
-    protected ?EcoleDoctorale $ecoleDoctorale = null;
-
-    /**
-     * @var \Structure\Entity\Db\UniteRecherche|null
-     */
-    protected ?UniteRecherche $uniteRecherche = null;
+    protected Collection $etablissement;
+    protected Collection $ecoleDoctorale;
+    protected Collection $uniteRecherche;
 
     /**
      * @var Role[] $roles
@@ -140,6 +132,9 @@ class Structure implements
 
     public function __construct()
     {
+        $this->etablissement = new ArrayCollection();
+        $this->ecoleDoctorale = new ArrayCollection();
+        $this->uniteRecherche = new ArrayCollection();
         $this->substitues = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -302,32 +297,28 @@ class Structure implements
      */
     public function getStructureConcrete(): StructureConcreteInterface
     {
-        switch (true) {
-            case $this->typeStructure->isEtablissement():
-                return $this->etablissement;
-            case $this->typeStructure->isEcoleDoctorale():
-                return $this->ecoleDoctorale;
-            case $this->typeStructure->isUniteRecherche():
-                return $this->uniteRecherche;
-            default:
-                throw new InvalidArgumentException("Type de structure inattendu");
-        }
+        return match (true) {
+            $this->typeStructure->isEtablissement() => $this->getEtablissement(),
+            $this->typeStructure->isEcoleDoctorale() => $this->getEcoleDoctorale(),
+            $this->typeStructure->isUniteRecherche() => $this->getUniteRecherche(),
+            default => throw new InvalidArgumentException("Type de structure inattendu"),
+        };
     }
 
     /**
-     * Retourne l'éventuel Etablissement correspondant à cette Structure "abstraite",
-     * telle que défini par la jointure Doctrine.
+     * Retourne le 1er Etablissement *non historisé* associé à cette Structure "abstraite",
+     * tel que défini par la jointure Doctrine.
      *
      * @see getStructureConcrete()
      * @return \Structure\Entity\Db\Etablissement|null
      */
     public function getEtablissement(): ?Etablissement
     {
-        return $this->etablissement;
+        return $this->etablissement->filter(fn(Etablissement $e) => $e->estNonHistorise())->first() ?: null;
     }
 
     /**
-     * Retourne l'éventuelle EcoleDoctorale correspondant à cette Structure "abstraite",
+     * Retourne la 1ere EcoleDoctorale *non historisée* associée à cette Structure "abstraite",
      * telle que définie par la jointure Doctrine.
      *
      * @see getStructureConcrete()
@@ -335,19 +326,19 @@ class Structure implements
      */
     public function getEcoleDoctorale(): ?EcoleDoctorale
     {
-        return $this->ecoleDoctorale;
+        return $this->ecoleDoctorale->filter(fn(EcoleDoctorale $ed) => $ed->estNonHistorise())->first() ?: null;
     }
 
     /**
-     * Retourne l'éventuelle UniteRecherche correspondant à cette Structure "abstraite",
-     * telle que défini par la jointure Doctrine.
+     * Retourne la 1ere UniteRecherche *non historisée* associée à cette Structure "abstraite",
+     * telle que définie par la jointure Doctrine.
      *
      * @see getStructureConcrete()
      * @return \Structure\Entity\Db\UniteRecherche|null
      */
     public function getUniteRecherche(): ?UniteRecherche
     {
-        return $this->uniteRecherche;
+        return $this->uniteRecherche->filter(fn(UniteRecherche $ur) => $ur->estNonHistorise())->first() ?: null;
     }
 
     /**
