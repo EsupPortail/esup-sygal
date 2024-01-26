@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+7.0.1
+-----
+- [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles).
+- [FIX] Module Substitutions : plantage de la page de détails d'une substitution d'UR.
+- [FIX] Services de recherche : la jointure avec la structure substituante n'est plus à faire.
+- [FIX] Utilisation de Structure::getCode() par getSourceCode() pour les établissements d'inscription (correction d'effets de bord des substitutions). 
+
 7.0.0
 -----
 - Nouveau module Substitutions (moteur de dédoublonnage automatique d'individus et de structures importés en doublons).
