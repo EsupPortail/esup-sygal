@@ -11,6 +11,8 @@
 <dl>
     <dt>Libelle :</dt>
     <dd><?php echo $entity->getStructure()->getLibelle(); ?></dd>
+    <dt>Code :</dt>
+    <dd><?php echo $entity->getStructure()->getCode(); ?></dd>
     <dt>Sigle :</dt>
     <dd><?php echo $entity->getStructure()->getSigle() ?: "(Non renseigné)"; ?></dd>
     <dt>Site internet :</dt>
@@ -49,8 +51,8 @@
 <dl>
     <dt>Id interne :</dt>
     <dd><?php echo $entity->getId(); ?></dd>
-    <dt>Code :</dt>
-    <dd><?php echo $entity->getStructure()->getCode(); ?></dd>
+    <dt>Source Code :</dt>
+    <dd><?php echo $entity->getStructure()->getSourceCode(); ?></dd>
     <dt>IdRef :</dt>
     <dd>
         <?php if ($entity->getStructure()->getIdRef() !== null and trim($entity->getStructure()->getIdRef()) !== "") : ?>

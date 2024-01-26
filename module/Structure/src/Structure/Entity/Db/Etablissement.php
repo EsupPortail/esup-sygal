@@ -320,7 +320,7 @@ class Etablissement implements
     public function createSearchFilterValueOption(): array
     {
         if ($this->estInscription) {
-            $label = $this->structure->getSigle() ?: $this->structure->getSourceCode();
+            $label = $this->structure->getSourceCode();
         } else {
             $label = ($this->structure->getCode() ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
         }

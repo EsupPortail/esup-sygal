@@ -39,7 +39,7 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
         $parts = [];
         $parts['type'] = $this->normalizedString($this->type());
         $parts['date'] = $this->rapportActivite->getAnneeUniv()->toString('-');
-        $parts['etab'] = $these->getEtablissement()->getStructure()->getCode();
+        $parts['etab'] = $these->getEtablissement()->getStructure()->getSourceCode();
         $parts['ed'] = 'ED' . $ed;
         $parts['ur'] = $ur;
         $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());

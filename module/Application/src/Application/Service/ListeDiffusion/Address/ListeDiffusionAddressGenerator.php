@@ -153,6 +153,6 @@ class ListeDiffusionAddressGenerator
             return null;
         }
 
-        return strtolower($this->etablissement->getStructure()->getCode()); // ex: 'UCN'
+        return strtolower($this->etablissement->getStructure()->getSourceCode()); // ex: 'UCN'
     }
 }

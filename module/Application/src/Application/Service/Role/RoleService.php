@@ -225,7 +225,7 @@ class RoleService extends BaseService
         foreach ($roleModeles as $roleModele) {
             if ($structure instanceof Etablissement) {
                 $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode(), $structure);
-                $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getCode();
+                $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getSourceCode();
             } else {
                 $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode());
                 $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getSigle();

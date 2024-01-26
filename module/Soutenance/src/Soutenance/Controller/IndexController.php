@@ -137,7 +137,7 @@ class IndexController extends AbstractController
         $uniteRechercheId = $this->params()->fromQuery('uniterecherche');
         $etatId = $this->params()->fromQuery('etat');
 
-        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getStructure()->getCode() == $etablissementId; });
+        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getStructure()->getSourceCode() == $etablissementId; });
         if ($ecoleDoctoraleId != '') $propositions = array_filter($propositions, function($proposition) use ($ecoleDoctoraleId) { return $proposition->getThese()->getEcoleDoctorale()->getId() == $ecoleDoctoraleId; });
         if ($uniteRechercheId != '') $propositions = array_filter($propositions, function($proposition) use ($uniteRechercheId) { return $proposition->getThese()->getUniteRecherche()->getId() == $uniteRechercheId; });
         if ($etatId != '') $propositions = array_filter($propositions, function($proposition) use ($etatId) { return $proposition->getEtat()->getId() == $etatId; });

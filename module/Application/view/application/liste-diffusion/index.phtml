@@ -47,7 +47,7 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
     foreach ($dataByEtablissement as $etablissement):
     ?>
     <li role="presentation"
-        class="nav-item <?php echo $codeEtablissement === ($code = $etablissement->getStructure()->getCode()) ? 'active' : '' ?>">
+        class="nav-item <?php echo $codeEtablissement === ($code = $etablissement->getStructure()->getSourceCode()) ? 'active' : '' ?>">
         <a class="nav-link"
            href="<?php echo $this->url('liste-diffusion', [], ['query' => ['etablissement' => $code]]) ?>"
            role="tab"><h2><?php echo $code ?></h2></a>
@@ -84,7 +84,7 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
         /** @var SplObjectStorage $dataByRole */
         $dataByRole = $dataByEtablissement[$etablissement];
         ?>
-        <div role="tabpanel" class="tab-pane" id="<?php echo $etablissement->getStructure()->getCode() ?>">
+        <div role="tabpanel" class="tab-pane" id="<?php echo $etablissement->getStructure()->getSourceCode() ?>">
 
             <p>
                 Si vous voulez que <?php echo $this->appInfos()->nom ?> puisse fournir les abonnés et
