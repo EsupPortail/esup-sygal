@@ -6,7 +6,8 @@ Journal des modifications
 - [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles).
 - [FIX] Module Substitutions : plantage de la page de détails d'une substitution d'UR.
 - [FIX] Services de recherche : la jointure avec la structure substituante n'est plus à faire.
-- [FIX] Utilisation de Structure::getCode() par getSourceCode() pour les établissements d'inscription (correction d'effets de bord des substitutions). 
+- [FIX] Utilisation de Structure::getCode() par getSourceCode() pour les établissements d'inscription (correction d'effets de bord des substitutions).
+- [FIX] Module formation : élimination des ED historisées dans la liste des structures complémentaires ajoutables à une session.
 
 7.0.0
 -----
