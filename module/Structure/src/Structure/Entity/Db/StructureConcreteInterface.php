@@ -33,9 +33,9 @@ interface StructureConcreteInterface
 
     /**
      * @param Structure $structure
-     * @return StructureConcreteInterface
+     * @return void
      */
-    public function setStructure(Structure $structure): StructureConcreteInterface;
+    public function setStructure(Structure $structure): void;
 
     /**
      * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.

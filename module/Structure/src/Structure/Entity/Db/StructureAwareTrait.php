@@ -3,14 +3,14 @@
 namespace Structure\Entity\Db;
 
 /**
- * Pour les classes d'entités ayant une relation to-one avec {@see \Structure\Entity\Db\Structure}.
+ * Pour les classes d'entités ayant une relation to-one avec {@see Structure}.
  */
 trait StructureAwareTrait
 {
     /**
      * Structure *abstraite* liée.
      *
-     * @var \Structure\Entity\Db\Structure|null
+     * @var Structure|null
      */
     protected ?Structure $structure = null;
 
@@ -18,20 +18,17 @@ trait StructureAwareTrait
      * Change la structure *abstraite* liée.
      *
      * @param Structure $structure
-     *
-     * @return StructureConcreteInterface
+     * @return void
      */
-    public function setStructure(Structure $structure): StructureConcreteInterface
+    public function setStructure(Structure $structure): void
     {
         $this->structure = $structure;
-
-        return $this;
     }
 
     /**
      * Retourne l'éventuelle structure liée.
      *
-     * @return \Structure\Entity\Db\Structure|null
+     * @return Structure|null
      */
     public function getStructure(): ?Structure
     {

@@ -8,6 +8,7 @@ Journal des modifications
 - [FIX] Services de recherche : la jointure avec la structure substituante n'est plus à faire.
 - [FIX] Utilisation de Structure::getCode() par getSourceCode() pour les établissements d'inscription (correction d'effets de bord des substitutions).
 - [FIX] Module formation : élimination des ED historisées dans la liste des structures complémentaires ajoutables à une session.
+- [FIX] Module formation : changement du type de retour dans le trait StructureAwareTrait.
 
 7.0.0
 -----
