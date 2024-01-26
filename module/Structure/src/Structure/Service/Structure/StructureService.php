@@ -384,9 +384,12 @@ class StructureService extends BaseService
         return $structure;
     }
 
+    /**
+     * TODO : il y a un module Formation donc à déplacer dans le module Formation !
+     */
     public function getStructuresFormationsAsOptions(): array
     {
-        $ecoles = $this->getEcoleDoctoraleService()->getRepository()->findAll();
+        $ecoles = $this->getEcoleDoctoraleService()->getRepository()->createQueryBuilder('ed')->andWhereNotHistorise()->getQuery()->getResult();
         $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
         //$unites = $this->getUnitesRechercheService()->getRepository()->findAll(true);
         $structures = array_merge($ecoles, $etablissements);
