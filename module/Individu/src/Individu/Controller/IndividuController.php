@@ -96,12 +96,12 @@ class IndividuController extends AbstractActionController implements SearchContr
         $rolesAffectesAuto = $this->collectRolesDynamiquesForIndividu($individu);
 
         // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
-        $etablissementsQb = $this->structureService->findAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
+        $etablissementsQb = $this->structureService->findAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'structure.libelle');
         $etablissementsQb->join('structure.etablissement', 'etab', Join::WITH, 'etab.estInscription = true');
         $etablissements = $etablissementsQb->getQuery()->execute();
 
-        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true);
-        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true);
+        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle');
+        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle');
 
         return new ViewModel([
             'individu' => $individu,

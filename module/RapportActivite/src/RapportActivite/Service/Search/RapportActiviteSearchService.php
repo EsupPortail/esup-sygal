@@ -166,14 +166,14 @@ class RapportActiviteSearchService extends SearchService
     private function fetchEcolesDoctorales(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.sigle'
         );
     }
 
     private function fetchUnitesRecherches(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_UNITE_RECHERCHE, 'code', false
+            TypeStructure::CODE_UNITE_RECHERCHE, 'structure.code', false
         );
     }
 

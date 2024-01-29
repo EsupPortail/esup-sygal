@@ -5,11 +5,8 @@ namespace Structure\Service\Structure;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -166,24 +163,24 @@ class StructureService extends BaseService
      * Recherche de structures concrètes par leur type.
      *
      * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
-     * @param string|null $order Ex: 'libelle'
+     * @param string|array|null $orders Ex: 'libelle', ou ['structure.sigle', 'structure.libelle']
      * @param bool $includeFermees
      * @return StructureConcreteInterface[]
      */
-    public function findAllStructuresAffichablesByType(string $type, ?string $order = null, ?bool $includeFermees = true): array
+    public function findAllStructuresAffichablesByType(string $type, string|array|null $orders = null, ?bool $includeFermees = true): array
     {
-        $qb = $this->findAllStructuresAffichablesByTypeQb($type, $order, $includeFermees);
+        $qb = $this->findAllStructuresAffichablesByTypeQb($type, $orders, $includeFermees);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
-     * @param string|null $order Ex: 'libelle'
+     * @param string|array|null $orders Ex: 'libelle', ou ['structure.sigle','structure.libelle'], ou ['structure.sigle' => 'asc']
      * @param bool $includeFermees
      * @return QueryBuilder
      */
-    public function findAllStructuresAffichablesByTypeQb(string $type, string $order = null, bool $includeFermees = true): QueryBuilder
+    public function findAllStructuresAffichablesByTypeQb(string $type, string|array|null $orders = null, bool $includeFermees = true): QueryBuilder
     {
         /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository $repo */
         $repo = $this->entityManager->getRepository($this->getEntityClassForType($type));
@@ -192,8 +189,20 @@ class StructureService extends BaseService
             ->addSelect('source')->join('structureConcrete.source', 'source')
             ->andWhereNotHistorise('structureConcrete');
 
-        if ($order) {
-            $qb->orderBy('structure.estFermee , structure.' . $order);
+        if ($orders) {
+            $qb->orderBy('structure.estFermee');
+            if (is_string($orders)) {
+                $orders = [$orders];
+            }
+            foreach ($orders as $f => $o) {
+                if (is_int($f)) {
+                    // ex : [0 => 'structure.libelle']
+                    $qb->addOrderBy($o, 'asc');
+                } else {
+                    // ex : ['structure.libelle' => 'asc']
+                    $qb->addOrderBy($f, $o);
+                }
+            }
         }
         else {
             if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) {

@@ -227,15 +227,13 @@ class UniteRecherche implements
     {
         $estFermee = $this->structure->estFermee();
 
-        $subtext = $this->structure->getLibelle();
-        if ($estFermee) {
-            $subtext .= " - FERMÉE";
-        }
+        $libelle = $this->structure->getLibelle();
+        $sigle = trim($this->structure->getSigle()) ?: '???';
 
         return [
             'value' => $this->getSourceCode(),
-            'label' => $this->structure->getSigle(),
-            'subtext' => $subtext,
+            'label' => sprintf('%s - %s', $sigle, $libelle),
+            'subtext' => $estFermee ? "Fermée" : null,
             'class' => $estFermee ? 'fermee' : '',
         ];
     }

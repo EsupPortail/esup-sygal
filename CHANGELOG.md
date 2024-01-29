@@ -9,6 +9,7 @@ Journal des modifications
 - [FIX] Utilisation de Structure::getCode() par getSourceCode() pour les établissements d'inscription (correction d'effets de bord des substitutions).
 - [FIX] Module formation : élimination des ED historisées dans la liste des structures complémentaires ajoutables à une session.
 - [FIX] Module formation : changement du type de retour dans le trait StructureAwareTrait.
+- [FIX] Recherche de thèses : amélioration de l'affichage et du tri des structures dans les filtres.
 
 7.0.0
 -----

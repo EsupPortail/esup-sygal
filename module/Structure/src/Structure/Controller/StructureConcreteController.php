@@ -60,7 +60,7 @@ abstract class StructureConcreteController extends AbstractController
 
         $structures = [];
         if ($consultationToutes) {
-            $qb = $this->structureService->findAllStructuresAffichablesByTypeQb($this->codeTypeStructure, 'libelle');
+            $qb = $this->structureService->findAllStructuresAffichablesByTypeQb($this->codeTypeStructure, 'structure.libelle');
             $qb // jointure nécessaire pour pouvoir appeler sur chaque enregistrement `estSubstituant()` sans requêtes surnuméraires
                 ->addSelect('substitues') /** @see \Substitution\Entity\Db\SubstitutionAwareEntityTrait::estSubstituant() */
                 ->leftJoin('structureConcrete.substitues', 'substitues');
