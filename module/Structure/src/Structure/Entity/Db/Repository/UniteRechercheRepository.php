@@ -16,6 +16,10 @@ class UniteRechercheRepository extends DefaultEntityRepository
     {
         $qb = $this->_createQueryBuilder($alias);
 
+        $qb
+            ->orderBy('structure.sigle')
+            ->addOrderBy('structure.libelle');
+
         return $qb;
     }
 
@@ -40,8 +44,9 @@ class UniteRechercheRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param string|null $term
-     * @return UniteRecherche[]
+     * Recherche textuelle d'UR.
+     *
+     * @return array[] Entités hydratées au format tableau.
      */
     public function findByText(?string $term) : array
     {

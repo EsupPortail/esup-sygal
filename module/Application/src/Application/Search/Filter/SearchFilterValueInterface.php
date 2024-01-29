@@ -5,8 +5,7 @@ namespace Application\Search\Filter;
 interface SearchFilterValueInterface
 {
     /**
-     * Retourne cette instance convertie dans un format utilisable dans
-     * {@see SelectSearchFilter::createValueOptionsFromData()}.
+     * Convertie l'instance courante dans un format utilisable par {@see SelectSearchFilter::createValueOptionsFromData()}.
      *
      * Exemples de valeurs retournées possibles :
      * ```
@@ -14,7 +13,7 @@ interface SearchFilterValueInterface
      * `['value' => 'UCN', 'label' => "Unicaen", 'subtext' => "Université de Caen"]`
      * ```
      *
-     * @return array
+     * @return array[]
      */
     public function createSearchFilterValueOption(): array ;
 }

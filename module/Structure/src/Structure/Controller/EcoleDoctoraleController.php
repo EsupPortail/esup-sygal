@@ -114,15 +114,13 @@ class EcoleDoctoraleController extends StructureConcreteController
             $unites = $this->getEcoleDoctoraleService()->getRepository()->findByText($term);
             $result = [];
             foreach ($unites as $unite) {
+                /** Attention à être cohérent avec {@see EcoleDoctorale::createSearchFilterValueOption() } */
                 $result[] = array(
-                    'id' => $unite->getId(),            // identifiant unique de l'item
-                    'label' => $unite->getStructure()->getLibelle(),    // libellé de l'item
-                    'extra' => $unite->getStructure()->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                    'id' => $unite['id'], // identifiant unique de l'item
+                    'label' => sprintf('%s - %s', $unite['structure']['code'], $unite['structure']['libelle']), // libellé de l'item
+                    'extra' => null, // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
 
             return new JsonModel($result);
         }

@@ -12,7 +12,13 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
 
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
-        return $this->_createQueryBuilder($alias);
+        $qb = $this->_createQueryBuilder($alias);
+
+        $qb
+            ->orderBy('structure.code')
+            ->addOrderBy('structure.libelle');
+
+        return $qb;
     }
 
     /**

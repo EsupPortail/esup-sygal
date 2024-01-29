@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] Module formation : élimination des ED historisées dans la liste des structures complémentaires ajoutables à une session.
 - [FIX] Module formation : changement du type de retour dans le trait StructureAwareTrait.
 - [FIX] Recherche de thèses : amélioration de l'affichage et du tri des structures dans les filtres.
+- [FIX] Recherche autocomplete établissement/ED/UR : bug empêchant la recherche (systématiquement aucun résultat).
 
 7.0.0
 -----

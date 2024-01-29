@@ -163,18 +163,21 @@ class EtablissementController extends StructureConcreteController
     public function rechercherAction()
     {
         if (($term = $this->params()->fromQuery('term'))) {
-            $unites = $this->getEtablissementService()->getRepository()->findByText($term);
+            $etabs = $this->getEtablissementService()->getRepository()->findByText($term);
             $result = [];
-            foreach ($unites as $unite) {
-                $result[] = array(
-                    'id' => $unite->getId(),            // identifiant unique de l'item
-                    'label' => $unite->getStructure()->getLibelle(),    // libellé de l'item
-                    'extra' => $unite->getStructure()->getSigle(),      // infos complémentaires (facultatives) sur l'item
-                );
+            foreach ($etabs as $etab) {
+                $label = $etab['structure']['libelle'];
+                if ($etab['structure']['sigle']) {
+                    $label .= sprintf(' (%s)', $etab['structure']['sigle']);
+                }
+                $result[] = [
+                    /** Attention à être cohérent avec {@see Etablissement::createSearchFilterValueOption() } */
+                    'id' => $etab['id'], // identifiant unique de l'item
+                    'label' => $label, // libellé de l'item
+                    'extra' => $etab['structure']['estFermee'] ? 'Fermé' : null, // infos complémentaires (facultatives) sur l'item
+                ];
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
+            usort($result, fn($a, $b) => $a['label'] <=> $b['label']);
 
             return new JsonModel($result);
         }

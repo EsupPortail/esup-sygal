@@ -229,10 +229,16 @@ class UniteRecherche implements
 
         $libelle = $this->structure->getLibelle();
         $sigle = trim($this->structure->getSigle()) ?: '???';
+        $code = $this->structure->getCode();
+
+        $label = sprintf('%s - %s', $sigle, $libelle);
+        if ($code) {
+            $label .= sprintf(' (%s)', $code);
+        }
 
         return [
             'value' => $this->getSourceCode(),
-            'label' => sprintf('%s - %s', $sigle, $libelle),
+            'label' => $label,
             'subtext' => $estFermee ? "Fermée" : null,
             'class' => $estFermee ? 'fermee' : '',
         ];

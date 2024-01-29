@@ -223,15 +223,17 @@ class UniteRechercheController extends StructureConcreteController
             $unites = $this->getUniteRechercheService()->getRepository()->findByText($term);
             $result = [];
             foreach ($unites as $unite) {
+                /** Attention à être cohérent avec {@see UniteRecherche::createSearchFilterValueOption() } */
+                $label = sprintf('%s - %s', $unite['structure']['sigle'] ?: '???', $unite['structure']['libelle']);
+                if ($unite['structure']['code']) {
+                    $label .= sprintf(' (%s)', $unite['structure']['code']);
+                }
                 $result[] = array(
-                    'id' => $unite->getId(),            // identifiant unique de l'item
-                    'label' => $unite->getStructure()->getLibelle(),    // libellé de l'item
-                    'extra' => $unite->getStructure()->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                    'id' => $unite['id'], // identifiant unique de l'item
+                    'label' => $label, // libellé de l'item
+                    'extra' => null, // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
 
             return new JsonModel($result);
         }

@@ -45,7 +45,7 @@ class EtablissementRepository extends DefaultEntityRepository
 
     /**
      * @param string|null $term
-     * @return Etablissement[]
+     * @return array[]
      */
     public function findByText(?string $term) : array
     {

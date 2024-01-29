@@ -171,12 +171,9 @@ class EcoleDoctorale implements
     {
         $estFermee = $this->structure->estFermee();
 
-        $libelle = $this->structure->getLibelle();
-        $sigle = $this->structure->getCode() ?: '???';
-
         return [
             'value' => $this->getSourceCode(),
-            'label' => sprintf('%s - %s', $sigle, $libelle),
+            'label' => sprintf('%s - %s', $this->structure->getCode(), $this->structure->getLibelle()),
             'subtext' => $estFermee ? "Fermée" : null,
             'class' => $estFermee ? 'fermee' : '',
         ];

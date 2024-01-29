@@ -314,21 +314,21 @@ class Etablissement implements
         return $this->structure->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function createSearchFilterValueOption(): array
     {
         if ($this->estInscription) {
             $label = $this->structure->getSourceCode();
         } else {
-            $label = ($this->structure->getCode() ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
+            $label = $this->structure->getLibelle();
+            if ($sigle = $this->structure->getSigle()) {
+                $label .= sprintf(' (%s)', $sigle);
+            }
         }
 
-        if ($this->structure->estFermee()) {
-            $label .= "&nbsp; FERMÉ";
-        }
-
-        return ['value' => $this->getSourceCode(), 'label' => $label];
+        return [
+            'value' => $this->getSourceCode(),
+            'label' => $label,
+            'extra' => $this->structure->estFermee() ? 'Fermé' : null,
+        ];
     }
 }
