@@ -245,7 +245,7 @@ $canGen =
     <div class="row">
         <div class="col-md-8">
             <dl>
-                <?php $formationsArray = $rapport->getFormationsSpecifiquesToArray() ?>
+                <?php $formationsArray = $rapport->getFormationsSpecifiques() ?>
                 <dt>Formations spécifiques/thématiques / Specific training
                     <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
                 <dd class="collection">
@@ -268,7 +268,7 @@ $canGen =
                     <?php endif ?>
                 </dd>
 
-                <?php $formationsArray = $rapport->getFormationsTransversalesToArray() ?>
+                <?php $formationsArray = $rapport->getFormationsTransversales() ?>
                 <dt>Formations transversales/professionnalisantes / Transversal training
                     <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
                 <dd class="collection">
@@ -291,7 +291,7 @@ $canGen =
                     <?php endif ?>
                 </dd>
 
-                <?php $actionsArray = $rapport->getActionsDiffusionCultureScientifiqueToArray() ?>
+                <?php $actionsArray = $rapport->getActionsDiffusionCultureScientifique() ?>
                 <dt>Actions de diffusion de la culture scientifique, technique et industrielle (CSTI) / Actions undertaken within the framework of the promotion of scientific, technical and industrial knowledge
                     <span class="badge bg-secondary"><?php echo count($actionsArray) ?></span></dt>
                 <dd class="collection">
@@ -327,7 +327,7 @@ $canGen =
     <div class="row">
         <div class="col-md-8">
             <dl>
-                <?php $autresActivitesArray = $rapport->getAutresActivitesToArray() ?>
+                <?php $autresActivitesArray = $rapport->getAutresActivites() ?>
                 <dt>Autres activités / Other activities
                     <span class="badge bg-secondary"><?php echo count($autresActivitesArray) ?></span></dt>
                 <dd class="collection">

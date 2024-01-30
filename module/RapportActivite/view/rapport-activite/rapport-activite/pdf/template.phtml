@@ -196,7 +196,7 @@ $these = $rapport->getThese();
     <div class="row">
         <div class="col-md-8">
             <dl>
-                <?php $formationsArray = $rapport->getFormationsSpecifiquesToArray() ?>
+                <?php $formationsArray = $rapport->getFormationsSpecifiques() ?>
                 <dt>Formations spécifiques/thématiques / <span class="en">Specific training</span>
                     <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
                 <dd class="collection">
@@ -219,7 +219,7 @@ $these = $rapport->getThese();
                     <?php endif ?>
                 </dd>
 
-                <?php $formationsArray = $rapport->getFormationsTransversalesToArray() ?>
+                <?php $formationsArray = $rapport->getFormationsTransversales() ?>
                 <dt>Formations transversales/professionnalisantes / <span class="en">Transversal training</span>
                     <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
                 <dd class="collection">
@@ -242,7 +242,7 @@ $these = $rapport->getThese();
                     <?php endif ?>
                 </dd>
 
-                <?php $actionsArray = $rapport->getActionsDiffusionCultureScientifiqueToArray() ?>
+                <?php $actionsArray = $rapport->getActionsDiffusionCultureScientifique() ?>
                 <dt>Actions de diffusion de la culture scientifique, technique et industrielle (CSTI) / <span class="en">Actions undertaken within the framework of the promotion of scientific, technical and industrial knowledge</span>
                     <span class="badge bg-secondary"><?php echo count($actionsArray) ?></span></dt>
                 <dd class="collection">
@@ -278,7 +278,7 @@ $these = $rapport->getThese();
     <div class="row">
         <div class="col-md-8">
             <dl>
-                <?php $autresActivitesArray = $rapport->getAutresActivitesToArray() ?>
+                <?php $autresActivitesArray = $rapport->getAutresActivites() ?>
                 <dt><!--Autres activités / <span class="en">Other activities</span>
                     <span class="badge bg-secondary"><?php /*echo count($autresActivitesArray) */?></span>--></dt>
                 <dd class="collection">

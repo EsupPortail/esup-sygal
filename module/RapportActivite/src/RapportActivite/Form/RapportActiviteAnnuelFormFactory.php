@@ -3,9 +3,9 @@
 namespace RapportActivite\Form;
 
 use Application\Service\AnneeUniv\AnneeUnivService;
-use Doctrine\ORM\EntityManager;
+use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\Hydrator\Strategy\BooleanStrategy;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Hydrator\RapportActiviteHydrator;
 
 class RapportActiviteAnnuelFormFactory
 {
@@ -15,11 +15,10 @@ class RapportActiviteAnnuelFormFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteAnnuelForm
     {
-        /** @var EntityManager $em */
-        $em = $container->get('doctrine.entitymanager.orm_default');
-        $hydrator = new RapportActiviteHydrator($em);
-
         $form = new RapportActiviteAnnuelForm('rapport-activite');
+
+        $hydrator = new ClassMethodsHydrator(false);
+        $hydrator->addStrategy('estFinContrat', new BooleanStrategy('1', '0'));
         $form->setHydrator($hydrator);
 
         /** @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService */

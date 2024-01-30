@@ -82,7 +82,7 @@ class RapportActiviteCreationRule implements RuleInterface
     /**
      * @inheritDoc
      */
-    public function execute()
+    public function execute(): void
     {
         if ($this->anneesUnivs === null) {
             throw new InvalidArgumentException("La liste initiale des années universitaires n'a pas été fournie");
@@ -100,6 +100,24 @@ class RapportActiviteCreationRule implements RuleInterface
         }
 
         $this->executed = true;
+    }
+
+    public function getAnneesUnivsDisponiblesPourRapportAnnuel(): array
+    {
+        if (!$this->executed) {
+            $this->execute();
+        }
+
+        return array_keys(array_filter($this->canCreateRapportAnnuel, fn($can) => $can));
+    }
+
+    public function getAnneesUnivsDisponiblesPourRapportFinContrat(): array
+    {
+        if (!$this->executed) {
+            $this->execute();
+        }
+
+        return array_keys(array_filter($this->canCreateRapportFinContrat, fn($can) => $can));
     }
 
     public function isCreationPossible(): bool

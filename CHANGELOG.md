@@ -3,11 +3,10 @@ Journal des modifications
 
 7.1.0
 -----
-- 
+- Rapports d'activité : initialisation du formulaire de création d'un nouveau rapport avec les formations suivies (module Formation).
 
 7.0.1
 -----
-- [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles).
 - [FIX] Module Substitutions : plantage de la page de détails d'une substitution d'UR.
 - [FIX] Services de recherche : la jointure avec la structure substituante n'est plus à faire.
 - [FIX] Utilisation de Structure::getCode() par getSourceCode() pour les établissements d'inscription (correction d'effets de bord des substitutions).

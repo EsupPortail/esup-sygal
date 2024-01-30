@@ -6,6 +6,7 @@ use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
+use Formation\Service\Inscription\InscriptionService as FormationInscriptionService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Form\RapportActiviteAnnuelForm;
 use RapportActivite\Form\RapportActiviteFinContratForm;
@@ -68,6 +69,10 @@ class RapportActiviteControllerFactory
         /** @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService */
         $anneeUnivService = $container->get(AnneeUnivService::class);
         $controller->setAnneeUnivService($anneeUnivService);
+
+        /** @var FormationInscriptionService $formationInscriptionService */
+        $formationInscriptionService = $container->get(FormationInscriptionService::class);
+        $controller->setInscriptionService($formationInscriptionService);
 
         return $controller;
     }

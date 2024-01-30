@@ -107,23 +107,22 @@ class InscriptionService {
         $qb = $this->getRepository()->createQueryBuilder('inscription')
             ->join('inscription.doctorant', 'doctorant')->addSelect('doctorant')
             ->join('inscription.session', 'session')->addSelect('session')
+            ->join('session.formation', 'formation')->addSelect('formation')
+            ->join('session.seances', 'seance')->addSelect('seance')
             ->andWhere('inscription.doctorant = :doctorant')->setParameter('doctorant', $doctorant);
 
         if ($type !== null) {
-            $qb =  $qb->join('session.formation', 'formation')->addSelect('formation')
-                ->andWhere('formation.type = :type')->setParameter('type', $type);
+            $qb->andWhere('formation.type = :type')->setParameter('type', $type);
         }
 
         if ($annee !== null) {
             $debut = DateTime::createFromFormat('d/m/Y','01/09/'.($annee-1));
             $fin = DateTime::createFromFormat('d/m/Y','31/08/'.($annee));
-
-            $qb = $qb->join('session.seances', 'seance')
+            $qb
                 ->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
                 ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
         }
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }
