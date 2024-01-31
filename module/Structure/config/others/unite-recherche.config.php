@@ -195,7 +195,7 @@ return [
                     'supprimer-logo' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/supprimer-logo/:structure',
+                            'route'       => '/supprimer-logo/:unite-recherche',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
                             ],

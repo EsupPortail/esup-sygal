@@ -21,8 +21,6 @@ use UnicaenIdref\Domain\Index1;
  * @var DomaineScientifique[]       $domainesScientifiques
  * @var string                      $logoContent
  * @var mixed                       $structure
- * @var string                      $paramName
- * @var array                       $queryParams
  *
  * @method string formControlGroup()
  */
@@ -188,7 +186,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                     <td> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?> </td>
                     <td>
                         <a
-                                href="<?php echo $this->url("unite-recherche/modifier/retirer-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
+                                href="<?php echo $this->url("unite-recherche/modifier/retirer-etablissement-rattachement", ["unite-recherche" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
                                 title="Retirer l'établissement de rattachement"
                         >
                             <span class="icon icon-delete iconly"></span>
@@ -211,19 +209,15 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 id="etablissements"
                 data-live-search="true"
                 data-width="450px">
-
             <?php foreach ($selectDomaine->asDataArray() as $data): ?>
-
                 <?php
                 $value = $data['value'];
                 $label = $data['label'];
-                $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-                $isActive = FiltersPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                $subtext = $data['subtext'] ?? '';
                 ?>
-                <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
+                <option value="<?php echo $value ?>" data-subtext="<?php echo $subtext ?>">
                     <?php echo $label ?>
                 </option>
-
             <?php endforeach ?>
         </select>
 
@@ -233,7 +227,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <a
                 class="btn btn-success"
                 id="ajout-rattachement"
-                href="<?php echo $this->url("unite-recherche/modifier/ajouter-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
+                href="<?php echo $this->url("unite-recherche/modifier/ajouter-etablissement-rattachement", ["unite-recherche" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
         >
             <span class="icon icon-plus"></span>
             Ajouter un établissement de rattachement
@@ -269,7 +263,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                     </td>
                     <td>
                         <a
-                                href="<?php echo $this->url('unite-recherche/modifier/retirer-domaine-scientifique', ["structure" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
+                                href="<?php echo $this->url('unite-recherche/modifier/retirer-domaine-scientifique', ["unite-recherche" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
                                 title="Retirer le domaine scientifique"
                         >
                             <span class="icon icon-delete iconly"></span>
@@ -294,19 +288,15 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 id="domaines"
                 data-live-search="true"
                 data-width="450px">
-
             <?php foreach ($selectDomaine->asDataArray() as $data): ?>
-
                 <?php
                 $value = $data['value'];
                 $label = $data['label'];
-                $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-                $isActive = FiltersPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                $subtext = $data['subtext'] ?? '';
                 ?>
-                <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
+                <option value="<?php echo $value ?>" data-subtext="<?php echo $subtext ?>">
                     <?php echo $label ?>
                 </option>
-
             <?php endforeach ?>
         </select>
 
@@ -315,7 +305,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <br/>
         <a class="btn btn-success"
            id="ajout-domaine"
-           href="<?php echo $this->url("unite-recherche/modifier/ajouter-domaine-scientifique", ["structure" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
+           href="<?php echo $this->url("unite-recherche/modifier/ajouter-domaine-scientifique", ["unite-recherche" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
             <span class="icon icon-plus"></span>
             Ajouter un domaine scientifique
         </a>

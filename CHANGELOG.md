@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] Module formation : changement du type de retour dans le trait StructureAwareTrait.
 - [FIX] Recherche de thèses : amélioration de l'affichage et du tri des structures dans les filtres.
 - [FIX] Recherche autocomplete établissement/ED/UR : bug empêchant la recherche (systématiquement aucun résultat).
+- [FIX] Page de modification d'une UR : paramètres de route erronés ; suppression de warnings PHP de variables inconnues.
 
 7.0.0
 -----
