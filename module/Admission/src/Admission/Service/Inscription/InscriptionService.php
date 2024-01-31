@@ -7,21 +7,11 @@ use Admission\Entity\Db\Repository\InscriptionRepository;
 use Admission\Entity\Db\Verification;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use DateTime;
 use Doctrine\ORM\ORMException;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 
 class InscriptionService extends BaseService
 {
-    use RoleServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
-    use UserContextServiceAwareTrait;
     use VerificationServiceAwareTrait;
 
     /**

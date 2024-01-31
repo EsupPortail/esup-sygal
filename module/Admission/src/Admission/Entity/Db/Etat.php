@@ -8,6 +8,7 @@ class Etat {
     const CODE_ABANDONNE = 'A';
     const CODE_VALIDE = 'V';
     const CODE_EN_COURS_VALIDATION = 'E';
+    const CODE_REJETE = 'R';
 
     private ?string $code = null;
     private ?string $libelle = null;

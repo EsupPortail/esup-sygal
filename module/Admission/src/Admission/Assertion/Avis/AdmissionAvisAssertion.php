@@ -39,7 +39,7 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
             return false;
         }
 
-        $admission = $this->getRequestedAdmission();
+        $admission = $this->getRequestedAdmissionForAvis();
         
         try {
 
@@ -196,7 +196,7 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
         return true;
     }
 
-    private function getRequestedAdmission(): ?Admission
+    private function getRequestedAdmissionForAvis(): ?Admission
     {
         $admission = null;
         if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('admissionAvis') ) {
@@ -217,12 +217,5 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
         }
 
         return $admission;
-    }
-
-    protected function getRouteMatch(): ?RouteMatch
-    {
-        /** @var \Application\RouteMatch $rm */
-        $rm = $this->getMvcEvent()->getRouteMatch();
-        return $rm;
     }
 }

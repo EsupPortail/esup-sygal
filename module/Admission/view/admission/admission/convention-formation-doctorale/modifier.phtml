@@ -1,0 +1,95 @@
+<?php
+
+namespace Admission;
+
+use Admission\Controller\AdmissionController;
+use Admission\Entity\Db\Admission;
+use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Admission $admission
+ * @var ConventionFormationDoctoraleForm $form
+ *
+ * @see AdmissionController::ajouterConventionFormationAction()
+ */
+
+$title = $admission->getId() ?
+    "Modification de la convention de formation doctorale" :
+    "Convention de formation doctorale ";
+
+$form->prepare();
+
+?>
+
+<?php $this->headTitle($this->translate($title));
+//    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel())
+?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+<!--    <small>--><?php //echo $this->partial('these/these/partial/titre', ['these' => $rapport->getThese()]) ?><!--</small>-->
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
+<div class="rapport-activite-container">
+
+    <?php echo $this->form()->openTag($form) ?>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('calendrierProjetRecherche')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('modalitesEncadrSuiviAvancmtRech')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('conditionsRealisationProjRech')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('modalitesIntegrationUr')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('partenariatsProjThese')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('motivationDemandeConfidentialite')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('projetProDoctorant')); ?>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php
+            echo $this->formControlGroup($form->get('security'));
+            echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+            ?>
+        </div>
+    </div>
+    <?php echo $this->form()->closeTag() ?>
+
+</div>

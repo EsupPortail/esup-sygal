@@ -1,10 +1,11 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class ConventionFormationDoctorale implements HistoriqueAwareInterface{
+class ConventionFormationDoctorale implements HistoriqueAwareInterface, ResourceInterface {
 
     use HistoriqueAwareTrait;
 
@@ -53,6 +54,11 @@ class ConventionFormationDoctorale implements HistoriqueAwareInterface{
      * @var \Admission\Entity\Db\Admission
      */
     private $admission;
+
+    public function __toString()
+    {
+        return strval( $this->getId() );
+    }
 
 
     /**
@@ -255,5 +261,10 @@ class ConventionFormationDoctorale implements HistoriqueAwareInterface{
     public function getAdmission()
     {
         return $this->admission;
+    }
+
+    public function getResourceId()
+    {
+        return "ConventionFormationDoctorale";
     }
 }

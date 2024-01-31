@@ -21,8 +21,9 @@ class AdmissionOperationsFormatter extends AbstractFilter {
         foreach ($operations["operations"] as $operation) {
             $str .= "
                     <tr>
-                        <th>" . $operation["libelle"] . "</th>
-                        <th>" . $operation["createur"] . "</th>
+                        <th>" . $operation["libelle"] . "</th>";
+            $str .= $operation["valeur"] ? "<th>" . $operation["valeur"] . "</th>" : "<th class='pas_valeur_avis_renseigne'>" . $operation["valeur"] . "</th>";
+            $str .="    <th>" . $operation["createur"] . "</th>
                         <th>" . $operation["dateCreation"] . "</th>
                     </tr>
                 ";

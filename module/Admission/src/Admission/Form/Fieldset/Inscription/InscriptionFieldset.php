@@ -24,6 +24,8 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     private $ecolesDoctorales = null;
     /** @var array */
     private $unitesRecherche = null;
+    /** @var array */
+    private $etablissementsInscription = null;
     private $specialites = null;
 
 
@@ -72,6 +74,18 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->unitesRecherche = $options;
         $this->get('uniteRecherche')->setEmptyOption('Sélectionnez une option');
         $this->get('uniteRecherche')->setValueOptions($this->unitesRecherche);
+    }
+
+    public function setEtablissementsInscription(array $etablissementsInscription): void
+    {
+        $options = [];
+
+        foreach ($etablissementsInscription as $etablissementInscription) {
+            $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle();
+        }
+        $this->etablissementInscription = $options;
+        $this->get('etablissementInscription')->setEmptyOption('Sélectionnez une option');
+        $this->get('etablissementInscription')->setValueOptions($this->etablissementInscription);
     }
 
     //Spécifités envisagées
@@ -159,6 +173,18 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
                     'id' => "uniteRecherche"
+                ])
+        );
+
+        $this->add(
+            (new Select("etablissementInscription"))
+                ->setLabel("Établissement d'inscription")
+                ->setLabelAttributes(['data-after' => " /   Registering establishment"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "etablissementInscription"
                 ])
         );
 
@@ -343,6 +369,13 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             ],
             'uniteRecherche' => [
                 'name' => 'uniteRecherche',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+            ],
+            'etablissementInscription' => [
+                'name' => 'etablissementInscription',
                 'required' => false,
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */

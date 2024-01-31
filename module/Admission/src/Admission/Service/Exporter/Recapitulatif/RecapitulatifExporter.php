@@ -4,12 +4,11 @@ namespace Admission\Service\Exporter\Recapitulatif;
 
 use Admission\Entity\AdmissionRecapitulatifDataTemplate;
 use Admission\Entity\Db\Admission;
-use Admission\Rule\Operation\AdmissionOperationRule;
+use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Admission\Provider\Template\PdfTemplates;
 use Admission\Service\Url\UrlServiceAwareTrait;
-use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
+use Soutenance\Service\Notification\StringElement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
@@ -24,7 +23,7 @@ class RecapitulatifExporter extends PdfExporter
     use RenduServiceAwareTrait;
     use StructureServiceAwareTrait;
     use UrlServiceAwareTrait;
-
+    use AdmissionServiceAwareTrait;
     private $vars;
 
     public function setVars(array $vars)
@@ -53,14 +52,18 @@ class RecapitulatifExporter extends PdfExporter
         $admissionRecapitulatif = new AdmissionRecapitulatifDataTemplate();
         $admissionRecapitulatif->setAdmission($admission);
 
+        $libelleSignature = new StringElement();
+        $libelleSignature->texte = $this->admissionService->generateLibelleSignaturePresidenceForAdmission($admission);
+
         $admissionRecapitulatif->setOperations($operations);
         $vars = [
             'admission' => $admission,
             'admissionEtudiant' => $admission->getEtudiant()->first(),
             'admissionInscription' => $admission->getInscription()->first(),
             'admissionFinancement' => $admission->getFinancement()->first(),
+            'stringelement' => $libelleSignature,
             'individu' => $individu,
-            'admissionRecapitulatif' => $admissionRecapitulatif
+            'admissionRecapitulatif' => $admissionRecapitulatif,
         ];
 
         $comue = $this->etablissementService->fetchEtablissementComue();

@@ -5,26 +5,14 @@ namespace Admission\Service\Etudiant;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Repository\EtudiantRepository;
-use Admission\Entity\Db\Repository\AdmissionValidationRepository;
 use Admission\Entity\Db\Verification;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use DateTime;
-use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\ORMException;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtudiantService extends BaseService
 {
-    use RoleServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
-    use UserContextServiceAwareTrait;
     use VerificationServiceAwareTrait;
 
     /**

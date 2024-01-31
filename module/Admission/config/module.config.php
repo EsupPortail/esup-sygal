@@ -19,6 +19,8 @@ use Admission\Event\Validation\AdmissionValidationEventListener;
 use Admission\Event\Validation\AdmissionValidationEventListenerFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
+use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
+use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleFormFactory;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Form\Fieldset\Document\DocumentFieldsetFactory;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
@@ -31,6 +33,8 @@ use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldsetFactory;
 use Admission\Hydrator\Admission\AdmissionHydrator;
 use Admission\Hydrator\Admission\AdmissionHydratorFactory;
+use Admission\Hydrator\ConventionFormationDoctorale\ConventionFormationDoctoraleHydrator;
+use Admission\Hydrator\ConventionFormationDoctorale\ConventionFormationDoctoraleHydratorFactory;
 use Admission\Hydrator\Document\DocumentHydrator;
 use Admission\Hydrator\Document\DocumentHydratorFactory;
 use Admission\Hydrator\Etudiant\EtudiantHydrator;
@@ -46,6 +50,8 @@ use Admission\Hydrator\Verification\VerificationHydratorFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
+use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
+use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceFactory;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Etudiant\EtudiantService;
@@ -110,6 +116,7 @@ return array(
                             AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET,
+                            AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET,
                             AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF
                         ],
                         'resources'  => ['Admission'],
@@ -186,22 +193,24 @@ return array(
                     'controller' => AdmissionController::class,
                     'action' => [
                         'notifier-dossier-complet',
+                        'notifier-dossier-incomplet',
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET,
+                        AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET,
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
                 [
-                'controller' => AdmissionController::class,
-                'action' => [
-                    'generer-recapitulatif',
+                    'controller' => AdmissionController::class,
+                    'action' => [
+                        'generer-recapitulatif',
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF,
+                    ],
+                    'assertion' => AdmissionAssertion::class,
                 ],
-                'privileges' => [
-                    AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF,
-                ],
-                'assertion' => AdmissionAssertion::class,
-            ],
             ]
         ],
     ],
@@ -278,6 +287,20 @@ return array(
                             ],
                         ],
                     ],
+                    'notifier-dossier-incomplet' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/notifier-dossier-incomplet/:admission',
+                            'constraints' => [
+                                'admission' => '[0-9]*'
+                            ],
+                            'defaults' => [
+                                'controller' => AdmissionController::class,
+                                'action' => 'notifier-dossier-incomplet',
+                                /* @see AdmissionController::notifierDossierIncompletAction() */
+                            ],
+                        ],
+                    ],
                     'generer-recapitulatif' => [
                         'type'  => Segment::class,
                         'may_terminate' => true,
@@ -330,7 +353,7 @@ return array(
             InscriptionFieldset::class => InscriptionFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,
             VerificationFieldset::class => VerificationFieldsetFactory::class,
-            DocumentFieldset::class => DocumentFieldsetFactory::class
+            DocumentFieldset::class => DocumentFieldsetFactory::class,
         ],
     ],
 
@@ -342,7 +365,8 @@ return array(
             FinancementHydrator::class => FinancementHydratorFactory::class,
             AdmissionValidationHydrator::class => AdmissionValidationHydratorFactory::class,
             VerificationHydrator::class => VerificationHydratorFactory::class,
-            DocumentHydrator::class => DocumentHydratorFactory::class
+            DocumentHydrator::class => DocumentHydratorFactory::class,
+            ConventionFormationDoctoraleHydrator::class => ConventionFormationDoctoraleHydratorFactory::class
         ],
     ],
 

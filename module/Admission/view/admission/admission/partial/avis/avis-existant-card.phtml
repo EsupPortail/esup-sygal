@@ -85,25 +85,3 @@ $canSupprimerOperation =
         </div>
     </div>
 </div>
-
-<script>
-    $(function() {
-        const avisComplemsModal = document.getElementById('avisComplemsModal')
-        avisComplemsModal.addEventListener('show.bs.modal', function (event) {
-            // Button that triggered the modal
-            const button = event.relatedTarget;
-            const logFullContent = $(button).parent().siblings(".log-full-content").html();
-            // Update the modal's content.
-            const modalBody = avisComplemsModal.querySelector('.modal-body');
-            $(modalBody).html(logFullContent);
-        });
-
-        // Gestion de la fermeture de la modale
-        let ajaxModalEvent = '<?php echo $ajaxModalEvent ?>';
-        $("body").on(ajaxModalEvent, function(event) {
-            $("body").addClass("loading");
-            event.div.modal('hide'); // ferme la fenêtre modale
-            window.location.reload();
-        });
-    })
-</script>

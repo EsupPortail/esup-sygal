@@ -16,7 +16,7 @@ h1 {
   margin-top: 50px; }
 
 .title_sous_partie {
-  background: #00498099 0% 0% no-repeat padding-box;
+  background: #00498099 0 0 no-repeat padding-box;
   padding-left: 15px;
   align-items: center; }
 
@@ -127,7 +127,7 @@ input[name="etudiant[ine]"] {
   text-align: center;
   width: fit-content; }
 
-.aucune_ecole_doctorale {
+.structure_non_declaree {
   color: #a94442;
   font-style: italic;
   margin-bottom: unset; }
@@ -287,7 +287,6 @@ i:hover {
   border: 2px solid #d23544;
   background-color: #d23544;
   color: white;
-  color: white;
   text-align: center;
   line-height: 25px;
   font-size: 12px;
@@ -366,17 +365,17 @@ input[name="validation[saveAttestationHonneur]"] {
 .dossier_complet {
   border: 3px solid #37AF37;
   border-radius: 11px;
-  max-width: 18rem; }
+  max-width: fit-content; }
 
 .dossier_incomplet {
   border: 3px solid #E69B18;
   border-radius: 11px;
-  max-width: 25rem; }
+  max-width: fit-content; }
 
 .dossier_refuse {
   border: 3px solid #d23544;
   border-radius: 11px;
-  max-width: 25rem; }
+  max-width: fit-content; }
 
 .dossier_complet > div > p, .dossier_incomplet > div > p, .dossier_refuse > div > p {
   color: #707070;
@@ -385,12 +384,12 @@ input[name="validation[saveAttestationHonneur]"] {
 .dossier_complet > div > i, .dossier_incomplet > div > i, .dossier_refuse > div > i {
   font-style: unset; }
 
-.card-body.text-success i.icon, .card-body.text-warning i.icon {
+.card-body.text-success i.icon, .card-body.text-warning i.icon, .card-body.text-danger i.icon {
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px; }
 
-.card-body.text-success p.card-title, .card-body.text-warning p.card-title {
+.card-body.text-success p.card-title, .card-body.text-warning p.card-title, .card-body.text-danger p.card-title {
   display: inline-block; }
 
 @media (max-width: 768px) {
@@ -401,7 +400,6 @@ input[name="validation[saveAttestationHonneur]"] {
   .inner.show {
     position: absolute;
     max-height: calc(100vh - 50px);
-    /* Limitez la hauteur du menu à la hauteur de l'écran moins la hauteur de l'en-tête (50px) */
     overflow-y: auto; }
 
   ul.dropdown-menu.inner.show > li {

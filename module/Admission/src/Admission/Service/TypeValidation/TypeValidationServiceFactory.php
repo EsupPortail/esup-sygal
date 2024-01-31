@@ -18,25 +18,7 @@ class TypeValidationServiceFactory {
      */
     public function __invoke(ContainerInterface $container): TypeValidationService
     {
-        /**
-         * @var RoleService $roleService
-         * @var SourceService $sourceService
-         * @var UserContextService $userContextService;
-         */
-        $roleService = $container->get(RoleService::class);
-        $sourceService = $container->get(SourceService::class);
-        $userContextService = $container->get('UserContextService');
-
-        /**
-         * @var SourceCodeStringHelper $sourceCodeStringHelper;
-         */
-        $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
-
         $service = new TypeValidationService();
-        $service->setRoleService($roleService);
-        $service->setSourceService($sourceService);
-        $service->setUserContextService($userContextService);
-        $service->setSourceCodeStringHelper($sourceCodeStringHelper);
         return $service;
     }
 }

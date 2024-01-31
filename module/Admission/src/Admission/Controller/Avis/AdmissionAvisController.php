@@ -6,12 +6,10 @@ use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Closure;
 use Doctrine\ORM\NoResultException;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Response;
-use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Event\Avis\AdmissionAvisEvent;
 use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
@@ -19,7 +17,6 @@ use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAvis\Entity\Db\Avis;
-use UnicaenAvis\Entity\Db\AvisTypeValeurComplem;
 use UnicaenAvis\Form\AvisForm;
 use UnicaenAvis\Service\AvisServiceAwareTrait;
 
@@ -73,6 +70,7 @@ class AdmissionAvisController extends AbstractController
                 $admissionAvis->setAvis($avis);
                 $this->admissionAvisService->saveNewAdmissionAvis($admissionAvis);
                 $event = $this->admissionAvisService->triggerEventAvisAjoute($admissionAvis);
+                $this->admissionService->changeEtatAdmission($admissionAvis, "aviser");
 
                 $this->flashMessenger()->addSuccessMessage("Avis enregistré avec succès.");
                 $this->flashMessengerAddMessagesFromEvent($event);
@@ -113,6 +111,7 @@ class AdmissionAvisController extends AbstractController
             if ($this->form->isValid()) {
                 $this->admissionAvisService->updateAdmissionAvis($admissionAvis);
                 $event = $this->admissionAvisService->triggerEventAvisModifie($admissionAvis);
+                $this->admissionService->changeEtatAdmission($admissionAvis, "modifier");
 
                 $this->flashMessenger()->addSuccessMessage("Avis modifié avec succès.");
                 $this->flashMessengerAddMessagesFromEvent($event);
@@ -142,6 +141,7 @@ class AdmissionAvisController extends AbstractController
 
         $this->admissionAvisService->deleteAdmissionAvis($admissionAvis);
         $event = $this->admissionAvisService->triggerEventAvisSupprime($admissionAvis);
+        $this->admissionService->changeEtatAdmission($admissionAvis, "desaviser");
 
         $this->flashMessenger()->addSuccessMessage("Avis supprimé avec succès.");
         $this->flashMessengerAddMessagesFromEvent($event);

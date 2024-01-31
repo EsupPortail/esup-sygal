@@ -110,7 +110,7 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
                 case AdmissionPrivileges::ADMISSION_DEVALIDER_TOUT:
                     $this->assertEtatAdmission($admissionValidation->getAdmission());
                     $this->assertAppartenanceAdmission($admissionValidation->getAdmission());
-                    $this->assertDossierCompletAdmission($admissionValidation);
+//                    $this->assertDossierCompletAdmission($admissionValidation);
                     break;
             }
 

@@ -15,7 +15,7 @@ use Admission\Entity\Db\Admission;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 
-class AdmissionOperationAbstractAssertion extends AbstractAssertion
+class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
     implements UserContextServiceAwareInterface, MessageCollectorAwareInterface
 {
     use ThrowsFailedAssertionExceptionTrait;

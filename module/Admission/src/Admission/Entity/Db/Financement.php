@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Application\Entity\Db\OrigineFinancement;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -16,9 +17,9 @@ class Financement implements HistoriqueAwareInterface{
     private $contratDoctoral;
 
     /**
-     * @var string|null
+     * @var OrigineFinancement
      */
-    private $employeurContrat;
+    private $financement;
 
     /**
      * @var string|null
@@ -73,27 +74,27 @@ class Financement implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set employeurContrat.
+     * Set financement.
      *
-     * @param string|null $employeurContrat
+     * @param OrigineFinancement $financement
      *
-     * @return Financement
+     * @return Financement|null
      */
-    public function setEmployeurContrat($employeurContrat = null)
+    public function setFinancement($financement = null)
     {
-        $this->employeurContrat = $employeurContrat;
+        $this->financement = $financement;
 
         return $this;
     }
 
     /**
-     * Get employeurContrat.
+     * Get financement.
      *
-     * @return string|null
+     * @return OrigineFinancement|null
      */
-    public function getEmployeurContrat()
+    public function getFinancement()
     {
-        return $this->employeurContrat;
+        return $this->financement;
     }
 
     /**
@@ -199,7 +200,9 @@ class Financement implements HistoriqueAwareInterface{
             return "<b>Non renseigné</b>";
         }else{
             if($this->getContratDoctoral()){
-                return "Oui <ul><li><b>Employeur du contrat : </b>".$this->getEmployeurContrat()."</li></ul>";
+                return $this->getFinancement() ?
+                        $this->getFinancement()->getLibelleLong() :
+                        'Aucun employeur choisi';
             }else{
                 return "<b>Aucun contrat doctoral prévu</b>";
             }

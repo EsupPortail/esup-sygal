@@ -29,6 +29,7 @@ $canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMIS
 $canNotifierGestionnairesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES);
 $canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
 $canNotifierDossierComplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET);
+$canNotifierDossierIncomplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET);
 $canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
@@ -95,6 +96,8 @@ $inscription = $admission->getInscription()->first();
         'fieldset' => $fieldset->get('exemplairesConvention'),
         'documents' => $documents,
         'individu' => $individu,
+        'admission' => $admission,
+        'conventionFormationDoctorale' => $conventionFormationDoctorale
     ]);
     $returnUrl = $this->url('admission/ajouter', ['action' => "document",
             'individu' => $individu]
@@ -209,30 +212,43 @@ if($canAccederCommentaires) {
     //Permettre aux gestionnaires de notifier l'étudiant que des commentaires ont été rentrés, seulement
     //si le dossier n'est pas encore noté comme complet et que des commentaires ont été renseignés
     if($canNotifierCommentairesAjoutesAdmission && !$admission->isDossierComplet() && $admission->hasComments()){ ?>
-        <a href="<?php echo $this->url('admission/notifier-commentaires-ajoutes', [
+<!--        <a href="--><?php //echo $this->url('admission/notifier-commentaires-ajoutes', [
+//            'admission' => $admission->getId(),
+//        ], [
+//            'query' => ['redirect' => $returnUrl],
+//        ]) ?><!--"-->
+<!--           class="btn btn-primary collapsable-action"-->
+<!--           title="Notifier l'étudiant des commentaires ajoutés ?"-->
+<!--           data-toggle="confirmationx"-->
+<!--           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant des commentaires ajoutés à son dossier ?">Notifier-->
+<!--            l'étudiant des commentaires ajoutés</span></a>-->
+    <?php }
+    if($canNotifierDossierIncomplet && !$admission->isDossierComplet() && !$dossierValideParGestionnaire){
+        //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>
+        <a href="<?php echo $this->url('admission/notifier-dossier-incomplet', [
             'admission' => $admission->getId(),
         ], [
             'query' => ['redirect' => $returnUrl],
         ]) ?>"
-           class="btn btn-primary collapsable-action"
-           title="Notifier l'étudiant des commentaires ajoutés ?"
-           data-toggle="confirmationx"
-           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant des commentaires ajoutés à son dossier ?">Notifier
-            l'étudiant des commentaires ajoutés</span></a>
+                   class="btn btn-primary collapsable-action"
+                   title="Notifier l'étudiant que son dossier est incomplet ?"
+                   data-toggle="confirmationx"
+                   data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant que son dossier est incomplet, cela entrainera la dévalidation de l'attestation sur l'honneur de l'étudiant ?">Notifier
+                    l'étudiant que son dossier est incomplet</span></a>
     <?php }
     //Permettre aux gestionnaires de notifier l'étudiant que son dossier est complet
-    else if($canNotifierDossierComplet && $admission->isDossierComplet() && !$dossierValideParGestionnaire){ ?>
-        <a href="<?php echo $this->url('admission/notifier-dossier-complet', [
-            'admission' => $admission->getId(),
-        ], [
-            'query' => ['redirect' => $returnUrl],
-        ]) ?>"
-           class="btn btn-primary collapsable-action"
-           title="Notifier l'étudiant que son dossier est complet ?"
-           data-toggle="confirmationx"
-           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant que son dossier est complet ?">Notifier
-            l'étudiant que son dossier est complet</span></a>
-    <?php } ?>
+//    else if($canNotifierDossierComplet && $admission->isDossierComplet() && !$dossierValideParGestionnaire){ ?>
+<!--        <a href="--><?php //echo $this->url('admission/notifier-dossier-complet', [
+//            'admission' => $admission->getId(),
+//        ], [
+//            'query' => ['redirect' => $returnUrl],
+//        ]) ?><!--"-->
+<!--           class="btn btn-primary collapsable-action"-->
+<!--           title="Notifier l'étudiant que son dossier est complet ?"-->
+<!--           data-toggle="confirmationx"-->
+<!--           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant que son dossier est complet ?">Notifier-->
+<!--            l'étudiant que son dossier est complet</span></a>-->
+<!--        //} -->
 </div>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -242,6 +258,7 @@ if($canAccederCommentaires) {
         $returnUrl = $this->url('admission/ajouter', ['action' => "document",
                 'individu' => $individu]
         );
+        unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
         echo $this->partial('admission/admission/partial/circuit-signatures', [
             'operations' => $operations,
             'individu' => $individu,
@@ -260,33 +277,33 @@ if($canAccederCommentaires) {
 
 <?php
 //Permet à l'étudiant de notifier les gestionnaires de son dossier, seulement si la validation par la gestionnaire n'a pas encore été effectuée
-if ($canNotifierGestionnairesAdmission && !$dossierValideParGestionnaire) {
-    $returnUrl = $this->url('admission/ajouter', ['action' => "document", 'individu' => $individu]); ?>
-    <div class="row notifier_gestionnaires">
-        <a href="<?php echo $this->url('admission/notifier-gestionnaire', [
-            'admission' => $admission->getId(),
-        ], [
-            'query' => ['redirect' => $returnUrl],
-        ]) ?>"
-           class="btn btn-primary"
-           title="Notifier votre gestionnaire de la saisie de vos informations, afin qu'ils vérifient votre dossier ?"
-           data-toggle="confirmationx"
-           data-message="Êtes-vous sûr·e de vouloir notifier votre gestionnaire de la saisie de vos informations, afin qu'il vérifie votre dossier ?">Notifier
-            votre gestionnaire</span></a>
-    </div>
-    <div class="modal fade" id="modalErreurNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Erreur dans l'envoi de la notification à votre gestionnaire</h4>
-                </div>
-                <div class="modal-body">
-                    Veuillez renseigner votre école doctorale, avant de pouvoir envoyer une notification à votre gestionnaire
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php } ?>
+//if ($canNotifierGestionnairesAdmission && !$dossierValideParGestionnaire) {
+//    $returnUrl = $this->url('admission/ajouter', ['action' => "document", 'individu' => $individu]); ?>
+<!--    <div class="row notifier_gestionnaires">-->
+<!--        <a href="--><?php //echo $this->url('admission/notifier-gestionnaire', [
+//            'admission' => $admission->getId(),
+//        ], [
+//            'query' => ['redirect' => $returnUrl],
+//        ]) ?><!--"-->
+<!--           class="btn btn-primary"-->
+<!--           title="Notifier votre gestionnaire de la saisie de vos informations, afin qu'ils vérifient votre dossier ?"-->
+<!--           data-toggle="confirmationx"-->
+<!--           data-message="Êtes-vous sûr·e de vouloir notifier votre gestionnaire de la saisie de vos informations, afin qu'il vérifie votre dossier ?">Notifier-->
+<!--            votre gestionnaire</span></a>-->
+<!--    </div>-->
+<!--    <div class="modal fade" id="modalErreurNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
+<!--        <div class="modal-dialog" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h4 class="modal-title" id="myModalLabel">Erreur dans l'envoi de la notification à votre gestionnaire</h4>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    Veuillez renseigner votre école doctorale, avant de pouvoir envoyer une notification à votre gestionnaire-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<?php //} ?>

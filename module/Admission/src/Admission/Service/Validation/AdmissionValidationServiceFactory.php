@@ -20,25 +20,13 @@ class AdmissionValidationServiceFactory {
     public function __invoke(ContainerInterface $container): AdmissionValidationService
     {
         /**
-         * @var RoleService $roleService
-         * @var SourceService $sourceService
          * @var UserContextService $userContextService;
          * @var IndividuService $individuService
          */
-        $roleService = $container->get(RoleService::class);
-        $sourceService = $container->get(SourceService::class);
         $userContextService = $container->get(UserContextService::class);
 
-        /**
-         * @var SourceCodeStringHelper $sourceCodeStringHelper;
-         */
-        $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
-
         $service = new AdmissionValidationService();
-        $service->setRoleService($roleService);
-        $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);
-        $service->setSourceCodeStringHelper($sourceCodeStringHelper);
         $service->setEventManager($container->get('EventManager'));
 
         return $service;

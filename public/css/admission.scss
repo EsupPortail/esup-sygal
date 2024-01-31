@@ -22,7 +22,7 @@ h1 {
 }
 
 .title_sous_partie {
-  background: #00498099 0% 0% no-repeat padding-box;
+  background: #00498099 0 0 no-repeat padding-box;
   padding-left: 15px;
   align-items: center;
 }
@@ -159,6 +159,12 @@ input[name="etudiant[ine]"]{
 .acces_dossier{
   text-align: center;
   width:fit-content;
+}
+
+.structure_non_declaree{
+  color: #a94442;
+  font-style: italic;
+  margin-bottom: unset;
 }
 
 //Partie étudiant
@@ -351,7 +357,6 @@ i:hover {
   border: 2px solid #d23544;
   background-color: #d23544;
   color: white;
-  color: white;
   text-align: center;
   line-height: 25px;
   font-size: 12px;
@@ -450,19 +455,19 @@ input[name="validation[saveAttestationHonneur]"] {
 .dossier_complet {
   border: 3px solid #37AF37;
   border-radius: 11px;
-  max-width: 18rem;
+  max-width: fit-content;
 }
 
 .dossier_incomplet {
   border: 3px solid #E69B18;
   border-radius: 11px;
-  max-width: 25rem;
+  max-width: fit-content;
 }
 
 .dossier_refuse {
   border: 3px solid #d23544;
   border-radius: 11px;
-  max-width: 25rem;
+  max-width: fit-content;
 }
 
 .dossier_complet > div > p, .dossier_incomplet > div > p, .dossier_refuse > div > p {
@@ -474,13 +479,13 @@ input[name="validation[saveAttestationHonneur]"] {
   font-style: unset;
 }
 
-.card-body.text-success i.icon, .card-body.text-warning i.icon {
+.card-body.text-success i.icon, .card-body.text-warning i.icon, .card-body.text-danger i.icon{
   display: inline-block;
   vertical-align: middle;
   margin-right: 10px;
 }
 
-.card-body.text-success p.card-title, .card-body.text-warning p.card-title {
+.card-body.text-success p.card-title, .card-body.text-warning p.card-title, .card-body.text-danger p.card-title {
   display: inline-block;
 }
 
@@ -493,7 +498,7 @@ input[name="validation[saveAttestationHonneur]"] {
   //Partie inscription
   .inner.show {
     position: absolute;
-    max-height: calc(100vh - 50px); /* Limitez la hauteur du menu à la hauteur de l'écran moins la hauteur de l'en-tête (50px) */
+    max-height: calc(100vh - 50px);
     overflow-y: auto;
   }
 
@@ -510,10 +515,6 @@ input[name="validation[saveAttestationHonneur]"] {
 
   .row > .date_televersement, .row > .action_file {
     width: revert;
-  }
-
-  .date_televersement > p {
-    //margin-top: revert;
   }
 
   .cards_validation .card {

@@ -7,14 +7,14 @@ trait FinancementServiceAwareTrait
     /**
      * @var FinancementService
      */
-    protected FinancementService $financementService;
+    protected FinancementService $admissionFinancementService;
 
     /**
-     * @param FinancementService $financementService
+     * @param FinancementService $admissionFinancementService
      */
-    public function setFinancementService(FinancementService $financementService): void
+    public function setFinancementService(FinancementService $admissionFinancementService): void
     {
-        $this->financementService = $financementService;
+        $this->admissionFinancementService = $admissionFinancementService;
     }
 
     /**
@@ -22,6 +22,6 @@ trait FinancementServiceAwareTrait
      */
     public function getFinancementService(): FinancementService
     {
-        return $this->financementService;
+        return $this->admissionFinancementService;
     }
 }

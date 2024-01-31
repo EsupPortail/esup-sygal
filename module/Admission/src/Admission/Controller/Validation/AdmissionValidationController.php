@@ -36,24 +36,7 @@ class AdmissionValidationController extends AbstractController
 
         $admissionValidation = $this->admissionValidationService->newAdmissionValidation($admission, $typeValidation);
         $this->admissionValidationService->saveNewAdmissionValidation($admissionValidation);
-
-        switch ($typeValidation->getCode()) {
-            //Remise du dossier d'admission dans l'état "En cours de validation"
-            case TypeValidation::CODE_VALIDATION_GESTIONNAIRE:
-                $enCoursDeValidation = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_VALIDATION]);
-                $admission->setEtat($enCoursDeValidation);
-                $this->admissionService->update($admission);
-                break;
-            //Remise du dossier d'admission dans l'état "Validé"
-            case TypeValidation::CODE_SIGNATURE_PRESIDENT:
-                $valide = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_VALIDE]);
-                $admission->setEtat($valide);
-                $this->admissionService->update($admission);
-                break;
-
-            default:
-                break;
-        }
+        $this->admissionService->changeEtatAdmission($admissionValidation, "valider");
 
         $event = $this->admissionValidationService->triggerEventValidationAjoutee($admissionValidation);
         if ($messages = $event->getMessages()) {
@@ -85,14 +68,7 @@ class AdmissionValidationController extends AbstractController
 
         $this->admissionValidationService->deleteAdmissionValidation($admissionValidation);
         $event = $this->admissionValidationService->triggerEventValidationSupprimee($admissionValidation);
-
-        //Remise du dossier d'admission dans l'état "En cours de saisie"
-        if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_VALIDATION_GESTIONNAIRE){
-            /** @var Etat $enCoursDeValidation */
-            $enCoursDeValidation = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
-            $admissionValidation->getAdmission()->setEtat($enCoursDeValidation);
-            $this->admissionService->update($admissionValidation->getAdmission());
-        }
+        $this->admissionService->changeEtatAdmission($admissionValidation, "devalider");
 
         $this->flashMessenger()->addSuccessMessage(sprintf(
             "%s supprimée avec succès.",

@@ -8,31 +8,18 @@ use Admission\Entity\Db\Repository\DocumentRepository;
 use Admission\Entity\Db\Verification;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\DateTimeAwareTrait;
-use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\ORM\Exception\NotSupported;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Fichier\Entity\Db\Fichier;
-use Fichier\Entity\Db\NatureFichier;
-use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Util;
 
 class DocumentService extends BaseService
 {
-    use RoleServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;

@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
             $('select[name="inscription[ecoleDoctorale]"]').attr('disabled', true);
             $('select[name="inscription[specialiteDoctorat]"]').attr('disabled', true);
             $('select[name="inscription[uniteRecherche]"]').attr('disabled', true);
+            $('select[name="inscription[etablissementInscription]"]').attr('disabled', true);
         }
 
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
@@ -135,6 +136,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (currentUrl.indexOf("/document") !== -1) {
+        // Masquer l'élément suivant de l'élément avec la classe file_charte_doctorat
+        $('.file_charte_doctorat').next().hide();
+
         FilePond.registerPlugin(FilePondPluginFileValidateType);
         FilePond.registerPlugin(FilePondPluginPdfPreview);
 
@@ -156,8 +160,24 @@ document.addEventListener("DOMContentLoaded", function() {
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
                     },
-                    load: {
-                        url: '/telecharger-document/' + individuId + '/' + inputId + '?name=',
+                    load: (source, load, error) => {
+                        fetch('/admission/telecharger-document/' + individuId + '/' + inputId + '?name='+documents[inputId].libelle, {
+                            method: 'GET',
+                        }).then(response => {
+                            if (!response.ok) {
+                                error("Erreur de chargement")
+                                throw new Error("Erreur de chargement");
+                            }
+                            response.blob().then(function(myBlob) {
+                                load(myBlob)
+                            });
+                            if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
+                                // Masquer l'élément suivant de l'élément avec la classe file_charte_doctorat
+                                $('.file_charte_doctorat').next().show();
+                            }
+                        }).catch(error => {
+                            console.log(error)
+                        });
                     },
                     remove: (source, load, error) => {
                         fetch('/admission/supprimer-document/' + individuId + '/' + inputId, {
@@ -260,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 $(document).ready(function () {
-    if (currentUrl.indexOf("/inscription") !== -1) {
+    if (currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
         $('select').selectpicker();
     }
 

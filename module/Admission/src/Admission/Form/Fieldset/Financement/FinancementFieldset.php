@@ -2,15 +2,33 @@
 namespace Admission\Form\Fieldset\Financement;
 
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
+use Application\Entity\Db\OrigineFinancement;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
 
 class FinancementFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    private $financements = null;
+
+    public function setFinancements(array $financements): void
+    {
+        $options = [];
+        foreach ($financements as $origine) {
+            /** @var OrigineFinancement $origine */
+            if(!in_array($origine->getLibelleLong(), $options)){
+                $options[$origine->getId()] = $origine->getLibelleLong();
+            }
+        }
+        $this->financements = $options;
+        $this->get('financement')->setEmptyOption('Sélectionnez une option');
+        $this->get('financement')->setValueOptions($this->financements);
+    }
 
     public function init()
     {
@@ -27,11 +45,14 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
         );
 
         $this->add(
-            (new Radio('employeurContrat'))
-                ->setValueOptions([
-                    "universite" => "Université de Caen Normandie",
-                    "region" => "Région Normandie (RIN 50%, RIN 100%)",
-                    "autre" => "Autre employeur"
+            (new Select("financement"))
+                ->setLabel("Financement")
+                ->setLabelAttributes(['data-after' => " / Funding"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => 'financement',
                 ])
         );
 
@@ -54,9 +75,12 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
                 'name' => 'contratDoctoral',
                 'required' => false,
             ],
-            'employeurContrat' => [
-                'name' => 'employeurContrat',
+            'financement' => [
+                'name' => 'financement',
                 'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
             ],
             'detailContratDoctoral' => [
                 'name' => 'detailContratDoctoral',

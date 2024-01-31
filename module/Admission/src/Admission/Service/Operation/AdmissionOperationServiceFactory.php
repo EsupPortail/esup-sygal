@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Operation;
 
+use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Avis\AdmissionAvisService;
 use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\Validation\AdmissionValidationService;

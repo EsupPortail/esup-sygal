@@ -9,7 +9,6 @@
         </id>
 
         <field name="contratDoctoral" type="boolean" column="CONTRAT_DOCTORAL" nullable="true"/>
-        <field name="employeurContrat" type="string" column="EMPLOYEUR_CONTRAT" length="60" nullable="true"/>
         <field name="detailContratDoctoral" type="string" column="DETAIL_CONTRAT_DOCTORAL" length="1024" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
@@ -19,6 +18,12 @@
         <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">
             <join-columns>
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="financement" target-entity="Application\Entity\Db\OrigineFinancement">
+            <join-columns>
+                <join-column name="FINANCEMENT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

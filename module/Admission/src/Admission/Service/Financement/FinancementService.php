@@ -2,27 +2,16 @@
 
 namespace Admission\Service\Financement;
 
-use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Repository\FinancementRepository;
 use Admission\Entity\Db\Verification;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use DateTime;
 use Doctrine\ORM\ORMException;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 
 class FinancementService extends BaseService
 {
-    use RoleServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
-    use UserContextServiceAwareTrait;
     use VerificationServiceAwareTrait;
 
     /**
@@ -35,7 +24,6 @@ class FinancementService extends BaseService
 
         return $repo;
     }
-
     /**
      * @param Financement $financement
      * @return Financement
@@ -51,9 +39,6 @@ class FinancementService extends BaseService
 
         return $financement;
     }
-
-
-
     /**
      * @param Financement $financement
      * @return Financement
@@ -68,7 +53,6 @@ class FinancementService extends BaseService
 
         return $financement;
     }
-
     /**
      * @param Financement $financement
      * @return Financement

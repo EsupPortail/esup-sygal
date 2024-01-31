@@ -5,6 +5,7 @@ namespace Admission\Entity;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Filter\AdmissionInscriptionFormatter;
 use Admission\Filter\AdmissionOperationsFormatter;
 
 class AdmissionRecapitulatifDataTemplate
@@ -38,19 +39,32 @@ class AdmissionRecapitulatifDataTemplate
     {
         $operations = $this->getOperations();
         $operationsFormatter = new AdmissionOperationsFormatter();
-        $operationsToPrint["header"] = ["Opération", "Acteur", "Date de l'opération"];
+        $operationsToPrint["header"] = ["Opération", "Valeur", "Acteur", "Date de l'opération"];
         foreach($operations as $operation){
             if ($operation instanceof AdmissionValidation) {
                 $libelleOperation = $operation->getTypeValidation()->getLibelle();
+                $valeur = "/";
             }elseif ($operation instanceof AdmissionAvis) {
                 $libelleOperation = $operation->getTypeToString();
+                /** @var AdmissionAvis $operation */
+                $valeur = $operation->getId() !== null ? $operation->getAvis()->getAvisValeur()->getValeur() : null;
             }
             $operationsToPrint["operations"][] = [
                 "libelle" => $libelleOperation,
+                "valeur" => $valeur,
                 "createur" => $operation->getId() !== null ? $operation->getHistoCreateur() : "/",
                 "dateCreation" => $operation->getId() !== null ? $operation->getHistoCreation()->format(\Application\Constants::DATETIME_FORMAT) : "/"
             ];
         }
         return $operationsFormatter->htmlifyOperations($operationsToPrint);
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getDiplomeIntituleInformationstoHtmlArray()
+    {
+        $etudiantFormatter = new AdmissionInscriptionFormatter();
+        return $etudiantFormatter->htmlifyDiplomeIntituleInformations($this->admission->getEtudiant()->first());
     }
 }

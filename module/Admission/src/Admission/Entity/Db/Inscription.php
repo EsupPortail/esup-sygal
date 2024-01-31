@@ -75,6 +75,10 @@ class Inscription implements HistoriqueAwareInterface{
      * @var UniteRecherche
      */
     private $uniteRecherche;
+    /**
+     * @var Etablissement
+     */
+    private $etablissementInscription;
 
     /**
      * @var bool|null
@@ -169,7 +173,7 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param string|null $nomDirecteurThese
      *
-     * @return Diplome
+     * @return string|null
      */
     public function setNomDirecteurThese($nomDirecteurThese = null)
     {
@@ -193,7 +197,7 @@ class Inscription implements HistoriqueAwareInterface{
      *
      * @param string|null $nomCodirecteurThese
      *
-     * @return Diplome
+     * @return string|null
      */
     public function setNomCodirecteurThese($nomCodirecteurThese = null)
     {
@@ -464,6 +468,30 @@ class Inscription implements HistoriqueAwareInterface{
     }
 
     /**
+     * Set etablissementInscription.
+     *
+     * @param Etablissement|null $etablissementInscription
+     *
+     * @return Inscription
+     */
+    public function setEtablissementInscription(Etablissement $etablissementInscription = null)
+    {
+        $this->etablissementInscription = $etablissementInscription;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementInscription.
+     *
+     * @return Etablissement|null
+     */
+    public function getEtablissementInscription()
+    {
+        return $this->etablissementInscription;
+    }
+
+    /**
      * Set admission.
      *
      * @param \Admission\Entity\Db\Admission|null $admission
@@ -710,6 +738,11 @@ class Inscription implements HistoriqueAwareInterface{
         return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : null;
     }
 
+    public function getEtablissementInscriptionLibelle()
+    {
+        return $this->getEtablissementInscription()?->getStructure()->getLibelle();
+    }
+
     public function getDenominationDirecteurThese() : string
     {
         return $this->getNomDirecteurThese()." ".$this->getPrenomDirecteurThese();
@@ -756,10 +789,14 @@ class Inscription implements HistoriqueAwareInterface{
         if($this->getCoDirection() === null){
             return "<b>Non renseigné</b>";
         }else{
-            $coDirecteur = $this->getCoDirecteur() ?
-                $this->getCoDirecteur()->getCiviliteToString()." ".$this->getCoDirecteur()->getNomComplet()." ".$this->getCoDirecteur()->getPrenom():
-                $this->getNomCodirecteurThese()." ".$this->getPrenomCodirecteurThese();
-            return $coDirecteur;
+            if($this->getCoDirection()) {
+                $coDirecteur = $this->getCoDirecteur() ?
+                    $this->getCoDirecteur()->getCiviliteToString() . " " . $this->getCoDirecteur()->getNomComplet() . " " . $this->getCoDirecteur()->getPrenom() :
+                    $this->getNomCodirecteurThese() . " " . $this->getPrenomCodirecteurThese();
+                return $coDirecteur;
+            }else{
+                return "Non";
+            }
         }
     }
 

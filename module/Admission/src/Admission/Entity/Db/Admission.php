@@ -18,6 +18,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     const ETAT_EN_COURS_VALIDATION   = 'E';
     const ETAT_ABANDONNE = 'A';
     const ETAT_VALIDE = 'V';
+    const ETAT_REJETE = 'R';
 
     const ETATS = [
         self::ETAT_EN_COURS_SAISIE => self::ETAT_EN_COURS_SAISIE,
@@ -406,8 +407,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
             ? $this->getFinancement()->first()->getVerificationFinancement()->first()
         : null;
         $isCompletFinancement = $verificationFinancement && $verificationFinancement->getEstComplet();
-//        var_dump($this->getDocument());
-//        var_dump($this->getDocument()->first() );
+
         /** @var Verification $verificationDocument */
         $verificationDocument = $this->getDocument()->first() && $this->getDocument()->first()->getVerificationDocument()->first()
         ? $this->getDocument()->first()->getVerificationDocument()->first()

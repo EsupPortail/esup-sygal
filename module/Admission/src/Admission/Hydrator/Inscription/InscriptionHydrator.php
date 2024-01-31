@@ -3,7 +3,6 @@
 namespace Admission\Hydrator\Inscription;
 
 use Admission\Entity\Db\Inscription;
-use Admission\Entity\Db\Verification;
 use Application\Entity\Db\Discipline;
 use Application\Entity\Db\Pays;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
@@ -53,6 +52,10 @@ class InscriptionHydrator extends DoctrineObject
             $data["uniteRecherche"] = $data["uniteRecherche"]->getId();
         }
 
+        if (array_key_exists($key = 'etablissementInscription', $data) && $data[$key] instanceof Etablissement) {
+            $data["etablissementInscription"] = $data["etablissementInscription"]->getId();
+        }
+
         if (array_key_exists($key = 'ecoleDoctorale', $data) && $data[$key] instanceof EcoleDoctorale) {
             $data["ecoleDoctorale"] = $data["ecoleDoctorale"]->getId();
         }
@@ -72,6 +75,7 @@ class InscriptionHydrator extends DoctrineObject
         $data["composanteDoctorat"] = (array_key_exists("composanteDoctorat", $data) && empty($data["composanteDoctorat"]["id"])) ? null : $data["composanteDoctorat"]["id"];
         $data["ecoleDoctorale"] = !empty($data["ecoleDoctorale"]) ? $data["ecoleDoctorale"] : null;
         $data["uniteRecherche"] = !empty($data["uniteRecherche"]) ? $data["uniteRecherche"] : null;
+        $data["etablissementInscription"] = !empty($data["etablissementInscription"]) ? $data["etablissementInscription"] : null;
         $data["specialiteDoctorat"] = !empty($data["specialiteDoctorat"]) ? $data["specialiteDoctorat"] : null;
 
         if (!empty($data["nomCodirecteurThese"]["id"]) && !empty($data["nomCodirecteurThese"]["label"])) {

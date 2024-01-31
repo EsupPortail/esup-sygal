@@ -1119,49 +1119,4 @@ class Etudiant implements HistoriqueAwareInterface{
             return "<b>Non renseigné</b>";
         }
     }
-
-    /**
-     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     */
-    public function getDiplomeIntituleInformations()
-    {
-        if ($this->getNiveauEtude() == 1) {
-            $str = "<table>
-                       <tr>
-                        <th>Intitulé</th>
-                        <th>Année d'obtention</th>
-                        <th>Établissement d'obtention</th>
-                       </tr>
-                       <tr>
-                          <td>".$this->getIntituleDuDiplomeNational()."</td>
-                          <td>".$this->getAnneeDobtentionDiplomeNational()."</td>
-                          <td>".$this->getEtablissementDobtentionDiplomeNational()."</td>
-                        </tr>
-                     </table>";
-            return $str;
-        }else if($this->getNiveauEtude() == 2){
-            $typeDiplome = null;
-            if($this->getTypeDiplomeAutre() == 1){
-                $typeDiplome = "Diplôme obtenu à l'étranger";
-            }else if($this->getTypeDiplomeAutre() == 2){
-                $typeDiplome = "Diplôme français ne conférant pas le grade de master";
-            }
-
-            $str = "<table>
-                       <tr>
-                        <th>Intitulé</th>
-                        <th>Année d'obtention</th>
-                        <th>Etablissement d'obtention</th>
-                        <th>Informations supplémentaires</th>
-                       </tr>
-                       <tr>
-                          <td>".$this->getIntituleDuDiplomeAutre()."</td>
-                          <td>".$this->getAnneeDobtentionDiplomeAutre()."</td>
-                          <td>".$this->getEtablissementDobtentionDiplomeAutre()."</td>
-                          <td>".$typeDiplome."</td>
-                        </tr>
-                     </table>";
-            return $str;
-        }
-    }
 }

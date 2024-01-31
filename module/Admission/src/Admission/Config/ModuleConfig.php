@@ -56,18 +56,7 @@ class ModuleConfig
                 'type' => AdmissionValidation::class,
                 'code' => TypeValidation::CODE_ATTESTATION_HONNEUR,
                 'role' => [Role::CODE_ADMIN_TECH, Role::ROLE_ID_USER],
-                'pre_condition' => function(Admission $admission) {
-                    $condition_verified = [];
-                    if($admission->isDossierComplet()){
-                        $condition_verified[] = $admission->isDossierComplet();
-                    }
-
-                    if(self::ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
-                        $condition_verified[] = self::ATTESTATION_HONNEUR_CHARTE_DOCTORALE;
-                    }
-
-                    return count($condition_verified) == 2;
-                },
+                'pre_condition' => self::ATTESTATION_HONNEUR_CHARTE_DOCTORALE,
                 //pas de notif, peut-être à enlever si changement d'ordre des validations
                 'readonly' => true,
                 'enabled' => null,
@@ -80,9 +69,9 @@ class ModuleConfig
                 'type' => AdmissionValidation::class,
                 'code' => TypeValidation::CODE_VALIDATION_GESTIONNAIRE,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_GEST_ED],
-                'pre_condition' => [
-                    self::ATTESTATION_HONNEUR => true, // l'attestation sur l'honneur doit exister & sa valeur positive (tj vrai pour une validation)
-                ],
+                'pre_condition' => function(Admission $admission) {
+                    return $admission->isDossierComplet();
+                },
                 'enabled' => null,
                 'enabled_as_dql' => null,
             ],
@@ -103,6 +92,11 @@ class ModuleConfig
                     // Si un avis "dossier d'admssion incomplet" est émis, on supprimera toutes les validations précédentes.
                     'validation_etudiant_operation_name' => self::ATTESTATION_HONNEUR,
                     'validation_gestionnaire_operation_name' => self::VALIDATION_GESTIONNAIRE,
+                    'avis_direction_these_operation_name' => self::AVIS_DIR_THESE,
+                    'avis_codirection_these_operation_name' => self::AVIS_CODIR_THESE,
+                    'avis_direction_ur_operation_name' => self::AVIS_DIR_UR,
+                    'avis_direction_ed_operation_name' => self::AVIS_DIR_ED,
+                    'avis_presidence_operation_name' => self::SIGNATURE_PRESIDENT,
                 ],
             ],
             /**
@@ -124,6 +118,16 @@ class ModuleConfig
                     }
                     return false;
                 },
+                'extra' => [
+                    // Si un avis "dossier d'admssion incomplet" est émis, on supprimera toutes les validations précédentes.
+                    'validation_etudiant_operation_name' => self::ATTESTATION_HONNEUR,
+                    'validation_gestionnaire_operation_name' => self::VALIDATION_GESTIONNAIRE,
+                    'avis_direction_these_operation_name' => self::AVIS_DIR_THESE,
+                    'avis_codirection_these_operation_name' => self::AVIS_CODIR_THESE,
+                    'avis_direction_ur_operation_name' => self::AVIS_DIR_UR,
+                    'avis_direction_ed_operation_name' => self::AVIS_DIR_ED,
+                    'avis_presidence_operation_name' => self::SIGNATURE_PRESIDENT,
+                ],
                 'enabled_as_dql' => null,
             ],
             /**
@@ -138,6 +142,16 @@ class ModuleConfig
                     self::VALIDATION_GESTIONNAIRE => true,
                     self::AVIS_DIR_THESE => true,
                     self::AVIS_CODIR_THESE => true
+                ],
+                'extra' => [
+                    // Si un avis "dossier d'admssion incomplet" est émis, on supprimera toutes les validations précédentes.
+                    'validation_etudiant_operation_name' => self::ATTESTATION_HONNEUR,
+                    'validation_gestionnaire_operation_name' => self::VALIDATION_GESTIONNAIRE,
+                    'avis_direction_these_operation_name' => self::AVIS_DIR_THESE,
+                    'avis_codirection_these_operation_name' => self::AVIS_CODIR_THESE,
+                    'avis_direction_ur_operation_name' => self::AVIS_DIR_UR,
+                    'avis_direction_ed_operation_name' => self::AVIS_DIR_ED,
+                    'avis_presidence_operation_name' => self::SIGNATURE_PRESIDENT,
                 ],
                 'enabled' => null,
                 'enabled_as_dql' => null,
@@ -156,6 +170,16 @@ class ModuleConfig
                     self::AVIS_CODIR_THESE => true,
                     self::AVIS_DIR_UR => true
                 ],
+                'extra' => [
+                    // Si un avis "dossier d'admssion incomplet" est émis, on supprimera toutes les validations précédentes.
+                    'validation_etudiant_operation_name' => self::ATTESTATION_HONNEUR,
+                    'validation_gestionnaire_operation_name' => self::VALIDATION_GESTIONNAIRE,
+                    'avis_direction_these_operation_name' => self::AVIS_DIR_THESE,
+                    'avis_codirection_these_operation_name' => self::AVIS_CODIR_THESE,
+                    'avis_direction_ur_operation_name' => self::AVIS_DIR_UR,
+                    'avis_direction_ed_operation_name' => self::AVIS_DIR_ED,
+                    'avis_presidence_operation_name' => self::SIGNATURE_PRESIDENT,
+                ],
                 'enabled' => null,
                 'enabled_as_dql' => null,
             ],
@@ -163,8 +187,8 @@ class ModuleConfig
              * Validation par la présidence de l'université
              */
             self::SIGNATURE_PRESIDENT => [
-                'type' => AdmissionValidation::class,
-                'code' => TypeValidation::CODE_SIGNATURE_PRESIDENT,
+                'type' => AdmissionAvis::class,
+                'code' => AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_GEST_ED],
                 'pre_condition' => [
                     self::ATTESTATION_HONNEUR => true,
@@ -173,6 +197,16 @@ class ModuleConfig
                     self::AVIS_CODIR_THESE => true,
                     self::AVIS_DIR_UR => true,
                     self::AVIS_DIR_ED => true
+                ],
+                'extra' => [
+                    // Si un avis "dossier d'admssion incomplet" est émis, on supprimera toutes les validations précédentes.
+                    'validation_etudiant_operation_name' => self::ATTESTATION_HONNEUR,
+                    'validation_gestionnaire_operation_name' => self::VALIDATION_GESTIONNAIRE,
+                    'avis_direction_these_operation_name' => self::AVIS_DIR_THESE,
+                    'avis_codirection_these_operation_name' => self::AVIS_CODIR_THESE,
+                    'avis_direction_ur_operation_name' => self::AVIS_DIR_UR,
+                    'avis_direction_ed_operation_name' => self::AVIS_DIR_ED,
+                    'avis_presidence_operation_name' => self::SIGNATURE_PRESIDENT,
                 ],
                 'enabled' => null,
                 'enabled_as_dql' => null,

@@ -23,7 +23,7 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_VERIFIER  = 'admission-admission-verifier';
     const ADMISSION_ACCEDER_COMMENTAIRES  = 'admission-admission-acceder-commentaires';
 
-    //validation
+    //avis
     const ADMISSION_AJOUTER_AVIS_TOUT = 'admission-admission-ajouter-avis-tout';
     const ADMISSION_AJOUTER_AVIS_SIEN = 'admission-admission-ajouter-avis-sien';
     const ADMISSION_MODIFIER_AVIS_TOUT = 'admission-admission-modifier-avis-tout';
@@ -43,4 +43,11 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_NOTIFIER_GESTIONNAIRES  = 'admission-admission-notifier-gestionnaires';
     const ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES  = 'admission-admission-commentaires-ajoutes';
     const ADMISSION_NOTIFIER_DOSSIER_COMPLET  = 'admission-admission-notifier-dossier-complet';
+    const ADMISSION_NOTIFIER_DOSSIER_INCOMPLET  = 'admission-admission-notifier-dossier-incomplet';
+
+    //convention de formation doctorale
+    const ADMISSION_CONVENTION_FORMATION_MODIFIER  = 'admission-admission-convention-formation-modifier';
+    const ADMISSION_CONVENTION_FORMATION_VISUALISER  = 'admission-admission-convention-formation-visualiser';
+    const ADMISSION_CONVENTION_FORMATION_GENERER  = 'admission-admission-convention-formation-generer';
+
 }

@@ -2,6 +2,8 @@
 
 namespace Admission\Service\Exporter\Recapitulatif;
 
+use Admission\Service\Admission\AdmissionService;
+use Application\Service\Variable\VariableService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Admission\Service\Url\UrlService;
 use Psr\Container\ContainerExceptionInterface;
@@ -31,6 +33,7 @@ class RecapitulatifExporterFactory {
         $renduService = $container->get(RenduService::class);
         $structureService = $container->get(StructureService::class);
         $urlService = $container->get(UrlService::class);
+        $admissionService = $container->get(AdmissionService::class);
         $renderer = $container->get('ViewRenderer');
 
         $exporter = new RecapitulatifExporter($renderer, 'A4');
@@ -39,6 +42,7 @@ class RecapitulatifExporterFactory {
         $exporter->setRenduService($renduService);
         $exporter->setStructureService($structureService);
         $exporter->setUrlService($urlService);
+        $exporter->setAdmissionService($admissionService);
         return $exporter;
     }
 }

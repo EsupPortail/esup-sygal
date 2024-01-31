@@ -1,7 +1,7 @@
 <?php
 
 use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\TypeValidation;
+use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
@@ -14,6 +14,8 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  * @var array $operations
  * @var Individu $individu
  * @var SearchAndSelect $inputIndividu
+ * @var AdmissionOperationInterface $operationEnAttente
+ *
  * @see \Admission\Controller\AdmissionController::indexAction()
  */
 
@@ -49,7 +51,7 @@ $canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResour
 <?php }else if(!empty($operations)){ ?>
     <h2>Statut de votre dossier d'admission</h2>
     <?php
-        $returnUrl = $this->url('admission', ['individu' => $individu]);
+    $returnUrl = $this->url('admission', ['individu' => $individu]);
         echo $this->partial('admission/admission/partial/circuit-signatures', [
             'operations' => $operations,
             'individu' => $individu->getId(),
@@ -93,10 +95,15 @@ $canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResour
                     <td><?php if($admission->getInscription()->first() && $admission->getInscription()->first()->getEcoleDoctorale()){
                             echo $admission->getInscription()->first()->getEcoleDoctorale();
                         }else{
-                            echo "<p class='aucune_ecole_doctorale'>Aucune ED déclarée</p>";
+                            echo "<p class='structure_non_declaree'>Aucune ED déclarée</p>";
                         }?>
                     </td>
-                    <td><?php echo $admission->getInscription()->first() ? $admission->getInscription()->first()->getUniteRecherche() : ""; ?></td>
+                    <td>
+                        <?php if($admission->getInscription()->first() && $admission->getInscription()->first()->getUniteRecherche()){
+                            echo $admission->getInscription()->first()->getUniteRecherche();
+                        }else{
+                            echo "<p class='structure_non_declaree'>Aucune UR déclarée</p>";
+                        }?>
                     <td>
                         <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>"
                            title="Accéder au dossier d'admission #<?php echo $admission->getId(); ?>"
@@ -120,4 +127,3 @@ $canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResour
         <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces_dossier">Accéder à votre dossier d'admission</a>
     </div>
 <?php } ?>
-

@@ -53,8 +53,11 @@ if(!empty($admission) && !$canModifierAdmission) {
         </div>
     </div>
     <div class="row subfield">
-        <div class="col">
+        <div class="col-lg-6 col-sm-12">
             <?php echo $this->formControlGroup($fieldset->get('uniteRecherche')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('etablissementInscription')) ?>
         </div>
     </div>
     <div class="row subfield">

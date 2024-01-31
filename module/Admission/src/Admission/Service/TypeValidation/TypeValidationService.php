@@ -5,23 +5,12 @@ namespace Admission\Service\TypeValidation;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Entity\Db\Repository\TypeValidationRepository;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use DateTime;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\ORMException;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 
 class TypeValidationService extends BaseService
 {
-    use RoleServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
-    use UserContextServiceAwareTrait;
-
     /**
      * @return TypeValidationRepository
      * @throws NotSupported
@@ -62,36 +51,6 @@ class TypeValidationService extends BaseService
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un TypeValidation");
         }
 
-        return $typeTypeValidation;
-    }
-
-    /**
-     * @param TypeValidation $typeTypeValidation
-     * @return TypeValidation
-     */
-    public function historise(TypeValidation $typeTypeValidation)  :TypeValidation
-    {
-        try {
-            $typeTypeValidation->historiser();
-            $this->getEntityManager()->flush($typeTypeValidation);
-        } catch(ORMException $e) {
-            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un TypeValidation");
-        }
-        return $typeTypeValidation;
-    }
-
-    /**
-     * @param TypeValidation $typeTypeValidation
-     * @return TypeValidation
-     */
-    public function restore(TypeValidation $typeTypeValidation)  :TypeValidation
-    {
-        try {
-            $typeTypeValidation->dehistoriser();
-            $this->getEntityManager()->flush($typeTypeValidation);
-        } catch(ORMException $e) {
-            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un TypeValidation");
-        }
         return $typeTypeValidation;
     }
 

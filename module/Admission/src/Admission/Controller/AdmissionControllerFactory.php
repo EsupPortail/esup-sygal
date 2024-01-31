@@ -2,24 +2,20 @@
 namespace Admission\Controller;
 
 use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
 use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Admission\AdmissionService;
+use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
 use Admission\Service\Document\DocumentService;
-use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporter;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
-use Admission\Service\TypeValidation\TypeValidationService;
-use Admission\Service\Validation\AdmissionValidationService;
+use Admission\Service\Operation\AdmissionOperationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
-use Fichier\Entity\Db\VersionFichier;
-use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
-use Fichier\Service\NatureFichier\NatureFichierService;
-use Fichier\Service\VersionFichier\VersionFichierService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -52,19 +48,18 @@ class AdmissionControllerFactory implements FactoryInterface
         $individuService = $container->get(IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $financementService = $container->get(FinancementService::class);
-        $admissionValidationService = $container->get(AdmissionValidationService::class);
+        $applicationFinancementService = $container->get(\Application\Service\Financement\FinancementService::class);
         $verificationService = $container->get(VerificationService::class);
         $admissionService = $container->get(AdmissionService::class);
         $disciplineService = $container->get(DisciplineService::class);
         $notificationFactory = $container->get(NotificationFactory::class);
         $notifierService = $container->get(NotifierService::class);
         $documentService = $container->get(DocumentService::class);
-        $fichierService = $container->get(FichierService::class);
-        /** @var TypeValidationService $typeValidationService */
-        $typeValidationService = $container->get(TypeValidationService::class);
         $recapitulatifExporter = $container->get(RecapitulatifExporter::class);
         $etablissementService = $container->get(EtablissementService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        $admissionOperationService = $container->get(AdmissionOperationService::class);
+        $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -81,22 +76,21 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setEtudiantService($etudiantService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setIndividuService($individuService);
-        $controller->setTypeValidationService($typeValidationService);
         $controller->setFinancementService($financementService);
-        $controller->setAdmissionValidationService($admissionValidationService);
+        $controller->setApplicationFinancementService($applicationFinancementService);
         $controller->setVerificationService($verificationService);
         $controller->setAdmissionService($admissionService);
         $controller->setDisciplineService($disciplineService);
         $controller->setNotificationFactory($notificationFactory);
         $controller->setNotifierService($notifierService);
         $controller->setDocumentService($documentService);
-        $controller->setFichierService($fichierService);
         $controller->setEtablissementService($etablissementService);
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setRecapitulatifExporter($recapitulatifExporter);
         $controller->setAdmissionForm($admissionForm);
         $controller->setAdmissionOperationRule($admissionOperationRule);
-
+        $controller->setAdmissionOperationService($admissionOperationService);
+        $controller->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
 
         return $controller;
     }

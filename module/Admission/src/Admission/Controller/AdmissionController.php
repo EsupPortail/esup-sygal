@@ -16,27 +16,24 @@ use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
+use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
 use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporterAwareTrait;
 use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
-use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
-use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
+use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
+use Application\Constants;
 use Application\Controller\PaysController;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
+use Application\Service\Financement\FinancementServiceAwareTrait as ApplicationFinancementServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Doctrine\ORM\Exception\NotSupported;
-use Fichier\Entity\Db\Fichier;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
-use Laminas\Http\Client;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
@@ -61,17 +58,21 @@ class AdmissionController extends AdmissionAbstractController {
     use IndividuServiceAwareTrait;
     use AdmissionServiceAwareTrait;
     use InscriptionServiceAwareTrait;
-    use FinancementServiceAwareTrait;
-    use AdmissionValidationServiceAwareTrait;
+    use FinancementServiceAwareTrait, ApplicationFinancementServiceAwareTrait  {
+        FinancementServiceAwareTrait::getFinancementService insteadof ApplicationFinancementServiceAwareTrait;
+        FinancementServiceAwareTrait::setFinancementService insteadof ApplicationFinancementServiceAwareTrait;
+        ApplicationFinancementServiceAwareTrait::getFinancementService as getApplicationFinancementService;
+        ApplicationFinancementServiceAwareTrait::setFinancementService as setApplicationFinancementService;
+    }
     use DocumentServiceAwareTrait;
     use VerificationServiceAwareTrait;
-    use TypeValidationServiceAwareTrait;
     use AdmissionOperationRuleAwareTrait;
     use UserContextServiceAwareTrait;
-    use FichierServiceAwareTrait;
     use RecapitulatifExporterAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
+    use AdmissionOperationServiceAwareTrait;
+    use ConventionFormationDoctoraleServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -104,17 +105,13 @@ class AdmissionController extends AdmissionAbstractController {
         //Récupération de l'objet Admission en BDD
         /** @var Admission $admission */
         $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
-        $operations = [];
-        $operationEnAttente = null;
-        $dossierComplet = null;
-        if(!empty($admission)){
-            $operations = $this->admissionOperationRule->getOperationsForAdmission($admission);
-            $operationEnAttente = $this->getOperationEnAttente($admission);
-            $dossierComplet = $admission->isDossierComplet();
-        }
+        $operations = $admission ? $this->admissionOperationRule->getOperationsForAdmission($admission) : [];
+        $operationEnAttente = $admission ? $this->getOperationEnAttente($admission) : null;
+        $dossierComplet = $admission?->isDossierComplet();
 
         //Alimente le tableau de tous les dossiers d'admissions disponibles
         $admissions = $this->admissionService->getRepository()->findAll();
+        unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
         return new ViewModel([
             'admissions' => $admissions,
             'operations' => $operations,
@@ -126,9 +123,6 @@ class AdmissionController extends AdmissionAbstractController {
         ]);
     }
 
-    /**
-     * @throws NotSupported
-     */
     public function etudiantAction(): Response|ViewModel
     {
         //Vide la session, si l'utilisateur demandé est différent de celui en session
@@ -217,14 +211,14 @@ class AdmissionController extends AdmissionAbstractController {
             }
         }
 
+        $origines = $this->getApplicationFinancementService()->findOriginesFinancements("libelleLong");
+        $this->admissionForm->get('financement')->setFinancements($origines);
+
         $response->setVariable('admission', $admission);
         $response->setTemplate('admission/ajouter-financement');
         return $response;
     }
 
-    /**
-     * @throws NotSupported
-     */
     public function documentAction(): Response|ViewModel
     {
         //Vide la session, si l'utilisateur demandé est différent de celui en session
@@ -242,6 +236,7 @@ class AdmissionController extends AdmissionAbstractController {
         $documentsAdmission = [];
         $operations = [];
         $dossierValideParGestionnaire = null;
+        $conventionFormationDoctorale = null;
         if(!empty($admission)){
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
@@ -260,6 +255,7 @@ class AdmissionController extends AdmissionAbstractController {
                     $documentsAdmission[$document->getFichier()->getNature()->getCode()] = ['libelle'=>$document->getFichier()->getNomOriginal(), 'televersement' => $document->getFichier()->getHistoModification()->format('d/m/Y H:i')];
                 }
             }
+            $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
         }
 
         $response->setVariable('admission', $admission);
@@ -267,6 +263,7 @@ class AdmissionController extends AdmissionAbstractController {
         $response->setVariable('documents', $documentsAdmission);
         $response->setVariable('dossierValideParGestionnaire', $dossierValideParGestionnaire);
         $response->setVariable('operationEnAttente', $operationEnAttente);
+        $response->setVariable('conventionFormationDoctorale', $conventionFormationDoctorale);
         $response->setTemplate('admission/ajouter-document');
         return $response;
     }
@@ -379,12 +376,11 @@ class AdmissionController extends AdmissionAbstractController {
             //si le dossier d'admission existe, on met à jour l'entité Etudiant
             try {
                 $this->admissionForm->bind($admission);
+                //Lier les valeurs des données en session avec le formulaire
+                $this->admissionForm->get('etudiant')->bindValues($data['etudiant']);
+                $etudiant = $this->admissionForm->get('etudiant')->getObject();
                 if ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
                     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
-                    //Lier les valeurs des données en session avec le formulaire
-                    $this->admissionForm->get('etudiant')->bindValues($data['etudiant']);
-
-                    $etudiant = $this->admissionForm->get('etudiant')->getObject();
                     $this->etudiantService->update($etudiant);
                 }
             } catch (\Exception $e) {
@@ -392,9 +388,7 @@ class AdmissionController extends AdmissionAbstractController {
             }
         }
         //Ajout de l'objet Vérification
-        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER) &&
-            ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
-            $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION))) {
+        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER) ) {
             /** @var Verification $verification */
             $verification = $this->verificationService->getRepository()->findOneByEtudiant($etudiant);
             if ($verification === null) {
@@ -412,14 +406,12 @@ class AdmissionController extends AdmissionAbstractController {
 
     public function enregistrerInscription($data, $admission)
     {
+        /** @var Inscription $inscription */
+        $inscription = $this->inscriptionService->getRepository()->findOneByAdmission($admission);
+        //Lier les valeurs des données en session avec le formulaire
+        $this->admissionForm->get('inscription')->bindValues($data['inscription']);
         if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
             $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
-            /** @var Inscription $inscription */
-            $inscription = $this->inscriptionService->getRepository()->findOneByAdmission($admission);
-
-            //Lier les valeurs des données en session avec le formulaire
-            $this->admissionForm->get('inscription')->bindValues($data['inscription']);
-
             //Si le fieldest Inscription n'est pas encore en BDD
             if (!$inscription instanceof Inscription) {
                 try {
@@ -444,34 +436,32 @@ class AdmissionController extends AdmissionAbstractController {
                     $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
                 }
             }
-            if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER)) {
-                //Ajout de l'objet Vérification
+        }
+        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER)) {
+            //Ajout de l'objet Vérification
+            /** @var Verification $verification */
+            $verification = $this->verificationService->getRepository()->findOneByInscription($inscription);
+            if ($verification === null) {
                 /** @var Verification $verification */
-                $verification = $this->verificationService->getRepository()->findOneByInscription($inscription);
-                if ($verification === null) {
-                    /** @var Verification $verification */
-                    $verification = $this->admissionForm->get('inscription')->get('verificationInscription')->getObject();
-                    $verification->setInscription($inscription);
-                    $this->verificationService->create($verification);
-                } else {
-                    /** @var Verification $updatedVerification */
-                    $updatedVerification = $this->admissionForm->get('inscription')->get('verificationInscription')->getObject();
-                    $this->verificationService->update($updatedVerification);
-                }
+                $verification = $this->admissionForm->get('inscription')->get('verificationInscription')->getObject();
+                $verification->setInscription($inscription);
+                $this->verificationService->create($verification);
+            } else {
+                /** @var Verification $updatedVerification */
+                $updatedVerification = $this->admissionForm->get('inscription')->get('verificationInscription')->getObject();
+                $this->verificationService->update($updatedVerification);
             }
         }
     }
 
     public function enregistrerFinancement($data, $admission)
     {
+        /** @var Financement $financement */
+        $financement = $this->admissionFinancementService->getRepository()->findOneByAdmission($admission);
+        //Lier les valeurs des données en session avec le formulaire
+        $this->admissionForm->get('financement')->bindValues($data['financement']);
         if ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
             $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
-            /** @var Financement $financement */
-            $financement = $this->financementService->getRepository()->findOneByAdmission($admission);
-
-            //Lier les valeurs des données en session avec le formulaire
-            $this->admissionForm->get('financement')->bindValues($data['financement']);
-
             //Si le fieldest Financement n'est pas encore en BDD
             if (!$financement instanceof Financement) {
                 try {
@@ -479,7 +469,7 @@ class AdmissionController extends AdmissionAbstractController {
                     $financement = $this->admissionForm->get('financement')->getObject();
                     //Ajout de la relation Financement>Admission
                     $financement->setAdmission($admission);
-                    $this->financementService->create($financement);
+                    $this->admissionFinancementService->create($financement);
                     $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
                 } catch (\Exception $e) {
                     $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations.");
@@ -488,33 +478,33 @@ class AdmissionController extends AdmissionAbstractController {
                 try {
                     /** @var Financement $financement */
                     $financement = $this->admissionForm->get('financement')->getObject();
-                    $this->financementService->update($financement);
+                    $this->admissionFinancementService->update($financement);
                 } catch (\Exception $e) {
                     $this->flashMessenger()->addErrorMessage("Échec de la modification des informations.");
                 }
             }
-            if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER)) {
-                //Ajout de l'objet Vérification
+        }
+        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER)) {
+            //Ajout de l'objet Vérification
+            /** @var Verification $verification */
+            $verification = $this->verificationService->getRepository()->findOneByFinancement($financement);
+            if ($verification === null) {
                 /** @var Verification $verification */
-                $verification = $this->verificationService->getRepository()->findOneByFinancement($financement);
-                if ($verification === null) {
-                    /** @var Verification $verification */
-                    $verification = $this->admissionForm->get('financement')->get('verificationFinancement')->getObject();
-                    $verification->setFinancement($financement);
-                    $this->verificationService->create($verification);
-                } else {
-                    /** @var Verification $updatedVerification */
-                    $updatedVerification = $this->admissionForm->get('financement')->get('verificationFinancement')->getObject();
-                    $this->verificationService->update($updatedVerification);
-                }
+                $verification = $this->admissionForm->get('financement')->get('verificationFinancement')->getObject();
+                $verification->setFinancement($financement);
+                $this->verificationService->create($verification);
+            } else {
+                /** @var Verification $updatedVerification */
+                $updatedVerification = $this->admissionForm->get('financement')->get('verificationFinancement')->getObject();
+                $this->verificationService->update($updatedVerification);
             }
         }
     }
 
     public function enregistrerDocument($data, $admission)
     {
-        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
-            $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
+//        if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
+//            $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
             /** @var Document $document */
             $document = $this->documentService->getRepository()->findOneWhereNoFichierByAdmission($admission)[0] ?? null;
 
@@ -544,7 +534,7 @@ class AdmissionController extends AdmissionAbstractController {
                     }
                 }
             }
-        }
+//        }
     }
 
     private function isUserDifferentFromUserInSession(){
@@ -584,6 +574,9 @@ class AdmissionController extends AdmissionAbstractController {
         $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', false);
         $this->admissionForm->get('inscription')->setUnitesRecherche($unites);
 
+        $etablissementsInscription = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
+        $this->admissionForm->get('inscription')->setEtablissementsInscription($etablissementsInscription);
+
         //Partie Spécifités envisagées
         /** @see PaysController::rechercherPaysAction() */
         $this->admissionForm->get('inscription')->setUrlPaysCoTutelle($this->url()->fromRoute('pays/rechercher-pays', [], ["query" => []], true));
@@ -593,14 +586,9 @@ class AdmissionController extends AdmissionAbstractController {
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
 
-        $operations = [];
-        $operationEnAttente = null;
-        $dossierComplet = null;
-        if(!empty($admission)){
-            $operations = $this->admissionOperationRule->getOperationsForAdmission($admission);
-            $operationEnAttente = $this->getOperationEnAttente($admission);
-            $dossierComplet = $admission->isDossierComplet();
-        }
+        $operations = $admission ? $this->admissionOperationRule->getOperationsForAdmission($admission) : [];
+        $operationEnAttente = $admission ? $this->getOperationEnAttente($admission) : null;
+        $dossierComplet = $admission?->isDossierComplet();
 
         return new ViewModel([
             'operations' => $operations,
@@ -610,7 +598,6 @@ class AdmissionController extends AdmissionAbstractController {
             'showActionButtons' => false
         ]);
     }
-
     public function getOperationEnAttente(Admission $admission){
         $operationLastCompleted = $this->admissionOperationRule->findLastCompletedOperation($admission);
         $operationEnAttente = $operationLastCompleted ? $this->admissionOperationRule->findFollowingOperation($operationLastCompleted) : null;
@@ -622,7 +609,6 @@ class AdmissionController extends AdmissionAbstractController {
         }elseif($operationEnAttente instanceof AdmissionAvis){
             $operationEnAttente = $operationLastCompleted && $operationLastCompleted->getValeurBool() ? $operationEnAttente : false;
         }
-
         return $operationEnAttente;
     }
 
@@ -646,18 +632,56 @@ class AdmissionController extends AdmissionAbstractController {
         }
     }
 
-    public function notifierDossierCompletAction()
+//    public function notifierDossierCompletAction()
+//    {
+//        $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
+//        $individu = $admission->getIndividu();
+//        try {
+//            $notif = $this->notificationFactory->createNotificationDossierComplet($admission);
+//            $this->notifierService->trigger($notif);
+//        } catch (RuntimeException $e) {
+//            throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::NOTIFICATION_DOSSIER_COMPLET."]",0,$e);
+//        }
+//
+//        $this->flashMessenger()->addSuccessMessage("{$individu} a bien été informé que son dossier d'admission est complet");
+//        $redirectUrl = $this->params()->fromQuery('redirect');
+//        if ($redirectUrl !== null) {
+//            return $this->redirect()->toUrl($redirectUrl);
+//        }
+//    }
+
+    public function notifierDossierIncompletAction()
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
         $individu = $admission->getIndividu();
         try {
-            $notif = $this->notificationFactory->createNotificationDossierComplet($admission);
+            $notif = $this->notificationFactory->createNotificationDossierIncomplet($admission);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::NOTIFICATION_DOSSIER_COMPLET."]",0,$e);
         }
 
-        $this->flashMessenger()->addSuccessMessage("{$individu} a bien été informé que son dossier d'admission est complet");
+        $this->flashMessenger()->addSuccessMessage("{$individu} a bien été informé que son dossier d'admission est incomplet");
+
+        /** @var AdmissionValidation $operationLastCompleted */
+        $operationLastCompleted = $this->admissionOperationRule->findLastCompletedOperation($admission);
+        if($operationLastCompleted instanceof AdmissionValidation && $operationLastCompleted->getTypeValidation()->getCode() === TypeValidation::CODE_ATTESTATION_HONNEUR){
+            $messages = [
+                'success' => sprintf(
+                    "L'opération suivante a été annulée car le dossier d'admission a été déclaré incomplet le %s par %s : %s.",
+                    ($operationLastCompleted->getHistoModification() ?: $operationLastCompleted->getHistoCreation())->format(Constants::DATETIME_FORMAT),
+                    $operationLastCompleted->getHistoModificateur() ?: $operationLastCompleted->getHistoCreateur(),
+                    lcfirst($operationLastCompleted),
+                ),
+            ];
+            $this->admissionOperationService->deleteOperationAndThrowEvent($operationLastCompleted, $messages);
+
+            /** @var Etat $enCours */
+            $enCours = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
+            $admission->setEtat($enCours);
+            $this->admissionService->update($admission);
+        }
+
         $redirectUrl = $this->params()->fromQuery('redirect');
         if ($redirectUrl !== null) {
             return $this->redirect()->toUrl($redirectUrl);
@@ -700,12 +724,7 @@ class AdmissionController extends AdmissionAbstractController {
             }
         }
 
-        $operations = null;
-        if(!empty($admission)){
-            $operations = $this->admissionOperationRule->getOperationsForAdmission($admission);
-        }
-
-        //exporter
+        $operations = $admission ? $this->admissionOperationRule->getOperationsForAdmission($admission) : null;
         $export = $this->recapitulatifExporter;
         $export->setWatermark("CONFIDENTIEL");
         $export->setVars([
@@ -713,6 +732,6 @@ class AdmissionController extends AdmissionAbstractController {
             'logos' => $logos,
             'operations' => $operations
         ]);
-        $export->export('SYGAL_admission-recapitulatif_' . $admission->getId() . ".pdf");
+        $export->export('SYGAL_admission_recapitulatif_' . $admission->getId() . ".pdf");
     }
 }

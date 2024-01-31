@@ -12,7 +12,6 @@
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionOperationInterface;
-use Admission\Entity\Db\TypeValidation;
 use Individu\Entity\Db\Individu;
 
 $ajaxModalEvent = 'EVENT_AVIS_SAISI';
@@ -22,25 +21,23 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php
         $count = 1;
         foreach ($operations as $i => $operation):
-            if($i !== TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
-                echo $this->partial('admission/admission/partial/operation-card', [
-                    'operation' => $operation,
-                    'count' => $count,
-                    'individu' => $individu,
-                    'operationEnAttente' => $operationEnAttente,
-                    'returnUrl' => $returnUrl,
-                    'ajaxModalEvent' => $ajaxModalEvent,
-                    'libelleOperation' => null,
-                    'showRangOperation' => true,
-                    'showActionButtons' => $showActionButtons
-                ]);
-                $count += 1;
-            }
+            echo $this->partial('admission/admission/partial/operation-card', [
+                'operation' => $operation,
+                'count' => $count,
+                'individu' => $individu,
+                'operationEnAttente' => $operationEnAttente,
+                'returnUrl' => $returnUrl,
+                'ajaxModalEvent' => $ajaxModalEvent,
+                'libelleOperation' => null,
+                'showRangOperation' => true,
+                'showActionButtons' => $showActionButtons
+            ]);
+            $count += 1;
         endforeach;
         ?>
     </div>
     <div class="col-lg-5 col-sm-12 cardsValidation">
-        <?php if ($admission->isDossierComplet() && $admission->getEtat()->getCode() !== Admission::ETAT_VALIDE) { ?>
+        <?php if ($admission->isDossierComplet() && ($admission->getEtat()->getCode() !== Admission::ETAT_VALIDE && $admission->getEtat()->getCode() !== Admission::ETAT_REJETE)) { ?>
             <div class="card border-success mb-3 dossier_complet">
                 <div class="card-body text-success">
                     <i class="icon icon-information"></i>
@@ -54,13 +51,20 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                     <p class="card-title">Le dossier est validé</p>
                 </div>
             </div>
+        <?php }else if($admission->getEtat()->getCode() === Admission::ETAT_REJETE){ ?>
+            <div class="card mb-3 dossier_refuse">
+                <div class="card-body text-danger">
+                    <i class="icon icon-unchecked"></i>
+                    <p class="card-title">Le dossier est rejeté</p>
+                </div>
+            </div>
         <?php }
 
         if ($operationEnAttente) { ?>
             <div class="card mb-3 dossier_incomplet">
                 <div class="card-body text-warning">
                     <i class="icon icon-information"></i>
-                    <?php if($operationEnAttente instanceof AdmissionAvis){ ?>
+                    <?php if($operationEnAttente instanceof AdmissionAvis && $operationEnAttente->getAvis()->getAvisType()->getCode() !== AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE){ ?>
                         <p class="card-title">En attente de l'<?= strtolower($operationEnAttente->getTypeToString()); ?></p>
                     <?php }else{ ?>
                         <p class="card-title">En attente de la <?= strtolower($operationEnAttente->getTypeToString()); ?></p>
@@ -68,7 +72,6 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 </div>
             </div>
         <?php }
-
         //Si la dernière opération a été déclarée comme réservée / incomplete
         else if ($operationEnAttente === false){ ?>
             <div class="card mb-3 dossier_refuse">
@@ -89,3 +92,41 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php } ?>
     </div>
 </div>
+
+<div class="modal fade" id="avisComplemsModal" tabindex="-1" aria-labelledby="avisComplemsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="avisComplemsModalLabel">Détails de l'avis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <!-- rempli dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+        const avisComplemsModal = document.getElementById('avisComplemsModal')
+        avisComplemsModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            const button = event.relatedTarget;
+            const logFullContent = $(button).parent().siblings(".log-full-content").html();
+            // Update the modal's content.
+            const modalBody = avisComplemsModal.querySelector('.modal-body');
+            $(modalBody).html(logFullContent);
+        });
+
+        // Gestion de la fermeture de la modale
+        let ajaxModalEvent = '<?php echo $ajaxModalEvent ?>';
+        $("body").on(ajaxModalEvent, function(event) {
+            $("body").addClass("loading");
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    })
+</script>

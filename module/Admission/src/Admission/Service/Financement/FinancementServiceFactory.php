@@ -19,26 +19,9 @@ class FinancementServiceFactory {
      */
     public function __invoke(ContainerInterface $container): FinancementService
     {
-        /**
-         * @var RoleService $roleService
-         * @var SourceService $sourceService
-         * @var UserContextService $userContextService;
-         */
-        $roleService = $container->get(RoleService::class);
-        $sourceService = $container->get(SourceService::class);
-        $userContextService = $container->get('UserContextService');
         $verificationService = $container->get(VerificationService::class);
 
-        /**
-         * @var SourceCodeStringHelper $sourceCodeStringHelper;
-         */
-        $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
-
         $service = new FinancementService();
-        $service->setRoleService($roleService);
-        $service->setSourceService($sourceService);
-        $service->setUserContextService($userContextService);
-        $service->setSourceCodeStringHelper($sourceCodeStringHelper);
         $service->setVerificationService($verificationService);
         return $service;
     }

@@ -5,14 +5,9 @@ namespace Admission\Service\Validation;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\Repository\AdmissionValidationRepository;
 use Admission\Entity\Db\TypeValidation;
-use Admission\Event\AdmissionEvent;
 use Admission\Event\Validation\AdmissionValidationEvent;
-use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Laminas\EventManager\EventManagerAwareTrait;
@@ -21,11 +16,7 @@ use UnicaenApp\Exception\RuntimeException;
 
 class AdmissionValidationService extends BaseService
 {
-    use RoleServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
-    use TypeValidationServiceAwareTrait;
     use EventManagerAwareTrait;
 
     const ADMISSION__VALIDATION_AJOUTE__EVENT = 'ADMISSION__VALIDATION_AJOUTE__EVENT';

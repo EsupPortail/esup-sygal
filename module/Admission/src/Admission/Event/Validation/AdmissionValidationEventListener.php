@@ -81,13 +81,4 @@ class AdmissionValidationEventListener extends AdmissionOperationAbstractEventLi
         $notif->setTemplateVariables(['messages' => $this->event->getMessages()]);
         $this->triggerNotification($notif);
     }
-
-    private function triggerNotification(Notification $notification)
-    {
-        $result = $this->notifierService->trigger($notification);
-
-        $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
-        $messages['warning'] = ($result->getErrorMessages()[0] ?? null);
-        $this->event->setMessages(array_filter($messages));
-    }
 }

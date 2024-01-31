@@ -2,7 +2,6 @@
 
 namespace Admission\Hydrator\Etudiant;
 
-use Application\Application\Form\Hydrator\RecrutementHydrator;
 use Doctrine\ORM\EntityManager;
 use Individu\Service\IndividuService;
 use Laminas\ServiceManager\Factory\FactoryInterface;

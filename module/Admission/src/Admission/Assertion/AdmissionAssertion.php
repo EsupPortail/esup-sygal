@@ -55,7 +55,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
      */
     protected function assertController($controller, $action = null, $privilege = null): bool
     {
-        if (! parent::assertController($controller, $action, $privilege)) {
+        if (!parent::assertController($controller, $action, $privilege)) {
             return false;
         }
 
@@ -83,6 +83,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
                 case 'notifier-gestionnaire':
                 case 'notifier-dossier-complet':
                 case 'generer-recapitulatif':
+                case 'ajouter-convention-formation' :
                     if ($this->admission !== null) {
                         $this->assertAppartenanceAdmission($this->admission);
                     }
@@ -92,10 +93,8 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             switch ($action) {
                 case 'enregistrer-document':
                 case 'supprimer-document':
-                case 'notifier-commentaires-ajoutes':
                 case 'notifier-gestionnaire':
-                case 'notifier-dossier-complet':
-                if ($this->admission !== null) {
+                    if ($this->admission !== null) {
                         $this->assertEtatAdmission($this->admission);
                     }
                     break;
@@ -113,8 +112,9 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
                 case 'notifier-commentaires-ajoutes':
                 case 'notifier-gestionnaire':
                 case 'notifier-dossier-complet':
+                case 'notifier-dossier-incomplet':
                     if ($this->admission !== null) {
-                        $this->assertCanNotifierCommentairesAjoutes($this->admission->getAdmissionValidations());
+                        $this->assertCanGestionnaireGererAdmission($this->admission->getAdmissionValidations());
                     }
                     break;
             }
@@ -135,7 +135,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
      */
     protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
-        if (! parent::assertEntity($entity, $privilege)) {
+        if (!parent::assertEntity($entity, $privilege)) {
             return false;
         }
         $this->admission = $entity;
@@ -147,16 +147,21 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
                 case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION:
-                case AdmissionPrivileges::ADMISSION_VERIFIER:
-                case AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES:
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_TOUT_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUT_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES:
-                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
-                case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET:
                     $this->assertEtatAdmission($this->admission);
+            }
+
+            switch ($privilege) {
+                case AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
+                case AdmissionPrivileges::ADMISSION_VERIFIER:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
+                    $this->assertCanGestionnaireGererAdmission($this->admission->getAdmissionValidations());
             }
 
             switch ($privilege) {
@@ -170,6 +175,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
                 case AdmissionPrivileges::ADMISSION_VERIFIER:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET:
+                case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
                     $this->assertAppartenanceAdmission($this->admission);
             }
 
@@ -203,6 +209,8 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
                 (int)$id === $individu->getId(),
                 "Le dossier d'admission n'appartient pas à l'individu " . $individu
             );
+        }else{ // à faire évoluer lorsque il y aura les nouveaux rôles pour le directeur de thèse
+//            throw new FailedAssertionException("Vous n'avez pas les droits pour initialiser un dossier d'admission");
         }
     }
 
@@ -213,57 +221,45 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             return;
         }
 
+        $isNotDirecteurOfAdmission = false;
+        $isNotEtudiantOfAdmission = false;
+        $isNotCoDirecteurOfAdmission = false;
+
         //Si le rôle connecté est Authentifié
         if ($role->getRoleId() == Role::ROLE_ID_USER) {
             $individu = $this->userContextService->getIdentityIndividu();
-//            if($admission->getIndividu()->getId() !== $individu->getId()){
-//                $isNotEtudiantOfAdmission = true;
-//            }
-            $this->assertTrue(
-                $admission->getIndividu()->getId() === $individu->getId(),
-                "Le dossier d'admission n'appartient pas à l'individu " . $individu
-            );
+            //Si l'étudiant attaché au dossier est bien celui de l'individu connecté
+            if($admission->getIndividu()->getId() !== $individu->getId()){
+                $isNotEtudiantOfAdmission = true;
+            }
 
-//            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
-//            if($admission->getInscription()->first()){
-//                if($individuUtilisateur->getId() !== $admission->getInscription()->first()->getDirecteur()->getId()){
-//                    $isNotDirecteurOfAdmission = true;
-//                }
-//            }
+            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            if($admission->getInscription()->first()){
+                //Si le directeur attaché au dossier n'est pas celui de l'individu connecté
+                if(!$admission->getInscription()->first()->getDirecteur() || $admission->getInscription()->first()->getDirecteur() && $individuUtilisateur->getId() !== $admission->getInscription()->first()->getDirecteur()->getId()){
+                    $isNotDirecteurOfAdmission = true;
+                }
 
-//            // cas du directeur de thèse
-//            $this->assertTrue(
-//                $individuUtilisateur->getId() == $admission->getInscription()->first()->getDirecteur()->getId(),
-//                "Le dossier d'admission n'est pas dirigé par " . $individuUtilisateur
-//            );
+                //Si le co-directeur attaché au dossier n'est pas celui de l'individu connecté
+                if (!$admission->getInscription()->first()->getCoDirecteur() || $admission->getInscription()->first()->getCoDirecteur() && $individuUtilisateur->getId() !== $admission->getInscription()->first()->getCoDirecteur()->getId()) {
+                    $isNotCoDirecteurOfAdmission = true;
+                }
+            }
 
-//            if($admission->getInscription()->first()) {
-//                if ($individuUtilisateur->getId() !== $admission->getInscription()->first()->getDirecteur()->getId()) {
-//                    $isNotCoDirecteurOfAdmission = true;
-//                }
-//            }
-//
-//            if($isNotEtudiantOfAdmission && $isNotDirecteurOfAdmission && $isNotCoDirecteurOfAdmission){
-//                throw new FailedAssertionException("Vous ne pouvez pas à accéder à cette page");
-//            }
-
-//            // cas du codirecteur de thèse
-//            $this->assertTrue(
-//                    $individuUtilisateur->getId() == $admission->getInscription()->first()->getCoDirecteur()->getId(),
-//                    "Le dossier d'admission n'est pas co-dirigé par " . $individuUtilisateur
-//            );
-
-        }elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
+            if($isNotEtudiantOfAdmission && $isNotDirecteurOfAdmission && $isNotCoDirecteurOfAdmission){
+                throw new FailedAssertionException("Vous ne pouvez pas à accéder à cette page");
+            }
+        } elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
             $message = "Le dossier d'admission n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode();
-            if($admission->getInscription()->first() && $admission->getInscription()->first()->getEcoleDoctorale()){
+            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getEcoleDoctorale()) {
                 $this->assertTrue(
                     $admission->getInscription()->first()->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
                     $message
                 );
-            }else{
+            } else {
                 throw new FailedAssertionException($message);
             }
-        }elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
+        } elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
             $message = "Le dossier d'admission n'est pas rattaché à l'UR " . $roleUniteRech->getStructure()->getCode();
             if ($admission->getInscription()->first() && $admission->getInscription()->first()->getUniteRecherche()) {
                 $this->assertTrue(
@@ -277,28 +273,28 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             // que les informations ont été saisies mais que le directeur n'a pas encore été renseigné
             // on laisse le droit à un n'importe quel directeur (qui à ce rôle pour l'instant) de n'importe quel établissement
             // de pouvoir rentrer les informations du dossier à la place de l'étudiant
-        }elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
+        } elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $message = "Le dossier d'admission n'est pas dirigé par " . $individuUtilisateur;
-            if($admission->getInscription()->first() && $admission->getInscription()->first()->getDirecteur()){
+            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getDirecteur()) {
                 $this->assertTrue(
                     $admission->getInscription()->first()->getDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
-            }else if (empty($admission->getInscription()->first()) || ($admission->getInscription()->first() && empty($admission->getInscription()->first()->getDirecteur()))){
+            } else if (empty($admission->getInscription()->first()) || ($admission->getInscription()->first() && empty($admission->getInscription()->first()->getDirecteur()))) {
                 return true;
-            }else{
+            } else {
                 throw new FailedAssertionException($message);
             }
-        }elseif ($this->userContextService->getSelectedRoleCodirecteurThese()) {
+        } elseif ($this->userContextService->getSelectedRoleCodirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $message = "Le dossier d'admission n'est pas codirigé par " . $individuUtilisateur;
-            if($admission->getInscription()->first() && $admission->getInscription()->first()->getCoDirecteur()){
+            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getCoDirecteur()) {
                 $this->assertTrue(
                     $admission->getInscription()->first()->getCoDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
-            }else{
+            } else {
                 throw new FailedAssertionException($message);
             }
         }
@@ -314,7 +310,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
 
     protected function assertCanNotifierCommentairesAjoutes(Collection $admissionValidations)
     {
-        foreach($admissionValidations as $admissionValidation){
+        foreach ($admissionValidations as $admissionValidation) {
             $this->assertTrue(
                 TypeValidation::CODE_VALIDATION_GESTIONNAIRE !== $admissionValidation->getTypeValidation()->getCode(),
                 "L'envoi de commentaires n'est possible que lorsque la validation des gestionnaires
@@ -323,10 +319,21 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
         }
     }
 
+    protected function assertCanGestionnaireGererAdmission(Collection $admissionValidations)
+    {
+        foreach ($admissionValidations as $admissionValidation) {
+            $this->assertTrue(
+                TypeValidation::CODE_VALIDATION_GESTIONNAIRE !== $admissionValidation->getTypeValidation()->getCode(),
+                "Le gestionnaire peut gérer le dossier (ajouter des commentaires, notifier l'étudiant) seulement si leur validation
+                                 n'a pas encore été effectuée"
+            );
+        }
+    }
+
     protected function assertCanGenererRecapitulatif(Collection $admissionValidations)
     {
         $canGenerate = false;
-        foreach($admissionValidations as $admissionValidation){
+        foreach ($admissionValidations as $admissionValidation) {
             $canGenerate = TypeValidation::CODE_VALIDATION_GESTIONNAIRE === $admissionValidation->getTypeValidation()->getCode() ? true : $canGenerate;
         }
         $this->assertTrue(
@@ -347,12 +354,12 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
     private function getRequestedAdmission(): ?Admission
     {
         $admission = null;
-        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('individu') ) {
+        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('individu')) {
             $admission = $this->admissionService->getRepository()->findOneByIndividu($id);
         }
 
-        if(empty($admission)){
-            if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('admission') ) {
+        if (empty($admission)) {
+            if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('admission')) {
                 $admission = $this->admissionService->getRepository()->findOneById($id);
             }
         }

@@ -2,12 +2,7 @@
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionOperationInterface;
-use Admission\Entity\Db\Etat;
-use Admission\Entity\Db\Verification;
-use Admission\Form\Admission\AdmissionForm;
-use Admission\Form\Fieldset\Financement\FinancementFieldset;
-use Admission\Provider\Privilege\AdmissionPrivileges;
-use Application\View\Renderer\PhpRenderer;
+use Admission\Entity\Db\TypeValidation;
 use Individu\Entity\Db\Individu;
 
 /**
@@ -19,6 +14,7 @@ use Individu\Entity\Db\Individu;
  * * @var Admission $admission
  * @var boolean $showActionButtons
  */
+unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
 echo $this->partial('admission/admission/partial/circuit-signatures', [
     'operations' => $operations,
     'individu' => $admission->getIndividu(),

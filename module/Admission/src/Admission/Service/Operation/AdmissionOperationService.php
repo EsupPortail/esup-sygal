@@ -6,6 +6,7 @@ use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\TypeValidation;
+use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
 use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
@@ -22,6 +23,7 @@ class AdmissionOperationService
     use AdmissionValidationServiceAwareTrait;
     use AdmissionAvisServiceAwareTrait;
     use AvisServiceAwareTrait;
+
     private array $typeValidationsCache = [];
     private array $avisTypesCache = [];
 

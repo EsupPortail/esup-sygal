@@ -32,18 +32,5 @@ class VerificationHydratorFactory implements FactoryInterface
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
         return new VerificationHydrator($entityManager);
-
-//        $etudiantService = $container->get(EtudiantService::class);
-//        $inscriptionService = $container->get(InscriptionService::class);
-//        $financementService = $container->get(FinancementService::class);
-//        $documentService = $container->get(DocumentService::class);
-//        $hydrator = new VerificationHydrator();
-//        $hydrator->setEtudiantService($etudiantService);
-//        $hydrator->setInscriptionService($inscriptionService);
-//        $hydrator->setFinancementService($financementService);
-//        $hydrator->setDocumentService($documentService);
-
-
-//        return $hydrator;
     }
 }

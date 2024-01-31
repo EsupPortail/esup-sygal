@@ -3,11 +3,7 @@
 namespace Admission\Hydrator\Document;
 
 use Admission\Entity\Db\Document;
-use Doctrine\Inflector\Inflector;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Doctrine\Persistence\ObjectManager;
-use Fichier\Entity\Db\Fichier;
-use Laminas\Hydrator\Strategy\BooleanStrategy;
 
 /**
  * @author Unicaen

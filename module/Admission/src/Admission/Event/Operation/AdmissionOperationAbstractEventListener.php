@@ -9,6 +9,7 @@ use Admission\Rule\Operation\Notification\OperationAttendueNotificationRuleAware
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
+use Notification\Notification;
 use Notification\Service\NotifierServiceAwareTrait;
 use Webmozart\Assert\Assert;
 
@@ -53,6 +54,15 @@ abstract class AdmissionOperationAbstractEventListener implements ListenerAggreg
         $notif = $this->notificationFactory->addOperationAttendueToTemplateOperationAttendue($notif->getOperationAttendue(), $notif);
 
         $result = $this->notifierService->trigger($notif);
+
+        $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
+        $messages['warning'] = ($result->getErrorMessages()[0] ?? null);
+        $this->event->setMessages(array_filter($messages));
+    }
+
+    protected function triggerNotification(Notification $notification)
+    {
+        $result = $this->notifierService->trigger($notification);
 
         $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
         $messages['warning'] = ($result->getErrorMessages()[0] ?? null);

@@ -56,6 +56,11 @@
                 <join-column name="UNITE_RECHERCHE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+        <many-to-one field="etablissementInscription" target-entity="Structure\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_INSCRIPTION_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
         <many-to-one field="directeur" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="DIRECTEUR_THESE_ID" referenced-column-name="ID"/>

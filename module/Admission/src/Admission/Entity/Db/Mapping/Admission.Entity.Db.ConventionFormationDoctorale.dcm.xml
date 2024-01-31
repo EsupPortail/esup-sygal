@@ -2,8 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Admission\Entity\Db\ConventionFormationDoctorale" table="ADMISSION_CONVENTION_FORMATION_DOCTORALE"
-            repository-class="Admission\Entity\Db\Repository\ConventionFormationDoctoraleRepository">
+    <entity name="Admission\Entity\Db\ConventionFormationDoctorale" table="ADMISSION_CONVENTION_FORMATION_DOCTORALE">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>

@@ -3,9 +3,7 @@
 namespace Admission\Hydrator\Etudiant;
 
 use Admission\Entity\Db\Etudiant;
-use Application\Entity\Db\Pays;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 
 /**

@@ -20,6 +20,7 @@ class AdmissionAvis implements HistoriqueAwareInterface, ResourceInterface, Admi
     const AVIS_TYPE__CODE__AVIS_ADMISSION_CODIR_THESE = 'AVIS_ADMISSION_CODIR_THESE';
     const AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_UR = 'AVIS_ADMISSION_DIR_UR';
     const AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_ED = 'AVIS_ADMISSION_DIR_ED';
+    const AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE = 'AVIS_ADMISSION_PRESIDENCE';
 
     // Codes des valeurs d'avis, issus de "UNICAEN_AVIS_VALEUR.CODE" :
     const AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_INCOMPLET = 'AVIS_ADMISSION_VALEUR_INCOMPLET';
@@ -48,12 +49,12 @@ class AdmissionAvis implements HistoriqueAwareInterface, ResourceInterface, Admi
     public function __toString(): string
     {
         $str = $this->getAvis()->getAvisType();
-        $str .= $this->getAvis()->getAvisValeur() ? " : ".$this->getAvis()->getAvisValeur()->getValeur() : "";
-        if ($date = $this->getHistoModification() ?: $this->getHistoCreation()) {
-            $str .= sprintf(" (le %s par %s)",
-                $date->format(Constants::DATETIME_FORMAT),
-                $this->getHistoModificateur() ?: $this->getHistoCreateur());
-        }
+//        $str .= $this->getAvis()->getAvisValeur() ? " : ".$this->getAvis()->getAvisValeur()->getValeur() : "";
+//        if ($date = $this->getHistoModification() ?: $this->getHistoCreation()) {
+//            $str .= sprintf(" (le %s par %s)",
+//                $date->format(Constants::DATETIME_FORMAT),
+//                $this->getHistoModificateur() ?: $this->getHistoCreateur());
+//        }
 
         return $str;
     }
@@ -109,5 +110,40 @@ class AdmissionAvis implements HistoriqueAwareInterface, ResourceInterface, Admi
     public function getResourceId(): string
     {
         return self::RESOURCE_ID;
+    }
+
+    /** Fonction pour les macros du module UnicaenRenderer ************************************************************/
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getAuteurToString() : string
+    {
+        $displayname = $this->getHistoModificateur() ?: $this->getHistoCreateur();
+        return $displayname;
+    }
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getDateToString() : string
+    {
+        $date = $this->getHistoModification() ?: $this->getHistoCreation();
+        return $date->format('d/m/Y à H:i');
+    }
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getDestructeurToString() : string
+    {
+        return "par ".$this->getHistoDestructeur();
+    }
+
+    public function getModificateurToString() : string
+    {
+        return "par ".$this->getHistoModificateur();
     }
 }
