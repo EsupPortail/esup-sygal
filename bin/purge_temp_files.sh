@@ -12,6 +12,7 @@ patterns1j=(
     'sygal_couverture_*.pdf'   # génération de la page de couverture
     'sygal_trunc_*.pdf'        # fichier de thèse sans la 1ere page
     'sygal_notif_template_*'   # rendu d'un script de vue stocké en bdd pour une notification par mail
+    'sygal_storage_service_*'  # fichier temporaire généré par le FichierStorageService
     'gs_*'                     # fichiers temporaires ghostscript
     'run-sql-*'                # logs d'exécution d'instructions SQL (import)
 )
