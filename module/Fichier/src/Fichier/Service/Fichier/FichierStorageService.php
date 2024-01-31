@@ -16,6 +16,8 @@ class FichierStorageService
 {
     use PageFichierIntrouvablePdfExporterTrait;
 
+    const TEMP_FILENAME_PREFIX = 'sygal_storage_service_';
+
     const DIR_ETAB = 'Etab';
     const DIR_ED = 'ED';
     const DIR_UR = 'UR';
@@ -35,11 +37,10 @@ class FichierStorageService
     /**
      * @param bool $genererFichierSubstitutionSiIntrouvable
      */
-    public function setGenererFichierSubstitutionSiIntrouvable(?bool $genererFichierSubstitutionSiIntrouvable = true)
+    public function setGenererFichierSubstitutionSiIntrouvable(?bool $genererFichierSubstitutionSiIntrouvable = true): void
     {
         $this->genererFichierSubstitutionSiIntrouvable = $genererFichierSubstitutionSiIntrouvable;
     }
-
 
     /********************************** Fichiers standards *************************************/
 
@@ -83,10 +84,10 @@ class FichierStorageService
         $fileName = $this->computeFileNameForFichier($fichier);
         $dirPath = $this->storageAdapter->computeDirectoryPath($dirName);
 
-        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid();
+        $tmpFilePath = sys_get_temp_dir() . '/' . self::TEMP_FILENAME_PREFIX . uniqid();
 
         try {
-            $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
+            $filePath = $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
         } catch (StorageAdapterException $e) {
             // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
             if ($this->genererFichierSubstitutionSiIntrouvable) {
@@ -95,13 +96,14 @@ class FichierStorageService
                 if ($substitutionFileContent === null ) {
                     throw $e; // solution de facilité (todo: lancer une exception spécifique)
                 }
-                file_put_contents($tmpFilePath, $substitutionFileContent);
+                $filePath = $tmpFilePath;
+                file_put_contents($filePath, $substitutionFileContent);
             } else {
                 throw $e;
             }
         }
 
-        return $tmpFilePath;
+        return $filePath;
     }
 
     /**
@@ -146,7 +148,7 @@ class FichierStorageService
      * @param \Fichier\Entity\Db\Fichier $fichier Entité Fichier concernée
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function saveFileForFichier(string $filepath, Fichier $fichier)
+    public function saveFileForFichier(string $filepath, Fichier $fichier): void
     {
         $dirName = $this->computeDirectoryNameForFichier($fichier);
         $fileName = $this->computeFileNameForFichier($fichier);
@@ -161,7 +163,7 @@ class FichierStorageService
      * @param \Fichier\Entity\Db\Fichier $fichier Entité Fichier concernée
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function deleteFileForFichier(Fichier $fichier)
+    public function deleteFileForFichier(Fichier $fichier): void
     {
         $dirName = $this->computeDirectoryNameForFichier($fichier);
         $fileName = $this->computeFileNameForFichier($fichier);
@@ -249,7 +251,7 @@ class FichierStorageService
      * Retourne le chemin absolu d'une copie du fichier physique du logo existant d'une structure.
      *
      * @param \Structure\Entity\Db\StructureInterface $structure Entité Structure concernée
-     * @return string
+     * @return string|null
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Fichier introuvable dans le storage
      */
     public function getFileForLogoStructure(StructureInterface $structure): ?string
@@ -261,10 +263,10 @@ class FichierStorageService
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();
 
-        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid();
+        $tmpFilePath = sys_get_temp_dir() . '/' . self::TEMP_FILENAME_PREFIX . uniqid();
 
         try {
-            $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
+            $filePath = $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
         } catch (StorageAdapterException $e) {
             // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
             if ($this->genererFichierSubstitutionSiIntrouvable) {
@@ -275,13 +277,14 @@ class FichierStorageService
                 if ($substitutionFileContent === null ) {
                     throw $e; // solution de facilité (todo: lancer une exception spécifique)
                 }
-                file_put_contents($tmpFilePath, $substitutionFileContent);
+                $filePath = $tmpFilePath;
+                file_put_contents($filePath, $substitutionFileContent);
             } else {
                 throw $e;
             }
         }
 
-        return $tmpFilePath;
+        return $filePath;
     }
 
     private function createSubstitutionFileContentForFichier(Fichier $fichier): ?string
@@ -303,7 +306,7 @@ class FichierStorageService
      * @param \Structure\Entity\Db\StructureInterface $structure
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function saveFileForLogoStructure(string $logoFilepath, StructureInterface $structure)
+    public function saveFileForLogoStructure(string $logoFilepath, StructureInterface $structure): void
     {
         $logoDir = $this->computeDirectoryPathForLogoStructure($structure);
         $logoFilename = $this->computeFileNameForNewLogoStructure($structure);
@@ -317,7 +320,7 @@ class FichierStorageService
      * @param \Structure\Entity\Db\StructureInterface $structure
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function deleteFileForLogoStructure(StructureInterface $structure)
+    public function deleteFileForLogoStructure(StructureInterface $structure): void
     {
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();

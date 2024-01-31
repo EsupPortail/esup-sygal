@@ -13,7 +13,7 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
      * @param array $config
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         parent::setConfig($config);
 
@@ -39,7 +39,7 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
      * @param string $absolutePath
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function createDirectory(string $absolutePath)
+    public function createDirectory(string $absolutePath): void
     {
         $ok = $this->createWritableFolder($absolutePath, 0770);
         if (!$ok) {
@@ -60,7 +60,7 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
      *
      * @codeCoverageIgnore
      */
-    public function createWritableFolder(string $folder, int $mode = 0700): bool
+    private function createWritableFolder(string $folder, int $mode = 0700): bool
     {
         if($folder !== '.' && $folder !== '/' ) {
             $this->createWritableFolder(dirname($folder));
@@ -72,7 +72,7 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
         return mkdir($folder, $mode, true) && is_writable($folder);
     }
 
-    public function deleteFile(string $dirPath, string $fileName)
+    public function deleteFile(string $dirPath, string $fileName): void
     {
         $filePath = $this->assemblePath($dirPath, $fileName);
 
@@ -102,16 +102,9 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
         }
 
         return file_get_contents($filePath);
-
     }
 
-    /**
-     * @param string $fromDirPath
-     * @param string $fromFileName
-     * @param string $toFilesystemPath
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
-     */
-    public function saveToFilesystem(string $fromDirPath, string $fromFileName, string $toFilesystemPath)
+    public function saveToFilesystem(string $fromDirPath, string $fromFileName, string $toFilesystemPath): string
     {
         $filePath = $this->assemblePath($fromDirPath, $fromFileName);
 
@@ -126,13 +119,13 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
                 ->setFileName($fromFileName);
         }
 
-        copy($filePath, $toFilesystemPath);
+        return $filePath;
     }
 
     /**
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function saveFileContent(string $fileContent, string $toDirPath, string $toFileName)
+    public function saveFileContent(string $fileContent, string $toDirPath, string $toFileName): void
     {
         $this->createDirectory($toDirPath);
 
