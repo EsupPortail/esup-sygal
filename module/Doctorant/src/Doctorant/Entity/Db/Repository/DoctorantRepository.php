@@ -38,23 +38,29 @@ class DoctorantRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param Individu $individu
-     * @return Doctorant|null
+     * Recherche d'un doctorant par son individu lié.
+     *
+     * *Attention : il peut arriver que 2 doctorants soient liés au même individu (D1->I3 et D2->I3) ! Oui, cela arrive
+     * lorsque les 2 individus auxquels était lié chacun des 2 doctorants respectivement (I1 et I2) ont été détectés
+     * comme doublon et substitués par I3 par le moteur de substitutions (dédoublonnage).
+     * On pourrait s'attendre à ce que les 2 doctorants D1 et D2 aient également été substitués puisqu'ils sont
+     * liés au même individu, mais ce n'est pas le cas s'ils n'ont pas le même INE (l'INE est l'attribut discriminant les
+     * doctorants pour le moteur de substitutions)... et cela arrive ! On privilégie systématiquement le Doctorant
+     * créé/modifié le plus récemment.*
      */
     public function findOneByIndividu(Individu $individu): ?Doctorant
     {
         $qb = $this->createQueryBuilder('d');
         $qb
             ->addSelect('i')
-            ->join('d.individu', 'i', Join::WITH, 'i = :individu')
+            ->join('d.individu', 'i', Join::WITH, 'i = :individu')->setParameter('individu', $individu)
+            ->join('d.source', 's')
             ->andWhereNotHistorise()
-            ->setParameter('individu', $individu);
+            ->addOrderBy('s.id', 'asc') // source SyGAL privilégiée
+            ->addOrderBy('d.histoCreation', 'desc')      // créé ou
+            ->addOrderBy('d.histoModification', 'desc'); // modifié le plus récemment
 
-        try {
-            return $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie rencontrée : 2 doctorants non historisés liés au même individu " . $individu->getId());
-        }
+        return $qb->getQuery()->setMaxResults(1)->getResult()[0] ?? null;
     }
 
     /**

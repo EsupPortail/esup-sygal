@@ -13,6 +13,7 @@ Journal des modifications
 - [FIX] Recherche autocomplete établissement/ED/UR : bug empêchant la recherche (systématiquement aucun résultat).
 - [FIX] Page de modification d'une UR : paramètres de route erronés ; suppression de warnings PHP de variables inconnues.
 - [FIX] Module Substitutions : modification de la formule de caclul du NPD doctorant.
+- [FIX] Recherche de doctorant par individu : plus d'exception si 2 doctorants liés au même individu, on prend le plus récent.
 
 7.0.0
 -----
