@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Recherche de thèses : amélioration de l'affichage et du tri des structures dans les filtres.
 - [FIX] Recherche autocomplete établissement/ED/UR : bug empêchant la recherche (systématiquement aucun résultat).
 - [FIX] Page de modification d'une UR : paramètres de route erronés ; suppression de warnings PHP de variables inconnues.
+- [FIX] Module Substitutions : modification de la formule de caclul du NPD doctorant.
 
 7.0.0
 -----
