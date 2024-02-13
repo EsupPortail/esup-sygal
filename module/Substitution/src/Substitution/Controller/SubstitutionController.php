@@ -153,7 +153,11 @@ class SubstitutionController extends AbstractActionController
         Assert::keyExists($post, 'substitue');
 
         $substitueId = $post['substitue'];
+
         $substitutionData = $this->fetchSubstitutionData($type, $substituantId);
+        Assert::minCount($substitutionData['substitues'], 2,
+            "Impossible de retirer de cette substitution l'unique enregistrement substitué");
+
         $npd = $substitutionData['substitution']['npd'];
 
         $this->substitutionService->removeSubstitueFromSubstitutionForType($type, $substitueId, $npd);

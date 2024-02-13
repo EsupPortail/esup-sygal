@@ -41,6 +41,13 @@ $voirSubstitueUrl = $this->url('substitution/substitution/voir/voir-substituable
     <code><abbr title="NPD"><?php echo $substitution['npd'] ?></abbr></code>
 </h1>
 
+<?php if (count($substitues) === 1): ?>
+    <p class="alert alert-danger">
+        <span class="icon icon-attention"></span> <strong>Votre attention, svp ! :</strong>
+        <?php echo \Substitution\Constants::ALERTE_1_SEUL_SUBSTITUE ?>
+    </p>
+<?php endif; ?>
+
 <p class="lead">
 
 </p>
@@ -84,16 +91,22 @@ $voirSubstitueUrl = $this->url('substitution/substitution/voir/voir-substituable
                     ?>
                     <form method="post" action="<?php echo $this->url('substitution/substitution/voir/retirer-substitue', ['type' => $type, 'id' => $substituant->getId()]) ?>">
                         <input type="hidden" value="<?php echo $substitue->getId() ?>" name="substitue"/>
-                        <?php if ($estSubstitueManuellement): ?>
-                            <input type="submit" value="Retirer"
-                                   title="Retirer de la substitution cet enregistrement ajouté manuellement"
-                                   class="btn btn-warning float-end"
-                                   onclick="return confirm('Êtes-vous certain·e de vouloir retirer cet enregistrement ?')"/>
+                        <?php if (count($substitues) > 1): ?>
+                            <?php if ($estSubstitueManuellement): ?>
+                                <input type="submit" value="Retirer"
+                                       title="Retirer de la substitution cet enregistrement ajouté manuellement"
+                                       class="btn btn-warning float-end"
+                                       onclick="return confirm('Êtes-vous certain·e de vouloir retirer cet enregistrement ?')"/>
+                            <?php else: ?>
+                                <input type="submit" value="Retirer ce faux doublon"
+                                       title="Retirer de la substitution cet enregistrement car vous estimez que c'est un faux doublon"
+                                       class="btn btn-danger float-end"
+                                       onclick="return confirm('Êtes-vous certain·e de vouloir retirer ce faux doublon ?')"/>
+                            <?php endif ?>
                         <?php else: ?>
-                            <input type="submit" value="Retirer ce faux doublon"
-                                   title="Retirer de la substitution cet enregistrement car vous estimez que c'est un faux doublon"
-                                   class="btn btn-danger float-end"
-                                   onclick="return confirm('Êtes-vous certain·e de vouloir retirer ce faux doublon ?')"/>
+                            <input type="submit" value="Impossible de retirer l'unique enregistrement substitué"
+                                   class="btn btn-danger float-end disabled"
+                                   onclick="return false"/>
                         <?php endif ?>
                     </form>
                 </div>

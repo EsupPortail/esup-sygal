@@ -41,6 +41,13 @@ $this->headTitle("Substitution par " . $substituant->getId());
     <code><abbr title="NPD"><?php echo $substitution['npd'] ?></abbr></code>
 </h1>
 
+<?php if (count($substitues) === 1): ?>
+    <p class="alert alert-danger">
+        <span class="icon icon-attention"></span> <strong>Votre attention, svp ! :</strong>
+        <?php echo \Substitution\Constants::ALERTE_1_SEUL_SUBSTITUE ?>
+    </p>
+<?php endif; ?>
+
 <p>
     <?php echo count($substitues) ?> enregistrements substitués.
 </p>
