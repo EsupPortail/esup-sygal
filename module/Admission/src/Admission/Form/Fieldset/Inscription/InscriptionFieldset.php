@@ -22,6 +22,8 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     private ?string $urlIndividuThese = null;
     private ?string $urlEtablissement = null;
     /** @var array */
+    private $composantesEnseignement = null;
+    /** @var array */
     private $ecolesDoctorales = null;
     /** @var array */
     private $unitesRecherche = null;
@@ -42,12 +44,6 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->get('prenomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
     }
 
-    public function setUrlEtablissement(string $urlEtablissement): void
-    {
-        $this->urlEtablissement = $urlEtablissement;
-        $this->get('composanteDoctorat')->setAutocompleteSource($this->urlEtablissement);
-    }
-
     public function setSpecialites(array $specialites): void
     {
         $this->specialites = $specialites;
@@ -65,6 +61,18 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->ecolesDoctorales = $options;
         $this->get('ecoleDoctorale')->setEmptyOption('Sélectionnez une option');
         $this->get('ecoleDoctorale')->setValueOptions($this->ecolesDoctorales);
+    }
+
+    public function setComposantesEnseignement(array $composantesEnseignement): void
+    {
+        $options = [];
+
+        foreach ($composantesEnseignement as $composanteEnseignement) {
+            $options[$composanteEnseignement->getId()] = $composanteEnseignement->getStructure()->getLibelle();
+        }
+        $this->composantesEnseignement = $options;
+        $this->get('composanteDoctorat')->setEmptyOption('Sélectionnez une option');
+        $this->get('composanteDoctorat')->setValueOptions($this->composantesEnseignement);
     }
 
     public function setUnitesRecherche(array $unitesRecherche): void
@@ -164,18 +172,16 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ])
         );
 
-        $composanteDoctorat = new SearchAndSelect('composanteDoctorat', ['label' => "Composante de rattachement (U.F.R., instituts…)"]);
-        $composanteDoctorat
-            ->setAutocompleteSource($this->urlEtablissement )
-            ->setLabelAttributes(['data-after' => " / Component of attachment"])
-            ->setSelectionRequired()
-            ->setAttributes([
-                'class' => 'selectpicker show-tick',
-                'data-live-search' => 'true',
-                'id' => 'composanteDoctorat',
-                'placeholder' => "Entrez les deux premières lettres...",
-            ]);
-        $this->add($composanteDoctorat);
+        $this->add(
+            (new Select("composanteDoctorat"))
+                ->setLabel("Composante de rattachement (U.F.R., instituts…)")
+                ->setLabelAttributes(['data-after' => " / Component of attachment"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                ])
+        );
 
         $this->add(
             (new Select("ecoleDoctorale"))

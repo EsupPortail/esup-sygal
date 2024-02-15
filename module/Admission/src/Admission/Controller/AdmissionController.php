@@ -625,11 +625,12 @@ class AdmissionController extends AdmissionAbstractController {
         //Partie Informations sur l'inscription
         /** @see AdmissionController::rechercherIndividuAction() */
         $this->admissionForm->get('inscription')->setUrlIndividuThese($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true));
-        /** @see EtablissementController::rechercherAction() */
-        $this->admissionForm->get('inscription')->setUrlEtablissement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
 
         $disciplines = $this->disciplineService->getDisciplinesAsOptions('code','ASC','code');
         $this->admissionForm->get('inscription')->setSpecialites($disciplines);
+
+        $composantes = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT, 'libelle', false);
+        $this->admissionForm->get('inscription')->setComposantesEnseignement($composantes);
 
         $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false);
         $this->admissionForm->get('inscription')->setEcolesDoctorales($ecoles);

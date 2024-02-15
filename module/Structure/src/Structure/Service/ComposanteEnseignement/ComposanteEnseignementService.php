@@ -36,76 +36,32 @@ class ComposanteEnseignementService extends BaseService
     }
 
     /**
-     * @param ComposanteEnseignement $unite
-     * @return EtablissementRattachement[]
-     */
-    public function findEtablissementRattachement(ComposanteEnseignement $unite): array
-    {
-        /** @var DefaultQueryBuilder $qb */
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er");
-        $qb
-            ->addSelect("e, s")
-            ->join('er.etablissement', 'e')
-            ->join('e.structure', 's')
-            ->join('er.unite', 'ur')->addSelect('ur')
-            ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
-            ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
-            ->andWhereStructureEstNonSubstituee('ur_structure')
-            ->orderBy('s.libelle');
-
-        return $qb->getQuery()->getResult();
-    }
-
-    public function existEtablissementRattachement(ComposanteEnseignement $unite, Etablissement $etablissement): ?EtablissementRattachement
-    {
-        /** @var DefaultQueryBuilder $qb */
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er");
-        $qb
-            ->join('er.unite', 'ur')->addSelect('ur')
-            ->join('er.etablissement', 'etab')->addSelect('etab')
-            ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
-            ->join('etab.structure', 'etab_structure')->addSelect('etab_structure')
-            ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
-            ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(), 'etab_structure')
-            ->andWhere("er.unite = :unite")
-            ->andWhere("er.etablissement = :etablissement")
-            ->setParameter("unite", $unite)
-            ->setParameter("etablissement", $etablissement);
-
-        try {
-            return $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie : Plusieurs EtablissementRattachement trouvés pour une ED et un Etab donnés");
-        }
-    }
-
-    /**
      * Historise une ED.
      *
-     * @param ComposanteEnseignement $ur
+     * @param ComposanteEnseignement $ce
      * @param Utilisateur    $destructeur
      */
-    public function deleteSoftly(ComposanteEnseignement $ur, Utilisateur $destructeur)
+    public function deleteSoftly(ComposanteEnseignement $ce, Utilisateur $destructeur)
     {
-        $ur->historiser($destructeur);
-        $ur->getStructure()->historiser($destructeur);
+        $ce->historiser($destructeur);
+        $ce->getStructure()->historiser($destructeur);
 
-        $this->flush($ur);
+        $this->flush($ce);
     }
 
-    public function undelete(ComposanteEnseignement $ur)
+    public function undelete(ComposanteEnseignement $ce)
     {
-        $ur->dehistoriser();
-        $ur->getStructure()->dehistoriser();
+        $ce->dehistoriser();
+        $ce->getStructure()->dehistoriser();
 
-        $this->flush($ur);
+        $this->flush($ce);
     }
 
     public function create(ComposanteEnseignement $structureConcrete, Utilisateur $createur): ComposanteEnseignement
     {
         try {
             /** @var TypeStructure $typeStructure */
-            $typeStructure = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(['code' => TypeStructure::CODE_UNITE_RECHERCHE]);
+            $typeStructure = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(['code' => TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT]);
         } catch (NotSupported $e) {
             throw new RuntimeException("Erreur lors de l'obtention du repository Doctrine", null, $e);
         }
@@ -134,93 +90,47 @@ class ComposanteEnseignementService extends BaseService
         return $structureConcrete;
     }
 
-    public function update(ComposanteEnseignement $ur)
+    public function update(ComposanteEnseignement $ce)
     {
-        $this->flush($ur);
+        $this->flush($ce);
 
-        return $ur;
+        return $ce;
     }
 
-    public function setLogo(ComposanteEnseignement $unite, $cheminLogo)
+    public function setLogo(ComposanteEnseignement $composanteEnseignement, $cheminLogo)
     {
-        $unite->getStructure()->setCheminLogo($cheminLogo);
-        $this->flush($unite);
+        $composanteEnseignement->getStructure()->setCheminLogo($cheminLogo);
+        $this->flush($composanteEnseignement);
 
-        return $unite;
+        return $composanteEnseignement;
     }
 
-    public function deleteLogo(ComposanteEnseignement $unite)
+    public function deleteLogo(ComposanteEnseignement $composanteEnseignement)
     {
-        $unite->getStructure()->setCheminLogo(null);
-        $this->flush($unite);
+        $composanteEnseignement->getStructure()->setCheminLogo(null);
+        $this->flush($composanteEnseignement);
 
-        return $unite;
+        return $composanteEnseignement;
     }
 
-    private function flush(ComposanteEnseignement $ur)
+    private function flush(ComposanteEnseignement $ce)
     {
         try {
-            $this->getEntityManager()->flush($ur);
-            $this->getEntityManager()->flush($ur->getStructure());
+            $this->getEntityManager()->flush($ce);
+            $this->getEntityManager()->flush($ce->getStructure());
         } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
-        }
-    }
-
-    /** ETABLISSEMENT DE RATTACHEMENT **/
-
-    /**
-     * @param ComposanteEnseignement $unite
-     * @param Etablissement  $etablissement
-     */
-    public function addEtablissementRattachement(ComposanteEnseignement $unite, Etablissement $etablissement)
-    {
-        $er = new EtablissementRattachement();
-        $er->setComposanteEnseignement($unite);
-        $er->setEtablissement($etablissement);
-        try {
-            $this->getEntityManager()->persist($er);
-            $this->getEntityManager()->flush($er);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
-        }
-    }
-
-    /**
-     * @param ComposanteEnseignement $unite
-     * @param Etablissement  $etablissement
-     */
-    public function removeEtablissementRattachement(ComposanteEnseignement $unite, Etablissement $etablissement)
-    {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
-            ->andWhere("er.unite = :unite")
-            ->andWhere("er.etablissement = :etablissement")
-            ->setParameter("unite", $unite)
-            ->setParameter("etablissement", $etablissement);
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
-        }
-
-        if ($result) {
-            try {
-                $this->getEntityManager()->remove($result);
-                $this->getEntityManager()->flush($result);
-            } catch (ORMException $e) {
-                throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
-            }
         }
     }
 
     //todo faire les filtrage et considerer que les UR internes
     public function getUnitesRecherchesAsOptions() : array
     {
-        $unites = $this->getRepository()->findAll();
+        $composantes = $this->getRepository()->findAll();
 
         $options = [];
-        foreach ($unites as $unite) {
-            $options[$unite->getId()] = $unite->getStructure()->getLibelle() . " " ."<span class='badge'>".$unite->getStructure()->getSigle()."</span>";
+        foreach ($composantes as $composante) {
+            $options[$composante->getId()] = $composante->getStructure()->getLibelle() . " " ."<span class='badge'>".$composante->getStructure()->getSigle()."</span>";
         }
         return $options;
     }

@@ -77,6 +77,7 @@ class Structure implements
     protected Collection $etablissement;
     protected Collection $ecoleDoctorale;
     protected Collection $uniteRecherche;
+    protected Collection $composanteEnseignement;
 
     /**
      * @var Role[] $roles
@@ -119,6 +120,9 @@ class Structure implements
             case $data instanceof UniteRecherche:
                 $structure = new UniteRecherche();
                 break;
+            case $data instanceof ComposanteEnseignement:
+                $structure = new ComposanteEnseignement();
+                break;
             default:
                 throw new LogicException("Type d'entité Structure spécifiée inattendu : " . get_class($data));
                 break;
@@ -135,6 +139,7 @@ class Structure implements
         $this->etablissement = new ArrayCollection();
         $this->ecoleDoctorale = new ArrayCollection();
         $this->uniteRecherche = new ArrayCollection();
+        $this->composanteEnseignement = new ArrayCollection();
         $this->substitues = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -301,6 +306,7 @@ class Structure implements
             $this->typeStructure->isEtablissement() => $this->getEtablissement(),
             $this->typeStructure->isEcoleDoctorale() => $this->getEcoleDoctorale(),
             $this->typeStructure->isUniteRecherche() => $this->getUniteRecherche(),
+            $this->typeStructure->isComposanteEnseignement() => $this->getComposanteEnseignement(),
             default => throw new InvalidArgumentException("Type de structure inattendu"),
         };
     }
@@ -327,6 +333,18 @@ class Structure implements
     public function getEcoleDoctorale(): ?EcoleDoctorale
     {
         return $this->ecoleDoctorale->filter(fn(EcoleDoctorale $ed) => $ed->estNonHistorise())->first() ?: null;
+    }
+
+    /**
+     * Retourne l'éventuelle ComposanteEnseignement correspondant à cette Structure "abstraite",
+     * telle que défini par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\ComposanteEnseignement|null
+     */
+    public function getComposanteEnseignement(): ?ComposanteEnseignement
+    {
+        return $this->composanteEnseignement;
     }
 
     /**
