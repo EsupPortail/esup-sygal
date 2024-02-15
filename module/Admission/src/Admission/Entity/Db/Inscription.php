@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Qualite;
+use Structure\Entity\Db\ComposanteEnseignement;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
@@ -69,7 +70,7 @@ class Inscription implements HistoriqueAwareInterface{
     private $ecoleDoctorale;
 
     /**
-     * @var Etablissement
+     * @var ComposanteEnseignement
      */
     private $composanteDoctorat;
 
@@ -131,7 +132,7 @@ class Inscription implements HistoriqueAwareInterface{
      * @var Individu
      */
     private $coDirecteur;
-    
+
     /**
      * @var Qualite
      */
@@ -420,11 +421,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set composanteDoctorat.
      *
-     * @param Etablissement|null $composanteDoctorat
+     * @param ComposanteEnseignement|null $composanteDoctorat
      *
      * @return Inscription
      */
-    public function setComposanteDoctorat(Etablissement $composanteDoctorat = null)
+    public function setComposanteDoctorat(ComposanteEnseignement $composanteDoctorat = null)
     {
         $this->composanteDoctorat = $composanteDoctorat;
 
@@ -434,7 +435,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get composanteDoctorat.
      *
-     * @return Etablissement|null
+     * @return ComposanteEnseignement|null
      */
     public function getComposanteDoctorat()
     {

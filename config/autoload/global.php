@@ -5,11 +5,9 @@ namespace Application;
 use Application\Entity\Db\Source;
 use Application\Navigation\NavigationFactoryFactory;
 use Import\Filter\PrefixEtabColumnValueFilter;
-use Import\Filter\SetTypeStructureIdFilter;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 use Retraitement\Filter\Command\RetraitementShellCommandMines;
-use Structure\Entity\Db\TypeStructure;
 
 $config = [
     'api-tools-content-negotiation' => [
@@ -189,40 +187,6 @@ $config = [
  */
 const CONFIG_IMPORTS = [
     [
-        'name' => 'composante-enseignement-%s',
-        'order' => 10,
-        'source' => [
-            'name' => '%s',
-            'connection' => 'sygal-import-octopus-composante-ens',
-            'select' => '/structure-light?type=2',
-            'source_code_column' => 'SOURCE_CODE',
-            'code' => 'UCN::octopus',
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'page_size' => 0,
-            'columns' => [
-                'sigle',
-                'libelleLong',
-                'code',
-            ],
-            'column_name_filter' => [
-                'sigle' => 'SIGLE',
-                'libelleLong' => 'LIBELLE_LONG',
-                'code' => 'SOURCE_CODE',
-            ],
-            'extra' => [
-                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
-            ],
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'tmp_composante_ens',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'id_strategy' => null,
-            'id_sequence' => null,
-        ],
-    ],
-    [
         'name' => 'structure-%s',
         'order' => 10,
         'source' => [
@@ -343,8 +307,42 @@ const CONFIG_IMPORTS = [
         ],
     ],
     [
-        'name' => 'individu-%s',
+        'name' => 'composante-enseignement-%s',
         'order' => 50,
+        'source' => [
+            'name' => '%s',
+            'connection' => 'sygal-import-octopus-composante-ens',
+            'select' => '/structure-light?type=2',
+            'source_code_column' => 'SOURCE_CODE',
+            'code' => 'UCN::octopus',
+            'column_value_filter' => \Admission\Filter\PrefixEtabColumnValueFilter::class,
+            'page_size' => 0,
+            'columns' => [
+                'sigle',
+                'libelleLong',
+                'code',
+            ],
+            'column_name_filter' => [
+                'sigle' => 'SIGLE',
+                'libelleLong' => 'LIBELLE_LONG',
+                'code' => 'SOURCE_CODE',
+            ],
+            'extra' => [
+                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
+            ],
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'tmp_composante_ens',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'individu-%s',
+        'order' => 60,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -384,7 +382,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'doctorant-%s',
-        'order' => 60,
+        'order' => 70,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -414,7 +412,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'these-%s',
-        'order' => 70,
+        'order' => 80,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -463,7 +461,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'these-annee-univ-%s',
-        'order' => 80,
+        'order' => 90,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -493,7 +491,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'role-%s',
-        'order' => 90,
+        'order' => 100,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -523,7 +521,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'acteur-%s',
-        'order' => 100,
+        'order' => 110,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -561,7 +559,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'origine-financement-%s',
-        'order' => 110,
+        'order' => 120,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -592,7 +590,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'financement-%s',
-        'order' => 120,
+        'order' => 130,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -629,7 +627,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'titre-acces-%s',
-        'order' => 130,
+        'order' => 140,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -664,7 +662,7 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'variable-%s',
-        'order' => 140,
+        'order' => 150,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
@@ -727,28 +725,6 @@ const CONFIG_SYNCHROS = [
         ],
     ],
     [
-        'name' => 'composante-enseignement-%s',
-        'order' => 150,
-        'source' => [
-            'name' => 'SyGAL',
-            'code' => 'app',
-            'table' => 'SRC_COMPOSANTE_ENS',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-        ],
-        'destination' => [
-            'name' => 'Application',
-            'table' => 'COMPOSANTE_ENS',
-            'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
-            'id_strategy' => 'SEQUENCE',
-            'id_sequence' => null,
-        ],
-    ],
-    ////////////////////////////////////////////// ETABLISSEMENT //////////////////////////////////////////////
-    [
-        ////// ETABLISSEMENT : sans doublons non historisés.
         'name' => 'etablissement-%s',
         'order' => 22,
         'source' => [
@@ -815,11 +791,31 @@ const CONFIG_SYNCHROS = [
             'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
+    [
+        'name' => 'composante-enseignement-%s',
+        'order' => 50,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'SRC_COMPOSANTE_ENS',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'COMPOSANTE_ENS',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
+        ],
+    ],
     ////////////////////////////////////////////// INDIVIDU //////////////////////////////////////////////
     [
         ////// INDIVIDU : sans doublons non historisés.
         'name' => 'individu-%s',
-        'order' => 51,
+        'order' => 60,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -842,7 +838,7 @@ const CONFIG_SYNCHROS = [
     [
         ////// DOCTORANT : sans doublons non historisés.
         'name' => 'doctorant-%s',
-        'order' => 61,
+        'order' => 70,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -864,7 +860,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// THESE //////////////////////////////////////////////
     [
         'name' => 'these-%s',
-        'order' => 70,
+        'order' => 80,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -884,7 +880,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// THESE-ANNEE-UNIV //////////////////////////////////////////////
     [
         'name' => 'these-annee-univ-%s',
-        'order' => 80,
+        'order' => 90,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -904,7 +900,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// ROLE //////////////////////////////////////////////
     [
         'name' => 'role-%s',
-        'order' => 90,
+        'order' => 100,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -924,7 +920,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// ACTEUR //////////////////////////////////////////////
     [
         'name' => 'acteur-%s',
-        'order' => 100,
+        'order' => 110,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -944,7 +940,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// ORIGINE-FINANCEMENT //////////////////////////////////////////////
     [
         'name' => 'origine-financement-%s',
-        'order' => 110,
+        'order' => 120,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -964,7 +960,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// FINANCEMENT //////////////////////////////////////////////
     [
         'name' => 'financement-%s',
-        'order' => 120,
+        'order' => 130,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -984,7 +980,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// TITRE-ACCES //////////////////////////////////////////////
     [
         'name' => 'titre-acces-%s',
-        'order' => 130,
+        'order' => 140,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -1004,7 +1000,7 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// VARIABLE //////////////////////////////////////////////
     [
         'name' => 'variable-%s',
-        'order' => 140,
+        'order' => 150,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -1037,8 +1033,8 @@ function generateConfigImportsForEtabs(array $etabs): array
             $array['source']['name'] = generateNameForEtab($array['source']['name'], $etab);
             $array['source']['connection'] = generateNameForEtab($array['source']['connection'], $etab);
             $array['source']['extra'] = [
-                SetTypeStructureIdFilter::PARAM_CODE_TYPE_STRUCTURE => TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT,
                 PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT => $etab,
+                \Admission\Filter\PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT => $etab
             ];
             $synchros[] = $array;
         }

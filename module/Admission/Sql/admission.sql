@@ -1,11 +1,134 @@
 -- Suppression des tables associés à Admission
 DROP TABLE IF EXISTS admission_etat CASCADE;
 DROP TABLE IF EXISTS admission_validation;
-drop table if exists admission_avis;
+DROP TABLE IF EXISTS admission_avis;
 DROP TABLE IF EXISTS admission_type_validation;
 DROP TABLE IF EXISTS admission_verification;
 DROP TABLE IF EXISTS admission_etudiant;
 DROP TABLE IF EXISTS admission_inscription;
+
+--------Import des composantes d'enseignement-----------------------
+--Ajout de la table Composante d'enseignement
+INSERT INTO source(id, code, libelle, etablissement_id, importable)
+VALUES (6, 'UCN::octopus', 'Octopus UCN', 2, true)
+ON CONFLICT DO NOTHING;
+INSERT INTO type_structure(id, code, libelle)
+VALUES (4, 'composante-enseignement', 'Composante d''enseignement')
+ON CONFLICT DO NOTHING;;
+
+--Suppression des données existantes concernant l'import des composantes d'enseignement
+drop view if exists v_diff_structure;
+drop view if exists src_structure;
+drop view if exists v_diff_composante_ens;
+drop view if exists src_composante_ens;
+drop table if exists tmp_composante_ens;
+drop table if exists composante_ens;
+--Création de la table TEMP de Composante d'enseignement
+create table public.tmp_composante_ens
+(
+    id                    bigserial,
+    sigle                 varchar(64),
+    libelle_long          varchar(200),
+    insert_date           timestamp(0) default ('now'::text)::timestamp without time zone,
+    source_id             bigint                                                             not null,
+    source_code           varchar(64)                                                        not null,
+    source_insert_date    timestamp    default ('now'::text)::timestamp without time zone,
+    histo_creation        timestamp(0) default ('now'::text)::timestamp(0) without time zone not null,
+    histo_modification    timestamp(0),
+    histo_destruction     timestamp(0),
+    histo_createur_id     bigint                                                             not null,
+    histo_modificateur_id bigint,
+    histo_destructeur_id  bigint
+);
+
+create index tmp_composante_ens_source_code_index
+    on public.tmp_composante_ens (source_code);
+
+create index tmp_composante_ens_source_id_index
+    on public.tmp_composante_ens (source_id);
+
+create unique index tmp_composante_ens_unique_index
+    on public.tmp_composante_ens (source_id, source_code);
+
+--Création de la table Composante d'enseignement
+create table public.composante_ens
+(
+    id                    bigserial                                                    not null
+        primary key,
+    structure_id          bigint references structure (id),
+    histo_creation        timestamp default ('now'::text)::timestamp without time zone not null,
+    histo_createur_id     bigint                                                       not null
+        constraint composante_ens_hcfk
+            references public.utilisateur
+            on delete cascade,
+    histo_modification    timestamp,
+    histo_modificateur_id bigint
+        constraint composante_ens_hmfk
+            references public.utilisateur
+            on delete cascade,
+    histo_destruction     timestamp,
+    histo_destructeur_id  bigint
+        constraint composante_ens_hdfk
+            references public.utilisateur
+            on delete cascade,
+    source_id             bigint                                                       not null
+        constraint composante_ens_source_fk
+            references public.source
+            on delete cascade,
+    source_code           varchar(64)                                                  not null
+);
+
+create index composante_ens_hc_idx
+    on public.composante_ens (histo_createur_id);
+
+create index composante_ens_hd_idx
+    on public.composante_ens (histo_destructeur_id);
+
+create index composante_ens_hm_idx
+    on public.composante_ens (histo_modificateur_id);
+
+create unique index composante_ens_source_code_un
+    on public.composante_ens (source_code);
+
+create index composante_ens_source_idx
+    on public.composante_ens (source_id);
+
+--Création de la vue src_structure avec les infos de tmp_composante_ens
+create or replace view src_structure(id, source_code, code, source_id, type_structure_id, sigle, libelle) as
+SELECT NULL::bigint                                                                               AS id,
+       tmp.source_code,
+       ltrim(substr(tmp.source_code::text, strpos(tmp.source_code::text, '::'::text)), ':'::text) AS code,
+       src.id                                                                                     AS source_id,
+       ts.id                                                                                      AS type_structure_id,
+       tmp.sigle,
+       tmp.libelle
+FROM tmp_structure tmp
+         JOIN type_structure ts ON ts.code::text = tmp.type_structure_id::text
+         JOIN source src ON src.id = tmp.source_id
+union
+select NULL::bigint                                                                               AS id,
+       tmp.source_code,
+       ltrim(substr(tmp.source_code::text, strpos(tmp.source_code::text, '::'::text)), ':'::text) AS code,
+       src.id                                                                                     AS source_id,
+       ts.id                                                                                      AS type_structure_id,
+       tmp.sigle,
+       tmp.libelle_long                                                                           as libelle
+FROM tmp_composante_ens tmp
+         JOIN type_structure ts ON ts.code = 'composante-enseignement'
+         JOIN source src ON src.id = tmp.source_id
+;
+
+--Création de la vue src_composante_ens avec les infos de tmp_composante_ens
+create or replace view src_composante_ens(id, source_code, source_id) as
+select NULL::bigint AS id,
+       tmp.source_code,
+       src.id       AS source_id,
+       s.id         as structure_id
+FROM tmp_composante_ens tmp
+         JOIN structure s ON s.source_code = tmp.source_code
+         JOIN source src ON src.id = tmp.source_id
+;
+---------------------------------------------
 DROP TABLE IF EXISTS admission_financement;
 DROP TABLE IF EXISTS admission_document;
 DROP TABLE IF EXISTS admission_convention_formation_doctorale CASCADE;
@@ -96,8 +219,8 @@ create table IF NOT EXISTS admission_inscription
     admission_id                              bigint REFERENCES admission_admission (id),
     discipline_doctorat                       varchar(60),
     specialite_doctorat                       varchar(255),
-    composante_doctorat_id                    bigint REFERENCES etablissement (id),
-    ecole_doctorale_id                        bigint REFERENCES composante_ens (id),
+    composante_doctorat_id                    bigint REFERENCES composante_ens (id),
+    ecole_doctorale_id                        bigint REFERENCES ecole_doct (id),
     unite_recherche_id                        bigint REFERENCES unite_rech (id),
     etablissement_inscription_id              bigint REFERENCES etablissement (id),
     directeur_these_id                        bigint REFERENCES individu (id),
@@ -1605,117 +1728,3 @@ VALUES ('ADMISSION_DERNIERE_VALIDATION_AJOUTEE',
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p>Le <strong>dossier d\'admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>
 <p>Le circuit de signature de votre dossier est maintenant terminé. </p>', null, 'Admission\Provider\Template');
-
---Ajout de la table Composante d'enseignement
-INSERT INTO source(id, code, libelle, etablissement_id, importable)
-VALUES (6, 'UCN::octopus', 'Octopus UCN', 2, true);
-INSERT INTO type_structure(id, code, libelle)
-VALUES (4, 'composante-enseignement', 'Composante d''enseignement');
-
-drop table if exists tmp_composante_ens;
---Création de la table TEMP de Composante d'enseignement
-create table public.tmp_composante_ens
-(
-    id                    bigserial,
-    sigle                 varchar(64),
-    libelle_long          varchar(200),
-    insert_date           timestamp(0) default ('now'::text)::timestamp without time zone,
-    source_id             bigint                                                             not null,
-    source_code           varchar(64)                                                        not null,
-    source_insert_date    timestamp    default ('now'::text)::timestamp without time zone,
-    histo_creation        timestamp(0) default ('now'::text)::timestamp(0) without time zone not null,
-    histo_modification    timestamp(0),
-    histo_destruction     timestamp(0),
-    histo_createur_id     bigint                                                             not null,
-    histo_modificateur_id bigint,
-    histo_destructeur_id  bigint
-);
-
-create index tmp_composante_ens_source_code_index
-    on public.tmp_composante_ens (source_code);
-
-create index tmp_composante_ens_source_id_index
-    on public.tmp_composante_ens (source_id);
-
-create unique index tmp_composante_ens_unique_index
-    on public.tmp_composante_ens (source_id, source_code);
-
-drop table if exists composante_ens;
-create table public.composante_ens
-(
-    id                    bigserial                                                    not null
-        primary key,
-    structure_id          bigint references structure (id),
-    histo_creation        timestamp default ('now'::text)::timestamp without time zone not null,
-    histo_createur_id     bigint                                                       not null
-        constraint composante_ens_hcfk
-            references public.utilisateur
-            on delete cascade,
-    histo_modification    timestamp,
-    histo_modificateur_id bigint
-        constraint composante_ens_hmfk
-            references public.utilisateur
-            on delete cascade,
-    histo_destruction     timestamp,
-    histo_destructeur_id  bigint
-        constraint composante_ens_hdfk
-            references public.utilisateur
-            on delete cascade,
-    source_id             bigint                                                       not null
-        constraint composante_ens_source_fk
-            references public.source
-            on delete cascade,
-    source_code           varchar(64)                                                  not null
-);
-
-create index composante_ens_hc_idx
-    on public.composante_ens (histo_createur_id);
-
-create index composante_ens_hd_idx
-    on public.composante_ens (histo_destructeur_id);
-
-create index composante_ens_hm_idx
-    on public.composante_ens (histo_modificateur_id);
-
-create unique index composante_ens_source_code_un
-    on public.composante_ens (source_code);
-
-create index composante_ens_source_idx
-    on public.composante_ens (source_id);
-
-drop view v_diff_structure;
-drop view src_structure;
-create or replace view src_structure(id, source_code, code, source_id, type_structure_id, sigle, libelle) as
-SELECT NULL::bigint                                                                               AS id,
-       tmp.source_code,
-       ltrim(substr(tmp.source_code::text, strpos(tmp.source_code::text, '::'::text)), ':'::text) AS code,
-       src.id                                                                                     AS source_id,
-       ts.id                                                                                      AS type_structure_id,
-       tmp.sigle,
-       tmp.libelle
-FROM tmp_structure tmp
-         JOIN type_structure ts ON ts.code::text = tmp.type_structure_id::text
-         JOIN source src ON src.id = tmp.source_id
-union
-select NULL::bigint                                                                               AS id,
-       tmp.source_code,
-       ltrim(substr(tmp.source_code::text, strpos(tmp.source_code::text, '::'::text)), ':'::text) AS code,
-       src.id                                                                                     AS source_id,
-       ts.id                                                                                      AS type_structure_id,
-       tmp.sigle,
-       tmp.libelle_long                                                                           as libelle
-FROM tmp_composante_ens tmp
-         JOIN type_structure ts ON ts.code = 'composante-enseignement'
-         JOIN source src ON src.id = tmp.source_id
-;
-
-drop view src_composante_ens;
-create or replace view src_composante_ens(id, source_code, source_id) as
-select NULL::bigint AS id,
-       tmp.source_code,
-       src.id       AS source_id,
-       s.id         as structure_id
-FROM tmp_composante_ens tmp
-         JOIN structure s ON s.source_code = tmp.source_code
-         JOIN source src ON src.id = tmp.source_id
-;

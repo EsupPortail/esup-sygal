@@ -153,6 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
             $('input:radio[name="inscription[coTutelle]"]:not(:checked)').attr('disabled', true);
             $('input:radio[name="inscription[coDirection]"]:not(:checked)').attr('disabled', true);
             $('input:radio[name="inscription[coEncadrement]"]:not(:checked)').attr('disabled', true);
+            $('select[name="inscription[composanteDoctorat]"]').attr('disabled', true);
             $('select[name="inscription[ecoleDoctorale]"]').attr('disabled', true);
             $('select[name="inscription[specialiteDoctorat]"]').attr('disabled', true);
             $('select[name="inscription[uniteRecherche]"]').attr('disabled', true);
@@ -161,7 +162,6 @@ document.addEventListener("DOMContentLoaded", function() {
             $('select[name="inscription[etablissementRattachementCoDirecteur]"]').attr('disabled', true);
             $('select[name="inscription[fonctionDirecteurThese]"]').attr('disabled', true);
             $('select[name="inscription[fonctionCoDirecteurThese]"]').attr('disabled', true);
-
         }
 
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');

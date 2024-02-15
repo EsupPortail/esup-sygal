@@ -41,7 +41,7 @@
                 <join-column name="SPECIALITE_DOCTORAT" referenced-column-name="code"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="composanteDoctorat" target-entity="Structure\Entity\Db\Etablissement">
+        <many-to-one field="composanteDoctorat" target-entity="Structure\Entity\Db\ComposanteEnseignement">
             <join-columns>
                 <join-column name="COMPOSANTE_DOCTORAT_ID" referenced-column-name="ID"/>
             </join-columns>

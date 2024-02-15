@@ -1,42 +1,39 @@
 <?php
 
-namespace Import\Filter;
+namespace Admission\Filter;
 
 use Application\Service\Source\SourceServiceAwareTrait;
 use InvalidArgumentException;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenDbImport\Filter\ColumnValue\AbstractColumnValueFilter;
 
 /**
- * Filtre permettant de retourner l'ID du type de structure voulue,
- * ex : '4' pour 'composante_rattachement'.
+ * Filtre permettant de préfixer une valeur de colonne/attribut par le code établissement,
+ * ex : 'UMR6211' devient 'UCN::UMR6211'.
  */
-class SetTypeStructureIdFilter extends AbstractColumnValueFilter
+class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
 {
-    const PARAM_CODE_TYPE_STRUCTURE = 'type-structure';
+    const PARAM_CODE_ETABLISSEMENT = 'code_etablissement_admission';
 
     use SourceServiceAwareTrait;
-    use StructureServiceAwareTrait;
 
     /**
      * @var string[]
      */
     protected $columnsToTransform = [
-        'typeId',
+        'code'
     ];
 
     /**
      * @var string
      */
-    protected $codeTypeStructure;
-
+    protected $codeEtablissement;
 
     /**
      * @inheritDoc
      */
     public function __toString(): string
     {
-        return "Retourne l'ID du type de structure voulue : " . PHP_EOL .
+        return "Préfixage par le code établissement des colonnes/attributs suivants : " . PHP_EOL .
             implode(', ', $this->columnsToTransform);
     }
 
@@ -45,11 +42,11 @@ class SetTypeStructureIdFilter extends AbstractColumnValueFilter
      */
     public function setParams(array $params)
     {
-        if (!isset($params[$key = self::PARAM_CODE_TYPE_STRUCTURE])) {
+        if (!isset($params[$key = self::PARAM_CODE_ETABLISSEMENT])) {
             throw new InvalidArgumentException("La clé '$key' doit exister dans les paramètres transmis");
         }
 
-        $this->codeTypeStructure = $params[$key];
+        $this->codeEtablissement = $params[$key];
 
         parent::setParams($params);
     }
@@ -64,8 +61,7 @@ class SetTypeStructureIdFilter extends AbstractColumnValueFilter
         }
 
         if (in_array($name, $this->columnsToTransform)) {
-            $value = sprintf("(select id from type_structure where code like %s)",$this->codeTypeStructure);
-            $value =  $this->structureService->getTypeStructureByCode($this->codeTypeStructure)->getCode();
+            $value = $this->codeEtablissement . '::' . $value;
         }
 
         return $value;

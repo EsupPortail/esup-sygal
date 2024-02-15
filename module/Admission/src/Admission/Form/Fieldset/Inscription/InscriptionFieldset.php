@@ -20,16 +20,20 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
 {
     //Informations Inscription
     private ?string $urlIndividuThese = null;
-    private ?string $urlEtablissement = null;
+
     /** @var array */
     private $composantesEnseignement = null;
+
     /** @var array */
     private $ecolesDoctorales = null;
+
     /** @var array */
     private $unitesRecherche = null;
+
     /** @var array */
     private $etablissementInscription = null;
     private $specialites = null;
+
     /** @var array $qualites  */
     private $qualites = null;
 
