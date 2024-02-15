@@ -4,10 +4,15 @@ namespace Admission\Service\Exporter\ConventionFormationDoctorale;
 
 use Admission\Entity\ConventionFormationDoctoraleDataTemplate;
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\ConventionFormationDoctorale;
+use Admission\Entity\Db\Inscription;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
+use Application\Entity\Db\Role;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Admission\Provider\Template\PdfTemplates;
 use Admission\Service\Url\UrlServiceAwareTrait;
+use Individu\Entity\Db\IndividuRole;
 use Soutenance\Service\Notification\StringElement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
@@ -24,6 +29,7 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
     use StructureServiceAwareTrait;
     use UrlServiceAwareTrait;
     use AdmissionServiceAwareTrait;
+    use RoleServiceAwareTrait;
     private $vars;
 
     public function setVars(array $vars)
@@ -43,13 +49,31 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
+        /** @var ConventionFormationDoctorale $conventionFormationDoctorale */
+        $conventionFormationDoctorale = $this->vars['conventionFormationDoctorale'];
+        $conventionFormationDoctoraleDataTemplate = new ConventionFormationDoctoraleDataTemplate();
 
         /** @var Admission $admission */
         $admission = $this->vars['admission'];
-        $individu = $admission->getIndividu();
-
-        $conventionFormationDoctoraleDataTemplate = new ConventionFormationDoctoraleDataTemplate();
         $conventionFormationDoctoraleDataTemplate->setAdmission($admission);
+
+        $operations = $this->vars['conventionFormationDoctoraleOperations'];
+        $conventionFormationDoctoraleDataTemplate->setOperations($operations);
+
+        $individu = $admission->getIndividu();
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first();
+        $uniteRechercheDirecteur = $inscription?->getUniteRecherche();
+        $uniteRechercheCoDirecteur = $inscription?->getUniteRechercheCoDirecteur();
+
+        $individuResponsablesUniteRechercheDirecteur = $uniteRechercheDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheDirecteur->getStructure()) : null;
+        if(is_array($individuResponsablesUniteRechercheDirecteur)){
+            $conventionFormationDoctoraleDataTemplate->setIndividuResponsablesUniteRechercheDirecteur($individuResponsablesUniteRechercheDirecteur);
+        }
+        $individuResponsablesUniteRechercheCoDirecteur = $uniteRechercheCoDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheCoDirecteur->getStructure()) : null;
+        if(is_array($individuResponsablesUniteRechercheCoDirecteur)){
+            $conventionFormationDoctoraleDataTemplate->setIndividuResponsablesUniteRechercheCoDirecteur($individuResponsablesUniteRechercheCoDirecteur);
+        }
 
         $vars = [
             'admission' => $admission,
@@ -57,7 +81,8 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
             'admissionInscription' => $admission->getInscription()->first(),
             'admissionFinancement' => $admission->getFinancement()->first(),
             'individu' => $individu,
-            'admissionConventionFormationDoctorale' => $conventionFormationDoctoraleDataTemplate
+            'conventionFormationDoctorale' => $conventionFormationDoctorale,
+            'admissionConventionFormationDoctoraleData' => $conventionFormationDoctoraleDataTemplate
         ];
 
         $comue = $this->etablissementService->fetchEtablissementComue();

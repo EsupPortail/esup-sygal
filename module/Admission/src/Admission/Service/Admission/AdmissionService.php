@@ -13,6 +13,7 @@ use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\AdmissionRepository;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
+use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
 use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
@@ -35,6 +36,7 @@ class AdmissionService extends BaseService
     use DocumentServiceAwareTrait;
     use AdmissionAvisServiceAwareTrait;
     use VariableServiceAwareTrait;
+    use ConventionFormationDoctoraleServiceAwareTrait;
 
     /**
      * @return AdmissionRepository
@@ -134,6 +136,11 @@ class AdmissionService extends BaseService
                 $this->admissionFinancementService->delete($financement);
             }
 
+            $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
+            if($conventionFormationDoctorale){
+                $this->conventionFormationDoctoraleService->delete($conventionFormationDoctorale);
+            }
+
             $this->documentService->deleteAllDocumentsForAdmission($admission);
             $this->admissionValidationService->deleteValidationForAdmission($admission);
             $this->admissionAvisService->deleteAllAvisForAdmission($admission);
@@ -211,19 +218,20 @@ class AdmissionService extends BaseService
     public function generateLibelleSignaturePresidenceForAdmission(Admission $admission): string
     {
         $etabInscription = $admission->getInscription()->first()->getEtablissementInscription();
-        $ETB_LIB_NOM_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $etabInscription);
-        $ETB_LIB_TIT_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $etabInscription);
-        $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $etabInscription);
-        $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $etabInscription);
+        $libelle = "";
+        if($etabInscription) {
+            $ETB_LIB_NOM_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $etabInscription);
+            $ETB_LIB_TIT_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $etabInscription);
+            $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $etabInscription);
+            $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $etabInscription);
 
-        $libelle  = "";
-        $libelle .= $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
-        $libelle .= ", ";
-        $libelle .= $ETB_LIB_TIT_RESP ? $ETB_LIB_TIT_RESP->getValeur() : "(Variable ETB_LIB_TIT_RESP introuvable)";
-        $libelle .= " de ";
-        $libelle .= $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
-        $libelle .= $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
-
+            $libelle .= $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
+            $libelle .= ", ";
+            $libelle .= $ETB_LIB_TIT_RESP ? $ETB_LIB_TIT_RESP->getValeur() : "(Variable ETB_LIB_TIT_RESP introuvable)";
+            $libelle .= " de ";
+            $libelle .= $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
+            $libelle .= $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
+        }
         return $libelle;
     }
 }

@@ -5,9 +5,11 @@ namespace Application;
 use Application\Entity\Db\Source;
 use Application\Navigation\NavigationFactoryFactory;
 use Import\Filter\PrefixEtabColumnValueFilter;
+use Import\Filter\SetTypeStructureIdFilter;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 use Retraitement\Filter\Command\RetraitementShellCommandMines;
+use Structure\Entity\Db\TypeStructure;
 
 $config = [
     'api-tools-content-negotiation' => [
@@ -186,6 +188,40 @@ $config = [
  * Ce qui suit n'est que la config "commune".
  */
 const CONFIG_IMPORTS = [
+    [
+        'name' => 'composante-enseignement-%s',
+        'order' => 10,
+        'source' => [
+            'name' => '%s',
+            'connection' => 'sygal-import-octopus-composante-ens',
+            'select' => '/structure-light?type=2',
+            'source_code_column' => 'SOURCE_CODE',
+            'code' => 'UCN::octopus',
+            'column_value_filter' => PrefixEtabColumnValueFilter::class,
+            'page_size' => 0,
+            'columns' => [
+                'sigle',
+                'libelleLong',
+                'code',
+            ],
+            'column_name_filter' => [
+                'sigle' => 'SIGLE',
+                'libelleLong' => 'LIBELLE_LONG',
+                'code' => 'SOURCE_CODE',
+            ],
+            'extra' => [
+                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
+            ],
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'tmp_composante_ens',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
+        ],
+    ],
     [
         'name' => 'structure-%s',
         'order' => 10,
@@ -690,6 +726,26 @@ const CONFIG_SYNCHROS = [
             'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
+    [
+        'name' => 'composante-enseignement-%s',
+        'order' => 150,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'SRC_COMPOSANTE_ENS',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'COMPOSANTE_ENS',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
+        ],
+    ],
     ////////////////////////////////////////////// ETABLISSEMENT //////////////////////////////////////////////
     [
         ////// ETABLISSEMENT : sans doublons non historisés.
@@ -981,6 +1037,7 @@ function generateConfigImportsForEtabs(array $etabs): array
             $array['source']['name'] = generateNameForEtab($array['source']['name'], $etab);
             $array['source']['connection'] = generateNameForEtab($array['source']['connection'], $etab);
             $array['source']['extra'] = [
+                SetTypeStructureIdFilter::PARAM_CODE_TYPE_STRUCTURE => TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT,
                 PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT => $etab,
             ];
             $synchros[] = $array;
@@ -1019,6 +1076,7 @@ function generateNameForEtab(string $nameTemplate, string $codeEtablissement): s
 }
 
 /**
+ *
  * Génère la clause à utiliser dans un WHERE pour cibler un établissement précis.
  * @param string $codeEtablissement Code établissement maison unique, ex : 'UCN', 'URN', etc.
  * @return string Ex : "d.source_id = (... like 'UCN::%')"

@@ -3,6 +3,7 @@
 namespace Admission\Service\Exporter\ConventionFormationDoctorale;
 
 use Admission\Service\Admission\AdmissionService;
+use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Admission\Service\Url\UrlService;
 use Psr\Container\ContainerExceptionInterface;
@@ -33,6 +34,7 @@ class ConventionFormationDoctoraleExporterFactory {
         $structureService = $container->get(StructureService::class);
         $urlService = $container->get(UrlService::class);
         $admissionService = $container->get(AdmissionService::class);
+        $roleService = $container->get(RoleService::class);
         $renderer = $container->get('ViewRenderer');
 
         $exporter = new ConventionFormationDoctoraleExporter($renderer, 'A4');
@@ -42,6 +44,7 @@ class ConventionFormationDoctoraleExporterFactory {
         $exporter->setStructureService($structureService);
         $exporter->setUrlService($urlService);
         $exporter->setAdmissionService($admissionService);
+        $exporter->setRoleService($roleService);
         return $exporter;
     }
 }

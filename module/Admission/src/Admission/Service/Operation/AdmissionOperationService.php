@@ -121,4 +121,13 @@ class AdmissionOperationService
         }
         return $this->avisTypesCache[$code];
     }
+
+    public function hideOperations(array $operations, array $operationToHide){
+        foreach ($operations as $key => $value) {
+            if (in_array($key, $operationToHide)) {
+                unset($operations[$key]);
+            }
+        }
+        return $operations;
+    }
 }

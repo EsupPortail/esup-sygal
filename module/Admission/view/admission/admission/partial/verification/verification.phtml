@@ -1,11 +1,15 @@
 <?php
 /** @var bool $canVerifierAdmission
+ * @var Admission $admission
  * @var FormControlGroup $fcg
  */
 
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Verification;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use UnicaenApp\Form\View\Helper\FormControlGroup;
 
+$canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
 ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -30,7 +34,18 @@ use UnicaenApp\Form\View\Helper\FormControlGroup;
                 $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
                 $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
                 $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
-                echo !empty($commentaire) ? "<p class='gestionnaire'>".$commentaire."<p class='text-muted text-sm info-commentaire'>(Par ".$nom." ".$prenom.", le ".$date_verification.")</p>" : "<p class='pas_de_commentaire'>Pas de commentaire renseigné par votre gestionnaire</p>";
+                $isComplet = !empty($verification) ? $verification->getEstComplet() : null ;
+                if(!empty($commentaire)){
+                    echo "<p class='verification_gestionnaire commentaire_gestionnaire'>".$commentaire."<p class='text-muted text-sm info-commentaire'>(Par ".$nom." ".$prenom.", le ".$date_verification.")</p>";
+                }else{
+                    if($isComplet === null){
+                        echo "<p class='verification_gestionnaire aucune_action_effectuee_commentaire'>Aucune action n'a encore été effectuée sur cette étape par la/le gestionnaire de ce dossier d'admission</p>";
+                    }elseif(!$isComplet && empty($commentaire)){
+                        echo "<p class='verification_gestionnaire pas_de_commentaire_ajoute'>Cette étape est incomplète mais aucun commentaire n'a encore été ajouté par la/le gestionnaire de ce dossier d'admission</p>";
+                    }else{
+                        echo "<p class='verification_gestionnaire partie_complete'>Cette étape est notée comme complète par la/le gestionnaire de ce dossier d'admission</p>";
+                    }
+                }
                 ?>
             </div>
         </div>

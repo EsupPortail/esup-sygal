@@ -11,13 +11,11 @@ use Application\View\Renderer\PhpRenderer;
  * @var FinancementFieldset    $fieldset
  * @var AdmissionForm $form
  * @var Admission $admission
- * @var string              $error
  *
  */
 $form->prepare();
 $fcg = $this->formControlGroup();
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
-$canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
 $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
@@ -35,32 +33,59 @@ if(!empty($admission) && !$canModifierAdmission) {
         <h2 class="titre_sous_partie">Financement<label class="titre_sous_partie_en">&nbsp; / Funding</label></h2>
     </div>
     <div class="row subfield">
-        <div class="col-lg-3 col-sm-12">
+        <div class="col-lg-4 col-sm-12">
             <div class="checkbox_admission">
                 <?php echo $this->formControlGroup($fieldset->get('contratDoctoral')) ?>
             </div>
         </div>
-        <div class="col-lg-9 col-sm-12">
+        <div class="col-lg-8 col-sm-12">
             <div id="additional_fields_contrat_doctoral">
                 <div class="row">
                     <div class="col-lg-12 col-sm-12">
                         <?php echo $this->formControlGroup($fieldset->get('financement')) ?>
+                    </div>
+                    <div class="col-lg-12 col-sm-12">
+                        <p class="informations">Merci de préciser le nom, l'acronyme, adresse, coordonnées de la structure publique ou privée signataire du contrat</p>
+                        <?php echo $this->formControlGroup($fieldset->get('detailContratDoctoral')) ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row subfield">
-        <div class="col-lg-12 col-sm-12">
-            <p class="informations">Merci de préciser le nom, l'acronyme, adresse, coordonnées de la structure publique ou privée signataire du contrat</p>
-            <?php echo $this->formControlGroup($fieldset->get('detailContratDoctoral')) ?>
+
+    </div>
+    <div class="row subfield">
+        <div class="col">
+            <div class="checkbox_admission">
+                <?php echo $fcg($fieldset->get('tempsTravail')) ?>
+            </div>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-3 col-sm-12">
+            <div class="checkbox_admission">
+                <?php echo $this->formControlGroup($fieldset->get('estSalarie')) ?>
+            </div>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+            <div id="additional_fields_infos_salaries">
+                <div class="row">
+                    <div class="col-lg-6 col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('statutProfessionnel')) ?>
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                        <?php echo $this->formControlGroup($fieldset->get('etablissementLaboratoireRecherche')) ?>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <?php
 if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
-        'canVerifierAdmission' => $canVerifierAdmission,
+        'admission' => $admission,
         'fcg' => $fcg,
         'fieldset' => $fieldset->get("verificationFinancement"),
         'element' => !empty($admission->getFinancement()->first()) ? $admission->getFinancement() : null,

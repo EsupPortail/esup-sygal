@@ -91,65 +91,201 @@ create table IF NOT EXISTS admission_etudiant
 
 create table IF NOT EXISTS admission_inscription
 (
-    id                           bigserial                                                    not null
+    id                                        bigserial                                                    not null
         primary key,
-    admission_id                 bigint REFERENCES admission_admission (id),
-    discipline_doctorat          varchar(60),
-    specialite_doctorat          varchar(255),
-    composante_doctorat_id       bigint REFERENCES etablissement (id),
-    ecole_doctorale_id           bigint REFERENCES ecole_doct (id),
-    unite_recherche_id           bigint REFERENCES unite_rech (id),
-    etablissement_inscription_id bigint REFERENCES etablissement (id),
-    directeur_these_id           bigint REFERENCES individu (id),
-    prenom_directeur_these       varchar(60),
-    nom_directeur_these          varchar(60),
-    mail_directeur_these         varchar(255),
-    codirecteur_these_id         bigint REFERENCES individu (id),
-    prenom_codirecteur_these     varchar(60),
-    nom_codirecteur_these        varchar(60),
-    mail_codirecteur_these       varchar(255),
-    titre_these                  varchar(60),
-    confidentialite              boolean,
-    date_confidentialite         timestamp,
-    co_tutelle                   boolean,
-    pays_co_tutelle_id           bigint REFERENCES pays (id),
-    co_encadrement               boolean,
-    co_direction                 boolean,
-    histo_createur_id            bigint                                                       not null REFERENCES utilisateur (id),
-    histo_creation               timestamp default ('now'::text)::timestamp without time zone not null,
-    histo_modificateur_id        bigint REFERENCES utilisateur (id),
-    histo_modification           timestamp,
-    histo_destructeur_id         bigint REFERENCES utilisateur (id),
-    histo_destruction            timestamp
+    admission_id                              bigint REFERENCES admission_admission (id),
+    discipline_doctorat                       varchar(60),
+    specialite_doctorat                       varchar(255),
+    composante_doctorat_id                    bigint REFERENCES etablissement (id),
+    ecole_doctorale_id                        bigint REFERENCES ecole_doct (id),
+    unite_recherche_id                        bigint REFERENCES unite_rech (id),
+    etablissement_inscription_id              bigint REFERENCES etablissement (id),
+    directeur_these_id                        bigint REFERENCES individu (id),
+    prenom_directeur_these                    varchar(60),
+    nom_directeur_these                       varchar(60),
+    mail_directeur_these                      varchar(255),
+    fonction_directeur_these_id               bigint REFERENCES soutenance_qualite (id),
+    codirecteur_these_id                      bigint REFERENCES individu (id),
+    prenom_codirecteur_these                  varchar(60),
+    nom_codirecteur_these                     varchar(60),
+    mail_codirecteur_these                    varchar(255),
+    fonction_codirecteur_these_id             bigint REFERENCES soutenance_qualite (id),
+    unite_recherche_codirecteur_id            bigint REFERENCES unite_rech (id),
+    etablissement_rattachement_codirecteur_id bigint REFERENCES etablissement (id),
+    titre_these                               varchar(60),
+    confidentialite                           boolean,
+    date_confidentialite                      timestamp,
+    co_tutelle                                boolean,
+    pays_co_tutelle_id                        bigint REFERENCES pays (id),
+    etablissement_co_tutelle_id               bigint REFERENCES etablissement (id),
+    co_encadrement                            boolean,
+    co_direction                              boolean,
+    histo_createur_id                         bigint                                                       not null REFERENCES utilisateur (id),
+    histo_creation                            timestamp default ('now'::text)::timestamp without time zone not null,
+    histo_modificateur_id                     bigint REFERENCES utilisateur (id),
+    histo_modification                        timestamp,
+    histo_destructeur_id                      bigint REFERENCES utilisateur (id),
+    histo_destruction                         timestamp
 );
 
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 4;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 0;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 554;
+UPDATE public.soutenance_qualite
+SET Admission = 'N'
+WHERE id = 12;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 16;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 174;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 11;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 574;
+UPDATE public.soutenance_qualite
+SET Admission = 'N'
+WHERE id = 434;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 94;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 7;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 394;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 254;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 5;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 114;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 474;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 134;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 454;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 214;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 8;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 10;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 6;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 154;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 494;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 374;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 2;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 274;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 414;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 537;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 54;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 9;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 354;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 1;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 34;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 536;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 294;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 514;
+UPDATE public.soutenance_qualite
+SET admission = 'O'
+WHERE id = 74;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 194;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 234;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 314;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 334;
+UPDATE public.soutenance_qualite
+SET admission = 'N'
+WHERE id = 35;
 
 create table IF NOT EXISTS admission_financement
 (
-    id                      bigserial                                                    not null
+    id                                  bigserial                                                    not null
         primary key,
-    admission_id            bigint REFERENCES admission_admission (id),
-    contrat_doctoral        boolean,
-    financement_id          bigint REFERENCES origine_financement (id),
-    employeur_contrat       varchar(60),
-    detail_contrat_doctoral varchar(1024),
-    histo_createur_id       bigint                                                       not null REFERENCES utilisateur (id),
-    histo_creation          timestamp default ('now'::text)::timestamp without time zone not null,
-    histo_modificateur_id   bigint REFERENCES utilisateur (id),
-    histo_modification      timestamp,
-    histo_destructeur_id    bigint REFERENCES utilisateur (id),
-    histo_destruction       timestamp
+    admission_id                        bigint REFERENCES admission_admission (id),
+    contrat_doctoral                    boolean,
+    financement_id                      bigint REFERENCES origine_financement (id),
+    employeur_contrat                   varchar(60),
+    detail_contrat_doctoral             varchar(1024),
+    temps_travail                       integer,
+    est_salarie                         boolean,
+    etablissement_laboratoire_recherche varchar(100),
+    statut_professionnel                varchar(200),
+    histo_createur_id                   bigint                                                       not null REFERENCES utilisateur (id),
+    histo_creation                      timestamp default ('now'::text)::timestamp without time zone not null,
+    histo_modificateur_id               bigint REFERENCES utilisateur (id),
+    histo_modification                  timestamp,
+    histo_destructeur_id                bigint REFERENCES utilisateur (id),
+    histo_destruction                   timestamp
 );
 
 --------------------------- Validations du dossier d'admission ---------------------------
-
-
 create table IF NOT EXISTS admission_type_validation
 (
     id      bigserial   not null
         primary key,
-    code    varchar(50) not null,
-    libelle varchar(100)
+    code    varchar(60) not null,
+    libelle varchar(150)
 );
 
 INSERT INTO admission_type_validation (code, libelle)
@@ -160,13 +296,17 @@ VALUES ('ATTESTATION_HONNEUR', 'Attestation sur l''honneur de la part de l''étu
 INSERT INTO admission_type_validation (code, libelle)
 VALUES ('VALIDATION_GESTIONNAIRE', 'Validation effectuée par les gestionnaires');
 INSERT INTO admission_type_validation (code, libelle)
-VALUES ('VALIDATION_DIRECTION_THESE', 'Validation par la direction de thèse');
+VALUES ('VALIDATION_CONVENTION_FORMATION_DOCT_DIR_THESE',
+        'Validation de la bonne lecture de la convention de formation doctorale par la direction de thèse');
 INSERT INTO admission_type_validation (code, libelle)
-VALUES ('VALIDATION_CO_DIRECTION_THESE', 'Validation par la codirection de thèse');
+VALUES ('VALIDATION_CONVENTION_FORMATION_DOCT_CODIR_THESE',
+        'Validation de la bonne lecture de la convention de formation doctorale par la co-direction de thèse');
 INSERT INTO admission_type_validation (code, libelle)
-VALUES ('VALIDATION_UR', 'Validation par l''unité de recherche');
+VALUES ('VALIDATION_CONVENTION_FORMATION_DOCT_DIR_UR',
+        'Validation de la bonne lecture de la convention de formation doctorale par la direction de l''unité de recherche');
 INSERT INTO admission_type_validation (code, libelle)
-VALUES ('VALIDATION_ED', 'Validation par l''école doctorale');
+VALUES ('VALIDATION_CONVENTION_FORMATION_DOCT_DIR_ED',
+        'Validation de la bonne lecture de la convention de formation doctorale par la direction de l''école doctorale');
 INSERT INTO admission_type_validation (code, libelle)
 VALUES ('SIGNATURE_PRESIDENT', 'Signature de la présidence de l''établissement d''inscription');
 
@@ -186,7 +326,6 @@ create table IF NOT EXISTS admission_validation
 );
 
 --------------------------- Avis du dossier d'admission ---------------------------
-
 
 create table admission_avis
 (
@@ -437,7 +576,7 @@ ON CONFLICT DO NOTHING;
 --------------------------- Avis Présidence de l'établissement d'inscription ---------------------------
 
 insert into unicaen_avis_type (code, libelle, description, ordre)
-values ('AVIS_ADMISSION_PRESIDENCE', 'Avis de la présidence de l''établissement d''inscription',
+values ('AVIS_ADMISSION_PRESIDENCE', 'Signature du dossier par la direction de l''établissement',
         'Point de vue de la présidence de l''établissement d''inscription',
         30)
 ON CONFLICT DO NOTHING;
@@ -563,6 +702,36 @@ VALUES (207, 'ADMISSION_DIPLOME_BAC', 'Diplôme de Bac + 5 permettant l''accès 
        (218, 'ADMISSION_DEMANDE_COENCADREMENT', 'Formulaire de demande de co-encadrement')
 ON CONFLICT DO NOTHING;
 
+-- GESTION DES RôLES
+--Suppression des privilèges existants aux profils, rôles
+DELETE
+from profil_privilege
+where privilege_id in (select id from privilege where code LIKE 'admission-%');
+DELETE
+from role_privilege
+where privilege_id in (select id from privilege where code LIKE 'admission-%');
+DELETE
+from privilege
+where code LIKE 'admission-%';
+DELETE
+from role
+where code LIKE 'ADMISSION_%';
+
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id,
+                  histo_modificateur_id)
+values (4000, 'ADMISSION_CANDIDAT', 'Candidat', 'ADMISSION_CANDIDAT', 1, 'Candidat', false, 1, 1)
+;
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id,
+                  histo_modificateur_id)
+values (4001, 'ADMISSION_DIRECTEUR_THESE', 'Potentiel directeur de thèse', 'ADMISSION_DIRECTEUR_THESE', 1,
+        'Potentiel directeur de thèse', false, 1, 1)
+;
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id,
+                  histo_modificateur_id)
+values (4002, 'ADMISSION_CODIRECTEUR_THESE', 'Potentiel co-directeur de thèse', 'ADMISSION_CODIRECTEUR_THESE', 1,
+        'Potentiel co-directeur de thèse', false, 1, 1)
+;
+
 -- GESTION DES PRIVILÈGES
 --
 -- Nouvelle catégorie de privilèges : Admission.
@@ -578,12 +747,8 @@ WHERE NOT EXISTS (SELECT 1
 --
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 with d(ordre, code, lib) as (select 1,
-                                    'admission-lister-tous-dossiers-admission',
-                                    'Lister les dossiers d''admission en cours'
-                             union
-                             select 1,
-                                    'admission-lister-son-dossier-admission',
-                                    'Lister son dossier d''admission en cours'
+                                    'admission-lister-mes-dossiers-admission',
+                                    'Lister mes dossiers d''admission en cours'
                              union
                              select 2, 'admission-afficher-tous-dossiers-admission', 'Consulter un dossier d''admission'
                              union
@@ -649,17 +814,9 @@ with d(ordre, code, lib) as (select 1,
                                     'admission-telecharger-son-document',
                                     'Télécharger un document dans son dossier d''admission'
                              union
-                             select 18,
-                                    'admission-notifier-gestionnaires',
-                                    'Notifier ses gestionnaires de la fin de saisie de son dossier d''admission'
-                             union
                              select 19,
                                     'admission-commentaires-ajoutes',
                                     'Notifier l''étudiant des commentaires ajoutés sur son dossier d''admission'
-                             union
-                             select 20,
-                                    'admission-notifier-dossier-complet',
-                                    'Notifier l''étudiant que son dossier d''admission est complet'
                              union
                              select 21,
                                     'admission-notifier-dossier-incomplet',
@@ -683,7 +840,17 @@ with d(ordre, code, lib) as (select 1,
                              union
                              select 24,
                                     'admission-convention-formation-generer',
-                                    'Générer la convention de formation doctorale du dossier d''admission')
+                                    'Générer la convention de formation doctorale du dossier d''admission'
+                             union
+                             select 25, 'admission-rechercher-dossiers-admission', 'Rechercher un dossier d''admission'
+                             union
+                             select 26,
+                                    'admission-afficher-son-dossier-admission-dans-liste',
+                                    'Afficher son dossier d''admission dans la liste des dossiers d''admission en cours'
+                             union
+                             select 27,
+                                    'admission-initialiser-son-dossier-admission',
+                                    'Initialiser son dossier d''admission')
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
          join CATEGORIE_PRIVILEGE cp on cp.CODE = 'admission'
@@ -695,9 +862,9 @@ WHERE NOT EXISTS (SELECT 1
 -- Accord de privilèges à des profils.
 --
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-admission'
+with data(categ, priv) as (select 'admission', 'admission-lister-mes-dossiers-admission'
                            union
-                           select 'admission', 'admission-lister-son-dossier-admission'
+                           select 'admission', 'admission-rechercher-dossiers-admission'
                            union
                            select 'admission', 'admission-afficher-tous-dossiers-admission'
                            union
@@ -721,8 +888,6 @@ with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-a
                            union
                            select 'admission', 'admission-devalider-sien'
                            union
-                           select 'admission', 'admission-verifier'
-                           union
                            select 'admission', 'admission-acceder-commentaires'
                            union
                            select 'admission', 'admission-televerser-tout-document'
@@ -737,11 +902,7 @@ with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-a
                            union
                            select 'admission', 'admission-telecharger-son-document'
                            union
-                           select 'admission', 'admission-notifier-gestionnaires'
-                           union
                            select 'admission', 'admission-commentaires-ajoutes'
-                           union
-                           select 'admission', 'admission-notifier-dossier-complet'
                            union
                            select 'admission', 'admission-notifier-dossier-incomplet'
                            union
@@ -763,7 +924,9 @@ with data(categ, priv) as (select 'admission', 'admission-lister-tous-dossiers-a
                            union
                            select 'admission', 'admission-convention-formation-visualiser'
                            union
-                           select 'admission', 'admission-convention-formation-generer')
+                           select 'admission', 'admission-convention-formation-generer'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission-dans-liste')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
@@ -773,14 +936,11 @@ from data
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
+-- ajout des privilèges communs au profil GEST_ED, RESP_UR, RESP_ED, D, K
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'admission', 'admission-lister-son-dossier-admission'
+with data(categ, priv) as (select 'admission', 'admission-rechercher-dossiers-admission'
                            union
                            select 'admission', 'admission-afficher-son-dossier-admission'
-                           union
-                           select 'admission', 'admission-afficher-tous-dossiers-admission'
-                           union
-                           select 'admission', 'admission-supprimer-son-dossier-admission'
                            union
                            select 'admission', 'admission-lister-mes-dossiers-admission'
                            union
@@ -788,24 +948,25 @@ with data(categ, priv) as (select 'admission', 'admission-lister-son-dossier-adm
                            union
                            select 'admission', 'admission-devalider-sien'
                            union
-                           select 'admission', 'admission-televerser-son-document'
-                           union
-                           select 'admission', 'admission-supprimer-son-document'
-                           union
-                           select 'admission', 'admission-telecharger-son-document'
-                           union
                            select 'admission', 'admission-ajouter-avis-sien'
                            union
                            select 'admission', 'admission-modifier-avis-sien'
                            union
                            select 'admission', 'admission-supprimer-avis-sien'
                            union
-                           select 'admission', 'admission-acceder-commentaires')
+                           select 'admission', 'admission-telecharger-son-document'
+                           union
+                           select 'admission', 'admission-acceder-commentaires'
+                           union
+                           select 'admission', 'admission-convention-formation-visualiser'
+                           union
+                           select 'admission', 'admission-convention-formation-generer'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission-dans-liste')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
                                            'GEST_ED',
-                                           'GEST_UR',
                                            'RESP_UR',
                                            'RESP_ED',
                                            'D',
@@ -815,6 +976,26 @@ from data
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
+-- ajout des privilèges au profil GEST_ED
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'admission', 'admission-commentaires-ajoutes'
+                           union
+                           select 'admission', 'admission-supprimer-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-notifier-dossier-incomplet'
+                           union
+                           select 'admission', 'admission-verifier'
+                           union
+                           select 'admission', 'admission-generer-recapitulatif')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+    'GEST_ED')
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+-- ajout des privilèges au profil D (Directeur de thèse)
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
 with data(categ, priv) as (select 'admission', 'admission-modifier-son-dossier-admission')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
@@ -824,44 +1005,15 @@ from data
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'admission', 'admission-commentaires-ajoutes'
-                           union
-                           select 'admission', 'admission-notifier-dossier-complet'
-                           union
-                           select 'admission', 'admission-notifier-dossier-incomplet'
-                           union
-                           select 'admission', 'admission-verifier'
-                           union
-                           select 'admission', 'admission-generer-recapitulatif'
-                           union
-                           select 'admission', 'admission-convention-formation-visualiser'
-                           union
-                           select 'admission', 'admission-convention-formation-generer')
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in (
-    'GEST_ED')
-         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
-         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
-
--- ajout des privilèges au rôle user
-
+-- ajout des privilèges communs au rôle ADMISSION_CANDIDAT, ADMISSION_DIRECTEUR_THESE et ADMISSION_CODIRECTEUR_THESE
 INSERT INTO ROLE_PRIVILEGE (PRIVILEGE_ID, ROLE_ID)
 with data(categ, priv) as (select 'admission', 'admission-afficher-son-dossier-admission'
                            union
-                           select 'admission', 'admission-supprimer-son-dossier-admission'
+                           select 'admission', 'admission-acceder-commentaires'
                            union
                            select 'admission', 'admission-valider-sien'
                            union
                            select 'admission', 'admission-devalider-sien'
-                           union
-                           select 'admission', 'admission-televerser-son-document'
-                           union
-                           select 'admission', 'admission-supprimer-son-document'
-                           union
-                           select 'admission', 'admission-telecharger-son-document'
                            union
                            select 'admission', 'admission-ajouter-avis-sien'
                            union
@@ -869,17 +1021,62 @@ with data(categ, priv) as (select 'admission', 'admission-afficher-son-dossier-a
                            union
                            select 'admission', 'admission-supprimer-avis-sien'
                            union
-                           select 'admission', 'admission-modifier-son-dossier-admission'
-                           union
-                           select 'admission', 'admission-notifier-gestionnaires'
-                           union
-                           select 'admission', 'admission-acceder-commentaires'
-                           union
-                           select 'admission', 'admission-convention-formation-modifier'
+                           select 'admission', 'admission-telecharger-son-document'
                            union
                            select 'admission', 'admission-convention-formation-visualiser'
                            union
                            select 'admission', 'admission-convention-formation-generer')
+select p.id as PRIVILEGE_ID, role.id as ROLE_ID
+from data
+         join ROLE on role.ROLE_ID in (
+                                       'Potentiel directeur de thèse',
+                                       'Potentiel co-directeur de thèse',
+                                       'Candidat'
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from ROLE_PRIVILEGE where PRIVILEGE_ID = p.id and ROLE_ID = role.id);
+
+-- ajout des privilèges communs au rôle ADMISSION_DIRECTEUR_THESE et ADMISSION_CODIRECTEUR_THESE
+INSERT INTO ROLE_PRIVILEGE (PRIVILEGE_ID, ROLE_ID)
+with data(categ, priv) as (select 'admission', 'admission-lister-mes-dossiers-admission'
+                           union
+                           select 'admission', 'admission-rechercher-dossiers-admission'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission-dans-liste')
+select p.id as PRIVILEGE_ID, role.id as ROLE_ID
+from data
+         join ROLE on role.ROLE_ID in (
+                                       'Potentiel directeur de thèse',
+                                       'Potentiel co-directeur de thèse'
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from ROLE_PRIVILEGE where PRIVILEGE_ID = p.id and ROLE_ID = role.id);
+
+-- ajout des privilèges communs au rôle ADMISSION_CANDIDAT et ADMISSION_DIRECTEUR_THESE
+INSERT INTO ROLE_PRIVILEGE (PRIVILEGE_ID, ROLE_ID)
+with data(categ, priv) as (select 'admission', 'admission-supprimer-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-televerser-son-document'
+                           union
+                           select 'admission', 'admission-supprimer-son-document'
+                           union
+                           select 'admission', 'admission-modifier-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-convention-formation-modifier')
+select p.id as PRIVILEGE_ID, role.id as ROLE_ID
+from data
+         join ROLE on role.ROLE_ID in ('Candidat',
+                                       'Potentiel directeur de thèse')
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from ROLE_PRIVILEGE where PRIVILEGE_ID = p.id and ROLE_ID = role.id);
+
+-- ajout des privilèges au rôle user
+
+INSERT INTO ROLE_PRIVILEGE (PRIVILEGE_ID, ROLE_ID)
+with data(categ, priv) as (select 'admission', 'admission-initialiser-son-dossier-admission')
 select p.id as PRIVILEGE_ID, role.id as ROLE_ID
 from data
          join ROLE on role.ROLE_ID in ('user')
@@ -894,7 +1091,6 @@ from PROFIL_TO_ROLE p2r
          join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
 where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;
-
 
 -------------------- Macros et Templates alimentant UnicaenRenderer ---------------------------
 
@@ -1029,6 +1225,9 @@ INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_na
 VALUES ('AdmissionInscription#MailDirecteurThese', '<p>Retourne le mail du directeur de thèse</p>',
         'admissionInscription', 'getEmailDirecteurThese');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionInscription#FonctionDirecteurThese', '<p>Retourne la fonction du directeur de thèse</p>',
+        'admissionInscription', 'getFonctionDirecteurLibelle');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionInscription#TitreThese', '<p>Retourne le titre provisoire de la thèse de l''étudiant</p>',
         'admissionInscription', 'getTitreThese');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
@@ -1044,6 +1243,17 @@ VALUES ('AdmissionInscription#CoDirectionDemandee',
         '<p>Retourne si une codirection est demandée pour la thèse de l''étudiant</p>',
         'admissionInscription', 'getCoDirectionDemandeeLibelle');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionInscription#UniteRechercheCoDirection',
+        '<p>Retourne l''unité de recherche du co-directeur de thèse pour le doctorat de l''étudiant</p>',
+        'admissionInscription', 'getUniteRechercheCoDirecteurLibelle');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionInscription#EtablissementRattachementCoDirection',
+        '<p>Retourne l''établissement d''inscription du co-directeur de thèse pour le doctorat de l''étudiant</p>',
+        'admissionInscription', 'getEtablissementRattachementCoDirecteurLibelle');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionInscription#FonctionCoDirecteurThese', '<p>Retourne la fonction du co-directeur de thèse</p>',
+        'admissionInscription', 'getFonctionCoDirecteurLibelle');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionInscription#CoEncadrementEnvisage',
         '<p>Retourne si un co-encadrement est envisagé pour la thèse de l''étudiant</p>', 'admissionInscription',
         'getCoEncadrementLibelle');
@@ -1056,21 +1266,77 @@ VALUES ('AdmissionFinancement#DetailContratDoctoral',
         '<p>Retourne si les détails du contrat doctoral pour la thèse de l''étudiant</p>', 'admissionFinancement',
         'getDetailContratDoctoral');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionFinancement#TempsTravail',
+        '<p>Retourne si les détails du temps de travail pour la thèse de l''étudiant</p>', 'admissionFinancement',
+        'getTempsTravailInformations');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionFinancement#EstSalarie',
+        '<p>Retourne si le doctorant sera salarié</p>', 'admissionFinancement',
+        'getEstSalarieInfos');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionFinancement#StatutProfessionnel',
+        '<p>Retourne si les détails du statut professionnel pour la thèse de l''étudiant</p>', 'admissionFinancement',
+        'getStatutProfessionnel');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionFinancement#EtablissementLaboratoireRecherche',
+        '<p>Retourne si l''établissement hébergeant le laboratoire de recherche</p>', 'admissionFinancement',
+        'getEtablissementLaboratoireRecherche');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionRecapitulatif#Operations',
         '<p>Retourne les opérations accordées au dossier d''admission de l''étudiant</p>',
         'admissionRecapitulatif', 'getOperationstoHtmlArray');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionConventionFormationDoctorale#InfosCoDirecteur',
         '<p>Retourne les informations concernant le co-directeur du dossier d''admission de l''étudiant</p>',
-        'admissionConventionFormationDoctorale', 'getCoDirectionInformationstoHtml');
+        'admissionConventionFormationDoctoraleData', 'getCoDirectionInformationstoHtml');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionConventionFormationDoctorale#InfosCoTutelle',
         '<p>Retourne les informations concernant la co-tutelle du dossier d''admission de l''étudiant</p>',
-        'admissionConventionFormationDoctorale', 'getCoTutelleInformationstoHtml');
+        'admissionConventionFormationDoctoraleData', 'getCoTutelleInformationstoHtml');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionConventionFormationDoctorale#InfosConventionCollaboration',
         '<p>Retourne les informations concernant la convention de collaboration du dossier d''admission de l''étudiant</p>',
-        'admissionConventionFormationDoctorale', 'getConventionCollaborationInformationstoHtml');
+        'admissionConventionFormationDoctoraleData', 'getConventionCollaborationInformationstoHtml');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#ResponsablesURDirecteurThese',
+        '<p>Retourne les responsables de l''UR du directeur de thèse du dossier d''admission de l''étudiant</p>',
+        'admissionConventionFormationDoctoraleData', 'getResponsablesURDirecteurtoHtml');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#ResponsablesURCoDirecteurThese',
+        '<p>Retourne les responsables de l''UR du co-directeur de thèse du dossier d''admission de l''étudiant</p>',
+        'admissionConventionFormationDoctoraleData', 'getResponsablesURCoDirecteurtoHtml');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#CalendrierPrevisionnel',
+        '<p>Retourne les informations concernant le calendrier prévisionnel de la convention de formation doctorale du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getCalendrierProjetRecherche');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#ModalitesEncadrement',
+        '<p>Retourne les informations concernant les modalités d''encadrement, de suivi de la formation et d''avancement des recherches de la convention de formation doctorale du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getModalitesEncadrSuiviAvancmtRech');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#ConditionsProjRech',
+        '<p>Retourne les informations concernant les conditions matérielles de réalisation du projet de recherche et conditions de sécurité spécifiques de la convention de formation doctorale du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getConditionsRealisationProjRech');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#ModalitesIntegrationUR',
+        '<p>Retourne les informations concernant les modalités d''intégration dans l''unité ou l’équipe de recherche de la convention de formation doctorale du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getModalitesIntegrationUr');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#PartenariatsProjThese',
+        '<p>Retourne les informations concernant les Partenariats impliqués par le projet de thèse de la convention de formation doctorale du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getPartenariatsProjThese');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#MotivationDemandeConfidentialite',
+        '<p>Retourne les informations concernant le calendrier prévisionnel de la convention de collaboration du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getMotivationDemandeConfidentialite');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#ProjetProDoctorant',
+        '<p>Retourne les informations concernant le projet professionnel du doctorant de la convention de collaboration du dossier d''admission de l''étudiant</p>',
+        'conventionFormationDoctorale', 'getProjetProDoctorant');
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#Operations',
+        '<p>Retourne les opérations liées  à la convention de formations doctorale accordées au dossier d''admission de l''étudiant</p>',
+        'admissionConventionFormationDoctoraleData', 'getOperationstoHtmlArray');
 
 -------------------- Templates alimentant UnicaenRenderer ---------------------------
 -- Suppression des données concernant les templates de Renderer
@@ -1078,9 +1344,9 @@ DELETE
 FROM unicaen_renderer_template
 WHERE code LIKE 'ADMISSION%';
 
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (58, 'ADMISSION_OPERATION_ATTENDUE',
+VALUES ('ADMISSION_OPERATION_ATTENDUE',
         '<p>Mail pour notifier les acteurs de la prochaine opération attendue du dossier d''admission</p>', 'mail',
         'Dossier d''admission de VAR[Individu#Denomination]', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL. </p>
@@ -1089,33 +1355,99 @@ VALUES (58, 'ADMISSION_OPERATION_ATTENDUE',
 <p>Merci de vous connecter sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</p>
 <p><strong>Note importante : une fois connecté, pensez à vérifier le rôle que vous endossez (en cliquant sur votre nom en haut à droite des pages de l\'application) et le cas échéant à sélectionner celui permettant de réaliser l\'opération attendue.</strong></p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (59, 'ADMISSION_VALIDATION_AJOUTEE',
+VALUES ('ADMISSION_VALIDATION_AJOUTEE',
         '<p>Mail pour notifier qu''une validation a été ajoutée au dossier d''admission</p>', 'mail',
         'Dossier d''admission de VAR[Individu#Denomination] ', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p>Le <strong>dossier d\'admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionValidation#Auteur], le VAR[AdmissionValidation#Date]</p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (57, 'ADMISSION_NOTIFICATION_GESTIONNAIRE',
+VALUES ('ADMISSION_NOTIFICATION_GESTIONNAIRE',
         '<p>Envoi d''un mail à l''initiative de l''étudiant, afin de notifier le(s) gestionnaire(s) que le dossier est prêt à être vérifié</p>',
         'mail', 'La saisie du dossier d''admission de VAR[Individu#Denomination] est terminée', e'<p>Bonjour,</p>
 <p>VAR[Individu#Denomination] a terminé la saisie de son dossier d\'admission.</p>
 <p>Merci de prendre connaissance des informations saisies en vous connectant sur la plateforme ESUP-SyGAL via le lien : VAR[Url#Admission].</p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (60, 'ADMISSION_VALIDATION_SUPPRIMEE',
+VALUES ('ADMISSION_VALIDATION_SUPPRIMEE',
         '<p>Mail pour notifier qu''une validation a été supprimée du dossier d''admission</p>', 'mail',
         'Dossier d''admission de VAR[Individu#Denomination] dévalidé', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p>La <strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d\'admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionValidation#Date] a été <strong>annulée </strong>VAR[AdmissionValidation#Destructeur]</p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (61, 'ADMISSION_RECAPITULATIF', null, 'pdf',
+VALUES ('ADMISSION_CONVENTION_FORMATION_DOCTORALE',
+        '<p>Convention de formation doctorale appartenant à un dossier d''admission</p>', 'pdf',
+        'Convention de formation doctorale de VAR[Individu#Denomination]', e'<h1 style="text-align: center;">Convention de formation doctorale</h1>
+<h1 style="text-align: center;">de VAR[Individu#Denomination]</h1>
+<p> </p>
+<p><strong>Entre</strong> VAR[AdmissionEtudiant#DenominationEtudiant]<br /><strong>né le</strong> VAR[AdmissionEtudiant#DateNaissance]<br /><strong>à</strong> VAR[AdmissionEtudiant#VilleNaissance], VAR[AdmissionEtudiant#PaysNaissance] (VAR[AdmissionEtudiant#Nationalite])<br /><strong>ayant pour adresse</strong> VAR[AdmissionEtudiant#Adresse] VAR[AdmissionEtudiant#CodePostal], VAR[AdmissionEtudiant#VilleEtudiant]<br /><strong>Mail</strong> : VAR[AdmissionEtudiant#MailEtudiant]</p>
+<p><strong>ci-après dénommé le Doctorant</strong></p>
+<p><strong>Et</strong> VAR[AdmissionInscription#DenominationDirecteurThese], directeur(-trice) de thèse<br /><strong>Fonction</strong> : VAR[AdmissionInscription#FonctionDirecteurThese]<br /><strong>Unité de recherche </strong>: VAR[AdmissionInscription#UniteRecherche]<br /><strong>Établissement de rattachement</strong> : VAR[AdmissionInscription#EtablissementInscription]<br /><strong>Mail</strong> : VAR[AdmissionInscription#MailDirecteurThese]</p>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosCoDirecteur]</p>
+<p>- Vu l’article L612-7 du Code de l’éducation, Vu les articles L412-1 et L412-2 du Code de la recherche,</p>
+<p>- Vu l’arrêté du 25 mai 2016 fixant le cadre national de la formation et les modalités conduisant à la délivrance du diplôme national de doctorat, modifié par l’arrêté du 26 août 2022,</p>
+<p>- Vu la charte du doctorat dans le cadre de la délivrance conjointe du doctorat entre la ComUE Normandie Université et les établissements d’inscription co-accrédités en date du 1er septembre 2023, </p>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosCoTutelle]</p>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosConventionCollaboration]</p>
+<p>Il est établi la convention de formation doctorale suivante. Cette convention peut être modifiée par avenant autant de fois que nécessaire pendant le doctorat.</p>
+<h3><strong>Article 1 - Objet de la convention de formation doctorale</strong></h3>
+<p>La présente convention de formation, signée à la première inscription par le Doctorant, par le (ou les) (co)Directeur(s) de Thèse et, le cas échéant, par le(s) co-encadrant(s) de thèse, fixe les conditions de suivi et d''encadrement de la thèse, sous la responsabilité de l’VAR[AdmissionInscription#EtablissementInscription] (établissement d’inscription), établissement de préparation du doctorat. En cas de besoin, la convention de formation doctorale est révisable annuellement par un avenant à la convention initiale.</p>
+<p>Les règles générales en matière de signature des travaux issus de la thèse, de confidentialité et de propriété intellectuelle sont précisées dans la Charte du doctorat adoptée par Normandie Université et l’VAR[AdmissionInscription#EtablissementInscription] (établissement d’inscription), également signée à la première inscription, par le Doctorant et le (ou les) Directeur(s) de Thèse.</p>
+<p><strong>Titre de la thèse </strong></p>
+<p>VAR[AdmissionInscription#TitreThese]</p>
+<p><strong>Spécialité du diplôme</strong></p>
+<p>VAR[AdmissionInscription#SpecialiteDoctorat]</p>
+<p><strong>Financement</strong></p>
+<p>VAR[AdmissionFinancement#ContratDoctoral]</p>
+<p><strong>Établissement d''inscription du doctorant</strong></p>
+<p>VAR[AdmissionInscription#EtablissementInscription]</p>
+<p><strong>École doctorale</strong></p>
+<p>VAR[AdmissionInscription#EcoleDoctorale]</p>
+<p><strong>Temps de travail du Doctorat mené à</strong> : VAR[AdmissionFinancement#TempsTravail]</p>
+<p><strong>Statut professionnel </strong>: VAR[AdmissionFinancement#StatutProfessionnel]</p>
+<h3><strong>Article 2 – Laboratoire d’accueil</strong></h3>
+<p>Le doctorant réalise sa thèse au sein de :</p>
+<ul>
+<li style="font-weight: 400; text-align: start;">Unité d''accueil (UMR, U INSERM, UR, Laboratoire privé...) : VAR[AdmissionInscription#UniteRecherche]</li>
+<li style="font-weight: 400; text-align: start;">Directeur de l''unité (Nom, Prénom, coordonnées téléphoniques et courriel) : VAR[AdmissionConventionFormationDoctorale#ResponsablesURDirecteurThese]</li>
+</ul>
+<p>Et (en cas de co-tutelle ou co-direction de thèse) :</p>
+<ul>
+<li style="font-weight: 400; text-align: start;">Unité d''accueil (EA, UMR, U INSERM, UR, Laboratoire privé …) : VAR[AdmissionInscription#UniteRechercheCoDirection]</li>
+<li style="font-weight: 400; text-align: start;">Directeur de l''unité (Nom, Prénom, coordonnées téléphoniques et courriel) : VAR[AdmissionConventionFormationDoctorale#ResponsablesURCoDirecteurThese]</li>
+</ul>
+<h3><strong>Article 3 - Méthodes et Moyens</strong></h3>
+<p><strong>3-1 Calendrier prévisionnel du projet de recherche</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#CalendrierPrevisionnel]</p>
+<p><strong>3-2 Modalités d''encadrement, de suivi de la formation et d''avancement des recherches du doctorant</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#ModalitesEncadrement]</p>
+<p><strong>3-3 Conditions matérielles de réalisation du projet de recherche et conditions de sécurité spécifiques si nécessaire</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#ConditionsProjRech]</p>
+<p><strong>3-4 Modalités d''intégration dans l''unité ou l’équipe de recherche</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#ModalitesIntegrationUR]</p>
+<p><strong>3-5 Partenariats impliqués par le projet de thèse</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#PartenariatsProjThese]</p>
+<h3><strong>Article 4 - Confidentialité des travaux de recherche</strong></h3>
+<p>Caractère confidentiel des travaux :</p>
+<p>VAR[AdmissionInscription#ConfidentialiteSouhaitee]</p>
+<p>Si oui, motivation de la demande de confidentialité par le doctorant et la direction de thèse:</p>
+<p>VAR[AdmissionConventionFormationDoctorale#MotivationDemandeConfidentialite]</p>
+<h3><strong>Article 5 - Projet professionnel du doctorant</strong></h3>
+<p>VAR[AdmissionConventionFormationDoctorale#ProjetProDoctorant]</p>
+<p> </p>
+<h2>Validations accordées à la convention de formation doctorale</h2>
+<p>VAR[AdmissionConventionFormationDoctorale#Operations]</p>',
+        'table { border-collapse: collapse;  width: 100%;  } th, td { border: 1px solid #000; padding: 8px;  }body{font-size: 9pt;}.pas_valeur_avis_renseigne { background-color: #dddddd;} p{padding:unset}',
+        'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
+                                              document_css, namespace)
+VALUES ('ADMISSION_RECAPITULATIF', null, 'pdf',
         'Récapitulatif du dossier d''admission de VAR[Individu#Denomination]', e'<h1 style="text-align: center;">Récapitulatif du dossier d''admission</h1>
 <h1 style="text-align: center;">de VAR[Individu#Denomination]</h1>
 <h2>Étudiant</h2>
@@ -1167,26 +1499,42 @@ VALUES (61, 'ADMISSION_RECAPITULATIF', null, 'pdf',
 <h2>Inscription </h2>
 <h3>Informations concernant son inscription demandée</h3>
 <ul>
-<li><strong>Spécialité d''inscription :</strong> VAR[AdmissionInscription#SpecialiteDoctorat]</li>
+<li><strong>Spécialité d''inscription :</strong> VAR[AdmissionInscription#SpecialiteDoctorat]</li>
 <li><strong>Composante de rattachement : </strong>VAR[AdmissionInscription#ComposanteRattachement]</li>
-<li><strong>École Doctorale :</strong> VAR[AdmissionInscription#EcoleDoctorale]</li>
-<li><strong>Unité de recherche :</strong> VAR[AdmissionInscription#UniteRecherche]</li>
-<li><strong>Directeur(-trice) de thèse :</strong> VAR[AdmissionInscription#DenominationDirecteurThese]</li>
-<li><strong>Titre provisoire de la thèse :</strong> VAR[AdmissionInscription#TitreThese]</li>
+<li><strong>École Doctorale :</strong> VAR[AdmissionInscription#EcoleDoctorale]</li>
+<li><strong>Unité de recherche :</strong> VAR[AdmissionInscription#UniteRecherche]</li>
+<li><strong>Établissement d''inscription</strong> : VAR[AdmissionInscription#EtablissementInscription] </li>
+<li><strong>Directeur(-trice) de thèse :</strong> VAR[AdmissionInscription#DenominationDirecteurThese]
+<ul>
+<li><strong>Fonction du directeur(-trice) de thèse :</strong> VAR[AdmissionInscription#FonctionDirecteurThese]</li>
+</ul>
+</li>
+<li><strong>Titre provisoire de la thèse :</strong> VAR[AdmissionInscription#TitreThese]</li>
 </ul>
 <h3>Spéciﬁcités envisagées concernant son inscription</h3>
 <ul>
-<li><strong>Conﬁdentialité souhaitée :</strong> VAR[AdmissionInscription#ConfidentialiteSouhaitee]</li>
-<li><strong>Cotutelle envisagée :</strong> VAR[AdmissionInscription#CotutelleEnvisagee]</li>
-<li><strong>Codirection demandée :</strong> VAR[AdmissionInscription#CoDirectionDemandee]</li>
-<li><strong>Co-encadrement envisagé :</strong> VAR[AdmissionInscription#CoEncadrementEnvisage]</li>
+<li><strong>Conﬁdentialité souhaitée :</strong> VAR[AdmissionInscription#ConfidentialiteSouhaitee]</li>
+<li><strong>Cotutelle envisagée :</strong> VAR[AdmissionInscription#CotutelleEnvisagee]</li>
+<li><strong>Codirection demandée :</strong> VAR[AdmissionInscription#CoDirectionDemandee]
+<ul>
+<li><strong>Si oui, fonction du codirecteur(-trice) de thèse :</strong> VAR[AdmissionInscription#FonctionCoDirecteurThese]</li>
+</ul>
+</li>
+<li><strong>Co-encadrement envisagé :</strong> VAR[AdmissionInscription#CoEncadrementEnvisage]</li>
 </ul>
 <h2>Financement</h2>
-<p>Avez-vous un contrat doctoral ? VAR[AdmissionFinancement#ContratDoctoral]</p>
-<p>Si oui, détails du contrat doctoral : VAR[AdmissionFinancement#DetailContratDoctoral]</p>
+<p><strong>Avez-vous un contrat doctoral</strong> <strong>?</strong> VAR[AdmissionFinancement#ContratDoctoral]</p>
+<p><strong>Si oui, détails du contrat doctoral</strong> : VAR[AdmissionFinancement#DetailContratDoctoral]</p>
+<p><strong>Temps de travail du Doctorat mené à</strong> : VAR[AdmissionFinancement#TempsTravail]</p>
+<p><strong>Êtes-vous salarié ?</strong> VAR[AdmissionFinancement#EstSalarie]</p>
+<ul>
+<li><strong>Si oui, Statut professionnel </strong>: VAR[AdmissionFinancement#StatutProfessionnel]</li>
+<li><strong>Si oui, Établissement hébergeant le laboratoire de recherche</strong> :  VAR[AdmissionFinancement#EtablissementLaboratoireRecherche]</li>
+</ul>
+<p> </p>
 <h2>Validations et Avis accordés au dossier d''admission</h2>
 <p>VAR[AdmissionRecapitulatif#Operations]</p>
-<h2>Validation par la présidence</h2>
+<h2>Validation par la direction de l''établissement</h2>
 <ul>
 <li>Favorable</li>
 <li>Défavorable
@@ -1201,18 +1549,18 @@ VALUES (61, 'ADMISSION_RECAPITULATIF', null, 'pdf',
 <p>Signature de VAR[String#ToString]</p>',
         'table { border-collapse: collapse;  width: 100%;  } th, td { border: 1px solid #000; padding: 8px;  }body{font-size: 9pt;}.pas_valeur_avis_renseigne { background-color: #dddddd;}',
         'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (55, 'ADMISSION_COMMENTAIRES_AJOUTES',
+VALUES ('ADMISSION_COMMENTAIRES_AJOUTES',
         '<p>Notification lorsque le gestionnaire a ajouté des commentaires au dossier d''admission</p>', 'mail',
         'Commentaires ajoutés à votre dossier d''admission', e'<p>Bonjour, </p>
 <p style="font-family: \'Segoe UI\', \'Lucida Sans\', sans-serif; font-size: 14.16px; background-color: #fdfcfa;">Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p><strong>Des commentaires ont été ajoutés</strong> par vos gestionnaires à votre dossier d\'admission. </p>
 <p><span style="background-color: #fdfcfa; font-family: \'Segoe UI\', \'Lucida Sans\', sans-serif; font-size: 14.16px;">Merci de prendre connaissance des commentaires en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</span><span style="background-color: #fdfcfa; font-family: \'Segoe UI\', \'Lucida Sans\', sans-serif; font-size: 14.16px;"> </span></p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (62, 'ADMISSION_NOTIFICATION_DOSSIER_COMPLET',
+VALUES ('ADMISSION_NOTIFICATION_DOSSIER_COMPLET',
         '<p>Mail pour notifier l''étudiant que son dossier est complet</p>', 'mail',
         'Votre dossier d''admission est complet', e'<p>Bonjour, </p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
@@ -1228,30 +1576,30 @@ VALUES ('ADMISSION_NOTIFICATION_DOSSIER_INCOMPLET',
 <p>Votre dossier d\'admission est noté comme <strong>incomplet</strong> par votre gestionnaire.</p>
 <p>Veuillez prendre connaissance des commentaires ajoutés à votre dossier, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (63, 'ADMISSION_AVIS_AJOUTE', '<p>Mail pour notifier qu''un avis a été ajouté au dossier d''admission</p>',
+VALUES ('ADMISSION_AVIS_AJOUTE', '<p>Mail pour notifier qu''un avis a été ajouté au dossier d''admission</p>',
         'mail', 'Dossier d''admission de VAR[Individu#Denomination] ', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p>Un avis a été ajouté au <strong>dossier d\'admission</strong> de <strong>VAR[Individu#Denomination]</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (65, 'ADMISSION_AVIS_MODIFIE', '<p>Mail pour notifier qu''un avis a été modifié du dossier d''admission</p>',
+VALUES ('ADMISSION_AVIS_MODIFIE', '<p>Mail pour notifier qu''un avis a été modifié du dossier d''admission</p>',
         'mail', 'Dossier d''admission de VAR[Individu#Denomination]', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p>L\'<strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d\'admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionAvis#Date] a été modifié<strong> </strong>VAR[AdmissionAvis#Modificateur]</p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (64, 'ADMISSION_AVIS_SUPPRIME', '<p>Mail pour notifier qu''un avis a été supprimé du dossier d''admission</p>',
+VALUES ('ADMISSION_AVIS_SUPPRIME', '<p>Mail pour notifier qu''un avis a été supprimé du dossier d''admission</p>',
         'mail', 'Dossier d''admission de VAR[Individu#Denomination]', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>
 <p>L\'<strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d\'admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionAvis#Date] a été <strong>supprimé </strong>VAR[AdmissionAvis#Destructeur]</p>',
         null, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps,
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES (56, 'ADMISSION_DERNIERE_VALIDATION_AJOUTEE',
+VALUES ('ADMISSION_DERNIERE_VALIDATION_AJOUTEE',
         '<p>Mail pour notifier que la dernière validation a été ajoutée au dossier d''admission</p>', 'mail',
         'Dossier d''admission de VAR[Individu#Denomination] ', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l\'application ESUP-SyGAL.</p>

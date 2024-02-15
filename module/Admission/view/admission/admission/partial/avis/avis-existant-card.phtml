@@ -62,10 +62,29 @@ $canSupprimerOperation =
                title="Modifier cet avis ?">Modifier l'avis</span></a>
         <?php endif ?>
         <?php if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
-            <a href="<?php echo $this->url('admission/desaviser', ['admissionAvis' => $operation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-               class="card-link btn btn-warning btn-sm"
-               title="Supprimer cet avis ?"
-               data-toggle="confirmationx">Supprimer l'avis</span></a>
+            <a class="btn btn-warning btn-sm access_suppression_operation" data-operation="SuppressionOperation">Supprimer l'avis</a>
+            <div class="modal fade" id="modalShowConfirmationSuppressionOperation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Confirmation de l'opération</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr·e de vouloir supprimer cette opération ?</p>
+                            <p>Are you sure to invalidate this operation?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                            <a href="
+                            <?php echo $this->url('admission/desaviser', ['admissionAvis' => $operation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                               class="card-link btn btn-warning collapsable-action validation_action_operation"
+                               title="Supprimer cet avis ?">
+                                Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <?php endif ?>
     </div>
 </div>

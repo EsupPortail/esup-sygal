@@ -18,9 +18,8 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  *
  * @see \Admission\Controller\AdmissionController::indexAction()
  */
-
+$canRechercherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_RECHERCHER_DOSSIERS_ADMISSION));
 $canListerDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION));
-$canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION));
 ?>
 
 <?php $this->headTitle($this->translate($title = "Admission")) ?>
@@ -32,7 +31,7 @@ $canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResour
 </p>
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if($canAfficherDossiersAdmission) { ?>
+<?php if($canRechercherDossiersAdmission) { ?>
     <div class="form_admission">
         <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
             <div class="row individu_recherche_index">
@@ -79,7 +78,7 @@ $canAfficherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResour
         <?php
         $countFilteredAdmissions=0;
         foreach ($admissions as $admission):
-            $can = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION);
+            $can = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE);
             if($can){
                 $countFilteredAdmissions++; ?>
                 <tr>

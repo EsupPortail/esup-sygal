@@ -6,6 +6,8 @@ use Import\Controller\Factory\ImportObserverControllerFactory;
 use Import\Controller\ImportController;
 use Import\Filter\PrefixEtabColumnValueFilter;
 use Import\Filter\PrefixEtabColumnValueFilterFactory;
+use Import\Filter\SetTypeStructureIdFilter;
+use Import\Filter\SetTypeStructureIdFilterFactory;
 use Import\Model\Service\ImportObservResultService;
 use Import\Model\Service\ImportObservResultServiceFactory;
 use Unicaen\Console\Router\Simple;
@@ -146,6 +148,7 @@ return [
             Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,
             ImportObservResultService::class => ImportObservResultServiceFactory::class,
             PrefixEtabColumnValueFilter::class => PrefixEtabColumnValueFilterFactory::class,
+            SetTypeStructureIdFilter::class => SetTypeStructureIdFilterFactory::class,
         ],
         'aliases' => [
             'ImportService' => Import\Service\ImportService::class,

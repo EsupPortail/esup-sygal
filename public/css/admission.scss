@@ -1,11 +1,12 @@
 $title_color: #004980;
 $padding_titre_sous_partie_formulaire: 5px;
 
-label:not(:empty):not(:has(*))::after, .label_en::after, .titre_sous_partie_en {
+label:not(:empty):not(:has(*))::after, .label_en::after, .titre_sous_partie_en, .titre_label_champ_form_en{
   content: attr(data-after);
   font-style: italic;
   font-weight: bold;
 }
+
 //GLOBAL
 h1 {
   color: $title_color;
@@ -22,16 +23,28 @@ h1 {
 }
 
 .title_sous_partie {
-  background: #00498099 0 0 no-repeat padding-box;
+  background: #00498099;
   padding-left: 15px;
-  align-items: center;
+  border-radius: 8px;
 }
 
 .titre_sous_partie {
   text-align: left;
+  padding: $padding_titre_sous_partie_formulaire;
   color: #FFFFFF;
   font-size: 20px;
-  padding: $padding_titre_sous_partie_formulaire;
+  margin: 0;
+}
+
+.titre_sous_partie_en {
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.titre_sous_partie_type_document_en {
+  margin-left: 10px;
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .row_fin_formulaire {
@@ -94,7 +107,7 @@ h1 {
   display: flex;
 }
 
-.commentaires_gestionnaire .gestionnaire{
+.commentaires_gestionnaire .commentaire_gestionnaire{
   margin-left:30px;
 }
 
@@ -105,8 +118,76 @@ h1 {
   align-items: center;
 }
 
-.pas_de_commentaire{
+.verification_gestionnaire{
   margin-left:30px;
+  display: inline-block;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.verification_gestionnaire::before {
+  margin-right: 8px;
+}
+
+.aucune_action_effectuee_commentaire {
+  background-color: #00498099;
+  color: white;
+}
+
+.aucune_action_effectuee_commentaire::before {
+  content: "\002139";
+}
+
+.aucune_action_effectuee_commentaire:hover {
+  background-color: #003d6699;
+}
+
+.pas_de_commentaire_ajoute {
+  background-color: #b95a26;
+}
+
+.pas_de_commentaire_ajoute::before {
+  content: "\26A0";
+}
+
+.pas_de_commentaire_ajoute:hover {
+  background-color: #824012;
+}
+
+.commentaire_gestionnaire {
+  background-color: #d23544;
+  color: #fff;
+  width: fit-content;
+}
+
+.commentaire_gestionnaire::before {
+  content: "\26A0";
+}
+
+.commentaire_gestionnaire:hover {
+  background-color: #bb2d3b;
+}
+
+.info-commentaire {
+  width: 500px;
+}
+
+.partie_complete{
+  background-color: #38833b;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.partie_complete::before {
+  content: "\2713";
+}
+
+.partie_complete:hover {
+  background-color: #45a049;
 }
 
 .notifier_commentaires_ajoutes, .notifier_gestionnaires{
@@ -124,6 +205,12 @@ h1 {
 
 .observations_gestionnaire > div > div > div > .btn-success.selected::after {
   content: "\2713";
+}
+
+
+.loading {
+  cursor: progress;
+  pointer-events: none;
 }
 
 //Page accueil Admission
@@ -199,8 +286,9 @@ div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
   margin-top: 15px;
 }
 
-.form-select.form-select {
+.form-select {
   font-size: inherit;
+  padding: .15rem .425rem .315rem .45rem;
 }
 
 //Partie Inscription
@@ -212,6 +300,10 @@ div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
 .title_sous_partie > .row > .col {
   align-items: center;
   display: flex;
+}
+
+.titre_specifites{
+  margin-top: 7px!important;
 }
 
 .titre_these > span {
@@ -236,6 +328,7 @@ div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
 }
 
 //Partie Justificatifs
+
 .informations-pieces_justificatives > p {
   text-align: left;
   color: #004980;
@@ -283,9 +376,44 @@ i:hover {
   margin-top: 20px;
 }
 
-.file_charte_doctorat{
+.file_charte_doctorat, .file_convention_formation_doctorale{
   display: none;
   width: auto;
+}
+
+.charteDoctoraleOperations, .conventionFormationDoctoraleOperations{
+  display: none;
+}
+
+.file_convention_formation_doctorale{
+  height: 150px;
+}
+
+#modalShowConventionFormationDoctorale #loading-indicator {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+#modalShowConventionFormationDoctorale #loading-indicator .spinner {
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .date_televersement:empty {
@@ -410,8 +538,35 @@ input[name="validation[saveAttestationHonneur]"] {
   margin-top: revert !important;
 }
 
-.dossier_incomplet_validation_impossible{
+/* Style de base de la bulle informative */
+.dossier_incomplet_validation_impossible {
+  position: relative;
+  display: inline-block;
+  cursor: pointer; /* Curseur de type pointer */
   margin-left: 10px;
+}
+
+.dossier_incomplet_validation_impossible .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Affichage de la bulle informative lorsqu'elle est survolée */
+.dossier_incomplet_validation_impossible:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 //Circuit signatures
@@ -458,6 +613,11 @@ input[name="validation[saveAttestationHonneur]"] {
   max-width: fit-content;
 }
 
+.cardsValidation .card{
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
 .dossier_incomplet {
   border: 3px solid #E69B18;
   border-radius: 11px;
@@ -489,7 +649,29 @@ input[name="validation[saveAttestationHonneur]"] {
   display: inline-block;
 }
 
+.cardsValidation .card:hover {
+  transform: translateY(-4px); /* Effet de léger soulèvement au survol */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Ombre légèrement plus prononcée au survol */
+}
+
+.cardsValidation{
+  margin-top: 15px;
+}
+
+//Convention de formation doctorale
+.precisions_convention{
+  font-style: italic;
+}
+.precisions_convention + textarea{
+  margin-bottom: 30px;
+  height: 100px !important;
+}
+
 @media (max-width: 768px) {
+  //Général
+  .commentaires_gestionnaire .partie_etudiant{
+    flex-direction: column;
+  }
   //Accueil
   .individu_recherche_index{
     display: flex;
@@ -557,5 +739,6 @@ input[name="validation[saveAttestationHonneur]"] {
     align-items: center;
   }
 }
+
 
 

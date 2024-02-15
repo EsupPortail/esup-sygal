@@ -13,6 +13,7 @@ use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Soutenance\Entity\Qualite;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class InscriptionFieldset extends Fieldset implements InputFilterProviderInterface
@@ -25,8 +26,10 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
     /** @var array */
     private $unitesRecherche = null;
     /** @var array */
-    private $etablissementsInscription = null;
+    private $etablissementInscription = null;
     private $specialites = null;
+    /** @var array $qualites  */
+    private $qualites = null;
 
 
     public function setUrlIndividuThese(string $urlIndividuThese): void
@@ -74,6 +77,9 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->unitesRecherche = $options;
         $this->get('uniteRecherche')->setEmptyOption('Sélectionnez une option');
         $this->get('uniteRecherche')->setValueOptions($this->unitesRecherche);
+
+        $this->get('uniteRechercheCoDirecteur')->setEmptyOption('Sélectionnez une option');
+        $this->get('uniteRechercheCoDirecteur')->setValueOptions($this->unitesRecherche);
     }
 
     public function setEtablissementsInscription(array $etablissementsInscription): void
@@ -86,6 +92,24 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->etablissementInscription = $options;
         $this->get('etablissementInscription')->setEmptyOption('Sélectionnez une option');
         $this->get('etablissementInscription')->setValueOptions($this->etablissementInscription);
+
+        $this->get('etablissementRattachementCoDirecteur')->setEmptyOption('Sélectionnez une option');
+        $this->get('etablissementRattachementCoDirecteur')->setValueOptions($this->etablissementInscription);
+    }
+
+    public function setQualites(array $qualites): void
+    {
+        $options = [];
+
+        foreach ($qualites as $qualite) {
+            $options[$qualite->getId()] = $qualite->getLibelle();
+        }
+        $this->qualites = $options;
+        $this->get('fonctionDirecteurThese')->setEmptyOption('Sélectionnez une option');
+        $this->get('fonctionDirecteurThese')->setValueOptions($this->qualites);
+
+        $this->get('fonctionCoDirecteurThese')->setEmptyOption('Sélectionnez une option');
+        $this->get('fonctionCoDirecteurThese')->setValueOptions($this->qualites);
     }
 
     //Spécifités envisagées
@@ -226,6 +250,18 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
         );
 
         $this->add(
+            (new Select("fonctionDirecteurThese"))
+                ->setLabel("Fonction")
+                ->setLabelAttributes(['data-after' => " /   Role"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "fonctionDirecteurThese"
+                ])
+        );
+
+        $this->add(
             (new Hidden('coDirecteur'))
         );
 
@@ -259,6 +295,42 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 ->setLabelAttributes(['data-after' => " / Email of thesis supervisor"])
                 ->setAttributes([
                     'id' => 'emailCodirecteurThese',
+                ])
+        );
+
+        $this->add(
+            (new Select("uniteRechercheCoDirecteur"))
+                ->setLabel("Unité de recherche")
+                ->setLabelAttributes(['data-after' => " /   Laboratory"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "uniteRechercheCoDirecteur"
+                ])
+        );
+
+        $this->add(
+            (new Select("etablissementRattachementCoDirecteur"))
+                ->setLabel("Établissement de rattachement")
+                ->setLabelAttributes(['data-after' => " /   Registering establishment"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "etablissementRattachementCoDirecteur"
+                ])
+        );
+
+        $this->add(
+            (new Select("fonctionCoDirecteurThese"))
+                ->setLabel("Fonction")
+                ->setLabelAttributes(['data-after' => " /   Role"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "fonctionCoDirecteurThese"
                 ])
         );
 
@@ -393,6 +465,13 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
                 'name' => 'emailDirecteurThese',
                 'required' => false,
             ],
+            'fonctionDirecteurThese' => [
+                'name' => 'fonctionDirecteurThese',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+            ],
             'prenomCodirecteurThese' => [
                 'name' => 'prenomCodirecteurThese',
                 'required' => false,
@@ -404,6 +483,27 @@ class InscriptionFieldset extends Fieldset implements InputFilterProviderInterfa
             'emailCodirecteurThese' => [
                 'name' => 'emailCodirecteurThese',
                 'required' => false,
+            ],
+            'uniteRechercheCoDirecteur' => [
+                'name' => 'uniteRechercheCoDirecteur',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+            ],
+            'etablissementRattachementCoDirecteur' => [
+                'name' => 'etablissementRattachementCoDirecteur',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+            ],
+            'fonctionCoDirecteurThese' => [
+                'name' => 'fonctionCoDirecteurThese',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
             ],
             'titreThese' => [
                 'name' => 'titreThese',

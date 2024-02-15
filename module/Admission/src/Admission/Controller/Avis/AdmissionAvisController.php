@@ -35,17 +35,17 @@ class AdmissionAvisController extends AbstractController
     private AvisForm $form;
 
     /**
-     * @param \UnicaenAvis\Form\AvisForm $form
+     * @param AvisForm $form
      */
-    public function setForm(AvisForm $form)
+    public function setForm(AvisForm $form): void
     {
         $this->form = $form;
     }
 
     /**
-     * @return array|\Laminas\Http\Response
+     * @return array|Response
      */
-    public function aviserAction()
+    public function aviserAction(): Response|array
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
         $avisType = $this->avisService->findOneAvisTypeById($this->params('typeAvis'));
@@ -93,7 +93,7 @@ class AdmissionAvisController extends AbstractController
         ];
     }
 
-    public function modifierAction()
+    public function modifierAction(): Response|array
     {
         $admissionAvis = $this->requestedAdmissionAvis();
         $admission = $admissionAvis->getAdmission();
@@ -157,7 +157,7 @@ class AdmissionAvisController extends AbstractController
      * @param AdmissionAvisEvent $event
      * @param string $paramName
      */
-    protected function flashMessengerAddMessagesFromEvent(EventInterface $event, string $paramName = 'logs')
+    protected function flashMessengerAddMessagesFromEvent(EventInterface $event, string $paramName = 'logs'): void
     {
         if ($messages = $event->getMessages()) {
             foreach ($messages as $namespace => $message) {

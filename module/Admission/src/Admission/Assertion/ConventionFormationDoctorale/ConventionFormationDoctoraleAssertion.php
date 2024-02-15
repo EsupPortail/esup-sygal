@@ -3,6 +3,7 @@
 namespace Admission\Assertion\ConventionFormationDoctorale;
 
 use Admission\Assertion\AdmissionAbstractAssertion;
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
@@ -33,32 +34,34 @@ class ConventionFormationDoctoraleAssertion extends AdmissionAbstractAssertion
         $conventionAlreadyInBdd = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $this->admission]);
 
         try {
-            switch ($action) {
-                case 'ajouter-convention-formation':
-                    $this->assertCanAjouterConventionFormationAdmission($conventionAlreadyInBdd);
-                    break;
-            }
+            if($this->admission){
+                switch ($action) {
+                    case 'ajouter-convention-formation':
+                        $this->assertCanAjouterConventionFormationAdmission($conventionAlreadyInBdd, $this->admission);
+                        break;
+                }
 
-            switch ($action) {
-                case 'modifier-convention-formation':
-                    $this->assertCanModifierConventionFormationAdmission($conventionAlreadyInBdd);
-                    break;
-            }
+                switch ($action) {
+                    case 'modifier-convention-formation':
+                        $this->assertCanModifierConventionFormationAdmission($conventionAlreadyInBdd, $this->admission);
+                        break;
+                }
 
-            switch ($action) {
-                case 'generer-convention-formation':
-                    $this->assertAppartenanceAdmission($this->admission);
-                    break;
-            }
+                switch ($action) {
+                    case 'generer-convention-formation':
+                        $this->assertAppartenanceAdmission($this->admission);
+                        $this->assertCanGenererConventionFormationAdmission($conventionAlreadyInBdd);
+                        break;
+                }
 
-            switch ($action) {
-                case 'modifier-convention-formation':
-                case 'ajouter-convention-formation':
-                    $this->assertEtatAdmission($this->admission);
-                    $this->assertAppartenanceAdmission($this->admission);
-                    break;
+                switch ($action) {
+                    case 'modifier-convention-formation':
+                    case 'ajouter-convention-formation':
+                        $this->assertEtatAdmission($this->admission);
+                        $this->assertAppartenanceAdmission($this->admission);
+                        break;
+                }
             }
-
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
                 $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
@@ -82,15 +85,13 @@ class ConventionFormationDoctoraleAssertion extends AdmissionAbstractAssertion
 
         /** @var ConventionFormationDoctorale $conventionFormationDoctorale */
         $conventionFormationDoctorale = $entity;
-
+        $this->admission = $this->getRequestedAdmission();
         try {
 
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_MODIFIER:
                 case AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_VISUALISER:
                 case AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER:
-
-                    break;
             }
 
 
@@ -104,19 +105,27 @@ class ConventionFormationDoctoraleAssertion extends AdmissionAbstractAssertion
         return true;
     }
 
-    protected function assertCanAjouterConventionFormationAdmission($conventionAlreadyInBdd)
+    protected function assertCanAjouterConventionFormationAdmission($conventionAlreadyInBdd, $admission)
     {
         $this->assertTrue(
-            empty($conventionAlreadyInBdd),
+            empty($conventionAlreadyInBdd) && in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE]),
             "Une convention de formation doctorale a déjà été ajoutée"
         );
     }
 
-    protected function assertCanModifierConventionFormationAdmission($conventionAlreadyInBdd)
+    protected function assertCanModifierConventionFormationAdmission($conventionAlreadyInBdd, $admission)
     {
         $this->assertTrue(
-            !empty($conventionAlreadyInBdd),
+            !empty($conventionAlreadyInBdd) && in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE]),
             "Aucune convention de formation doctorale n'a été ajoutée"
+        );
+    }
+
+    protected function assertCanGenererConventionFormationAdmission($conventionAlreadyInBdd)
+    {
+        $this->assertTrue(
+            $conventionAlreadyInBdd,
+            "Aucune convention de formation doctorale n'a été créee"
         );
     }
 }

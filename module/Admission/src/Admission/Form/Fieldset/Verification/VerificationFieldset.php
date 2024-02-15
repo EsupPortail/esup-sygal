@@ -47,7 +47,7 @@ class VerificationFieldset extends Fieldset implements InputFilterProviderInterf
 
         $this->add(
             (new Textarea('commentaire'))
-                ->setLabel("Observations à donner à l'étudiant")
+                ->setLabel("Observations à donner à l'étudiant (obligatoire pour passer à une autre étape)")
                 ->setAttributes([
                     "class" => "commentaires_gestionnaire"
                 ])

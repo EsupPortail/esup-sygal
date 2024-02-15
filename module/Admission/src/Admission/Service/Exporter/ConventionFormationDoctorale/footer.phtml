@@ -2,8 +2,15 @@
 
 
 ?>
-
-<small>
-Document généré par ESUP-SyGAL le <?php echo (new DateTime())->format('d/m/Y à H:i'); ?>
-</small>
-
+<table width="100%">
+    <tr>
+        <td width="85%" style="border:0; text-align: left;">
+            <small>
+                Document généré par ESUP-SyGAL le <?php echo (new DateTime())->format('d/m/Y à H:i'); ?>
+            </small>
+        </td>
+        <td width="15%" style="border: 0; text-align: right;">
+            Page {PAGENO}/{nbpg}
+        </td>
+    </tr>
+</table>

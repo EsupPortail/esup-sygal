@@ -266,7 +266,7 @@ class AdmissionOperationRule
      * @param Admission $admission
      * @return AdmissionOperationInterface[]
      */
-    public function getOperationsForAdmission(Admission $admission): array
+    public function getOperationsForAdmission(Admission $admission, ?string $byCategorie = null): array
     {
         if ($this->operations === null) {
             $this->operations = [];
@@ -275,21 +275,26 @@ class AdmissionOperationRule
             $this->operations[$admission->getId()] = null;
         }
 
-        if ($this->operations[$admission->getId()] !== null) {
-            return $this->operations[$admission->getId()];
-        }
+//        if ($this->operations[$admission->getId()] !== null) {
+//            return $this->operations[$admission->getId()];
+//        }
 
-        $this->loadOperationsForAdmission($admission);
+        $this->loadOperationsForAdmission($admission, $byCategorie);
 
         return $this->operations[$admission->getId()];
     }
 
-    private function loadOperationsForAdmission(Admission $admission): void
+    private function loadOperationsForAdmission(Admission $admission, ?string $byCategorie = null): void
     {
         $this->operations[$admission->getId()] = [];
 
         foreach ($this->operationsConfig as $name => $config) {
             if (!$this->isOperationEnabledForAdmission($config, $admission)) {
+                continue;
+            }
+
+            //Si une catégorie est spécifiée, on vérifie que l'opération est présente dans cette catégorie
+            if($byCategorie && !$this->isOperationInCategoryForAdmission($config, $byCategorie)){
                 continue;
             }
 
@@ -302,6 +307,7 @@ class AdmissionOperationRule
             }
 
             $this->operations[$admission->getId()][$name] = $ope;
+
         }
     }
 
@@ -311,6 +317,14 @@ class AdmissionOperationRule
             return $operationConfig['enabled'];
         } elseif (is_callable($operationConfig['enabled'])) {
             return call_user_func($operationConfig['enabled'], $admission);
+        }
+        return true;
+    }
+
+    private function isOperationInCategoryForAdmission(array $config, string $byCategorie): bool
+    {
+        if (!(isset($config["categorie"]["name"]) && $config["categorie"]["name"] === $byCategorie)) {
+            return false;
         }
         return true;
     }
@@ -366,6 +380,20 @@ class AdmissionOperationRule
         }
 
         return $result;
+    }
+
+    public function getOperationEnAttente(Admission $admission){
+        $operationLastCompleted = $this->findLastCompletedOperation($admission);
+        $operationEnAttente = $operationLastCompleted ? $this->findFollowingOperation($operationLastCompleted) : null;
+
+        if($operationEnAttente instanceof AdmissionValidation){
+            $codeTypeValidation = $operationEnAttente->getTypeValidation()->getCode();
+//            $operationEnAttente = ($codeTypeValidation !== TypeValidation::CODE_ATTESTATION_HONNEUR && $codeTypeValidation !== TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE) ? $operationEnAttente : null;
+            $operationEnAttente = $operationLastCompleted && $operationLastCompleted->getValeurBool() ? $operationEnAttente : false;
+        }elseif($operationEnAttente instanceof AdmissionAvis){
+            $operationEnAttente = $operationLastCompleted && $operationLastCompleted->getValeurBool() ? $operationEnAttente : false;
+        }
+        return $operationEnAttente;
     }
 
     /**

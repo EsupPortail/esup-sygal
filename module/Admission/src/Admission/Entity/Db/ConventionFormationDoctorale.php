@@ -51,7 +51,7 @@ class ConventionFormationDoctorale implements HistoriqueAwareInterface, Resource
     private $id;
 
     /**
-     * @var \Admission\Entity\Db\Admission
+     * @var Admission
      */
     private $admission;
 
@@ -242,11 +242,11 @@ class ConventionFormationDoctorale implements HistoriqueAwareInterface, Resource
     /**
      * Set admission.
      *
-     * @param \Admission\Entity\Db\Admission|null $admission
+     * @param Admission|null $admission
      *
      * @return ConventionFormationDoctorale
      */
-    public function setAdmission(\Admission\Entity\Db\Admission $admission = null)
+    public function setAdmission(Admission $admission = null)
     {
         $this->admission = $admission;
 
@@ -256,7 +256,7 @@ class ConventionFormationDoctorale implements HistoriqueAwareInterface, Resource
     /**
      * Get admission.
      *
-     * @return \Admission\Entity\Db\Admission|null
+     * @return Admission|null
      */
     public function getAdmission()
     {

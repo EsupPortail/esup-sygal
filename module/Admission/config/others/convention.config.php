@@ -76,7 +76,7 @@ return array(
                         'type'  => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/generer-convention-formation/:admission',
+                            'route'    => '/generer-convention-formation/:admission/convention-formation-doctorale',
                             'defaults' => [
                                 'controller' => ConventionFormationDoctoraleController::class,
                                 'action'     => 'generer-convention-formation',

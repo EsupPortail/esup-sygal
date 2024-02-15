@@ -15,6 +15,7 @@ use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Operation\AdmissionOperationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
+use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
@@ -22,6 +23,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Qualite\QualiteService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 
@@ -60,6 +62,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $fichierStorageService = $container->get(FichierStorageService::class);
         $admissionOperationService = $container->get(AdmissionOperationService::class);
         $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
+        $roleService = $container->get(RoleService::class);
+        $qualiteService = $container->get(QualiteService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -91,6 +95,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setAdmissionOperationRule($admissionOperationRule);
         $controller->setAdmissionOperationService($admissionOperationService);
         $controller->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
+        $controller->setRoleService($roleService);
+        $controller->setQualiteService($qualiteService);
 
         return $controller;
     }

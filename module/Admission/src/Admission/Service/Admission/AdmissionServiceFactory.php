@@ -3,6 +3,7 @@
 namespace Admission\Service\Admission;
 
 use Admission\Service\Avis\AdmissionAvisService;
+use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
@@ -28,6 +29,7 @@ class AdmissionServiceFactory {
         $admissionAvisService = $container->get(AdmissionAvisService::class);
         $documentService = $container->get(DocumentService::class);
         $variableService = $container->get(VariableService::class);
+        $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
 
         $service = new AdmissionService();
         $service->setEtudiantService($etudiantService);
@@ -37,6 +39,7 @@ class AdmissionServiceFactory {
         $service->setAdmissionAvisService($admissionAvisService);
         $service->setDocumentService($documentService);
         $service->setVariableService($variableService);
+        $service->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
 
         return $service;
     }

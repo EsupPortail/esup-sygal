@@ -14,6 +14,11 @@ function showOrNotDiv(radiobutton, additionnalFields) {
         }
     });
 }
+
+function showModal(modalId) {
+    $(modalId).modal('show');
+}
+
 const currentUrl = window.location.href;
 document.addEventListener("DOMContentLoaded", function() {
     //permet de afficher/cacher le textarea observations pour le gestionnaire
@@ -44,6 +49,53 @@ document.addEventListener("DOMContentLoaded", function() {
             commentairesDiv.style.display = "none";
         }
     });
+
+    //Gestion des commentaires du gestionnaire -> afin de pouvoir passer ou non à une autre étape
+    const boutonGestionnaireIncomplet = document.querySelector('.bouton_gestionnaire.incomplet');
+    const boutonGestionnaireComplet = document.querySelector('.bouton_gestionnaire.complet');
+    const previousButton = document.querySelector('.multipage-nav.previous');
+    const nextButton = document.querySelector('.multipage-nav.next');
+    const submitButton = document.querySelector('.multipage-nav.submit');
+    const commentairesGestionnaire = document.querySelector('textarea.commentaires_gestionnaire');
+
+    function updateButtonsState() {
+        // Vérifiez si l'input est cochée et que le textarea est vide
+        const isButtonDisabled = boutonGestionnaireIncomplet.checked && commentairesGestionnaire.value.trim() === '';
+
+        if(previousButton){
+            previousButton.disabled = isButtonDisabled;
+        }
+        if(nextButton){
+            nextButton.disabled = isButtonDisabled;
+        }
+        if(submitButton){
+            submitButton.disabled = isButtonDisabled;
+        }
+
+        // Mettez à jour les classes et les infobulles
+        [previousButton, nextButton, submitButton].forEach(button => {
+            if(button){
+                if (isButtonDisabled) {
+                    button.classList.add('disabled');
+                    button.setAttribute('title', 'Veuillez renseigner un message pour changer d\'étape');
+                } else {
+                    button.classList.remove('disabled');
+                    button.removeAttribute('title');
+                }
+            }
+        });
+    }
+
+    if(boutonGestionnaireComplet){
+        boutonGestionnaireComplet.addEventListener('change', updateButtonsState);
+        updateButtonsState();
+    }
+    if(boutonGestionnaireIncomplet){
+        boutonGestionnaireIncomplet.addEventListener('change', updateButtonsState);
+    }
+    if(commentairesGestionnaire){
+        commentairesGestionnaire.addEventListener('input', updateButtonsState);
+    }
 
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
@@ -105,6 +157,11 @@ document.addEventListener("DOMContentLoaded", function() {
             $('select[name="inscription[specialiteDoctorat]"]').attr('disabled', true);
             $('select[name="inscription[uniteRecherche]"]').attr('disabled', true);
             $('select[name="inscription[etablissementInscription]"]').attr('disabled', true);
+            $('select[name="inscription[uniteRechercheCoDirecteur]"]').attr('disabled', true);
+            $('select[name="inscription[etablissementRattachementCoDirecteur]"]').attr('disabled', true);
+            $('select[name="inscription[fonctionDirecteurThese]"]').attr('disabled', true);
+            $('select[name="inscription[fonctionCoDirecteurThese]"]').attr('disabled', true);
+
         }
 
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
@@ -126,19 +183,22 @@ document.addEventListener("DOMContentLoaded", function() {
         if(readOnly){
             $('input:radio[name="financement[contratDoctoral]"]:not(:checked)').attr('disabled', true);
             $('input:radio[name="financement[employeurContrat]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="financement[tempsTravail]"]:not(:checked)').attr('disabled', true);
+            $('input:radio[name="financement[estSalarie]"]:not(:checked)').attr('disabled', true);
+            $('select[name="financement[financement]"]').attr('disabled', true);
         }
         const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
         const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
-
         additionalFieldscontratDoctoral.style.display = 'none';
-
         showOrNotDiv(contratDoctoralRadios, additionalFieldscontratDoctoral)
+
+        const infosDoctorantSalarieRadios = document.querySelectorAll('input[name="financement[estSalarie]"]');
+        const additionalFieldsInfosDoctorantSalarie = document.getElementById('additional_fields_infos_salaries');
+        additionalFieldsInfosDoctorantSalarie.style.display = 'none';
+        showOrNotDiv(infosDoctorantSalarieRadios, additionalFieldsInfosDoctorantSalarie)
     }
 
     if (currentUrl.indexOf("/document") !== -1) {
-        // Masquer l'élément suivant de l'élément avec la classe file_charte_doctorat
-        $('.file_charte_doctorat').next().hide();
-
         FilePond.registerPlugin(FilePondPluginFileValidateType);
         FilePond.registerPlugin(FilePondPluginPdfPreview);
 
@@ -172,8 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 load(myBlob)
                             });
                             if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
-                                // Masquer l'élément suivant de l'élément avec la classe file_charte_doctorat
-                                $('.file_charte_doctorat').next().show();
+                                $('.charteDoctoraleOperations').show();
                             }
                         }).catch(error => {
                             console.log(error)
@@ -227,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 labelTapToUndo: "Appuyez pour revenir en arrière",
                 labelTapToRetry: "Appuyez pour réessayer",
                 labelTapToCancel: "Appuyez pour annuler",
-                labelIdle: "Glissez-déposez votre document ou <span class='filepond--label-action'> parcourir </span>",
+                labelIdle: "Glissez-déposez votre document ou <span class='filepond--label-action'> parcourir </span> <br>(pdf/jpg/jpeg acceptés)",
                 forceRevert: true,
                 allowRemove: inputId !== "ADMISSION_CHARTE_DOCTORAT",
                 allowMultiple: false,
@@ -254,28 +313,66 @@ document.addEventListener("DOMContentLoaded", function() {
                 pond.addFiles([fichier]);
             }
 
-            var accessButton = document.querySelector('.access_charte_doctorat');
-            var fileDiv = document.querySelector('.file_charte_doctorat');
+            var accessButtonCharteDoctorale = document.querySelector('.access_charte_doctorat');
+            var fileCharteDoctoratDiv = document.querySelector('.file_charte_doctorat');
 
-            accessButton.addEventListener('click', function(event) {
+            accessButtonCharteDoctorale.addEventListener('click', function(event) {
                 event.preventDefault();
                 $('#modalShowCharteDoctorale').modal('show');
-                fileDiv.style.display = 'block';
+                fileCharteDoctoratDiv.style.display = 'block';
             });
 
-            //Si aucune école doctorale n'est renseignée
-            const parentDiv = document.querySelector('.notifier_gestionnaires');
-            const lien = parentDiv ? parentDiv.querySelector('a.btn.btn-primary') : null;
-            if (lien && !ecoleDoctoraleRenseignee) {
-                lien.dataset.message = 'Veuillez renseigner votre École doctorale';
-                lien.style.opacity = '0.5';
-                lien.removeAttribute('data-toggle');
-                lien.addEventListener('click', function (e) {
-                    e.preventDefault()
-                    $('#modalErreurNotification').modal('show');
-                })
+            var conventionFormationDoctorale = document.getElementById("conventionFormationDoctoraleObject");
+            if(conventionFormationDoctorale){
+                conventionFormationDoctorale.setAttribute("height", "0px");
+                conventionFormationDoctorale.addEventListener("load", function () {
+                    loadingIndicator.style.display = "none";
+                    fileConventionFormationDoctoraleDiv.style.height = "auto";
+                    $('.conventionFormationDoctoraleOperations').show();
+                    conventionFormationDoctorale.setAttribute("height", "4000px");
+                });
+            }
+            var loadingIndicator = document.getElementById("loading-indicator");
+            if(loadingIndicator){
+                loadingIndicator.style.display = "block";
+            }
+
+            var fileConventionFormationDoctoraleDiv = document.querySelector('.file_convention_formation_doctorale');
+            var accessButtonConventionFormationDoctorale = document.querySelector('.access_convention_formation_doctorale');
+
+            if(accessButtonConventionFormationDoctorale){
+                accessButtonConventionFormationDoctorale.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    $('#modalShowConventionFormationDoctorale').modal('show');
+                    fileConventionFormationDoctoraleDiv.style.display = 'block';
+                });
             }
         });
+
+        const buttons = document.querySelectorAll('.access_validation_operation, .access_devalidation_operation, .access_suppression_operation, .access_notification_dossier_incomplet');
+        buttons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const modalId = '#modalShowConfirmation' + button.dataset.operation;
+
+                //Gestion des modals lorsqu'il y a deux modals superposés (convention de formation doctorale et les opérations)
+                var targetElement = document.querySelector('.access_convention_formation_doctorale');
+                var modal = document.getElementById('modalShowConfirmationDeValidationOperation') || document.getElementById('modalShowConfirmationValidationOperation');
+                if(modal){
+                    targetElement.insertAdjacentElement('afterend', modal);
+                    $('#modalShowConventionFormationDoctorale').modal('hide');
+                    $('#modalShowCharteDoctorale').modal('hide');
+                }
+                showModal(modalId);
+            });
+        });
+
+        var validation_action_operation = document.querySelector('.validation_action_operation');
+        if(validation_action_operation){
+            validation_action_operation.addEventListener('click', function(event) {
+                validation_action_operation.classList.add('loading');
+            });
+        }
     }
 })
 
@@ -290,6 +387,10 @@ $(document).ready(function () {
 
     //permet de split la paire nom/prénom dans chaque input correspondant
     $(function() {
+        $("#nomDirecteurThese-autocomplete, #prenomDirecteurThese-autocomplete").on('input', function(){
+            $("#nomDirecteurThese").val(null)
+            $("#prenomDirecteurThese").val(null)
+        });
         $("#nomDirecteurThese-autocomplete, #prenomDirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
             setTimeout(function() {
                 $("#nomDirecteurThese-autocomplete").val(data.item.extras.nom);
@@ -303,6 +404,10 @@ $(document).ready(function () {
             $("#emailDirecteurThese").val(data.item.extras.email);
         })
 
+        $("#nomCodirecteurThese-autocomplete, #prenomCodirecteurThese-autocomplete").on('input', function(){
+            $("#nomCodirecteurThese").val(null)
+            $("#prenomCodirecteurThese").val(null)
+        });
         $("#nomCodirecteurThese-autocomplete, #prenomCodirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
             setTimeout(function() {
                 $("#nomCodirecteurThese-autocomplete").val(data.item.extras.nom);

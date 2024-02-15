@@ -4,15 +4,22 @@ namespace Admission\Controller\ConventionFormationDoctorale;
 
 use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleFormAwareTrait;
+use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceAwareTrait;
 use Admission\Service\Exporter\ConventionFormationDoctorale\ConventionFormationDoctoraleExporterAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-
+/**
+ * Class ConventionFormationDoctoraleController
+ *
+ * @method FlashMessenger flashMessenger()
+ */
 class ConventionFormationDoctoraleController extends AbstractActionController
 {
     use AdmissionServiceAwareTrait;
@@ -21,8 +28,9 @@ class ConventionFormationDoctoraleController extends AbstractActionController
     use ConventionFormationDoctoraleFormAwareTrait;
     use ConventionFormationDoctoraleExporterAwareTrait;
     use EtablissementServiceAwareTrait;
+    use AdmissionOperationRuleAwareTrait;
 
-    public function ajouterConventionFormationAction()
+    public function ajouterConventionFormationAction(): Response|ViewModel
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
 
@@ -57,7 +65,8 @@ class ConventionFormationDoctoraleController extends AbstractActionController
         ]))->setTemplate('admission/admission/convention-formation-doctorale/modifier');
     }
 
-    public function modifierConventionFormationAction(){
+    public function modifierConventionFormationAction(): Response|ViewModel
+    {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
         $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
         $form = $this->conventionFormationDoctoraleForm;
@@ -85,7 +94,8 @@ class ConventionFormationDoctoraleController extends AbstractActionController
         ]))->setTemplate('admission/admission/convention-formation-doctorale/modifier');
     }
 
-    public function genererConventionFormationAction(){
+    public function genererConventionFormationAction(): void
+    {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
         $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
 
@@ -93,16 +103,19 @@ class ConventionFormationDoctoraleController extends AbstractActionController
         try {
             $site = $admission->getInscription()->first()->getEtablissementInscription() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure() : null;
             $logos['site'] = $site ? $this->fichierStorageService->getFileForLogoStructure($site) : null;
-        } catch (StorageAdapterException $e) {
+        } catch (StorageAdapterException) {
             $logos['site'] = null;
         }
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             try {
                 $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
-            } catch (StorageAdapterException $e) {
+            } catch (StorageAdapterException) {
                 $logos['comue'] = null;
             }
         }
+
+        //Récupération des opérations liées à la convention de formation doctorale du dossier d'admission
+        $conventionFormationDoctoraleOperations = $admission ? $this->admissionOperationRule->getOperationsForAdmission($admission, 'conventionFormationDoctorale') : null;
 
         $export = $this->conventionFormationDoctoraleExporter;
         $export->setWatermark("CONFIDENTIEL");
@@ -110,6 +123,7 @@ class ConventionFormationDoctoraleController extends AbstractActionController
             'admission' => $admission,
             'conventionFormationDoctorale' => $conventionFormationDoctorale,
             'logos' => $logos,
+            'conventionFormationDoctoraleOperations' => $conventionFormationDoctoraleOperations
         ]);
         $export->export('SYGAL_admission_convention_formation_doctorale_' . $admission->getId() . ".pdf");
     }

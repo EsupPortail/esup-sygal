@@ -13,7 +13,6 @@ use Individu\Entity\Db\Individu;
  * @var AdmissionForm $form
  * @var Admission $admission
  * @var Individu $individu
- * @var string $error
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
  */
@@ -22,7 +21,6 @@ $form->prepare();
 $fcg = $this->formControlGroup();
 
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
-$canVerifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER);
 $canModifierAdmission  =
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
@@ -172,7 +170,7 @@ if(!empty($admission) && !$canModifierAdmission) {
 <?php
 if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
-        'canVerifierAdmission' => $canVerifierAdmission,
+        'admission' => $admission,
         'fcg' => $fcg,
         'fieldset' => $fieldset->get("verificationEtudiant"),
         'element' => !empty($admission) ? $admission->getEtudiant() : null,
@@ -180,7 +178,6 @@ if($canAccederCommentaires) {
     ]);
 }
 ?>
-
 <div class="modal fade" id="modalInfosIne" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -198,10 +195,8 @@ if($canAccederCommentaires) {
                         2. Courriers officiels de l'éducation nationale : Si vous avez reçu des courriers ou des notifications officielles de l'éducation nationale, votre I.N.E pourrait y être mentionné.
                     </li>
                 </ul>
-
                 <b>À quoi ressemble-t-il ?</b>
                 <br>
-
                 L'I.N.E est composé de chiffres et de lettres : il peut être sous la forme de
                 <ul>
                     <li>
@@ -220,10 +215,8 @@ if($canAccederCommentaires) {
                     <li>
                         2. Official letters from the Ministry of Education: If you have received official letters or notifications from the Ministry of Education, your I.N.E. may be mentioned.                    </li>
                 </ul>
-
                 <b>What does it look like?</b>
                 <br>
-
                 The I.N.E is made up of numbers and letters: it can be in the format of
                 <ul>
                     <li>

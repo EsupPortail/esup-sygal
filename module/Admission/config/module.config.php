@@ -114,10 +114,9 @@ return array(
                             AdmissionPrivileges::ADMISSION_VERIFIER,
                             AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
-                            AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES,
-                            AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET,
-                            AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF
+                            AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF,
+                            AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE
                         ],
                         'resources'  => ['Admission'],
                         'assertion'  => AdmissionAssertion::class,
@@ -136,6 +135,7 @@ return array(
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
                         AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_INITIALISER_ADMISSION
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
@@ -150,6 +150,7 @@ return array(
                         'generer-statut-dossier'
                     ],
                     'privileges' => [
+                        AdmissionPrivileges::ADMISSION_INITIALISER_ADMISSION,
                         AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
                         AdmissionPrivileges::ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION,
                         AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION,
@@ -172,16 +173,6 @@ return array(
                 [
                     'controller' => AdmissionController::class,
                     'action' => [
-                        'notifier-gestionnaire',
-                    ],
-                    'privileges' => [
-                        AdmissionPrivileges::ADMISSION_NOTIFIER_GESTIONNAIRES,
-                    ],
-                    'assertion' => AdmissionAssertion::class,
-                ],
-                [
-                    'controller' => AdmissionController::class,
-                    'action' => [
                         'notifier-commentaires-ajoutes',
                     ],
                     'privileges' => [
@@ -196,7 +187,6 @@ return array(
                         'notifier-dossier-incomplet',
                     ],
                     'privileges' => [
-                        AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_COMPLET,
                         AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET,
                     ],
                     'assertion' => AdmissionAssertion::class,
@@ -256,34 +246,6 @@ return array(
                                 'controller' => AdmissionController::class,
                                 'action' => 'notifier-commentaires-ajoutes',
                                 /* @see AdmissionController::notifierCommentairesAjoutesAction() */
-                            ],
-                        ],
-                    ],
-                    'notifier-gestionnaire' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/notifier-gestionnaire/:admission',
-                            'constraints' => [
-                                'admission' => '[0-9]*'
-                            ],
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-                                'action' => 'notifier-gestionnaire',
-                                /* @see AdmissionController::notifierGestionnaireAction() */
-                            ],
-                        ],
-                    ],
-                    'notifier-dossier-complet' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/notifier-dossier-complet/:admission',
-                            'constraints' => [
-                                'admission' => '[0-9]*'
-                            ],
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-                                'action' => 'notifier-dossier-complet',
-                                /* @see AdmissionController::notifierDossierCompletAction() */
                             ],
                         ],
                     ],

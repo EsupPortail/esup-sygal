@@ -40,6 +40,25 @@ class Financement implements HistoriqueAwareInterface{
      * @var Collection
      */
     private $verificationFinancement;
+    /**
+     * @var integer|null
+     */
+    private $tempsTravail;
+
+    /**
+     * @var string|null
+     */
+    private $statutProfessionnel;
+
+    /**
+     * @var bool|null
+     */
+    private $estSalarie;
+
+    /**
+     * @var string|null
+     */
+    private $etablissementLaboratoireRecherche;
 
     /**
      * Constructor
@@ -189,6 +208,102 @@ class Financement implements HistoriqueAwareInterface{
         }
     }
 
+    /**
+     * Set tempsTravail.
+     *
+     * @param integer|null $tempsTravail
+     *
+     * @return Financement
+     */
+    public function setTempsTravail($tempsTravail = null)
+    {
+        $this->tempsTravail = $tempsTravail;
+
+        return $this;
+    }
+
+    /**
+     * Get tempsTravail.
+     *
+     * @return integer|null
+     */
+    public function getTempsTravail()
+    {
+        return $this->tempsTravail;
+    }
+
+    /**
+     * Set statutProfessionnel.
+     *
+     * @param string|null $statutProfessionnel
+     *
+     * @return Financement
+     */
+    public function setStatutProfessionnel($statutProfessionnel = null)
+    {
+        $this->statutProfessionnel = $statutProfessionnel;
+
+        return $this;
+    }
+
+    /**
+     * Get statutProfessionnel.
+     *
+     * @return string|null
+     */
+    public function getStatutProfessionnel()
+    {
+        return $this->statutProfessionnel;
+    }
+
+    /**
+     * Set estSalarie.
+     *
+     * @param bool|null $estSalarie
+     *
+     * @return Financement
+     */
+    public function setEstSalarie($estSalarie = null)
+    {
+        $this->estSalarie = $estSalarie;
+
+        return $this;
+    }
+
+    /**
+     * Get estSalarie.
+     *
+     * @return bool|null
+     */
+    public function getEstSalarie()
+    {
+        return $this->estSalarie;
+    }
+
+    /**
+     * Set etablissementLaboratoireRecherche.
+     *
+     * @param string|null $etablissementLaboratoireRecherche
+     *
+     * @return Financement
+     */
+    public function setEtablissementLaboratoireRecherche($etablissementLaboratoireRecherche = null)
+    {
+        $this->etablissementLaboratoireRecherche = $etablissementLaboratoireRecherche;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementLaboratoireRecherche.
+     *
+     * @return string|null
+     */
+    public function getEtablissementLaboratoireRecherche()
+    {
+        return $this->etablissementLaboratoireRecherche;
+    }
+
     /** Pour macro ****************************************************************************************************/
 
     /**
@@ -206,6 +321,32 @@ class Financement implements HistoriqueAwareInterface{
             }else{
                 return "<b>Aucun contrat doctoral prévu</b>";
             }
+        }
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getTempsTravailInformations(){
+        if($this->tempsTravail == 1){
+            return "temps complet";
+        }else if($this->tempsTravail == 2){
+            return "à temps partiel";
+        }else{
+            return "<b>Non renseigné</b>";
+        }
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getEstSalarieInfos(){
+        if($this->estSalarie == 1){
+            return "Oui";
+        }else if($this->estSalarie == 2){
+            return "Non";
+        }else{
+            return "<b>Non renseigné</b>";
         }
     }
 }

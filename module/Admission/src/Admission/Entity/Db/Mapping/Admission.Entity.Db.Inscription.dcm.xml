@@ -66,9 +66,29 @@
                 <join-column name="DIRECTEUR_THESE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+        <many-to-one field="fonctionDirecteurThese" target-entity="Soutenance\Entity\Qualite">
+            <join-columns>
+                <join-column name="FONCTION_DIRECTEUR_THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
         <many-to-one field="coDirecteur" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="CODIRECTEUR_THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="fonctionCoDirecteurThese" target-entity="Soutenance\Entity\Qualite">
+            <join-columns>
+                <join-column name="FONCTION_CODIRECTEUR_THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="uniteRechercheCoDirecteur" target-entity="Structure\Entity\Db\UniteRecherche">
+            <join-columns>
+                <join-column name="UNITE_RECHERCHE_CODIRECTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="etablissementRattachementCoDirecteur" target-entity="Structure\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="ETABLISSEMENT_RATTACHEMENT_CODIRECTEUR_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

@@ -3,9 +3,11 @@ namespace Admission\Entity\Db;
 
 use Application\Entity\Db\Discipline;
 use Application\Entity\Db\Pays;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
+use Soutenance\Entity\Qualite;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
@@ -37,7 +39,7 @@ class Inscription implements HistoriqueAwareInterface{
     private $titreThese;
 
     /**
-     * @var \DateTime|null
+     * @var DateTime|null
      */
     private $dateConfidentialite;
 
@@ -129,11 +131,31 @@ class Inscription implements HistoriqueAwareInterface{
      * @var Individu
      */
     private $coDirecteur;
+    
+    /**
+     * @var Qualite
+     */
+    private $fonctionDirecteurThese;
+
+    /**
+     * @var Qualite
+     */
+    private $fonctionCoDirecteurThese;
 
     /**
      * @var Collection
      */
     private $verificationInscription;
+
+    /**
+     * @var UniteRecherche
+     */
+    private $uniteRechercheCoDirecteur;
+
+    /**
+     * @var Etablissement
+     */
+    private $etablissementRattachementCoDirecteur;
 
     /**
      * Constructor
@@ -267,7 +289,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set dateConfidentialite.
      *
-     * @param \DateTime|null $dateConfidentialite
+     * @param DateTime|null $dateConfidentialite
      *
      * @return Inscription
      */
@@ -281,7 +303,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get dateConfidentialite.
      *
-     * @return \DateTime|null
+     * @return DateTime|null
      */
     public function getDateConfidentialite()
     {
@@ -717,28 +739,124 @@ class Inscription implements HistoriqueAwareInterface{
         }
     }
 
+    /**
+     * Set uniteRechercheCoDirecteur.
+     *
+     * @param UniteRecherche|null $uniteRechercheCoDirecteur
+     *
+     * @return Inscription
+     */
+    public function setUniteRechercheCoDirecteur(UniteRecherche $uniteRechercheCoDirecteur = null)
+    {
+        $this->uniteRechercheCoDirecteur = $uniteRechercheCoDirecteur;
+
+        return $this;
+    }
+
+    /**
+     * Get uniteRechercheCoDirecteur.
+     *
+     * @return UniteRecherche|null
+     */
+    public function getUniteRechercheCoDirecteur()
+    {
+        return $this->uniteRechercheCoDirecteur;
+    }
+
+    /**
+     * Set etablissementRattachementCoDirecteur.
+     *
+     * @param Etablissement|null $etablissementRattachementCoDirecteur
+     *
+     * @return Inscription
+     */
+    public function setEtablissementRattachementCoDirecteur(Etablissement $etablissementRattachementCoDirecteur = null)
+    {
+        $this->etablissementRattachementCoDirecteur = $etablissementRattachementCoDirecteur;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementRattachementCoDirecteur.
+     *
+     * @return Etablissement|null
+     */
+    public function getEtablissementRattachementCoDirecteur()
+    {
+        return $this->etablissementRattachementCoDirecteur;
+    }
+
+    /**
+     * Set fonctionDirecteurThese.
+     *
+     * @param Qualite|null $fonctionDirecteurThese
+     *
+     * @return Inscription
+     */
+    public function setFonctionDirecteurThese(Qualite $fonctionDirecteurThese = null)
+    {
+        $this->fonctionDirecteurThese = $fonctionDirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get fonctionDirecteurThese.
+     *
+     * @return Qualite|null
+     */
+    public function getFonctionDirecteurThese()
+    {
+        return $this->fonctionDirecteurThese;
+    }
+
+    /**
+     * Set fonctionCoDirecteurThese.
+     *
+     * @param Qualite|null $fonctionCoDirecteurThese
+     *
+     * @return Inscription
+     */
+    public function setFonctionCoDirecteurThese(Qualite $fonctionCoDirecteurThese = null)
+    {
+        $this->fonctionCoDirecteurThese = $fonctionCoDirecteurThese;
+
+        return $this;
+    }
+
+    /**
+     * Get fonctionCoDirecteurThese.
+     *
+     * @return Qualite|null
+     */
+    public function getFonctionCoDirecteurThese()
+    {
+        return $this->fonctionCoDirecteurThese;
+    }
+
     /** Pour macro ****************************************************************************************************/
 
-    public function getSpecialiteDoctoratLibelle()
+    public function getSpecialiteDoctoratLibelle(): ?string
     {
         return $this->getSpecialiteDoctorat() ? $this->getSpecialiteDoctorat()->getLibelle() : null;
     }
-    public function getComposanteRattachementLibelle()
+    public function getComposanteRattachementLibelle(): ?string
     {
         return $this->getComposanteDoctorat() ? $this->getComposanteDoctorat()->getStructure()->getLibelle() : null;
     }
 
-    public function getEcoleDoctoraleLibelle()
+    public function getEcoleDoctoraleLibelle(): ?string
     {
         return $this->getEcoleDoctorale() ? $this->getEcoleDoctorale()->getStructure()->getLibelle() : null;
     }
 
-    public function getUniteRechercheLibelle()
+    public function getUniteRechercheLibelle(): ?string
     {
         return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : null;
     }
 
-    public function getEtablissementInscriptionLibelle()
+    public function getEtablissementInscriptionLibelle(): ?string
     {
         return $this->getEtablissementInscription()?->getStructure()->getLibelle();
     }
@@ -751,13 +869,14 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
-    public function getConfidentialiteSouhaiteeLibelle()
+    public function getConfidentialiteSouhaiteeLibelle(): string
     {
         if($this->getConfidentialite() === null){
             return "<b>Non renseigné</b>";
         }else{
             if($this->getConfidentialite()){
-                return "Oui <br> <ul><li><b>Date de fin de confidentialité souhaitée (limitée à 10 ans) : </b>".$this->getDateConfidentialite()->format("d/m/Y")."</li></ul>";
+                $dateConfidentialite = $this->getDateConfidentialite() ? $this->getDateConfidentialite()->format("d/m/Y") : null;
+                return "Oui <br> <ul><li><b>Date de fin de confidentialité souhaitée (limitée à 10 ans) : </b>".$dateConfidentialite."</li></ul>";
             }else{
                 return "Non";
             }
@@ -767,7 +886,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
-    public function getCotutelleEnvisageeLibelle()
+    public function getCotutelleEnvisageeLibelle(): string
     {
         if($this->getCoTutelle() === null){
             return "<b>Non renseigné</b>";
@@ -791,13 +910,33 @@ class Inscription implements HistoriqueAwareInterface{
         }else{
             if($this->getCoDirection()) {
                 $coDirecteur = $this->getCoDirecteur() ?
-                    $this->getCoDirecteur()->getCiviliteToString() . " " . $this->getCoDirecteur()->getNomComplet() . " " . $this->getCoDirecteur()->getPrenom() :
+                    $this->getCoDirecteur()->getCiviliteToString() . " " . $this->getCoDirecteur()->getNomComplet() :
                     $this->getNomCodirecteurThese() . " " . $this->getPrenomCodirecteurThese();
                 return $coDirecteur;
             }else{
                 return "Non";
             }
         }
+    }
+
+    public function getUniteRechercheCoDirecteurLibelle()
+    {
+        return $this->getUniteRechercheCoDirecteur()?->getStructure()->getLibelle();
+    }
+
+    public function getEtablissementRattachementCoDirecteurLibelle()
+    {
+        return $this->getEtablissementRattachementCoDirecteur()?->getStructure()->getLibelle();
+    }
+
+    public function getFonctionDirecteurLibelle(): ?string
+    {
+        return $this->getFonctionDirecteurThese()?->getLibelle();
+    }
+
+    public function getFonctionCoDirecteurLibelle(): ?string
+    {
+        return $this->getFonctionCoDirecteurThese()?->getLibelle();
     }
 
     public function getCoEncadrementLibelle()

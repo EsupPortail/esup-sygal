@@ -6,8 +6,11 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 
 class AdmissionPrivileges extends Privileges {
     const ADMISSION_LISTER_MES_DOSSIERS_ADMISSION  = 'admission-admission-lister-mes-dossiers-admission';
+    const ADMISSION_INITIALISER_ADMISSION  = 'admission-admission-initialiser-son-dossier-admission';
+    const ADMISSION_RECHERCHER_DOSSIERS_ADMISSION  = 'admission-admission-rechercher-dossiers-admission';
     const ADMISSION_AFFICHER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-afficher-tous-dossiers-admission';
     const ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION = 'admission-admission-afficher-son-dossier-admission';
+    const ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE = 'admission-admission-afficher-son-dossier-admission-dans-liste';
     const ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-modifier-tous-dossiers-admission';
     const ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION     = 'admission-admission-modifier-son-dossier-admission';
     const ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-supprimer-tous-dossiers-admission';
@@ -40,14 +43,11 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_TELECHARGER_SON_DOCUMENT = 'admission-admission-telecharger-son-document';
 
     //notification
-    const ADMISSION_NOTIFIER_GESTIONNAIRES  = 'admission-admission-notifier-gestionnaires';
     const ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES  = 'admission-admission-commentaires-ajoutes';
-    const ADMISSION_NOTIFIER_DOSSIER_COMPLET  = 'admission-admission-notifier-dossier-complet';
     const ADMISSION_NOTIFIER_DOSSIER_INCOMPLET  = 'admission-admission-notifier-dossier-incomplet';
 
     //convention de formation doctorale
     const ADMISSION_CONVENTION_FORMATION_MODIFIER  = 'admission-admission-convention-formation-modifier';
     const ADMISSION_CONVENTION_FORMATION_VISUALISER  = 'admission-admission-convention-formation-visualiser';
     const ADMISSION_CONVENTION_FORMATION_GENERER  = 'admission-admission-convention-formation-generer';
-
 }

@@ -2,6 +2,7 @@
 namespace Admission\Controller\ConventionFormationDoctorale;
 
 use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
+use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
 use Admission\Service\Document\DocumentService;
@@ -33,6 +34,7 @@ class ConventionFormationDoctoraleControllerFactory implements FactoryInterface
         $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
         $etablissementService = $container->get(EtablissementService::class);
         $conventionFormationDoctoraleExporter = $container->get(ConventionFormationDoctoraleExporter::class);
+        $admissionOperationRule = $container->get(AdmissionOperationRule::class);
         /**
          * @var ConventionFormationDoctoraleForm $conventionFormationDoctorale
          */
@@ -45,6 +47,7 @@ class ConventionFormationDoctoraleControllerFactory implements FactoryInterface
         $controller->setConventionFormationDoctoraleForm($conventionFormationDoctorale);
         $controller->setConventionFormationDoctoraleExporter($conventionFormationDoctoraleExporter);
         $controller->setEtablissementService($etablissementService);
+        $controller->setAdmissionOperationRule($admissionOperationRule);
 
 
         return $controller;

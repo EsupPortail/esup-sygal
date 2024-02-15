@@ -7,6 +7,7 @@ use Application\Entity\Db\Discipline;
 use Application\Entity\Db\Pays;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
+use Soutenance\Entity\Qualite;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
@@ -60,10 +61,25 @@ class InscriptionHydrator extends DoctrineObject
             $data["ecoleDoctorale"] = $data["ecoleDoctorale"]->getId();
         }
 
+        if (array_key_exists($key = 'etablissementRattachementCoDirecteur', $data) && $data[$key] instanceof Etablissement) {
+            $data["etablissementRattachementCoDirecteur"] = $data["etablissementRattachementCoDirecteur"]->getId();
+        }
+
+        if (array_key_exists($key = 'fonctionDirecteurThese', $data) && $data[$key] instanceof Qualite) {
+            $data["fonctionDirecteurThese"] = $data["fonctionDirecteurThese"]->getId();
+        }
+
+        if (array_key_exists($key = 'fonctionCoDirecteurThese', $data) && $data[$key] instanceof Qualite) {
+            $data["fonctionCoDirecteurThese"] = $data["fonctionCoDirecteurThese"]->getId();
+        }
+
+        if (array_key_exists($key = 'uniteRechercheCoDirecteur', $data) && $data[$key] instanceof UniteRecherche) {
+            $data["uniteRechercheCoDirecteur"] = $data["uniteRechercheCoDirecteur"]->getId();
+        }
+
         if (array_key_exists($key = 'specialiteDoctorat', $data) && $data[$key] instanceof Discipline) {
             $data["specialiteDoctorat"] = $data["specialiteDoctorat"]->getCode();
         }
-
 
         $data['verificationInscription'] = $object->getVerificationInscription()->first();
 
@@ -76,6 +92,10 @@ class InscriptionHydrator extends DoctrineObject
         $data["ecoleDoctorale"] = !empty($data["ecoleDoctorale"]) ? $data["ecoleDoctorale"] : null;
         $data["uniteRecherche"] = !empty($data["uniteRecherche"]) ? $data["uniteRecherche"] : null;
         $data["etablissementInscription"] = !empty($data["etablissementInscription"]) ? $data["etablissementInscription"] : null;
+        $data["uniteRechercheCoDirecteur"] = !empty($data["uniteRechercheCoDirecteur"]) ? $data["uniteRechercheCoDirecteur"] : null;
+        $data["etablissementRattachementCoDirecteur"] = !empty($data["etablissementRattachementCoDirecteur"]) ? $data["etablissementRattachementCoDirecteur"] : null;
+        $data["fonctionDirecteurThese"] = !empty($data["fonctionDirecteurThese"]) ? $data["fonctionDirecteurThese"] : null;
+        $data["fonctionCoDirecteurThese"] = !empty($data["fonctionCoDirecteurThese"]) ? $data["fonctionCoDirecteurThese"] : null;
         $data["specialiteDoctorat"] = !empty($data["specialiteDoctorat"]) ? $data["specialiteDoctorat"] : null;
 
         if (!empty($data["nomCodirecteurThese"]["id"]) && !empty($data["nomCodirecteurThese"]["label"])) {

@@ -12,6 +12,8 @@
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
 use Individu\Entity\Db\Individu;
 
 $ajaxModalEvent = 'EVENT_AVIS_SAISI';
@@ -55,7 +57,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <div class="card mb-3 dossier_refuse">
                 <div class="card-body text-danger">
                     <i class="icon icon-unchecked"></i>
-                    <p class="card-title">Le dossier est rejeté</p>
+                    <p class="card-title">La direction de l'établissement a émis un avis réservé sur ce dossier</p>
                 </div>
             </div>
         <?php }
@@ -64,7 +66,11 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <div class="card mb-3 dossier_incomplet">
                 <div class="card-body text-warning">
                     <i class="icon icon-information"></i>
-                    <?php if($operationEnAttente instanceof AdmissionAvis && $operationEnAttente->getAvis()->getAvisType()->getCode() !== AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE){ ?>
+                    <?php
+                    if(($operationEnAttente instanceof AdmissionAvis &&
+                        $operationEnAttente->getAvis()->getAvisType()->getCode() !== AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE) ||
+                        ($operationEnAttente instanceof AdmissionValidation &&
+                        $operationEnAttente->getTypeValidation()->getCode() === TypeValidation::CODE_ATTESTATION_HONNEUR)){ ?>
                         <p class="card-title">En attente de l'<?= strtolower($operationEnAttente->getTypeToString()); ?></p>
                     <?php }else{ ?>
                         <p class="card-title">En attente de la <?= strtolower($operationEnAttente->getTypeToString()); ?></p>

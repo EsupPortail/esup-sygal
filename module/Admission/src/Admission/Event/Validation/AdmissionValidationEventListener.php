@@ -3,6 +3,7 @@
 namespace Admission\Event\Validation;
 
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
 use Admission\Event\AdmissionEvent;
 use Admission\Event\Operation\AdmissionOperationAbstractEventListener;
 use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
@@ -43,8 +44,9 @@ class AdmissionValidationEventListener extends AdmissionOperationAbstractEventLi
     public function onValidationAjoutee(AdmissionValidationEvent $event)
     {
         $this->initFromEvent($event);
-
-        $this->handleNotificationValidationAjoutee();
+        if (!in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE)){
+            $this->handleNotificationValidationAjoutee();
+        }
         $this->handleSuppressionOperationsExistantes();
         $this->handleNotificationOperationAttendue();
     }

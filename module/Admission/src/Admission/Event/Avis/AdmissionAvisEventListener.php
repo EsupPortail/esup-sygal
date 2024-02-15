@@ -117,7 +117,12 @@ class AdmissionAvisEventListener extends AdmissionOperationAbstractEventListener
 
         $operationConfig = $this->admissionOperationRule->getConfigForOperation($this->operationRealisee);
         // le nom de l'opération "validation_etudiant_operation_name" et "validation_gestionnaire_operation_name" est dans la config de l'opération courante
-        $ripOperationsname = ['validation_etudiant_operation_name',
+        $ripOperationsname = [
+            'validation_convention_formation_doctorale_dir_these_operation_name',
+            'validation_convention_formation_doctorale_codir_these_operation_name',
+            'validation_convention_formation_doctorale_dir_ur_operation_name',
+            'validation_convention_formation_doctorale_dir_ed_operation_name',
+            'validation_etudiant_operation_name',
             'validation_gestionnaire_operation_name',
             'avis_direction_these_operation_name',
             'avis_codirection_these_operation_name',

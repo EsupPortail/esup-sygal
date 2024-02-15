@@ -3,7 +3,6 @@
 namespace Admission\Controller\Validation;
 
 use Admission\Entity\Db\AdmissionValidation;
-use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;

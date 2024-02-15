@@ -24,36 +24,43 @@ class ConventionFormationDoctoraleForm extends Form
         $this->add(
             (new Textarea('calendrierProjetRecherche'))
                 ->setLabel("Calendrier prévisionnel du projet de recherche")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Textarea('modalitesEncadrSuiviAvancmtRech'))
                 ->setLabel("Modalités d'encadrement, de suivi de la formation et d'avancement des recherches du doctorant")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Textarea('conditionsRealisationProjRech'))
                 ->setLabel("Conditions matérielles de réalisation du projet de recherche et conditions de sécurité spécifiques si nécessaire")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Textarea('modalitesIntegrationUr'))
                 ->setLabel(" Modalités d'intégration dans l'unité ou l’équipe de recherche")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Textarea('partenariatsProjThese'))
                 ->setLabel("Partenariats impliqués par le projet de thèse")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Textarea('motivationDemandeConfidentialite'))
                 ->setLabel("Motivation de la demande de confidentialité par le doctorant et la direction de thèse")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Textarea('projetProDoctorant'))
                 ->setLabel("Projet professionnel du doctorant")
+                ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(new Csrf('security'), ['csrf_options' => ['timeout' => 600]]);

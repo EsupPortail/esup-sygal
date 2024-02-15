@@ -149,7 +149,9 @@ class OperationAttendueNotificationRule implements RuleInterface
 
                 case Role::CODE_DIRECTEUR_THESE:
                 case Role::CODE_CODIRECTEUR_THESE:
-                    $acteurs[] = ($codeRole === Role::CODE_DIRECTEUR_THESE) ?
+                case Role::CODE_ADMISSION_DIRECTEUR_THESE:
+                case Role::CODE_ADMISSION_CODIRECTEUR_THESE:
+                    $acteurs[] = ($codeRole === Role::CODE_DIRECTEUR_THESE || $codeRole === Role::CODE_ADMISSION_DIRECTEUR_THESE) ?
                         $admission->getInscription()->first()->getDirecteur() :
                         $admission->getInscription()->first()->getCoDirecteur();
                     if (count($acteurs)) {

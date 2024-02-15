@@ -6,16 +6,24 @@ use Admission\Entity\Db\Document;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
+use Exception;
+use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\Fichier\FichierServiceException;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Validator\File\MimeType;
 use Laminas\View\Model\JsonModel;
+use UnicaenApp\Exception\RuntimeException;
 
+/**
+ * Class DocumentController
+ *
+ * @method FlashMessenger flashMessenger()
+ */
 class DocumentController extends AbstractActionController
 {
     use AdmissionServiceAwareTrait;
@@ -26,7 +34,8 @@ class DocumentController extends AbstractActionController
     use FichierStorageServiceAwareTrait;
     use AdmissionOperationRuleAwareTrait;
 
-    public function enregistrerDocumentAction(){
+    public function enregistrerDocumentAction(): JsonModel|Response|bool
+    {
         $request = $this->getRequest();
         if ($request->isPost()) {
             // Récupérez le fichier téléchargé via le gestionnaire de fichiers
@@ -56,7 +65,7 @@ class DocumentController extends AbstractActionController
                         $fichier = $this->fichierService->createFichiersFromUpload($fileDetail, $nature, $version);
                         $this->documentService->createDocumentFromUpload($admission, $fichier);
                         return new JsonModel(['success' => 'Document téléversé avec succès']);
-                    } catch (\Exception $die) {
+                    } catch (Exception $die) {
                         return $this->createErrorResponse(500, $die->getMessage());
                     }
                 }
@@ -65,7 +74,7 @@ class DocumentController extends AbstractActionController
         return false;
     }
 
-    public function supprimerDocumentAction()
+    public function supprimerDocumentAction(): JsonModel|Response
     {
         $natureCode = $this->params()->fromRoute("codeNatureFichier");
         $nature = $this->documentService->getRepository()->fetchNatureFichier($natureCode);
@@ -82,11 +91,11 @@ class DocumentController extends AbstractActionController
             $this->documentService->delete($document);
             $this->flashMessenger()->addSuccessMessage("Document justificatif supprimé avec succès.");
             return new JsonModel(['success' => 'Document supprimé avec succès']);
-        } catch (\Exception $die) {
+        } catch (Exception $die) {
             return $this->createErrorResponse(500, $die->getMessage());
         }
     }
-    public function telechargerDocumentAction()
+    public function telechargerDocumentAction(): JsonModel|Response
     {
         $natureCode = $this->params()->fromRoute('codeNatureFichier');
         $nature = $this->documentService->getRepository()->fetchNatureFichier($natureCode);
@@ -101,11 +110,11 @@ class DocumentController extends AbstractActionController
             try {
                 $fichierContenu = $this->documentService->recupererDocumentContenu($document);
             } catch (FichierServiceException $e) {
-                throw new \UnicaenApp\Exception\RuntimeException("Une erreur est survenue empêchant la création ", null, $e);
+                throw new RuntimeException("Une erreur est survenue empêchant la création ", null, $e);
             }
             $this->fichierService->telechargerFichier($fichierContenu);
             return new JsonModel(['success' => 'Document téléchargé avec succès']);
-        } catch (\Exception $die) {
+        } catch (Exception $die) {
             return $this->createErrorResponse(500, $die->getMessage());
         }
     }
