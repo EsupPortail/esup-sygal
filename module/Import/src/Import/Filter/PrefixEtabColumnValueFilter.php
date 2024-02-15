@@ -48,7 +48,7 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
             implode(', ', $this->columnsToTransform);
     }
 
-    public function setParams(array $params)
+    public function setParams(array $params): void
     {
         if (array_key_exists($key = self::PARAM_CODE_ETABLISSEMENT, $params)) {
             $this->codeEtablissement = $params[self::PARAM_CODE_ETABLISSEMENT];
@@ -57,7 +57,7 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
         parent::setParams($params);
     }
 
-    public function filter(string $name, $value)
+    public function filter($value)
     {
         if ($value === null) {
             return null;
@@ -70,7 +70,7 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
             ));
         }
 
-        if (in_array($name, $this->columnsToTransform)) {
+        if (in_array($this->columnName, $this->columnsToTransform)) {
             $value = $this->codeEtablissement . '::' . $value;
         }
 
