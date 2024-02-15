@@ -33,7 +33,9 @@ class IndividuSubstitutionService extends SpecificSubstitutionAbstractService
             "FROM INDIVIDU t " .
             "JOIN INDIVIDU_RECH ir on ir.id = t.id " .
             "JOIN SOURCE src on src.id = t.source_id and src.importable = true " . // enregistrement importé
-            "WHERE t.HISTO_DESTRUCTION IS NULL ";
+            "left join doctorant d on d.individu_id = t.id " . // pour exclusion des individus doctorants
+            "WHERE t.HISTO_DESTRUCTION IS NULL " .
+            "and d.id is null"; // exclusion des individus doctorants (car substitutions dédiées)
 
         // autres conditions pour être substituable
         $ors = implode(' OR ', [
