@@ -592,7 +592,9 @@ class DepotController extends AbstractController
 
         // Attestations remplies ?
         $isAttestationsSaisies = $this->depotService->isAttestationsVersionInitialeSaisies($these);
-        $form->get('attestationsRemplies')->setValue($isAttestationsSaisies);
+        if ($form->has('attestationsRemplies')) {
+            $form->get('attestationsRemplies')->setValue($isAttestationsSaisies);
+        }
 
         if ($form instanceof RdvBuTheseForm && ! $this->depotService->isExemplPapierFourniPertinent($these)) {
             $form->disableExemplPapierFourni();

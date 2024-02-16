@@ -14,6 +14,7 @@ Journal des modifications
 - [FIX] Page de modification d'une UR : paramètres de route erronés ; suppression de warnings PHP de variables inconnues.
 - [FIX] Module Substitutions : modification de la formule de caclul du NPD doctorant.
 - [FIX] Recherche de doctorant par individu : plus d'exception si 2 doctorants liés au même individu, on prend le plus récent.
+- [FIX] Affichage du formulaire de saisie par le doctorant des informations nécessaires au RDV BU.  
 
 7.0.0
 -----
