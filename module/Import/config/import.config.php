@@ -147,7 +147,6 @@ return [
         'factories' => [
             Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,
             ImportObservResultService::class => ImportObservResultServiceFactory::class,
-            PrefixEtabColumnValueFilter::class => PrefixEtabColumnValueFilterFactory::class,
         ],
         'aliases' => [
             'ImportService' => Import\Service\ImportService::class,

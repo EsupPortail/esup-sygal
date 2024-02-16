@@ -251,6 +251,9 @@ create table IF NOT EXISTS admission_inscription
     histo_destruction                         timestamp
 );
 
+alter table soutenance_qualite
+    add column if not exists admission varchar(1);
+
 UPDATE public.soutenance_qualite
 SET admission = 'N'
 WHERE id = 4;
