@@ -11480,7 +11480,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "d98c6da960aab0c2a63d3333d5af956a6eef3c86"
+                "reference": "995b48e96a79fa22f2e0894806eb077102e17093"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -11513,7 +11513,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2024-02-14T15:50:35+00:00"
+            "time": "2024-02-19T10:29:14+00:00"
         },
         {
             "name": "unicaen/faq",

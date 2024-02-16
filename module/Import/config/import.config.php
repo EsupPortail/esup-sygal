@@ -1,11 +1,9 @@
 <?php
 
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Import\Controller\Factory\ImportObserverControllerFactory;
 use Import\Controller\ImportController;
-use Import\Filter\PrefixEtabColumnValueFilter;
-use Import\Filter\PrefixEtabColumnValueFilterFactory;
 use Import\Model\Service\ImportObservResultService;
 use Import\Model\Service\ImportObservResultServiceFactory;
 use Unicaen\Console\Router\Simple;
@@ -145,7 +143,6 @@ return [
         'factories' => [
             Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,
             ImportObservResultService::class => ImportObservResultServiceFactory::class,
-            PrefixEtabColumnValueFilter::class => PrefixEtabColumnValueFilterFactory::class,
         ],
         'aliases' => [
             'ImportService' => Import\Service\ImportService::class,
