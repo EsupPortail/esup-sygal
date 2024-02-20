@@ -81,6 +81,8 @@ class AdmissionController extends AdmissionAbstractController {
 
     public function indexAction(): ViewModel|Response
     {
+        return $this->redirect()->toRoute('admission/recherche', [], [], true);
+
         $request = $this->getRequest();
         if($request->isPost()){
             $individu = $request->getPost('individuId');

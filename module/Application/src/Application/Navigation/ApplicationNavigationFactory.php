@@ -29,6 +29,10 @@ class ApplicationNavigationFactory extends NavigationFactory
     const MES_THESES_PAGE_ID = 'MES_THESES';
     const NOS_THESES_PAGE_ID = 'NOS_THESES';
 
+    const MON_ADMISSION_PAGE_ID = 'MON_ADMISSION';
+    const MES_ADMISSIONS_PAGE_ID = 'MES_ADMISSIONS';
+    const NOS_ADMISSIONS_PAGE_ID = 'NOS_ADMISSIONS';
+
     /**
      * @var Doctorant|null
      */
@@ -160,6 +164,30 @@ class ApplicationNavigationFactory extends NavigationFactory
                 unset($page['pages'][$key]);
             }
         }
+
+        /** ADMISSION */
+        /**
+         * Mon admission
+         */
+        // Rôle Doctorant : génération d'une page "Mon Admission"
+        if ($page['pages'][$key = self::MON_ADMISSION_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CANDIDAT || $this->role->getRoleId() == Role::ROLE_ID_USER)) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Mes admissions
+         */
+        if ($page['pages'][$key = self::MES_ADMISSIONS_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->getCode() == Role::CODE_ADMIN_TECH || $this->userContextService->getSelectedRoleDirecteurThese() || $this->userContextService->getSelectedRoleCodirecteurThese() || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE)) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
     }
 
     /**
@@ -255,6 +283,16 @@ class ApplicationNavigationFactory extends NavigationFactory
         }
 
         $newPages = [];
+
+        // génération d'une page fille emmenant vers les soutenances
+        $protoPage = $parentPage['pages']['ADMISSIONS'];
+        $page = $protoPage;
+        // label
+        $page['label'] = "Admissions " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
+        $newPages[] = $page;
 
         // génération d'une page fille emmenant vers les thèses de la struture
         $protoPage = $parentPage['pages']['THESES'];

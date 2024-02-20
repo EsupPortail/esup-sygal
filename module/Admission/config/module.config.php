@@ -11,6 +11,8 @@ use Admission\Config\ModuleConfig;
 use Admission\Config\ModuleConfigFactory;
 use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
+use Admission\Controller\AdmissionRechercheController;
+use Admission\Controller\AdmissionRechercheControllerFactory;
 use Admission\Controller\Validation\AdmissionValidationController;
 use Admission\Controller\Validation\AdmissionValidationControllerFactory;
 use Admission\Event\AdmissionEventListener;
@@ -48,6 +50,8 @@ use Admission\Hydrator\Validation\AdmissionValidationHydratorFactory;
 use Admission\Hydrator\Verification\VerificationHydrator;
 use Admission\Hydrator\Verification\VerificationHydratorFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+use Admission\Service\Admission\AdmissionRechercheService;
+use Admission\Service\Admission\AdmissionRechercheServiceFactory;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
@@ -68,8 +72,10 @@ use Admission\Service\Url\UrlService;
 use Admission\Service\Url\UrlServiceFactory;
 use Admission\Service\Verification\VerificationService;
 use Admission\Service\Verification\VerificationServiceFactory;
+use Application\Navigation\ApplicationNavigationFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -201,19 +207,32 @@ return array(
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
+                [
+                    'controller' => AdmissionRechercheController::class,
+                    'action' => [
+                        'index',
+                        'filters',
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION,
+                        AdmissionPrivileges::ADMISSION_INITIALISER_ADMISSION
+                    ],
+                    'assertion' => AdmissionAssertion::class,
+                ],
             ]
         ],
     ],
     'router' => [
         'routes' => [
             'admission' => [
-                'type' => Segment::class,
+                'type' => Literal::class,
                 'may_terminate' => true,
                 'options' => [
                     'route' => '/admission',
                     'defaults' => [
                         'action' => 'index',
-                        'controller' => AdmissionController::class,
+                        'controller' => AdmissionRechercheController::class,
                     ],
                 ],
                 'child_routes' => [
@@ -222,6 +241,10 @@ return array(
                         'options' => [
                             'route' => '/:action/:individu',
                             'constraints' => [
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'admission' => '[0-9]*'
+                            ],
+                            'defaults' => [
                                 /**
                                  * @see AdmissionController::etudiantAction()
                                  * @see AdmissionController::inscriptionAction()
@@ -230,8 +253,7 @@ return array(
                                  * @see AdmissionController::enregistrerAction()
                                  * @see AdmissionController::supprimerAction()
                                  */
-                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'admission' => '[0-9]*'
+                                'controller' => AdmissionController::class,
                             ],
                         ],
                     ],
@@ -297,14 +319,88 @@ return array(
                             ],
                         ],
                     ],
+                    'recherche' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/recherche',
+                            'defaults' => [
+                                'controller' => AdmissionRechercheController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'filters' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                        'controller' => AdmissionRechercheController::class,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
     ],
+    'navigation' => [
+        'default' => [
+            // DEPTH = 0
+            'home' => [
+                'pages' => [
+                    /**
+                     * Page pour le Candidat.
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::MON_ADMISSION_PAGE_ID => [
+                        'order' => -200,
+                        'label' => 'Admission',
+                        'route' => 'admission',
+                        'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
+                        'pages' => [
+                        ],
+                    ],
 
+                    /**
+                     * Page pour Dir, Codir.
+                     */
+                    ApplicationNavigationFactory::MES_ADMISSIONS_PAGE_ID => [
+                        'order' => -200,
+                        'label' => 'Mes admissions',
+                        'route' => 'admission',
+                        'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
+                        'pages' => [
+                        ],
+                    ],
+
+                    /**
+                     * Page pour Gest/Resp ED, Gest/Resp UR, Maison du Doctorat.
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::NOS_THESES_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 2
+                            'ADMISSIONS' => [
+                                'label' => '(Rapports activité Structure)',
+                                'route' => 'admission',
+                                'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
+                                'privilege' => [
+                                    AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
     'controllers' => [
         'factories' => [
             AdmissionController::class => AdmissionControllerFactory::class,
+            AdmissionRechercheController::class => AdmissionRechercheControllerFactory::class
         ],
     ],
 
@@ -341,6 +437,7 @@ return array(
             TypeValidationService::class => TypeValidationServiceFactory::class,
             DocumentService::class => DocumentServiceFactory::class,
             VerificationService::class => VerificationServiceFactory::class,
+            AdmissionRechercheService::class => AdmissionRechercheServiceFactory::class,
 
             AdmissionEventListener::class => AdmissionEventListenerFactory::class,
 

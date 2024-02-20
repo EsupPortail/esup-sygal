@@ -910,8 +910,6 @@ const CONFIG_SYNCHROS = [
             'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
-            'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
-            'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
     ////////////////////////////////////////////// INDIVIDU //////////////////////////////////////////////

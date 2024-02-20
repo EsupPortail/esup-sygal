@@ -2,6 +2,13 @@
 
 namespace Admission\Controller;
 
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\TypeValidation;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
+use Admission\Service\Admission\AdmissionRechercheService;
+use Admission\Service\Admission\AdmissionServiceAwareTrait;
+use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Search\Controller\SearchControllerInterface;
@@ -11,14 +18,13 @@ use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
-use These\Entity\Db\These;
-use These\Service\These\TheseSearchService;
-use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\Form\Element\SearchAndSelect;
+use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**
  * Class AdmissionRechercheController
  *
- * @property TheseSearchService $searchService
+ * @property AdmissionRechercheService $searchService
  */
 class AdmissionRechercheController extends AbstractController implements SearchControllerInterface
 {
@@ -26,7 +32,9 @@ class AdmissionRechercheController extends AbstractController implements SearchC
     use SearchControllerTrait;
 
     use RoleServiceAwareTrait;
-    use TheseServiceAwareTrait;
+    use AdmissionServiceAwareTrait;
+    use AdmissionOperationRuleAwareTrait;
+    use AdmissionOperationServiceAwareTrait;
 
     /**
      * @var array
@@ -38,14 +46,63 @@ class AdmissionRechercheController extends AbstractController implements SearchC
      */
     private $searchIfRequired = false; // todo : ne pas mettre à true car impossible de dépasser la page 1 !! :-(
 
+    protected string $routeName = 'admission';
+
+    /**
+     * @var string
+     */
+    protected string $indexActionTemplate = 'admission/admission-recherche/index';
+    protected string $filtersActionTemplate = 'admission/admission-recherche/filters';
+
     /**
      * @return ViewModel|Response
      */
     public function indexAction()
     {
+        $request = $this->getRequest();
+        if($request->isPost()){
+            $individu = $request->getPost('individuId');
+            //Redirige vers le dossier d'admission de l'individu, si un individu est renseigné
+            if ($individu && $individu['id']) {
+                return $this->redirect()->toRoute(
+                    'admission/ajouter',
+                    ['action' => "etudiant",
+                        'individu' => $individu['id']],
+                    [],
+                    true);
+            }
+        }
+
+        $inputIndividu = new SearchAndSelect();
+        $inputIndividu
+            ->setAutocompleteSource($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true))
+            ->setAttributes([
+                'class' => 'selectpicker show-tick',
+                'data-live-search' => 'true',
+                'id' => 'individuId',
+                'name' => 'individuId',
+            ]);
+
+        $individu = $this->userContextService->getIdentityIndividu();
+        //Récupération de l'objet Admission en BDD
+        /** @var Admission $admission */
+        $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
+
+        //Récupération des opérations liées au dossier d'admission
+        $operations = $admission ? $this->admissionOperationRule->getOperationsForAdmission($admission) : [];
+        //Masquage des actions non voulues dans le circuit de signatures -> celles correspondant à la convention de formation doctorale
+        $operations = $this->admissionOperationService->hideOperations($operations, TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE);
+        $operationEnAttente = $admission ? $this->admissionOperationRule->getOperationEnAttente($admission) : null;
+        $dossierComplet = $admission?->isDossierComplet();
+
+        unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
+
+        //---------------------------Récupération des dossiers d'admissions correspondant aux filtres spécifiés--------------
+        $this->restrictFilters();
+
         $text = $this->params()->fromQuery('text');
 
-        /** @see TheseSearchService */
+        /** @see AdmissionRechercheService */
         $result = $this->searchIfRequired ? $this->searchIfRequested() : $this->search();
         if ($result instanceof Response) {
             return $result;
@@ -53,100 +110,71 @@ class AdmissionRechercheController extends AbstractController implements SearchC
         /** @var SearchResultPaginator $paginator */
         $paginator = $result;
 
-        $etablissement = $this->searchService->getEtablissementInscSearchFilter()->getValue();
-        $etatThese = $this->searchService->getFilterValueByName(TheseSearchService::NAME_etatThese);
+        $etatAdmission = $this->searchService->getFilterValueByName(AdmissionRechercheService::NAME_etatAdmission);
 
-        return new ViewModel([
-            'theses' => $paginator,
+        $model = new ViewModel([
+            'admissions' => $paginator,
             'text' => $text,
-            'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'displayEtablissement' => !$etablissement,
-            'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
-            'etatThese' => $etatThese,
-            'filtersRoute' => 'these/recherche/filters',
+            'etatAdmission' => $etatAdmission,
+            'routeName' => $this->routeName,
+            'operations' => $operations,
+            'individu' => $individu,
+            'admission' => $admission,
+            'inputIndividu' => $inputIndividu,
+            'operationEnAttente' => $operationEnAttente,
+            'dossierComplet' => $dossierComplet
         ]);
+        $model->setTemplate($this->indexActionTemplate);
+        return $model;
     }
 
     /**
-     * @return ViewModel
-     */
-    public function indexFiltersAction(): ViewModel
-    {
-        $filters = $this->filters();
-
-        $vm = new ViewModel([
-            'filters' => $filters,
-            'message' => "coucou!",
-        ]);
-        $vm->setTemplate('these/these-recherche/filters');
-
-        return $vm;
-    }
-
-//    /**
-//     * Pour les acteurs de thèses en général (Doctorant, Dir, Codir, etc.)
-//     *
-//     * @return ViewModel|Response
-//     */
-//    public function miennesAction()
-//    {
-//        /** @var Role $role */
-//        $role = $this->userContextService->getSelectedIdentityRole();
-//        $individu = $this->userContextService->getIdentityIndividu();
-//        $etats = [These::ETAT_EN_COURS];
-//
-//        switch (true) {
-//            case $role->isDoctorant() :
-//                $theses = $this->theseService->getRepository()->findThesesByDoctorantAsIndividu($individu, $etats);
-//                break;
-//            case $role->isActeurDeThese() :
-//                $theses = $this->theseService->getRepository()->findThesesByActeur($individu, $role, $etats);
-//                break;
-//            default:
-//                return $this->redirect()->toRoute('home');
-//        }
-//
-//        return new ViewModel([
-//            'theses' => $theses,
-//        ]);
-//    }
-
-    /**
-     * Prévu pour ED, UR, MDD.
+     * Surcharge de la méthode {@see SearchControllerTrait::filtersAction()}.
      *
      * @return ViewModel
      */
-    public function notresAction()
+    public function filtersAction(): ViewModel
     {
         $this->restrictFilters();
-
-        $this->searchIfRequired = false;
-
-        $viewModel = $this->indexAction();
-        $viewModel->setTemplate('these/these-recherche/index');
-        $viewModel->setVariables([
-            'filtersRoute' => 'these/recherche/notres/filters',
-        ]);
-
-        return $viewModel;
-    }
-
-    /**
-     * @return ViewModel
-     */
-    public function notresFiltersAction(): ViewModel
-    {
-        $this->restrictFilters();
-
         $filters = $this->filters();
 
-        $vm = new ViewModel([
+        $model = new ViewModel([
             'filters' => $filters,
             'message' => "coucou!",
         ]);
-        $vm->setTemplate('these/these-recherche/filters');
+        $model->setTemplate($this->filtersActionTemplate);
 
-        return $vm;
+        return $model;
+    }
+
+    private function restrictFilterEcolesDoctorales()
+    {
+        $edFilter = $this->searchService->getEcoleDoctoraleSearchFilter();
+
+        if ($this->isAllowed(Privileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION))) {
+            // restrictions en fonction du rôle
+            if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
+                $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
+                $edFilter->setData([$ed]);
+                $edFilter->setDefaultValueAsObject($ed);
+                $edFilter->setAllowsEmptyOption(false);
+            }
+        }
+    }
+
+    private function restrictFilterUnitesRecherches()
+    {
+        $urFilter = $this->searchService->getUniteRechercheSearchFilter();
+
+        if ($this->isAllowed(Privileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION))) {
+            // restrictions en fonction du rôle
+            if ($roleUniteRecherche = $this->userContextService->getSelectedRoleUniteRecherche()) {
+                $ed = $roleUniteRecherche->getStructure()->getUniteRecherche();
+                $urFilter->setData([$ed]);
+                $urFilter->setDefaultValueAsObject($ed);
+                $urFilter->setAllowsEmptyOption(false);
+            }
+        }
     }
 
     private function restrictFilters()

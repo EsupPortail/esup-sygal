@@ -20,11 +20,12 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     const ETAT_VALIDE = 'V';
     const ETAT_REJETE = 'R';
 
-    const ETATS = [
-        self::ETAT_EN_COURS_SAISIE => self::ETAT_EN_COURS_SAISIE,
-        self::ETAT_EN_COURS_VALIDATION => self::ETAT_EN_COURS_VALIDATION,
-        self::ETAT_ABANDONNE => self::ETAT_ABANDONNE,
-        self::ETAT_VALIDE => self::ETAT_VALIDE,
+    public static $etatsLibelles = [
+        self::ETAT_EN_COURS_SAISIE => "En cours de saisie",
+        self::ETAT_EN_COURS_VALIDATION => "En cours de validation",
+        self::ETAT_ABANDONNE => "Abandonné",
+        self::ETAT_VALIDE => "Validé",
+        self::ETAT_REJETE => "Rejeté",
     ];
 
     private ?Etat $etat = null;

@@ -20,15 +20,10 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  */
 $canRechercherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_RECHERCHER_DOSSIERS_ADMISSION));
 $canListerDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION));
-?>
 
-<?php $this->headTitle($this->translate($title = "Admission")) ?>
+echo $this->partial('admission/admission/partial/header', []); ?>
 
-<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
 
-<p class="introduction">Cette application permet dans un premier temps de candidater à un parcours doctoral.
-    <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.<br>
-</p>
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <?php if($canRechercherDossiersAdmission) { ?>

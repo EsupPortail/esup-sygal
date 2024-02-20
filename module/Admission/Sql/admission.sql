@@ -1095,8 +1095,31 @@ from data
                                            'GEST_ED',
                                            'RESP_UR',
                                            'RESP_ED',
-                                           'D',
-                                           'K'
+                                           'D', -- Directeur
+                                           'K', -- Co-directeur
+                                           'BDD' -- Maison du Doctorat
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+-- ajout des privilèges communs au profil GEST_ED, RESP_UR, RESP_ED, D, K
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'admission', 'admission-afficher-son-dossier-admission'
+                           union
+                           select 'admission', 'admission-lister-mes-dossiers-admission'
+                           union
+                           select 'admission', 'admission-telecharger-son-document'
+                           union
+                           select 'admission', 'admission-acceder-commentaires'
+                           union
+                           select 'admission', 'admission-convention-formation-generer'
+                           union
+                           select 'admission', 'admission-afficher-son-dossier-admission-dans-liste')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+    'BDD' -- Maison du Doctorat
     )
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv

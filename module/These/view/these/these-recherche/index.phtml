@@ -54,9 +54,9 @@ $acteursFormatterCodirecteurs->asSeparated()
 
     <p>
         <?php
-            echo $theses->getTotalItemCount();
-            echo " ";
-            echo $this->translate("thèse(s) trouvée(s).");
+        echo $theses->getTotalItemCount();
+        echo " ";
+        echo $this->translate("thèse(s) trouvée(s).");
         ?>
     </p>
 
@@ -66,16 +66,16 @@ $acteursFormatterCodirecteurs->asSeparated()
             <th>
                 <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_titre); ?>"
                    title="<?php echo $this->translate("Titre de la thèse");?> ">
-                        <?php echo $this->translate("Titre"); ?>
+                    <?php echo $this->translate("Titre"); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
             <?php if ($displayEtablissement): ?>
-            <th>
-                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etablissement); ?>"
-                   title="<?php echo $this->translate("Établissement");?> ">
-                    <?php echo $this->translate("Étab."); ?>
-                </a> <?php echo $s->icon() ?>
-            </th>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etablissement); ?>"
+                       title="<?php echo $this->translate("Établissement");?> ">
+                        <?php echo $this->translate("Étab."); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
             <?php endif ?>
             <th>
                 <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etatThese); ?>"
@@ -86,7 +86,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <th>
                 <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_numeroEtudiant); ?>"
                    title="<?php echo $this->translate("Numéro étudiant"); ?>">
-                        <?php echo $this->translate("N°étud."); ?>
+                    <?php echo $this->translate("N°étud."); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
             <th>
@@ -140,15 +140,15 @@ $acteursFormatterCodirecteurs->asSeparated()
                     </span>
                 </td>
                 <?php
-                    if ($displayEtablissement) {
-                        echo "<td>";
-                        echo "<abbr title='";
-                        echo $these->getEtablissement()->getStructure()->getLibelle();
-                        echo "'>";
-                        echo $these->getEtablissement()->getStructure()->getSourceCode();
-                        echo "</abbr>";
-                        echo "</td>";
-                    }
+                if ($displayEtablissement) {
+                    echo "<td>";
+                    echo "<abbr title='";
+                    echo $these->getEtablissement()->getStructure()->getLibelle();
+                    echo "'>";
+                    echo $these->getEtablissement()->getStructure()->getCode();
+                    echo "</abbr>";
+                    echo "</td>";
+                }
                 ?>
                 <td><?php echo $these->getEtatThese() ?></td>
                 <td><?php echo $these->getDoctorant()->getNumeroEtudiant() ?></td>
@@ -180,7 +180,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                     <?php endif ?>
                 </td>
                 <td><?php
-    //                echo $this->dateFormat($these->getDatePremiereInscription(),IntlDateFormatter::SHORT);
+                    //                echo $this->dateFormat($these->getDatePremiereInscription(),IntlDateFormatter::SHORT);
                     if ($these->getDatePremiereInscription()) echo $these->getDatePremiereInscription()->format("d/m/Y");
                     ?>
                 </td>
@@ -216,18 +216,18 @@ $acteursFormatterCodirecteurs->asSeparated()
 <?php endif ?>
 
 <?php
-    $this->translate("Filtres");
-    $this->translate("État");
-    $this->translate("En cours");
-    $this->translate("Abandonnée");
-    $this->translate("Soutenue");
-    $this->translate("Transférée");
-    $this->translate("Tous");
+$this->translate("Filtres");
+$this->translate("État");
+$this->translate("En cours");
+$this->translate("Abandonnée");
+$this->translate("Soutenue");
+$this->translate("Transférée");
+$this->translate("Tous");
 
-    $this->translate("Rechercher");
-    $this->translate("Vider");
-    $this->translate("Entrez 2 caractères au moins...");
-    $this->translate("Recherche possible sur<ul><li>le titre de la thèse</li><li>le numéro étudiant de l'auteur</li><li>le nom de l'auteur</li><li>le nom du directeur ou co-directeur de thèse</li><li>le code national de l'école doctorale concernée (ex: 181)</li><li>l'unité de recherche concernée (ex: umr6211)</li></ul>");
+$this->translate("Rechercher");
+$this->translate("Vider");
+$this->translate("Entrez 2 caractères au moins...");
+$this->translate("Recherche possible sur<ul><li>le titre de la thèse</li><li>le numéro étudiant de l'auteur</li><li>le nom de l'auteur</li><li>le nom du directeur ou co-directeur de thèse</li><li>le code national de l'école doctorale concernée (ex: 181)</li><li>l'unité de recherche concernée (ex: umr6211)</li></ul>");
 ?>
 
 

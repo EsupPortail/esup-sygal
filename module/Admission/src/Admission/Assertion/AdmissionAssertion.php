@@ -144,8 +144,6 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION:
-                case AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION:
-                case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_TOUT_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUT_DOCUMENT:
@@ -224,6 +222,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
         $roleUniteRecherche = $this->userContextService->getSelectedRoleUniteRecherche();
         $roleDirecteurThese = $this->userContextService->getSelectedRoleDirecteurThese();
         $roleCoDirecteurThese = $this->userContextService->getSelectedRoleCodirecteurThese();
+        $roleMaisonDoctorat = $this->userContextService->getSelectedRoleBDD();
 
         if ($role->getRoleId() === Role::ROLE_ID_USER ||
             $role->getRoleId() === Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE ||
@@ -233,7 +232,8 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             $roleEcoleDoctorale ||
             $roleUniteRecherche ||
             $roleDirecteurThese ||
-            $roleCoDirecteurThese) {
+            $roleCoDirecteurThese ||
+            $roleMaisonDoctorat) {
             return;
         }else{
             throw new FailedAssertionException("Vous ne pouvez pas accéder au module admission");
@@ -321,7 +321,7 @@ class AdmissionAssertion extends AbstractAssertion implements UserContextService
             } else {
                 throw new FailedAssertionException($message);
             }
-        }else if($role->getCode() !== Role::CODE_ADMIN_TECH){
+        }else if($role->getCode() !== Role::CODE_ADMIN_TECH && $role->getCode() !== Role::CODE_BDD){
             throw new FailedAssertionException("Vous ne pouvez pas accéder au module admission");
         }
     }

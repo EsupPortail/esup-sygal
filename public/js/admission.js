@@ -356,10 +356,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 const modalId = '#modalShowConfirmation' + button.dataset.operation;
 
                 //Gestion des modals lorsqu'il y a deux modals superposés (convention de formation doctorale et les opérations)
-                var targetElement = document.querySelector('.access_convention_formation_doctorale');
+                var targetElement = document.querySelector('.access_convention_formation_doctorale') || document.querySelector('.access_charte_doctorat');
                 var modal = document.getElementById('modalShowConfirmationDeValidationOperation') || document.getElementById('modalShowConfirmationValidationOperation');
                 if(modal){
-                    targetElement.insertAdjacentElement('afterend', modal);
+                    if(targetElement){
+                        targetElement.insertAdjacentElement('afterend', modal);
+                    }
                     $('#modalShowConventionFormationDoctorale').modal('hide');
                     $('#modalShowCharteDoctorale').modal('hide');
                 }
