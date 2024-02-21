@@ -87,4 +87,9 @@ class ComposanteEnseignement implements StructureConcreteInterface, HistoriqueAw
         $str .= $this->structure->getLibelle();
         return $str;
     }
+
+    public function getCode(): string
+    {
+        return $this->structure->getCode();
+    }
 }
