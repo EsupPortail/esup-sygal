@@ -118,7 +118,7 @@ class AdmissionRechercheService extends SearchService
             ->setDataProvider(function() {
                 return $this->fetchEtablissements();
             })
-            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'admission') {
                 $qb
                     ->andWhere($qb->expr()->orX('etab.sourceCode = :sourceCodeEtab', 'etab_substituant.sourceCode = :sourceCodeEtab'))
                     ->setParameter('sourceCodeEtab', $filter->getValue());
@@ -127,7 +127,7 @@ class AdmissionRechercheService extends SearchService
             ->setDataProvider(function() {
                 return $this->fetchEcolesDoctorales();
             })
-            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'admission') {
                 $qb
                     ->andWhere($qb->expr()->orX('ed.sourceCode = :sourceCodeED', 'ed_substituant.sourceCode = :sourceCodeED'))
                     ->setParameter('sourceCodeED', $filter->getValue());
@@ -136,7 +136,7 @@ class AdmissionRechercheService extends SearchService
             ->setDataProvider(function() {
                 return $this->fetchUnitesRecherches();
             })
-            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'admission') {
                 $qb
                     ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
                     ->setParameter('sourceCodeUR', $filter->getValue());
@@ -212,7 +212,7 @@ class AdmissionRechercheService extends SearchService
 
             case self::SORTER_NAME_titre:
                 // trim et suppression des guillemets
-                $orderBy = "TRIM(REPLACE(these.$name, CHR(34), ''))"; // CHR(34) <=> "
+                $orderBy = "TRIM(REPLACE(admission.$name, CHR(34), ''))"; // CHR(34) <=> "
                 $qb->addOrderBy($orderBy, $direction);
                 break;
 

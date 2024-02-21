@@ -315,6 +315,7 @@ return array(
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
                                 'action' => 'rechercher-individu',
+                                'controller' => AdmissionController::class,
                                 /* @see AdmissionController::rechercherIndividuAction() */
                             ],
                         ],
