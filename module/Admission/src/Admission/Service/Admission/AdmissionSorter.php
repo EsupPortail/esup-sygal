@@ -13,7 +13,7 @@ use UnicaenApp\Exception\LogicException;
  */
 class AdmissionSorter
 {
-    const NAME_titre = 'titre';
+    const NAME_titre = 'titreThese';
     const NAME_etablissement = 'etablissement';
     const NAME_etatAdmission = 'etat';
     const NAME_individu = 'individu';

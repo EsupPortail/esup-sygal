@@ -15,9 +15,6 @@ class ComposanteEnseignementRepository extends DefaultEntityRepository
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
         $qb = $this->_createQueryBuilder($alias);
-        $qb
-            ->addSelect('composanteEnseignementSubstituante')
-            ->leftJoin("structureSubstituante.composanteEnseignement", 'composanteEnseignementSubstituante');
 
         return $qb;
     }

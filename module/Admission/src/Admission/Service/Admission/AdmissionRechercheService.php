@@ -48,7 +48,7 @@ class AdmissionRechercheService extends SearchService
 
     const NAME_etatAdmission = 'etat';
 
-    const SORTER_NAME_titre = 'titre';
+    const SORTER_NAME_titre = 'titreThese';
     const SORTER_NAME_individu = 'individu';
 
     /**
@@ -89,22 +89,6 @@ class AdmissionRechercheService extends SearchService
             $qb->andWhere('inscr.coDirecteur = :individuId')
                 ->setParameter('individuId', $individu->getId());
         }
-        $qb
-            ->addSelect('etab_structure')->leftJoin("etab.structure", "etab_structure")
-            ->addSelect('etab_structureSubstituante')->leftJoin("etab_structure.structureSubstituante", "etab_structureSubstituante")
-            ->addSelect('etab_substituant')->leftJoin("etab_structureSubstituante.etablissement", "etab_substituant");
-        $qb
-            ->addSelect('ed_structure')->leftJoin("ed.structure", "ed_structure")
-            ->addSelect('ed_structureSubstituante')->leftJoin("ed_structure.structureSubstituante", "ed_structureSubstituante")
-            ->addSelect('ed_substituant')->leftJoin("ed_structureSubstituante.ecoleDoctorale", "ed_substituant");
-        $qb
-            ->addSelect('ur_structure')->leftJoin("ur.structure", "ur_structure")
-            ->addSelect('ur_structureSubstituante')->leftJoin("ur_structure.structureSubstituante", "ur_structureSubstituante")
-            ->addSelect('ur_substituant')->leftJoin("ur_structureSubstituante.uniteRecherche", "ur_substituant");
-        $qb
-            ->addSelect('compRat_structure')->leftJoin("compRat.structure", "compRat_structure")
-            ->addSelect('compRat_structureSubstituante')->leftJoin("compRat_structure.structureSubstituante", "compRat_structureSubstituante")
-            ->addSelect('compRat_substituant')->leftJoin("compRat_structureSubstituante.uniteRecherche", "compRat_substituant");
 
         return $qb;
     }
@@ -120,7 +104,7 @@ class AdmissionRechercheService extends SearchService
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'admission') {
                 $qb
-                    ->andWhere($qb->expr()->orX('etab.sourceCode = :sourceCodeEtab', 'etab_substituant.sourceCode = :sourceCodeEtab'))
+                    ->andWhere($qb->expr()->orX('etab.sourceCode = :sourceCodeEtab'))
                     ->setParameter('sourceCodeEtab', $filter->getValue());
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
@@ -129,7 +113,7 @@ class AdmissionRechercheService extends SearchService
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'admission') {
                 $qb
-                    ->andWhere($qb->expr()->orX('ed.sourceCode = :sourceCodeED', 'ed_substituant.sourceCode = :sourceCodeED'))
+                    ->andWhere($qb->expr()->orX('ed.sourceCode = :sourceCodeED'))
                     ->setParameter('sourceCodeED', $filter->getValue());
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
@@ -138,7 +122,7 @@ class AdmissionRechercheService extends SearchService
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'admission') {
                 $qb
-                    ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
+                    ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR'))
                     ->setParameter('sourceCodeUR', $filter->getValue());
             });
         $etatAdmissionSearchFilter = $this->getEtatAdmissionSearchFilter()
@@ -212,7 +196,7 @@ class AdmissionRechercheService extends SearchService
 
             case self::SORTER_NAME_titre:
                 // trim et suppression des guillemets
-                $orderBy = "TRIM(REPLACE(admission.$name, CHR(34), ''))"; // CHR(34) <=> "
+                $orderBy = "TRIM(REPLACE(inscr.$name, CHR(34), ''))"; // CHR(34) <=> "
                 $qb->addOrderBy($orderBy, $direction);
                 break;
 
@@ -351,13 +335,13 @@ EOS;
     private function fetchEcolesDoctorales(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.sigle', true, true);
     }
 
     private function fetchUnitesRecherches(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_UNITE_RECHERCHE, 'code', true, true);
+            TypeStructure::CODE_UNITE_RECHERCHE, 'structure.code', true, true);
     }
 
     /**
@@ -382,7 +366,7 @@ EOS;
         $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('etab_structureSubstituante.code, etab_structure.code', $sorter->getDirection());
+                $qb->addOrderBy('etab_structure.code', $sorter->getDirection());
             }
         );
 
@@ -394,7 +378,7 @@ EOS;
         $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('ed_structureSubstituante.sigle, ed_structure.sigle', $sorter->getDirection());
+                $qb->addOrderBy('ed_structure.sigle', $sorter->getDirection());
             }
         );
 
@@ -406,7 +390,7 @@ EOS;
         $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('ur_structureSubstituante.code, ur_structure.code', $sorter->getDirection());
+                $qb->addOrderBy('ur_structure.code', $sorter->getDirection());
             }
         );
 

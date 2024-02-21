@@ -631,13 +631,13 @@ class AdmissionController extends AdmissionAbstractController {
         $disciplines = $this->disciplineService->getDisciplinesAsOptions('code','ASC','code');
         $this->admissionForm->get('inscription')->setSpecialites($disciplines);
 
-        $composantes = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT, 'libelle', false);
+        $composantes = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT, 'structure.libelle', false);
         $this->admissionForm->get('inscription')->setComposantesEnseignement($composantes);
 
-        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false);
+        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
         $this->admissionForm->get('inscription')->setEcolesDoctorales($ecoles);
 
-        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', false);
+        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
         $this->admissionForm->get('inscription')->setUnitesRecherche($unites);
 
         $etablissementsInscription = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
