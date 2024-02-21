@@ -108,6 +108,7 @@ return [
                     'action' => [
                         'accueil',
                         'lister',
+                        'lister-enregistrements-lies',
                     ],
                     'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
@@ -303,6 +304,19 @@ return [
                                     ],
                                     'defaults' => [
                                         'action' => 'lister',
+                                    ],
+                                ],
+                            ],
+                            'lister-enregistrements-lies' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/lister-enregistrements-lies/:type/:id',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                        'id' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'lister-enregistrements-lies',
                                     ],
                                 ],
                             ],

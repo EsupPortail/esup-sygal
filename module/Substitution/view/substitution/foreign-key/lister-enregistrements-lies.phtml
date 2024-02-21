@@ -1,0 +1,49 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $type
+ * @var string $substituantId
+ * @var \Doctrine\DBAL\Result $result
+ *
+ * @see \Substitution\Controller\ForeignKeyController::listerEnregistrementsLiesAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate("Enregistrements liés : $type $substituantId")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-key"></span>
+    <?php echo $this->translate("Enregistrements liés") ?> <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span> <?php echo $substituantId ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<p class="lead">
+    TODO : Voici la liste des clés étrangères prises en charge par le mécanisme de substitution automatique.
+    Lorsqu'une substitution est créée, ces clés étrangères sont mises à jour automatiquement :
+    tous les id des substitués sont remplacés par l'id du substituant.
+</p>
+
+<?php if ($count = $result->rowCount()): ?>
+    <p><?php echo $count ?> enregistrements liés trouvés.</p>
+
+    <table class="table table-bordered table-extra-condensed">
+        <tr>
+            <th>Table</th>
+            <th>Id</th>
+            <th>Aperçu</th>
+        </tr>
+        <?php while ($row = $result->fetchAssociative()): ?>
+            <tr>
+                <td><?php echo $row['source_table'] ?></td>
+                <td><?php echo $row['id'] ?></td>
+                <td><?php echo $row['data'] ?></td>
+            </tr>
+        <?php endwhile ?>
+    </table>
+<?php else: ?>
+    <p>Aucun.</p>
+<?php endif ?>
