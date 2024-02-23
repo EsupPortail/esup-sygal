@@ -39,6 +39,7 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
         <thead>
         <tr>
             <th> Libellé</th>
+            <th> </th>
             <th> Source</th>
             <th> Code</th>
             <th> Sigle</th>
@@ -60,17 +61,19 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
                     <a href="<?php echo $this->url('unite-recherche/voir', ['unite-recherche' => $unite->getId()], [], true); ?>">
                         <?php echo $unite->getStructure()->getLibelle(); ?>
                     </a>
-                    <?php if ($unite->estSubstituant()) : ?>
-                        <a href="<?php echo $this->url('substitution/substitution/voir', ['type' => \Substitution\Constants::TYPE_unite_rech, 'id' => $unite->getId()]) ?>"
-                           title="Accéder aux détails de cette substitution">
-                            <span class="badge bg-info" title="Cet enregistrement substitue d'autres enregistrements">S</span></a>
-                    <?php endif; ?>
+                </td>
+                <td>
                     <?php if ($unite->getStructure()->estFermee()) : ?>
-                        &nbsp;<span class="badge bg-danger">Structure fermée</span>
+                        &nbsp;<span class="badge bg-danger" title="Structure fermée">Fermée</span>
                     <?php endif; ?>
                 </td>
                 <td>
                     <?php echo $unite->getSource(); ?>
+                    <?php if ($unite->estSubstituant()) : ?>
+                        <a href="<?php echo $this->url('substitution/substitution/voir', ['type' => \Substitution\Constants::TYPE_unite_rech, 'id' => $unite->getId()]) ?>"
+                           title="Accéder aux détails de cette substitution">
+                            <span class="badge bg-light text-info" title="Cet enregistrement substitue d'autres enregistrements, cliquez pour en savoir plus...">Substitution</span></a>
+                    <?php endif; ?>
                 </td>
                 <td>
                     <?php echo $unite->getStructure()->getCode(); ?>
