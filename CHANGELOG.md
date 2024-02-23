@@ -6,6 +6,7 @@ Journal des modifications
 - Rapports d'activité : initialisation du formulaire de création d'un nouveau rapport avec les formations suivies (module Formation).
 - Stockage de fichier S3/Filesystem : plus de copie sur disque dans le cas d'une demande d'un fichier issu du Filesystem.
 - Inclusion au script de purge des fichiers temporaires ceux générés par le FichierStorageService.
+- Module Substitutions : amélioration de fonctions pgsql du moteur de substitutions.
 - [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles). 
 - [FIX] Page Assistance : plantage de la page lorsque le rôle de l'utilisateur est structure-dépendant.
 
