@@ -8,6 +8,7 @@ Journal des modifications
 - Inclusion au script de purge des fichiers temporaires ceux générés par le FichierStorageService.
 - Module Substitutions : amélioration de fonctions pgsql du moteur de substitutions.
 - Module Substitutions : possibilité de lancer la création d'une substitution depuis la page des doublons.
+- Module Substitutions : nouvelles pages d'informations concernant les triggers utilisés en bdd, pour chaque thème.
 - Structures : amélioration visuelle sur la page listant les structures (Etablissement, ED, UR).
 - Listing/recherche d'individus : lien vers la substitution si individu substituant ; nouveau filtre 'Historisés inclus' décoché par défaut ; cosmétique.  
 - [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles). 
