@@ -7,8 +7,8 @@ CREATE or replace FUNCTION test_substit_unite_rech__set_up() returns void
     language plpgsql
 as
 $$begin
-    alter table unite_rech_substit disable trigger substit_trigger_on_unite_rech_substit;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit;
+    alter table substit_unite_rech disable trigger substit_trigger_on_substit_unite_rech;
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure;
 end$$;
 
 
@@ -23,27 +23,27 @@ $$begin
     delete from substit_log sl where type = 'structure' and exists (select id from structure s where sl.substituant_id = s.id and sigle = 'test1234');
 
     alter table structure disable trigger substit_trigger_structure;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure;
     alter table unite_rech disable trigger substit_trigger_unite_rech;
-    alter table unite_rech_substit disable trigger substit_trigger_on_unite_rech_substit;
+    alter table substit_unite_rech disable trigger substit_trigger_on_substit_unite_rech;
 
     delete from substit_fk_replacement where type = 'unite_rech' and to_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
-    delete from unite_rech_substit where from_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
-    delete from unite_rech_substit where to_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
+    delete from substit_unite_rech where from_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
+    delete from substit_unite_rech where to_id in (select d.id from unite_rech d join structure i on d.structure_id = i.id where sigle = 'test1234');
     delete from unite_rech where structure_id in (select id from structure where sigle = 'test1234');
 
     delete from unite_rech where structure_id in (select id from structure where sigle = 'test1234');
 
-    delete from structure_substit where from_id in (select id from structure where sigle = 'test1234');
-    delete from structure_substit where to_id in (select id from structure where sigle = 'test1234');
+    delete from substit_structure where from_id in (select id from structure where sigle = 'test1234');
+    delete from substit_structure where to_id in (select id from structure where sigle = 'test1234');
     delete from structure where sigle = 'test1234';
 
     delete from structure where sigle = 'test1234';
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit enable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure enable trigger substit_trigger_on_substit_structure;
     alter table unite_rech enable trigger substit_trigger_unite_rech;
-    alter table unite_rech_substit enable trigger substit_trigger_on_unite_rech_substit;
+    alter table substit_unite_rech enable trigger substit_trigger_on_substit_unite_rech;
 end$$;
 
 
@@ -142,14 +142,14 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -171,9 +171,9 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_1.id, /*'azerty.de',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_1;
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id;
-    assert v_unite_rech_substit.id is null,
-        format('[TEST] Attendu : aucun unite_rech_substit avec from_id = %L', v_pre_unite_rech_1.id);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id;
+    assert v_substit_unite_rech.id is null,
+        format('[TEST] Attendu : aucun substit_unite_rech avec from_id = %L', v_pre_unite_rech_1.id);
 
     --
     -- Test insertion d'un doublon de unite_rech :
@@ -187,23 +187,23 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_2.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L', v_pre_unite_rech_2.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_2.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L', v_pre_unite_rech_2.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.etab_support = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec etab_support = %L (reçu %L)', /*'azerty.al',*/ v_unite_rech.etab_support);*/
-    assert v_unite_rech.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_unite_rech.structure_id);
+    assert v_unite_rech.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_unite_rech.structure_id);
 
     perform test_substit_unite_rech__tear_down();
 END$$;
@@ -221,7 +221,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -229,7 +229,7 @@ $$declare
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -282,15 +282,15 @@ begin
     --
     update unite_rech set histo_destruction = current_timestamp, histo_destructeur_id = 1 where id = v_pre_unite_rech_3.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.histo_destruction is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L et histo_destruction not null', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.histo_destruction is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L et histo_destruction not null', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.etab_support = 'azerty.fr'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec etab_support = %L (reçu %L)', 3, /*'azerty.fr',*/ v_unite_rech.etab_support);*/
 
@@ -310,7 +310,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -318,7 +318,7 @@ $$declare
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -377,23 +377,23 @@ begin
     --
     update unite_rech set histo_destruction = null, histo_destructeur_id = null where id = v_pre_unite_rech_3.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a and histo_destruction is not null;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L et histo_destruction not null', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a and histo_destruction is not null;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L et histo_destruction not null', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a and histo_destruction is null;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L et histo_destruction null', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a and histo_destruction is null;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L et histo_destruction null', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.etab_support = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec etab_support = %L (reçu %L)', /*'azerty.al',*/ v_unite_rech.etab_support);*/
-    assert v_unite_rech.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_unite_rech.structure_id);
+    assert v_unite_rech.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_unite_rech.structure_id);
 
     perform test_substit_unite_rech__tear_down();
 END$$;
@@ -411,7 +411,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -419,7 +419,7 @@ $$declare
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -466,7 +466,7 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
 
     --
     -- Passage d'un unite_rech à la source application : HOCHON PAULE aaaa@mail.fr
@@ -474,20 +474,20 @@ begin
     --
     update unite_rech set source_id = 1 where id = v_pre_unite_rech_1.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where id = v_unite_rech_substit.id;
-    assert v_unite_rech_substit.id is null,
-        format('[TEST] Attendu : 1 unite_rech_substit supprimé avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where id = v_substit_unite_rech.id;
+    assert v_substit_unite_rech.id is null,
+        format('[TEST] Attendu : 1 substit_unite_rech supprimé avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id;
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.domaine = 'azerty.fr'/*car azerty.al a changé de source*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec domaine = %L (reçu %L)', /*'azerty.fr',*/ v_unite_rech.domaine);*/
-    assert v_unite_rech.structure_id = v_structure_substit.to_id,
-        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_unite_rech.structure_id);
+    assert v_unite_rech.structure_id = v_substit_structure.to_id,
+        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_unite_rech.structure_id);
 
     perform test_substit_unite_rech__tear_down();
 END$$;
@@ -505,7 +505,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -513,7 +513,7 @@ $$declare
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -560,7 +560,7 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
 
     --
     -- Passage d'un unite_rech à la source application : HOCHON PAULE aaaa@mail.fr
@@ -574,24 +574,24 @@ begin
     --
     update unite_rech set source_id = v_source_id where id = v_pre_unite_rech_1.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_1.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_1.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where id = v_unite_rech_substit.id;
-    assert v_unite_rech_substit.id is null,
-        format('[TEST] Attendu : 1 unite_rech_substit supprimé avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where id = v_substit_unite_rech.id;
+    assert v_substit_unite_rech.id is null,
+        format('[TEST] Attendu : 1 substit_unite_rech supprimé avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit recréé avec from_id = %L et npd = %L et histo_destruction null', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech recréé avec from_id = %L et npd = %L et histo_destruction null', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id;
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.domaine = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec domaine = %L (reçu %L)', /*'azerty.al',*/ v_unite_rech.domaine);*/
-    assert v_unite_rech.structure_id = v_structure_substit.to_id,
-        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_unite_rech.structure_id);
+    assert v_unite_rech.structure_id = v_substit_structure.to_id,
+        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_unite_rech.structure_id);
 
     perform test_substit_unite_rech__tear_down();
 END$$;
@@ -609,7 +609,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -618,7 +618,7 @@ $$declare
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -678,23 +678,23 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_4.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, v_npd_unite_rech_a
     returning * into v_pre_unite_rech_4; -- NB : NPD forcé
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_4.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : 0 structure_substit avec from_id = %s et npd = %L car la structure elle n''est pas en doublon', v_pre_structure_4.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_4.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : 0 substit_structure avec from_id = %s et npd = %L car la structure elle n''est pas en doublon', v_pre_structure_4.id, v_npd_structure_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_4.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %s et npd = %L', v_pre_unite_rech_4.id, v_npd_unite_rech_a, v_pre_structure_4.id);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_4.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %s et npd = %L', v_pre_unite_rech_4.id, v_npd_unite_rech_a, v_pre_structure_4.id);
 
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.etab_support = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec etab_support = %L (reçu %L)', /*'azerty.al',*/ v_unite_rech.etab_support);*/
-    assert v_unite_rech.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_unite_rech.structure_id);
+    assert v_unite_rech.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_unite_rech.structure_id);
 
     perform test_substit_unite_rech__tear_down();
 END$$;
@@ -712,7 +712,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -720,7 +720,7 @@ $$declare
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -755,9 +755,9 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
     --
     -- Test insertion unite_rech puis update du NPD forcé : COCHON Michel cccc@mail.fr
@@ -771,21 +771,21 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_3;
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id;
-    assert v_unite_rech_substit.to_id is null,
-        format('[TEST] Attendu : aucun unite_rech_substit avec from_id = %L ', v_pre_unite_rech_3.id);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id;
+    assert v_substit_unite_rech.to_id is null,
+        format('[TEST] Attendu : aucun substit_unite_rech avec from_id = %L ', v_pre_unite_rech_3.id);
 
     update unite_rech set npd_force = v_npd_unite_rech_a where id = v_pre_unite_rech_3.id;
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L', v_pre_unite_rech_4.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_3.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L', v_pre_unite_rech_3.id, v_npd_unite_rech_a);
 
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     /*assert v_unite_rech.etab_support = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 unite_rech substituant avec etab_support = %L (reçu %L)', /*'azerty.al',*/ v_unite_rech.etab_support);*/
-    assert v_unite_rech.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_unite_rech.structure_id);
+    assert v_unite_rech.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 unite_rech substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_unite_rech.structure_id);
 
     perform test_substit_unite_rech__tear_down();
 END$$;
@@ -803,14 +803,14 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
 
     v_npd_unite_rech_a varchar(256);
 
-    v_unite_rech_substit unite_rech_substit;
+    v_substit_unite_rech substit_unite_rech;
     v_unite_rech unite_rech;
     v_pre_unite_rech unite_rech;
     v_pre_unite_rech_1 unite_rech;
@@ -844,17 +844,17 @@ begin
     select nextval('unite_rech_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_unite_rech_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
-    assert v_unite_rech_substit.to_id is not null,
-        format('[TEST] Attendu : 1 unite_rech_substit avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
+    assert v_substit_unite_rech.to_id is not null,
+        format('[TEST] Attendu : 1 substit_unite_rech avec from_id = %L et npd = %L', v_pre_unite_rech_1.id, v_npd_unite_rech_a);
 
     -- Modif du NPD forcé pour sortir celui avec azerty.fr de la substitution :
     --   - la substitution de la structure liée perdure ;
@@ -863,16 +863,16 @@ begin
     --   - suppression du substituant.
     update unite_rech set npd_force = 'ksldqhflksjdqhfl' where id = v_pre_unite_rech_2.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L non historise', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L non historise', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_unite_rech_substit from unite_rech_substit where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
-    select count(*) into v_count from unite_rech_substit i where to_id = v_unite_rech_substit.to_id;
+    select * into v_substit_unite_rech from substit_unite_rech where from_id = v_pre_unite_rech_1.id and npd = v_npd_unite_rech_a;
+    select count(*) into v_count from substit_unite_rech i where to_id = v_substit_unite_rech.to_id;
     assert v_count = 0,
-        format('[TEST] Attendu : 0 unite_rech_substit avec substituant = %s', v_unite_rech_substit.to_id);
+        format('[TEST] Attendu : 0 substit_unite_rech avec substituant = %s', v_substit_unite_rech.to_id);
 
-    select * into v_unite_rech from unite_rech i where id = v_unite_rech_substit.to_id;
+    select * into v_unite_rech from unite_rech i where id = v_substit_unite_rech.to_id;
     assert v_unite_rech.id is null,
         format('[TEST] Attendu : 1 unite_rech substituant supprimé : %s', v_unite_rech.id);
 

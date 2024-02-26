@@ -7,7 +7,7 @@ CREATE or replace FUNCTION test_substit_structure__set_up() returns void
     language plpgsql
 as
 $$begin
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure;
 end$$;
 
 
@@ -22,16 +22,16 @@ $$begin
     delete from substit_log sl where type = 'structure' and sl.substituant_id in (select id from structure s where libelle = 'test1234');
 
     alter table structure disable trigger substit_trigger_structure;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure;
 
     delete from substit_fk_replacement where type = 'structure' and to_id in (select id from structure where libelle = 'test1234');
-    delete from structure_substit where from_id in (select id from structure where libelle = 'test1234');
-    delete from structure_substit where to_id in (select id from structure where libelle = 'test1234');
+    delete from substit_structure where from_id in (select id from structure where libelle = 'test1234');
+    delete from substit_structure where to_id in (select id from structure where libelle = 'test1234');
     delete from structure where libelle = 'test1234';
     delete from structure where libelle = 'test1234';
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit enable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure enable trigger substit_trigger_on_substit_structure;
 end$$;
 
 
@@ -112,7 +112,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -128,9 +128,9 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'BBBB', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_1;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : aucun structure_substit avec from_id = % ', v_pre_structure_1.id);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : aucun substit_structure avec from_id = % ', v_pre_structure_1.id);
 
     --
     -- Test insertion d'un doublon : sigle = AAAA
@@ -140,15 +140,15 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'AAAA', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_1.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_1.id, v_npd_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'AAAA',
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'AAAA', v_structure.sigle);
 
@@ -168,7 +168,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -185,9 +185,9 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'BBBB', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
     returning * into v_pre_structure_1;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : aucun structure_substit avec from_id = % ', v_pre_structure_1.id);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : aucun substit_structure avec from_id = % ', v_pre_structure_1.id);
 
     --
     -- Test insertion d'un doublon : sigle = AAAA
@@ -197,15 +197,15 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'AAAA', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
     returning * into v_pre_structure_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = % et npd = %', v_pre_structure_1.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = % et npd = %', v_pre_structure_1.id, v_npd_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = % et npd = %', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = % et npd = %', v_pre_structure_2.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert not (v_structure is null or v_structure.sigle <> 'AAAA'),
         format('[TEST] Attendu : 1 structure substituant avec sigle = % (mais sigle = %)', 'AAAA', v_structure.sigle);
 
@@ -217,11 +217,11 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'BBBB', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, current_timestamp
     returning * into v_pre_structure_3;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = % et npd = %', v_pre_structure_3.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = % et npd = %', v_pre_structure_3.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert not (v_structure is null or v_structure.sigle <> 'BBBB'),
         format('[TEST] Attendu : 1 structure substituant avec sigle = % (mais sigle = %)', 'BBBB', v_structure.sigle);
 
@@ -238,7 +238,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -246,7 +246,7 @@ begin
     perform test_substit_structure__set_up();
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit; -- SANS remplacement de FK
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure; -- SANS remplacement de FK
 
     v_npd_a = 'etablissement,X123';
 
@@ -267,15 +267,15 @@ begin
     select * into v_pre_structure_1 from structure where libelle = 'test1234' and sigle = 'BBBB';
     select * into v_pre_structure_2 from structure where libelle = 'test1234' and sigle = 'AAAA';
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_1.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_1.id, v_npd_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'AAAA',
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'AAAA', v_structure.sigle);
 
@@ -299,7 +299,7 @@ begin
     perform test_substit_structure__set_up();
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit enable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure enable trigger substit_trigger_on_substit_structure;
 
     v_npd_a = 'etablissement,X123';
 
@@ -374,7 +374,7 @@ $$declare
 
     v_role role;
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure_1 structure;
     v_structure_2 structure;
     v_fkr_1 substit_fk_replacement;
@@ -383,7 +383,7 @@ begin
     perform test_substit_structure__set_up();
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit enable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure enable trigger substit_trigger_on_substit_structure;
 
     v_npd_a = 'etablissement,X123';
 
@@ -401,21 +401,21 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'AAAA', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
     returning * into v_structure_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_structure_1.id and npd = v_npd_a;
+    select * into v_substit_structure from substit_structure where from_id = v_structure_1.id and npd = v_npd_a;
     select * into v_role from role where id = currval('role_id_seq');
 
-    assert v_role.structure_id = v_structure_substit.to_id,
+    assert v_role.structure_id = v_substit_structure.to_id,
         format('[TEST] Attendu : FK INDIVIDU_ROLE.structure_id remplacée par %s (mais valeur = %s)',
-               v_structure_substit.to_id, v_role.structure_id);
+               v_substit_structure.to_id, v_role.structure_id);
 
     select * into v_fkr_1 from substit_fk_replacement
     where type = 'structure' and table_name = 'role' and column_name = 'structure_id'
       and record_id = v_role.id
-      and from_id = v_structure_1.id and to_id = v_structure_substit.to_id;
+      and from_id = v_structure_1.id and to_id = v_substit_structure.to_id;
 
     assert v_fkr_1.id is not null,
         format('[TEST] Attendu : 1er SUBSTIT_FK_REPLACEMENT pour %s => %s dans INDIVIDU_ROLE',
-               v_structure_1.id, v_structure_substit.to_id, v_role.structure_id);
+               v_structure_1.id, v_substit_structure.to_id, v_role.structure_id);
 
     delete from role where id = v_role.id;
 
@@ -428,21 +428,7 @@ CREATE or replace FUNCTION test_substit_individu__creates_substit_can_fail_to_re
     language plpgsql
 as
 $$declare
-    v_app_user bigint = 1; -- pseudo-utilisateur SyGAL
-    v_source_id bigint = 2; -- source INSA
-    v_npd_a varchar(256);
 
-    v_role role;
-    v_individu_role_1 individu_role;
-    v_individu_role_2 individu_role;
-    v_individu_substit individu_substit;
-    v_individu_1 individu;
-    v_individu_2 individu;
-    v_individu_id bigint;
-    v_pre_individu_1 individu;
-    v_pre_individu_2 individu;
-
-    v_count smallint;
 begin
 
     --
@@ -461,7 +447,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -500,11 +486,11 @@ begin
     --
     update structure set histo_destruction = current_timestamp, histo_destructeur_id = 1 where id = v_pre_structure_2.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    assert v_structure_substit.histo_destruction is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L et histo_destruction not null', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    assert v_substit_structure.histo_destruction is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L et histo_destruction not null', v_pre_structure_2.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert not (v_structure is null or v_structure.sigle <> 'BBBB'),
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'BBBB', v_structure.sigle);
 
@@ -526,12 +512,12 @@ $$declare
     v_pre_structure_2 structure;
     v_pre_structure_3 structure;
     v_structure structure;
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
 begin
     perform test_substit_structure__set_up();
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit; -- SANS remplacement de FK
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure; -- SANS remplacement de FK
 
     v_npd_structure_a = 'etablissement,X123';
 
@@ -551,8 +537,8 @@ begin
     returning * into v_pre_structure_2;
 
     -- Fetch de la substitution et du substituant correspondant
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_structure_a;
-    select * into v_structure from structure where id = v_structure_substit.to_id;
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_structure_a;
+    select * into v_structure from structure where id = v_substit_structure.to_id;
 
     -- Verif des valeurs des attributs mis à jour automatiquement à partir des substitués
     assert v_structure.sigle = 'AAAA' /* car ordre alpha */,
@@ -583,7 +569,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -592,7 +578,7 @@ begin
     perform test_substit_structure__set_up();
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit; -- SANS remplacement de FK
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure; -- SANS remplacement de FK
 
     v_npd_a = 'etablissement,X123';
 
@@ -615,12 +601,12 @@ begin
     --
     update structure set histo_destruction = current_timestamp, histo_destructeur_id = 1 where id = v_pre_structure_3.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_a;
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_a;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'BBBB', -- car BBBB majoritaire
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'BBBB', v_structure.sigle);
 
@@ -645,8 +631,8 @@ $$declare
     v_structure structure;
     v_utilisateur utilisateur;
 
-    v_structure_substit_1 structure_substit;
-    v_structure_substit_2 structure_substit;
+    v_substit_structure_1 substit_structure;
+    v_substit_structure_2 substit_structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
     v_pre_structure_3 structure;
@@ -660,7 +646,7 @@ begin
     perform test_substit_structure__set_up();
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit enable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure enable trigger substit_trigger_on_substit_structure;
 
     v_npd_a = 'etablissement,X123';
 
@@ -685,26 +671,26 @@ begin
     -- Modif du code de la 2e structure pour qu'elle soit substituée :
     update structure set code = 'X123' where id = v_structure_2.id;
 
-    select * into v_structure_substit_1 from structure_substit where from_id = v_structure_1.id and npd = v_npd_a;
-    select * into v_structure_substit_2 from structure_substit where from_id = v_structure_2.id and npd = v_npd_a;
+    select * into v_substit_structure_1 from substit_structure where from_id = v_structure_1.id and npd = v_npd_a;
+    select * into v_substit_structure_2 from substit_structure where from_id = v_structure_2.id and npd = v_npd_a;
 
     select * into v_fkr_1 from substit_fk_replacement
         where type = 'structure' and table_name = 'role' and column_name = 'structure_id'
           and record_id = v_role_1.id
           and from_id = v_structure_1.id
-          and to_id = v_structure_substit_1.to_id;
+          and to_id = v_substit_structure_1.to_id;
     assert v_fkr_1.id is not null,
         format('[TEST] Attendu : un SUBSTIT_FK_REPLACEMENT pour %s => %s et la table "role"',
-               v_structure_1.id, v_structure_substit_1.to_id, v_role_1.structure_id);
+               v_structure_1.id, v_substit_structure_1.to_id, v_role_1.structure_id);
 
     select * into v_fkr_2 from substit_fk_replacement
         where type = 'structure' and table_name = 'role' and column_name = 'structure_id'
           and record_id = v_role_2.id
           and from_id = v_structure_2.id
-          and to_id = v_structure_substit_2.to_id;
+          and to_id = v_substit_structure_2.to_id;
     assert v_fkr_2.id is not null,
         format('[TEST] Attendu : un SUBSTIT_FK_REPLACEMENT pour %s => %s et la table "role"',
-               v_structure_2.id, v_structure_substit_2.to_id, v_role_2.structure_id);
+               v_structure_2.id, v_substit_structure_2.to_id, v_role_2.structure_id);
 
     -- Modif du NPD forcé pour sortir la 1ere structure de la substitution (cela supprimera la substitution puisqu'il ne reste qu'un substitué)
     update structure set npd_force = 'ksldqhflksjdqhfl' where id = v_structure_1.id;
@@ -721,10 +707,10 @@ begin
         where type = 'structure' and table_name = 'role' and column_name = 'structure_id'
           and record_id = v_role_1.id
           and from_id = v_structure_1.id
-          and to_id = v_structure_substit_1.to_id;
+          and to_id = v_substit_structure_1.to_id;
     assert v_fkr_1.id is null,
         format('[TEST] Attendu : plus aucun SUBSTIT_FK_REPLACEMENT pour %s => %s et la table "role"',
-               v_structure_1.id, v_structure_substit_1.to_id, v_role_1.structure_id);
+               v_structure_1.id, v_substit_structure_1.to_id, v_role_1.structure_id);
 
     --
     -- 2e structure
@@ -738,10 +724,10 @@ begin
         where type = 'structure' and table_name = 'role' and column_name = 'structure_id'
           and record_id = v_role_2.id
           and from_id = v_structure_2.id
-          and to_id = v_structure_substit_2.to_id;
+          and to_id = v_substit_structure_2.to_id;
     assert v_fkr_2.id is null,
         format('[TEST] Attendu : plus aucun SUBSTIT_FK_REPLACEMENT pour %s => %s et la table "role"',
-               v_structure_2.id, v_structure_substit_2.to_id, v_role_2.structure_id);
+               v_structure_2.id, v_substit_structure_2.to_id, v_role_2.structure_id);
 
     delete from role where id = v_role_1.id;
     delete from role where id = v_role_2.id;
@@ -759,7 +745,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -803,11 +789,11 @@ begin
     --
     update structure set histo_destruction = null, histo_destructeur_id = null where id = v_pre_structure_2.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a and histo_destruction is null;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L et histo_destruction null', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a and histo_destruction is null;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L et histo_destruction null', v_pre_structure_2.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'AAAA',
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'AAAA', v_structure.sigle);
 
@@ -824,7 +810,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -863,12 +849,12 @@ begin
     --
     update structure set source_id = 1 where id = v_pre_structure_1.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : 1 structure_substit supprimé avec from_id = %s et npd = %L ', v_pre_structure_1.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : 1 substit_structure supprimé avec from_id = %s et npd = %L ', v_pre_structure_1.id, v_npd_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    select * into v_structure from structure where id = v_structure_substit.to_id;
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    select * into v_structure from structure where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'BBBB',
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'BBBB', v_structure.sigle);
 
@@ -885,7 +871,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -930,11 +916,11 @@ begin
     --
     update structure set source_id = v_source_id where id = v_pre_structure_1.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_1.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_1.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert not (v_structure is null or v_structure.sigle <> 'AAAA'),
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'AAAA', v_structure.sigle);
 
@@ -951,7 +937,7 @@ $$declare
     v_source_id bigint = 2; -- source INSA
     v_npd_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -975,11 +961,11 @@ begin
     select nextval('structure_id_seq'), 1, 'PEUIMPORTE', 'test1234', 'AAAA', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, v_npd_a
     returning * into v_pre_structure_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = % et npd = %', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = % et npd = %', v_pre_structure_2.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'AAAA',
         format('[TEST] Attendu : 1 structure substituant avec sigle = % (mais sigle = %)', 'AAAA', v_structure.sigle);
 
@@ -997,7 +983,7 @@ $$declare
     v_npd_a varchar(256);
     v_npd_b varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -1047,24 +1033,24 @@ begin
     --
     update structure set code = 'Z666' where id = v_pre_structure_3.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : 1 structure_substit supprimé avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : 1 substit_structure supprimé avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'AAAA',
         format('[TEST] Attendu : 1 structure substituant avec sigle = %s (mais sigle = %L)', 'AAAA', v_structure.sigle);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_b;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_b);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_b;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_b);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_4.id and npd = v_npd_b;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_4.id, v_npd_b);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_4.id and npd = v_npd_b;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_4.id, v_npd_b);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert not (v_structure is null or v_structure.sigle <> 'BBBB'),
         format('[TEST] Attendu : 1 structure substituant avec sigle = %L (mais sigle = %L)', 'BBBB', v_structure.sigle);
 
@@ -1082,7 +1068,7 @@ $$declare
     v_npd_a varchar(256);
     v_npd_b varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -1124,17 +1110,17 @@ begin
     select nextval('structure_id_seq'), 1, 'X444', 'test1234', 'AAAA', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
     returning * into v_pre_structure_4;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_4.id;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : aucun structure_substit avec from_id = % ', v_pre_structure_4.id);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_4.id;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : aucun substit_structure avec from_id = % ', v_pre_structure_4.id);
 
     update structure set npd_force = v_npd_a where id = v_pre_structure_4.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_4.id and npd = v_npd_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = % et npd = %', v_pre_structure_4.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_4.id and npd = v_npd_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = % et npd = %', v_pre_structure_4.id, v_npd_a);
 
-    select * into v_structure from structure i where id = v_structure_substit.to_id;
+    select * into v_structure from structure i where id = v_substit_structure.to_id;
     assert v_structure.sigle = 'AAAA',
         format('[TEST] Attendu : 1 structure substituant avec sigle = % (mais sigle = %)', 'AAAA', v_structure.sigle);
 
@@ -1152,7 +1138,7 @@ $$declare
     v_npd_a varchar(256);
     v_npd_b varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
     v_structure structure;
@@ -1177,21 +1163,21 @@ begin
     select nextval('structure_id_seq'), 1, 'X123', 'test1234', 'AAAA', 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_structure_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_a;
-    select * into v_structure from structure where id = v_structure_substit.to_id;
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_a;
+    select * into v_structure from structure where id = v_substit_structure.to_id;
 
     -- Modif du NPD forcé pour sortir AAAA de la substitution
     --   - retrait structure de la substitution existante : 1 doublons restant (mail substituant = bbbb@mail.fr car ordre alphabet)
     --   - suppression du substituant existant car 0 doublon restant.
     update structure set npd_force = 'ksldqhflksjdqhfl' where id = v_pre_structure_2.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_a;
-    assert v_structure_substit.id is null,
-        format('[TEST] Attendu : 1 structure_substit supprimé avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_a;
+    assert v_substit_structure.id is null,
+        format('[TEST] Attendu : 1 substit_structure supprimé avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_a);
 
-    select count(*) into v_count from structure_substit i where to_id = v_structure.id;
+    select count(*) into v_count from substit_structure i where to_id = v_structure.id;
     assert v_count = 0,
-        format('[TEST] Attendu : 0 structure_substit avec substituant = %s', v_structure_substit.to_id);
+        format('[TEST] Attendu : 0 substit_structure avec substituant = %s', v_substit_structure.to_id);
 
     select * into v_structure from structure where id = v_structure.id;
     assert v_structure.id is null,
@@ -1220,7 +1206,7 @@ select test_substit_structure__adds_to_substit_si_ajout_npd();
 select test_substit_structure__deletes_substit_si_plus_doublon();
 /*
 select * from substit_log;
-select * from structure_substit order by to_id desc, id desc;
+select * from substit_structure order by to_id desc, id desc;
 
 select substit_create_all_substitutions_structure(20); -- totalité : 23-24 min (avec ou sans les raise)
 
