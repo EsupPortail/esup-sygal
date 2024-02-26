@@ -74,6 +74,7 @@ return [
                         'voir',
                         'voirSubstitue',
                         'voirSubstituant',
+                        'creer'
                     ],
                     'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
@@ -252,6 +253,20 @@ return [
                                                 'action' => 'retirerSubstitue',
                                             ],
                                         ],
+                                    ],
+                                ],
+                            ],
+                            'creer' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/:type/creer/substituable/:substituableId/npd/:npd',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                        'substituableId' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        /** @see SubstitutionController::creerAction() */
+                                        'action' => 'creer',
                                     ],
                                 ],
                             ],

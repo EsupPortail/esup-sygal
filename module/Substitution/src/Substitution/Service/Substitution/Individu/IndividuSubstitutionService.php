@@ -4,6 +4,7 @@ namespace Substitution\Service\Substitution\Individu;
 
 use Application\Service\BaseService;
 use Doctrine\DBAL\Exception;
+use Substitution\Constants;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Service\Substitution\SpecificSubstitutionAbstractService;
 use UnicaenApp\Exception\RuntimeException;
@@ -11,6 +12,8 @@ use UnicaenApp\Util;
 
 class IndividuSubstitutionService extends SpecificSubstitutionAbstractService
 {
+    protected string $type = Constants::TYPE_individu;
+
     /**
      * @var \Individu\Service\IndividuService
      */
@@ -101,7 +104,7 @@ class IndividuSubstitutionService extends SpecificSubstitutionAbstractService
         $this->entityService->saveIndividu($entity);
     }
 
-    public function generateSqlToFindSubstitutions(?int $substituantId = null): string
+    public function generateSqlToFindSubstitutionsBySubstituant(?int $substituantId = null): string
     {
         $andWhereToId = $substituantId ? 'where sub.to_id = ' . $substituantId : null;
         return <<<EOT

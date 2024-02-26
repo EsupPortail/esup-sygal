@@ -64,6 +64,24 @@ class SubstitutionController extends AbstractActionController
     /**
      * @throws \Doctrine\DBAL\Exception
      */
+    public function creerAction(): Response
+    {
+        $type = $this->getRequestedType();
+        $substituableId = $this->params()->fromRoute('substituableId');
+        $npd = $this->params()->fromRoute('npd');
+
+        $result = $this->substitutionService->createSubstitutionForTypeAndSubstituable($type, $substituableId, $npd);
+        $substitution = $result->fetchAssociative();
+        $substituantId = $substitution['to_id'];
+
+        $this->flashMessenger()->addSuccessMessage("Le substitué $substituableId a été ajouté avec succès à la substitution par $substituantId.");
+
+        return $this->redirect()->toRoute('substitution/substitution/voir', ['type' => $type, 'id' => $substituantId], [], true);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function modifierAction(): ViewModel
     {
         $type = $this->getRequestedType();

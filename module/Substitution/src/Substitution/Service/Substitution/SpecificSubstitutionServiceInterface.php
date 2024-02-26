@@ -8,6 +8,22 @@ use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 interface SpecificSubstitutionServiceInterface
 {
     /**
+     * Retourne le type de substitution associé à ce service, cf. {@see \Substitution\Constants::TYPES}.
+     *
+     * @return string
+     */
+    public function getType(): string;
+
+    /**
+     * Création d'une substitution à partir de l'id d'un enregistrement substituable (1 parmi les doublons trouvés).
+     *
+     * @return Result Substitution créée
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function createSubstitution(string $substituableId, string $npd): Result;
+
+    /**
      * @throws \Doctrine\DBAL\Exception
      */
     public function countAllSubstitutions(): int;
@@ -20,7 +36,7 @@ interface SpecificSubstitutionServiceInterface
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findOneSubstitution(int $substituantId): Result;
+    public function findOneSubstitutionBySubstituant(int $substituantId): Result;
 
     /**
      * Recherche d'enregistrements pouvant être ajoutés manuellement à une substitution.

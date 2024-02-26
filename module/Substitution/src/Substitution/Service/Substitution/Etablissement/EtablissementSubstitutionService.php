@@ -3,6 +3,7 @@
 namespace Substitution\Service\Substitution\Etablissement;
 
 use Application\Service\BaseService;
+use Substitution\Constants;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Service\Substitution\SpecificSubstitutionAbstractService;
 use Substitution\Service\Substitution\Structure\StructureConcreteSubstitutionServiceTrait;
@@ -11,15 +12,12 @@ class EtablissementSubstitutionService extends SpecificSubstitutionAbstractServi
 {
     use StructureConcreteSubstitutionServiceTrait;
 
+    protected string $type = Constants::TYPE_etablissement;
+
     /**
      * @var \Structure\Service\Etablissement\EtablissementService
      */
     protected BaseService $entityService;
-
-    public function __construct()
-    {
-        $this->type = 'etablissement';
-    }
 
     public function saveEntity(SubstitutionAwareEntityInterface $entity): void
     {
