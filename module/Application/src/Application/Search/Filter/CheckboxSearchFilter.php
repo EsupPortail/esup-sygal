@@ -2,17 +2,9 @@
 
 namespace Application\Search\Filter;
 
-/**
- *
- *
- * @author Unicaen
- */
 class CheckboxSearchFilter extends SearchFilter
 {
-    /**
-     * @var string
-     */
-    protected $checkedOptionValue = '1';
+    protected string $checkedOptionValue = '1';
 
     /**
      * @param array $queryParams
@@ -24,6 +16,11 @@ class CheckboxSearchFilter extends SearchFilter
         $optionName = $this->getName();
 
         return isset($queryParams[$optionName]) && $queryParams[$optionName] === $this->checkedOptionValue;
+    }
+
+    public function canApplyToQueryBuilder(): bool
+    {
+        return true;
     }
 
     /**

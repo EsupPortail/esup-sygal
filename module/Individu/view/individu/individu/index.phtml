@@ -2,9 +2,12 @@
 
 namespace Individu;
 
+global $unite;
+
 use Application\Filter\IdifyFilter;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Provider\Privilege\IndividuPrivileges;
+use Substitution\Constants;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**
@@ -46,8 +49,9 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
             <th>Nom d'usage</th>
             <th>Prénoms</th>
             <th>Adresse électronique</th>
-            <th>Date de naissance</th>
+            <th>Date naiss.</th>
             <th title="Complément d'individu">Compl.</th>
+            <th>Source</th>
             <th class="action">Action</th>
         </tr>
         <?php /** @var \Individu\Entity\Db\Individu $individu */
@@ -56,7 +60,7 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
             $canModifier = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_MODIFIER);
             $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIMER);
             ?>
-            <tr>
+            <tr class="individu <?php echo $individu->estHistorise() ? 'historise' : '' ?>">
                 <td>
                     <span class="<?php echo $individu->estHistorise() ? 'historise' : '' ?>">
                         <a href="<?php echo $this->url('individu/voir', ['individu' => IdifyFilter::id($individu)]) ?>"
@@ -81,6 +85,14 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
                             <span class="icon icon-voir"></span>
                         </a>
                     <?php endif ?>
+                </td>
+                <td>
+                    <?php echo $individu->getSource(); ?>
+                    <?php if ($individu->estSubstituant()) : ?>
+                        <a href="<?php echo $this->url('substitution/substitution/voir', ['type' => Constants::TYPE_individu, 'id' => $individu->getId()]) ?>"
+                           title="Accéder aux détails de cette substitution">
+                            <span class="badge bg-light text-info" title="Cet enregistrement substitue d'autres enregistrements, cliquez pour en savoir plus...">Substitution</span></a>
+                    <?php endif; ?>
                 </td>
                 <td class="action">
                     <?php if ($canSupprimer): ?>
