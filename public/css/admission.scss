@@ -109,6 +109,7 @@ h1 {
 
 .commentaires_gestionnaire .commentaire_gestionnaire{
   margin-left:30px;
+  margin-top: 30px;
 }
 
 .commentaires_gestionnaire .info-commentaire{
@@ -161,7 +162,6 @@ h1 {
 .commentaire_gestionnaire {
   background-color: #d23544;
   color: #fff;
-  width: fit-content;
 }
 
 .commentaire_gestionnaire::before {
@@ -207,10 +207,16 @@ h1 {
   content: "\2713";
 }
 
-
 .loading {
   cursor: progress;
   pointer-events: none;
+}
+
+.dossier_bulle_information {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  //margin-left: 10px;
 }
 
 //Page accueil Admission
@@ -538,15 +544,30 @@ input[name="validation[saveAttestationHonneur]"] {
   margin-top: revert !important;
 }
 
+.access_convention_formation_doctorale.required, .access_charte_doctorat.required {
+  background-color: #F1732D;
+  color: #fff;
+  font-weight: bold;
+}
+
+.access_convention_formation_doctorale.required:hover, .access_charte_doctorat.required:hover {
+  background-color: #824012;
+}
+
 /* Style de base de la bulle informative */
 .dossier_incomplet_validation_impossible {
   position: relative;
   display: inline-block;
   cursor: pointer; /* Curseur de type pointer */
   margin-left: 10px;
+  color: #F1732D;
 }
 
-.dossier_incomplet_validation_impossible .tooltip-text {
+.dossier_incomplet_validation_impossible:before{
+  font-size: large;
+}
+
+.dossier_incomplet_validation_impossible .tooltip-text, .dossier_bulle_information .tooltip-text {
   visibility: hidden;
   width: 200px;
   background-color: #333;
@@ -564,7 +585,7 @@ input[name="validation[saveAttestationHonneur]"] {
 }
 
 /* Affichage de la bulle informative lorsqu'elle est survolée */
-.dossier_incomplet_validation_impossible:hover .tooltip-text {
+.dossier_incomplet_validation_impossible:hover .tooltip-text, .dossier_bulle_information:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
 }
@@ -659,6 +680,30 @@ input[name="validation[saveAttestationHonneur]"] {
 }
 
 //Convention de formation doctorale
+.convention-formation-doctorale-container > form > .row {
+  margin-bottom: 30px;
+}
+
+.precisions_action, .precisions_convention_intro {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.precisions_action p, .precisions_convention_intro p {
+  margin: 0;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.precisions_action, .precisions_convention_intro i {
+  margin-right: 10px;
+}
+
 .precisions_convention{
   font-style: italic;
 }
@@ -669,11 +714,11 @@ input[name="validation[saveAttestationHonneur]"] {
 
 @media (max-width: 768px) {
   //Général
-  .commentaires_gestionnaire .partie_etudiant{
+  .commentaires_gestionnaire .partie_etudiant {
     flex-direction: column;
   }
   //Accueil
-  .individu_recherche_index{
+  .individu_recherche_index {
     display: flex;
     justify-content: center;
   }
@@ -714,7 +759,7 @@ input[name="validation[saveAttestationHonneur]"] {
     align-items: center;
   }
 
-  .libelle_etape > label{
+  .libelle_etape > label {
     color: #707070;
     font-size: 1.45vh;
     margin-left: unset;
@@ -724,21 +769,18 @@ input[name="validation[saveAttestationHonneur]"] {
     margin-right: 10px;
   }
 
-  .info_validation{
+  .info_validation {
     margin-bottom: 10px;
     margin-top: 10px;
   }
 
-  .cardsValidation{
+  .cardsValidation {
     margin-top: 20px;
   }
 
-  .bouton_etape_validation{
+  .bouton_etape_validation {
     display: flex;
     justify-content: center;
     align-items: center;
   }
 }
-
-
-

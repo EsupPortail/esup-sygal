@@ -10,6 +10,7 @@ use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Select;
 
 /**
  * @var PhpRenderer         $this
@@ -22,9 +23,9 @@ use Application\View\Renderer\PhpRenderer;
  * @var AdmissionOperationInterface $operationEnAttente
  * @var array $conventionFormationDoctoraleOperations
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
+ * @see \Admission\Controller\AdmissionController::documentAction()
  */
 $form->prepare();
-$fcg = $this->formControlGroup();
 
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
 $canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
@@ -35,7 +36,11 @@ $canModifierAdmission  =
     $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
 if(!empty($admission) && !$canModifierAdmission) {
     foreach ($fieldset->getElements() as $element) {
-        $element->setAttribute('readonly', true);
+        if ($element instanceof Laminas\Form\Element\Checkbox || $element instanceof Select || $element instanceof \Laminas\Form\Element\File) {
+            $element->setAttribute('disabled', true);
+        } else {
+            $element->setAttribute('readonly', true);
+        }
     }
 }
 $individu = $admission ?$admission->getIndividu()->getId() : null;
@@ -47,18 +52,9 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
 ?>
 
 <script>
-    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? '1' : '0'; ?>;
     var documents = <?php echo json_encode($documents); ?>;
     var individuId = <?php echo $individu; ?>;
 </script>
-
-<head>
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet"/>
-    <link href="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.css" rel="stylesheet">
-</head>
-<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
-<script src="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.js"></script>
-<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 
 <div class="row_sous_partie">
     <div class="title_sous_partie">
@@ -103,6 +99,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         'fieldset' => $fieldset->get('exemplairesCharteDoctorat'),
         'documents' => $documents,
         'individu' => $individu,
+        'admission' => $admission,
         'validation_charte_doctorat' => $operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE],
         'returnUrl' => $returnUrl,
     ]);
@@ -191,7 +188,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
 if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'admission' => $admission,
-        'fcg' => $fcg,
+        'fcg' => $this->formControlGroup(),
         'fieldset' => $fieldset->get("verificationDocument"),
         'element' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument() : null,
         'elementVerification' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument()->first()->getVerificationDocument() : null,

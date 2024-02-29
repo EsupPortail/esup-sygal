@@ -9,6 +9,7 @@ use Admission\Service\Financement\FinancementService;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Validation\AdmissionValidationService;
+use Admission\Service\Verification\VerificationService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -30,6 +31,7 @@ class AdmissionServiceFactory {
         $documentService = $container->get(DocumentService::class);
         $variableService = $container->get(VariableService::class);
         $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
+        $verificationService = $container->get(VerificationService::class);
 
         $service = new AdmissionService();
         $service->setEtudiantService($etudiantService);
@@ -40,6 +42,7 @@ class AdmissionServiceFactory {
         $service->setDocumentService($documentService);
         $service->setVariableService($variableService);
         $service->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
+        $service->setVerificationService($verificationService);
 
         return $service;
     }

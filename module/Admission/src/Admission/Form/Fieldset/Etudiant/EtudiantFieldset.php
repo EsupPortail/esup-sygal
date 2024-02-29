@@ -1,16 +1,13 @@
 <?php
 namespace Admission\Form\Fieldset\Etudiant;
 
-use Admission\Entity\Db\Admission;
-use Admission\Entity\Db\Etat;
+use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
-use Admission\Provider\Privilege\AdmissionPrivileges;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\Digits;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToNull;
-use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Hidden;
@@ -19,17 +16,14 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Tel;
 use Laminas\Form\Element\Text;
-use Laminas\Form\Element\Textarea;
-use Laminas\Form\Fieldset;
-use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\GreaterThan;
 use Laminas\Validator\Regex;
 use Laminas\Validator\StringLength;
-use UnicaenApp\Form\Element\SearchAndSelect;
 
-class EtudiantFieldset extends Fieldset implements InputFilterProviderInterface
+class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
+
     // Méthode pour générer les options d'année
     protected function generateYearOptions() : array
     {

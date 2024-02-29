@@ -7,10 +7,20 @@ use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
-class ConventionFormationDoctoraleForm extends Form
+class ConventionFormationDoctoraleForm extends Form implements InputFilterProviderInterface
 {
-    public function __construct($name = null)
+    private bool $disableMotivationDemandeConfidentialite = false;
+
+    /**
+     * @param bool $disable
+     */
+    public function disableMotivationDemandeConfidentialite(bool $disable = true): void
+    {
+        $this->disableMotivationDemandeConfidentialite = $disable;
+    }
+    public function __construct()
     {
         parent::__construct();
 
@@ -75,6 +85,20 @@ class ConventionFormationDoctoraleForm extends Form
     }
 
     /**
+     * @return Form
+     */
+    public function prepare(): Form
+    {
+        parent::prepare();
+
+        if ($this->disableMotivationDemandeConfidentialite) {
+            $this->remove('motivationDemandeConfidentialite');
+        }
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getInputFilterSpecification(): array
@@ -82,31 +106,31 @@ class ConventionFormationDoctoraleForm extends Form
         return [
             'calendrierProjetRecherche' => [
                 'name' => 'calendrierProjetRecherche',
-                'required' => false,
+                'required' => true,
             ],
             'modalitesEncadrSuiviAvancmtRech' => [
                 'name' => 'modalitesEncadrSuiviAvancmtRech',
-                'required' => false,
+                'required' => true,
             ],
             'conditionsRealisationProjRech' => [
                 'name' => 'conditionsRealisationProjRech',
-                'required' => false,
+                'required' => true,
             ],
             'modalitesIntegrationUr' => [
                 'name' => 'modalitesIntegrationUr',
-                'required' => false,
+                'required' => true,
             ],
             'partenariatsProjThese' => [
                 'name' => 'partenariatsProjThese',
-                'required' => false,
+                'required' => true,
             ],
             'motivationDemandeConfidentialite' => [
                 'name' => 'motivationDemandeConfidentialite',
-                'required' => false,
+                'required' => !$this->disableMotivationDemandeConfidentialite,
             ],
             'projetProDoctorant' => [
                 'name' => 'projetProDoctorant',
-                'required' => false,
+                'required' => true,
             ],
         ];
     }

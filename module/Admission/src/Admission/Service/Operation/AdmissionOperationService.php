@@ -76,10 +76,8 @@ class AdmissionOperationService
         }
     }
 
-    public function deleteOperationAndThrowEvent(AdmissionOperationInterface $operation, array $messages = []): AdmissionEvent
+    public function throwDeletionOperationEvent(AdmissionOperationInterface $operation, array $messages = []): AdmissionEvent
     {
-        $this->deleteOperation($operation);
-
         switch (true) {
             case $operation instanceof AdmissionValidation:
                 $event = $this->admissionValidationService->triggerEventValidationSupprimee($operation, ['messages' => $messages]);

@@ -19,6 +19,7 @@ use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
+use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\Db\Variable;
 use Application\Service\BaseService;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -37,6 +38,7 @@ class AdmissionService extends BaseService
     use AdmissionAvisServiceAwareTrait;
     use VariableServiceAwareTrait;
     use ConventionFormationDoctoraleServiceAwareTrait;
+    use VerificationServiceAwareTrait;
 
     /**
      * @return AdmissionRepository
@@ -156,6 +158,21 @@ class AdmissionService extends BaseService
         }
     }
 
+    /**
+     * @param Admission $admission
+     * @return void
+     * @throws ORMException
+     */
+    public function deleteAllVerifications(Admission $admission): void
+    {
+        try {
+            $this->verificationService->deleteAllVerificationFromAdmission($admission);
+        } catch (ORMException $e) {
+            $this->rollBack();
+            throw $e;
+        }
+    }
+
     public function changeEtatAdmission(AdmissionOperationInterface $operation, string $typeAction): void
     {
         switch (true) {
@@ -169,20 +186,21 @@ class AdmissionService extends BaseService
                 throw new InvalidArgumentException("Type d'opération inattendu : " . get_class($operation));
         }
         $admission = $operation->getAdmission();
+        $etatRepository = $this->entityManager->getRepository(Etat::class);
         switch ($code) {
             case AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE:
                 if($typeAction === "modifier" || $typeAction === "aviser"){
                     //Mise du dossier d'admission dans l'état "Validé"
                     if ($operation->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_POSITIF) {
                         /** @var Etat $valide */
-                        $valide = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_VALIDE]);
+                        $valide = $etatRepository->findOneBy(["code" => Etat::CODE_VALIDE]);
                         $admission->setEtat($valide);
                         $this->update($admission);
                         break;
                         //Mise du dossier d'admission dans l'état "Rejeté"
                     }else if($operation->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF){
                         /** @var Etat $rejete */
-                        $rejete = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_REJETE]);
+                        $rejete = $etatRepository->findOneBy(["code" => Etat::CODE_REJETE]);
                         $admission->setEtat($rejete);
                         $this->update($admission);
                         break;
@@ -190,16 +208,16 @@ class AdmissionService extends BaseService
                 }
                 break;
             case TypeValidation::CODE_ATTESTATION_HONNEUR:
-                //Mise du dossier d'admission dans l'état "Validé"
+                //Mise du dossier d'admission dans l'état "En cours de validation"
                 if ($typeAction === "valider") {
-                    $enCoursDeValidation = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_VALIDATION]);
+                    $enCoursDeValidation = $etatRepository->findOneBy(["code" => Etat::CODE_EN_COURS_VALIDATION]);
                     $admission->setEtat($enCoursDeValidation);
                     $this->update($admission);
                     break;
                     //Mise du dossier d'admission dans l'état "En cours de saisie"
                 }else if($typeAction === "devalider"){
                     /** @var Etat $enCoursDeSaisie */
-                    $enCoursDeSaisie = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
+                    $enCoursDeSaisie = $etatRepository->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
                     $admission->setEtat($enCoursDeSaisie);
                     $this->update($admission);
                     break;

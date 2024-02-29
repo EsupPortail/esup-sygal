@@ -63,11 +63,11 @@ $canSupprimerOperation =
         <?php endif ?>
         <?php if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
             <a class="btn btn-warning btn-sm access_suppression_operation" data-operation="SuppressionOperation">Supprimer l'avis</a>
-            <div class="modal fade" id="modalShowConfirmationSuppressionOperation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="modalShowConfirmationSuppressionOperation" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">Confirmation de l'opération</h4>
+                            <h4 class="modal-title">Confirmation de l'opération</h4>
                         </div>
                         <div class="modal-body">
                             <p>Êtes-vous sûr·e de vouloir supprimer cette opération ?</p>
@@ -86,21 +86,5 @@ $canSupprimerOperation =
                 </div>
             </div>
         <?php endif ?>
-    </div>
-</div>
-<div class="modal fade" id="avisComplemsModal" tabindex="-1" aria-labelledby="avisComplemsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="avisComplemsModalLabel">Détails de l'avis</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body">
-                <!-- rempli dynamiquement -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            </div>
-        </div>
     </div>
 </div>

@@ -71,7 +71,9 @@ class AdmissionRechercheService extends SearchService
             ->addSelect('compRat')->leftJoin('inscr.composanteDoctorat', 'compRat')
             ->addSelect('etab')->leftJoin('inscr.etablissementInscription', 'etab')
             ->addSelect('ed')->leftJoin('inscr.ecoleDoctorale', 'ed')
+            ->addSelect('ed_struct')->leftJoin('ed.structure', 'ed_struct')
             ->addSelect('ur')->leftJoin('inscr.uniteRecherche', 'ur')
+            ->addSelect('ur_struct')->leftJoin('ur.structure', 'ur_struct')
             ->addSelect('di')->leftJoin('inscr.directeur', 'di')
             ->addSelect('codir')->leftJoin('inscr.coDirecteur', 'codir')
 
@@ -82,6 +84,7 @@ class AdmissionRechercheService extends SearchService
 
         if($this->userContextService->getSelectedRoleDirecteurThese() || $role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE){
             $qb->andWhere('inscr.directeur = :individuId')
+                ->orWhere('inscr.directeur is null')
                 ->setParameter('individuId', $individu->getId());
         }
 
@@ -366,7 +369,7 @@ EOS;
         $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('etab_structure.code', $sorter->getDirection());
+                $qb->addOrderBy('etab.sourceCode', $sorter->getDirection());
             }
         );
 
@@ -378,7 +381,7 @@ EOS;
         $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('ed_structure.sigle', $sorter->getDirection());
+                $qb->addOrderBy('ed_struct.sigle', $sorter->getDirection());
             }
         );
 
@@ -390,7 +393,7 @@ EOS;
         $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
-                $qb->addOrderBy('ur_structure.code', $sorter->getDirection());
+                $qb->addOrderBy('ur_struct.code', $sorter->getDirection());
             }
         );
 

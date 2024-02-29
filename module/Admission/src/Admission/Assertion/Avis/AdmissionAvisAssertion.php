@@ -118,17 +118,6 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_AJOUTER_AVIS_TOUT:
                 case AdmissionPrivileges::ADMISSION_AJOUTER_AVIS_SIEN:
-                case AdmissionPrivileges::ADMISSION_MODIFIER_AVIS_TOUT:
-                case AdmissionPrivileges::ADMISSION_MODIFIER_AVIS_SIEN:
-                case AdmissionPrivileges::ADMISSION_SUPPRIMER_AVIS_TOUT:
-                case AdmissionPrivileges::ADMISSION_SUPPRIMER_AVIS_SIEN:
-//                    $this->assertAucuneValidation($admission);
-//                    break;
-            }
-
-            switch ($privilege) {
-                case AdmissionPrivileges::ADMISSION_AJOUTER_AVIS_TOUT:
-                case AdmissionPrivileges::ADMISSION_AJOUTER_AVIS_SIEN:
                     $nextOperation = $this->findNextExpectedOperation($admissionAvis->getAdmission());
                     $this->assertOperationsMatch($admissionAvis, $nextOperation);
                     $this->assertOperationIsAllowed($nextOperation);

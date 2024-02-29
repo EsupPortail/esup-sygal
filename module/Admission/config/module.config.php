@@ -189,7 +189,6 @@ return array(
                 [
                     'controller' => AdmissionController::class,
                     'action' => [
-                        'notifier-dossier-complet',
                         'notifier-dossier-incomplet',
                     ],
                     'privileges' => [
@@ -310,7 +309,7 @@ return array(
                         ],
                     ],
                     'rechercher-individu' => [
-                        'type'          => Segment::class,
+                        'type'          => Literal::class,
                         'options'       => [
                             'route'       => '/rechercher-individu',
                             'defaults'    => [
@@ -321,7 +320,7 @@ return array(
                         ],
                     ],
                     'recherche' => [
-                        'type' => 'Literal',
+                        'type' => Literal::class,
                         'options' => [
                             'route' => '/recherche',
                             'defaults' => [
@@ -332,7 +331,7 @@ return array(
                         'may_terminate' => true,
                         'child_routes' => [
                             'filters' => [
-                                'type' => 'Literal',
+                                'type' => Literal::class,
                                 'options' => [
                                     'route' => '/filters',
                                     'defaults' => [
@@ -376,22 +375,15 @@ return array(
                         'pages' => [
                         ],
                     ],
-
                     /**
-                     * Page pour Gest/Resp ED, Gest/Resp UR, Maison du Doctorat.
+                     * Page pour Dir, Codir.
                      */
-                    // DEPTH = 1
-                    ApplicationNavigationFactory::NOS_THESES_PAGE_ID => [
+                    ApplicationNavigationFactory::NOS_ADMISSIONS_PAGE_ID => [
+                        'order' => -200,
+                        'label' => 'Nos admissions',
+                        'route' => 'admission',
+                        'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
                         'pages' => [
-                            // DEPTH = 2
-                            'ADMISSIONS' => [
-                                'label' => '(Rapports activité Structure)',
-                                'route' => 'admission',
-                                'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
-                                'privilege' => [
-                                    AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION,
-                                ],
-                            ],
                         ],
                     ],
                 ],
@@ -461,9 +453,14 @@ return array(
         ],
         'stylesheets' => [
             '080_admission' => '/css/admission.css',
+            '090_filepond' => "/vendor/filepond/filepond.css",
+            '0100_filepond_pdf_preview' => "/vendor/filepond/filepond-plugin-pdf-preview.min.css",
         ],
         'head_scripts' => [
-            '080_uploader' => "/js/admission.js",
+            '080_admission' => "/js/admission.js",
+            '090_filepond' => "vendor/filepond/filepond.min.js",
+            '0100_filepond_pdf_preview' => "vendor/filepond/filepond-plugin-pdf-preview.min.js",
+            '0110_filepond-plugin-file-validate-type' => "vendor/filepond/filepond-plugin-file-validate-type.js",
         ],
     ],
 );

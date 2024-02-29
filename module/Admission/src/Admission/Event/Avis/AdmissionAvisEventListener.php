@@ -116,8 +116,9 @@ class AdmissionAvisEventListener extends AdmissionOperationAbstractEventListener
         $admission = $this->operationRealisee->getAdmission();
 
         $operationConfig = $this->admissionOperationRule->getConfigForOperation($this->operationRealisee);
-        // le nom de l'opération "validation_etudiant_operation_name" et "validation_gestionnaire_operation_name" est dans la config de l'opération courante
+        // le nom de l'opération "validation_etudiant_operation_name" et "validation_gestionnaire_operation_name"... est dans la config de l'opération courante
         $ripOperationsname = [
+            'validation_etudiant_charte_doctorale',
             'validation_convention_formation_doctorale_dir_these_operation_name',
             'validation_convention_formation_doctorale_codir_these_operation_name',
             'validation_convention_formation_doctorale_dir_ur_operation_name',
@@ -132,10 +133,8 @@ class AdmissionAvisEventListener extends AdmissionOperationAbstractEventListener
         foreach($ripOperationsname as $ripOperationname){
             $ripOperatioName = $operationConfig['extra'][$ripOperationname] ?? null;
             if (!$ripOperatioName) {
-                throw new InvalidArgumentException(sprintf(
-                    "Clé ['extra'][$ripOperationname] introuvable dans la config de l'opération suivante : %s",
-                    $operationConfig['name']
-                ));
+                // opération non activée pour ce dossier d'admission, rien à faire.
+                continue;
             }
 
             $ripOperationConfig = $this->admissionOperationRule->getConfigForOperationName($ripOperatioName);
@@ -167,11 +166,16 @@ class AdmissionAvisEventListener extends AdmissionOperationAbstractEventListener
                 ),
             ];
 
-            // historisation (avec déclenchement de l'événement).
-            $event = $this->admissionOperationService->deleteOperationAndThrowEvent($ripOperation, $messages);
-
             $this->event->setMessages($messages);
-            $this->event->addMessages($event->getMessages());
+
+            // historisation
+            $this->admissionOperationService->deleteOperation($ripOperation);
         }
+        //Suppression des vérifications faites sur le dossier d'admission
+        $this->admissionService->deleteAllVerifications($admission);
+        // déclenchement de la notification.
+        $notif = $this->notificationFactory->createNotificationDeclarationDossierIncomplet($this->operationRealisee);
+        $this->triggerNotification($notif);
+        $this->event->addMessages($notif->getSuccessMessages());
     }
 }

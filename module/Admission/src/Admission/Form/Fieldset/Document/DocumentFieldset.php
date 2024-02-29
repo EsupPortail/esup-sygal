@@ -1,20 +1,14 @@
 <?php
 namespace Admission\Form\Fieldset\Document;
 
-use Admission\Form\Fieldset\Validation\AdmissionValidationFieldset;
+use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
-use Laminas\Filter\StringTrim;
-use Laminas\Filter\StripTags;
-use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\File;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
-use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
-use Laminas\Validator\File\Extension;
 
-class DocumentFieldset extends Fieldset implements InputFilterProviderInterface
+class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
     public function init()
     {

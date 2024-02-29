@@ -1529,6 +1529,16 @@ VALUES ('ADMISSION_VALIDATION_SUPPRIMEE',
         null, 'Admission\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
+VALUES ('ADMISSION_VALIDATION_SUPPRIMEE',
+        '<p>Notification lorsque qu''un avis émis est ''Dossier incomplet'' lors du circuit de signatures du dossier d''admission</p>', 'mail',
+        'Le dossier d''admission de VAR[Individu#Denomination] est incomplet', e'<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été déclaré comme <strong>incomplet</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date].</p>
+<p>Cela a pour conséquence de supprimer l''intégralité des validations préalablement effectuées.</p>
+<p>Veuillez prendre connaissance de cette déclaration, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>',
+        null, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
+                                              document_css, namespace)
 VALUES ('ADMISSION_CONVENTION_FORMATION_DOCTORALE',
         '<p>Convention de formation doctorale appartenant à un dossier d''admission</p>', 'pdf',
         'Convention de formation doctorale de VAR[Individu#Denomination]', e'<h1 style="text-align: center;">Convention de formation doctorale</h1>

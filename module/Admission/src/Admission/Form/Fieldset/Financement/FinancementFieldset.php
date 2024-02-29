@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Financement;
 
+use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Application\Entity\Db\OrigineFinancement;
 use Laminas\Filter\StringTrim;
@@ -10,10 +11,9 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
-use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
 
-class FinancementFieldset extends Fieldset implements InputFilterProviderInterface
+class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
     private $financements = null;
 

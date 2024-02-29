@@ -36,7 +36,7 @@ $canValiderOperation =
             <label><?php echo $libelleOperation ?: $operation->getTypeValidation()->getLibelle(); ?></label>
             <?php //Si l'attestation sur l'honneur ne peut-être effectuée, on affiche ce message
             if (!$canValiderOperation && $operation->getTypeValidation()->getCode() == TypeValidation::CODE_ATTESTATION_HONNEUR) {
-                echo '<span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip">
+                echo '<span class="icon icon-warning dossier_incomplet_validation_impossible" data-toggle="tooltip">
                         <span class="tooltip-text">La charte doctorale (présente dans les pièces justificatives) doit avoir été lue pour pouvoir attester sur l\'honneur</span>
                      </span>';
             //Si l'attestation sur l'honneur peut-être effectuée mais qu'elle n'a pas été faîte, on affiche ce message
@@ -47,20 +47,22 @@ $canValiderOperation =
             }
             //Si la validation par les gestionnaires ne peut-être effectuée, on affiche ce message
             if((!$canValiderOperation && $operationEnAttente instanceof AdmissionValidation && $operationEnAttente->getTypeValidation()->getCode() == TypeValidation::CODE_VALIDATION_GESTIONNAIRE)){
-                echo '<span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip">
-                        <span class="tooltip-text">Le dossier doit-être noté comme complet</span>
-                     </span>';
+                echo "<span class='icon icon-warning dossier_incomplet_validation_impossible' data-toggle='tooltip'>
+                        <span class='tooltip-text'>Chaque partie de ce dossier doit-être notée comme complète<br>
+                        afin d'effectuer cette validation
+                        </span>
+                     </span>";
             }
             ?>
         </div>
 
         <?php if ($canValiderOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
-           <a class="btn btn-success btn-sm access_validation_operation" data-operation="ValidationOperation">Valider</a>
-            <div class="modal fade" id="modalShowConfirmationValidationOperation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+           <a class="btn btn-success access_validation_operation" data-operation="ValidationOperation">Valider</a>
+            <div class="modal fade" id="modalShowConfirmationValidationOperation" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">Confirmation de l'opération</h4>
+                            <h4 class="modal-title">Confirmation de l'opération</h4>
                         </div>
                         <div class="modal-body">
                             <p>Êtes-vous sûr·e de vouloir valider cette opération ?</p>

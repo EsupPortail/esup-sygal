@@ -40,7 +40,7 @@ class AdmissionRecapitulatifDataTemplate
     {
         $operations = $this->getOperations();
         $operationsFormatter = new AdmissionOperationsFormatter();
-        $operationsToPrint["header"] = ["Opération", "Valeur", "Acteur", "Date de l'opération"];
+        $operationsToPrint["header"] = ["Opération", "", "Acteur", "Date de l'opération"];
         foreach($operations as $operation){
             if ($operation instanceof AdmissionValidation) {
                 $libelleOperation = $operation->getTypeValidation()->getLibelle();

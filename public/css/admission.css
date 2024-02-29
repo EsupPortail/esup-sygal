@@ -84,7 +84,8 @@ h1 {
   display: flex; }
 
 .commentaires_gestionnaire .commentaire_gestionnaire {
-  margin-left: 30px; }
+  margin-left: 30px;
+  margin-top: 30px; }
 
 .commentaires_gestionnaire .info-commentaire {
   margin-left: 15px;
@@ -126,8 +127,7 @@ h1 {
 
 .commentaire_gestionnaire {
   background-color: #d23544;
-  color: #fff;
-  width: fit-content; }
+  color: #fff; }
 
 .commentaire_gestionnaire::before {
   content: "\26A0"; }
@@ -165,6 +165,11 @@ h1 {
 .loading {
   cursor: progress;
   pointer-events: none; }
+
+.dossier_bulle_information {
+  position: relative;
+  display: inline-block;
+  cursor: pointer; }
 
 .form_admission {
   display: flex;
@@ -432,15 +437,27 @@ input[name="validation[saveAttestationHonneur]"] {
 .validation_attestation {
   margin-top: revert !important; }
 
+.access_convention_formation_doctorale.required, .access_charte_doctorat.required {
+  background-color: #F1732D;
+  color: #fff;
+  font-weight: bold; }
+
+.access_convention_formation_doctorale.required:hover, .access_charte_doctorat.required:hover {
+  background-color: #824012; }
+
 /* Style de base de la bulle informative */
 .dossier_incomplet_validation_impossible {
   position: relative;
   display: inline-block;
   cursor: pointer;
   /* Curseur de type pointer */
-  margin-left: 10px; }
+  margin-left: 10px;
+  color: #F1732D; }
 
-.dossier_incomplet_validation_impossible .tooltip-text {
+.dossier_incomplet_validation_impossible:before {
+  font-size: large; }
+
+.dossier_incomplet_validation_impossible .tooltip-text, .dossier_bulle_information .tooltip-text {
   visibility: hidden;
   width: 200px;
   background-color: #333;
@@ -457,7 +474,7 @@ input[name="validation[saveAttestationHonneur]"] {
   transition: opacity 0.3s; }
 
 /* Affichage de la bulle informative lorsqu'elle est survolée */
-.dossier_incomplet_validation_impossible:hover .tooltip-text {
+.dossier_incomplet_validation_impossible:hover .tooltip-text, .dossier_bulle_information:hover .tooltip-text {
   visibility: visible;
   opacity: 1; }
 
@@ -533,6 +550,26 @@ input[name="validation[saveAttestationHonneur]"] {
 
 .cardsValidation {
   margin-top: 15px; }
+
+.convention-formation-doctorale-container > form > .row {
+  margin-bottom: 30px; }
+
+.precisions_action, .precisions_convention_intro {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  width: fit-content; }
+
+.precisions_action p, .precisions_convention_intro p {
+  margin: 0;
+  font-weight: bold;
+  display: inline-block; }
+
+.precisions_action, .precisions_convention_intro i {
+  margin-right: 10px; }
 
 .precisions_convention {
   font-style: italic; }

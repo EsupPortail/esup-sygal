@@ -36,6 +36,10 @@ class ConventionFormationDoctoraleController extends AbstractActionController
 
         $form = $this->conventionFormationDoctoraleForm;
 
+        if ($admission && ($admission->getInscription()->first() && !$admission->getInscription()->first()->getConfidentialite())) {
+            $form->disableMotivationDemandeConfidentialite();
+        }
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
@@ -71,6 +75,10 @@ class ConventionFormationDoctoraleController extends AbstractActionController
         $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
         $form = $this->conventionFormationDoctoraleForm;
         $form->bind($conventionFormationDoctorale);
+
+        if ($admission && ($admission->getInscription()->first() && !$admission->getInscription()->first()->getConfidentialite())) {
+            $form->disableMotivationDemandeConfidentialite();
+        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {

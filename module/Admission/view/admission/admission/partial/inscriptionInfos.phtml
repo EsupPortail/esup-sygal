@@ -5,6 +5,8 @@ use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Select;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 /**
  * @var PhpRenderer         $this
@@ -15,21 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  *
  */
 $form->prepare();
-$fcg = $this->formControlGroup();
-$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
-$canModifierAdmission  =
-    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
-    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-if(!empty($admission) && !$canModifierAdmission) {
-    foreach ($fieldset->getElements() as $element) {
-        $element->setAttribute('readonly', true);
-    }
-}
-?>
-<script>
-    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? 1 : 0 ?>
-</script>
-
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Inscription demandée<label class="titre_sous_partie_en">&nbsp; /  Application for registration</label></h2>
@@ -68,12 +56,14 @@ if(!empty($admission) && !$canModifierAdmission) {
                 ($admission->getInscription()->first()->getNomDirecteurThese() &&
                 empty($admission->getInscription()->first()->getDirecteur()))){ ?>
                 <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis supervisor</label>
-                <span class="icon icon-warning" data-toggle="tooltip" title="" data-bs-original-title="Merci d'enregistrer l'individu en base de données" aria-label="Merci d'enregistrer l'individu en base de données"></span>
+                <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                    <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                </span>
             <?php }else{ ?>
                     <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis supervisor</label>
                         <?php if($inscriptionExist &&
                               $admission->getInscription()->first()->getDirecteur()){ ?>
-                    <span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip">
+                    <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
                         <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
                     </span>
                 <?php } ?>
@@ -95,7 +85,7 @@ if(!empty($admission) && !$canModifierAdmission) {
     <div class="row subfield">
         <div class="col-lg-12 titre_these">
             <label class="form-label" for="inscription[titreThese]">Titre provisoire de la thèse</label><label class="titre_label_champ_form_en">&nbsp; / Provisional title of thesis</label>
-            <span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip">
+            <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
                 <span class="tooltip-text">Le titre saisi dans ce champ est provisoire et pourra être modifié ultérieurement durant votre parcours doctoral</span>
             </span>
         </div>
@@ -169,15 +159,15 @@ if(!empty($admission) && !$canModifierAdmission) {
                             <?php if($inscriptionExist &&
                                     $admission->getInscription()->first()->getNomCodirecteurThese() &&
                                     empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
-                                    <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis co-supervisor</label>
-                                    <span class="icon icon-information individu_non_enregistre dossier_incomplet_validation_impossible" data-toggle="tooltip">
+                                    <label class="form-label individu_non_enregistre" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis co-supervisor</label>
+                                    <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
                                         <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                                     </span>
                             <?php }else{ ?>
-                                <label class="form-label" for="inscription[nomDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis co-supervisor</label>
+                                <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis co-supervisor</label>
                                 <?php if($inscriptionExist &&
                                         $admission->getInscription()->first()->getCoDirecteur()){ ?>
-                                        <span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip">
+                                        <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
                                             <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
                                         </span>
                                 <?php } ?>
@@ -223,7 +213,7 @@ if(!empty($admission) && !$canModifierAdmission) {
 if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'admission' => $admission,
-        'fcg' => $fcg,
+        'fcg' => $this->formControlGroup(),
         'fieldset' => $fieldset->get("verificationInscription"),
         'element' => !empty($admission) && !empty($admission->getInscription()) ? $admission->getInscription() : null,
         'elementVerification' => !empty($admission) && !empty($admission->getInscription()->first()) ? $admission->getInscription()->first()->getVerificationInscription() : null

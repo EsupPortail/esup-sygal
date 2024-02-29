@@ -5,29 +5,19 @@ use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Select;
 
 /**
  * @var PhpRenderer         $this
  * @var FinancementFieldset    $fieldset
  * @var AdmissionForm $form
  * @var Admission $admission
- *
+ * @see \Admission\Controller\AdmissionController::financementAction()
  */
 $form->prepare();
-$fcg = $this->formControlGroup();
-$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
-$canModifierAdmission  =
-    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
-    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-if(!empty($admission) && !$canModifierAdmission) {
-    foreach ($fieldset->getElements() as $element) {
-        $element->setAttribute('readonly', true);
-    }
-}
-?>
-<script>
-    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? 1 : 0 ?>
-</script>
+
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Financement<label class="titre_sous_partie_en">&nbsp; / Funding</label></h2>
@@ -58,7 +48,7 @@ if(!empty($admission) && !$canModifierAdmission) {
     <div class="row subfield">
         <div class="col">
             <div class="checkbox_admission">
-                <?php echo $fcg($fieldset->get('tempsTravail')) ?>
+                <?php echo $this->formControlGroup($fieldset->get('tempsTravail')) ?>
             </div>
         </div>
     </div>
@@ -86,7 +76,7 @@ if(!empty($admission) && !$canModifierAdmission) {
 if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'admission' => $admission,
-        'fcg' => $fcg,
+        'fcg' => $this->formControlGroup(),
         'fieldset' => $fieldset->get("verificationFinancement"),
         'element' => !empty($admission->getFinancement()->first()) ? $admission->getFinancement() : null,
         'elementVerification' => !empty($admission->getFinancement()->first()) ? $admission->getFinancement()->first()->getVerificationFinancement() : null

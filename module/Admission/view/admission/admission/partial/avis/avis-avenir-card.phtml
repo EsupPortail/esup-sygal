@@ -45,9 +45,10 @@ $canAjouterOperation =
                     $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_ED && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_ED
                 )
             ) {
-                echo '<span class="icon icon-information dossier_incomplet_validation_impossible" data-toggle="tooltip">
+                echo '<span class="icon icon-warning dossier_incomplet_validation_impossible" data-toggle="tooltip">
                         <span class="tooltip-text">La convention de formation doctorale (présente dans les pièces justificatives) doit avoir été lue pour pouvoir effectuer cette validation</span>
                       </span>';
+                echo  isset($showActionButtons) && $showActionButtons ? '<a class="btn access_convention_formation_doctorale required">Lire et valider la convention de formation doctorale</a>' : '';
             }
             ?>
         </div>
@@ -56,7 +57,7 @@ $canAjouterOperation =
                 'admission' => $operation->getAdmission()->getId(),
                 'typeAvis' => $operation->getAvis()->getAvisType()->getId(),
             ]) ?>"
-               class="card-link btn btn-primary btn-sm action ajax-modal"
+               class="card-link btn btn-primary action ajax-modal"
                data-event="<?php echo $ajaxModalEvent ?>">Saisir l'avis</span></a>
         <?php endif ?>
     </div>

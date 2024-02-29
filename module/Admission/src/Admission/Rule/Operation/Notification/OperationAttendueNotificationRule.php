@@ -134,7 +134,7 @@ class OperationAttendueNotificationRule implements RuleInterface
                         $admission->getInscription()->first()->getUniteRecherche() :
                         $admission->getInscription()->first()->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
-                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
+                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     if (empty($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
                         $individusRoles = $structureConcrete ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
@@ -168,7 +168,7 @@ class OperationAttendueNotificationRule implements RuleInterface
                         $admission->getInscription()->first()->getUniteRecherche() :
                         $admission->getInscription()->first()->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
-                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
+                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     if (empty($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
                         $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;

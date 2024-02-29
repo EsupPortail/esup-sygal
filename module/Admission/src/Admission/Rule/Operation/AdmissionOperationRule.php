@@ -80,6 +80,7 @@ class AdmissionOperationRule
     public function findLastCompletedOperation(Admission $admission): ?AdmissionOperationInterface
     {
         $prevOperation = null;
+        $operations = $this->getOperationsForAdmission($admission);
         foreach ($this->getOperationsForAdmission($admission) as $operation) {
             if ($operation->getId() === null) {
                 break;
@@ -275,10 +276,6 @@ class AdmissionOperationRule
             $this->operations[$admission->getId()] = null;
         }
 
-//        if ($this->operations[$admission->getId()] !== null) {
-//            return $this->operations[$admission->getId()];
-//        }
-
         $this->loadOperationsForAdmission($admission, $byCategorie);
 
         return $this->operations[$admission->getId()];
@@ -387,8 +384,6 @@ class AdmissionOperationRule
         $operationEnAttente = $operationLastCompleted ? $this->findFollowingOperation($operationLastCompleted) : null;
 
         if($operationEnAttente instanceof AdmissionValidation){
-            $codeTypeValidation = $operationEnAttente->getTypeValidation()->getCode();
-//            $operationEnAttente = ($codeTypeValidation !== TypeValidation::CODE_ATTESTATION_HONNEUR && $codeTypeValidation !== TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE) ? $operationEnAttente : null;
             $operationEnAttente = $operationLastCompleted && $operationLastCompleted->getValeurBool() ? $operationEnAttente : false;
         }elseif($operationEnAttente instanceof AdmissionAvis){
             $operationEnAttente = $operationLastCompleted && $operationLastCompleted->getValeurBool() ? $operationEnAttente : false;

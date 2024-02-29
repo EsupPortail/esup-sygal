@@ -30,7 +30,13 @@ $form->prepare();
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
 
-<div class="rapport-activite-container">
+<div class="convention-formation-doctorale-container">
+    <div class="precisions_convention_intro">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>
+            Vous devez remplir tous les champs de ce formulaire afin de pouvoir l'enregistrer.
+        </p>
+    </div>
 
     <?php echo $this->form()->openTag($form) ?>
 
@@ -46,6 +52,7 @@ $form->prepare();
                 laboratoire académique.
             </p>
             <?php echo $this->formtextarea($form->get('calendrierProjetRecherche')); ?>
+            <?= $this->formelementerrors()->render($form->get('calendrierProjetRecherche'), ['class' => 'error text-danger']) ?>
         </div>
     </div>
 
@@ -62,6 +69,7 @@ $form->prepare();
                 connaissance).
             </p>
             <?php echo $this->formtextarea($form->get('modalitesEncadrSuiviAvancmtRech')); ?>
+            <?= $this->formelementerrors()->render($form->get('modalitesEncadrSuiviAvancmtRech'), ['class' => 'error text-danger']) ?>
         </div>
     </div>
 
@@ -77,6 +85,7 @@ $form->prepare();
                 évoquées.
             </p>
             <?php echo $this->formtextarea($form->get('conditionsRealisationProjRech')); ?>
+            <?= $this->formelementerrors()->render($form->get('conditionsRealisationProjRech'), ['class' => 'error text-danger']) ?>
         </div>
     </div>
 
@@ -90,6 +99,7 @@ $form->prepare();
                 assumer au sein du laboratoire.
             </p>
             <?php echo $this->formtextarea($form->get('modalitesIntegrationUr')); ?>
+            <?= $this->formelementerrors()->render($form->get('modalitesIntegrationUr'), ['class' => 'error text-danger']) ?>
         </div>
     </div>
 
@@ -103,14 +113,16 @@ $form->prepare();
                 si le projet implique un autre laboratoire ou établissement accueillant une partie des travaux…)
             </p>
             <?php echo $this->formtextarea($form->get('partenariatsProjThese')); ?>
+            <?= $this->formelementerrors()->render($form->get('partenariatsProjThese'), ['class' => 'error text-danger']) ?>
         </div>
     </div>
-    <?php if($admission && $admission->getInscription()->first()->getConfidentialite()){ ?>
+    <?php if ($form->has('motivationDemandeConfidentialite')){ ?>
         <div class="row">
             <div class="col-md-7">
                 <h3><?php echo $this->formlabel($form->get('motivationDemandeConfidentialite')); ?></h3>
                 <p class="precisions_convention"></p>
                 <?php echo $this->formtextarea($form->get('motivationDemandeConfidentialite')); ?>
+                <?= $this->formelementerrors()->render($form->get('motivationDemandeConfidentialite'), ['class' => 'error text-danger']) ?>
             </div>
         </div>
     <?php } ?>
@@ -123,6 +135,7 @@ $form->prepare();
                 qui vous seront utiles pour atteindre ces objectifs.
             </p>
             <?php echo $this->formtextarea($form->get('projetProDoctorant')); ?>
+            <?= $this->formelementerrors()->render($form->get('projetProDoctorant'), ['class' => 'error text-danger']) ?>
         </div>
     </div>
 

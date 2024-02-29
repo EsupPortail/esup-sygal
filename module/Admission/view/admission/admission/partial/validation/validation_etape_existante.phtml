@@ -30,13 +30,13 @@ $canSupprimerOperation =
     <?php
     if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
         <div class="col-lg-2 bouton_etape_validation">
-            <a  class="btn btn-danger btn-sm access_devalidation_operation" data-operation="DeValidationOperation">Dévalider</a>
+            <a  class="btn btn-danger access_devalidation_operation" data-operation="DeValidationOperation">Dévalider</a>
         </div>
-        <div class="modal fade" id="modalShowConfirmationDeValidationOperation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="modalShowConfirmationDeValidationOperation" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Suppression de l'opération</h4>
+                        <h4 class="modal-title">Suppression de l'opération</h4>
                     </div>
                     <div class="modal-body">
                         <p>Êtes-vous sûr·e de vouloir dévalider cette opération?</p>

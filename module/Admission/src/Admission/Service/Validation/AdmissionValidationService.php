@@ -104,8 +104,8 @@ class AdmissionValidationService extends BaseService
         foreach ($admission->getAdmissionValidations(true) as $validation) {
             $admission->removeAdmissionValidation($validation);
             try {
-                $this->getEntityManager()->remove($validation);
-                $this->getEntityManager()->flush($validation);
+                $this->entityManager->remove($validation);
+                $this->entityManager->flush($validation);
             } catch (ORMException $e) {
                 throw new RuntimeException("Erreur rencontrée lors de la suppression en bdd", null, $e);
             }

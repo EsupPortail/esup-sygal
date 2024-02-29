@@ -6,6 +6,7 @@ use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
+use Laminas\Form\Element\Select;
 
 /**
  * @var EtudiantFieldset $fieldset
@@ -18,22 +19,8 @@ use Individu\Entity\Db\Individu;
  */
 
 $form->prepare();
-$fcg = $this->formControlGroup();
 
-$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
-$canModifierAdmission  =
-    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
-    $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-
-if(!empty($admission) && !$canModifierAdmission) {
-    foreach ($fieldset->getElements() as $element) {
-        $element->setAttribute('readonly', true);
-    }
-}
-?>
-<script>
-    var readOnly = <?php echo !empty($admission) && !$canModifierAdmission ? 1 : 0 ?>
-</script>
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
 <div class="row_sous_partie">
     <div class="title_sous_partie">
         <h2 class="titre_sous_partie">Étudiant<label class="titre_sous_partie_en">&nbsp; / Student</label></h2>
@@ -50,65 +37,65 @@ if(!empty($admission) && !$canModifierAdmission) {
 
         </div>
         <div class="col-md-6">
-            <?php echo $fcg($fieldset->get('numeroEtudiant')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('numeroEtudiant')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
             <div class="checkbox_admission">
-                <?php echo $fcg($fieldset->get('civilite')->setValue($individu->getCivilite())) ?>
+                <?php echo $this->formControlGroup($fieldset->get('civilite')->setValue($individu->getCivilite())) ?>
             </div>
         </div>
         <div class="col-lg-3">
-            <?php echo $fcg($fieldset->get('individu')->setValue($individu->getId())) ?>
-            <?php echo $fcg($fieldset->get('nomFamille')->setValue($individu->getNomPatronymique())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('individu')->setValue($individu->getId())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('nomFamille')->setValue($individu->getNomPatronymique())) ?>
         </div>
         <div class="col-lg-3">
-            <?php echo $fcg($fieldset->get('nomUsuel')->setValue($individu->getNomUsuel())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('nomUsuel')->setValue($individu->getNomUsuel())) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get('prenom')->setValue($individu->getPrenom())) ?>
-            <?php echo $fcg($fieldset->get('prenom2')->setValue($individu->getPrenom2())) ?>
-            <?php echo $fcg($fieldset->get('prenom3')->setValue($individu->getPrenom3())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('prenom')->setValue($individu->getPrenom())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('prenom2')->setValue($individu->getPrenom2())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('prenom3')->setValue($individu->getPrenom3())) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('dateNaissance')->setValue($individu->getDateNaissance())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('dateNaissance')->setValue($individu->getDateNaissance())) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('villeNaissance')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('villeNaissance')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('paysNaissanceId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
-            <?php echo $fcg($fieldset->get('paysNaissance')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelle() : null)) ?>
+            <?php echo $this->formControlGroup($fieldset->get('paysNaissanceId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
+            <?php echo $this->formControlGroup($fieldset->get('paysNaissance')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelle() : null)) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('nationaliteId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
-            <?php echo $fcg($fieldset->get('nationalite')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelleNationalite() : null)) ?>
+            <?php echo $this->formControlGroup($fieldset->get('nationaliteId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
+            <?php echo $this->formControlGroup($fieldset->get('nationalite')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelleNationalite() : null)) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-md-3">
-            <?php echo $fcg($fieldset->get('adresseLigne3Bvoie')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('adresseLigne3Bvoie')) ?>
         </div>
         <div class="col-md-2">
-            <?php echo $fcg($fieldset->get('adresseCodePostal')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('adresseCodePostal')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
-            <?php echo $fcg($fieldset->get('adresseCodeCommune')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('adresseCodeCommune')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
-            <?php echo $fcg($fieldset->get('numeroTelephone1')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('numeroTelephone1')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $fcg($fieldset->get('courriel')->setValue($individu->getEmailContact())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('courriel')->setValue($individu->getEmailContact())) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col">
             <div class="checkbox_admission">
-                <?php echo $fcg($fieldset->get('situationHandicap')) ?>
+                <?php echo $this->formControlGroup($fieldset->get('situationHandicap')) ?>
                 <p class="informations">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
                     N'hésitez pas à
                     contacter le Service Universitaire de Médecine Préventive (SUMPPS) <a href="mailto:sumpps@unicaen.fr">sumpps@unicaen.fr</a> ainsi que le
@@ -124,18 +111,18 @@ if(!empty($admission) && !$canModifierAdmission) {
     </div>
     <div class="row subfield">
         <div class="checkbox_admission">
-            <?php echo $fcg($fieldset->get('niveauEtude')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('niveauEtude')) ?>
         </div>
         <div id="additional_fields_diplome">
             <div class="row subfield">
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get('intituleDuDiplomeNational')) ?>
+                    <?php echo $this->formControlGroup($fieldset->get('intituleDuDiplomeNational')) ?>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplomeNational")) ?>
+                    <?php echo $this->formControlGroup($fieldset->get("anneeDobtentionDiplomeNational")) ?>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplomeNational")) ?>
+                    <?php echo $this->formControlGroup($fieldset->get("etablissementDobtentionDiplomeNational")) ?>
                 </div>
             </div>
         </div>
@@ -143,7 +130,7 @@ if(!empty($admission) && !$canModifierAdmission) {
             <div class="row subfield">
                 <div class="col">
                     <div class="checkbox_admission checkbox_diplome">
-                        <?php echo $fcg($fieldset->get('typeDiplomeAutre')) ?>
+                        <?php echo $this->formControlGroup($fieldset->get('typeDiplomeAutre')) ?>
                     </div>
                 </div>
                 <p class="informations">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
@@ -152,15 +139,15 @@ if(!empty($admission) && !$canModifierAdmission) {
             </div>
             <div class="row subfield">
                 <div class="col-sm-12">
-                    <?php echo $fcg($fieldset->get('intituleDuDiplomeAutre')) ?>
+                    <?php echo $this->formControlGroup($fieldset->get('intituleDuDiplomeAutre')) ?>
                 </div>
             </div>
             <div class="row subfield">
                 <div class="col-lg-6 col-sm-12">
-                    <?php echo $fcg($fieldset->get("anneeDobtentionDiplomeAutre")) ?>
+                    <?php echo $this->formControlGroup($fieldset->get("anneeDobtentionDiplomeAutre")) ?>
                 </div>
                 <div class="col-lg-6 col-sm-12">
-                    <?php echo $fcg($fieldset->get("etablissementDobtentionDiplomeAutre")) ?>
+                    <?php echo $this->formControlGroup($fieldset->get("etablissementDobtentionDiplomeAutre")) ?>
                 </div>
             </div>
         </div>
@@ -171,18 +158,18 @@ if(!empty($admission) && !$canModifierAdmission) {
 if($canAccederCommentaires) {
     echo $this->partial('admission/partial/verification/verification', [
         'admission' => $admission,
-        'fcg' => $fcg,
+        'fcg' => $this->formControlGroup(),
         'fieldset' => $fieldset->get("verificationEtudiant"),
         'element' => !empty($admission) ? $admission->getEtudiant() : null,
         'elementVerification' => !empty($admission) ? $admission->getEtudiant()->first()->getVerificationEtudiant() : null
     ]);
 }
 ?>
-<div class="modal fade" id="modalInfosIne" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="modalInfosIne" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Comment trouver son I.N.E</h4>
+                <h4 class="modal-title">Comment trouver son I.N.E</h4>
             </div>
             <div class="modal-body">
                 L'I.N.E (Identifiant National Étudiant) est un identifiant unique attribué à chaque étudiant en France. Pour le trouver, vous avez plusieurs options :
@@ -228,7 +215,7 @@ if($canAccederCommentaires) {
                 </ul>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>

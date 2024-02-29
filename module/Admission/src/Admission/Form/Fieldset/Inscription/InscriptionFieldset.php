@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Form\Fieldset\Inscription;
 
+use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
@@ -11,12 +12,10 @@ use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Textarea;
-use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
-use Soutenance\Entity\Qualite;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
-class InscriptionFieldset extends Fieldset implements InputFilterProviderInterface
+class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
     //Informations Inscription
     private ?string $urlIndividuThese = null;

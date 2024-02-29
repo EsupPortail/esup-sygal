@@ -188,6 +188,17 @@ class ApplicationNavigationFactory extends NavigationFactory
                 unset($page['pages'][$key]);
             }
         }
+
+        /**
+         * Nos admissions
+         */
+        if ($page['pages'][$key = self::NOS_ADMISSIONS_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
     }
 
     /**
@@ -283,16 +294,6 @@ class ApplicationNavigationFactory extends NavigationFactory
         }
 
         $newPages = [];
-
-        // génération d'une page fille emmenant vers les soutenances
-        $protoPage = $parentPage['pages']['ADMISSIONS'];
-        $page = $protoPage;
-        // label
-        $page['label'] = "Admissions " . $label;
-        // params
-        $page['query'] = $page['query'] ?? [];
-        $page['query'] = array_merge($page['query'], $query);
-        $newPages[] = $page;
 
         // génération d'une page fille emmenant vers les thèses de la struture
         $protoPage = $parentPage['pages']['THESES'];

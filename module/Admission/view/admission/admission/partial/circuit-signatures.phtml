@@ -39,7 +39,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         ?>
     </div>
     <div class="col-lg-5 col-sm-12 cardsValidation">
-        <?php if ($admission->isDossierComplet() && ($admission->getEtat()->getCode() !== Admission::ETAT_VALIDE && $admission->getEtat()->getCode() !== Admission::ETAT_REJETE)) { ?>
+        <?php if ($admission->isDossierComplet() && ($admission->getEtat()->getCode() === Admission::ETAT_EN_COURS_VALIDATION)) { ?>
             <div class="card border-success mb-3 dossier_complet">
                 <div class="card-body text-success">
                     <i class="icon icon-information"></i>

@@ -37,8 +37,6 @@ class AdmissionForm extends MultipageForm
         $documentFieldset->setName("document");
         $this->add($documentFieldset);
 
-//        $this->addConfirmFieldset();
-
         $this->setNavigationFieldsetPrototype($this->createNavigationFieldsetPrototype());
     }
     /**
