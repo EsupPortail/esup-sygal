@@ -250,10 +250,12 @@ class Session implements HistoriqueAwareInterface,
 
     public function getLimiteInscription() : ?DateTime
     {
+        $id = $this->getId();
+
         $debut = $this->getDateDebut();
         if ($debut === null) return null;
 
-        $limite = DateTime::createFromFormat('d/m/Y', $debut->format('d/m/y'));
+        $limite = DateTime::createFromFormat('d/m/Y', $debut->format('d/m/Y'));
         $limite->sub(new DateInterval('P14D'));
         return $limite;
     }
