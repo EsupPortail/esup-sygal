@@ -76,7 +76,14 @@ class ModuleConfig
                 'code' => TypeValidation::CODE_VALIDATION_GESTIONNAIRE,
                 'role' => [Role::CODE_ADMIN_TECH, Role::CODE_GEST_ED],
                 'pre_condition' => function(Admission $admission) {
-                    return $admission->isDossierComplet();
+                    $directeur = null;
+                    $coDirecteur = null;
+                    //Il faut que le directeur et le co-directeur (le cas échéant) doivent-être enregistrés en BDD pour pouvoir effectuer cette validation
+                    if($admission->getInscription()->first()){
+                        $directeur = $admission->getInscription()->first()->getDirecteur();
+                        $coDirecteur = !$admission->getInscription()->first()->getCoDirection() || $admission->getInscription()->first()->getCoDirecteur();
+                    }
+                    return $admission->isDossierComplet() && $directeur && $coDirecteur;
                 },
                 'enabled' => null,
                 'enabled_as_dql' => null,
@@ -393,3 +400,4 @@ class ModuleConfig
         }
     }
 }
+

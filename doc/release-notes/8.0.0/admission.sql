@@ -460,12 +460,13 @@ WHERE avis_id IN (SELECT id
                                            FROM unicaen_avis ua
                                                     JOIN unicaen_avis_valeur uav ON ua.avis_valeur_id = uav.id
                                            WHERE uav.code LIKE 'AVIS_ADMISSION_%'));
-DELETE
-FROM unicaen_avis
-WHERE avis_valeur_id IN (SELECT ua.avis_valeur_id
-                         FROM unicaen_avis ua
-                                  JOIN unicaen_avis_valeur uav ON ua.avis_valeur_id = uav.id
-                         WHERE uav.code LIKE 'AVIS_ADMISSION_%');
+DELETE FROM unicaen_avis
+WHERE avis_valeur_id IN (
+    SELECT ua.avis_valeur_id
+    FROM unicaen_avis ua
+             JOIN unicaen_avis_valeur uav ON ua.avis_valeur_id = uav.id
+    WHERE uav.code LIKE 'AVIS_ADMISSION_%'
+);
 DELETE
 FROM unicaen_avis_type_valeur_complem
 WHERE code LIKE 'AVIS_ADMISSION_%';

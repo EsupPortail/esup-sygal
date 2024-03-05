@@ -84,7 +84,7 @@ class AdmissionRechercheService extends SearchService
 
         if($this->userContextService->getSelectedRoleDirecteurThese() || $role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE){
             $qb->andWhere('inscr.directeur = :individuId')
-                ->orWhere('inscr.directeur is null')
+                ->orWhere('inscr.directeur is null and (inscr.prenomDirecteurThese is not null or inscr.nomDirecteurThese is not null)')
                 ->setParameter('individuId', $individu->getId());
         }
 

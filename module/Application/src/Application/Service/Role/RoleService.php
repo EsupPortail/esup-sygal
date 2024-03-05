@@ -198,6 +198,27 @@ class RoleService extends BaseService
         return $result;
     }
 
+    public function filterIndividuRolePotentielDirecteurThese(array $individuRoles): array
+    {
+        return array_filter($individuRoles, function(IndividuRole $ir) {
+            return $ir->getRole()->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE;
+        });
+    }
+
+    public function filterIndividuRolePotentielCoDirecteurThese(array $individuRoles): array
+    {
+        return array_filter($individuRoles, function(IndividuRole $ir) {
+            return $ir->getRole()->getCode() === Role::CODE_ADMISSION_CODIRECTEUR_THESE;
+        });
+    }
+
+    public function filterIndividuRoleCandidat(array $individuRoles): array
+    {
+        return array_filter($individuRoles, function(IndividuRole $ir) {
+            return $ir->getRole()->getCode() === Role::CODE_ADMISSION_CANDIDAT;
+        });
+    }
+
     /**
      * @param UniteRecherche|EcoleDoctorale|Etablissement $structure
      */

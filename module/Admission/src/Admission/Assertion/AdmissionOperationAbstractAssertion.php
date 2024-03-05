@@ -50,6 +50,14 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         );
     }
 
+    protected function assertDirectionAdmission(Admission $admission)
+    {
+        $this->assertTrue(
+            in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE, Admission::ETAT_EN_COURS_VALIDATION]),
+            "Le dossier d'admission doit être en cours"
+        );
+    }
+
     protected function assertDossierCompletAdmission(AdmissionValidation $admissionValidation)
     {
         //cette condition ne concerne pas la première validation du dossier

@@ -51,7 +51,11 @@ class AdmissionAvisEventListener extends AdmissionOperationAbstractEventListener
     {
         $this->initFromEvent($event);
         $this->handleSuppressionValidationEtudiant();
-        $this->handleNotificationAvisAjoute();
+        if (!in_array($this->operationRealisee->getAvis()->getAvisValeur()->getCode(), [
+            AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_INCOMPLET
+        ])) {
+            $this->handleNotificationAvisAjoute();
+        }
         if (!in_array($this->operationRealisee->getAvis()->getAvisValeur()->getCode(), [
             AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_INCOMPLET,
             AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF

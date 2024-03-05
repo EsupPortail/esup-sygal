@@ -285,6 +285,16 @@ class Session implements HistoriqueAwareInterface,
         return $annee;
     }
 
+    static public function getAnneeScolaireCourante() : int
+    {
+        $debut = new DateTime();
+
+        $mois = ((int) $debut->format('m'));
+        $annee =  ((int) $debut->format('Y'));
+        if ($mois < 9) $annee -= 1;
+        return $annee;
+    }
+
     /**
      * @return SessionEtatHeurodatage[]
      */

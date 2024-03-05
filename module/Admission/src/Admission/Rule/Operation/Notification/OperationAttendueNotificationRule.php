@@ -122,7 +122,6 @@ class OperationAttendueNotificationRule implements RuleInterface
         foreach ((array) $operationConfig['role'] as $codeRole) {
             switch ($codeRole) {
                 case Role::CODE_ADMIN_TECH:
-                    $emails["thomas.hamel@unicaen.fr"] = "Thomas Hamel";
                     break;
                 case Role::ROLE_ID_USER:
                     $emails[$emailEtudiant] = $etudiant . "(étudiant)";

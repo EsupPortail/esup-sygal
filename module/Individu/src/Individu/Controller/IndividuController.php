@@ -2,6 +2,7 @@
 
 namespace Individu\Controller;
 
+use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Application\Entity\Db\Role;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
@@ -13,6 +14,7 @@ use Doctorant\Controller\Plugin\UrlDoctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Individu\Form\IndividuForm;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Request;
@@ -44,6 +46,7 @@ class IndividuController extends AbstractActionController implements SearchContr
     use ActeurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use InscriptionServiceAwareTrait;
 
     private IndividuForm $individuForm;
 
@@ -142,6 +145,19 @@ class IndividuController extends AbstractActionController implements SearchContr
         if ($doctorant) {
             $roles[] = $this->roleService->getRepository()
                 ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
+        }
+
+        $individuRoles = $this->roleService->findIndividuRolesByIndividu($individu);
+        if($individuRoles){
+            $individuPotentielDirecteurRole = $this->roleService->filterIndividuRolePotentielDirecteurThese($individuRoles);
+            $individuPotentielCoDirecteurRole = $this->roleService->filterIndividuRolePotentielCoDirecteurThese($individuRoles);
+            $individuCandidatRole = $this->roleService->filterIndividuRoleCandidat($individuRoles);
+            $roles = array_merge($roles, array_map(
+                function (IndividuRole $ir) {
+                    return $ir->getRole();
+                },
+                array_merge($individuPotentielDirecteurRole, $individuPotentielCoDirecteurRole, $individuCandidatRole)
+            ));
         }
 
         return array_unique($roles);
