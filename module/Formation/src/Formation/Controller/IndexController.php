@@ -36,8 +36,10 @@ class IndexController extends AbstractController
         }
 
         if($doctorant) {
+            $anneeScolaire = Session::getAnneeScolaireCourante();
             /** @var Session[] $session */
             $sessions = $this->getEntityManager()->getRepository(Session::class)->findSessionsDisponiblesByDoctorant($doctorant);
+            $sessions = array_filter($sessions, function (Session $s) use ($anneeScolaire) { return $s->getAnneeScolaire() === $anneeScolaire;});
             $ouvertes = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_INSCRIPTION;});
             $preparations = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_PREPARATION;});
             /** @var Inscription[] $inscription */

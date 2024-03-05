@@ -108,13 +108,13 @@ $config = [
         // Alias éventuels des noms de colonnes d'historique.
         //
         'histo_columns_aliases' => [
-            'created_on' => 'HISTO_CREATION',     // date/heure de création de l'enregistrement
-            'updated_on' => 'HISTO_MODIFICATION', // date/heure de modification
-            'deleted_on' => 'HISTO_DESTRUCTION',  // date/heure de suppression
+            'created_on' => 'histo_creation',     // date/heure de création de l'enregistrement
+            'updated_on' => 'histo_modification', // date/heure de modification
+            'deleted_on' => 'histo_destruction',  // date/heure de suppression
 
-            'created_by' => 'HISTO_CREATEUR_ID',     // auteur de la création de l'enregistrement
-            'updated_by' => 'HISTO_MODIFICATEUR_ID', // auteur de la modification
-            'deleted_by' => 'HISTO_DESTRUCTEUR_ID',  // auteur de la suppression
+            'created_by' => 'histo_createur_id',     // auteur de la création de l'enregistrement
+            'updated_by' => 'histo_modificateur_id', // auteur de la modification
+            'deleted_by' => 'histo_destructeur_id',  // auteur de la suppression
         ],
 
         //
@@ -187,31 +187,69 @@ $config = [
  */
 const CONFIG_IMPORTS = [
     [
-        'name' => 'structure-%s',
+        'name' => 'composante-enseignement-%s',
         'order' => 10,
         'source' => [
             'name' => '%s',
-            'connection' => 'sygal-import-ws-%s',
-            'select' => '/structure',
-            'source_code_column' => 'SOURCE_CODE',
-            'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
+            'connection' => 'sygal-import-octopus-composante-ens',
+            'select' => '/structure-light?type=2',
+            'code' => 'UCN::octopus',
+            'page_size' => 0,
+            'columns' => [
+                'sigle',
+                'libelleLong',
+                'code',
+            ],
             'column_name_filter' => [
-                'typeStructureId' => 'TYPE_STRUCTURE_ID',
-                'sigle' => 'SIGLE',
-                'libelle' => 'LIBELLE',
-                'codePays' => 'CODE_PAYS',
-                'libellePays' => 'LIBELLE_PAYS',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+                'sigle' => 'sigle',
+                'libelleLong' => 'libelle_long',
+                'code' => 'source_code',
+            ],
+            'source_code_column' => 'source_code',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['code']]],
             ],
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
+            'table' => 'tmp_composante_ens',
+            'connection' => 'default',
+            'source_code_column' => 'source_code',
+            'id_strategy' => null,
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'structure-%s',
+        'order' => 10,
+        'source' => [
+            'name' => '%s',
+            'connection' => 'sygal-import-ws-%s',
+            'select' => '/structure',
+            'page_size' => 500,
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId']]],
+            ],
+            'column_name_filter' => [
+                'typeStructureId' => 'type_structure_id',
+                'sigle' => 'sigle',
+                'libelle' => 'libelle',
+                'codePays' => 'code_pays',
+                'libellePays' => 'libelle_pays',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
+            'extra' => [
+                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
+            ],
+        ],
+        'destination' => [
+            'name' => 'application',
             'table' => 'tmp_structure',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -226,21 +264,23 @@ const CONFIG_IMPORTS = [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/etablissement',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'structureId' => 'STRUCTURE_ID',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','structureId']]],
             ],
+            'column_name_filter' => [
+                'structureId' => 'structure_id',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_etablissement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -255,21 +295,23 @@ const CONFIG_IMPORTS = [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/ecole-doctorale',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'structureId' => 'STRUCTURE_ID',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','structureId']]],
             ],
+            'column_name_filter' => [
+                'structureId' => 'structure_id',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_ecole_doct',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -284,22 +326,94 @@ const CONFIG_IMPORTS = [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/unite-recherche',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','structureId']]],
+            ],
             'column_name_filter' => [
-                'structureId' => 'STRUCTURE_ID',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+                'structureId' => 'structure_id',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
+            'extra' => [
+                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
+            ],
+        ],
+        'destination' => [
+            'name' => 'application',
+            'table' => 'tmp_unite_rech',
+            'connection' => 'default',
+            'source_code_column' => 'source_code',
+            'id_strategy' => null,
+            'id_sequence' => null,
+        ],
+    ],
+//    [
+//        'name' => 'composante-enseignement-%s',
+//        'order' => 50,
+//        'source' => [
+//            'name' => '%s',
+//            'connection' => 'sygal-import-octopus-composante-ens',
+//            'select' => '/structure-light?type=2',
+//            'source_code_column' => 'SOURCE_CODE',
+//            'code' => 'UCN::octopus',
+//            'column_value_filter' => \Admission\Filter\PrefixEtabColumnValueFilter::class,
+//            'page_size' => 0,
+//            'columns' => [
+//                'sigle',
+//                'libelleLong',
+//                'code',
+//            ],
+//            'column_name_filter' => [
+//                'sigle' => 'SIGLE',
+//                'libelleLong' => 'LIBELLE_LONG',
+//                'code' => 'SOURCE_CODE',
+//            ],
+//            'extra' => [
+//                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
+//            ],
+//        ],
+//        'destination' => [
+//            'name' => 'Application',
+//            'table' => 'tmp_composante_ens',
+//            'connection' => 'default',
+//            'source_code_column' => 'SOURCE_CODE',
+//            'id_strategy' => null,
+//            'id_sequence' => null,
+//        ],
+//    ],
+    [
+        'name' => 'composante-enseignement-%s',
+        'order' => 50,
+        'source' => [
+            'name' => '%s',
+            'connection' => 'sygal-import-octopus-composante-ens',
+            'select' => '/structure-light?type=2',
+            'code' => 'UCN::octopus',
+            'page_size' => 0,
+            'columns' => [
+                'sigle',
+                'libelleLong',
+                'code',
+            ],
+            'column_name_filter' => [
+                'sigle' => 'sigle',
+                'libelleLong' => 'libelle_long',
+                'code' => 'source_code',
+            ],
+            'source_code_column' => 'source_code',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['code']]],
             ],
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'tmp_unite_rech',
+            'name' => 'application',
+            'table' => 'tmp_composante_ens',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_strategy' => null,
@@ -308,37 +422,39 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'individu-%s',
-        'order' => 50,
+        'order' => 60,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/individu',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'supannId' => 'SUPANN_ID',
-                'type' => 'TYPE',
-                'civilite' => 'CIV',
-                'nomUsuel' => 'LIB_NOM_USU_IND',
-                'nomPatronymique' => 'LIB_NOM_PAT_IND',
-                'prenom1' => 'LIB_PR1_IND',
-                'prenom2' => 'LIB_PR2_IND',
-                'prenom3' => 'LIB_PR3_IND',
-                'email' => 'EMAIL',
-                'dateNaissance' => 'DAT_NAI_PER',
-                'nationalite' => 'LIB_NAT',
-                'codePaysNationalite' => 'cod_pay_nat', // à partir de la v2.1.0 du WS
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId']]],
             ],
+            'column_name_filter' => [
+                'supannId' => 'supann_id',
+                'type' => 'type',
+                'civilite' => 'civ',
+                'nomUsuel' => 'lib_nom_usu_ind',
+                'nomPatronymique' => 'lib_nom_pat_ind',
+                'prenom1' => 'lib_pr1_ind',
+                'prenom2' => 'lib_pr2_ind',
+                'prenom3' => 'lib_pr3_ind',
+                'email' => 'email',
+                'dateNaissance' => 'dat_nai_per',
+                'nationalite' => 'lib_nat',
+                'codePaysNationalite' => 'cod_pay_nat', // à partir de la v2.1.0 du WS
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_individu',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -348,27 +464,29 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'doctorant-%s',
-        'order' => 60,
+        'order' => 70,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/doctorant',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'individuId' => 'INDIVIDU_ID',
-                'ine' => 'INE',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','individuId']]],
             ],
+            'column_name_filter' => [
+                'individuId' => 'individu_id',
+                'ine' => 'ine',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_doctorant',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -378,46 +496,48 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'these-%s',
-        'order' => 70,
+        'order' => 80,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/these',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'doctorantId' => 'DOCTORANT_ID',
-                'ecoleDoctId' => 'ECOLE_DOCT_ID',
-                'uniteRechId' => 'UNITE_RECH_ID',
-                'title' => 'LIB_THS',
-                'dateSoutenanceAutorisee' => 'DAT_AUT_SOU_THS',
-                'dateConfidFin' => 'DAT_FIN_CFD_THS',
-                'datePremiereInsc' => 'DAT_DEB_THS',
-                'dateSoutenancePrev' => 'DAT_PREV_SOU',
-                'dateSoutenance' => 'DAT_SOU_THS',
-                'dateAbandon' => 'DAT_ABANDON',
-                'dateTransfert' => 'DAT_TRANSFERT_DEP',
-                'etatThese' => 'ETA_THS',
-                'codeSiseDiscipline' => 'CODE_SISE_DISC',
-                'libDiscipline' => 'LIB_INT1_DIS',
-                'libEtabCotut' => 'LIB_ETAB_COTUT',
-                'libPaysCotut' => 'LIB_PAYS_COTUT',
-                'correctionAutorisee' => 'CORRECTION_POSSIBLE',
-                'correctionEffectuee' => 'CORRECTION_EFFECTUEE',
-                'resultat' => 'COD_NEG_TRE',
-                'temAvenant' => 'TEM_AVENANT_COTUT',
-                'temSoutenanceAutorisee' => 'TEM_SOU_AUT_THS',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','doctorantId','ecoleDoctId','uniteRechId']]],
             ],
+            'column_name_filter' => [
+                'doctorantId' => 'doctorant_id',
+                'ecoleDoctId' => 'ecole_doct_id',
+                'uniteRechId' => 'unite_rech_id',
+                'title' => 'lib_ths',
+                'dateSoutenanceAutorisee' => 'dat_aut_sou_ths',
+                'dateConfidFin' => 'dat_fin_cfd_ths',
+                'datePremiereInsc' => 'dat_deb_ths',
+                'dateSoutenancePrev' => 'dat_prev_sou',
+                'dateSoutenance' => 'dat_sou_ths',
+                'dateAbandon' => 'dat_abandon',
+                'dateTransfert' => 'dat_transfert_dep',
+                'etatThese' => 'eta_ths',
+                'codeSiseDiscipline' => 'code_sise_disc',
+                'libDiscipline' => 'lib_int1_dis',
+                'libEtabCotut' => 'lib_etab_cotut',
+                'libPaysCotut' => 'lib_pays_cotut',
+                'correctionAutorisee' => 'correction_possible',
+                'correctionEffectuee' => 'correction_effectuee',
+                'resultat' => 'cod_neg_tre',
+                'temAvenant' => 'tem_avenant_cotut',
+                'temSoutenanceAutorisee' => 'tem_sou_aut_ths',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_these',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -427,27 +547,29 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'these-annee-univ-%s',
-        'order' => 80,
+        'order' => 90,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/these-annee-univ',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'theseId' => 'THESE_ID',
-                'anneeUniv' => 'ANNEE_UNIV',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','theseId']]],
             ],
+            'column_name_filter' => [
+                'theseId' => 'these_id',
+                'anneeUniv' => 'annee_univ',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_these_annee_univ',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -457,27 +579,29 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'role-%s',
-        'order' => 90,
+        'order' => 100,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/role',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'libLongRole' => 'LIB_ROJ',
-                'libCourtRole' => 'LIC_ROJ',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId']]],
             ],
+            'column_name_filter' => [
+                'libLongRole' => 'lib_roj',
+                'libCourtRole' => 'lic_roj',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_role',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -487,35 +611,37 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'acteur-%s',
-        'order' => 100,
+        'order' => 110,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/acteur',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'individuId' => 'INDIVIDU_ID',
-                'theseId' => 'THESE_ID',
-                'roleId' => 'ROLE_ID',
-                'acteurEtablissementId' => 'ACTEUR_ETABLISSEMENT_ID',
-                'libQualite' => 'LIB_CPS',
-                'codeQualite' => 'COD_CPS',
-                'codeRoleJury' => 'COD_ROJ_COMPL',
-                'libRoleJury' => 'LIB_ROJ_COMPL',
-                'temoinHDR' => 'TEM_HAB_RCH_PER',
-                'temoinRapport' => 'TEM_RAP_RECU',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','individuId','roleId','theseId','acteurEtablissementId']]],
             ],
+            'column_name_filter' => [
+                'individuId' => 'individu_id',
+                'theseId' => 'these_id',
+                'roleId' => 'role_id',
+                'acteurEtablissementId' => 'acteur_etablissement_id',
+                'libQualite' => 'lib_cps',
+                'codeQualite' => 'cod_cps',
+                'codeRoleJury' => 'cod_roj_compl',
+                'libRoleJury' => 'lib_roj_compl',
+                'temoinHDR' => 'tem_hab_rch_per',
+                'temoinRapport' => 'tem_rap_recu',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_acteur',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -525,28 +651,30 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'origine-financement-%s',
-        'order' => 110,
+        'order' => 120,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/origine-financement',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'codOfi' => 'COD_OFI',
-                'licOfi' => 'LIC_OFI',
-                'libOfi' => 'LIB_OFI',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId']]],
             ],
+            'column_name_filter' => [
+                'codOfi' => 'cod_ofi',
+                'licOfi' => 'lic_ofi',
+                'libOfi' => 'lib_ofi',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_origine_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -556,34 +684,36 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'financement-%s',
-        'order' => 120,
+        'order' => 130,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/financement',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'theseId' => 'THESE_ID',
-                'annee' => 'ANNEE',
-                'origineFinancementId' => 'ORIGINE_FINANCEMENT_ID',
-                'complementFinancement' => 'COMPLEMENT_FINANCEMENT',
-                'quotiteFinancement' => 'QUOTITE_FINANCEMENT',
-                'dateDebutFinancement' => 'DATE_DEBUT_FINANCEMENT',
-                'dateFinFinancement' => 'DATE_FIN_FINANCEMENT',
-                'codeTypeFinancement' => 'CODE_TYPE_FINANCEMENT',
-                'libelleTypeFinancement' => 'LIBELLE_TYPE_FINANCEMENT',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','theseId','origineFinancementId']]],
             ],
+            'column_name_filter' => [
+                'theseId' => 'these_id',
+                'annee' => 'annee',
+                'origineFinancementId' => 'origine_financement_id',
+                'complementFinancement' => 'complement_financement',
+                'quotiteFinancement' => 'quotite_financement',
+                'dateDebutFinancement' => 'date_debut_financement',
+                'dateFinFinancement' => 'date_fin_financement',
+                'codeTypeFinancement' => 'code_type_financement',
+                'libelleTypeFinancement' => 'libelle_type_financement',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -593,32 +723,34 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'titre-acces-%s',
-        'order' => 130,
+        'order' => 140,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/titre-acces',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'theseId' => 'THESE_ID',
-                'titreAccesInterneExterne' => 'TITRE_ACCES_INTERNE_EXTERNE',
-                'libelleTitreAcces' => 'LIBELLE_TITRE_ACCES',
-                'typeEtabTitreAcces' => 'TYPE_ETB_TITRE_ACCES',
-                'libelleEtabTitreAcces' => 'LIBELLE_ETB_TITRE_ACCES',
-                'codeDeptTitreAcces' => 'CODE_DEPT_TITRE_ACCES',
-                'codePaysTitreAcces' => 'CODE_PAYS_TITRE_ACCES',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId','theseId']]],
             ],
+            'column_name_filter' => [
+                'theseId' => 'these_id',
+                'titreAccesInterneExterne' => 'titre_acces_interne_externe',
+                'libelleTitreAcces' => 'libelle_titre_acces',
+                'typeEtabTitreAcces' => 'type_etb_titre_acces',
+                'libelleEtabTitreAcces' => 'libelle_etb_titre_acces',
+                'codeDeptTitreAcces' => 'code_dept_titre_acces',
+                'codePaysTitreAcces' => 'code_pays_titre_acces',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_titre_acces',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -628,30 +760,32 @@ const CONFIG_IMPORTS = [
     ],
     [
         'name' => 'variable-%s',
-        'order' => 140,
+        'order' => 150,
         'source' => [
             'name' => '%s',
             'connection' => 'sygal-import-ws-%s',
             'select' => '/variable',
-            'source_code_column' => 'SOURCE_CODE',
             'page_size' => 500,
-            'column_value_filter' => PrefixEtabColumnValueFilter::class,
-            'column_name_filter' => [
-                'libEtablissement' => 'COD_VAP',
-                'libResponsable' => 'LIB_VAP',
-                'libTitre' => 'PAR_VAP',
-                'dateDebValidite' => 'DATE_DEB_VALIDITE',
-                'dateFinValidite' => 'DATE_FIN_VALIDITE',
-                'sourceCode' => 'SOURCE_CODE',
-                'sourceId' => 'SOURCE_ID',
-                'sourceInsertDate' => 'SOURCE_INSERT_DATE',
+            'column_value_filter' => [
+                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['sourceCode','sourceId']]],
             ],
+            'column_name_filter' => [
+                'libEtablissement' => 'cod_vap',
+                'libResponsable' => 'lib_vap',
+                'libTitre' => 'par_vap',
+                'dateDebValidite' => 'date_deb_validite',
+                'dateFinValidite' => 'date_fin_validite',
+                'sourceCode' => 'source_code',
+                'sourceId' => 'source_id',
+                'sourceInsertDate' => 'source_insert_date',
+            ],
+            'source_code_column' => 'source_code',
             'extra' => [
                 /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
             ],
         ],
         'destination' => [
-            'name' => 'Application',
+            'name' => 'application',
             'table' => 'tmp_variable',
             'connection' => 'default',
             'source_code_column' => 'source_code',
@@ -673,17 +807,17 @@ const CONFIG_SYNCHROS = [
         'name' => 'structure-%s',
         'order' => 11,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_STRUCTURE',
+            'table' => 'src_structure',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'STRUCTURE',
+            'name' => 'application',
+            'table' => 'structure',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
             'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
@@ -696,17 +830,17 @@ const CONFIG_SYNCHROS = [
         'name' => 'etablissement-%s',
         'order' => 22,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_ETABLISSEMENT',
+            'table' => 'src_etablissement',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'ETABLISSEMENT',
+            'name' => 'application',
+            'table' => 'etablissement',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
             'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
@@ -719,17 +853,17 @@ const CONFIG_SYNCHROS = [
         'name' => 'ecole-doctorale-%s',
         'order' => 31,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_ECOLE_DOCT',
+            'table' => 'src_ecole_doct',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'ECOLE_DOCT',
+            'name' => 'application',
+            'table' => 'ecole_doct',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
             'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
@@ -742,40 +876,59 @@ const CONFIG_SYNCHROS = [
         'name' => 'unite-recherche-%s',
         'order' => 41,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_UNITE_RECH',
+            'table' => 'src_unite_rech',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'UNITE_RECH',
+            'name' => 'application',
+            'table' => 'unite_rech',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
             'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
             'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
+    [
+        'name' => 'composante-enseignement-%s',
+        'order' => 50,
+        'source' => [
+            'name' => 'sygal',
+            'code' => 'app',
+            'table' => 'src_composante_ens',
+            'connection' => 'default',
+            'source_code_column' => 'source_code',
+        ],
+        'destination' => [
+            'name' => 'application',
+            'table' => 'composante_ens',
+            'connection' => 'default',
+            'source_code_column' => 'source_code',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
+        ],
+    ],
     ////////////////////////////////////////////// INDIVIDU //////////////////////////////////////////////
     [
         ////// INDIVIDU : sans doublons non historisés.
         'name' => 'individu-%s',
-        'order' => 51,
+        'order' => 60,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_INDIVIDU',
+            'table' => 'src_individu',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'INDIVIDU',
+            'name' => 'application',
+            'table' => 'individu',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
             'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
@@ -786,19 +939,19 @@ const CONFIG_SYNCHROS = [
     [
         ////// DOCTORANT : sans doublons non historisés.
         'name' => 'doctorant-%s',
-        'order' => 61,
+        'order' => 70,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_DOCTORANT',
+            'table' => 'src_doctorant',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'DOCTORANT',
+            'name' => 'application',
+            'table' => 'doctorant',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
             'undelete_enabled_column' => 'synchro_undelete_enabled', // pour ne pas que les substitués soient déhistorisés
@@ -808,19 +961,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// THESE //////////////////////////////////////////////
     [
         'name' => 'these-%s',
-        'order' => 70,
+        'order' => 80,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_THESE',
+            'table' => 'src_these',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'THESE',
+            'name' => 'application',
+            'table' => 'these',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -828,19 +981,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// THESE-ANNEE-UNIV //////////////////////////////////////////////
     [
         'name' => 'these-annee-univ-%s',
-        'order' => 80,
+        'order' => 90,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_THESE_ANNEE_UNIV',
+            'table' => 'src_these_annee_univ',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'THESE_ANNEE_UNIV',
+            'name' => 'application',
+            'table' => 'these_annee_univ',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -848,19 +1001,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// ROLE //////////////////////////////////////////////
     [
         'name' => 'role-%s',
-        'order' => 90,
+        'order' => 100,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_ROLE',
+            'table' => 'src_role',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'ROLE',
+            'name' => 'application',
+            'table' => 'role',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -868,19 +1021,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// ACTEUR //////////////////////////////////////////////
     [
         'name' => 'acteur-%s',
-        'order' => 100,
+        'order' => 110,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_ACTEUR',
+            'table' => 'src_acteur',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'ACTEUR',
+            'name' => 'application',
+            'table' => 'acteur',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -888,19 +1041,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// ORIGINE-FINANCEMENT //////////////////////////////////////////////
     [
         'name' => 'origine-financement-%s',
-        'order' => 110,
+        'order' => 120,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_ORIGINE_FINANCEMENT',
+            'table' => 'src_origine_financement',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'ORIGINE_FINANCEMENT',
+            'name' => 'application',
+            'table' => 'origine_financement',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -908,19 +1061,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// FINANCEMENT //////////////////////////////////////////////
     [
         'name' => 'financement-%s',
-        'order' => 120,
+        'order' => 130,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_FINANCEMENT',
+            'table' => 'src_financement',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'FINANCEMENT',
+            'name' => 'application',
+            'table' => 'financement',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -928,19 +1081,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// TITRE-ACCES //////////////////////////////////////////////
     [
         'name' => 'titre-acces-%s',
-        'order' => 130,
+        'order' => 140,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_TITRE_ACCES',
+            'table' => 'src_titre_acces',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'TITRE_ACCES',
+            'name' => 'application',
+            'table' => 'titre_acces',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],
@@ -948,19 +1101,19 @@ const CONFIG_SYNCHROS = [
     ////////////////////////////////////////////// VARIABLE //////////////////////////////////////////////
     [
         'name' => 'variable-%s',
-        'order' => 140,
+        'order' => 150,
         'source' => [
-            'name' => 'SyGAL',
+            'name' => 'sygal',
             'code' => 'app',
-            'table' => 'SRC_VARIABLE',
+            'table' => 'src_variable',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
         ],
         'destination' => [
-            'name' => 'Application',
-            'table' => 'VARIABLE',
+            'name' => 'application',
+            'table' => 'variable',
             'connection' => 'default',
-            'source_code_column' => 'SOURCE_CODE',
+            'source_code_column' => 'source_code',
             'id_strategy' => 'SEQUENCE',
             'id_sequence' => null,
         ],

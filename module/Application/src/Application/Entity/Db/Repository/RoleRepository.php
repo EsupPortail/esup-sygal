@@ -81,7 +81,8 @@ class RoleRepository extends DefaultEntityRepository
             ->andWhere('r.code = :code')
             ->setParameter('code', $code)
             ->andWhereStructureIs($structure)
-            ->andWhere('r.histoDestruction is null');
+            ->andWhere('r.histoDestruction is null')
+            ->andWhere('s.histoDestruction is null');
 
         try {
             return $qb->getQuery()->getOneOrNullResult();

@@ -1,0 +1,61 @@
+<?php
+/**
+ * @var AdmissionOperationInterface $operation
+ * @var int $count
+ * @var int $individu
+ * @var AdmissionOperationInterface $operationEnAttente
+ * @var string $returnUrl
+ * @var bool $ajaxModalEvent
+ * @var string $libelleOperation
+ * @var bool $showRangOperation
+ * @var boolean $showActionButtons
+ */
+
+use Admission\Entity\Db\AdmissionAvis;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\AdmissionValidation;
+
+if ($operation instanceof AdmissionValidation) {
+    if ($operation->getId() !== null) {
+        echo $this->partial('admission/admission/partial/validation/validation_etape_existante', [
+            'operation' => $operation,
+            'returnUrl' => $returnUrl,
+            'libelleOperation' => $libelleOperation,
+            'showActionButtons' => $showActionButtons
+        ]);
+    } else {
+        echo $this->partial('admission/admission/partial/validation/validation_etape_non_existante', [
+            'operation' => $operation,
+            'count' => $count,
+            'individu' => $individu,
+            'operationEnAttente' => $operationEnAttente,
+            'returnUrl' => $returnUrl,
+            'libelleOperation' => $libelleOperation,
+            'showRangOperation' => $showRangOperation,
+            'showActionButtons' => $showActionButtons
+        ]);
+    }
+} elseif ($operation instanceof AdmissionAvis) {
+    if ($operation->getId() !== null) {
+        echo $this->partial('admission/admission/partial/avis/avis-existant-card', [
+            'operation' => $operation,
+            'ajaxModalEvent' => $ajaxModalEvent,
+            'returnUrl' => $returnUrl,
+            'libelleOperation' => $libelleOperation,
+            'showActionButtons' => $showActionButtons
+        ]);
+    } else {
+        echo $this->partial('admission/admission/partial/avis/avis-avenir-card', [
+            'operation' => $operation,
+            'ajaxModalEvent' => $ajaxModalEvent,
+            'count' => $count,
+            'operationEnAttente' => $operationEnAttente,
+            'returnUrl' => $returnUrl,
+            'libelleOperation' => $libelleOperation,
+            'showRangOperation' => $showRangOperation,
+            'showActionButtons' => $showActionButtons
+        ]);
+    }
+}else{
+    throw new InvalidArgumentException("Type inattendu");
+}

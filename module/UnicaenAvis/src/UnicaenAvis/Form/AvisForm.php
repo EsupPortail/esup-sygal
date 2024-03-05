@@ -348,8 +348,12 @@ class AvisForm extends Form implements InputFilterProviderInterface
      *
      * @return \UnicaenAvis\Entity\Db\AvisTypeValeurComplem[]
      */
-    protected function getAvisTypeValeurComplemsForAvisValeurSelectionnee(): array
+    private function getAvisTypeValeurComplemsForAvisValeurSelectionnee(): array
     {
+        if (!$this->data || !array_key_exists($this->avisElement->getName(), $this->data)) {
+            return [];
+        }
+
         $avisValue = $this->data[$this->avisElement->getName()];
 
         foreach ($this->avisTypeValeurs as $avisTypeValeur) {
@@ -369,9 +373,9 @@ class AvisForm extends Form implements InputFilterProviderInterface
      *
      * @return \UnicaenAvis\Entity\Db\AvisTypeValeurComplem[]
      */
-    protected function getAvisTypeValeurComplemsForAvisValeurNonSelectionnee(): array
+    private function getAvisTypeValeurComplemsForAvisValeurNonSelectionnee(): array
     {
-        $avisValue = $this->data[$this->avisElement->getName()];
+        $avisValue = $this->data[$this->avisElement->getName()] ?? null;
 
         $avisTypeValeurComplems = [];
         foreach ($this->avisTypeValeurs as $avisTypeValeur) {

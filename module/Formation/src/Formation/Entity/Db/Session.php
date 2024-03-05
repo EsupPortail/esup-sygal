@@ -250,10 +250,12 @@ class Session implements HistoriqueAwareInterface,
 
     public function getLimiteInscription() : ?DateTime
     {
+        $id = $this->getId();
+
         $debut = $this->getDateDebut();
         if ($debut === null) return null;
 
-        $limite = DateTime::createFromFormat('d/m/Y', $debut->format('d/m/y'));
+        $limite = DateTime::createFromFormat('d/m/Y', $debut->format('d/m/Y'));
         $limite->sub(new DateInterval('P14D'));
         return $limite;
     }
@@ -278,6 +280,16 @@ class Session implements HistoriqueAwareInterface,
     {
         $debut = $this->getDateDebut();
         if ($debut === null) $debut = new DateTime();
+
+        $mois = ((int) $debut->format('m'));
+        $annee =  ((int) $debut->format('Y'));
+        if ($mois < 9) $annee -= 1;
+        return $annee;
+    }
+
+    static public function getAnneeScolaireCourante() : int
+    {
+        $debut = new DateTime();
 
         $mois = ((int) $debut->format('m'));
         $annee =  ((int) $debut->format('Y'));

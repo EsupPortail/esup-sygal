@@ -24,6 +24,8 @@ class Qualite implements HistoriqueAwareInterface
     private $emeritat;
     /** @var string */
     private $justificatif;
+    /** @var string */
+    private $admission;
 
     /** @var ArrayCollection (QualiteLibelleSupplementaire) */
     private $libellesSupplementaires;
@@ -156,6 +158,32 @@ class Qualite implements HistoriqueAwareInterface
     {
         $this->justificatif = $justificatif;
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAdmission(): ?string
+    {
+        return $this->admission;
+    }
+
+    /**
+     * @param string $admission
+     * @return Qualite
+     */
+    public function setAdmission(string $admission): Qualite
+    {
+        $this->admission = $admission;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmission()
+    {
+        return ($this->admission === 'O');
     }
 
     /**

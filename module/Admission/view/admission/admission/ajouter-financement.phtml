@@ -1,0 +1,20 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ *
+ * @see \Admission\Controller\AdmissionController::financementAction()
+ */
+?>
+
+<?php echo $this->partial('admission/admission/partial/header', []); ?>
+
+<?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<?php
+$multipageFormFieldset = $this->multipageFormFieldset();
+$multipageFormFieldset->setPartial('admission/partial/financementInfos');
+echo $multipageFormFieldset;
+?>

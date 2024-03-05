@@ -2,6 +2,8 @@
 
 namespace Application;
 
+use Admission\Entity\Db\Admission;
+use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Fichier\Entity\Db\Fichier;
@@ -40,6 +42,7 @@ class RouteMatch extends BaseRouteMatch
         'etablissement' => Etablissement::class,
         'structure' => Structure::class,
         'rapport' => Rapport::class,
+        'individu' => Individu::class
     ];
 
     /**
@@ -76,7 +79,6 @@ class RouteMatch extends BaseRouteMatch
             default:
                 $criteria = ['id' => $id];
         }
-
         return $repository->findOneBy($criteria);
     }
 

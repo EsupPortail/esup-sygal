@@ -12,6 +12,7 @@
         <field name="hdr"               type="string"       length="1"          column="HDR"            nullable="false"/>
         <field name="emeritat"          type="string"       length="1"          column="EMERITAT"       nullable="false"/>
         <field name="justificatif"      type="string"       length="1"          column="JUSTIFICATIF"   nullable="false"/>
+        <field name="admission"         type="string"       length="1"          column="ADMISSION"   nullable="false"/>
 
         <one-to-many field="libellesSupplementaires" target-entity="Soutenance\Entity\QualiteLibelleSupplementaire" mapped-by="qualite"/>
 

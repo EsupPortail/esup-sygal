@@ -10,7 +10,7 @@ class Pays
     private string $codeIsoAlpha2;
     private string $libelle;
     private string $libelleIso;
-    private string $libelleNationalite;
+    private ?string $libelleNationalite;
     private ?string $codePaysApogee;
 
     /**
@@ -111,10 +111,7 @@ class Pays
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLibelleNationalite(): string
+    public function getLibelleNationalite(): ?string
     {
         return $this->libelleNationalite;
     }

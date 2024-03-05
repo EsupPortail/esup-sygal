@@ -2,6 +2,7 @@
 
 namespace Individu\Controller;
 
+use Admission\Service\Inscription\InscriptionService;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\Structure\StructureService;
 use Application\Service\UserContextService;
@@ -57,6 +58,10 @@ class IndividuControllerFactory {
         /** @var \Application\Service\UserContextService $userContextService */
         $userContextService = $container->get(UserContextService::class);
         $controller->setUserContextService($userContextService);
+
+        /** @var InscriptionService $inscriptionService */
+        $inscriptionService = $container->get(InscriptionService::class);
+        $controller->setInscriptionService($inscriptionService);
 
         return $controller;
     }

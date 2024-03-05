@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+8.0.0
+-----
+- Nouveau module Admission (Formulaire permettant de candidater à un parcours doctoral)
+  - Saisie des informations concernant l'étudiant, son parcours, son inscription et ses spécifités et le financement
+  - Dépôt de pièces justificatives
+  - Remplissage et validation en ligne de la convention de formation doctorale
+  - Validation en ligne de la charte doctorale
+
 7.0.1
 -----
 - [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles).

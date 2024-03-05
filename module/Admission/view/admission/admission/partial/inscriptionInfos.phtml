@@ -1,0 +1,222 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Select;
+use UnicaenApp\Form\Element\SearchAndSelect;
+
+/**
+ * @var PhpRenderer         $this
+ * @var InscriptionFieldset    $fieldset
+ * @var AdmissionForm $form
+ * @var Admission $admission
+ * @var string              $error
+ *
+ */
+$form->prepare();
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Inscription demandée<label class="titre_sous_partie_en">&nbsp; /  Application for registration</label></h2>
+        </h2>
+    </div>
+    <div class="row subfield">
+        <div class="col">
+                <?php echo $this->formControlGroup($fieldset->get('disciplineDoctorat')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('specialiteDoctorat')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('composanteDoctorat')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('ecoleDoctorale')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('uniteRecherche')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('etablissementInscription')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <?php echo $this->formControlGroup($fieldset->get('directeur')) ?>
+        <div class="col-lg-6 col-sm-12">
+            <?php
+            $inscriptionExist = $admission && $admission->getInscription()->first();
+            if($inscriptionExist &&
+                ($admission->getInscription()->first()->getNomDirecteurThese() &&
+                empty($admission->getInscription()->first()->getDirecteur()))){ ?>
+                <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis supervisor</label>
+                <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                    <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                </span>
+            <?php }else{ ?>
+                    <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis supervisor</label>
+                        <?php if($inscriptionExist &&
+                              $admission->getInscription()->first()->getDirecteur()){ ?>
+                    <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
+                        <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
+                    </span>
+                <?php } ?>
+            <?php } ?>
+            <?php echo $this->formControlGroup($fieldset->get('nomDirecteurThese')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('prenomDirecteurThese')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('emailDirecteurThese')) ?>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('fonctionDirecteurThese')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
+        <div class="col-lg-12 titre_these">
+            <label class="form-label" for="inscription[titreThese]">Titre provisoire de la thèse</label><label class="titre_label_champ_form_en">&nbsp; / Provisional title of thesis</label>
+            <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
+                <span class="tooltip-text">Le titre saisi dans ce champ est provisoire et pourra être modifié ultérieurement durant votre parcours doctoral</span>
+            </span>
+        </div>
+        <div class="col">
+            <?php echo $this->formControlGroup($fieldset->get('titreThese')) ?>
+        </div>
+    </div>
+</div>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <div class="row">
+            <div class="col-lg-5 col-sm-12">
+                <h2 class="titre_sous_partie titre_specifites">Spécificités envisagées<label class="titre_sous_partie_en">&nbsp; / Specificity(ies) planned</label></h2>
+            </div>
+            <div class="col">
+                <p class="informations-title-sous-partie">Demande de spécificité(s) à émettre obligatoirement via le(s) formulaire(s) téléchargeable(s) sur le site internet UNICAEN</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get('confidentialite')) ?>
+                </div>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div id="additionalFieldsConfidentialite">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('dateConfidentialite')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12 informations-confidentialite-souhaitee">
+                            <p class="informations">A demander et motiver dans la convention de formation doctorale (présente à la dernière étape de ce formulaire)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get('coTutelle')) ?>
+                </div>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div id="additionalFieldsCotutelle">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('paysCoTutelle')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <p class="informations">Attention, il est OBLIGATOIRE d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get('coDirection')) ?>
+                </div>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <div id="additionalFieldsCodirection">
+                    <div class="row">
+                        <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
+                        <div class="col-lg-6 col-sm-12">
+                            <?php if($inscriptionExist &&
+                                    $admission->getInscription()->first()->getNomCodirecteurThese() &&
+                                    empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
+                                    <label class="form-label individu_non_enregistre" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis co-supervisor</label>
+                                    <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                                        <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                                    </span>
+                            <?php }else{ ?>
+                                <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis co-supervisor</label>
+                                <?php if($inscriptionExist &&
+                                        $admission->getInscription()->first()->getCoDirecteur()){ ?>
+                                        <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
+                                            <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
+                                        </span>
+                                <?php } ?>
+                            <?php } ?>
+                            <?php echo $this->formControlGroup($fieldset->get('nomCodirecteurThese')) ?>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('prenomCodirecteurThese')) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('emailCodirecteurThese')) ?>
+                        </div>
+                        <div class="col-lg-4 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('uniteRechercheCoDirecteur')) ?>
+                        </div>
+                        <div class="col-lg-4 col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('etablissementRattachementCoDirecteur')) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <?php echo $this->formControlGroup($fieldset->get('fonctionCoDirecteurThese')) ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12">
+                <div class="checkbox_admission">
+                    <?php echo $this->formControlGroup($fieldset->get('coEncadrement')) ?>
+                </div>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <p class="informations">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D.R. Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+if($canAccederCommentaires) {
+    echo $this->partial('admission/partial/verification/verification', [
+        'admission' => $admission,
+        'fcg' => $this->formControlGroup(),
+        'fieldset' => $fieldset->get("verificationInscription"),
+        'element' => !empty($admission) && !empty($admission->getInscription()) ? $admission->getInscription() : null,
+        'elementVerification' => !empty($admission) && !empty($admission->getInscription()->first()) ? $admission->getInscription()->first()->getVerificationInscription() : null
+    ]);
+}
+?>

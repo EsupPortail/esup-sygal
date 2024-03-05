@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var Admission $admission
+ * @var AvisForm $form
+ * @var string $title
+ */
+
+use Admission\Entity\Db\Admission;
+use UnicaenAvis\Form\AvisForm;
+
+$form->prepare();
+?>
+
+<?php $this->headTitle($this->translate($title))
+    ->prepend("Nouvel avis")
+    ->prepend($admission->getIndividu()->getNomUsuel());
+?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<div class="row">
+    <div class="col-md-7">
+        <?php echo $this->partial('unicaen-avis/partial/avis-form', ['form' => $form]) ?>
+    </div>
+</div>

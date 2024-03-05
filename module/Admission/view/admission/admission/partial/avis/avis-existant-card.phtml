@@ -1,0 +1,90 @@
+<?php
+/**
+ * @var AdmissionAvis $operation
+ * @var bool $ajaxModalEvent
+ * @var bool $returnUrl
+ * @var string $libelleOperation
+ * @var boolean $showActionButtons
+ */
+
+use Admission\Entity\Db\AdmissionAvis;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+
+$avis = $operation->getAvis();
+$statusClass = $avis->getAvisValeur()->getValeurBool() ? 'success' : 'danger';
+
+$canModifierOperation =
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_MODIFIER_AVIS_TOUT) ||
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_MODIFIER_AVIS_SIEN);
+$canSupprimerOperation =
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_SUPPRIMER_AVIS_TOUT) ||
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_SUPPRIMER_AVIS_SIEN);
+?>
+
+<div class="row subfield ">
+    <div class="col-lg-2 circle_etape etape_signature">
+        <span class="icon <?php echo $avis->getAvisValeur()->getTags() ?> circle_<?php echo $avis->getAvisValeur()->getTags() ?>"></span>
+    </div>
+    <div class="col-lg-6 libelle_etape etape_signature">
+        <label><?php echo $libelleOperation ?: $operation->getAvis()->getAvisType()->getLibelle(); ?></label>
+    </div>
+    <div class="col-lg-2 text-sm text-muted info_validation etape_signature">
+        <p>
+            Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+            le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(\Application\Constants::DATETIME_FORMAT) ?>
+        </p>
+    </div>
+    <div class="col-lg-4 text-sm text-muted info_validation etape_signature">
+        <p class="card-text text-<?php echo $statusClass ?>">
+            <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
+
+            <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+                <?php if(isset($showActionButtons) && $showActionButtons) { ?>
+                    <br>
+                    <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                       data-bs-target="#avisComplemsModal">
+                        <span class="fas fa-glasses" title="Voir les détails de la validation"></span>
+                        Détails
+                    </a>
+                <?php } ?>
+            <?php endif ?>
+        </p>
+        <div class="log-full-content d-none">
+            <p>Voici les compléments :</p>
+            <?php echo $avisComplemsToHtml ?>
+        </div>
+    </div>
+    <div class="col-lg-2 info_validation etape_signature">
+        <?php if ($canModifierOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
+            <a href="<?php echo $this->url('admission/modifierAvis', ['admissionAvis' => $operation->getId()]) ?>"
+               class="card-link btn btn-secondary btn-sm action ajax-modal"
+               data-event="<?php echo $ajaxModalEvent ?>"
+               title="Modifier cet avis ?">Modifier l'avis</span></a>
+        <?php endif ?>
+        <?php if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
+            <a class="btn btn-warning btn-sm access_suppression_operation" data-operation="SuppressionOperation">Supprimer l'avis</a>
+            <div class="modal fade" id="modalShowConfirmationSuppressionOperation" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Confirmation de l'opération</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr·e de vouloir supprimer cette opération ?</p>
+                            <p>Are you sure to invalidate this operation?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                            <a href="
+                            <?php echo $this->url('admission/desaviser', ['admissionAvis' => $operation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                               class="card-link btn btn-warning collapsable-action validation_action_operation"
+                               title="Supprimer cet avis ?">
+                                Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+</div>

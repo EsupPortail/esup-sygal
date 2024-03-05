@@ -1,0 +1,241 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Provider\Privilege\AdmissionPrivileges;use Admission\Service\Admission\AdmissionSorter;
+use Application\Entity\Db\Role;
+use Individu\Entity\Db\Individu;
+use Application\Search\SearchResultPaginator;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\Element\SearchAndSelect;
+
+/**
+ * @var PhpRenderer $this
+ * @var SearchResultPaginator $admissions
+ * @var string      $text
+ * @var Role        $roleDirecteurThese
+ * @var string      $routeName
+ * @var Admission $admission
+ * @var array $operations
+ * @var Individu $individu
+ * @var SearchAndSelect $inputIndividu
+ * @var AdmissionOperationInterface $operationEnAttente
+ *
+ * @see \Admission\Controller\AdmissionController::indexAction()
+ */
+
+$canRechercherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_RECHERCHER_DOSSIERS_ADMISSION));
+$canListerDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION));
+
+$queryParams = $this->queryParams();
+
+echo $this->partial('admission/admission/partial/header', []); ?>
+
+<?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<?php if($canRechercherDossiersAdmission) { ?>
+    <div class="form_admission">
+        <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
+            <div class="row individu_recherche_index">
+                <div class="col-lg-4 col-sm-12 label_index">
+                    <label for="individuId">Entrez l'individu recherché :</label>
+                </div>
+                <div class="col-lg-4 col-sm-12 input_index">
+                    <?php echo $this->formControlGroup($inputIndividu); ?>
+                </div>
+                <div class="col-lg-3 col-sm-12 bouton_acces_dossier_index">
+                    <button type="submit" class="btn btn-primary">Accéder à son dossier d'admission</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<?php } else if(!empty($operations)){ ?>
+    <h2>Statut de votre dossier d'admission</h2>
+    <?php
+    $returnUrl = $this->url('admission', ['individu' => $individu]);
+    echo $this->partial('admission/admission/partial/circuit-signatures', [
+        'operations' => $operations,
+        'individu' => $individu->getId(),
+        'returnUrl' => $returnUrl,
+        'admission' => $admission,
+        'operationEnAttente' => $operationEnAttente,
+        'showActionButtons' => true
+    ]);
+} ?>
+
+<?php if($canListerDossiersAdmission) { ?>
+
+    <!-- Formulaire de filtrage -->
+    <div class="float-start">
+        <?php $loadFiltersUrl = $this->url($routeName . '/recherche/filters', [], ['query' => $this->queryParams()], true); ?>
+        <div class="filters" id="admission-filters" data-url="<?php echo $loadFiltersUrl ?>">
+            <!-- Contenu chargé en AJAX -->
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <?php if (count($admissions) > 0): ?>
+
+        <p>
+            <?php
+            echo $admissions->getTotalItemCount();
+            echo " ";
+            echo $this->translate("dossiers(s) d'admission trouvé(s).");
+            ?>
+        </p>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(AdmissionSorter::NAME_individu); ?>"
+                       title="<?php echo $this->translate("Nom de l'étudiant"); ?>">
+                        <?php echo $this->translate("Étudiant"); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(AdmissionSorter::NAME_etatAdmission); ?>"
+                       title="<?php echo $this->translate("État du dossier d'admission");?> ">
+                        <?php echo $this->translate("État"); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(AdmissionSorter::NAME_titre); ?>"
+                       title="<?php echo $this->translate("Titre de la thèse");?> ">
+                        <?php echo $this->translate("Titre de la thèse"); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(AdmissionSorter::NAME_etablissement); ?>"
+                       title="<?php echo $this->translate("Établissement");?> ">
+                        <?php echo $this->translate("Étab."); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+                <th>
+                    <span title="<?php echo $this->translate("Liste des directeurs de thèse"); ?>">
+                        <?php echo $this->translate("Dir. de thèse"); ?>
+                    </span>
+                </th>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(AdmissionSorter::NAME_ecoleDoctorale); ?>"
+                       title="<?php echo $this->translate("École doctorale");?>">
+                        <?php echo $this->translate("École<br>doct.");?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(AdmissionSorter::NAME_uniteRecherche); ?>"
+                       title="<?php echo $this->translate("Unité de recherche"); ?>">
+                        <?php echo $this->translate("Unité<br>rech."); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <?php /** @var Admission $admission */
+            foreach ($admissions as $admission): ?>
+                <tr>
+                    <td><?php echo $admission->getIndividu()->getNomComplet() ?></td>
+                    <td><?php echo $admission->getEtat() ?>
+                        <a href="<?php echo $this->url('admission/generer-statut-dossier', ['action' => 'generer-statut-dossier','admission' => $admission->getId()], [], true) ?>"
+                           title="Appuyer pour avoir plus de détails"
+                           data-bs-toggle="tooltip" data-bs-html="true" class="info_statut_dossier action ajax-modal">
+                            <span class="icon icon-information"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <span title="<?php echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getTitreThese() : null ?>">
+                            <?php echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getTitreThese() : null ?>
+                        </span>
+                    </td>
+                    <?php
+                    $etabInscription =  $admission?->getInscription()->first() && $admission->getInscription()->first()->getEtablissementInscription() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getLibelle() : null;
+                    echo "<td>";
+                    if($etabInscription){
+                        echo "<abbr title='";
+                        echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getLibelle() : null;
+                        echo "'>";
+                        echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getCode() : null;
+                        echo "</abbr>";
+                    }
+                    echo "</td>";
+                    ?>
+                    <td class="acteurs">
+                        <?php
+                        if($admission->getInscription()->first()){
+                            $directeur = $admission->getInscription()->first()->getDirecteur();
+                            if($directeur){
+                                echo $directeur;
+                            }else{
+                                if($admission->getInscription()->first()->getDenominationDirecteurThese()){
+                                    echo $admission->getInscription()->first()->getDenominationDirecteurThese(); ?>
+                                    <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                                        <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                                    </span>
+                                <?php }
+                            }
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        $ecoleDoctorale = $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEcoleDoctorale() : null;
+                        if($ecoleDoctorale): ?>
+                            <abbr title="<?php echo $ecoleDoctorale->getStructure()->getLibelle() ?>">
+                                <?php echo $ecoleDoctorale->getStructure()->getSigle() ?: "Pas de sigle" ?>
+                            </abbr>
+                        <?php endif ?>
+                    </td>
+                    <td>
+                        <?php
+                        $uniteRecherche = $admission?->getInscription()->first() ? $admission->getInscription()->first()->getUniteRecherche() : null;
+                        if($uniteRecherche): ?>
+                            <abbr title="<?php echo $uniteRecherche->getStructure()->getLibelle() ?>">
+                                <?php echo $uniteRecherche->getStructure()->getCode(); ?>
+                            </abbr>
+                        <?php endif ?>
+                    </td>
+                    <td>
+                        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>"
+                           title="Accéder au dossier d'admission #<?php echo $admission->getId(); ?>"
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-voir"></span>
+                        </a>
+                        <?php
+                         $canSupprimerAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION);
+                         if($canSupprimerAdmission){ ?>
+                            <a href="<?php echo $this->url('admission/ajouter',['action' => 'supprimer', 'individu' => $admission->getIndividu()->getId()], [], true); ?>"
+                               data-toggle="confirmationx" data-event="modification"
+                               title="Suppression du dossier d'admission #<?php echo $admission->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                                <span class="icon icon-historiser text-danger"></span>
+                            </a>
+                        <?php } ?>
+                    </td>
+                </tr>
+            <?php endforeach ?>
+            </tbody>
+        </table>
+
+        <?php echo $paginationControl = $this->paginationControl($admissions, 'sliding', 'application/paginator.phtml', ['route' => 'admission']) ?>
+
+    <?php else: ?>
+
+        <?php if ($admissions->containsRealSearchResult()): ?>
+            <p>Aucun dossier d'admission trouvé.</p>
+        <?php else: ?>
+            <p class="text-info text-center"><i class="fa fa-bullhorn"></i> Ajustez les filtres et lancez la recherche...</p>
+        <?php endif ?>
+
+    <?php endif ?>
+<?php }else{ ?>
+    <div class="row bouton_acces_dossier">
+        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces_dossier">Accéder à votre dossier d'admission</a>
+    </div>
+<?php } ?>
+
+<script>
+    $(function() {
+        $("#admission-filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

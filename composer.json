@@ -73,12 +73,14 @@
         "unicaen/pdf": "6.1.0",
         "unicaen/renderer": "^6.0",
         "unicaen/sygal-api": "dev-master",
-        "unicaen/zfc-user": "^5.0"
+        "unicaen/zfc-user": "^5.0",
+        "unicaen/etat": "^6.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
         "psr-0": {
+            "Admission\\": "module/Admission/src",
             "Application\\": "module/Application/src",
             "ComiteSuiviIndividuel\\": "module/ComiteSuiviIndividuel/src",
             "Depot\\": "module/Depot/src",

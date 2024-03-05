@@ -29,6 +29,10 @@ class ApplicationNavigationFactory extends NavigationFactory
     const MES_THESES_PAGE_ID = 'MES_THESES';
     const NOS_THESES_PAGE_ID = 'NOS_THESES';
 
+    const MON_ADMISSION_PAGE_ID = 'MON_ADMISSION';
+    const MES_ADMISSIONS_PAGE_ID = 'MES_ADMISSIONS';
+    const NOS_ADMISSIONS_PAGE_ID = 'NOS_ADMISSIONS';
+
     /**
      * @var Doctorant|null
      */
@@ -157,6 +161,41 @@ class ApplicationNavigationFactory extends NavigationFactory
         if ($page['pages'][$key = self::THESE_SELECTIONNEE_PAGE_ID] ?? null) {
             if ($this->pageMaTheseCreated) {
                 // si une page 'Ma thèse' est présente, la page 'Thèse sélectionnée' qui fait doublon est supprimée
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /** ADMISSION */
+        /**
+         * Mon admission
+         */
+        // Rôle Doctorant : génération d'une page "Mon Admission"
+        if ($page['pages'][$key = self::MON_ADMISSION_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CANDIDAT || $this->role->getRoleId() == Role::ROLE_ID_USER)) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Mes admissions
+         */
+        if ($page['pages'][$key = self::MES_ADMISSIONS_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->getCode() == Role::CODE_ADMIN_TECH || $this->userContextService->getSelectedRoleDirecteurThese() || $this->userContextService->getSelectedRoleCodirecteurThese() || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE)) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Nos admissions
+         */
+        if ($page['pages'][$key = self::NOS_ADMISSIONS_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
+                $page['visible'] = true;
+            } else {
                 unset($page['pages'][$key]);
             }
         }

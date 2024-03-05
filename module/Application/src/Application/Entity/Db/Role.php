@@ -53,6 +53,15 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const LIBELLE_PRESIDENT = "Président du jury";
     const CODE_OBSERVATEUR = "Observateur";
 
+    const ROLE_ID_ADMISSION_CANDIDAT = "Candidat";
+    const CODE_ADMISSION_CANDIDAT = "ADMISSION_CANDIDAT";
+    const ROLE_ID_ADMISSION_DIRECTEUR_THESE = "Potentiel directeur de thèse";
+    const CODE_ADMISSION_DIRECTEUR_THESE = "ADMISSION_DIRECTEUR_THESE";
+
+    const ROLE_ID_ADMISSION_CODIRECTEUR_THESE = "Potentiel co-directeur de thèse";
+    const CODE_ADMISSION_CODIRECTEUR_THESE = "ADMISSION_CODIRECTEUR_THESE";
+
+
 
     /**
      * @var string

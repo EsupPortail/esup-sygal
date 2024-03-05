@@ -1,0 +1,10 @@
+<?php
+
+namespace Admission\Provider\Template;
+
+class PdfTemplates {
+
+    const ADMISSION_RECAPITULATIF = "ADMISSION_RECAPITULATIF";
+    const ADMISSION_CONVENTION_FORMATION_DOCTORALE = "ADMISSION_CONVENTION_FORMATION_DOCTORALE";
+
+}

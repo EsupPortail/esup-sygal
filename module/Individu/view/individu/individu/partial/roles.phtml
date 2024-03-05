@@ -139,7 +139,9 @@ function generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier =
     $VH = new RoleHelper();
     foreach ($roles as $role) {
         $texte .= '<div id="affecte_' . $role->getId() . '"';
-        if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
+        if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false || (array_search($role, $rolesAffectes) && $role->getAttributionAutomatique())){
+            $texte .= ' style="display:none;" ';
+        }
         $texte .= '>';
         $texte .= $VH->render($role);
         if ($canModifier) {
@@ -160,7 +162,7 @@ function generatesRoleStatiques($individu, $roles, $rolesAffectes, $canModifier 
 {
     $texte = "";
     foreach ($roles as $role) {
-        if ($role->getTypeStructureDependant() === null && $role->isTheseDependant() === false) {
+        if ($role->getTypeStructureDependant() === null && $role->isTheseDependant() === false && !$role->getAttributionAutomatique()) {
             $texte .= '<div id="disponible_' . $role->getId() . '"';
             if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
             $texte .= '>';

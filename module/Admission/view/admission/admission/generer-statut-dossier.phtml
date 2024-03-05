@@ -1,0 +1,25 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\TypeValidation;
+use Individu\Entity\Db\Individu;
+
+/**
+ *  @var array $operations
+ * * @var Individu $individu
+ * * @var string $returnUrl
+ * * @var AdmissionOperationInterface $operationEnAttente
+ * * @var bool $dossierComplet
+ * * @var Admission $admission
+ * @var boolean $showActionButtons
+ */
+unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
+echo $this->partial('admission/admission/partial/circuit-signatures', [
+    'operations' => $operations,
+    'individu' => $admission->getIndividu(),
+    'returnUrl' => "",
+    'operationEnAttente' => $operationEnAttente,
+    'admission' => $admission,
+    'showActionButtons' => $showActionButtons
+]);

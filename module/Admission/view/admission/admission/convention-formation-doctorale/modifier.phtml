@@ -1,0 +1,152 @@
+<?php
+
+namespace Admission;
+
+use Admission\Controller\AdmissionController;
+use Admission\Entity\Db\Admission;
+use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Admission $admission
+ * @var ConventionFormationDoctoraleForm $form
+ *
+ * @see AdmissionController::ajouterConventionFormationAction()
+ */
+
+$title = "Convention de formation doctorale de {$admission->getIndividu()}";
+
+$form->prepare();
+
+?>
+
+<?php $this->headTitle($this->translate($title)); ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
+<div class="convention-formation-doctorale-container">
+    <div class="precisions_convention_intro">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>
+            Vous devez remplir tous les champs de ce formulaire afin de pouvoir l'enregistrer.
+        </p>
+    </div>
+
+    <?php echo $this->form()->openTag($form) ?>
+
+    <div class="row">
+        <div class="col-md-7">
+            <h3><?php echo $this->formlabel($form->get('calendrierProjetRecherche')); ?></h3>
+            <p class="precisions_convention">
+                Préciser le calendrier et les jalons prévisionnels du projet de thèse, le lieu de recherche externe
+                le cas échéant. Si la thèse se fait dans le cadre d'une co-tutelle internationale, préciser le
+                calendrier prévisionnel des séjours dans les deux pays. Si la thèse se fait dans le cadre d’une
+                CIFRE, d’une COFRA ou d’une collaboration de recherche avec un acteur socio-économique,
+                préciser le calendrier prévisionnel des périodes en entreprise (ou autre partenaire) et en
+                laboratoire académique.
+            </p>
+            <?php echo $this->formtextarea($form->get('calendrierProjetRecherche')); ?>
+            <?= $this->formelementerrors()->render($form->get('calendrierProjetRecherche'), ['class' => 'error text-danger']) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <h3><?php echo $this->formlabel($form->get('modalitesEncadrSuiviAvancmtRech')); ?></h3>
+            <p class="precisions_convention">
+                Préciser le rôle et les responsabilités spécifiques de chaque personne assurant l’encadrement
+                (direction, co-direction, co-encadrement non HDR), ainsi que le mode d’interaction des
+                encadrants entre eux, et des encadrants avec le doctorant.
+                Remarque : Les recommandations spécifiques en matière de formation doctorale, de comité
+                de suivi individuel de thèse et les pré-requis pour la soutenance de thèse sont précisées dans le
+                règlement intérieur de votre école doctorale de rattachement (dont vous devez prendre
+                connaissance).
+            </p>
+            <?php echo $this->formtextarea($form->get('modalitesEncadrSuiviAvancmtRech')); ?>
+            <?= $this->formelementerrors()->render($form->get('modalitesEncadrSuiviAvancmtRech'), ['class' => 'error text-danger']) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <h3><?php echo $this->formlabel($form->get('conditionsRealisationProjRech')); ?></h3>
+            <p class="precisions_convention">
+                Préciser les moyens et méthodes disponibles qui devront être mis en œuvre pour mener à
+                bien le projet doctoral au sein de l'unité de recherche (archives, plates-formes, animalerie, sites
+                expérimentaux … ). Préciser, le cas échéant, le cadre d'utilisation de ces moyens (conditions
+                spécifiques d’accès et de sécurité, formations préalables … ). Les questions sur le financement
+                des missions, des mobilités, des participations aux séminaires et aux colloques pourront être
+                évoquées.
+            </p>
+            <?php echo $this->formtextarea($form->get('conditionsRealisationProjRech')); ?>
+            <?= $this->formelementerrors()->render($form->get('conditionsRealisationProjRech'), ['class' => 'error text-danger']) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <h3><?php echo $this->formlabel($form->get('modalitesIntegrationUr')); ?></h3>
+            <p class="precisions_convention">
+                Précisez s’il y a signature d’un engagement de confidentialité et/ou du règlement intérieur du
+                laboratoire et si l’intégration implique une formation aux bonnes pratiques ou autres
+                obligations. Précisez les éventuelles responsabilités collectives que le doctorant pourra
+                assumer au sein du laboratoire.
+            </p>
+            <?php echo $this->formtextarea($form->get('modalitesIntegrationUr')); ?>
+            <?= $this->formelementerrors()->render($form->get('modalitesIntegrationUr'), ['class' => 'error text-danger']) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <h3><?php echo $this->formlabel($form->get('partenariatsProjThese')); ?></h3>
+            <p class="precisions_convention">
+                Précisez si la thèse se déroule dans un contexte impliquant des conventions avec des
+                partenaires (hors co-tutelle internationale de thèse) et si oui lesquels et pour quoi (par exemple
+                si le projet de texte est mené dans le cadre d’une collaboration de recherche avec un industriel,
+                si le projet implique un autre laboratoire ou établissement accueillant une partie des travaux…)
+            </p>
+            <?php echo $this->formtextarea($form->get('partenariatsProjThese')); ?>
+            <?= $this->formelementerrors()->render($form->get('partenariatsProjThese'), ['class' => 'error text-danger']) ?>
+        </div>
+    </div>
+    <?php if ($form->has('motivationDemandeConfidentialite')){ ?>
+        <div class="row">
+            <div class="col-md-7">
+                <h3><?php echo $this->formlabel($form->get('motivationDemandeConfidentialite')); ?></h3>
+                <p class="precisions_convention"></p>
+                <?php echo $this->formtextarea($form->get('motivationDemandeConfidentialite')); ?>
+                <?= $this->formelementerrors()->render($form->get('motivationDemandeConfidentialite'), ['class' => 'error text-danger']) ?>
+            </div>
+        </div>
+    <?php } ?>
+    <div class="row">
+        <div class="col-md-7">
+            <h3><?php echo $this->formlabel($form->get('projetProDoctorant')); ?></h3>
+            <p class="precisions_convention">
+                Indiquez vos objectifs d’après-thèse en précisant si vous souhaitez vous orienter vers le milieu
+                académique ou le milieu socio-économique. Précisez les jalons de votre formation doctorale
+                qui vous seront utiles pour atteindre ces objectifs.
+            </p>
+            <?php echo $this->formtextarea($form->get('projetProDoctorant')); ?>
+            <?= $this->formelementerrors()->render($form->get('projetProDoctorant'), ['class' => 'error text-danger']) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php
+            echo $this->formControlGroup($form->get('security'));
+            echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+            ?>
+        </div>
+    </div>
+    <?php echo $this->form()->closeTag() ?>
+
+</div>

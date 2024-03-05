@@ -1,0 +1,64 @@
+<?php
+/**
+ * @var AdmissionAvis $operation
+ * @var bool $ajaxModalEvent
+ * @var AdmissionOperationInterface $operationEnAttente
+ * @var int $count
+ * @var string $libelleOperation
+ * @var bool $showRangOperation
+ * @var boolean $showActionButtons
+ */
+
+use Admission\Entity\Db\AdmissionAvis;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+
+$avis = $operation->getAvis();
+
+$canAjouterOperation =
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_AJOUTER_AVIS_TOUT) ||
+    $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_AJOUTER_AVIS_SIEN);
+?>
+<div class="row subfield">
+    <div class="col etape_signature">
+        <?php if ($showRangOperation) {
+            if ($operationEnAttente && $operationEnAttente->getTypeToString() == $operation->getTypeToString()) { ?>
+                <div class="col-lg-2 circle_etape etape_signature">
+                    <span class="icon icon-hourglass circle_waiting"></span>
+                </div>
+            <?php } else { ?>
+                <div class="circle"><p><?= $count ?></p></div>
+            <?php }
+        } ?>
+        <div class="col-lg-6 libelle_etape etape_signature">
+            <label><?php echo $libelleOperation ?: $operation->getAvis()->getAvisType()->getLibelle(); ?></label>
+            <?php
+            $codeOperation = $operation->getAvis()->getAvisType()->getCode();
+            $codeOperationEnAttente = $operationEnAttente instanceof AdmissionValidation ? $operationEnAttente->getTypeValidation()->getCode() : null;
+            //Si la validation par les gestionnaires ne peut-être effectuée, on affiche ce message
+            if ((!$canAjouterOperation && $operationEnAttente instanceof AdmissionValidation) &&
+                ($codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_THESE && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_THESE ||
+                    $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_CODIR_THESE && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_CODIR_THESE ||
+                    $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_UR && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_UR ||
+                    $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_ED && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_ED
+                )
+            ) {
+                echo '<span class="icon icon-warning dossier_incomplet_validation_impossible" data-toggle="tooltip">
+                        <span class="tooltip-text">La convention de formation doctorale (présente dans les pièces justificatives) doit avoir été lue pour pouvoir effectuer cette validation</span>
+                      </span>';
+                echo  isset($showActionButtons) && $showActionButtons ? '<a class="btn access_convention_formation_doctorale required">Lire et valider la convention de formation doctorale</a>' : '';
+            }
+            ?>
+        </div>
+        <?php if ($canAjouterOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
+            <a href="<?php echo $this->url('admission/aviser', [
+                'admission' => $operation->getAdmission()->getId(),
+                'typeAvis' => $operation->getAvis()->getAvisType()->getId(),
+            ]) ?>"
+               class="card-link btn btn-primary action ajax-modal"
+               data-event="<?php echo $ajaxModalEvent ?>">Saisir l'avis</span></a>
+        <?php endif ?>
+    </div>
+</div>

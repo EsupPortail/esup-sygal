@@ -1,0 +1,60 @@
+<?php
+/** @var bool $canVerifierAdmission
+ * @var Admission $admission
+ * @var FormControlGroup $fcg
+ */
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Verification;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use UnicaenApp\Form\View\Helper\FormControlGroup;
+
+$canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
+?>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Commentaires<label class="titre_sous_partie_en">&nbsp; /  Comments</label></h2>
+    </div>
+    <?php if ($canVerifierAdmission) { ?>
+        <div class="row observations_gestionnaire">
+            <div class="col">
+                <?php echo $fcg($fieldset->get('estComplet')) ?>
+            </div>
+            <div class="commentaires_gestionnaire">
+                <div class="precisions_action">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>
+                        <?php echo $this->formlabel($fieldset->get('commentaire')) ?>
+                    </p>
+                </div>
+                <?php echo $this->formtextarea($fieldset->get('commentaire')) ?>
+            </div>
+        </div>
+    <?php }else{ ?>
+        <div class="commentaires_gestionnaire">
+            <div class="partie_etudiant">
+                <?php
+                /** @var Verification $verification */
+                $verification = !empty($elementVerification) ? $elementVerification->first() : null;
+                $nom = !empty($verification) ? $verification->getIndividu()->getNomUsuel() : null;
+                $prenom = !empty($verification) ? $verification->getIndividu()->getPrenom() : null;
+                $commentaire = !empty($verification) ? $verification->getCommentaire() : null ;
+                $date_verification = !empty($verification) ? $verification->getHistoModification()->format('d/m/Y H:i') : null;
+                $isComplet = !empty($verification) ? $verification->getEstComplet() : null ;
+                if(!empty($commentaire)){
+                    echo "<div class='col-lg-6 col-sm-12 verification_gestionnaire commentaire_gestionnaire'>".$commentaire."</div>";
+                    echo "<div class='col-lg-6 col-sm-12 text-muted text-sm info-commentaire'>(Par ".$nom." ".$prenom.", le ".$date_verification.")</div>";
+                }else{
+                    if($isComplet === null){
+                        echo "<p class='verification_gestionnaire aucune_action_effectuee_commentaire'>Aucune action n'a encore été effectuée sur cette étape par la/le gestionnaire de ce dossier d'admission</p>";
+                    }elseif(!$isComplet && empty($commentaire)){
+                        echo "<p class='verification_gestionnaire pas_de_commentaire_ajoute'>Cette étape est incomplète mais aucun commentaire n'a encore été ajouté par la/le gestionnaire de ce dossier d'admission</p>";
+                    }else{
+                        echo "<p class='verification_gestionnaire partie_complete'>Cette étape est notée comme complète par la/le gestionnaire de ce dossier d'admission</p>";
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    <?php  } ?>
+</div>

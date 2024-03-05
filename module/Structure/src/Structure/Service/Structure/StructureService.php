@@ -12,8 +12,10 @@ use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Structure\Entity\Db\ComposanteEnseignement;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Repository\ComposanteEnseignementRepository;
 use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Structure\Entity\Db\Repository\EtablissementRepository;
 use Structure\Entity\Db\Repository\StructureRepository;
@@ -72,7 +74,7 @@ class StructureService extends BaseService
      */
     public function findStructureConcreteFromStructure(Structure $cible): ?StructureConcreteInterface
     {
-        /** @var EcoleDoctoraleRepository|EtablissementRepository|UniteRechercheRepository $repo */
+        /** @var EcoleDoctoraleRepository|EtablissementRepository|UniteRechercheRepository|ComposanteEnseignementRepository $repo */
         $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($cible->getTypeStructure()->getCode()));
 
         $qb = $repo->createQueryBuilder("sc")
@@ -154,6 +156,9 @@ class StructureService extends BaseService
             case TypeStructure::CODE_ETABLISSEMENT :
             case 'Établissement':
                 return Etablissement::class;
+            case TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT :
+            case "Composante d'enseignement":
+                return ComposanteEnseignement::class;
             default :
                 throw new RuntimeException('Type de structure inconnu ['.$type.']');
         }
@@ -182,7 +187,7 @@ class StructureService extends BaseService
      */
     public function findAllStructuresAffichablesByTypeQb(string $type, string|array|null $orders = null, bool $includeFermees = true): QueryBuilder
     {
-        /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository $repo */
+        /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository|ComposanteEnseignementRepository $repo */
         $repo = $this->entityManager->getRepository($this->getEntityClassForType($type));
 
         $qb = $repo->createQueryBuilder('structureConcrete')
@@ -224,7 +229,7 @@ class StructureService extends BaseService
      */
     public function findStructureConcreteByTypeAndStructureId(string $type, $structureId): StructureConcreteInterface
     {
-        /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository $repo */
+        /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository|ComposanteEnseignementRepository $repo */
         $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($type));
 
         $qb = $repo->createQueryBuilder('structureConcrete')
@@ -250,7 +255,7 @@ class StructureService extends BaseService
      */
     public function findStructureConcreteByTypeAndStructureConcreteId(string $type, $structureId): StructureConcreteInterface
     {
-        /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository $repo */
+        /** @var EtablissementRepository|EcoleDoctoraleRepository|UniteRechercheRepository|ComposanteEnseignementRepository $repo */
         $repo = $this->getEntityManager()->getRepository($this->getEntityClassForType($type));
 
         $qb = $repo->createQueryBuilder('structureConcrete')

@@ -81,6 +81,7 @@ return [
         'Doctorant',
         'StepStar',
         'InscriptionAdministrative',
+        'Admission',
         'Application',
         'Substitution',
         'SygalApi',

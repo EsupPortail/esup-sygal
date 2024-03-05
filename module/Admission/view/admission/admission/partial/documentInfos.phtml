@@ -1,0 +1,265 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Admission\Entity\Db\ConventionFormationDoctorale;
+use Admission\Entity\Db\Etudiant;
+use Admission\Entity\Db\Inscription;
+use Admission\Entity\Db\TypeValidation;
+use Admission\Form\Admission\AdmissionForm;
+use Admission\Form\Fieldset\Document\DocumentFieldset;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Select;
+
+/**
+ * @var PhpRenderer         $this
+ * @var DocumentFieldset    $fieldset
+ * @var AdmissionForm $form
+ * @var Admission $admission
+ * @var array[] $operations
+ * @var array               $documents
+ * @var boolean $dossierValideParGestionnaire
+ * @var AdmissionOperationInterface $operationEnAttente
+ * @var array $conventionFormationDoctoraleOperations
+ * @var ConventionFormationDoctorale $conventionFormationDoctorale
+ * @see \Admission\Controller\AdmissionController::documentAction()
+ */
+$form->prepare();
+
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
+$canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
+$canNotifierDossierIncomplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET);
+$canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
+$canModifierAdmission  =
+    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
+    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+if(!empty($admission) && !$canModifierAdmission) {
+    foreach ($fieldset->getElements() as $element) {
+        if ($element instanceof Laminas\Form\Element\Checkbox || $element instanceof Select || $element instanceof \Laminas\Form\Element\File) {
+            $element->setAttribute('disabled', true);
+        } else {
+            $element->setAttribute('readonly', true);
+        }
+    }
+}
+$individu = $admission ?$admission->getIndividu()->getId() : null;
+/** @var Etudiant $etudiant */
+$etudiant = $admission ? $admission->getEtudiant()->first() : null;
+/** @var Inscription $inscription */
+$inscription = $admission ?$admission->getInscription()->first() : null;
+$returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' => $individu]);
+?>
+
+<script>
+    var documents = <?php echo json_encode($documents); ?>;
+    var individuId = <?php echo $individu; ?>;
+</script>
+
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Pièces justificatives<label class="titre_sous_partie_en">&nbsp; /  Supporting documents</label></h2>
+    </div>
+    <div class="row subfield">
+        <div class="col informations-pieces_justificatives">
+            <p>Obligatoires<label class="titre_sous_partie_type_document_en">&nbsp; / Required</label></p>
+        </div>
+    </div>
+    <?php
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('diplomeBac'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('curicculumVitae'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('financement'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('projetThese'),
+        'documents' => $documents,
+        'individu' => $individu,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('exemplairesConvention'),
+        'documents' => $documents,
+        'individu' => $individu,
+        'admission' => $admission,
+        'returnUrl' => $returnUrl,
+        'conventionFormationDoctoraleOperations' => $conventionFormationDoctoraleOperations,
+        'conventionFormationDoctorale' => $conventionFormationDoctorale
+    ]);
+    echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('exemplairesCharteDoctorat'),
+        'documents' => $documents,
+        'individu' => $individu,
+        'admission' => $admission,
+        'validation_charte_doctorat' => $operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE],
+        'returnUrl' => $returnUrl,
+    ]);
+    if ($etudiant->getNiveauEtude() == 2) { ?>
+        <div class="row subfield">
+            <div class="col informations-pieces_justificatives">
+                <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="titre_sous_partie_type_document_en">&nbsp; / If other than a French Master's degree (Derogation)</label></p>
+            </div>
+        </div>
+        <div class="row subfield">
+            <div class="col-lg-3 col-sm-12 label-file">
+                <?php echo $this->formlabel($fieldset->get('argumentaireDirecteurThese')) ?>
+            </div>
+            <div class="col-lg-9 col-sm-12">
+                <?php echo $this->formtextarea($fieldset->get('argumentaireDirecteurThese')) ?>
+            </div>
+        </div>
+    <?php }
+    if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 1) { ?>
+        <div class="row subfield">
+            <div class="col informations-pieces_justificatives">
+                <p>Vous êtes titulaire d'un titre étranger<label class="titre_sous_partie_type_document_en">&nbsp; / If the student has a foreign qualification</label></p>
+            </div>
+        </div>
+        <?php
+        echo $this->partial('admission/partial/document/document', [
+            'fieldset' => $fieldset->get('diplomesRelevesNotesTraduits'),
+            'documents' => $documents,
+            'individu' => $individu,
+        ]);
+        echo $this->partial('admission/partial/document/document', [
+            'fieldset' => $fieldset->get('acteNaissance'),
+            'documents' => $documents,
+            'individu' => $individu,
+        ]);
+        echo $this->partial('admission/partial/document/document', [
+            'fieldset' => $fieldset->get('photocopiePasseport'),
+            'documents' => $documents,
+            'individu' => $individu,
+        ]);
+    } ?>
+    <?php if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 2){ ?>
+        <div class="row subfield">
+            <div class="col informations-pieces_justificatives">
+                <p>Si l'étudiant est titulaire d'un diplôme français ne conférant pas le grade de master</p>
+            </div>
+        </div>
+    <?php
+        echo $this->partial('admission/partial/document/document', [
+            'fieldset' => $fieldset->get('diplomesTravauxExperiencePro'),
+            'documents' => $documents,
+            'individu' => $individu,
+        ]);
+    } ?>
+    <?php if ($inscription && ($inscription->getConfidentialite() || $inscription->getCoTutelle() || $inscription->getCoEncadrement())) { ?>
+        <div class="row subfield">
+            <div class="col informations-pieces_justificatives">
+                <p>Spécificité(s) demandée(s)<label class="titre_sous_partie_type_document_en">&nbsp; /  Specificities requested</label></p>
+            </div>
+        </div>
+        <?php if ($inscription->getConfidentialite()) { ?>
+            <div class="row subfield">
+                <div class="col-lg-3 col-sm-12 label-file">
+                    <?php echo $this->formlabel($fieldset->get('documentsDemandeConfidentialite')) ?>
+                </div>
+            </div>
+        <?php } ?>
+        <?php if ($inscription->getCoTutelle()) {
+            echo $this->partial('admission/partial/document/document', [
+                'fieldset' => $fieldset->get('documentsCotutelle'),
+                'documents' => $documents,
+                'individu' => $individu,
+            ]);
+        } ?>
+        <?php if ($inscription->getCoEncadrement()) {
+            echo $this->partial('admission/partial/document/document', [
+                'fieldset' => $fieldset->get('documentsCoencadrement'),
+                'documents' => $documents,
+                'individu' => $individu,
+            ]);
+        }
+    } ?>
+</div>
+
+<?php
+if($canAccederCommentaires) {
+    echo $this->partial('admission/partial/verification/verification', [
+        'admission' => $admission,
+        'fcg' => $this->formControlGroup(),
+        'fieldset' => $fieldset->get("verificationDocument"),
+        'element' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument() : null,
+        'elementVerification' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument()->first()->getVerificationDocument() : null,
+    ]);
+}
+?>
+
+<div class="row notifier_commentaires_ajoutes">
+    <?php
+    //Permettre aux gestionnaires de notifier l'étudiant que des commentaires ont été rentrés, seulement
+    //si le dossier n'est pas encore noté comme complet et que des commentaires ont été renseignés
+    if($canNotifierCommentairesAjoutesAdmission && !$admission->isDossierComplet() && $admission->hasComments()){ ?>
+<!--        <a href="--><?php //echo $this->url('admission/notifier-commentaires-ajoutes', [
+//            'admission' => $admission->getId(),
+//        ], [
+//            'query' => ['redirect' => $returnUrl],
+//        ]) ?><!--"-->
+<!--           class="btn btn-primary collapsable-action"-->
+<!--           title="Notifier l'étudiant des commentaires ajoutés ?"-->
+<!--           data-toggle="confirmationx"-->
+<!--           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant des commentaires ajoutés à son dossier ?">Notifier-->
+<!--            l'étudiant des commentaires ajoutés</span></a>-->
+    <?php }
+    if($canNotifierDossierIncomplet && !$admission->isDossierComplet()){
+        //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>
+        <a class="btn btn-primary access_notification_dossier_incomplet" data-operation="NotificationDossierIncomplet">Notifier l'étudiant que son dossier est incomplet</a>
+        <div class="modal fade" id="modalShowConfirmationNotificationDossierIncomplet" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Confirmation de l'opération</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Êtes-vous sûr·e de vouloir notifier l'étudiant que son dossier est incomplet, cela entrainera la dévalidation de l'attestation sur l'honneur de l'étudiant, si celle-ci a été effectuée ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+                        <a href="<?php echo $this->url(
+                            'admission/notifier-dossier-incomplet',
+                            ['admission' => $admission->getId()],
+                            ['query' => ['redirect' => $returnUrl]])?>"
+                           class="btn btn-success collapsable-action validation_action_operation"
+                           title="Notifier l'étudiant que son dossier est incomplet ?">
+                            Valider
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+</div>
+<div class="row_sous_partie">
+    <div class="title_sous_partie">
+        <h2 class="titre_sous_partie">Signatures</h2>
+    </div>
+    <?php
+    unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
+    echo $this->partial('admission/admission/partial/circuit-signatures', [
+        'operations' => $operations,
+        'individu' => $individu,
+        'returnUrl' => $returnUrl,
+        'operationEnAttente' => $operationEnAttente,
+        'admission' => $admission,
+        'showActionButtons' => true
+    ]);
+    if ($canGenererRecapitulatif) { ?>
+        <a class="btn btn-primary"
+           href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
+           target="_blank">
+            <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
+            Télécharger le récapitulatif du dossier d'admission
+        </a>
+    <?php } ?>
+</div>

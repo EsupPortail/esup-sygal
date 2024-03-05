@@ -1,0 +1,636 @@
+@charset "UTF-8";
+label:not(:empty):not(:has(*))::after, .label_en::after, .titre_sous_partie_en, .titre_label_champ_form_en {
+  content: attr(data-after);
+  font-style: italic;
+  font-weight: bold; }
+
+h1 {
+  color: #004980; }
+
+.introduction {
+  text-align: left;
+  color: #707070;
+  margin-left: 50px; }
+
+.row_sous_partie {
+  margin-top: 50px; }
+
+.title_sous_partie {
+  background: #00498099;
+  padding-left: 15px;
+  border-radius: 8px; }
+
+.titre_sous_partie {
+  text-align: left;
+  padding: 5px;
+  color: #FFFFFF;
+  font-size: 20px;
+  margin: 0; }
+
+.titre_sous_partie_en {
+  margin-left: 10px;
+  font-size: 15px; }
+
+.titre_sous_partie_type_document_en {
+  margin-left: 10px;
+  font-size: 10px;
+  font-weight: bold; }
+
+.row_fin_formulaire {
+  text-align: end;
+  margin-top: 30px; }
+
+.col_fin_formulaire > input {
+  margin-right: 15px; }
+
+.informations-title-sous-partie {
+  color: #FFFFFF;
+  margin-top: revert; }
+
+.row.subfield {
+  margin: 15px; }
+
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107; }
+
+.boutons_gestionnaires {
+  display: flex;
+  text-align: end; }
+
+.bouton_gestionnaire {
+  margin-right: 15px; }
+
+.observations_gestionnaire {
+  margin-top: 10px;
+  margin-bottom: 25px; }
+
+.observations_gestionnaire > .col {
+  text-align: right;
+  color: #ccc;
+  text-decoration: none; }
+
+.observations_gestionnaire > div > div > div > label {
+  display: inline-flex;
+  margin-right: 15px; }
+
+.observations_gestionnaire > div > div > div > label > input {
+  display: none; }
+
+.observations_gestionnaire > div > div > div > .btn-danger.selected::after {
+  content: "\2715"; }
+
+.commentaires_gestionnaire .partie_etudiant {
+  display: flex; }
+
+.commentaires_gestionnaire .commentaire_gestionnaire {
+  margin-left: 30px;
+  margin-top: 30px; }
+
+.commentaires_gestionnaire .info-commentaire {
+  margin-left: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.verification_gestionnaire {
+  margin-left: 30px;
+  display: inline-block;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease; }
+
+.verification_gestionnaire::before {
+  margin-right: 8px; }
+
+.aucune_action_effectuee_commentaire {
+  background-color: #00498099;
+  color: white; }
+
+.aucune_action_effectuee_commentaire::before {
+  content: "\002139"; }
+
+.aucune_action_effectuee_commentaire:hover {
+  background-color: #003d6699; }
+
+.pas_de_commentaire_ajoute {
+  background-color: #b95a26; }
+
+.pas_de_commentaire_ajoute::before {
+  content: "\26A0"; }
+
+.pas_de_commentaire_ajoute:hover {
+  background-color: #824012; }
+
+.commentaire_gestionnaire {
+  background-color: #d23544;
+  color: #fff; }
+
+.commentaire_gestionnaire::before {
+  content: "\26A0"; }
+
+.commentaire_gestionnaire:hover {
+  background-color: #bb2d3b; }
+
+.info-commentaire {
+  width: 500px; }
+
+.partie_complete {
+  background-color: #38833b;
+  color: #fff;
+  border-radius: 4px; }
+
+.partie_complete::before {
+  content: "\2713"; }
+
+.partie_complete:hover {
+  background-color: #45a049; }
+
+.notifier_commentaires_ajoutes, .notifier_gestionnaires {
+  display: flex;
+  justify-content: flex-end; }
+
+.notifier_commentaires_ajoutes > a, .notifier_gestionnaires > a {
+  width: auto; }
+
+.partie_etudiant > p {
+  margin-top: 30px; }
+
+.observations_gestionnaire > div > div > div > .btn-success.selected::after {
+  content: "\2713"; }
+
+.loading {
+  cursor: progress;
+  pointer-events: none; }
+
+.dossier_bulle_information {
+  position: relative;
+  display: inline-block;
+  cursor: pointer; }
+
+.form_admission {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  position: relative; }
+
+.label_ine {
+  display: initial; }
+
+input[name="etudiant[ine]"] {
+  margin-bottom: 0.8rem;
+  margin-top: 0.18rem; }
+
+.label_index, .input_index, .bouton_acces_dossier_index {
+  width: auto; }
+
+.bouton_acces_dossier {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  /* Pour centrer verticalement sur toute la hauteur de la fenêtre - ajustez selon vos besoins */ }
+
+.acces_dossier {
+  text-align: center;
+  width: fit-content; }
+
+.structure_non_declaree {
+  color: #a94442;
+  font-style: italic;
+  margin-bottom: unset; }
+
+.info_ine {
+  border-width: inherit;
+  padding: unset;
+  background-color: unset; }
+
+.checkbox_admission > .mb-2 > .multicheckbox > .form-check-label {
+  display: inline-block;
+  padding-right: 15px; }
+
+input[type="radio"][name="etudiant[civilite]"] {
+  opacity: 0.5;
+  pointer-events: none; }
+
+div.mb-2:has(input[type="hidden"][name="etudiant[individu]"]),
+div.mb-2:has(input[type="hidden"][name="etudiant[paysNaissanceId]"]),
+div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
+  display: none; }
+
+.informations {
+  font-style: italic; }
+
+.checkbox_admission.checkbox_diplome {
+  margin-left: 20px;
+  margin-top: 15px; }
+
+.form-select {
+  font-size: inherit;
+  padding: .15rem .425rem .315rem .45rem; }
+
+.informations-confidentialite-souhaitee {
+  align-items: center;
+  display: flex; }
+
+.title_sous_partie > .row > .col {
+  align-items: center;
+  display: flex; }
+
+.titre_specifites {
+  margin-top: 7px !important; }
+
+.titre_these > span {
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: unset; }
+
+.titre_these > div {
+  display: inline;
+  float: left; }
+
+.individu_non_enregistre {
+  color: darkred; }
+
+.mb-2 > .multicheckbox > .form-check-label {
+  display: inline-block;
+  padding-right: 15px; }
+
+.informations-pieces_justificatives > p {
+  text-align: left;
+  color: #004980;
+  margin-bottom: 5px; }
+
+.informations-pieces_justificatives {
+  border-bottom: 1px dashed #004980; }
+
+.element {
+  display: inline-flex;
+  align-items: center; }
+
+.label-file,
+.date_televersement,
+.action_file {
+  display: flex;
+  align-items: center; }
+
+.upload_file > i {
+  cursor: pointer;
+  font-size: 15px; }
+
+span {
+  margin-right: 7px; }
+
+i:hover {
+  opacity: 0.6; }
+
+.upload_file > input {
+  display: none; }
+
+.upload_file > i {
+  font-style: unset; }
+
+.upload_file {
+  margin-top: 20px; }
+
+.file_charte_doctorat, .file_convention_formation_doctorale {
+  display: none;
+  width: auto; }
+
+.charteDoctoraleOperations, .conventionFormationDoctoraleOperations {
+  display: none; }
+
+.file_convention_formation_doctorale {
+  height: 150px; }
+
+#modalShowConventionFormationDoctorale #loading-indicator {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  border-radius: 10px;
+  padding: 20px; }
+
+#modalShowConventionFormationDoctorale #loading-indicator .spinner {
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite; }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+.date_televersement:empty {
+  display: none; }
+
+.date_televersement {
+  width: auto; }
+
+.date_televersement > p {
+  margin-bottom: initial; }
+
+.action_file > a {
+  padding-right: 15px !important; }
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #8E8E8E;
+  color: #fff;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  margin-right: 15px; }
+
+.circle_icon-ok {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #2EA662;
+  background-color: #2EA662;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset; }
+
+.circle_waiting {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #F1732D;
+  background-color: #F1732D;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset; }
+
+.circle_icon-ko {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #d23544;
+  background-color: #d23544;
+  color: white;
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
+  font-weight: bold;
+  content: "1";
+  padding-right: unset;
+  margin-right: unset; }
+
+.circle > p {
+  color: #8E8E8E; }
+
+textarea {
+  width: 100%; }
+
+.multipage-nav.next, .multipage-nav, .multipage-nav.submit {
+  float: right; }
+
+.multipage-nav.cancel {
+  clear: both;
+  float: right; }
+
+#contenu-principal {
+  padding-bottom: 95px; }
+
+.validation_attestation > div > div > div > label {
+  margin-left: 7px;
+  vertical-align: sub; }
+
+input[name="validation[saveAttestationHonneur]"] {
+  width: auto;
+  margin-top: revert !important; }
+
+.bouton_validation {
+  display: flex;
+  align-items: end; }
+
+.texte_validation_attestation_honneur {
+  margin-bottom: revert !important; }
+
+.validation_attestation {
+  margin-top: revert !important; }
+
+.access_convention_formation_doctorale.required, .access_charte_doctorat.required {
+  background-color: #F1732D;
+  color: #fff;
+  font-weight: bold; }
+
+.access_convention_formation_doctorale.required:hover, .access_charte_doctorat.required:hover {
+  background-color: #824012; }
+
+/* Style de base de la bulle informative */
+.dossier_incomplet_validation_impossible {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  /* Curseur de type pointer */
+  margin-left: 10px;
+  color: #F1732D; }
+
+.dossier_incomplet_validation_impossible:before {
+  font-size: large; }
+
+.dossier_incomplet_validation_impossible .tooltip-text, .dossier_bulle_information .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s; }
+
+/* Affichage de la bulle informative lorsqu'elle est survolée */
+.dossier_incomplet_validation_impossible:hover .tooltip-text, .dossier_bulle_information:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1; }
+
+.circle_etape {
+  width: fit-content;
+  padding-right: unset;
+  margin-right: 15px; }
+
+.etape_signature {
+  display: flex;
+  align-items: center;
+  width: auto;
+  padding-left: unset; }
+
+.etape_signature > label {
+  color: #707070;
+  font-size: 15px; }
+
+.etape_signature .info_validation {
+  margin-left: 10px; }
+
+.info_validation {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.info_validation > p {
+  margin-bottom: unset;
+  margin-top: unset; }
+
+.etape_signature > a {
+  margin-left: 10px; }
+
+.dossier_complet {
+  border: 3px solid #37AF37;
+  border-radius: 11px;
+  max-width: fit-content; }
+
+.cardsValidation .card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease; }
+
+.dossier_incomplet {
+  border: 3px solid #E69B18;
+  border-radius: 11px;
+  max-width: fit-content; }
+
+.dossier_refuse {
+  border: 3px solid #d23544;
+  border-radius: 11px;
+  max-width: fit-content; }
+
+.dossier_complet > div > p, .dossier_incomplet > div > p, .dossier_refuse > div > p {
+  color: #707070;
+  font-size: 15px; }
+
+.dossier_complet > div > i, .dossier_incomplet > div > i, .dossier_refuse > div > i {
+  font-style: unset; }
+
+.card-body.text-success i.icon, .card-body.text-warning i.icon, .card-body.text-danger i.icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px; }
+
+.card-body.text-success p.card-title, .card-body.text-warning p.card-title, .card-body.text-danger p.card-title {
+  display: inline-block; }
+
+.cardsValidation .card:hover {
+  transform: translateY(-4px);
+  /* Effet de léger soulèvement au survol */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  /* Ombre légèrement plus prononcée au survol */ }
+
+.cardsValidation {
+  margin-top: 15px; }
+
+.convention-formation-doctorale-container > form > .row {
+  margin-bottom: 30px; }
+
+.precisions_action, .precisions_convention_intro {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  width: fit-content; }
+
+.precisions_action p, .precisions_convention_intro p {
+  margin: 0;
+  font-weight: bold;
+  display: inline-block; }
+
+.precisions_action, .precisions_convention_intro i {
+  margin-right: 10px; }
+
+.precisions_convention {
+  font-style: italic; }
+
+.precisions_convention + textarea {
+  margin-bottom: 30px;
+  height: 100px !important; }
+
+@media (max-width: 768px) {
+  .commentaires_gestionnaire .partie_etudiant {
+    flex-direction: column; }
+
+  .individu_recherche_index {
+    display: flex;
+    justify-content: center; }
+
+  .inner.show {
+    position: absolute;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto; }
+
+  ul.dropdown-menu.inner.show > li {
+    font-size: 9px; }
+
+  .detail_file {
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+
+  .row > .date_televersement, .row > .action_file {
+    width: revert; }
+
+  .cards_validation .card {
+    margin: 0 auto;
+    float: none; }
+
+  .bouton_validation {
+    justify-content: center; }
+
+  .libelle_etape {
+    display: flex;
+    align-items: center; }
+
+  .libelle_etape > label {
+    color: #707070;
+    font-size: 1.45vh;
+    margin-left: unset; }
+
+  .circle_etape {
+    margin-right: 10px; }
+
+  .info_validation {
+    margin-bottom: 10px;
+    margin-top: 10px; }
+
+  .cardsValidation {
+    margin-top: 20px; }
+
+  .bouton_etape_validation {
+    display: flex;
+    justify-content: center;
+    align-items: center; } }
+
+/*# sourceMappingURL=admission.css.map */

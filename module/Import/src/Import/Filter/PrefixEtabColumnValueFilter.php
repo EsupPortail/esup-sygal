@@ -2,7 +2,7 @@
 
 namespace Import\Filter;
 
-use Application\Service\Source\SourceServiceAwareTrait;
+use Application\SourceCodeStringHelper;
 use InvalidArgumentException;
 use UnicaenDbImport\Filter\ColumnValue\AbstractColumnValueFilter;
 
@@ -14,50 +14,43 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
 {
     const PARAM_CODE_ETABLISSEMENT = 'code_etablissement';
 
-    use SourceServiceAwareTrait;
-
     /**
+     * Liste des noms de colonnes/attributs à transformer.
+     *
      * @var string[]
      */
-    protected array $columnsToTransform = [
-        'sourceCode', 'source_code',
-        'sourceId', 'source_id',
-        'individuId', 'individu_id',
-        'roleId', 'role_id',
-        'theseId', 'these_id',
-        'doctorantId', 'doctorant_id',
-        'structureId', 'structure_id',
-        'ecoleDoctId', 'ecole_doct_id',
-        'uniteRechId', 'unite_rech_id',
-        'acteurEtablissementId', 'acteur_etablissement_id',
-        'origineFinancementId', 'origine_financement_id',
-    ];
+    protected array $columns = [];
 
     protected ?string $codeEtablissement = null;
+    protected SourceCodeStringHelper $sourceCodeStringHelper;
 
-    public function __construct(?array $columnsToTransform = null)
+
+    public function __construct(array $params = [])
     {
-        if ($columnsToTransform !== null) {
-            $this->columnsToTransform = $columnsToTransform;
-        }
+        parent::__construct($params);
+
+        $this->sourceCodeStringHelper = new SourceCodeStringHelper();
     }
 
     public function __toString(): string
     {
         return "Préfixage par le code établissement des colonnes/attributs suivants : " . PHP_EOL .
-            implode(', ', $this->columnsToTransform);
+            implode(', ', $this->columns);
     }
 
-    public function setParams(array $params)
+    public function setParams(array $params): void
     {
-        if (array_key_exists($key = self::PARAM_CODE_ETABLISSEMENT, $params)) {
+        if (array_key_exists('columns', $params)) {
+            $this->columns = (array) $params['columns'];
+        }
+        if (array_key_exists(self::PARAM_CODE_ETABLISSEMENT, $params)) {
             $this->codeEtablissement = $params[self::PARAM_CODE_ETABLISSEMENT];
         }
 
         parent::setParams($params);
     }
 
-    public function filter(string $name, $value)
+    public function filter($value)
     {
         if ($value === null) {
             return null;
@@ -70,8 +63,8 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
             ));
         }
 
-        if (in_array($name, $this->columnsToTransform)) {
-            $value = $this->codeEtablissement . '::' . $value;
+        if (in_array($this->columnName, $this->columns)) {
+            $value = $this->sourceCodeStringHelper->addPrefixTo($value, $this->codeEtablissement);
         }
 
         return $value;

@@ -121,6 +121,20 @@ class QualiteService {
     }
 
     /**
+     * @return Qualite[]
+     */
+    public function getQualitesForAdmission() : array
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere("qualite.admission = :admission")
+            ->setParameter("admission", "O")
+            ->orderBy('qualite.libelle', 'ASC')
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param int|null $id
      * @return Qualite|null
      */

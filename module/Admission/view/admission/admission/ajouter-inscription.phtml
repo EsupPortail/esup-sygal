@@ -1,0 +1,20 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ *
+ * @see \Admission\Controller\AdmissionController::inscriptionAction()
+ */
+?>
+
+<?php echo $this->partial('admission/admission/partial/header', []); ?>
+
+<?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<?php
+$multipageFormFieldset = $this->multipageFormFieldset();
+$multipageFormFieldset->setPartial('admission/partial/inscriptionInfos');
+echo $multipageFormFieldset;
+?>

@@ -34,6 +34,7 @@
         <one-to-many field="etablissement" target-entity="Structure\Entity\Db\Etablissement"  mapped-by="structure"/>
         <one-to-many field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale" mapped-by="structure"/>
         <one-to-many field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche" mapped-by="structure"/>
+        <one-to-many field="composanteEnseignement" target-entity="Structure\Entity\Db\ComposanteEnseignement"  mapped-by="structure"/>
 
         <one-to-many field="roles" target-entity="Application\Entity\Db\Role" mapped-by="structure"/>
 

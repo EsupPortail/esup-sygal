@@ -10,6 +10,7 @@ class TypeStructure
     const CODE_ETABLISSEMENT   = 'etablissement';
     const CODE_ECOLE_DOCTORALE = 'ecole-doctorale';
     const CODE_UNITE_RECHERCHE = 'unite-recherche';
+    const CODE_COMPOSANTE_ENSEIGNEMENT = 'composante-enseignement';
 
     /**
      * @var string
@@ -113,5 +114,13 @@ class TypeStructure
     public function isUniteRecherche()
     {
         return $this->getCode() === self::CODE_UNITE_RECHERCHE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isComposanteEnseignement()
+    {
+        return $this->getCode() === self::CODE_COMPOSANTE_ENSEIGNEMENT;
     }
 }
