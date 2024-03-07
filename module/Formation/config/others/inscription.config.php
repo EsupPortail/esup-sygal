@@ -92,6 +92,15 @@ return [
                         InscriptionPrivileges::INSCRIPTION_ATTESTATION,
                     ],
                 ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
+                        'accorder-sursis'
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_SURSIS,
+                    ],
+                ],
             ],
         ],
     ],
@@ -246,6 +255,17 @@ return [
                                     'defaults' => [
                                         'controller' => InscriptionController::class,
                                         'action'     => 'generer-attestation',
+                                    ],
+                                ],
+                            ],
+                            'accorder-sursis' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/accorder-sursis/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'accorder-sursis',
                                     ],
                                 ],
                             ],

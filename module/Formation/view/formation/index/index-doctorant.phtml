@@ -220,7 +220,7 @@ $now = new DateTime();
         </table>
 
         <h2>
-            Formations "En prépration"
+            Formations "En préparation"
         </h2>
 
         <table class="table table-sm">
@@ -432,25 +432,38 @@ $now = new DateTime();
                         <?php if ($inscription->computeDureePresence() > 0) : ?>
                             <?php if ($canRepondreEnquete AND $inscription->getValidationEnquete() === null) : ?>
                                 <?php
-                                    $dateFin = $inscription->getSession()->getDateFin();
-                                    $dateButoir = $dateFin->add(new DateInterval('P'.$delai.'D'));
+                                    $delai = $inscription->getSursisEnquete() ?: $delai;
+                                    $heurodatagesSession = $inscription->getSession()->getHeurodatages();
+                                    $date = null;
+                                    $dateButoir = null;
+                                    foreach($heurodatagesSession as $heurodatageSession){
+                                        $dateFin = $heurodatageSession->getEtat()->getCode() === Etat::CODE_CLOTURER ? DateTime::createFromFormat('d/m/Y', $heurodatageSession->getHeurodatage()->format('d/m/Y')) : $date;
+                                        $dateButoir = $dateFin ? $dateFin->add(new DateInterval('P'.$delai.'D')) : $dateButoir;
+                                    }
                                 ?>
-                                <?php if ($now <= $dateButoir) : ?>
+                                <?php if ($dateButoir && $now <= $dateButoir) : ?>
                                     <span class="text-warning"> Date butoir : <?php echo $dateButoir->format('d/m/Y'); ?></span><br/>
                                     <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
                                     <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>"
-                                       title="Compléter l'enquête (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
+                                       title="Compléter l'enquête (date butoir : <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
                                     >
                                         <span class="icon icon-edit"></span>
                                         Compléter l'enquête
                                     </a>
                                     <br/>
-                                <?php else : ?>
+                                <?php elseif($dateButoir && $now > $dateButoir) : ?>
                                     <span class="text-danger"
-                                          title="Impossible de valider l'enquête après la date butoir (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
+                                          title="Impossible de valider l'enquête après la date butoir (date butoir : <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
                                     >
                                         <span class="icon icon-unchecked"></span>
                                         Date butoir dépassée
+                                    </span>
+                                <?php else : ?>
+                                    <span class="text-danger"
+                                          title="<?= $delai ?> jours à partir de la clôture de la session pour répondre et valider" data-bs-toggle="tooltip" data-bs-html="true"
+                                    >
+                                        <span class="icon icon-edit"></span>
+                                        Compléter l'enquête
                                     </span>
                                 <?php endif; ?>
                             <?php endif; ?>

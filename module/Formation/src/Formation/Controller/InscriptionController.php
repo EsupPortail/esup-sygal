@@ -9,6 +9,7 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
+use Formation\Provider\Parametre\FormationParametres;
 use Formation\Service\Exporter\Attestation\AttestationExporterAwareTrait;
 use Formation\Service\Exporter\Convocation\ConvocationExporterAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
@@ -26,6 +27,7 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class InscriptionController extends AbstractController
 {
@@ -42,6 +44,7 @@ class InscriptionController extends AbstractController
     use StructureDocumentServiceAwareTrait;
     use AttestationExporterAwareTrait;
     use ConvocationExporterAwareTrait;
+    use ParametreServiceAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(?PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -170,6 +173,28 @@ class InscriptionController extends AbstractController
             ]);
         }
         return $vm;
+    }
+
+    public function accorderSursisAction()
+    {
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if($data["sursisEnquete"]){
+                $inscription->setSursisEnquete($data["sursisEnquete"]);
+                $this->inscriptionService->update($inscription);
+            }
+        }
+
+        $delai = $this->parametreService->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE);
+
+        return new ViewModel([
+            "title" => "Accorder un sursis pour la saisie de l'enquête",
+            "inscription" => $inscription,
+            'delai' => $delai
+        ]);
     }
 
     /** GESTION DES LISTES ********************************************************************************************/

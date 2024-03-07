@@ -19,6 +19,7 @@ use Notification\Service\NotifierService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class InscriptionControllerFactory {
 
@@ -55,6 +56,7 @@ class InscriptionControllerFactory {
         $structureDocumentService = $container->get(StructureDocumentService::class);
         $attestationExporter = $container->get(AttestationExporter::class);
         $convocationExporter = $container->get(ConvocationExporter::class);
+        $parametreService = $container->get(ParametreService::class);
 
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
@@ -75,6 +77,7 @@ class InscriptionControllerFactory {
         /** autres*****************************************************************************************************/
         $controller->setAttestationExporter($attestationExporter);
         $controller->setConvocationExporter($convocationExporter);
+        $controller->setParametreService($parametreService);
         $controller->setRenderer($renderer);
 
         /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */

@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
+use Formation\Entity\Db\Etat;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieFormAwareTrait;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormAwareTrait;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormAwareTrait;
@@ -342,9 +343,15 @@ class EnqueteQuestionController extends AbstractController {
 
         $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
 
-        $delai = $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE);
-        $date = DateTime::createFromFormat('d/m/Y', $inscription->getSession()->getDateFin()->format('d/m/Y'));
-        $date->add(new DateInterval('P'.$delai.'D'));
+        $delai = $inscription->getSursisEnquete() ?: $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE);
+        $heurodatagesSession = $inscription->getSession()->getHeurodatages();
+        $date = null;
+        foreach($heurodatagesSession as $heurodatageSession){
+            $date = $heurodatageSession->getEtat()->getCode() === Etat::CODE_CLOTURER ? DateTime::createFromFormat('d/m/Y', $heurodatageSession->getHeurodatage()->format('d/m/Y')) : $date;
+            if($date){
+                $date->add(new DateInterval('P'.$delai.'D'));
+            }
+        }
 
         return new ViewModel([
             'inscription' => $inscription,
@@ -352,6 +359,7 @@ class EnqueteQuestionController extends AbstractController {
             'categories' => $categories,
             'form' => $form,
             'date' => $date,
+            'delai' => $delai
         ]);
     }
 

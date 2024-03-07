@@ -25,6 +25,7 @@ class Inscription implements HistoriqueAwareInterface {
     private ?string $description = null;
     private ?Collection $presences = null;
     private ?DateTime $validationEnquete = null;
+    private ?int $sursisEnquete = null;
 
     /**
      * @return int
@@ -148,6 +149,16 @@ class Inscription implements HistoriqueAwareInterface {
     public function setValidationEnquete(?DateTime $validationEnquete): void
     {
         $this->validationEnquete = $validationEnquete;
+    }
+
+    public function getSursisEnquete(): ?int
+    {
+        return $this->sursisEnquete;
+    }
+
+    public function setSursisEnquete(?int $sursisEnquete): void
+    {
+        $this->sursisEnquete = $sursisEnquete;
     }
 
     public function getPositionListeComplementaire() : int

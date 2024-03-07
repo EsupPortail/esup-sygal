@@ -13,4 +13,5 @@ class InscriptionPrivileges extends Privileges {
     const INSCRIPTION_SUPPRIMER  = 'formation_inscription-supprimer';
     const INSCRIPTION_CONVOCATION = 'formation_inscription-generer_convocation';
     const INSCRIPTION_ATTESTATION = 'formation_inscription-generer_attestation';
+    const INSCRIPTION_SURSIS = 'formation_inscription-accorder_sursis';
 }

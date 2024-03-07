@@ -1,0 +1,21 @@
+<?php
+
+use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\Controller\InscriptionController::accorderSursisAction()
+ * @var Inscription $inscription
+ * @var int $delai
+ */
+?>
+
+<form method="post" action="<?php echo $this->url("formation/inscription/accorder-sursis",['inscription' => $inscription->getId()],[], true); ?>">
+    <i>Ce sursis supplémentaire commencera à partir de la mise à l'état "Cloturé" de cette session de formation.<br>
+        Vous ne pouvez pas accorder un sursis inférieur à la règle générale énoncée dans l'application : <?= $delai ?> jours.
+    </i><br><br>
+    <label for="sursisEnquete"> Accorder un sursis de  </label>
+    <input id="sursisEnquete" name="sursisEnquete" type="number" min="<?= $delai ?>" value="<?php echo $inscription->getSursisEnquete() ?>"/> jours
+    <input type="submit" value="Valider" class="btn btn-primary" style="margin-top: initial"/>
+</form>

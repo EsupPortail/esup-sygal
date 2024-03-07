@@ -12,6 +12,7 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
  * @var EnqueteQuestion[] $questions
  * @var EnqueteReponseForm $form
  * @var DateTime $date
+ * @var int $delai
  */
 
 $categories = array_filter($categories, function (EnqueteCategorie $a) { return $a->estNonHistorise();});
@@ -30,7 +31,11 @@ usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return 
     <span class="lead">
         <strong>
             <span class="icon icon-attention"></span>
-            Attention, vous devez repondre et valider l'enquête pour le <?php echo $date->format('d/m/Y'); ?>.
+            <?php if($date){ ?>
+                        Attention, vous devez répondre et valider l'enquête pour le <?php echo $date->format('d/m/Y'); ?>.
+            <?php }else{ ?>
+                        Attention, lorsque la session sera indiquée comme clôturée, vous aurez pour répondre et valider l'enquête <?= $delai ?> jours à partir de la clôture.
+            <?php } ?>
         </strong>
     </span>
 </div>

@@ -7,6 +7,8 @@
  */
 
 use Application\Entity\AnneeUniv;
+use Formation\Entity\Db\Etat;
+use Formation\Provider\Privilege\InscriptionPrivileges;
 use These\Entity\Db\These;
 use Formation\Entity\Db\Inscription;
 
@@ -14,6 +16,8 @@ $actionListePrincipale = (!isset($options['action-liste-principale']) OR $option
 $actionListeComplementaire = (!isset($options['action-liste-complementaire']) OR $options['action-liste-complementaire'] !== false);
 $actionHistoriser = (!isset($options['action-historiser']) OR $options['action-historiser'] !== false);
 $actionSupprimer = (!isset($options['action-supprimer']) OR $options['action-supprimer'] !== false);
+
+$canAccorderSursis = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SURSIS));
 
 $doctorant = $inscription->getDoctorant();
 $session = $inscription->getSession();
@@ -58,7 +62,9 @@ $these = current($doctorant->getTheses());
     </span>
     <br/>
     Inscrit le <?php echo $inscription->getHistoCreation()->format("d/m/Y à H:i"); ?>
-
+    <?php if ($inscription->getSursisEnquete()) : ?>
+        <br><b>Possède un sursis personnel de <?= $inscription->getSursisEnquete() ?> jours pour répondre à l'enquête</b>
+    <?php endif; ?>
     <?php if ($actionListePrincipale OR $actionListeComplementaire OR $actionHistoriser OR $actionSupprimer) : ?>
         <br/>
         <?php if ($inscription->estNonHistorise() AND $actionListePrincipale) : ?>
@@ -92,6 +98,15 @@ $these = current($doctorant->getTheses());
                 <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
                     <span class="icon icon-restaurer"></span></a>
+            <?php endif; ?>
+            <?php if ($canAccorderSursis && $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER AND $inscription->getListe() == Inscription::LISTE_PRINCIPALE) : ?>
+                <?php /** @see \Formation\Controller\InscriptionController::accorderSursisAction() */?>
+                <a class="btn btn-primary action ajax-modal" data-event="modification"
+                   title="Accorder un sursis à <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour la saisie de l'enquête"
+                   href="<?php echo $this->url('formation/inscription/accorder-sursis', ['inscription' => $inscription->getId()], true); ?>"
+                >
+                    Accorder un sursis
+                </a>
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($actionSupprimer AND $inscription->estHistorise()) : ?>
