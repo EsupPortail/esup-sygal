@@ -9,6 +9,7 @@
         </id>
 
         <field name="disciplineDoctorat" type="string" column="DISCIPLINE_DOCTORAT" length="60" nullable="true"/>
+        <field name="composanteDoctoratLibelle" type="string" column="COMPOSANTE_DOCTORAT_LIBELLE" length="255" nullable="true"/>
         <field name="nomDirecteurThese" type="string" column="NOM_DIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="prenomDirecteurThese" type="string" column="PRENOM_DIRECTEUR_THESE" length="60" nullable="true"/>
         <field name="emailDirecteurThese" type="string" column="MAIL_DIRECTEUR_THESE" length="60" nullable="true"/>

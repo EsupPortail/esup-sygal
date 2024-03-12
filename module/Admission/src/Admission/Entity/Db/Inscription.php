@@ -70,6 +70,11 @@ class Inscription implements HistoriqueAwareInterface{
     private $ecoleDoctorale;
 
     /**
+     * @var string|null
+     */
+    private $composanteDoctoratLibelle;
+
+    /**
      * @var ComposanteEnseignement
      */
     private $composanteDoctorat;
@@ -416,6 +421,16 @@ class Inscription implements HistoriqueAwareInterface{
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getComposanteDoctoratLibelle(): ?string
+    {
+        return $this->composanteDoctoratLibelle;
+    }
+
+    public function setComposanteDoctoratLibelle(?string $composanteDoctoratLibelle): void
+    {
+        $this->composanteDoctoratLibelle = $composanteDoctoratLibelle;
     }
 
     /**
@@ -862,9 +877,9 @@ class Inscription implements HistoriqueAwareInterface{
         return $this->getEtablissementInscription()?->getStructure()->getLibelle();
     }
 
-    public function getDenominationDirecteurThese() : string
+    public function getDenominationDirecteurThese() : ?string
     {
-        return $this->getNomDirecteurThese()." ".$this->getPrenomDirecteurThese();
+        return ($this->getNomDirecteurThese() || $this->getPrenomDirecteurThese()) ? $this->getNomDirecteurThese()." ".$this->getPrenomDirecteurThese() : null;
     }
 
     /**

@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 throw new Error("Erreur de chargement");
                             }
                             response.blob().then(function(myBlob) {
-                                load(myBlob)
+                                   load(myBlob)
                             });
                             if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
                                 $('.charteDoctoraleOperations').show();
@@ -286,7 +286,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
 
-            // Vérifier si l'ID d'input correspond à une entrée dans le tableau de documents
             if (documents.hasOwnProperty(inputId)) {
                 // Construire l'objet de fichier
                 var fichier = {
@@ -299,22 +298,30 @@ document.addEventListener("DOMContentLoaded", function() {
                     fichier.options['file'] = {
                         name: documents[inputId].libelle,
                         size: documents[inputId].size,
-                        type: documents[inputId].type
                     };
+                    // Ajouter le fichier à FilePond
+                    pond.addFiles([fichier]);
                 }
-                // Ajouter le fichier à FilePond
-                pond.addFiles([fichier]);
             }
 
             //GESTION DE LA CHARTE DOCTORALE
             var accessButtonCharteDoctorale = document.querySelector('.access_charte_doctorat');
             var fileCharteDoctoratDiv = document.querySelector('.file_charte_doctorat');
 
-            accessButtonCharteDoctorale.addEventListener('click', function(event) {
-                event.preventDefault();
-                $('#modalShowCharteDoctorale').modal('show');
-                fileCharteDoctoratDiv.style.display = 'block';
-            });
+            if(accessButtonCharteDoctorale){
+                accessButtonCharteDoctorale.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    $('#modalShowCharteDoctorale').modal('show');
+                    //Chargement de la charte doctorale lors de la première apparition de la popup, sinon le fichier peut ne pas apparaitre
+                    if (documents.hasOwnProperty(inputId)) {
+                        if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
+                            // Ajouter le fichier à FilePond
+                            pond.addFiles([fichier]);
+                        }
+                    }
+                    fileCharteDoctoratDiv.style.display = 'block';
+                });
+            }
 
             //GESTION DE LA CONVENTION DE FORMATION DOCTORALE
             var conventionFormationDoctorale = document.getElementById("conventionFormationDoctoraleObject");
@@ -374,6 +381,22 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.body.style.pointerEvents = 'none';
                     document.body.style.cursor = 'wait';
                 });
+            });
+        }
+
+        var lienRecapitulatif = document.querySelector('.access_recapitulatif_dossier_signe');
+        var divRecapitulatif = document.getElementById('file_recapitulatif_dossier_signe');
+
+        if(lienRecapitulatif){
+            lienRecapitulatif.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Toggle de la visibilité de la div
+                if (divRecapitulatif.style.display === 'none' || divRecapitulatif.style.display === '') {
+                    divRecapitulatif.style.display = 'block';
+                } else {
+                    divRecapitulatif.style.display = 'none';
+                }
             });
         }
     }

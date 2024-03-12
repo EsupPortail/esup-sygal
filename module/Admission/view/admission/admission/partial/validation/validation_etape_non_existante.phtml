@@ -47,20 +47,21 @@ $canValiderOperation =
             }
             //Si la validation par les gestionnaires ne peut-être effectuée, on affiche ce message
             if((!$canValiderOperation && $operationEnAttente instanceof AdmissionValidation && $operationEnAttente->getTypeValidation()->getCode() == TypeValidation::CODE_VALIDATION_GESTIONNAIRE)){
-                echo "<span class='icon icon-warning dossier_incomplet_validation_impossible' data-toggle='tooltip'>
-                        <span class='tooltip-text'>";
+
                 $admission = $operation->getAdmission();
 
                 //Si le dossier n'est pas complet, on affiche ce message
-                echo !$admission->isDossierComplet() ? "Chaque partie de ce dossier doit-être notée comme complète<br>afin d'effectuer cette validation<br><br>" : null;
+                $message = !$admission->isDossierComplet() ? "Chaque partie de ce dossier doit-être notée comme complète<br>afin d'effectuer cette validation<br><br>" : null;
 
                 $directeur = $admission->getInscription()->first()->getDirecteur();
                 $coDirecteur = !$admission->getInscription()->first()->getCoDirection() || $admission->getInscription()->first()->getCoDirecteur();
                 //Si le directeur/co-directeur de thèse ne sont pas renseigné, on affiche ce message
-                echo !$directeur || !$coDirecteur ? "Le directeur de thèse ainsi que le co-directeur (le cas échéant) doivent-être enregistrés en base de données" : null;
+                $message .= !$directeur || !$coDirecteur ? "Le directeur de thèse ainsi que le co-directeur (le cas échéant) doivent-être enregistrés en base de données" : null;
 
-                echo "</span>
-                     </span>";
+                if($message){
+                    echo "<span class='icon icon-warning dossier_incomplet_validation_impossible' data-toggle='tooltip'>
+                        <span class='tooltip-text'>".$message."</span></span>";
+                }
             }
             ?>
         </div>

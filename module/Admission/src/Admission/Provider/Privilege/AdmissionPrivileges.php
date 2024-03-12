@@ -41,6 +41,8 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_SUPPRIMER_SON_DOCUMENT = 'admission-admission-supprimer-son-document';
     const ADMISSION_TELECHARGER_TOUT_DOCUMENT = 'admission-admission-telecharger-tout-document';
     const ADMISSION_TELECHARGER_SON_DOCUMENT = 'admission-admission-telecharger-son-document';
+    const ADMISSION_GERER_RECAPITULATIF_DOSSIER = 'admission-admission-gerer-recapitulatif-signe-dossier';
+    const ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER = 'admission-admission-acceder-recapitulatif-signe-dossier';
 
     //notification
     const ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES  = 'admission-admission-commentaires-ajoutes';

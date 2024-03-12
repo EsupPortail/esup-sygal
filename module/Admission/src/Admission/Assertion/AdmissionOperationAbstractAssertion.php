@@ -42,22 +42,6 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         return true;
     }
 
-    protected function assertEtatAdmission(Admission $admission)
-    {
-        $this->assertTrue(
-            in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE, Admission::ETAT_EN_COURS_VALIDATION]),
-            "Le dossier d'admission doit être en cours"
-        );
-    }
-
-    protected function assertDirectionAdmission(Admission $admission)
-    {
-        $this->assertTrue(
-            in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE, Admission::ETAT_EN_COURS_VALIDATION]),
-            "Le dossier d'admission doit être en cours"
-        );
-    }
-
     protected function assertDossierCompletAdmission(AdmissionValidation $admissionValidation)
     {
         //cette condition ne concerne pas la première validation du dossier
@@ -69,7 +53,6 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
             "Le dossier d'admission doit être en complet"
         );
     }
-
     /**
      * todo :
      */
