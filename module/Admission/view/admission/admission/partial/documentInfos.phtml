@@ -231,7 +231,6 @@ if($canAccederCommentaires) {
     ]);
 
     if ($canGenererRecapitulatif) { ?>
-        <div class="recapitulatif_buttons">
             <a class="btn btn-primary"
                href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
                target="_blank">
@@ -252,7 +251,6 @@ if($canAccederCommentaires) {
                     Accéder au récapitulatif signé
                 <?php } ?>
             </a>
-            </div>
             <div id="file_recapitulatif_dossier_signe">
                 <?php if ($canGererRecapitulatifSigne) {
                     echo $this->partial('admission/partial/document/document', [
