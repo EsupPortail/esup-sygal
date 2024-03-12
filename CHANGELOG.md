@@ -8,6 +8,7 @@ Journal des modifications
   - Dépôt de pièces justificatives
   - Remplissage et validation en ligne de la convention de formation doctorale
   - Validation en ligne de la charte doctorale
+- [FIX] Plantage lors de l'accès à la page de création d'une UR/ED.
 
 7.0.1
 -----

@@ -64,7 +64,7 @@ class Structure implements
      */
     protected $sourceCode;
 
-    protected string $code;
+    protected ?string $code = null;
 
     /**
      * @var TypeStructure
@@ -188,7 +188,7 @@ class Structure implements
     /**
      * Get Code
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
