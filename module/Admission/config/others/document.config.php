@@ -6,7 +6,6 @@ use Admission\Assertion\AdmissionAssertion;
 use Admission\Controller\Document\DocumentController;
 use Admission\Controller\Document\DocumentControllerFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
-use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 
@@ -33,6 +32,7 @@ return array(
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_TELEVERSER_TOUT_DOCUMENT,
                         AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT,
+                        AdmissionPrivileges::ADMISSION_GERER_RECAPITULATIF_DOSSIER
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
@@ -44,6 +44,7 @@ return array(
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUT_DOCUMENT,
                         AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT,
+                        AdmissionPrivileges::ADMISSION_GERER_RECAPITULATIF_DOSSIER
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],

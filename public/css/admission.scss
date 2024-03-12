@@ -679,6 +679,10 @@ input[name="validation[saveAttestationHonneur]"] {
   margin-top: 15px;
 }
 
+#file_recapitulatif_dossier_signe{
+  display: none;
+}
+
 //Convention de formation doctorale
 .convention-formation-doctorale-container > form > .row {
   margin-bottom: 30px;
@@ -782,5 +786,9 @@ input[name="validation[saveAttestationHonneur]"] {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .access_recapitulatif_dossier_signe{
+    margin-top: 15px;
   }
 }

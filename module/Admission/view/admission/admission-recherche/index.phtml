@@ -168,8 +168,8 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                             if($directeur){
                                 echo $directeur;
                             }else{
-                                if($admission->getInscription()->first()->getDenominationDirecteurThese()){
-                                    echo $admission->getInscription()->first()->getDenominationDirecteurThese(); ?>
+                                if(!empty($admission->getInscription()->first()->getDenominationDirecteurThese())){
+                                    echo $admission->getInscription()->first()->getDenominationDirecteurThese();?>
                                     <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
                                         <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                                     </span>

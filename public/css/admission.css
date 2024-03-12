@@ -551,6 +551,9 @@ input[name="validation[saveAttestationHonneur]"] {
 .cardsValidation {
   margin-top: 15px; }
 
+#file_recapitulatif_dossier_signe {
+  display: none; }
+
 .convention-formation-doctorale-container > form > .row {
   margin-bottom: 30px; }
 
@@ -631,6 +634,9 @@ input[name="validation[saveAttestationHonneur]"] {
   .bouton_etape_validation {
     display: flex;
     justify-content: center;
-    align-items: center; } }
+    align-items: center; }
+
+  .access_recapitulatif_dossier_signe {
+    margin-top: 15px; } }
 
 /*# sourceMappingURL=admission.css.map */

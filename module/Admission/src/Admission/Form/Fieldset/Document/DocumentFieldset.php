@@ -103,6 +103,11 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 ->setLabel("Formulaire de demande de co-encadrement à compléter (dès que le co-encadrant est connu)")
                 ->setAttributes(["id" => "ADMISSION_DEMANDE_COENCADREMENT"])
         );
+        $this->add(
+            (new File('recapitulatifDossierSigne'))
+                ->setLabel("Récapitulatif du dossier d'admission signé par la direction de l'établissement")
+                ->setAttributes(["id" => "ADMISSION_RECAPITULATIF_DOSSIER_SIGNE"])
+        );
 
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
         $verificationFieldset->setName("verificationDocument");

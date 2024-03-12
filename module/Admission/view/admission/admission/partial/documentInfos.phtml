@@ -10,7 +10,6 @@ use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
-use Laminas\Form\Element\Select;
 
 /**
  * @var PhpRenderer         $this
@@ -19,7 +18,6 @@ use Laminas\Form\Element\Select;
  * @var Admission $admission
  * @var array[] $operations
  * @var array               $documents
- * @var boolean $dossierValideParGestionnaire
  * @var AdmissionOperationInterface $operationEnAttente
  * @var array $conventionFormationDoctoraleOperations
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
@@ -31,18 +29,9 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
 $canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
 $canNotifierDossierIncomplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET);
 $canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
-$canModifierAdmission  =
-    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) ||
-    $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-if(!empty($admission) && !$canModifierAdmission) {
-    foreach ($fieldset->getElements() as $element) {
-        if ($element instanceof Laminas\Form\Element\Checkbox || $element instanceof Select || $element instanceof \Laminas\Form\Element\File) {
-            $element->setAttribute('disabled', true);
-        } else {
-            $element->setAttribute('readonly', true);
-        }
-    }
-}
+$canAccederRecapitulatifSigne  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER);
+$canGererRecapitulatifSigne  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_GERER_RECAPITULATIF_DOSSIER));
+
 $individu = $admission ?$admission->getIndividu()->getId() : null;
 /** @var Etudiant $etudiant */
 $etudiant = $admission ? $admission->getEtudiant()->first() : null;
@@ -52,8 +41,8 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
 ?>
 
 <script>
-    var documents = <?php echo json_encode($documents); ?>;
-    var individuId = <?php echo $individu; ?>;
+    let documents = <?php echo json_encode($documents); ?>;
+    let individuId = <?php echo $individu; ?>;
 </script>
 
 <div class="row_sous_partie">
@@ -198,20 +187,6 @@ if($canAccederCommentaires) {
 
 <div class="row notifier_commentaires_ajoutes">
     <?php
-    //Permettre aux gestionnaires de notifier l'étudiant que des commentaires ont été rentrés, seulement
-    //si le dossier n'est pas encore noté comme complet et que des commentaires ont été renseignés
-    if($canNotifierCommentairesAjoutesAdmission && !$admission->isDossierComplet() && $admission->hasComments()){ ?>
-<!--        <a href="--><?php //echo $this->url('admission/notifier-commentaires-ajoutes', [
-//            'admission' => $admission->getId(),
-//        ], [
-//            'query' => ['redirect' => $returnUrl],
-//        ]) ?><!--"-->
-<!--           class="btn btn-primary collapsable-action"-->
-<!--           title="Notifier l'étudiant des commentaires ajoutés ?"-->
-<!--           data-toggle="confirmationx"-->
-<!--           data-message="Êtes-vous sûr·e de vouloir notifier l'étudiant des commentaires ajoutés à son dossier ?">Notifier-->
-<!--            l'étudiant des commentaires ajoutés</span></a>-->
-    <?php }
     if($canNotifierDossierIncomplet && !$admission->isDossierComplet()){
         //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>
         <a class="btn btn-primary access_notification_dossier_incomplet" data-operation="NotificationDossierIncomplet">Notifier l'étudiant que son dossier est incomplet</a>
@@ -254,12 +229,46 @@ if($canAccederCommentaires) {
         'admission' => $admission,
         'showActionButtons' => true
     ]);
+
     if ($canGenererRecapitulatif) { ?>
-        <a class="btn btn-primary"
-           href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
-           target="_blank">
-            <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
-            Télécharger le récapitulatif du dossier d'admission
-        </a>
-    <?php } ?>
+        <div class="recapitulatif_buttons">
+            <a class="btn btn-primary"
+               href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
+               target="_blank">
+                <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
+                Télécharger le récapitulatif du dossier d'admission
+            </a>
+    <?php }
+
+    //Affichage du bouton seulement si l'on peut gérer un récap signé
+    //ou soit que le dossier ne soit pas plus en cours de saisie et que le récap soit déjà uploadé
+    if($canAccederRecapitulatifSigne){
+        if($canGererRecapitulatifSigne || isset($documents[$fieldset->get('recapitulatifDossierSigne')->getAttribute('id')])){ ?>
+            <a class="btn btn-primary access_recapitulatif_dossier_signe" href="">
+                <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
+                <?php if ($canGererRecapitulatifSigne) { ?>
+                    Téléverser le récapitulatif signé
+                <?php } else { ?>
+                    Accéder au récapitulatif signé
+                <?php } ?>
+            </a>
+            </div>
+            <div id="file_recapitulatif_dossier_signe">
+                <?php if ($canGererRecapitulatifSigne) {
+                    echo $this->partial('admission/partial/document/document', [
+                        'fieldset' => $fieldset->get('recapitulatifDossierSigne')->setAttribute('disabled', false),
+                        'documents' => $documents,
+                        'individu' => $individu,
+                    ]);
+                } else {
+                    echo $this->partial('admission/partial/document/document', [
+                        'fieldset' => $fieldset->get('recapitulatifDossierSigne'),
+                        'documents' => $documents,
+                        'individu' => $individu,
+                    ]);
+                } ?>
+            </div>
+        <?php }
+    } ?>
+
 </div>

@@ -5,24 +5,14 @@ namespace Admission;
 
 use Admission\Assertion\AdmissionAssertion;
 use Admission\Assertion\AdmissionAssertionFactory;
-use Admission\Assertion\Validation\AdmissionValidationAssertion;
-use Admission\Assertion\Validation\AdmissionValidationAssertionFactory;
-use Admission\Config\ModuleConfig;
-use Admission\Config\ModuleConfigFactory;
 use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
 use Admission\Controller\AdmissionRechercheController;
 use Admission\Controller\AdmissionRechercheControllerFactory;
-use Admission\Controller\Validation\AdmissionValidationController;
-use Admission\Controller\Validation\AdmissionValidationControllerFactory;
 use Admission\Event\AdmissionEventListener;
 use Admission\Event\AdmissionEventListenerFactory;
-use Admission\Event\Validation\AdmissionValidationEventListener;
-use Admission\Event\Validation\AdmissionValidationEventListenerFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
-use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
-use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleFormFactory;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Form\Fieldset\Document\DocumentFieldsetFactory;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
@@ -54,8 +44,6 @@ use Admission\Service\Admission\AdmissionRechercheService;
 use Admission\Service\Admission\AdmissionRechercheServiceFactory;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Admission\AdmissionServiceFactory;
-use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
-use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceFactory;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Etudiant\EtudiantService;
@@ -122,6 +110,7 @@ return array(
                             AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET,
                             AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF,
+                            AdmissionPrivileges::ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER,
                             AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE
                         ],
                         'resources'  => ['Admission'],

@@ -220,6 +220,7 @@ create table IF NOT EXISTS admission_inscription
     discipline_doctorat                       varchar(60),
     specialite_doctorat                       varchar(255),
     composante_doctorat_id                    bigint REFERENCES composante_ens (id),
+    composante_doctorat_libelle               varchar(255),
     ecole_doctorale_id                        bigint REFERENCES ecole_doct (id),
     unite_recherche_id                        bigint REFERENCES unite_rech (id),
     etablissement_inscription_id              bigint REFERENCES etablissement (id),
@@ -746,24 +747,9 @@ from unicaen_avis_type t,
      unicaen_avis_valeur v
 where t.code = 'AVIS_ADMISSION_PRESIDENCE'
   and v.code in (
-                 'AVIS_ADMISSION_VALEUR_INCOMPLET',
                  'AVIS_ADMISSION_VALEUR_POSITIF',
                  'AVIS_ADMISSION_VALEUR_NEGATIF'
     )
-    ON CONFLICT DO NOTHING;
-
-insert into unicaen_avis_type_valeur_complem (avis_type_valeur_id, code, obligatoire_un_au_moins, type, libelle)
-with tmp (code, oblig, type, libelle) as (select 'PB_INFOS',
-                                                 false,
-                                                 'information',
-                                                 'Si le dossier d''admission est jugé incomplet, l''étudiant devra reprendre le circuit de signatures depuis le début...')
-select tv.id, concat(t.code, '__', v.code, '__', tmp.code), tmp.oblig, tmp.type, tmp.libelle
-from tmp,
-     unicaen_avis_type_valeur tv
-         join unicaen_avis_type t on t.id = tv.avis_type_id and t.code = 'AVIS_ADMISSION_PRESIDENCE'
-         join unicaen_avis_valeur v on v.id = tv.avis_valeur_id and v.code in (
-         'AVIS_ADMISSION_VALEUR_INCOMPLET'
-         )
     ON CONFLICT DO NOTHING;
 
 insert into unicaen_avis_type_valeur_complem (avis_type_valeur_id, code, obligatoire_un_au_moins, type, libelle)
@@ -785,7 +771,6 @@ from tmp,
      unicaen_avis_type_valeur tv
          join unicaen_avis_type t on t.id = tv.avis_type_id and t.code = 'AVIS_ADMISSION_PRESIDENCE'
          join unicaen_avis_valeur v on v.id = tv.avis_valeur_id and v.code in (
-                                                                               'AVIS_ADMISSION_VALEUR_INCOMPLET',
                                                                                'AVIS_ADMISSION_VALEUR_POSITIF',
                                                                                'AVIS_ADMISSION_VALEUR_NEGATIF'
          )
@@ -859,7 +844,8 @@ VALUES (207, 'ADMISSION_DIPLOME_BAC', 'Diplôme de Bac + 5 permettant l''accès 
         'Photocopie du passeport (ou de la carte d''identité pour les ressortissants européens)'),
        (216, 'ADMISSION_DIPLOMES_TRAVAUX_EXPERIENCE_PRO', 'Diplômes, travaux et expérience professionnelle détaillés'),
        (217, 'ADMISSION_DEMANDE_COTUTELLE', 'Formulaire de demande de cotutelle'),
-       (218, 'ADMISSION_DEMANDE_COENCADREMENT', 'Formulaire de demande de co-encadrement')
+       (218, 'ADMISSION_DEMANDE_COENCADREMENT', 'Formulaire de demande de co-encadrement'),
+       (219, 'ADMISSION_RECAPITULATIF_DOSSIER_SIGNE', 'Récapitulatif du dossier d''admission signé par la direction de l''établissement')
     ON CONFLICT DO NOTHING;
 
 -- GESTION DES RôLES
@@ -974,6 +960,14 @@ with d(ordre, code, lib) as (select 1,
                                     'admission-telecharger-son-document',
                                     'Télécharger un document dans son dossier d''admission'
                              union
+                             select 17,
+                                    'admission-gerer-recapitulatif-signe-dossier',
+                                    'Gérer l''ajout/retrait du récapitulatif signé du dossier d''admission'
+                             union
+                             select 17,
+                                    'admission-acceder-recapitulatif-signe-dossier',
+                                    'Accéder au récapitulatif signé du dossier d''admission'
+                             union
                              select 19,
                                     'admission-commentaires-ajoutes',
                                     'Notifier l''étudiant des commentaires ajoutés sur son dossier d''admission'
@@ -1062,6 +1056,10 @@ with data(categ, priv) as (select 'admission', 'admission-lister-mes-dossiers-ad
                            union
                            select 'admission', 'admission-telecharger-son-document'
                            union
+                           select 'admission', 'admission-gerer-recapitulatif-signe-dossier'
+                           union
+                           select 'admission', 'admission-acceder-recapitulatif-signe-dossier'
+                           union
                            select 'admission', 'admission-commentaires-ajoutes'
                            union
                            select 'admission', 'admission-notifier-dossier-incomplet'
@@ -1116,6 +1114,8 @@ with data(categ, priv) as (select 'admission', 'admission-rechercher-dossiers-ad
                            union
                            select 'admission', 'admission-telecharger-son-document'
                            union
+                           select 'admission', 'admission-acceder-recapitulatif-signe-dossier'
+                           union
                            select 'admission', 'admission-acceder-commentaires'
                            union
                            select 'admission', 'admission-convention-formation-visualiser'
@@ -1144,6 +1144,8 @@ with data(categ, priv) as (select 'admission', 'admission-afficher-son-dossier-a
                            union
                            select 'admission', 'admission-telecharger-son-document'
                            union
+                           select 'admission', 'admission-acceder-recapitulatif-signe-dossier'
+                           union
                            select 'admission', 'admission-acceder-commentaires'
                            union
                            select 'admission', 'admission-convention-formation-generer'
@@ -1168,7 +1170,9 @@ with data(categ, priv) as (select 'admission', 'admission-commentaires-ajoutes'
                            union
                            select 'admission', 'admission-verifier'
                            union
-                           select 'admission', 'admission-generer-recapitulatif')
+                           select 'admission', 'admission-generer-recapitulatif'
+                           union
+                           select 'admission', 'admission-gerer-recapitulatif-signe-dossier')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
@@ -1204,6 +1208,8 @@ with data(categ, priv) as (select 'admission', 'admission-afficher-son-dossier-a
                            select 'admission', 'admission-supprimer-avis-sien'
                            union
                            select 'admission', 'admission-telecharger-son-document'
+                           union
+                           select 'admission', 'admission-acceder-recapitulatif-signe-dossier'
                            union
                            select 'admission', 'admission-convention-formation-visualiser'
                            union

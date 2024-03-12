@@ -11,6 +11,7 @@ use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
+use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -184,6 +185,12 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
                 ])
+        );
+
+        $this->add(
+            (new Text('composanteDoctoratLibelle'))
+                ->setLabel("Composante de rattachement (U.F.R., instituts…)")
+                ->setLabelAttributes(['data-after' => " / Component of attachment"])
         );
 
         $this->add(
