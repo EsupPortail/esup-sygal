@@ -13,10 +13,12 @@ use Doctrine\ORM\Query\Expr\Join;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Formation\Service\Inscription\InscriptionServiceAwareTrait as FormationInscriptionServiceAwareTrait;
 use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Entity\Formation;
 use RapportActivite\Form\RapportActiviteAbstractForm;
 use RapportActivite\Form\RapportActiviteAnnuelForm;
 use RapportActivite\Form\RapportActiviteFinContratForm;
@@ -40,6 +42,7 @@ class RapportActiviteController extends AbstractController
     use ValidationServiceAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
+    use FormationInscriptionServiceAwareTrait;
 
     private RapportActiviteAnnuelForm $annuelForm;
     private RapportActiviteFinContratForm $finContratForm;
@@ -113,7 +116,7 @@ class RapportActiviteController extends AbstractController
     /**
      * Ajout d'un nouveau rapport.
      */
-    public function ajouterAction()
+    public function ajouterAction(): Response|ViewModel
     {
         $this->these = $this->requestedThese();
         $estFinContrat = (bool)$this->params('estFinContrat');
@@ -296,7 +299,7 @@ class RapportActiviteController extends AbstractController
         $this->rapports = $this->rapportActiviteService->findRapportsForThese($this->these);
     }
 
-    private function initForm(RapportActiviteAbstractForm $form, RapportActivite $rapportActivite)
+    private function initForm(RapportActiviteAbstractForm $form, RapportActivite $rapportActivite): void
     {
         if ($rapportActivite->getId() === null) {
             $anneesUnivs = $rapportActivite->getThese()->getAnneesUnivInscription();
@@ -305,6 +308,21 @@ class RapportActiviteController extends AbstractController
                 ->setRapportsExistants($this->rapportActiviteService->findRapportsForThese($rapportActivite->getThese()))
                 ->getAnneesUnivsDisponibles();
             $form->setAnneesUnivs($anneesUnivsPossibles);
+
+            // TODO : Modifier le process/formulaire pour avoir l'année avant et pouvoir ainsi filtrer les formations
+            //
+            // 2 idées :
+            //   - soit générer dans le bouton autant de liens de création de RA qu'il y a de couples (type de RA ; année) possibles
+            //     (ex : 'Annuel 2022', 'Annuel 2023', 'Fin de contrat 2023'). On pourra utiliser ça :
+            //       $anneesUnivsPossiblesPourRapportAnnuel = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportAnnuel();
+            //       $anneesUnivsPossiblesPourRapportFinContrat = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportFinContrat();
+            //     L'avantage est que ça évite aussi l'exception "Interdit de créer ce type de rapport" déclénchée ci-après.
+            //
+            //   - soit modifier le comportement du formulaire pour faire saisir d'abord l'année seule (.e. validation group)
+            //     et ensuite le formulaire entier (avec année grisée) initialisé avec les formations de l'année choisie.
+            //     Cf. AnneeUnivService pour les bornes de début et de fin d'une année univ.
+            $formationInscriptions = $this->inscriptionService->getInscriptionByDoctorantAndAnnee($rapportActivite->getThese()->getDoctorant());
+            $rapportActivite->setFormationsFromInscriptions($formationInscriptions);
 
             if ($rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportFinContrat() ||
                 !$rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {

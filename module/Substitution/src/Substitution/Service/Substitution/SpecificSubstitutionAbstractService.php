@@ -13,32 +13,47 @@ use Webmozart\Assert\Assert;
 
 abstract class SpecificSubstitutionAbstractService implements SpecificSubstitutionServiceInterface
 {
+    protected string $type;
     protected BaseService $entityService;
     protected string $fauxDoublonNpdPrefix = 'faux_doublon_';
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
 
     public function setEntityService(BaseService $entityService): void
     {
         $this->entityService = $entityService;
     }
 
+    public function createSubstitution(string $substituableId, string $npd): Result
+    {
+        $substituantId = $this->entityService->getEntityManager()->getConnection()->executeQuery(
+            $this->generateSqlToCreateSubstitution($npd, $substituableId)
+        )->fetchOne();
+
+        return $this->findOneSubstitutionBySubstituant($substituantId);
+    }
+
     public function countAllSubstitutions(): int
     {
         return $this->entityService->getEntityManager()->getConnection()->executeQuery(
-            'select count(*) nb from (' . $this->generateSqlToFindSubstitutions() . ') tmp'
+            'select count(*) nb from (' . $this->generateSqlToFindSubstitutionsBySubstituant() . ') tmp'
         )->fetchOne();
     }
 
     public function findAllSubstitutions(?int $limit = null): Result
     {
         return $this->entityService->getEntityManager()->getConnection()->executeQuery(
-            $this->generateSqlToFindSubstitutions() . ($limit !== null ? " limit $limit" : '')
+            $this->generateSqlToFindSubstitutionsBySubstituant() . ($limit !== null ? " limit $limit" : '')
         );
     }
 
-    public function findOneSubstitution(int $substituantId): Result
+    public function findOneSubstitutionBySubstituant(int $substituantId): Result
     {
         return $this->entityService->getEntityManager()->getConnection()->executeQuery(
-            $this->generateSqlToFindSubstitutions($substituantId)
+            $this->generateSqlToFindSubstitutionsBySubstituant($substituantId)
         );
     }
 
@@ -136,7 +151,15 @@ abstract class SpecificSubstitutionAbstractService implements SpecificSubstituti
      * Génère le SQL permettant de sélectionner toutes les substituions,
      * ou alors celle spécifiée par l'id du substituant.
      */
-    abstract protected function generateSqlToFindSubstitutions(?int $substituantId = null): string;
+    abstract protected function generateSqlToFindSubstitutionsBySubstituant(?int $substituantId = null): string;
+
+    /**
+     * Génère le SQL permettant de déclencher la création d'une nouvelle substitution pour le NPD spécifié.
+     */
+    protected function generateSqlToCreateSubstitution(string $npd, int $substituableId): string
+    {
+        return "select substit_update_or_create_substitution_with_npd('$this->type', '$npd', $substituableId)";
+    }
 
     /**
      * Recherche d'enregistrements substituables selon un motif texte.

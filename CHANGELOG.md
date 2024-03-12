@@ -8,6 +8,16 @@ Journal des modifications
   - Dépôt de pièces justificatives
   - Remplissage et validation en ligne de la convention de formation doctorale
   - Validation en ligne de la charte doctorale
+- Rapports d'activité : initialisation du formulaire de création d'un nouveau rapport avec les formations suivies (module Formation).
+- Stockage de fichier S3/Filesystem : plus de copie sur disque dans le cas d'une demande d'un fichier issu du Filesystem.
+- Inclusion au script de purge des fichiers temporaires ceux générés par le FichierStorageService.
+- Module Substitutions : amélioration de fonctions pgsql du moteur de substitutions.
+- Module Substitutions : possibilité de lancer la création d'une substitution depuis la page des doublons.
+- Module Substitutions : nouvelles pages d'informations concernant les triggers utilisés en bdd, pour chaque thème.
+- Structures : amélioration visuelle sur la page listant les structures (Etablissement, ED, UR).
+- Listing/recherche d'individus : lien vers la substitution si individu substituant ; nouveau filtre 'Historisés inclus' décoché par défaut ; cosmétique.
+- [FIX] Module Substitutions : plantage de la page consacrée aux doublons (substitutions possibles).
+- [FIX] Page Assistance : plantage de la page lorsque le rôle de l'utilisateur est structure-dépendant.
 - [FIX] Plantage lors de l'accès à la page de création d'une UR/ED.
 
 7.0.1

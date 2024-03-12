@@ -22,12 +22,12 @@ class SubstitutionServiceFactory
         $service = new SubstitutionService();
 
         $service->setSpecificSubstitutionServices([
-            Constants::TYPE_individu => $container->get(IndividuSubstitutionService::class),
-            Constants::TYPE_doctorant => $container->get(DoctorantSubstitutionService::class),
-            Constants::TYPE_structure => $container->get(StructureSubstitutionService::class),
-            Constants::TYPE_etablissement => $container->get(EtablissementSubstitutionService::class),
-            Constants::TYPE_ecole_doct => $container->get(EcoleDoctoraleSubstitutionService::class),
-            Constants::TYPE_unite_rech => $container->get(UniteRechercheSubstitutionService::class),
+            $container->get(IndividuSubstitutionService::class),
+            $container->get(DoctorantSubstitutionService::class),
+            $container->get(StructureSubstitutionService::class),
+            $container->get(EtablissementSubstitutionService::class),
+            $container->get(EcoleDoctoraleSubstitutionService::class),
+            $container->get(UniteRechercheSubstitutionService::class),
         ]);
 
         return $service;

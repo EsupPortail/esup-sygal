@@ -37,7 +37,7 @@ class EtablissementRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder("e");
         if ($nonHistorise) {
-            $qb->andWhereNotHistorise('ur');
+            $qb->andWhereNotHistorise('e');
         }
 
         return $this->_findByStructureId($qb, $structureId);

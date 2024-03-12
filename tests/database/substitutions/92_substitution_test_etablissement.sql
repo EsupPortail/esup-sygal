@@ -8,8 +8,8 @@ CREATE or replace FUNCTION test_substit_etab__set_up() returns void
     language plpgsql
 as
 $$begin
-    alter table etablissement_substit disable trigger substit_trigger_on_etablissement_substit;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit;
+    alter table substit_etablissement disable trigger substit_trigger_on_substit_etablissement;
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure;
 end$$;
 
 
@@ -24,23 +24,23 @@ $$begin
     delete from substit_log sl where type = 'structure' and exists (select id from structure s where sl.substituant_id = s.id and sigle = 'test1234');
 
     alter table structure disable trigger substit_trigger_structure;
-    alter table structure_substit disable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure disable trigger substit_trigger_on_substit_structure;
     alter table etablissement disable trigger substit_trigger_etablissement;
-    alter table etablissement_substit disable trigger substit_trigger_on_etablissement_substit;
+    alter table substit_etablissement disable trigger substit_trigger_on_substit_etablissement;
 
     delete from substit_fk_replacement where type = 'etablissement' and to_id in (select d.id from etablissement d join structure i on d.structure_id = i.id where sigle = 'test1234');
-    delete from etablissement_substit where from_id in (select d.id from etablissement d join structure i on d.structure_id = i.id where sigle = 'test1234');
-    delete from etablissement_substit where to_id in (select d.id from etablissement d join structure i on d.structure_id = i.id where sigle = 'test1234');
+    delete from substit_etablissement where from_id in (select d.id from etablissement d join structure i on d.structure_id = i.id where sigle = 'test1234');
+    delete from substit_etablissement where to_id in (select d.id from etablissement d join structure i on d.structure_id = i.id where sigle = 'test1234');
     delete from etablissement where structure_id in (select id from structure where sigle = 'test1234');
 
-    delete from structure_substit where from_id in (select id from structure where sigle = 'test1234');
-    delete from structure_substit where to_id in (select id from structure where sigle = 'test1234');
+    delete from substit_structure where from_id in (select id from structure where sigle = 'test1234');
+    delete from substit_structure where to_id in (select id from structure where sigle = 'test1234');
     delete from structure where sigle = 'test1234';
 
     alter table structure enable trigger substit_trigger_structure;
-    alter table structure_substit enable trigger substit_trigger_on_structure_substit;
+    alter table substit_structure enable trigger substit_trigger_on_substit_structure;
     alter table etablissement enable trigger substit_trigger_etablissement;
-    alter table etablissement_substit enable trigger substit_trigger_on_etablissement_substit;
+    alter table substit_etablissement enable trigger substit_trigger_on_substit_etablissement;
 end$$;
 
 
@@ -139,14 +139,14 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -168,9 +168,9 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_1.id, /*'azerty.de',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user
     returning * into v_pre_etablissement_1;
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id;
-    assert v_etablissement_substit.id is null,
-        format('[TEST] Attendu : aucun etablissement_substit avec from_id = %L', v_pre_etablissement_1.id);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id;
+    assert v_substit_etablissement.id is null,
+        format('[TEST] Attendu : aucun substit_etablissement avec from_id = %L', v_pre_etablissement_1.id);
 
     --
     -- Test insertion d'un doublon de etablissement HISTORISÉ :
@@ -184,23 +184,23 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_2.id, /*'azerty.al',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, current_timestamp
     returning * into v_pre_etablissement_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_2.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L', v_pre_etablissement_2.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_2.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L', v_pre_etablissement_2.id, v_npd_etablissement_a);
 
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     /*assert v_etablissement.domaine = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', /*'azerty.al',*/ v_etablissement.domaine);*/
-    assert v_etablissement.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_etablissement.structure_id);
+    assert v_etablissement.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_etablissement.structure_id);
 
     perform test_substit_etab__tear_down();
 END$$;
@@ -218,7 +218,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -226,7 +226,7 @@ $$declare
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -279,15 +279,15 @@ begin
     --
     update etablissement set histo_destruction = current_timestamp, histo_destructeur_id = 1 where id = v_pre_etablissement_3.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.histo_destruction is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L et histo_destruction not null', v_pre_etablissement_3.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.histo_destruction is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L et histo_destruction not null', v_pre_etablissement_3.id, v_npd_etablissement_a);
 
-    /*select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    /*select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     assert v_etablissement.domaine = 'azerty.fr'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', 2, /*'azerty.fr',*/ v_etablissement.domaine);*/
 
@@ -307,7 +307,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -315,7 +315,7 @@ $$declare
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -374,23 +374,23 @@ begin
     --
     update etablissement set histo_destruction = null, histo_destructeur_id = null where id = v_pre_etablissement_3.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a and histo_destruction is not null;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L et histo_destruction not null', v_pre_etablissement_3.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a and histo_destruction is not null;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L et histo_destruction not null', v_pre_etablissement_3.id, v_npd_etablissement_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a and histo_destruction is null;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L et histo_destruction null', v_pre_etablissement_3.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a and histo_destruction is null;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L et histo_destruction null', v_pre_etablissement_3.id, v_npd_etablissement_a);
 
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     /*assert v_etablissement.domaine = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', /*'azerty.al',*/ v_etablissement.domaine);*/
-    assert v_etablissement.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_etablissement.structure_id);
+    assert v_etablissement.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_etablissement.structure_id);
 
     perform test_substit_etab__tear_down();
 END$$;
@@ -408,7 +408,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -416,7 +416,7 @@ $$declare
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -463,7 +463,7 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_etablissement_3;
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
 
     --
     -- Passage d'un etablissement à la source application :
@@ -471,20 +471,20 @@ begin
     --
     update etablissement set source_id = 1 where id = v_pre_etablissement_1.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where id = v_etablissement_substit.id;
-    assert v_etablissement_substit.id is null,
-        format('[TEST] Attendu : 1 etablissement_substit supprimé avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where id = v_substit_etablissement.id;
+    assert v_substit_etablissement.id is null,
+        format('[TEST] Attendu : 1 substit_etablissement supprimé avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id;
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     /*assert v_etablissement.domaine = 'azerty.fr'/*car azerty.al a changé de source*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', /*'azerty.fr',*/ v_etablissement.domaine);*/
-    assert v_etablissement.structure_id = v_structure_substit.to_id,
-        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_etablissement.structure_id);
+    assert v_etablissement.structure_id = v_substit_structure.to_id,
+        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_etablissement.structure_id);
 
     perform test_substit_etab__tear_down();
 END$$;
@@ -502,7 +502,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -510,7 +510,7 @@ $$declare
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -557,7 +557,7 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_3.id, /*'azerty.org',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_etablissement_3;
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
 
     --
     -- Passage d'un etablissement à la source application :
@@ -572,24 +572,24 @@ begin
     --
     update etablissement set source_id = v_source_id where id = v_pre_etablissement_1.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_1.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_1.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_1.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_1.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where id = v_etablissement_substit.id;
-    assert v_etablissement_substit.id is null,
-        format('[TEST] Attendu : 1 etablissement_substit supprimé avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where id = v_substit_etablissement.id;
+    assert v_substit_etablissement.id is null,
+        format('[TEST] Attendu : 1 substit_etablissement supprimé avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit recréé avec from_id = %L et npd = %L et histo_destruction null', v_pre_etablissement_1.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement recréé avec from_id = %L et npd = %L et histo_destruction null', v_pre_etablissement_1.id, v_npd_etablissement_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id;
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     /*assert v_etablissement.domaine = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', /*'azerty.al',*/ v_etablissement.domaine);*/
-    assert v_etablissement.structure_id = v_structure_substit.to_id,
-        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_etablissement.structure_id);
+    assert v_etablissement.structure_id = v_substit_structure.to_id,
+        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_etablissement.structure_id);
 
     perform test_substit_etab__tear_down();
 END$$;
@@ -607,7 +607,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -616,7 +616,7 @@ $$declare
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -676,23 +676,23 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_4.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, v_npd_etablissement_a
     returning * into v_pre_etablissement_4; -- NB : NPD forcé
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_4.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is null,
-        format('[TEST] Attendu : 0 structure_substit avec from_id = %s et npd = %L car la structure elle n''est pas en doublon', v_pre_structure_4.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_4.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is null,
+        format('[TEST] Attendu : 0 substit_structure avec from_id = %s et npd = %L car la structure elle n''est pas en doublon', v_pre_structure_4.id, v_npd_structure_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_3.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_3.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_4.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %s et npd = %L', v_pre_etablissement_4.id, v_npd_etablissement_a, v_pre_structure_4.id);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_4.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %s et npd = %L', v_pre_etablissement_4.id, v_npd_etablissement_a, v_pre_structure_4.id);
 
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     /*assert v_etablissement.domaine = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', /*'azerty.al',*/ v_etablissement.domaine);*/
-    assert v_etablissement.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_etablissement.structure_id);
+    assert v_etablissement.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_etablissement.structure_id);
 
     perform test_substit_etab__tear_down();
 END$$;
@@ -710,7 +710,7 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
@@ -718,7 +718,7 @@ $$declare
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -753,9 +753,9 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_etablissement_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
     --
     -- Test insertion etablissement puis update du NPD forcé : COCHON Michel cccc@mail.fr
@@ -769,21 +769,21 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_3.id, /*'azerty.al',*/ 'INSA::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_etablissement_3;
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id;
-    assert v_etablissement_substit.to_id is null,
-        format('[TEST] Attendu : aucun etablissement_substit avec from_id = %L ', v_pre_etablissement_3.id);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id;
+    assert v_substit_etablissement.to_id is null,
+        format('[TEST] Attendu : aucun substit_etablissement avec from_id = %L ', v_pre_etablissement_3.id);
 
     update etablissement set npd_force = v_npd_etablissement_a where id = v_pre_etablissement_3.id;
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L', v_pre_etablissement_4.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_3.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L', v_pre_etablissement_3.id, v_npd_etablissement_a);
 
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     /*assert v_etablissement.domaine = 'azerty.al'/*car ordre alpha*/,
         format('[TEST] Attendu : 1 etablissement substituant avec domaine = %L (reçu %L)', /*'azerty.al',*/ v_etablissement.domaine);*/
-    assert v_etablissement.structure_id = v_structure_substit.to_id/*id de l'structure substituant*/,
-        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_structure_substit.to_id, v_etablissement.structure_id);
+    assert v_etablissement.structure_id = v_substit_structure.to_id/*id de l'structure substituant*/,
+        format('[TEST] Attendu : 1 etablissement substituant avec structure_id = %s (reçu %s)', v_substit_structure.to_id, v_etablissement.structure_id);
 
     perform test_substit_etab__tear_down();
 END$$;
@@ -801,14 +801,14 @@ $$declare
 
     v_npd_structure_a varchar(256);
 
-    v_structure_substit structure_substit;
+    v_substit_structure substit_structure;
     v_pre_structure structure;
     v_pre_structure_1 structure;
     v_pre_structure_2 structure;
 
     v_npd_etablissement_a varchar(256);
 
-    v_etablissement_substit etablissement_substit;
+    v_substit_etablissement substit_etablissement;
     v_etablissement etablissement;
     v_pre_etablissement etablissement;
     v_pre_etablissement_1 etablissement;
@@ -842,17 +842,17 @@ begin
     select nextval('etablissement_id_seq'), v_pre_structure_2.id, /*'azerty.fr',*/ 'UCN::'||trunc(10000000000*random()), v_source_id, v_app_user, null
     returning * into v_pre_etablissement_2;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.to_id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.to_id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %L et npd = %L', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
-    assert v_etablissement_substit.to_id is not null,
-        format('[TEST] Attendu : 1 etablissement_substit avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
+    assert v_substit_etablissement.to_id is not null,
+        format('[TEST] Attendu : 1 substit_etablissement avec from_id = %L et npd = %L', v_pre_etablissement_1.id, v_npd_etablissement_a);
 
     -- Modif du NPD forcé pour sortir celui avec azerty.fr de la substitution :
     --   - la substitution de la structure liée perdure ;
@@ -861,16 +861,16 @@ begin
     --   - suppression du substituant.
     update etablissement set npd_force = 'ksldqhflksjdqhfl' where id = v_pre_etablissement_2.id;
 
-    select * into v_structure_substit from structure_substit where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
-    assert v_structure_substit.id is not null,
-        format('[TEST] Attendu : 1 structure_substit avec from_id = %s et npd = %L non historise', v_pre_structure_2.id, v_npd_structure_a);
+    select * into v_substit_structure from substit_structure where from_id = v_pre_structure_2.id and npd = v_npd_structure_a;
+    assert v_substit_structure.id is not null,
+        format('[TEST] Attendu : 1 substit_structure avec from_id = %s et npd = %L non historise', v_pre_structure_2.id, v_npd_structure_a);
 
-    select * into v_etablissement_substit from etablissement_substit where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
-    select count(*) into v_count from etablissement_substit i where to_id = v_etablissement_substit.to_id;
+    select * into v_substit_etablissement from substit_etablissement where from_id = v_pre_etablissement_1.id and npd = v_npd_etablissement_a;
+    select count(*) into v_count from substit_etablissement i where to_id = v_substit_etablissement.to_id;
     assert v_count = 0,
-        format('[TEST] Attendu : 0 etablissement_substit avec substituant = %s', v_etablissement_substit.to_id);
+        format('[TEST] Attendu : 0 substit_etablissement avec substituant = %s', v_substit_etablissement.to_id);
 
-    select * into v_etablissement from etablissement i where id = v_etablissement_substit.to_id;
+    select * into v_etablissement from etablissement i where id = v_substit_etablissement.to_id;
     assert v_etablissement.id is null,
         format('[TEST] Attendu : 1 etablissement substituant supprimé : %s', v_etablissement.id);
 
@@ -895,9 +895,9 @@ select substit_npd_etablissement(pre.*) from pre_etablissement pre order by id d
 select * from pre_structure order by id desc;
 select * from pre_etablissement order by id desc;
 select * from v_structure_doublon order by id desc;
-select * from structure_substit order by id desc;
+select * from substit_structure order by id desc;
 select * from v_etablissement_doublon order by id desc;
-select * from etablissement_substit order by id desc;
+select * from substit_etablissement order by id desc;
 select * from structure order by id desc;
 select * from etablissement order by id desc;
 select * from substit_fetch_data_for_substituant_etablissement('etablissement,ETABLE_HISMAN');

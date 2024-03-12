@@ -4,6 +4,7 @@ namespace Substitution\Service\Substitution\Doctorant;
 
 use Application\Service\BaseService;
 use Doctrine\DBAL\Exception;
+use Substitution\Constants;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Service\Substitution\SpecificSubstitutionAbstractService;
 use UnicaenApp\Exception\RuntimeException;
@@ -11,6 +12,8 @@ use UnicaenApp\Util;
 
 class DoctorantSubstitutionService extends SpecificSubstitutionAbstractService
 {
+    protected string $type = Constants::TYPE_doctorant;
+
     /**
      * @var \Doctorant\Service\DoctorantService
      */
@@ -103,7 +106,7 @@ class DoctorantSubstitutionService extends SpecificSubstitutionAbstractService
         $this->entityService->saveDoctorant($entity);
     }
 
-    public function generateSqlToFindSubstitutions(?int $substituantId = null): string
+    public function generateSqlToFindSubstitutionsBySubstituant(?int $substituantId = null): string
     {
         $andWhereToId = $substituantId ? 'where sub.to_id = ' . $substituantId : null;
         return <<<EOT

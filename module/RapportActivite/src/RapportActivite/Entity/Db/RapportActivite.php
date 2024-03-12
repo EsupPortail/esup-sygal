@@ -2,6 +2,7 @@
 
 namespace RapportActivite\Entity\Db;
 
+use Application\Constants;
 use Application\Entity\AnneeUniv;
 use Application\Entity\Db\TypeValidation;
 use DateTime;
@@ -18,6 +19,7 @@ use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenAvis\Entity\Db\AvisType;
+use Webmozart\Assert\Assert;
 
 class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 {
@@ -38,8 +40,22 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     private ?string $descriptionProjetRecherche = null;
     private ?string $principauxResultatsObtenus = null;
     private ?string $productionsScientifiques = null;
+
+    /**
+     * Le stockage des formations dans le rapport d'activité est très rudimentaire. Comme il n'y a pas de relation
+     * 'to-many' entre le {@see \RapportActivite\Entity\Db\RapportActivite} et les formations suivies, on la
+     * "simule" en stockant une chaîne de caractères représentant au format JSON la liste des formations suivies
+     * (intitulé et durée).
+     */
     private ?string $formationsSpecifiques = null;
+    /**
+     * Le stockage des formations dans le rapport d'activité est très rudimentaire. Comme il n'y a pas de relation
+     * 'to-many' entre le {@see \RapportActivite\Entity\Db\RapportActivite} et les formations suivies, on la
+     * "simule" en stockant une chaîne de caractères représentant au format JSON la liste des formations suivies
+     * (intitulé et durée).
+     */
     private ?string $formationsTransversales = null;
+
     private ?string $actionsDiffusionCultureScientifique = null;
     private ?string $autresActivites = null;
     private ?string $calendrierPrevionnelFinalisation = null;
@@ -175,21 +191,56 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
-     * @return string|null
+     * Initialisation des formations transversales et/ou spécifiques suivies par le doctorant à partir des
+     * {@see \Formation\Entity\Db\Inscription} renseignées dans le module Formation.
+     *
+     * Le stockage des formations dans le rapport d'activité est très rudimentaire. Comme il n'y a pas de relation
+     * 'to-many' entre le {@see \RapportActivite\Entity\Db\RapportActivite} et les formations suivies, on la
+     * "simule" en stockant une chaîne de caractères représentant au format JSON la liste des formations suivies
+     * (intitulé et durée).
+     *
+     * @param \Formation\Entity\Db\Inscription[] $formationInscriptions
      */
-    public function getFormationsSpecifiques(): ?string
+    public function setFormationsFromInscriptions(array $formationInscriptions): void
     {
-        return $this->formationsSpecifiques;
+        // parcours des inscriptions à des sessions pour cumul des durées par intitulé de formation
+        $infosFormations = [];
+        foreach ($formationInscriptions as $inscription) {
+            $session = $inscription->getSession();
+            $dateDebut = $session->getDateDebut();
+            if ($dateDebut > new DateTime()) {
+                continue; // on écarte les sessions situées dans le futur
+            }
+            if ($inscription->computeDureePresence() === 0.0) {
+                continue; // on écarte les inscription dont la durée de présence est nulle
+            }
+            $formation = $session->getFormation();
+            $type = $formation->getType();
+            $intitule = sprintf('%s (%s)', $formation->getLibelle(), $dateDebut->format(Constants::DATE_FORMAT));
+            $infosFormations[$type][$session->getId()] = $infosFormations[$type][$session->getId()] ?? ['intitule' => null, 'temps' => 0.0];
+            $infosFormations[$type][$session->getId()]['intitule'] = $intitule;
+            $infosFormations[$type][$session->getId()]['temps'] += $inscription->computeDureePresence();
+        }
+        foreach ($infosFormations as $type => $data) {
+            $formations = array_map(fn($d) => Formation::fromArray($d), $data);
+            if ($formations) {
+                if ($type === \Formation\Entity\Db\Formation::TYPE_CODE_SPECIFIQUE) {
+                    $this->setFormationsSpecifiques($formations);
+                } elseif ($type === \Formation\Entity\Db\Formation::TYPE_CODE_TRAVERSAL) {
+                    $this->setFormationsTransversales($formations);
+                }
+            }
+        }
     }
 
     /**
      * @return \RapportActivite\Entity\Formation[]
      */
-    public function getFormationsSpecifiquesToArray(): array
+    public function getFormationsSpecifiques(): array
     {
         $toArray = [];
-        if ($actions = $this->getFormationsSpecifiques()) {
-            foreach (json_decode($actions, true) as $array) {
+        if ($formations = $this->formationsSpecifiques) {
+            foreach (json_decode($formations, true) as $array) {
                 $toArray[] = Formation::fromArray($array);
             }
         }
@@ -199,34 +250,32 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     public function getFormationsSpecifiquesTempsTotal(): int
     {
-        return array_reduce($this->getFormationsSpecifiquesToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+        return array_reduce($this->getFormationsSpecifiques(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
     }
 
     /**
-     * @param string|null $formationsSpecifiques
-     * @return self
+     * @param \RapportActivite\Entity\Formation[] $formations
      */
-    public function setFormationsSpecifiques(?string $formationsSpecifiques): self
+    public function setFormationsSpecifiques(array $formations = []): self
     {
-        $this->formationsSpecifiques = $formationsSpecifiques;
+        Assert::allIsInstanceOf($formations, Formation::class);
+
+        usort($formations, fn($a, $b) => $b->getTemps() <=> $a->getTemps());
+        $formations = array_map(fn($entity) => $entity->toArray(), $formations);
+        $formationsAsString = json_encode($formations);
+
+        $this->formationsSpecifiques = $formationsAsString;
+
         return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFormationsTransversales(): ?string
-    {
-        return $this->formationsTransversales;
     }
 
     /**
      * @return \RapportActivite\Entity\Formation[]
      */
-    public function getFormationsTransversalesToArray(): array
+    public function getFormationsTransversales(): array
     {
         $toArray = [];
-        if ($actions = $this->getFormationsTransversales()) {
+        if ($actions = $this->formationsTransversales) {
             foreach (json_decode($actions, true) as $array) {
                 $toArray[] = Formation::fromArray($array);
             }
@@ -237,34 +286,32 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     public function getFormationsTransversalesTempsTotal(): int
     {
-        return array_reduce($this->getFormationsTransversalesToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+        return array_reduce($this->getFormationsTransversales(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
     }
 
     /**
-     * @param string|null $formationsTransversales
-     * @return self
+     * @param \RapportActivite\Entity\Formation[] $formations
      */
-    public function setFormationsTransversales(?string $formationsTransversales): self
+    public function setFormationsTransversales(array $formations = []): self
     {
-        $this->formationsTransversales = $formationsTransversales;
+        Assert::allIsInstanceOf($formations, Formation::class);
+
+        usort($formations, fn($a, $b) => $b->getTemps() <=> $a->getTemps());
+        $formations = array_map(fn($entity) => $entity->toArray(), $formations);
+        $formationsAsString = $formations ? json_encode($formations) : null;
+
+        $this->formationsTransversales = $formationsAsString;
+
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return \RapportActivite\Entity\ActionDiffusionCultureScientifique[]
      */
-    public function getActionsDiffusionCultureScientifique(): ?string
-    {
-        return $this->actionsDiffusionCultureScientifique;
-    }
-
-    /**
-     * @return ActionDiffusionCultureScientifique[]
-     */
-    public function getActionsDiffusionCultureScientifiqueToArray(): array
+    public function getActionsDiffusionCultureScientifique(): array
     {
         $toArray = [];
-        if ($actions = $this->getActionsDiffusionCultureScientifique()) {
+        if ($actions = $this->actionsDiffusionCultureScientifique) {
             foreach (json_decode($actions, true) as $array) {
                 $toArray[] = ActionDiffusionCultureScientifique::fromArray($array);
             }
@@ -275,35 +322,33 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     public function getActionsDiffusionCultureScientifiqueTempsTotal(): int
     {
-        return array_reduce($this->getActionsDiffusionCultureScientifiqueToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+        return array_reduce($this->getActionsDiffusionCultureScientifique(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
     }
 
     /**
-     * @param string|null $actionsDiffusionCultureScientifique
-     * @return self
+     * @param \RapportActivite\Entity\ActionDiffusionCultureScientifique[] $actions
      */
-    public function setActionsDiffusionCultureScientifique(?string $actionsDiffusionCultureScientifique): self
+    public function setActionsDiffusionCultureScientifique(array $actions = []): self
     {
-        $this->actionsDiffusionCultureScientifique = $actionsDiffusionCultureScientifique;
+        Assert::allIsInstanceOf($actions, ActionDiffusionCultureScientifique::class);
+
+        usort($actions, fn($a, $b) => $a->getDate() <=> $b->getDate());
+        $actions = array_map(fn($action) => $action->toArray(), $actions);
+        $actionsAsString = json_encode($actions);
+
+        $this->actionsDiffusionCultureScientifique = $actionsAsString;
+
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return \RapportActivite\Entity\AutreActivite[]
      */
-    public function getAutresActivites(): ?string
-    {
-        return $this->autresActivites;
-    }
-
-    /**
-     * @return AutreActivite[]
-     */
-    public function getAutresActivitesToArray(): array
+    public function getAutresActivites(): array
     {
         $toArray = [];
-        if ($actions = $this->getAutresActivites()) {
-            foreach (json_decode($actions, true) as $array) {
+        if ($activites = $this->autresActivites) {
+            foreach (json_decode($activites, true) as $array) {
                 $toArray[] = AutreActivite::fromArray($array);
             }
         }
@@ -313,16 +358,20 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     public function getAutresActivitesTempsTotal(): int
     {
-        return array_reduce($this->getAutresActivitesToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+        return array_reduce($this->getAutresActivites(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
     }
 
     /**
-     * @param string|null $autresActivites
-     * @return self
+     * @param \RapportActivite\Entity\AutreActivite[] $autresActivites
      */
-    public function setAutresActivites(?string $autresActivites): self
+    public function setAutresActivites(array $autresActivites = []): self
     {
-        $this->autresActivites = $autresActivites;
+        usort($autresActivites, fn($a, $b) => $a->getDate() <=> $b->getDate());
+        $autresActivites = array_map(fn($action) => $action->toArray(), $autresActivites);
+        $autresActivitesAsString = json_encode($autresActivites);
+
+        $this->autresActivites = $autresActivitesAsString;
+
         return $this;
     }
 

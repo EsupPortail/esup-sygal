@@ -2,12 +2,11 @@
 
 namespace Substitution\Service\Substitution\Structure;
 
-use Doctrine\ORM\Query\Expr\Join;
-
+/**
+ * @property string $type Cf. {@see \Substitution\Constants::TYPES}
+ */
 trait StructureConcreteSubstitutionServiceTrait
 {
-    protected string $type;
-
     protected function findEntitiesByText(string $text, string $npd, int $limit = 0): array
     {
         if (strlen($text) < 2) return [];
@@ -62,7 +61,7 @@ trait StructureConcreteSubstitutionServiceTrait
         return $result;
     }
 
-    public function generateSqlToFindSubstitutions(?int $substituantId = null): string
+    public function generateSqlToFindSubstitutionsBySubstituant(?int $substituantId = null): string
     {
         $andWhereToId = $substituantId ? 'where sub.to_id = ' . $substituantId : null;
         return <<<EOT

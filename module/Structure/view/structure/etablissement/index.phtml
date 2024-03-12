@@ -53,6 +53,7 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
         <thead>
         <tr>
             <th> Libellé </th>
+            <th> </th>
             <th> Source </th>
             <th> Code </th>
             <th> Sigle </th>
@@ -72,27 +73,29 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
                 <td>
                     <a href="<?php echo $this->url('etablissement/voir', ['etablissement' => $etablissement->getId()], [], true); ?>">
                         <?php echo $etablissement->getStructure()->getLibelle(); ?>
-                        <?php if ($etablissement->estSubstituant()) : ?>
-                            <a href="<?php echo $this->url('substitution/substitution/voir', ['type' => \Substitution\Constants::TYPE_etablissement, 'id' => $etablissement->getId()]) ?>"
-                               title="Accéder aux détails de cette substitution">
-                                <span class="badge bg-info" title="Cet enregistrement substitue d'autres enregistrements">S</span></a>
-                        <?php endif; ?>
-                        <?php if ($etablissement->getStructure()->estFermee()) : ?>
-                            &nbsp;<span class="badge bg-danger">Structure fermée</span>
-                        <?php endif; ?>
                     </a>
+                </td>
+                <td>
+                    <?php if ($etablissement->getStructure()->estFermee()) : ?>
+                        &nbsp;<span class="badge bg-danger">Structure fermée</span>
+                    <?php endif; ?>
                     <?php if ($etablissement->estMembre()): ?>
-                        <span class="badge bg-primary">Membre</span>
+                        <span class="badge bg-primary" title="Établissement membre">Membre</span>
                     <?php endif ?>
                     <?php if ($etablissement->estAssocie()): ?>
-                        <span class="badge bg-info">Associé</span>
+                        <span class="badge bg-info" title="Établissement associé">Associé</span>
                     <?php endif ?>
                     <?php if ($etablissement->estInscription()): ?>
-                        <span class="badge bg-warning">Inscription</span>
+                        <span class="badge bg-warning" title="Établissement d'inscription">Inscription</span>
                     <?php endif ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getSource(); ?>
+                    <?php if ($etablissement->estSubstituant()) : ?>
+                        <a href="<?php echo $this->url('substitution/substitution/voir', ['type' => \Substitution\Constants::TYPE_etablissement, 'id' => $etablissement->getId()]) ?>"
+                           title="Accéder aux détails de cette substitution">
+                            <span class="badge bg-light text-info" title="Cet enregistrement substitue d'autres enregistrements, cliquez pour en savoir plus...">Substitution</span></a>
+                    <?php endif; ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getStructure()->getCode(); ?>

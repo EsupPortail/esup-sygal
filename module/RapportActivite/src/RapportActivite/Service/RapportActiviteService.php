@@ -3,7 +3,6 @@
 namespace RapportActivite\Service;
 
 use Application\Command\ShellCommandRunnerTrait;
-use Application\Entity\AnneeUniv;
 use Application\Entity\AnneeUnivInterface;
 use Application\Entity\Db\TypeValidation;
 use Application\Exporter\ExporterDataException;
@@ -17,7 +16,6 @@ use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
-use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -25,7 +23,6 @@ use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\EventManager\EventManagerAwareTrait;
-use parametre\src\UnicaenParametre\Exception\ParametreMalTypeException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\RapportActiviteEvent;
@@ -40,14 +37,12 @@ use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
-use UnicaenParametre\Exception\ParametreNotFoundException;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class RapportActiviteService extends BaseService

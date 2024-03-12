@@ -14,6 +14,8 @@ use Substitution\Controller\LogController;
 use Substitution\Controller\LogControllerFactory;
 use Substitution\Controller\SubstitutionController;
 use Substitution\Controller\SubstitutionControllerFactory;
+use Substitution\Controller\TriggerController;
+use Substitution\Controller\TriggerControllerFactory;
 use Substitution\Provider\Privilege\SubstitutionPrivileges;
 use Substitution\Service\Doublon\Doctorant\DoctorantDoublonService;
 use Substitution\Service\Doublon\Doctorant\DoctorantDoublonServiceFactory;
@@ -47,6 +49,8 @@ use Substitution\Service\Substitution\SubstitutionService;
 use Substitution\Service\Substitution\SubstitutionServiceFactory;
 use Substitution\Service\Substitution\UniteRecherche\UniteRechercheSubstitutionService;
 use Substitution\Service\Substitution\UniteRecherche\UniteRechercheSubstitutionServiceFactory;
+use Substitution\Service\Trigger\TriggerService;
+use Substitution\Service\Trigger\TriggerServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [
@@ -70,6 +74,7 @@ return [
                         'voir',
                         'voirSubstitue',
                         'voirSubstituant',
+                        'creer'
                     ],
                     'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
@@ -101,6 +106,17 @@ return [
                 ],
                 [
                     'controller' => ForeignKeyController::class,
+                    'action' => [
+                        'accueil',
+                        'lister',
+                        'lister-enregistrements-lies',
+                    ],
+                    'privileges' => [
+                        SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
+                    ],
+                ],
+                [
+                    'controller' => TriggerController::class,
                     'action' => [
                         'accueil',
                         'lister',
@@ -240,6 +256,20 @@ return [
                                     ],
                                 ],
                             ],
+                            'creer' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/:type/creer/substituable/:substituableId/npd/:npd',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                        'substituableId' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        /** @see SubstitutionController::creerAction() */
+                                        'action' => 'creer',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     'doublon' => [
@@ -275,6 +305,44 @@ return [
                             'route' => '/foreign-key',
                             'defaults' => [
                                 'controller' => ForeignKeyController::class,
+                                'action' => 'accueil',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'lister' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/lister/:type',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'lister',
+                                    ],
+                                ],
+                            ],
+                            'lister-enregistrements-lies' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/lister-enregistrements-lies/:type/:id',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                        'id' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'lister-enregistrements-lies',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'trigger' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/trigger',
+                            'defaults' => [
+                                'controller' => TriggerController::class,
                                 'action' => 'accueil',
                             ],
                         ],
@@ -444,6 +512,42 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'trigger' => [
+                                        'label' => 'Triggers',
+                                        'route' => 'substitution/trigger',
+                                        'pages' => [
+                                            'structure' => [
+                                                'label' => 'Structures',
+                                                'route' => 'substitution/trigger/lister',
+                                                'params' => ['type' => Constants::TYPE_structure],
+                                            ],
+                                            'etablissement' => [
+                                                'label' => 'Etablissements',
+                                                'route' => 'substitution/trigger/lister',
+                                                'params' => ['type' => Constants::TYPE_etablissement],
+                                            ],
+                                            'ecole_doct' => [
+                                                'label' => 'Ecoles doctorales',
+                                                'route' => 'substitution/trigger/lister',
+                                                'params' => ['type' => Constants::TYPE_ecole_doct],
+                                            ],
+                                            'unite_rech' => [
+                                                'label' => 'Unités de recherche',
+                                                'route' => 'substitution/trigger/lister',
+                                                'params' => ['type' => Constants::TYPE_unite_rech],
+                                            ],
+                                            'individu' => [
+                                                'label' => 'Individus',
+                                                'route' => 'substitution/trigger/lister',
+                                                'params' => ['type' => Constants::TYPE_individu],
+                                            ],
+                                            'doctorant' => [
+                                                'label' => 'Doctorants',
+                                                'route' => 'substitution/trigger/lister',
+                                                'params' => ['type' => Constants::TYPE_doctorant],
+                                            ],
+                                        ],
+                                    ],
                                     'log' => [
                                         'label' => 'Logs',
                                         'route' => 'substitution/log',
@@ -494,6 +598,7 @@ return [
             SubstitutionController::class => SubstitutionControllerFactory::class,
             DoublonController::class => DoublonControllerFactory::class,
             ForeignKeyController::class => ForeignKeyControllerFactory::class,
+            TriggerController::class => TriggerControllerFactory::class,
             LogController::class => LogControllerFactory::class,
         ],
     ],
@@ -516,6 +621,7 @@ return [
             UniteRechercheDoublonService::class => UniteRechercheDoublonServiceFactory::class,
 
             ForeignKeyService::class => ForeignKeyServiceFactory::class,
+            TriggerService::class => TriggerServiceFactory::class,
             LogService::class => LogServiceFactory::class,
         ],
     ],

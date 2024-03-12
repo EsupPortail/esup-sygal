@@ -2,6 +2,8 @@
 
 namespace Formation\Service\Inscription;
 
+use DateTime;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Repository\InscriptionRepository;
@@ -97,5 +99,30 @@ class InscriptionService {
         return $seance;
     }
 
-    /** FACADE ********************************************************************************************************/
+    /** Querying ******************************************************************************************************/
+
+    /** @return Inscription[] */
+    public function getInscriptionByDoctorantAndAnnee(Doctorant $doctorant, ?string $type = null, ?int $annee = null): array
+    {
+        $qb = $this->getRepository()->createQueryBuilder('inscription')
+            ->join('inscription.doctorant', 'doctorant')->addSelect('doctorant')
+            ->join('inscription.session', 'session')->addSelect('session')
+            ->join('session.formation', 'formation')->addSelect('formation')
+            ->join('session.seances', 'seance')->addSelect('seance')
+            ->andWhere('inscription.doctorant = :doctorant')->setParameter('doctorant', $doctorant);
+
+        if ($type !== null) {
+            $qb->andWhere('formation.type = :type')->setParameter('type', $type);
+        }
+
+        if ($annee !== null) {
+            $debut = DateTime::createFromFormat('d/m/Y','01/09/'.($annee-1));
+            $fin = DateTime::createFromFormat('d/m/Y','31/08/'.($annee));
+            $qb
+                ->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

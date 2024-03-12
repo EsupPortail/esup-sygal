@@ -3,7 +3,6 @@
 namespace Substitution\Service\Substitution;
 
 use Doctrine\DBAL\Result;
-use Substitution\Constants;
 use Webmozart\Assert\Assert;
 
 class SubstitutionService
@@ -16,10 +15,18 @@ class SubstitutionService
      */
     public function setSpecificSubstitutionServices(array $services): void
     {
-        Assert::allInArray(array_keys($services), Constants::TYPES, 'La clé %s ne fait pas partie des valeurs autorisées : %2$s');
-        Assert::allImplementsInterface($services, SpecificSubstitutionServiceInterface::class);
+        foreach ($services as $service) {
+            Assert::implementsInterface($service, SpecificSubstitutionServiceInterface::class);
+            $this->specificServices[$service->getType()] = $service;
+        }
+    }
 
-        $this->specificServices = $services;
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function createSubstitutionForTypeAndSubstituable(string $type, string $substituableId, string $npd): Result
+    {
+        return $this->specificServices[$type]->createSubstitution($substituableId, $npd);
     }
 
     /**
@@ -43,7 +50,7 @@ class SubstitutionService
      */
     public function findOneSubstitutionForType(string $type, int $substituantId): Result
     {
-        return $this->specificServices[$type]->findOneSubstitution($substituantId);
+        return $this->specificServices[$type]->findOneSubstitutionBySubstituant($substituantId);
     }
 
     public function findSubstituableForTypeByText(string $type, string $text, string $npd): array

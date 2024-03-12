@@ -1,7 +1,6 @@
 <?php
 
 use Application\View\Renderer\PhpRenderer;
-use Substitution\Constants;
 
 /**
  * @var PhpRenderer $this
@@ -13,13 +12,14 @@ use Substitution\Constants;
 
 $tableName = $type;
 $null = '<span class="text-secondary">NULL</span>';
+$npdPrec = null;
 ?>
 
 <?php $this->headTitle($this->translate("Doublons : $type")) ?>
 
 <h1 class="page-header">
     <span class="far fa-clone"></span>
-    <?php echo $this->translate("Substitutions possibles") ?> <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span>
+    <?php echo $this->translate("Substitutions possibles (doublons)") ?> <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span>
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
@@ -27,11 +27,8 @@ $null = '<span class="text-secondary">NULL</span>';
 <p class="lead">
     Voici la liste des enregistrements considérés en doublon (au regard de leur
     <abbr title="Valeur calculée pour un enregistrement à partir de ses attributs discriminants et utilisé pour trouver les doublons">NPD</abbr>)
-    et non encore détectés et substitués automatiquement (ce qui ne devrait pas arriver théoriquement).
-    Si la liste n'est pas vide, vérifiez que le trigger de détection est bien activé sur la table
-    <span class="monospace"><?php echo strtoupper($tableName) ?></span>.
+    et non encore détectés et substitués automatiquement.
 </p>
-
 <?php if ($resultCount = $result->rowCount()): ?>
     <p>
         <?php echo $count ?> doublons trouvés.
@@ -40,8 +37,21 @@ $null = '<span class="text-secondary">NULL</span>';
         <?php endif; ?>
     </p>
 
+    <p class="alert alert-danger w-75">
+        <span class="icon icon-attention"></span> <strong>Votre attention, svp !</strong>
+        Théoriquement, cette liste devrait être vide puisqu'un trigger est sensé détecter
+        les mouvements sur la table <span class="monospace"><?php echo strtoupper($tableName) ?></span>.
+        Toujours est-il que vous pouvez ici lancer manuellement la création d'une substitution qui n'a pas été initiée
+        automatiquement par le moteur de substitutions.
+    </p>
+
     <table class="table table-bordered table-extra-condensed">
         <tr>
+            <th>
+                <label>
+                    <input type="checkbox" class="checkall" name="checkall">
+                </label>
+            </th>
             <th>NPD</th>
             <th>Id</th>
             <th>SOURCE_CODE</th>
@@ -49,13 +59,37 @@ $null = '<span class="text-secondary">NULL</span>';
         </tr>
         <?php while ($row = $result->fetchAssociative()): ?>
             <tr>
+                <td>
+                    <?php if ($npdPrec !== $row['npd']): ?>
+                    <label>
+                        <input type="checkbox" class="checkbox" data-substituable="<?php echo $row['id'] ?>" data-npd="<?php echo $row['npd'] ?>" name="check[]">
+                    </label>
+                    <?php endif ?>
+                </td>
                 <td><?php echo $row['npd'] ?></td>
                 <td><?php echo $row['id'] ?></td>
                 <td><?php echo $row['source_code'] ?></td>
                 <td><?php echo implode(', ', array_map(fn($name) => $row[$name] ?? $null, array_keys($npdAttributes))) ?></td>
             </tr>
+            <?php $npdPrec = $row['npd']; ?>
         <?php endwhile ?>
     </table>
 <?php else: ?>
     <p>Aucun doublon trouvé.</p>
 <?php endif ?>
+
+<?php if ($resultCount): ?>
+    <a class="btn btn-warning disabled"
+       id="btn-creer"
+       href="<?php echo $this->url(
+           'substitution/substitution/creer',
+           ['type' => $type, 'substituableId' => '__substituable__', 'npd' => '__npd__'],
+           ['query' => ['redirect' => $_SERVER['REQUEST_URI']]],
+       ) ?>"><span class="fas fa-play"></span> Créer les substitutions sélectionnées</a>
+<?php endif ?>
+
+<script>
+    $(function() {
+        installCheckboxesForAction($("a#btn-creer"), {substituable: '__substituable__', npd: '__npd__'}, 1);
+    });
+</script>

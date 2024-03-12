@@ -14,7 +14,7 @@ class S3StorageAdapter extends AbstractStorageAdapter
     private ?array $clientConfig;
     private ?S3Client $client = null;
 
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         parent::setConfig($config);
 
@@ -56,7 +56,7 @@ class S3StorageAdapter extends AbstractStorageAdapter
     /**
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    protected function createBucket(string $name)
+    protected function createBucket(string $name): void
     {
         $client = $this->getClient();
 
@@ -85,7 +85,7 @@ class S3StorageAdapter extends AbstractStorageAdapter
     /**
      * @inheritDoc
      */
-    public function saveFileContent(string $fileContent, string $toDirPath, string $toFileName)
+    public function saveFileContent(string $fileContent, string $toDirPath, string $toFileName): void
     {
         $client = $this->getClient();
 
@@ -110,7 +110,7 @@ class S3StorageAdapter extends AbstractStorageAdapter
     /**
      * @inheritDoc
      */
-    public function deleteFile(string $dirPath, string $fileName)
+    public function deleteFile(string $dirPath, string $fileName): void
     {
         $client = $this->getClient();
 
@@ -161,11 +161,13 @@ class S3StorageAdapter extends AbstractStorageAdapter
     /**
      * @inheritDoc
      */
-    public function saveToFilesystem(string $fromDirPath, string $fromFileName, string $toFilesystemPath)
+    public function saveToFilesystem(string $fromDirPath, string $fromFileName, string $toFilesystemPath): string
     {
         $content = $this->getFileContent($fromDirPath, $fromFileName);
 
         file_put_contents($toFilesystemPath, $content);
+
+        return $toFilesystemPath;
     }
 
     private function createS3Client(): S3Client

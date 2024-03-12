@@ -4,11 +4,14 @@ namespace Substitution\Service\Substitution\Structure;
 
 use Application\Service\BaseService;
 use Doctrine\ORM\Query\Expr\Join;
+use Substitution\Constants;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Service\Substitution\SpecificSubstitutionAbstractService;
 
 class StructureSubstitutionService extends SpecificSubstitutionAbstractService
 {
+    protected string $type = Constants::TYPE_structure;
+
     /**
      * @var \Structure\Service\Structure\StructureService
      */
@@ -74,7 +77,7 @@ class StructureSubstitutionService extends SpecificSubstitutionAbstractService
         $this->entityService->saveStructure($entity);
     }
 
-    public function generateSqlToFindSubstitutions(?int $substituantId = null): string
+    public function generateSqlToFindSubstitutionsBySubstituant(?int $substituantId = null): string
     {
         $andWhereToId = $substituantId ? 'where sub.to_id = ' . $substituantId : null;
         return <<<EOT

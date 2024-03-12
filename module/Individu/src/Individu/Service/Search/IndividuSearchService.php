@@ -2,6 +2,7 @@
 
 namespace Individu\Service\Search;
 
+use Application\Search\EstHistorise\EstHistoriseSearchFilterAwareTrait;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\SearchService;
@@ -12,6 +13,7 @@ use Individu\Service\IndividuServiceAwareTrait;
 class IndividuSearchService extends SearchService
 {
     use IndividuServiceAwareTrait;
+    use EstHistoriseSearchFilterAwareTrait;
 
     /**
      * @inheritDoc
@@ -23,7 +25,9 @@ class IndividuSearchService extends SearchService
             ->addSelect('u')
             ->leftJoin('i.utilisateurs', 'u')
             ->addSelect('cu')
-            ->leftJoin('i.complements', 'cu');
+            ->leftJoin('i.complements', 'cu')
+            ->addOrderBy('i.nomUsuel')
+            ->addOrderBy('i.prenom1');
 
         return $qb;
     }
@@ -44,9 +48,12 @@ class IndividuSearchService extends SearchService
         });
         $this->addFilter($textFilter);
 
+        $estHistoriseFilter = $this->getEstHistoriseSearchFilter();
+        $this->addFilter($estHistoriseFilter);
+
         $this->addSorters([
-            (new SearchSorter("Id", 'id')),
-            (new SearchSorter("Nom d'usage", 'nomUsuel'))->setIsDefault()
+            (new SearchSorter("Nom d'usage", 'nomUsuel'))->setIsDefault(),
+            (new SearchSorter("Prénom", 'prenom1'))
         ]);
     }
 }

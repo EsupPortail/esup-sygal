@@ -602,6 +602,10 @@ ul.ui-autocomplete li .extra {
 tr.historise td {
   color: #d22828; }
 
+tr.individu.historise td {
+  color: inherit;
+  opacity: 0.6; }
+
 span.historise::after,
 span.historisee::after {
   margin-left: 3px;

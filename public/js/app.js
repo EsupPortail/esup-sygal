@@ -453,6 +453,83 @@ $(function () {
     });
 });
 
+
+/**
+ * Implémentation d'un cochage multiple et de la màj à chaque cochage du "href" d'un lien de lancement.
+ *
+ * @var $triggerLink Lien de lancement d'une action dont le href sera mis à jour à chaque cochage d'une case
+ * @var paramPatterns `{'Nom du paramètre référencé dans un attribut data du lien': 'Pattern associé à rechercher/remplacer dans le href'}`,
+ * ex : {substituable: '__substituables__', npd: '__npds__'}
+ * @var limit Nombre maximum de cases cochables, illimité par défaut
+ */
+function installCheckboxesForAction($triggerLink, paramPatterns, limit = 0)
+{
+    let checkall = $(".checkall"),
+        checkboxes = $(".checkbox"),
+        urlPattern = $triggerLink.prop("href");
+
+    checkboxes.on('change', function () {
+        const checked = $(this).is(":checked");
+        if (!checked) {
+            checkall.prop("checked", false);
+        }
+        updateCheckboxes();
+        updateTrigger();
+    })
+    checkall.on('change', function () {
+        const checked = $(this).is(":checked");
+        if (!checked) {
+            $(".checkbox:visible").prop("checked", false);
+        } else {
+            $(".checkbox:visible").each(function () {
+                if (isLimitReached()) return;
+                $(this).prop("checked", checked);
+            });
+        }
+        updateCheckboxes();
+        updateTrigger();
+    });
+    updateCheckboxes();
+    updateTrigger();
+
+    function isLimitReached() {
+        return limit > 0 && checkboxes.filter(":checked").length >= limit;
+    }
+
+    function updateCheckboxes() {
+        checkboxes.add(checkall).not(":checked").prop("disabled", isLimitReached());
+    }
+
+    function updateTrigger() {
+        // autorisation ou non du lien
+        let $checkboxes = $(".checkbox:visible:checked");
+        if ($checkboxes.length > 0) {
+            $triggerLink.removeClass('disabled');
+        } else {
+            $triggerLink.addClass('disabled');
+        }
+        // màj du href du lien
+        if (urlPattern === undefined) return;
+        let newHref = urlPattern;
+        for (let paramName in paramPatterns) {
+            const paramPattern = paramPatterns[paramName];
+            const paramValue = generateParamValue($checkboxes, paramName);
+            if (!paramValue) continue;
+            newHref = newHref.replace(paramPattern, paramValue);
+        }
+        $triggerLink.prop("href", newHref);
+    }
+
+    function generateParamValue($checkboxes, paramName) {
+        let names = [];
+        $checkboxes.each(function () {
+            names.push($(this).data(paramName));
+        });
+        return encodeURI(names.join("|"));
+    }
+}
+
+
 // /**
 //  *
 //  * @constructor
