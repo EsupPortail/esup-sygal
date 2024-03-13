@@ -93,9 +93,8 @@ class AdmissionRechercheController extends AbstractController implements SearchC
         //Masquage des actions non voulues dans le circuit de signatures -> celles correspondant à la convention de formation doctorale
         $operations = $this->admissionOperationService->hideOperations($operations, TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE);
         $operationEnAttente = $admission ? $this->admissionOperationRule->getOperationEnAttente($admission) : null;
-        $dossierComplet = $admission?->isDossierComplet();
-
-        unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
 
         //---------------------------Récupération des dossiers d'admissions correspondant aux filtres spécifiés--------------
         $this->restrictFilters();
@@ -110,19 +109,16 @@ class AdmissionRechercheController extends AbstractController implements SearchC
         /** @var SearchResultPaginator $paginator */
         $paginator = $result;
 
-        $etatAdmission = $this->searchService->getFilterValueByName(AdmissionRechercheService::NAME_etatAdmission);
-
         $model = new ViewModel([
             'admissions' => $paginator,
             'text' => $text,
-            'etatAdmission' => $etatAdmission,
             'routeName' => $this->routeName,
             'operations' => $operations,
             'individu' => $individu,
             'admission' => $admission,
             'inputIndividu' => $inputIndividu,
             'operationEnAttente' => $operationEnAttente,
-            'dossierComplet' => $dossierComplet
+            'isOperationAllowedByRole' => $isOperationAllowedByRole
         ]);
         $model->setTemplate($this->indexActionTemplate);
         return $model;

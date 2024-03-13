@@ -417,7 +417,7 @@ create table IF NOT EXISTS admission_type_validation
 
 INSERT INTO admission_type_validation (code, libelle)
 VALUES ('ATTESTATION_HONNEUR_CHARTE_DOCTORALE',
-        'Attestation sur l''honneur par l''étudiant de la bonne lecture de sa charte doctorale');
+        'Attestation par l''étudiant de la bonne lecture de sa charte doctorale');
 INSERT INTO admission_type_validation (code, libelle)
 VALUES ('ATTESTATION_HONNEUR', 'Attestation sur l''honneur de la part de l''étudiant');
 INSERT INTO admission_type_validation (code, libelle)

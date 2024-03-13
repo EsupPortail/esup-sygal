@@ -20,6 +20,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  * @var Individu $individu
  * @var SearchAndSelect $inputIndividu
  * @var AdmissionOperationInterface $operationEnAttente
+ * @var boolean $isOperationAllowedByRole
  *
  * @see \Admission\Controller\AdmissionController::indexAction()
  */
@@ -59,7 +60,8 @@ echo $this->partial('admission/admission/partial/header', []); ?>
         'returnUrl' => $returnUrl,
         'admission' => $admission,
         'operationEnAttente' => $operationEnAttente,
-        'showActionButtons' => true
+        'showActionButtons' => false,
+        'isOperationAllowedByRole' => $isOperationAllowedByRole
     ]);
 } ?>
 

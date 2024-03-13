@@ -10,16 +10,16 @@ use Individu\Entity\Db\Individu;
  * * @var Individu $individu
  * * @var string $returnUrl
  * * @var AdmissionOperationInterface $operationEnAttente
- * * @var bool $dossierComplet
  * * @var Admission $admission
- * @var boolean $showActionButtons
+ * * @var boolean $showActionButtons
+ * * @var boolean $isOperationAllowedByRole
  */
-unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
 echo $this->partial('admission/admission/partial/circuit-signatures', [
     'operations' => $operations,
     'individu' => $admission->getIndividu(),
     'returnUrl' => "",
     'operationEnAttente' => $operationEnAttente,
     'admission' => $admission,
-    'showActionButtons' => $showActionButtons
+    'showActionButtons' => $showActionButtons,
+    'isOperationAllowedByRole' => $isOperationAllowedByRole
 ]);

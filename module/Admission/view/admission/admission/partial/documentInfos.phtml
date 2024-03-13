@@ -21,6 +21,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var AdmissionOperationInterface $operationEnAttente
  * @var array $conventionFormationDoctoraleOperations
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
+ * @var boolean $isOperationAllowedByRole
  * @see \Admission\Controller\AdmissionController::documentAction()
  */
 $form->prepare();
@@ -82,7 +83,8 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         'admission' => $admission,
         'returnUrl' => $returnUrl,
         'conventionFormationDoctoraleOperations' => $conventionFormationDoctoraleOperations,
-        'conventionFormationDoctorale' => $conventionFormationDoctorale
+        'conventionFormationDoctorale' => $conventionFormationDoctorale,
+        'isOperationAllowedByRole' => $isOperationAllowedByRole
     ]);
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('exemplairesCharteDoctorat'),
@@ -90,6 +92,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         'individu' => $individu,
         'admission' => $admission,
         'validation_charte_doctorat' => $operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE],
+        'isOperationAllowedByRole' => $isOperationAllowedByRole,
         'returnUrl' => $returnUrl,
     ]);
     if ($etudiant->getNiveauEtude() == 2) { ?>
@@ -227,7 +230,8 @@ if($canAccederCommentaires) {
         'returnUrl' => $returnUrl,
         'operationEnAttente' => $operationEnAttente,
         'admission' => $admission,
-        'showActionButtons' => true
+        'showActionButtons' => true,
+        'isOperationAllowedByRole' => $isOperationAllowedByRole
     ]);
 
     if ($canGenererRecapitulatif) { ?>

@@ -9,6 +9,7 @@
  * @var string $libelleOperation
  * @var bool $showRangOperation
  * @var boolean $showActionButtons
+ * @var boolean $isOperationAllowedByRole
  */
 
 use Admission\Entity\Db\AdmissionAvis;
@@ -32,7 +33,8 @@ if ($operation instanceof AdmissionValidation) {
             'returnUrl' => $returnUrl,
             'libelleOperation' => $libelleOperation,
             'showRangOperation' => $showRangOperation,
-            'showActionButtons' => $showActionButtons
+            'showActionButtons' => $showActionButtons,
+            'isOperationAllowedByRole' => $isOperationAllowedByRole
         ]);
     }
 } elseif ($operation instanceof AdmissionAvis) {
@@ -53,7 +55,8 @@ if ($operation instanceof AdmissionValidation) {
             'returnUrl' => $returnUrl,
             'libelleOperation' => $libelleOperation,
             'showRangOperation' => $showRangOperation,
-            'showActionButtons' => $showActionButtons
+            'showActionButtons' => $showActionButtons,
+            'isOperationAllowedByRole' => $isOperationAllowedByRole
         ]);
     }
 }else{
