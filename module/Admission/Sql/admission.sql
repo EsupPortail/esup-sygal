@@ -417,7 +417,7 @@ create table IF NOT EXISTS admission_type_validation
 
 INSERT INTO admission_type_validation (code, libelle)
 VALUES ('ATTESTATION_HONNEUR_CHARTE_DOCTORALE',
-        'Attestation par l''étudiant de la bonne lecture de sa charte doctorale');
+        'Attestation sur l''honneur par l''étudiant de la bonne lecture de sa charte doctorale');
 INSERT INTO admission_type_validation (code, libelle)
 VALUES ('ATTESTATION_HONNEUR', 'Attestation sur l''honneur de la part de l''étudiant');
 INSERT INTO admission_type_validation (code, libelle)
@@ -863,19 +863,19 @@ DELETE
 from role
 where code LIKE 'ADMISSION_%';
 
-insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id,
+insert into role (id, code, libelle, source_code, source_id, role_id, attrib_auto, these_dep, histo_createur_id,
                   histo_modificateur_id)
-values (4000, 'ADMISSION_CANDIDAT', 'Candidat', 'ADMISSION_CANDIDAT', 1, 'Candidat', false, 1, 1)
+values (4000, 'ADMISSION_CANDIDAT', 'Candidat', 'ADMISSION_CANDIDAT', 1, true, 'Candidat', false, 1, 1)
 ;
-insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id,
+insert into role (id, code, libelle, source_code, source_id, role_id, attrib_auto, these_dep, histo_createur_id,
                   histo_modificateur_id)
 values (4001, 'ADMISSION_DIRECTEUR_THESE', 'Potentiel directeur de thèse', 'ADMISSION_DIRECTEUR_THESE', 1,
-        'Potentiel directeur de thèse', false, 1, 1)
+        true, 'Potentiel directeur de thèse', false, 1, 1)
 ;
-insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id,
+insert into role (id, code, libelle, source_code, source_id, role_id, attrib_auto, these_dep, histo_createur_id,
                   histo_modificateur_id)
 values (4002, 'ADMISSION_CODIRECTEUR_THESE', 'Potentiel co-directeur de thèse', 'ADMISSION_CODIRECTEUR_THESE', 1,
-        'Potentiel co-directeur de thèse', false, 1, 1)
+        true, 'Potentiel co-directeur de thèse', false, 1, 1)
 ;
 
 -- GESTION DES PRIVILÈGES
