@@ -10,6 +10,7 @@
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
  * @var Admission $admission
  * @var array $conventionFormationDoctoraleOperations
+ * @var boolean $isOperationAllowedByRole
  */
 
 use Admission\Entity\Db\Admission;
@@ -71,7 +72,8 @@ $canTelechargerDocument =
                                             'returnUrl' => $returnUrl,
                                             'libelleOperation' => $libelleOperation,
                                             'showRangOperation' => false,
-                                            'showActionButtons' => true
+                                            'showActionButtons' => true,
+                                            'isOperationAllowedByRole' => $isOperationAllowedByRole
                                         ]);
                                         ?>
                                     </div>
@@ -133,7 +135,8 @@ $canTelechargerDocument =
                                                     'returnUrl' => $returnUrl,
                                                     'libelleOperation' => null,
                                                     'showRangOperation' => true,
-                                                    'showActionButtons' => true
+                                                    'showActionButtons' => true,
+                                                    'isOperationAllowedByRole' => $isOperationAllowedByRole
                                                 ]);
                                                 $count += 1;
                                             }

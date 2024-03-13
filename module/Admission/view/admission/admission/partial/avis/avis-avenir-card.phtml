@@ -7,6 +7,7 @@
  * @var string $libelleOperation
  * @var bool $showRangOperation
  * @var boolean $showActionButtons
+ * @var boolean $isOperationAllowedByRole
  */
 
 use Admission\Entity\Db\AdmissionAvis;
@@ -35,22 +36,23 @@ $canAjouterOperation =
         <div class="col-lg-6 libelle_etape etape_signature">
             <label><?php echo $libelleOperation ?: $operation->getAvis()->getAvisType()->getLibelle(); ?></label>
             <?php
-            $codeOperation = $operation->getAvis()->getAvisType()->getCode();
-            $codeOperationEnAttente = $operationEnAttente instanceof AdmissionValidation ? $operationEnAttente->getTypeValidation()->getCode() : null;
-            //Si la validation par les gestionnaires ne peut-être effectuée, on affiche ce message
-            if ((!$canAjouterOperation && $operationEnAttente instanceof AdmissionValidation) &&
-                ($codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_THESE && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_THESE ||
-                    $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_CODIR_THESE && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_CODIR_THESE ||
-                    $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_UR && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_UR ||
-                    $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_ED && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_ED
-                )
-            ) {
-                echo '<span class="icon icon-warning dossier_incomplet_validation_impossible" data-toggle="tooltip">
+            if($isOperationAllowedByRole){
+                $codeOperation = $operation->getAvis()->getAvisType()->getCode();
+                $codeOperationEnAttente = $operationEnAttente instanceof AdmissionValidation ? $operationEnAttente->getTypeValidation()->getCode() : null;
+                //Si la validation par les gestionnaires ne peut-être effectuée, on affiche ce message
+                if ((!$canAjouterOperation && $operationEnAttente instanceof AdmissionValidation) &&
+                    ($codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_THESE && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_THESE ||
+                        $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_CODIR_THESE && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_CODIR_THESE ||
+                        $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_UR && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_UR ||
+                        $codeOperation === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_DIR_ED && $codeOperationEnAttente === TypeValidation::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_ED
+                    )
+                ) {
+                    echo '<span class="icon icon-warning dossier_incomplet_validation_impossible" data-toggle="tooltip">
                         <span class="tooltip-text">La convention de formation doctorale (présente dans les pièces justificatives) doit avoir été lue pour pouvoir effectuer cette validation</span>
                       </span>';
-                echo  isset($showActionButtons) && $showActionButtons ? '<a class="btn access_convention_formation_doctorale required">Lire et valider la convention de formation doctorale</a>' : '';
-            }
-            ?>
+                    echo  isset($showActionButtons) && $showActionButtons ? '<a class="btn access_convention_formation_doctorale required">Lire et valider la convention de formation doctorale</a>' : '';
+                }
+            } ?>
         </div>
         <?php if ($canAjouterOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
             <a href="<?php echo $this->url('admission/aviser', [

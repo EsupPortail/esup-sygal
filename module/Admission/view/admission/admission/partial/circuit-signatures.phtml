@@ -6,6 +6,7 @@
  * @var AdmissionOperationInterface $operationEnAttente
  * @var Admission $admission
  * @var boolean $showActionButtons
+ * @var boolean $isOperationAllowedByRole
  */
 
 use Admission\Entity\Db\Admission;
@@ -31,7 +32,8 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 'ajaxModalEvent' => $ajaxModalEvent,
                 'libelleOperation' => null,
                 'showRangOperation' => true,
-                'showActionButtons' => $showActionButtons
+                'showActionButtons' => $showActionButtons,
+                'isOperationAllowedByRole' => $isOperationAllowedByRole
             ]);
             $count += 1;
         endforeach;

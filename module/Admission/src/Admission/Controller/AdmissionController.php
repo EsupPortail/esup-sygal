@@ -237,6 +237,8 @@ class AdmissionController extends AdmissionAbstractController {
             //Récupération des opérations liées à la convention de formation doctorale du dossier d'admission
             $conventionFormationDoctoraleOperations = $this->admissionOperationRule->getOperationsForAdmission($admission, 'conventionFormationDoctorale');
             $operationEnAttente = $this->admissionOperationRule->getOperationEnAttente($admission);
+            $role = $this->userContextService->getSelectedIdentityRole();
+            $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
             //Récupération des documents liés à ce dossier d'admission
             $documents = $this->documentService->getRepository()->findDocumentsByAdmission($admission);
             /** @var Document $document */
@@ -258,6 +260,7 @@ class AdmissionController extends AdmissionAbstractController {
         $response->setVariable('operationEnAttente', $operationEnAttente ?? null);
         $response->setVariable('conventionFormationDoctorale', $conventionFormationDoctorale ?? null);
         $response->setVariable('conventionFormationDoctoraleOperations', $conventionFormationDoctoraleOperations ?? null);
+        $response->setVariable('isOperationAllowedByRole', $isOperationAllowedByRole ?? null);
         $response->setTemplate('admission/ajouter-document');
         return $response;
     }
@@ -656,14 +659,15 @@ class AdmissionController extends AdmissionAbstractController {
         //Masquage des actions non voulues dans le circuit de signatures -> celles correspondant à la convention de formation doctorale
         $operations = $this->admissionOperationService->hideOperations($operations, TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE);
         $operationEnAttente = $admission ? $this->admissionOperationRule->getOperationEnAttente($admission) : null;
-        $dossierComplet = $admission?->isDossierComplet();
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
 
         return new ViewModel([
             'operations' => $operations,
             'admission' => $admission,
             'operationEnAttente' => $operationEnAttente,
-            'dossierComplet' => $dossierComplet,
-            'showActionButtons' => false
+            'showActionButtons' => false,
+            'isOperationAllowedByRole' => $isOperationAllowedByRole
         ]);
     }
 
