@@ -865,17 +865,17 @@ where code LIKE 'ADMISSION_%';
 
 insert into role (id, code, libelle, source_code, source_id, role_id, attrib_auto, these_dep, histo_createur_id,
                   histo_modificateur_id)
-values (4000, 'ADMISSION_CANDIDAT', 'Candidat', 'ADMISSION_CANDIDAT', 1, true, 'Candidat', false, 1, 1)
+values (4000, 'ADMISSION_CANDIDAT', 'Candidat', 'ADMISSION_CANDIDAT', 1, 'Candidat', true, false, 1, 1)
 ;
 insert into role (id, code, libelle, source_code, source_id, role_id, attrib_auto, these_dep, histo_createur_id,
                   histo_modificateur_id)
 values (4001, 'ADMISSION_DIRECTEUR_THESE', 'Potentiel directeur de thèse', 'ADMISSION_DIRECTEUR_THESE', 1,
-        true, 'Potentiel directeur de thèse', false, 1, 1)
+        'Potentiel directeur de thèse', true, false, 1, 1)
 ;
 insert into role (id, code, libelle, source_code, source_id, role_id, attrib_auto, these_dep, histo_createur_id,
                   histo_modificateur_id)
 values (4002, 'ADMISSION_CODIRECTEUR_THESE', 'Potentiel co-directeur de thèse', 'ADMISSION_CODIRECTEUR_THESE', 1,
-        true, 'Potentiel co-directeur de thèse', false, 1, 1)
+        'Potentiel co-directeur de thèse', true, false, 1, 1)
 ;
 
 -- GESTION DES PRIVILÈGES
