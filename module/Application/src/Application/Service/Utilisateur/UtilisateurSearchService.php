@@ -45,14 +45,18 @@ class UtilisateurSearchService extends SearchService
         // filtre "est lié à un individu"
         $individuFilter = new CheckboxSearchFilter("Lié à un<br>individu", 'individu');
         $individuFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
-            $qb->andWhere('i IS NOT NULL');
+            if ($filter->getValue() === true) {
+                $qb->andWhere('i IS NOT NULL');
+            }
         });
         $this->addFilter($individuFilter);
 
         // filtre "est lié à un individu supprimé"
         $individuSupprFilter = new CheckboxSearchFilter("Lié à un<br>individu supprimé", 'individu_suppr');
         $individuSupprFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
-            $qb->andWhere('i.histoDestruction is not null');
+            if ($filter->getValue() === true) {
+                $qb->andWhere('i.histoDestruction is not null');
+            }
         });
         $this->addFilter($individuSupprFilter);
 
