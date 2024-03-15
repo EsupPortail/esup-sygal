@@ -2,19 +2,27 @@
 
 namespace Soutenance\Form\DateLieu;
 
+use DateTime as DDateTime;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Date;
-use Laminas\Form\Element\Time;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Time;
 use Laminas\Form\Form;
-use Laminas\InputFilter\Factory;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\Callback;
-use DateTime as DDateTime;
 
-class DateLieuForm extends Form {
+class DateLieuForm extends Form implements InputFilterProviderInterface
+{
+    private bool $dateHeureRequired = true;
 
-    public function init()
+    public function setDateHeureRequired(bool $required): self
+    {
+        $this->dateHeureRequired = $required;
+        return $this;
+    }
+
+    public function init(): void
     {
         $this->add([
             'name' => 'date',
@@ -71,10 +79,13 @@ class DateLieuForm extends Form {
                 'class' => 'btn btn-primary',
             ],
         ]);
+    }
 
-        $this->setInputFilter((new Factory())->createInputFilter([
+    public function getInputFilterSpecification(): array
+    {
+        return [
             'date' => [
-                'required' => true,
+                'required' => $this->dateHeureRequired,
                 'validators' => [
                     [
                         'name' => Callback::class,
@@ -92,9 +103,9 @@ class DateLieuForm extends Form {
                     ],
                 ],
             ],
-            'heure' => [ 'required' => true, ],
+            'heure' => [ 'required' => $this->dateHeureRequired, ],
             'lieu' => [ 'required' => true, ],
             'exterieur' => [ 'required' => true, ],
-        ]));
+        ];
     }
 }

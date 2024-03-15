@@ -227,9 +227,14 @@ class PropositionController extends AbstractController
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
 
-        $form = $this->getDateLieuForm();
+        $form = $this->dateLieuForm;
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
         $form->bind($proposition);
+
+        $canModifierGestion = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
+        if ($canModifierGestion) {
+            $form->setDateHeureRequired(false);
+        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -239,7 +244,7 @@ class PropositionController extends AbstractController
                 $this->update($request, $form, $proposition);
                 $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
                 $this->getPropositionService()->initialisationDateRetour($proposition);
-                if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
+                if (!$canModifierGestion) $this->getPropositionService()->annulerValidationsForProposition($proposition);
             }
         }
 

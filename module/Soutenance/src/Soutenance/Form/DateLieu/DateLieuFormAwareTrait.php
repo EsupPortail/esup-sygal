@@ -2,26 +2,12 @@
 
 namespace Soutenance\Form\DateLieu;
 
-trait DateLieuFormAwareTrait{
+trait DateLieuFormAwareTrait
+{
+    private DateLieuForm $dateLieuForm;
 
-    /** @var DateLieuForm */
-    private $dateLieuForm;
-
-    /**
-     * @return DateLieuForm
-     */
-    public function getDateLieuForm()
-    {
-        return $this->dateLieuForm;
-    }
-
-    /**
-     * @param DateLieuForm $dateLieuForm
-     * @return DateLieuForm
-     */
-    public function setDateLieuForm($dateLieuForm)
+    public function setDateLieuForm(DateLieuForm $dateLieuForm): void
     {
         $this->dateLieuForm = $dateLieuForm;
-        return $this->dateLieuForm;
     }
 }

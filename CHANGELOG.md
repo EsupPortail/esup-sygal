@@ -4,6 +4,7 @@ Journal des modifications
 8.1.0
 -----
 - Proposition de soutenance : prise en compte dans l'assertion du profil Gestionnaire d'ED pour le privilège 'Modification d'une proposition de soutenance pour gestion'.
+- Proposition de soutenance : possibilité de rendre facultative la saisie de la date et heure de soutenance si besoin.
 
 8.0.0
 -----
