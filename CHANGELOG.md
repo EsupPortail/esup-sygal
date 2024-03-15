@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.1.0
+-----
+- Proposition de soutenance : prise en compte dans l'assertion du profil Gestionnaire d'ED pour le privilège 'Modification d'une proposition de soutenance pour gestion'.
+
 8.0.0
 -----
 - Nouveau module Admission (Formulaire permettant de candidater à un parcours doctoral)

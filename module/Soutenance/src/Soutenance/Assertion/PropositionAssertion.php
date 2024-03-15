@@ -65,7 +65,6 @@ class PropositionAssertion implements  AssertionInterface {
      */
     public function computeValeur(RoleInterface $role = null, ?Proposition $proposition = null, $privilege = null) : bool
     {
-
         $these = $proposition->getThese();
         $sursis = ($proposition)?$proposition->hasSursis():false;
         $dateValidationMax = ($proposition->getDate())?DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M')):null;
@@ -80,8 +79,7 @@ class PropositionAssertion implements  AssertionInterface {
             $structure = $role->getStructure();
             $role = $role->getCode();
         }
-
-
+        
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
         $doctorant = $these->getDoctorant()->getIndividu();
@@ -98,7 +96,6 @@ class PropositionAssertion implements  AssertionInterface {
         $acteurs = array_merge($rapporteursJ->toArray(), $rapporteursA->toArray());
         $rapporteurs = [];
         foreach ($acteurs as $acteur) $rapporteurs[] = $acteur->getIndividu();
-//        if ($role === Role::CODE_ADMIN_TECH) return true;
 
         $theseEtablissementStructure = $these->getEtablissement()->getStructure();
 
@@ -148,6 +145,8 @@ class PropositionAssertion implements  AssertionInterface {
                         return true;
                     case Role::CODE_BDD :
                         return ($these->getEtablissement()->getStructure() === $structure);
+                    case Role::CODE_GEST_ED :
+                        return $structure === $these->getEcoleDoctorale()->getStructure();
                     default:
                         return false;
                 }
