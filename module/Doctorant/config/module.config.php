@@ -257,7 +257,10 @@ return [
                             'ajouter' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/ajouter',
+                                    'route' => '/ajouter/:doctorant',
+                                    'constraints' => [
+                                        'doctorant' => '\d+',
+                                    ],
                                     'defaults' => [
                                         /** @see MissionEnseignementController::ajouterAction() */
                                         'controller' => MissionEnseignementController::class,

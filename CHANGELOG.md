@@ -6,6 +6,7 @@ Journal des modifications
 - Proposition de soutenance : prise en compte dans l'assertion du profil Gestionnaire d'ED pour le privilège 'Modification d'une proposition de soutenance pour gestion'.
 - Proposition de soutenance : possibilité de rendre facultative la saisie de la date et heure de soutenance si besoin.
 - [FIX] Liste/recherche des utilisateurs : dysfonctionnement des filtres à cocher qui s'appliquait quelle qu'était leur valeur.
+- [FIX] Ajout d'une mission d'enseignement : le bouton ne fonctionnait plus à cause d'une erreur de config de la route.
 
 8.0.0
 -----
