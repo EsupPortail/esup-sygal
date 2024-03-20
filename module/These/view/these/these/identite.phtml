@@ -1,6 +1,7 @@
 <?php
 
 use Application\Constants;
+use Application\Entity\Db\DomaineHal;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Filter\FinancementFormatter;
@@ -395,6 +396,21 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
 
             <dt class="col-md-4">Discipline</dt>
             <dd class="col-md-8"><?php echo $these->getLibelleDiscipline() ?></dd>
+
+            <dt class="col-md-4">Domaine(s) HAL</dt>
+            <dd class="col-md-8">
+                <?php foreach($these->getDomainesHal() as $domaine){
+                    /** @var DomaineHal $domaine */
+                    echo $domaine->getFrDomainS()."<br>";
+                } ?>
+                <a  <?php /**  @see \These\Controller\DomaineHalSaisieController::saisieDomaineHalAction() */ ?>
+                        class="btn btn-primary ajax-modal" data-event="modification"
+                        href="<?php echo $this->url('these/saisie-domaine-hal', ['these' => $these->getId()], [], true); ?>"
+                >
+                    <span class="icon icon-plus"></span>
+                    Saisir le(s) domaine(s)
+                </a>
+            </dd>
 
             <dt class="col-md-4">Date de 1ère<br>inscription</dt>
             <dd class="col-md-8"><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>

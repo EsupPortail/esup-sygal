@@ -4,6 +4,7 @@ namespace These\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
+use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
@@ -25,6 +26,7 @@ class TheseSaisieController extends AbstractController {
     use TheseServiceAwareTrait;
     use TheseSaisieFormAwareTrait;
     use SourceAwareTrait;
+    use DomaineHalServiceAwareTrait;
 
     /** FONCTIONS TEMPORAIRES A DEPLACER PLUS TARD */
     /**
@@ -51,6 +53,9 @@ class TheseSaisieController extends AbstractController {
         }
 
         $form = $this->getTheseSaisieForm();
+        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
+        $form->get('domaineHal')->setDomainesHal($domainesHal);
+
         $form->bind($these);
 
         $request = $this->getRequest();
@@ -61,33 +66,30 @@ class TheseSaisieController extends AbstractController {
             if ($form->isValid()) {
                 if ($theseId === null) {
                     $this->getTheseService()->create($these);
-                }
-                else {
+                } else {
                     $this->getTheseService()->update($these);
                 }
                 //ACTEUR //
                 /** Gestion des acteurs */
-                if ($data['directeur-individu']['id'] AND $data['directeur-qualite'] AND $data['directeur-etablissement'])
-                {
+                if ($data['directeur-individu']['id'] and $data['directeur-qualite'] and $data['directeur-etablissement']) {
                     /** @var Individu $individu */
                     $individu = $this->getIndividuService()->getRepository()->find($data['directeur-individu']['id']);
                     $qualite = $this->getQualiteService()->getQualite($data['directeur-qualite']);
                     /** @var Etablissement $etablissement */
                     $etablissement = $this->getEtablissementService()->getRepository()->find($data['directeur-etablissement']);
-                    if ($individu AND $qualite AND $etablissement) {
+                    if ($individu and $qualite and $etablissement) {
                         $this->getActeurService()->creerOrModifierActeur($these, $individu, Role::CODE_DIRECTEUR_THESE, $qualite, $etablissement);
                     }
                 }
                 $temoins = [];
-                for ($i=1 ; $i<=TheseSaisieForm::NBCODIR; $i++) {
-                    if ($data['codirecteur'.$i.'-individu']['id'] AND $data['codirecteur'.$i.'-qualite'] AND $data['codirecteur'.$i.'-etablissement'])
-                    {
+                for ($i = 1; $i <= TheseSaisieForm::NBCODIR; $i++) {
+                    if ($data['codirecteur' . $i . '-individu']['id'] and $data['codirecteur' . $i . '-qualite'] and $data['codirecteur' . $i . '-etablissement']) {
                         /** @var Individu $individu */
-                        $individu = $this->getIndividuService()->getRepository()->find($data['codirecteur'.$i.'-individu']['id']);
-                        $qualite = $this->getQualiteService()->getQualite($data['codirecteur'.$i.'-qualite']);
+                        $individu = $this->getIndividuService()->getRepository()->find($data['codirecteur' . $i . '-individu']['id']);
+                        $qualite = $this->getQualiteService()->getQualite($data['codirecteur' . $i . '-qualite']);
                         /** @var Etablissement $etablissement */
-                        $etablissement = $this->getEtablissementService()->getRepository()->find($data['codirecteur'.$i.'-etablissement']);
-                        if ($individu AND $qualite AND $etablissement) {
+                        $etablissement = $this->getEtablissementService()->getRepository()->find($data['codirecteur' . $i . '-etablissement']);
+                        if ($individu and $qualite and $etablissement) {
                             $acteur = $this->getActeurService()->creerOrModifierActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE, $qualite, $etablissement);
                             $temoins[] = $acteur->getId();
                         }
@@ -107,5 +109,4 @@ class TheseSaisieController extends AbstractController {
             'form' => $form,
         ]);
     }
-
 }

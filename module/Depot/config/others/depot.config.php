@@ -24,9 +24,16 @@ use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\WfEtape;
 use Depot\Form\Attestation\AttestationHydratorFactory;
 use Depot\Form\Attestation\AttestationTheseFormFactory;
+use Depot\Form\Description\DescriptionTheseForm;
+use Depot\Form\Description\DescriptionTheseFormFactory;
+use Depot\Form\Description\DescriptionTheseHydrator;
+use Depot\Form\Description\DescriptionTheseHydratorFactory;
 use Depot\Form\Diffusion\DiffusionHydratorFactory;
 use Depot\Form\Diffusion\DiffusionTheseFormFactory;
-use Depot\Form\Metadonnees\MetadonneeTheseFormFactory;
+use Depot\Form\Metadonnees\MetadonneesTheseHydrator;
+use Depot\Form\Metadonnees\MetadonneesTheseHydratorFactory;
+use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
+use Depot\Form\Metadonnees\MetadonneeTheseFieldsetFactory;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
@@ -978,12 +985,13 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            'MetadonneeTheseForm' => MetadonneeTheseFormFactory::class,
+            MetadonneeTheseFieldset::class => MetadonneeTheseFieldsetFactory::class,
             'AttestationTheseForm' => AttestationTheseFormFactory::class,
             'DiffusionTheseForm' => DiffusionTheseFormFactory::class,
             'RdvBuTheseForm' => RdvBuTheseFormFactory::class,
             'RdvBuTheseDoctorantForm' => RdvBuTheseDoctorantFormFactory::class,
             'PointsDeVigilanceForm' => PointsDeVigilanceFormFactory::class,
+            DescriptionTheseForm::class => DescriptionTheseFormFactory::class,
         ],
     ],
     'hydrators' => [
@@ -992,6 +1000,8 @@ return [
             'AttestationHydrator' => AttestationHydratorFactory::class,
             'RdvBuHydrator' => RdvBuHydratorFactory::class,
             'PointsDeVigilanceHydrator' => PointsDeVigilanceHydratorFactory::class,
+            MetadonneesTheseHydrator::class => MetadonneesTheseHydratorFactory::class,
+            DescriptionTheseHydrator::class => DescriptionTheseHydratorFactory::class,
         ]
     ],
     'service_manager' => [

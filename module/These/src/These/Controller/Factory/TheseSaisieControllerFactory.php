@@ -2,6 +2,7 @@
 
 namespace These\Controller\Factory;
 
+use Application\Service\DomaineHal\DomaineHalService;
 use Application\Service\Source\SourceService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
@@ -40,6 +41,7 @@ class TheseSaisieControllerFactory
         $qualiteService = $container->get(QualiteService::class);
         $sourceService = $container->get(SourceService::class);
         $theseService = $container->get(TheseService::class);
+        $domaineHalService = $container->get(DomaineHalService::class);
         $theseSaisieForm = $container->get('FormElementManager')->get(TheseSaisieForm::class);
 
         $controller = new TheseSaisieController();
@@ -48,6 +50,7 @@ class TheseSaisieControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setQualiteService($qualiteService);
         $controller->setTheseService($theseService);
+        $controller->setDomaineHalService($domaineHalService);
         $controller->setTheseSaisieForm($theseSaisieForm);
 
         $controller->setSource($sourceService->fetchApplicationSource());

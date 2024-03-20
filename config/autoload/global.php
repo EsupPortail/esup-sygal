@@ -137,6 +137,43 @@ $config = [
         // Imports.
         //
         'imports' => [
+            [
+                'name' => 'domaine-hal',
+                'order' => 160,
+                'source' => [
+                    'name' => 'HAL',
+                    'connection' => 'sygal-import-ws-hal',
+                    'select' => '/domain/?q=*:*&wt=json&fl=*&rows=500',
+                    'code' => 'HAL',
+                    'columns' => [
+                        'docid',
+                        'code_s',
+                        'haveNext_bool',
+                        'en_domain_s',
+                        'fr_domain_s',
+                        'level_i',
+                        'parent_i',
+                    ],
+                    'column_name_filter' => [
+                        'docid' => 'docid',
+                        'haveNext_bool' => 'havenext_bool',
+                        'code_s' => 'source_code',
+                        'en_domain_s' => 'en_domain_s',
+                        'fr_domain_s' => 'fr_domain_s',
+                        'level_i' => 'level_i',
+                        'parent_i' => 'parent_id'
+                    ],
+                    'source_code_column' => 'source_code',
+                ],
+                'destination' => [
+                    'name' => 'application',
+                    'table' => 'tmp_domaine_hal',
+                    'connection' => 'default',
+                    'source_code_column' => 'source_code',
+                    'id_strategy' => null,
+                    'id_sequence' => null,
+                ],
+            ]
             // <==== la config des imports sera injectée ici
         ],
 
@@ -145,6 +182,27 @@ $config = [
         //
         'synchros' => [
             // <==== la config des synchros sera injectée ici
+            ////////////////////////////////////////////// DOMAINES HAL //////////////////////////////////////////////
+            [
+                'name' => 'domaine-hal',
+                'order' => 160,
+                'source' => [
+                    'name' => 'sygal',
+                    'code' => 'app',
+                    'table' => 'src_domaine_hal',
+                    'connection' => 'default',
+                    'source_code_column' => 'source_code',
+                ],
+                'destination' => [
+                    'name' => 'application',
+                    'table' => 'domaine_hal',
+                    'connection' => 'default',
+                    'source_code_column' => 'source_code',
+                    'id_strategy' => 'SEQUENCE',
+                    'id_sequence' => null,
+                    'where' => NULL,
+                ],
+            ],
         ],
     ],
     // Options pour le service de notification par mail

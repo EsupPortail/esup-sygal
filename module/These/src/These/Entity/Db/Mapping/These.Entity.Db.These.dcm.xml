@@ -77,6 +77,17 @@
             </join-columns>
         </many-to-one>
 
+        <many-to-many field="domainesHal" target-entity="Application\Entity\Db\DomaineHal" inversed-by="theses" fetch="LAZY">
+            <join-table name="DOMAINE_HAL_THESE">
+                <join-columns>
+                    <join-column name="THESE_ID" referenced-column-name="ID"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="DOMAINE_ID" referenced-column-name="ID"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
                 <join-column name="SOURCE_ID" referenced-column-name="ID"/>

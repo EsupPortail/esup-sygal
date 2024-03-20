@@ -1,6 +1,6 @@
 <?php
 
-use These\Controller\TheseController;
+use Application\Entity\Db\DomaineHal;
 use These\Entity\Db\These;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -11,16 +11,18 @@ use Laminas\Form\Form;
  * @var These  $these
  * @var string $title
  * @var Form   $form
+ * @var DomaineHal[] $domainesHal
  *
  * @method string formControlGroup()
  *
- * @see TheseController::modifierDescriptionAction()
+ * @see \Depot\Controller\DepotController::modifierDescriptionAction()
  */
 
 $canEdit = true;
 $canEditMotsClesRameau = $canEdit && $this->isAllowed(DepotPrivileges::getResourceId(DepotPrivileges::THESE_SAISIE_MOT_CLE_RAMEAU));
 
 $fcg = $this->formControlGroup();
+$form->prepare();
 ?>
 
 <!--<h1 class="page-header">Signalement <small>--><?php //echo $this->partial('these/these/partial/titre') ?><!--</small></h1>-->
@@ -29,41 +31,49 @@ $fcg = $this->formControlGroup();
 
 <div class="row">
     <div class="col-md-8">
-        <?php echo $fcg($form->get('titre')->setAttribute('disabled', 'disabled')) ?>
+        <?php echo $fcg($form->get('metadonneeThese')->get('titre')->setAttribute('disabled', 'disabled')) ?>
     </div>
 </div>
 
 <div class="widget-titre-langue-these" id="titre-langue-these">
     <div class="row">
-        <div class="col-sm-5 col-md-4">
-            <?php echo $fcg($form->get('langue')) ?>
+        <div class="col-sm-5 col-md-12">
+            <?php echo $fcg($form->get('metadonneeThese')->get('langue')) ?>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-8">
-            <?php echo $fcg($form->get('titreAutreLangue')) ?>
+            <?php echo $fcg($form->get('metadonneeThese')->get('titreAutreLangue')) ?>
         </div>
     </div>
 </div>
 
-<?php echo $fcg($form->get('resume')->setAttributes(['class' => 'resume', 'rows' => 5])) ?>
+<?php echo $fcg($form->get('metadonneeThese')->get('resume')->setAttributes(['class' => 'resume', 'rows' => 5])) ?>
 <span class="resume-wc text-info"></span>
 
-<?php echo $fcg($form->get('resumeAnglais')->setAttributes(['class' => 'resume', 'rows' => 5])) ?>
+<?php echo $fcg($form->get('metadonneeThese')->get('resumeAnglais')->setAttributes(['class' => 'resume', 'rows' => 5])) ?>
 <span class="resume-wc text-info"></span>
 
 <?php
-$motsClesLibresFrancais = $form->get('motsClesLibresFrancais')->setAttribute('class', 'taggable');
+$motsClesLibresFrancais = $form->get('metadonneeThese')->get('motsClesLibresFrancais')->setAttribute('class', 'taggable');
 echo $fcg()
     ->setHelpContent($motsClesLibresFrancais->getAttribute('title'), 'before')
     ->render($motsClesLibresFrancais) ?>
 
 <?php
-$motsClesLibresAnglais = $form->get('motsClesLibresAnglais')->setAttribute('class', 'taggable');
+$motsClesLibresAnglais = $form->get('metadonneeThese')->get('motsClesLibresAnglais')->setAttribute('class', 'taggable');
 echo $fcg()
     ->setHelpContent($motsClesLibresAnglais->getAttribute('title'), 'before')
     ->render($motsClesLibresAnglais) ?>
+
+<div class="widget-domaine-hal-these" id="domaine-hal-these">
+    <div class="row">
+        <div class="col">
+            <?php echo $fcg($form->get('domaineHal')->get('domaineHal')); ?>
+        </div>
+    </div>
+</div>
 
 <?php echo $this->formElement($form->get('submit')) ?>
 
@@ -112,4 +122,6 @@ echo $fcg()
     function resumeWcContent(length) {
         return length ? length + " caractères, espaces compris" : "";
     }
+    $('select').selectpicker();
+
 </script>

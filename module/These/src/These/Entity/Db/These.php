@@ -3,6 +3,7 @@
 namespace These\Entity\Db;
 
 use Application\Entity\AnneeUniv;
+use Application\Entity\Db\DomaineHal;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
@@ -258,6 +259,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $propositions;
 
     /**
+     * @var ArrayCollection
+     */
+    private $domainesHal;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -283,6 +289,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->anneesUniv1ereInscription = new ArrayCollection();
         $this->rapports = new ArrayCollection();
         $this->propositions = new ArrayCollection();
+        $this->domainesHal = new ArrayCollection();
     }
 
     /**
@@ -1520,5 +1527,267 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $texte = [];
         foreach ($encadrement as $directeur) { $texte[] = $directeur->getNomComplet();}
         return implode (" et ", $texte);
+    }
+
+    /**
+     * Set datePremiereInscription.
+     *
+     * @param \DateTime|null $datePremiereInscription
+     *
+     * @return These
+     */
+    public function setDatePremiereInscription($datePremiereInscription = null)
+    {
+        $this->datePremiereInscription = $datePremiereInscription;
+
+        return $this;
+    }
+
+    /**
+     * Add fichierThesis.
+     *
+     * @param \Depot\Entity\Db\FichierThese $fichierThesis
+     *
+     * @return These
+     */
+    public function addFichierThesis(\Depot\Entity\Db\FichierThese $fichierThesis)
+    {
+        $this->fichierTheses[] = $fichierThesis;
+
+        return $this;
+    }
+
+    /**
+     * Remove fichierThesis.
+     *
+     * @param \Depot\Entity\Db\FichierThese $fichierThesis
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeFichierThesis(\Depot\Entity\Db\FichierThese $fichierThesis)
+    {
+        return $this->fichierTheses->removeElement($fichierThesis);
+    }
+
+    /**
+     * Add miseEnLigne.
+     *
+     * @param \Depot\Entity\Db\Diffusion $miseEnLigne
+     *
+     * @return These
+     */
+    public function addMiseEnLigne(\Depot\Entity\Db\Diffusion $miseEnLigne)
+    {
+        $this->miseEnLignes[] = $miseEnLigne;
+
+        return $this;
+    }
+
+    /**
+     * Remove miseEnLigne.
+     *
+     * @param \Depot\Entity\Db\Diffusion $miseEnLigne
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeMiseEnLigne(\Depot\Entity\Db\Diffusion $miseEnLigne)
+    {
+        return $this->miseEnLignes->removeElement($miseEnLigne);
+    }
+
+    /**
+     * Get miseEnLignes.
+     *
+     * @return Collection
+     */
+    public function getMiseEnLignes()
+    {
+        return $this->miseEnLignes;
+    }
+
+    /**
+     * Get rdvBus.
+     *
+     * @return Collection
+     */
+    public function getRdvBus()
+    {
+        return $this->rdvBus;
+    }
+
+    /**
+     * Add titreAcce.
+     *
+     * @param \Application\Entity\Db\TitreAcces $titreAcce
+     *
+     * @return These
+     */
+    public function addTitreAcce(\Application\Entity\Db\TitreAcces $titreAcce)
+    {
+        $this->titreAcces[] = $titreAcce;
+
+        return $this;
+    }
+
+    /**
+     * Remove titreAcce.
+     *
+     * @param \Application\Entity\Db\TitreAcces $titreAcce
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeTitreAcce(\Application\Entity\Db\TitreAcces $titreAcce)
+    {
+        return $this->titreAcces->removeElement($titreAcce);
+    }
+
+    /**
+     * Add anneesUnivInscription.
+     *
+     * @param \These\Entity\Db\TheseAnneeUniv $anneesUnivInscription
+     *
+     * @return These
+     */
+    public function addAnneesUnivInscription(\These\Entity\Db\TheseAnneeUniv $anneesUnivInscription)
+    {
+        $this->anneesUnivInscription[] = $anneesUnivInscription;
+
+        return $this;
+    }
+
+    /**
+     * Remove anneesUnivInscription.
+     *
+     * @param \These\Entity\Db\TheseAnneeUniv $anneesUnivInscription
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeAnneesUnivInscription(\These\Entity\Db\TheseAnneeUniv $anneesUnivInscription)
+    {
+        return $this->anneesUnivInscription->removeElement($anneesUnivInscription);
+    }
+
+    /**
+     * Add anneesUniv1ereInscription.
+     *
+     * @param \These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription
+     *
+     * @return These
+     */
+    public function addAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription)
+    {
+        $this->anneesUniv1ereInscription[] = $anneesUniv1ereInscription;
+
+        return $this;
+    }
+
+    /**
+     * Remove anneesUniv1ereInscription.
+     *
+     * @param \These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription)
+    {
+        return $this->anneesUniv1ereInscription->removeElement($anneesUniv1ereInscription);
+    }
+
+    /**
+     * Get anneesUniv1ereInscription.
+     *
+     * @return Collection
+     */
+    public function getAnneesUniv1ereInscription()
+    {
+        return $this->anneesUniv1ereInscription;
+    }
+
+    /**
+     * Add financement.
+     *
+     * @param \Application\Entity\Db\Financement $financement
+     *
+     * @return These
+     */
+    public function addFinancement(\Application\Entity\Db\Financement $financement)
+    {
+        $this->financements[] = $financement;
+
+        return $this;
+    }
+
+    /**
+     * Remove financement.
+     *
+     * @param \Application\Entity\Db\Financement $financement
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeFinancement(\Application\Entity\Db\Financement $financement)
+    {
+        return $this->financements->removeElement($financement);
+    }
+
+    /**
+     * Add proposition.
+     *
+     * @param \Soutenance\Entity\Proposition $proposition
+     *
+     * @return These
+     */
+    public function addProposition(\Soutenance\Entity\Proposition $proposition)
+    {
+        $this->propositions[] = $proposition;
+
+        return $this;
+    }
+
+    /**
+     * Remove proposition.
+     *
+     * @param \Soutenance\Entity\Proposition $proposition
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeProposition(\Soutenance\Entity\Proposition $proposition)
+    {
+        return $this->propositions->removeElement($proposition);
+    }
+
+    /**
+     * Add domainesHal.
+     *
+     * @param DomaineHal $domainesHal
+     *
+     * @return These
+     */
+    public function addDomainesHal(DomaineHal $domainesHal)
+    {
+        $this->domainesHal[] = $domainesHal;
+
+        return $this;
+    }
+
+    /**
+     * Remove domainesHal.
+     *
+     * @param DomaineHal $domainesHal
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeDomainesHal(DomaineHal $domainesHal)
+    {
+        return $this->domainesHal->removeElement($domainesHal);
+    }
+
+    /**
+     * Get domainesHal.
+     *
+     * @return ArrayCollection
+     */
+    public function getDomainesHal()
+    {
+        return $this->domainesHal;
     }
 }
