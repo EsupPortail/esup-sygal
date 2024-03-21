@@ -99,16 +99,17 @@ class RoleService extends BaseService
             ->leftJoin('irp.etablissement', 'irpe')->addSelect('irpe')
             ->leftJoin('irpe.structure', 'irpes')->addSelect('irpes')
             ->andWhereStructureIs($structure)
+            ->andWhereNotHistorise('i')
+            ->andWhereNotHistorise('r')
             ->orderBy('r.ordreAffichage, s.libelle, i.nomUsuel, i.prenom1');
 
         if ($role !== null) {
             $qb->andWhere('r.code = :role')->setParameter('role', $role);
         }
 
-        // Si un établissement est spécifié, filtrage des (individu,role) selon ce périmètre.
-        if ($perimetreEtablissement !== null) {
-            $qb//->andWhere('irpe = :etablissement')->setParameter('etablissement', $perimetreEtablissement)
-                ->andWhereStructureOuSubstituanteIs($perimetreEtablissement->getStructure(), 'irpes');
+        // Si un établissement est spécifié, filtrage selon ce périmètre.
+        if ($perimetreEtablissement === null) {
+            $qb->andWhere('irpe is null or irpe = :etablissement')->setParameter('etablissement', $perimetreEtablissement);
         }
 
         return $qb->getQuery()->execute();

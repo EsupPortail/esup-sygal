@@ -77,6 +77,7 @@ select privilege__grant_privilege_to_profile('acteur', 'modifier-acteur-de-toute
 select privilege__grant_privilege_to_profile('acteur', 'modifier-acteur-de-toutes-theses', 'ADMIN_TECH');
 
 
+
 --
 -- Vue utile quand il faudra créer à la main les 'individu_role_etablissement' pour remplacer le bricolage des
 -- doublons d'individus : elle liste ceux qui ont, pour le même rôle, 2 établissements différents.
@@ -113,6 +114,35 @@ with tmp as (
            -- where individu_role_id in (14046,11266,1707 ,2966 ,7746 ,9    ,12266,12216,9446 ,8026 ,6    ,8366 ,7    ,1501)
            order by tmp.nom_usuel, role_code, individu_role_id
 )
-select * from req
+select (select string_agg(to_id::varchar,',') from substit_individu where from_id = req.individu_id) sub, req.* from req
 where doublon is true
+;
+
+----> NB : ne pas faire les inserts si l'individu est substitué (colonne "sub") !
+
+/*
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (1707,5) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (1707,3) on conflict do nothing ;
+-- insert into individu_role_etablissement(individu_role_id,etablissement_id) values (2966,5) on conflict do nothing ; -- individu substitué
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (9,5) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (7746,3) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (12216,5) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (12266,3) on conflict do nothing ;
+-- insert into individu_role_etablissement(individu_role_id,etablissement_id) values (8026,2) on conflict do nothing ; -- individu substitué
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (9446,3) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (9446,21647) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (7,5) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (1501,3) on conflict do nothing ;
+-- insert into individu_role_etablissement(individu_role_id,etablissement_id) values (4966,2) on conflict do nothing ; -- individu substitué
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (12966,2) on conflict do nothing ;
+insert into individu_role_etablissement(individu_role_id,etablissement_id) values (12966,16866) on conflict do nothing ;
+*/
+
+-- truncate individu_role_etablissement;
+
+select i.nom_usuel, r.*
+from individu_role_etablissement ire
+         join individu_role ir on ire.individu_role_id = ir.id
+         join role r on ir.role_id = r.id
+         join individu i on ir.individu_id = i.id
 ;
