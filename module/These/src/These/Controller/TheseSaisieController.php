@@ -61,6 +61,10 @@ class TheseSaisieController extends AbstractController {
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
+            //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
+            if (!isset($data['domaineHal'])) {
+                $data['domaineHal'] = array("domaineHal" => array(""));
+            }
             $form->setData($data);
 
             if ($form->isValid()) {

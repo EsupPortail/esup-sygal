@@ -4,15 +4,15 @@ namespace These\Form\DomaineHalSaisie\Fieldset;
 
 use Laminas\Form\Fieldset;
 use Laminas\Form\Element\Select;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
-class DomaineHalFieldset extends Fieldset
+class DomaineHalFieldset extends Fieldset implements InputFilterProviderInterface
 {
     private ?array $domainesHal = null;
 
     public function setDomainesHal($domainesHal): void
     {
         $this->domainesHal = $domainesHal;
-        $this->get('domaineHal')->setEmptyOption('Sélectionnez une option');
         $this->get('domaineHal')->setValueOptions($this->domainesHal);
     }
 
@@ -26,7 +26,6 @@ class DomaineHalFieldset extends Fieldset
                 'class' => 'selectpicker show-tick form-control',
                 'data-live-search' => 'true',
                 'id' => 'domaineHal',
-                'placeholder' => "Entrez les deux premières lettres...",
                 'multiple' => 'true'
             ]);
         $this->add($domaineHal);
@@ -38,7 +37,9 @@ class DomaineHalFieldset extends Fieldset
     public function getInputFilterSpecification(): array
     {
         return [
-            'domaineHal' => ['required' => false],
+            'domaineHal' => [
+                'required' => false,
+            ],
         ];
     }
 }

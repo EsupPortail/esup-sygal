@@ -1427,6 +1427,10 @@ class DepotController extends AbstractController
         if ($this->getRequest()->isPost()) {
             /** @var ParametersInterface $post */
             $post = $this->getRequest()->getPost();
+            //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
+            if (!isset($post['domaineHal'])) {
+                $post['domaineHal'] = array("domaineHal" => array(""));
+            }
             $form->setData($post);
             if ($form->isValid()) {
                 /** @var MetadonneeThese $metadonnee */

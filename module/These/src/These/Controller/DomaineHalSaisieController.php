@@ -39,6 +39,10 @@ class DomaineHalSaisieController extends AbstractActionController
 
         if ($request->isPost()) {
             $data = $request->getPost();
+            //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
+            if (!isset($data['domaineHalFieldset'])) {
+                $data['domaineHalFieldset'] = array("domaineHal" => array(""));
+            }
             $form->setData($data);
 
             if ($form->isValid()) {
@@ -47,7 +51,7 @@ class DomaineHalSaisieController extends AbstractActionController
                 } else {
                     $this->getTheseService()->update($these);
                 }
-                return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+//                return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
             }
         }
 

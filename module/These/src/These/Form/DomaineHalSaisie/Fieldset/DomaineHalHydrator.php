@@ -33,6 +33,13 @@ class DomaineHalHydrator extends DoctrineObject
     public function hydrate(array $data, object $object): object
     {
         if(isset($data["domaineHal"]) && is_array($data["domaineHal"])){
+            //Si aucun domaine n'est sélectionné, on retire les potentiels domaines déjà enregistrés
+            if(count($data["domaineHal"]) === 1 && $data["domaineHal"][0] === ""){
+                foreach ($object->getDomainesHal() as $domaineHal) {
+                    $object->removeDomainesHal($domaineHal);
+                }
+                return parent::hydrate($data, $object);
+            }
             foreach ($data["domaineHal"] as $idDomaineHal) {
                 // Vérifier si le domaine est déjà associé à la thèse
                 $domaineHalExistant = $object->getDomainesHal()->filter(function ($domaineHal) use ($idDomaineHal) {
