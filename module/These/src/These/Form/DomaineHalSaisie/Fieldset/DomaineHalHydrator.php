@@ -17,6 +17,7 @@ class DomaineHalHydrator extends DoctrineObject
      */
     public function extract(object $object): array
     {
+        $data = [];
         foreach ($object->getDomainesHal() as $domaineHal) {
             $data["domaineHal"][] = $domaineHal->getId();
         }
