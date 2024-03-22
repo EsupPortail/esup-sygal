@@ -5,6 +5,7 @@
  * @var These $these
  */
 
+use Application\Entity\Db\DomaineHal;
 use Depot\Entity\Db\MetadonneeThese;
 use These\Entity\Db\These;
 use Depot\Filter\MotsClesFormatter;
@@ -12,7 +13,7 @@ use Depot\Filter\MotsClesFormatter;
 $metadonnee = $these->getMetadonnee();
 $motsClesFormatter = new MotsClesFormatter(['separator' => MetadonneeThese::SEPARATEUR_MOTS_CLES]);
 
-$langueAutreTitre = function() use ($metadonnee) {
+$langueAutreTitre = function () use ($metadonnee) {
     return $metadonnee->getLangue() === MetadonneeThese::LANGUE_FRANCAIS ?
         MetadonneeThese::LANGUE_ANGLAIS :
         MetadonneeThese::LANGUE_FRANCAIS;
@@ -36,12 +37,23 @@ $langueAutreTitre = function() use ($metadonnee) {
             <dd><?php echo $motsClesFormatter->filter($metadonnee->getMotsClesLibresFrancais()) ?></dd>
             <dt>Proposition de mots-clés en anglais</dt>
             <dd><?php echo $motsClesFormatter->filter($metadonnee->getMotsClesLibresAnglais()) ?: "(Non renseignés)" ?></dd>
+            <dt>Domaine(s) HAL</dt>
+            <dd><?php
+                $domaines = [];
+                foreach ($these->getDomainesHal() as $domaineHal) {
+                    /** @var DomaineHal $domaineHal */
+                    $domaines[] = $domaineHal->getFrDomainS() . " (<i>" . $domaineHal->getEnDomainS() . "</i>)";
+                }
+                echo implode(' <br> ', $domaines);
+                echo empty($domaines) ? "(Non renseignés)" : null;
+                ?>
+            </dd>
         </dl>
     </div>
 </div>
-        <dl class="metadonnees">
-            <dt>Résumé</dt>
-            <dd><p class="pre-scrollable"><?php echo $this->escapeText()->render($metadonnee->getResume()) ?></p></dd>
-            <dt>Résumé en anglais</dt>
-            <dd><p class="pre-scrollable"><?php echo $this->escapeText()->render($metadonnee->getResumeAnglais()) ?></p></dd>
-        </dl>
+<dl class="metadonnees">
+    <dt>Résumé</dt>
+    <dd><p class="pre-scrollable"><?php echo $this->escapeText()->render($metadonnee->getResume()) ?></p></dd>
+    <dt>Résumé en anglais</dt>
+    <dd><p class="pre-scrollable"><?php echo $this->escapeText()->render($metadonnee->getResumeAnglais()) ?></p></dd>
+</dl>

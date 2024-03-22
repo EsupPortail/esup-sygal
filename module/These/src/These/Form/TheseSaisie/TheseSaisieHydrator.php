@@ -73,6 +73,8 @@ class TheseSaisieHydrator implements HydratorInterface
         $data['confidentialite'] = ($object->getDateFinConfidentialite() !== null) ? 1 : 0;
         $data['fin-confidentialite'] = ($object->getDateFinConfidentialite()) ? $object->getDateFinConfidentialite()->format('Y-m-d') : null;
 
+        $data['domaineHal'] = $object;
+
         return $data;
     }
 

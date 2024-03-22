@@ -4,7 +4,7 @@ namespace Depot\Form\Metadonnees;
 
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Filter\MotsClesFilter;
-use Laminas\Form\Form;
+use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
 
 /**
@@ -13,7 +13,7 @@ use Laminas\InputFilter\InputFilterProviderInterface;
  * Date: 28/04/16
  * Time: 16:32
  */
-class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
+class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInterface
 {
     const SEPARATEUR_MOTS_CLES = MetadonneeThese::SEPARATEUR_MOTS_CLES;
     const SEPARATEUR_MOTS_CLES_LIB = MetadonneeThese::SEPARATEUR_MOTS_CLES_LIB;
@@ -42,8 +42,6 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
      */
     public function init()
     {
-        $this->setObject(new MetadonneeThese());
-
         $this->add([
             'type'       => 'Textarea',
             'name'       => 'titre',

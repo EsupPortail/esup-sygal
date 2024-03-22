@@ -1,0 +1,40 @@
+<?php
+
+namespace Admission;
+
+use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Form;
+use These\Controller\DomaineHalSaisieController;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $title
+ * @var Form $form
+ *
+ * @see DomaineHalSaisieController::saisieDomaineHalAction()
+ */
+
+$form->prepare();
+?>
+
+<?php $this->headTitle($this->translate($title)); ?>
+
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
+<?php echo $this->form()->openTag($form) ?>
+
+    <div class="row">
+        <div id="col-lg-12">
+            <?php echo $this->formControlGroup($form->get('domaineHalFieldset')->get('domaineHal')); ?>
+        </div>
+    </div>
+
+<?php echo $this->formControlGroup($form->get('bouton')); ?>
+
+<?php echo $this->form()->closeTag() ?>
+
+<script>
+    $('select').selectpicker();
+</script>

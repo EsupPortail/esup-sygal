@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61769eecabcaa95303cd93c66b2f1a9d",
+    "content-hash": "f1927284ffa0b1abfba7db98c4aa5654",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11480,7 +11480,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "995b48e96a79fa22f2e0894806eb077102e17093"
+                "reference": "ad5ea6867afaf849d5a8589e3443aed4544a5341"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -11513,7 +11513,29 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2024-02-19T10:29:14+00:00"
+            "time": "2024-03-20T10:31:24+00:00"
+        },
+        {
+            "name": "unicaen/etat",
+            "version": "6.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/etat.git",
+                "reference": "aaad20d1e8fd5ab4f8b74c386a84efe454aa119c"
+            },
+            "require": {
+                "unicaen/app": "^6.0",
+                "unicaen/privilege": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": [],
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module de gestion des etats et actions associés au passage d'état",
+            "time": "2024-02-20T10:04:31+00:00"
         },
         {
             "name": "unicaen/faq",

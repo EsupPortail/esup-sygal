@@ -2,12 +2,15 @@
 
 namespace Depot\Controller\Factory;
 
+use Application\Service\DomaineHal\DomaineHalService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Depot\Controller\DepotController;
+use Depot\Form\Description\DescriptionTheseForm;
+use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
 use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
@@ -70,6 +73,7 @@ class DepotControllerFactory
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $notifierService = $container->get(NotifierService::class);
         $utilisateurService = $container->get('UtilisateurService');
+        $domaineHalService = $container->get(DomaineHalService::class);
         $eventManager = $container->get('EventManager');
 
         /**
@@ -82,13 +86,15 @@ class DepotControllerFactory
         /**
          * @var \Depot\Form\Attestation\AttestationTheseForm $attestationTheseForm
          * @var \Depot\Form\Diffusion\DiffusionTheseForm $diffusionTheseForm
-         * @var \Depot\Form\Metadonnees\MetadonneeTheseForm $metadonneeTheseForm
+         * @var \Depot\Form\Metadonnees\MetadonneeTheseFieldset $metadonneeTheseFieldset
          * @var \Depot\Form\PointsDeVigilanceForm $pointsDeVigilanceForm
          */
         $attestationTheseForm = $container->get('FormElementManager')->get('AttestationTheseForm');
         $diffusionTheseForm = $container->get('FormElementManager')->get('DiffusionTheseForm');
-        $metadonneeTheseForm = $container->get('FormElementManager')->get('MetadonneeTheseForm');
+        $metadonneeTheseFieldset = $container->get('FormElementManager')->get(MetadonneeTheseFieldset::class);
         $pointsDeVigilanceForm = $container->get('FormElementManager')->get('PointsDeVigilanceForm');
+
+        $descriptionTheseForm = $container->get('FormElementManager')->get(DescriptionTheseForm::class);
 
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
@@ -114,8 +120,11 @@ class DepotControllerFactory
         $controller->setRdvBuTheseForm($rdvBuTheseForm);
         $controller->setAttestationTheseForm($attestationTheseForm);
         $controller->setDiffusionTheseForm($diffusionTheseForm);
-        $controller->setMetadonneeTheseForm($metadonneeTheseForm);
+        $controller->setMetadonneeTheseFieldset($metadonneeTheseFieldset);
+        $controller->setDescriptionTheseForm($descriptionTheseForm);
+
         $controller->setPointsDeVigilanceForm($pointsDeVigilanceForm);
+        $controller->setDomaineHalService($domaineHalService);
         $controller->setRenderer($renderer);
 
         /** @var DepotService $depotService */

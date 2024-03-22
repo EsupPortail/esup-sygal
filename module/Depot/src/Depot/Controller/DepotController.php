@@ -4,10 +4,12 @@ namespace Depot\Controller;
 
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
+use Application\Entity\Db\DomaineHal;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
 use Application\Filter\IdifyFilterAwareTrait;
+use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -23,8 +25,9 @@ use Depot\Entity\Db\WfEtape;
 use Depot\Event\EventsInterface;
 use Depot\Form\Attestation\AttestationTheseForm;
 use Depot\Form\ConformiteFichierForm;
+use Depot\Form\Description\DescriptionTheseForm;
 use Depot\Form\Diffusion\DiffusionTheseForm;
-use Depot\Form\Metadonnees\MetadonneeTheseForm;
+use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
 use Depot\Form\PointsDeVigilanceForm;
 use Depot\Form\RdvBuTheseDoctorantForm;
 use Depot\Form\RdvBuTheseForm;
@@ -83,6 +86,7 @@ class DepotController extends AbstractController
     use UserContextServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use DomaineHalServiceAwareTrait;
 
     private $timeoutRetraitement;
 
@@ -107,9 +111,14 @@ class DepotController extends AbstractController
     private $diffusionTheseForm;
 
     /**
-     * @var MetadonneeTheseForm
+     * @var MetadonneeTheseFieldset
      */
-    private $metadonneeTheseForm;
+    private $metadonneeTheseFieldset;
+
+    /**
+     * @var DescriptionTheseForm
+     */
+    private $descriptionTheseForm;
 
     /**
      * @var \Depot\Form\PointsDeVigilanceForm
@@ -154,11 +163,19 @@ class DepotController extends AbstractController
     }
 
     /**
-     * @param MetadonneeTheseForm $metadonneeTheseForm
+     * @param MetadonneeTheseFieldset $metadonneeTheseFieldset
      */
-    public function setMetadonneeTheseForm(MetadonneeTheseForm $metadonneeTheseForm)
+    public function setMetadonneeTheseFieldset(MetadonneeTheseFieldset $metadonneeTheseFieldset)
     {
-        $this->metadonneeTheseForm = $metadonneeTheseForm;
+        $this->metadonneeTheseFieldset = $metadonneeTheseFieldset;
+    }
+
+    /**
+     * @param DescriptionTheseForm $descriptionTheseForm
+     */
+    public function setDescriptionTheseForm(DescriptionTheseForm $descriptionTheseForm)
+    {
+        $this->descriptionTheseForm = $descriptionTheseForm;
     }
 
     /**
@@ -1400,23 +1417,32 @@ class DepotController extends AbstractController
     {
         $these = $this->requestedThese();
 
-        $form = $this->getDescriptionForm();
+        $form = $this->descriptionTheseForm;
+
+        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
+        $form->get('domaineHal')->setDomainesHal($domainesHal);
+
+        $form->bind($these);
 
         if ($this->getRequest()->isPost()) {
             /** @var ParametersInterface $post */
             $post = $this->getRequest()->getPost();
+            //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
+            if (!isset($post['domaineHal'])) {
+                $post['domaineHal'] = array("domaineHal" => array(""));
+            }
             $form->setData($post);
             if ($form->isValid()) {
                 /** @var MetadonneeThese $metadonnee */
-                $metadonnee = $form->getData();
-                $this->depotService->updateMetadonnees($these, $metadonnee);
+                $metadonnee = $form->getObject()->getMetadonnee();
 
-                if (! $this->getRequest()->isXmlHttpRequest()) {
+                $this->depotService->updateMetadonnees($these, $metadonnee);
+                $this->theseService->update($these);
+                if (!$this->getRequest()->isXmlHttpRequest()) {
                     return $this->redirect()->toRoute('these/description', [], [], true);
                 }
             }
         }
-
         $form->setAttribute('action', $this->urlDepot()->modifierMetadonneesUrl($these));
 
         return new ViewModel([
@@ -1427,14 +1453,14 @@ class DepotController extends AbstractController
     }
 
     /**
-     * @return \Depot\Form\Metadonnees\MetadonneeTheseForm
+     * @return \Depot\Form\Metadonnees\MetadonneeTheseFieldset
      */
     private function getDescriptionForm()
     {
         $these = $this->requestedThese();
 
-        /** @var MetadonneeTheseForm $form */
-        $form = $this->metadonneeTheseForm;
+        /** @var MetadonneeTheseFieldset $fieldset */
+        $fieldset = $this->metadonneeTheseFieldset;
 
         $description = $these->getMetadonnee();
 
@@ -1443,9 +1469,9 @@ class DepotController extends AbstractController
             $description->setTitre($these->getTitre());
         }
 
-        $form->bind($description);
+        $fieldset->bind($description);
 
-        return $form;
+        return $fieldset;
     }
 
     public function modifierCertifConformiteAction()

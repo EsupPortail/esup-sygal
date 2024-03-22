@@ -14,6 +14,7 @@ use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Form\DomaineHalSaisie\Fieldset\DomaineHalFieldset;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class TheseSaisieForm extends Form
@@ -36,6 +37,8 @@ class TheseSaisieForm extends Form
     }
 
     private string $urlDirecteur;
+    private ?array $domainesHal = null;
+
 
     /**
      * @param string|null $urlDirecteur
@@ -78,6 +81,9 @@ class TheseSaisieForm extends Form
                 'data-bs-html' => 'true',
             ]
         ]);
+
+        $domainesHalFieldset = $this->getFormFactory()->getFormElementManager()->get(DomaineHalFieldset::class);
+        $this->add($domainesHalFieldset, ['name' => 'domaineHal']);
 
         /**  DIRECTEUR  ***********************************************************************************************/
         $directeur = new SearchAndSelect('directeur-individu', ['label' => "Directeur·trice de thèse :"]);
@@ -264,6 +270,10 @@ class TheseSaisieForm extends Form
             ],
             'discipline' => [
                 'name' => 'discipline',
+                'required' => false,
+            ],
+            'domaineHal' => [
+                'name' => 'domaineHal',
                 'required' => false,
             ],
             'unite-recherche' => [
