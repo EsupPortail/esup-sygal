@@ -7,6 +7,7 @@
 
 use Application\Entity\Db\DomaineHal;
 use Depot\Entity\Db\MetadonneeThese;
+use Doctrine\ORM\PersistentCollection;
 use These\Entity\Db\These;
 use Depot\Filter\MotsClesFormatter;
 
@@ -39,14 +40,21 @@ $langueAutreTitre = function () use ($metadonnee) {
             <dd><?php echo $motsClesFormatter->filter($metadonnee->getMotsClesLibresAnglais()) ?: "(Non renseignés)" ?></dd>
             <dt>Domaine(s) HAL</dt>
             <dd><?php
-                $domaines = [];
-                foreach ($these->getDomainesHal() as $domaineHal) {
-                    /** @var DomaineHal $domaineHal */
-                    $domaines[] = $domaineHal->getFrDomainS() . " (<i>" . $domaineHal->getEnDomainS() . "</i>)";
-                }
-                echo implode(' <br> ', $domaines);
-                echo empty($domaines) ? "(Non renseignés)" : null;
-                ?>
+                if ($these->getDomainesHal() instanceof PersistentCollection && $these->getDomainesHal()->isEmpty()){ ?>
+                    <em> Aucun domaine HAL de renseigné </em><br>
+                <?php }else{ ?>
+                <ul>
+                    <?php foreach($these->getDomainesHal() as $domaine){ ?>
+                        <li>
+                            <?php
+                                /** @var DomaineHal $domaine */
+                                echo $domaine->getFrDomainS();
+                            ?>
+                            (<i><?= $domaine->getEnDomainS() ?>)</i>
+                        </li>
+                    <?php } ?>
+                </ul>
+                <?php } ?>
             </dd>
         </dl>
     </div>

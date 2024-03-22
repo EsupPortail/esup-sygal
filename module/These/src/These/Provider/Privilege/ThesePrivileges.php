@@ -36,4 +36,5 @@ class ThesePrivileges extends Privileges
     const THESE_CONSULTATION_SES_THESES             = 'these-consultation-de-ses-theses';
     const THESE_MODIFICATION_TOUTES_THESES          = 'these-modification-de-toutes-les-theses';
     const THESE_MODIFICATION_SES_THESES             = 'these-modification-de-ses-theses';
+    const THESE_MODIFICATION_DOMAINES_HAL_THESE     = 'these-modification-domaines-hal-these';
 }
