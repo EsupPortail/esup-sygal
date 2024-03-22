@@ -458,6 +458,123 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                         </mets:mdWrap>
                     </mets:techMD>
 
+                    <!--Déclaration des droits-->
+                    <!--Déclaration de l'autorisation du chef d'établissement-->
+                    <mets:rightsMD ID="these_{CODE_ETAB_SOUT}_{THESE_ID}_etab">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_etablissement_these">
+                            <mets:xmlData>
+                                <metsRights:RightsDeclarationMD>
+                                    <!-- Autorisations sur internet-->
+                                    <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                        <!--déclaration d'une confidentialité de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+
+                                    <!-- Autorisations sur intranet-->
+                                    <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                        <!--déclaration d'une confidentialité de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                </metsRights:RightsDeclarationMD>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:rightsMD>
+
+                    <!--Déclaration de l'autorisation de l'auteur-->
+                    <mets:rightsMD ID="CODEETAB.IMPORT.DROITS_DOCTORANT">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_auteur_these">
+                            <mets:xmlData>
+                                <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                                    <!-- Autorisations sur internet-->
+                                    <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                        <!--déclaration d'un embargo de la date de soutenance à la date de fin d'embargo-->
+                                        <xsl:if test="DATE_DEBUT_EMBARGO != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>restriction</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_EMBARGO"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_EMBARGO"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                    <!-- Autorisations sur intranet-->
+                                    <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                    </metsRights:Context>
+                                </metsRights:RightsDeclarationMD>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:rightsMD>
+
+                    <!--Droits consolidés pour la version complète d'archivage-->
+                    <mets:rightsMD ID="CODEETAB.IMPORT.VERSION_COMPLETE.DROITS">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_version">
+                            <mets:xmlData>
+                                <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                                    <!-- Autorisations sur internet-->
+                                    <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true"
+                                                                MODIFY="false" DELETE="false"/>
+                                        <!--droits calculés : confidentialité  de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                    <!-- Autorisations sur intranet-->
+                                    <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true"
+                                                                MODIFY="false" DELETE="false"/>
+                                        <!--droits calculés : confidentialité de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                </metsRights:RightsDeclarationMD>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:rightsMD>
                 </mets:amdSec>
                 <!--
                Génération de la carte de structure METS.

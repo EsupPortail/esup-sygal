@@ -4,14 +4,11 @@ namespace StepStar\Form;
 
 use Laminas\Filter\StringTrim;
 use Laminas\Form\Element\Checkbox;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
-use Laminas\Form\Form;
-use Laminas\InputFilter\InputFilterProviderInterface;
 
-class EnvoiForm extends Form implements InputFilterProviderInterface
+class EnvoiForm extends AbstractEnvoiForm
 {
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -22,15 +19,6 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
         $this->add((new Checkbox('force'))
             ->setLabel("Envoyer même si le TEF n'a pas changé depuis le dernier envoi")
         );
-
-        $this->add((new Text('tag'))
-            ->setLabel("Tag éventuel (pour retrouver facilement un ensemble de logs) :")
-        );
-
-        $this->add((new Submit('submit'))
-            ->setValue("Envoyer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
     }
 
     /**
@@ -38,7 +26,7 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification(): array
     {
-        return [
+        return array_merge(parent::getInputFilterSpecification(), [
             'these' => [
                 'name' => 'these',
                 'required' => true,
@@ -50,10 +38,6 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
                 'name' => 'force',
                 'required' => false,
             ],
-            'tag' => [
-                'name' => 'tag',
-                'required' => false,
-            ],
-        ];
+        ]);
     }
 }
