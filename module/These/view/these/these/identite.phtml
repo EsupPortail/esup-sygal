@@ -10,6 +10,7 @@ use Application\View\Renderer\PhpRenderer;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
+use Doctrine\ORM\PersistentCollection;
 use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
 use Structure\Entity\Db\EtablissementRattachement;
@@ -18,6 +19,7 @@ use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Filter\ActeursFormatter;
 use These\Provider\Privilege\CoEncadrantPrivileges;
+use These\Provider\Privilege\ThesePrivileges;
 
 /**
  * @var PhpRenderer  $this
@@ -48,6 +50,7 @@ $canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(
 $canMissionAfficher = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_VISUALISER));
 $canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_MODIFIER));
 
+$canDomaineHalModifier = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE));
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
@@ -399,17 +402,30 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
 
             <dt class="col-md-4">Domaine(s) HAL</dt>
             <dd class="col-md-8">
-                <?php foreach($these->getDomainesHal() as $domaine){
-                    /** @var DomaineHal $domaine */
-                    echo $domaine->getFrDomainS()."<br>";
-                } ?>
-                <a  <?php /**  @see \These\Controller\DomaineHalSaisieController::saisieDomaineHalAction() */ ?>
-                        class="btn btn-primary ajax-modal" data-event="modification"
-                        href="<?php echo $this->url('these/saisie-domaine-hal', ['these' => $these->getId()], [], true); ?>"
-                >
-                    <span class="icon icon-plus"></span>
-                    Saisir le(s) domaine(s)
-                </a>
+                <?php
+                if ($these->getDomainesHal() instanceof PersistentCollection && $these->getDomainesHal()->isEmpty()){ ?>
+                    <em> Aucun domaine HAL de renseigné </em><br>
+                <?php }else{ ?>
+                    <ul>
+                        <?php foreach($these->getDomainesHal() as $domaine){ ?>
+                            <li>
+                                <?php
+                                    /** @var DomaineHal $domaine */
+                                    echo $domaine->getFrDomainS();
+                                ?>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                <?php }
+                if($canDomaineHalModifier){?>
+                    <a  <?php /**  @see \These\Controller\DomaineHalSaisieController::saisieDomaineHalAction() */ ?>
+                            class="btn btn-primary ajax-modal" data-event="modification"
+                            href="<?php echo $this->url('these/saisie-domaine-hal', ['these' => $these->getId()], [], true); ?>"
+                    >
+                        <span class="icon icon-plus"></span>
+                        Saisir le(s) domaine(s)
+                    </a>
+                <?php } ?>
             </dd>
 
             <dt class="col-md-4">Date de 1ère<br>inscription</dt>

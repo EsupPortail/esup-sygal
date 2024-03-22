@@ -308,7 +308,7 @@ class EnqueteQuestionController extends AbstractController {
         foreach ($reponses as $reponse) $dictionnaireReponse[$reponse->getQuestion()->getId()] = $reponse;
         $enquete = new ArrayCollection();
         foreach ($dictionnaireQuestion as $id => $question) {
-            $reponse = $dictionnaireReponse[$id];
+            $reponse = $dictionnaireReponse[$id] ?? null;
             if ($reponse === null) {
                 $reponse = new EnqueteReponse();
                 $reponse->setInscription($inscription);

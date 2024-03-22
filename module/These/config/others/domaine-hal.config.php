@@ -11,6 +11,7 @@ use These\Form\DomaineHalSaisie\Fieldset\DomaineHalFieldset;
 use These\Form\DomaineHalSaisie\Fieldset\DomaineHalFieldsetFactory;
 use These\Form\DomaineHalSaisie\Fieldset\DomaineHalHydrator;
 use These\Form\DomaineHalSaisie\Fieldset\DomaineHalHydratorFactory;
+use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -23,9 +24,9 @@ return [
                     'action' => [
                         'saisie-domaine-hal',
                     ],
-//                    'privileges' => [
-//                        AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_MODIFIER,
-//                    ],
+                    'privileges' => [
+                        ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE,
+                    ],
                 ]
             ],
         ],
