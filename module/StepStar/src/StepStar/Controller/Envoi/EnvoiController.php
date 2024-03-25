@@ -61,6 +61,8 @@ class EnvoiController extends AbstractController
 
         return [
             'form' => $this->envoiFichiersForm,
+            'help' => "Le motif de recherche des fichiers TEF dans le répertoire est le suivant : " .
+                '<code>' . $this->envoiFacade->getTefFilesGlobPattern() . '</code>',
         ];
     }
 

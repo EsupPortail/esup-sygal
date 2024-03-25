@@ -17,7 +17,7 @@ class EnvoiThesesForm extends AbstractEnvoiForm
         );
 
         $this->add((new Checkbox('force'))
-            ->setLabel("Envoyer même si le TEF n'a pas changé depuis le dernier envoi")
+            ->setLabel("Envoyer la thèse même si son fichier TEF n'a pas changé depuis le dernier envoi")
         );
 
         $this->add((new Text('tag'))

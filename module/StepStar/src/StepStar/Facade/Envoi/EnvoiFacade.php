@@ -243,4 +243,9 @@ class EnvoiFacade
 
         return $paths;
     }
+
+    public function getTefFilesGlobPattern(): string
+    {
+        return $this->listTefFilesInDirectoryGlobPattern;
+    }
 }

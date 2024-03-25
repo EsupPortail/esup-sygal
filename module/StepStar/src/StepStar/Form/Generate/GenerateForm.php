@@ -19,7 +19,7 @@ class GenerateForm extends Form implements InputFilterProviderInterface
         );
 
         $this->add((new Submit('submit'))
-            ->setValue("Générer les fichiers XML")
+            ->setValue("Générer")
             ->setAttribute('class', 'btn btn-primary')
         );
     }

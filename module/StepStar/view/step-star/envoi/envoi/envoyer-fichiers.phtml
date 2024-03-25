@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \StepStar\Form\Envoi\EnvoiFichiersForm $form
+ * @var string $help
  *
  * @see \StepStar\Controller\Envoi\EnvoiController::envoyerFichiersAction()
  */
@@ -8,14 +9,14 @@
 $form->prepare();
 ?>
 
-<h1 class="page-header">Envoi de fichiers</h1>
+<h1 class="page-header">Envoi de fichiers TEF</h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <div class="row">
     <div class="col-md-5">
         <?php echo $this->form()->openTag($form); ?>
-        <?php echo $this->formControlGroup()->render($form->get('path')); ?>
+        <?php echo $this->formControlGroup()->setHelpContent($help)->render($form->get('path')); ?>
         <?php echo $this->formControlGroup()->render($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
     </div>

@@ -287,13 +287,13 @@ return [
                                         'order' => 10,
                                     ],
                                     'generation' => [
-                                        'label' => "Génération",
+                                        'label' => "Génération TEF",
                                         'route' => 'step-star/generation',
                                         'resource' => PrivilegeController::getResourceId(GenerateController::class, 'generer-theses'),
-                                        'order' => 20,
+                                        'order' => 15,
                                     ],
                                     'envoi-fichiers' => [
-                                        'label' => "Envoi de fichiers",
+                                        'label' => "Envoi de fichiers TEF",
                                         'route' => 'step-star/envoi/fichiers',
                                         'resource' => PrivilegeController::getResourceId(EnvoiController::class, 'envoyer-fichiers'),
                                         'order' => 20,

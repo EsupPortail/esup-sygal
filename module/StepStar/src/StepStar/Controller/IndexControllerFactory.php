@@ -20,11 +20,12 @@ class IndexControllerFactory
         $controller->setLogService($logService);
 
         $config = $container->get('Config')['step_star'];
-//        var_dump($config);
         $infos = [
             'Web Service destination' => $config['api']['soap_client']['wsdl']['url'],
             'Id établissement' => $config['api']['params']['idEtablissement'],
             "Autorité SUDOC étab soutenance" => $config['tef']['xsl_template_params']['autoriteSudoc_etabSoutenance'],
+            "Répertoire de travail pour la génération des fichiers TEF" => $config['tef']['output_dir_path_prefix'],
+            "Suppression des fichiers générés après l'envoi des thèses" => $config['tef']['clean_after_work'] ? 'Oui' : 'Non',
         ];
         $controller->setInfos($infos);
 
