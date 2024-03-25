@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \StepStar\Form\EnvoiForm $form
+ * @var \StepStar\Form\Envoi\EnvoiThesesForm $form
  *
  * @see \StepStar\Controller\Envoi\EnvoiController::envoyerThesesAction()
  */
@@ -8,13 +8,18 @@
 $form->prepare();
 ?>
 
-<h1 class="page-header">Envoi</h1>
+<h1 class="page-header">Envoi de thèses</h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <div class="row">
     <div class="col-md-5">
-        <?php echo $this->form($form) ?>
+        <?php echo $this->form()->openTag($form); ?>
+        <?php echo $this->formControlGroup()->render($form->get('these')); ?>
+        <?php echo $this->formControlGroup()->render($form->get('force')); ?>
+        <?php echo $this->formControlGroup()->render($form->get('tag')); ?>
+        <?php echo $this->formControlGroup()->render($form->get('submit')); ?>
+        <?php echo $this->form()->closeTag(); ?>
     </div>
 </div>
 

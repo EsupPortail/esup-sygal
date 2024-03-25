@@ -24,11 +24,6 @@ class LogService
 
     /**
      * Instancie un nouveau Log, qui devient le Log courant.
-     *
-     * @param string|null $operation
-     * @param string|null $command
-     * @param string|null $tag
-     * @return \StepStar\Entity\Db\Log
      */
     public function newLog(?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
@@ -49,12 +44,6 @@ class LogService
 
     /**
      * Instancie un nouveau Log concernant une thèse, qui devient le Log courant.
-     *
-     * @param int $theseId
-     * @param string|null $operation
-     * @param string|null $command
-     * @param string|null $tag
-     * @return \StepStar\Entity\Db\Log
      */
     public function newLogForThese(int $theseId, ?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
@@ -64,10 +53,6 @@ class LogService
         return $log;
     }
 
-    /**
-     * @param string $operation
-     * @return \StepStar\Entity\Db\Log|null
-     */
     public function findLastLogForOperation(string $operation): ?Log
     {
         $qb = $this->getRepository()->createQueryBuilder('l')
@@ -80,11 +65,6 @@ class LogService
         return $result[0] ?? null;
     }
 
-    /**
-     * @param int $theseId
-     * @param string $operation
-     * @return \StepStar\Entity\Db\Log|null
-     */
     public function findLastLogForTheseAndOperation(int $theseId, string $operation): ?Log
     {
         $qb = $this->getRepository()->createQueryBuilder('l')
@@ -100,10 +80,8 @@ class LogService
 
     /**
      * Enregistre le Log spécifié en bdd.
-     *
-     * @param \StepStar\Entity\Db\Log $log
      */
-    public function saveLog(Log $log)
+    public function saveLog(Log $log): void
     {
         if ($log->getThese() === null) {
             if ($log->getTheseId() !== null) {

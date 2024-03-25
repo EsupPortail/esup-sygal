@@ -1,0 +1,22 @@
+<?php
+/**
+ * @var \StepStar\Form\Generate\GenerateForm $form
+ *
+ * @see \StepStar\Controller\Generate\GenerateController::genererThesesAction()
+ */
+
+$form->prepare();
+?>
+
+<h1 class="page-header">Génération XML</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<div class="row">
+    <div class="col-md-5">
+        <?php echo $this->form($form) ?>
+    </div>
+</div>
+
+
+

@@ -9,10 +9,7 @@ use Webmozart\Assert\Assert;
 
 class XslServiceFactory implements FactoryInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): XslService
     {
         /** @var array $config */
         $config = $container->get('Config');
@@ -35,7 +32,6 @@ class XslServiceFactory implements FactoryInterface
             'etablissementStepStar',
             'autoriteSudoc_etabSoutenance',
             'these',
-//            'resultDocumentHref',
         ];
 
         foreach ($keys as $k) {

@@ -8,6 +8,10 @@ use StepStar\Controller\Envoi\EnvoiConsoleController;
 use StepStar\Controller\Envoi\EnvoiConsoleControllerFactory;
 use StepStar\Controller\Envoi\EnvoiController;
 use StepStar\Controller\Envoi\EnvoiControllerFactory;
+use StepStar\Controller\Generate\GenerateConsoleController;
+use StepStar\Controller\Generate\GenerateConsoleControllerFactory;
+use StepStar\Controller\Generate\GenerateController;
+use StepStar\Controller\Generate\GenerateControllerFactory;
 use StepStar\Controller\IndexController;
 use StepStar\Controller\IndexControllerFactory;
 use StepStar\Controller\Log\LogController;
@@ -16,9 +20,13 @@ use StepStar\Controller\Log\LogRechercheController;
 use StepStar\Controller\Log\LogRechercheControllerFactory;
 use StepStar\Controller\Oai\OaiConsoleController;
 use StepStar\Controller\Oai\OaiConsoleControllerFactory;
-use StepStar\Facade\EnvoiFacade;
-use StepStar\Facade\EnvoiFacadeFactory;
-use StepStar\Form\EnvoiForm;
+use StepStar\Facade\Envoi\EnvoiFacade;
+use StepStar\Facade\Envoi\EnvoiFacadeFactory;
+use StepStar\Facade\Generate\GenerateFacade;
+use StepStar\Facade\Generate\GenerateFacadeFactory;
+use StepStar\Form\Envoi\EnvoiFichiersForm;
+use StepStar\Form\Envoi\EnvoiThesesForm;
+use StepStar\Form\Generate\GenerateForm;
 use StepStar\Provider\StepStarPrivileges;
 use StepStar\Service\Api\ApiService;
 use StepStar\Service\Api\ApiServiceFactory;
@@ -86,8 +94,9 @@ return [
                     'rootTag' => 'THESES',
                     'tag' => 'THESE',
                 ],
-//                'resultDocumentHref' => '{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}.tef.xml',
             ],
+            'output_dir_path_prefix' => '/tmp/sygal_stepstar_',
+            'clean_after_work' => false,
         ],
         'api' => [
             'soap_client' => [
@@ -160,13 +169,43 @@ return [
                             ],
                         ],
                     ],
+                    'generation' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/generation',
+                            'defaults' => [
+                                'controller' => GenerateController::class,
+                                'action' => 'generer-theses',
+                            ],
+                        ],
+                    ],
                     'envoi' => [
                         'type' => 'Literal',
                         'options' => [
                             'route' => '/envoi',
                             'defaults' => [
                                 'controller' => EnvoiController::class,
-                                'action' => 'envoyer-theses',
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'theses' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/theses',
+                                    'defaults' => [
+                                        'action' => 'envoyer-theses',
+                                    ],
+                                ],
+                            ],
+                            'fichiers' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/fichiers',
+                                    'defaults' => [
+                                        'action' => 'envoyer-fichiers',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -247,11 +286,23 @@ return [
                                         'resource' => PrivilegeController::getResourceId(IndexController::class, 'index'),
                                         'order' => 10,
                                     ],
-                                    'envoi' => [
-                                        'label' => "Envoi",
-                                        'route' => 'step-star/envoi',
-                                        'resource' => PrivilegeController::getResourceId(EnvoiController::class, 'envoyer-theses'),
+                                    'generation' => [
+                                        'label' => "Génération",
+                                        'route' => 'step-star/generation',
+                                        'resource' => PrivilegeController::getResourceId(GenerateController::class, 'generer-theses'),
                                         'order' => 20,
+                                    ],
+                                    'envoi-fichiers' => [
+                                        'label' => "Envoi de fichiers",
+                                        'route' => 'step-star/envoi/fichiers',
+                                        'resource' => PrivilegeController::getResourceId(EnvoiController::class, 'envoyer-fichiers'),
+                                        'order' => 20,
+                                    ],
+                                    'envoi-theses' => [
+                                        'label' => "Envoi de thèses",
+                                        'route' => 'step-star/envoi/theses',
+                                        'resource' => PrivilegeController::getResourceId(EnvoiController::class, 'envoyer-theses'),
+                                        'order' => 21,
                                     ],
                                     'logs' => [
                                         'label' => 'Logs',
@@ -304,6 +355,32 @@ return [
                     ],
                 ],
 
+                'generer-theses' => [
+                    'type' => Simple::class,
+                    'options' => [
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__GENERER_THESES . ' [--these=] [--etat=] [--date-soutenance-min=] [--etablissement=]',
+                        'defaults' => [
+                            /**
+                             * @see GenerateConsoleController::genererThesesAction()
+                             */
+                            'controller' => GenerateConsoleController::class,
+                            'action' => 'generer-theses',
+                        ],
+                    ],
+                ],
+                'envoyer-fichiers' => [
+                    'type' => Simple::class,
+                    'options' => [
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_FICHIERS . ' --dir=',
+                        'defaults' => [
+                            /**
+                             * @see EnvoiConsoleController::envoyerFichiersAction()
+                             */
+                            'controller' => EnvoiConsoleController::class,
+                            'action' => 'envoyer-fichiers',
+                        ],
+                    ],
+                ],
                 'envoyer-theses' => [
                     'type' => Simple::class,
                     'options' => [
@@ -338,6 +415,26 @@ return [
                 ],
                 [
                     /**
+                     * @see GenerateConsoleController::genererThesesAction()
+                     */
+                    'controller' => GenerateConsoleController::class,
+                    'action' => [
+                        'generer-theses',
+                    ],
+                    'role' => [],
+                ],
+                [
+                    /**
+                     * @see EnvoiConsoleController::envoyerFichiersAction()
+                     */
+                    'controller' => EnvoiConsoleController::class,
+                    'action' => [
+                        'envoyer-fichiers',
+                    ],
+                    'role' => [],
+                ],
+                [
+                    /**
                      * @see EnvoiConsoleController::envoyerThesesAction()
                      */
                     'controller' => EnvoiConsoleController::class,
@@ -356,6 +453,28 @@ return [
                     'action' => [
                         'index',
                         'infos',
+                    ],
+                    'role' => [],
+                    'privileges' => StepStarPrivileges::LOG_LISTER,
+                ],
+                [
+                    /**
+                     * @see \StepStar\Controller\Generate\GenerateController::genererThesesAction()
+                     */
+                    'controller' => GenerateController::class,
+                    'action' => [
+                        'generer-theses',
+                    ],
+                    'role' => [],
+                    'privileges' => StepStarPrivileges::LOG_LISTER,
+                ],
+                [
+                    /**
+                     * @see \StepStar\Controller\Envoi\EnvoiController::envoyerFichiersAction()
+                     */
+                    'controller' => EnvoiController::class,
+                    'action' => [
+                        'envoyer-fichiers',
                     ],
                     'role' => [],
                     'privileges' => StepStarPrivileges::LOG_LISTER,
@@ -411,6 +530,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            GenerateFacade::class => GenerateFacadeFactory::class,
             EnvoiFacade::class => EnvoiFacadeFactory::class,
 
             XmlService::class => XmlServiceFactory::class,
@@ -435,6 +555,9 @@ return [
             LogController::class => LogControllerFactory::class,
             LogRechercheController::class => LogRechercheControllerFactory::class,
 
+            GenerateController::class => GenerateControllerFactory::class,
+            GenerateConsoleController::class => GenerateConsoleControllerFactory::class,
+
             EnvoiController::class => EnvoiControllerFactory::class,
             EnvoiConsoleController::class => EnvoiConsoleControllerFactory::class,
 
@@ -443,7 +566,9 @@ return [
     ],
     'form_elements' => [
         'invokables' => [
-            EnvoiForm::class,
+            GenerateForm::class,
+            EnvoiFichiersForm::class,
+            EnvoiThesesForm::class,
         ],
     ],
     'view_manager' => [
