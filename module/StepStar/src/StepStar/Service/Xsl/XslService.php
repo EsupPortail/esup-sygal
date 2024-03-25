@@ -65,10 +65,6 @@ class XslService
      */
     public function generateXslFile(?string $resultDocumentHref = null): string
     {
-        if ($this->outputDir === null) {
-            throw new TefServiceException("Aucun répertoire destination n'a été spécifié");
-        }
-
         // substitution possible
         if ($resultDocumentHref !== null) {
             $this->xslTemplateParams['resultDocumentHref'] = $resultDocumentHref;

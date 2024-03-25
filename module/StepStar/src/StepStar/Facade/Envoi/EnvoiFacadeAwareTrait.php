@@ -1,6 +1,6 @@
 <?php
 
-namespace StepStar\Facade;
+namespace StepStar\Facade\Envoi;
 
 trait EnvoiFacadeAwareTrait
 {

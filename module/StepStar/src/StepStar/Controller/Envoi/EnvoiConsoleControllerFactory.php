@@ -3,7 +3,7 @@
 namespace StepStar\Controller\Envoi;
 
 use Psr\Container\ContainerInterface;
-use StepStar\Facade\EnvoiFacade;
+use StepStar\Facade\Envoi\EnvoiFacade;
 use StepStar\Service\Fetch\FetchService;
 
 class EnvoiConsoleControllerFactory
@@ -17,7 +17,7 @@ class EnvoiConsoleControllerFactory
         $controller = new EnvoiConsoleController();
 
         /**
-         * @var \StepStar\Facade\EnvoiFacade $envoiFacade
+         * @var \StepStar\Facade\Envoi\EnvoiFacade $envoiFacade
          */
         $envoiFacade = $container->get(EnvoiFacade::class);
         $controller->setEnvoiFacade($envoiFacade);

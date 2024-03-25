@@ -1,12 +1,12 @@
 <?php
 
-namespace StepStar\Form;
+namespace StepStar\Form\Envoi;
 
 use Laminas\Filter\StringTrim;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 
-class EnvoiForm extends AbstractEnvoiForm
+class EnvoiThesesForm extends AbstractEnvoiForm
 {
     public function init(): void
     {
@@ -18,6 +18,10 @@ class EnvoiForm extends AbstractEnvoiForm
 
         $this->add((new Checkbox('force'))
             ->setLabel("Envoyer même si le TEF n'a pas changé depuis le dernier envoi")
+        );
+
+        $this->add((new Text('tag'))
+            ->setLabel("Tag éventuel (pour retrouver facilement un ensemble de logs) :")
         );
     }
 

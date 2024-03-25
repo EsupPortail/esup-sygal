@@ -4,8 +4,9 @@ namespace StepStar\Controller\Envoi;
 
 use Laminas\Form\FormElementManager;
 use Psr\Container\ContainerInterface;
-use StepStar\Facade\EnvoiFacade;
-use StepStar\Form\EnvoiForm;
+use StepStar\Facade\Envoi\EnvoiFacade;
+use StepStar\Form\Envoi\EnvoiFichiersForm;
+use StepStar\Form\Envoi\EnvoiThesesForm;
 use StepStar\Service\Fetch\FetchService;
 
 class EnvoiControllerFactory
@@ -19,7 +20,7 @@ class EnvoiControllerFactory
         $controller = new EnvoiController();
 
         /**
-         * @var \StepStar\Facade\EnvoiFacade $envoiFacade
+         * @var \StepStar\Facade\Envoi\EnvoiFacade $envoiFacade
          */
         $envoiFacade = $container->get(EnvoiFacade::class);
         $controller->setEnvoiFacade($envoiFacade);
@@ -32,9 +33,12 @@ class EnvoiControllerFactory
 
         /** @var FormElementManager $formElementsManager */
         $formElementsManager = $container->get(FormElementManager::class);
-        /** @var EnvoiForm $envoiForm */
-        $envoiForm = $formElementsManager->get(EnvoiForm::class);
-        $controller->setEnvoiForm($envoiForm);
+        /** @var EnvoiThesesForm $envoiThesesForm */
+        $envoiThesesForm = $formElementsManager->get(EnvoiThesesForm::class);
+        $controller->setEnvoiThesesForm($envoiThesesForm);
+        /** @var \StepStar\Form\Envoi\EnvoiFichiersForm $envoiThesesForm */
+        $envoiFichiersForm = $formElementsManager->get(EnvoiFichiersForm::class);
+        $controller->setEnvoiFichiersForm($envoiFichiersForm);
 
         return $controller;
     }

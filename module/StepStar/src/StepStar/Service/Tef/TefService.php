@@ -45,13 +45,14 @@ class TefService
     /**
      * Transforme, à l'aide d'un fichier XSL, les fichiers XML placés dans un répertoire, pour produire les fichiers TEF.
      *
-     * NB : ne requiert pas le module PHP SaxonC.
+     * NB : ne requiert pas le module PHP SaxonC mais l'utilitaire en ligne de commande 'transform' de SaxonC, cf.
+     * {@see TransformShellCommand}
      *
      * @param string $inputDirPath
      * @param string $xslFilePath
      * @throws \StepStar\Exception\TefServiceException
      */
-    public function generateTefFilesFromDir(string $inputDirPath, string $xslFilePath)
+    public function generateTefFilesFromDir(string $inputDirPath, string $xslFilePath): void
     {
         $command = new TransformShellCommand();
         $command->setInputFilePath($inputDirPath);
@@ -80,27 +81,5 @@ class TefService
                 0,
                 $rte);
         }
-    }
-
-    /**
-     * Transforme, à l'aide d'un fichier XSL, le fichier XML spécifié, pour produire les fichiers TEF.
-     *
-     * ATTENTION : requiert le module PHP SaxonC (https://www.saxonica.com/download/c.xml).
-     *
-     * @param string $xmlFilePath
-     * @param string $xslFilePath
-     * @throws \StepStar\Exception\TefServiceException
-     */
-    public function generateTefFilesFromFile(string $xmlFilePath, string $xslFilePath)
-    {
-        if ($this->outputDir === null) {
-            throw new TefServiceException("Aucun répertoire destination n'a été spécifié");
-        }
-
-        // transformation XSLT
-        $this->xsltService
-            ->setOutputDir($this->outputDir)
-            ->setXslFilePath($xslFilePath)
-            ->transformToFiles($xmlFilePath);
     }
 }
