@@ -3,3 +3,7 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 1;1;\These\Provider\Privilege\ThesePrivileges::THESE_TOUT_FAIRE;;;;;;;;;;1;
 2;1;*;1:1;;;;;;;2:0;;0;Cette thèse n'est pas la vôtre.
 3;1;*;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
+5;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;1:1;;;;;;;2:0;;0;Vous ne pouvez pas saisir le(s) domaines HAL car vous n’êtes pas l’auteur de la thèse.
+6;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
+7;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;;;1:0;;;;;0;L’état de la thèse ne permet pas cette opération.
+8;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;;;;;;;;1;

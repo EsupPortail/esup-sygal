@@ -1,7 +1,16 @@
+--
+-- DomaineHal
+--
+-- Version 8.1.0
+--
+
+--
+-- Ajout des informations concernant l'import des domaines HAL
+--
 INSERT INTO source(id, code, libelle, etablissement_id, importable)
 VALUES (7, 'HAL', 'HAL', null, true) ON CONFLICT DO NOTHING;;
 
---Suppression des données existantes concernant l'import des domaines HAL
+--Suppression des possibles données existantes concernant l'import des domaines HAL
 drop view if exists v_diff_domaine_hal;
 drop view if exists src_domaine_hal;
 drop table if exists tmp_domaine_hal;
@@ -112,6 +121,9 @@ CREATE TABLE IF NOT EXISTS public.domaine_hal_these
     domaine_id bigint NOT NULL
 );
 
+--
+-- Ajout des privilèges liés à la gestion des domaines HAL
+--
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 with d(ordre, code, lib) as (
     select 3100, 'modification-domaines-hal-these', 'Modifier les domaines HAL de sa thèse'

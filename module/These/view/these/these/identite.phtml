@@ -50,7 +50,7 @@ $canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(
 $canMissionAfficher = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_VISUALISER));
 $canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_MODIFIER));
 
-$canDomaineHalModifier = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE));
+$canDomaineHalModifier = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 

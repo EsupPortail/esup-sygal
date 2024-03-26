@@ -3,6 +3,7 @@
 namespace These;
 
 use Laminas\Router\Http\Segment;
+use These\Assertion\These\TheseAssertion;
 use These\Controller\DomaineHalSaisieController;
 use These\Controller\Factory\DomaineHalSaisieControllerFactory;
 use These\Form\DomaineHalSaisie\DomaineHalSaisieForm;
@@ -17,6 +18,19 @@ use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE,
+                        ],
+                        'resources'  => ['These'],
+                        'assertion'  => TheseAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -27,6 +41,7 @@ return [
                     'privileges' => [
                         ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE,
                     ],
+                    'assertion' => TheseAssertion::class,
                 ]
             ],
         ],
