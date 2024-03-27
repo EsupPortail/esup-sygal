@@ -47,7 +47,11 @@ services:
      - $HOME/.ssh:/root/.ssh
      - $HOME/.cache/composer:/root/.cache/composer
      - ../sygal-pegase-connect/vendor/unicaen/sygal-api:/sygal-api
-     - ./docker/apache/livelog.conf:/etc/apache2/conf-available/livelog.conf
+     - ./docker/configs/apache/conf-available/api.conf:/etc/apache2/conf-available/api.conf
+     - ./docker/configs/apache/conf-available/livelog.conf:/etc/apache2/conf-available/livelog.conf
+     - ./docker/configs/apache/conf-available/security.conf:/etc/apache2/conf-available/security.conf
+     - ./docker/entrypoint.d/001_memcached:/entrypoint.d/001_memcached
+     - ./docker/entrypoint.d/008_api:/entrypoint.d/008_api
      - ./docker/entrypoint.d/009_livelog:/entrypoint.d/009_livelog
     working_dir: /app
     networks:
