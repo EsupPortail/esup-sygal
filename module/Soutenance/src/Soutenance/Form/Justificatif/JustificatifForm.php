@@ -3,17 +3,22 @@
 namespace Soutenance\Form\Justificatif;
 
 use Fichier\Entity\Db\NatureFichier;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 
-class JustificatifForm extends Form {
-    use PropositionServiceAwareTrait;
+class JustificatifForm extends Form
+{
+    protected array $membresAsOptions = [];
 
-    public function init()
+    public function setMembresAsOptions(array $membresAsOptions): void
+    {
+        $this->membresAsOptions = $membresAsOptions;
+    }
+
+    public function init(): void
     {
         //Nature
         $this->add([
@@ -48,7 +53,6 @@ class JustificatifForm extends Form {
             'options' => [
                 'label' => 'Associer à un membre du jury :',
                 'empty_option' => 'Aucun',
-                'value_options' => ($this->getObject()?$this->getPropositionService()->extractMembresAsOptionsFromProposition($this->getObject()->getProposition()):null),
                 'attributes' => [
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -94,5 +98,14 @@ class JustificatifForm extends Form {
                 'required' => false,
             ],
         ]));
+    }
+
+    public function prepare(): JustificatifForm
+    {
+        /** @var Select $membresSelect */
+        $membresSelect = $this->get('membre');
+        $membresSelect->setValueOptions($this->membresAsOptions);
+
+        return parent::prepare();
     }
 }

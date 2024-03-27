@@ -2,27 +2,17 @@
 
 namespace Soutenance\Form\Justificatif;
 
-trait JustificatifFormAwareTrait {
+trait JustificatifFormAwareTrait
+{
+    protected JustificatifForm $justificatifForm;
 
-    /** @var JustificatifForm */
-    private $justificatifForm;
-
-    /**
-     * @return JustificatifForm
-     */
-    public function getJustificatifForm()
+    public function getJustificatifForm(): JustificatifForm
     {
         return $this->justificatifForm;
     }
 
-    /**
-     * @param JustificatifForm $justificatifForm
-     * @return JustificatifForm
-     */
-    public function setJustificatifForm($justificatifForm)
+    public function setJustificatifForm(JustificatifForm $justificatifForm): void
     {
         $this->justificatifForm = $justificatifForm;
-        return $this->justificatifForm;
     }
-
 }

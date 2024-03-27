@@ -3,21 +3,22 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
-use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Form\Justificatif\JustificatifFormAwareTrait;
 use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Laminas\View\Model\ViewModel;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
-class JustificatifController extends AbstractController {
+class JustificatifController extends AbstractController
+{
     use FichierTheseServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -78,9 +79,9 @@ class JustificatifController extends AbstractController {
         $justificatif = new Justificatif();
         $justificatif->setProposition($proposition);
         $form = $this->getJustificatifForm();
+        $form->setMembresAsOptions($this->propositionService->extractMembresAsOptionsFromProposition($proposition));
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true));
         $form->bind($justificatif);
-
 
         $request = $this->getRequest();
         if ($request->isPost()) {

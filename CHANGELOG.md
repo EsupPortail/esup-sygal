@@ -7,6 +7,7 @@ Journal des modifications
 - Proposition de soutenance : possibilité de rendre facultative la saisie de la date et heure de soutenance si besoin.
 - [FIX] Liste/recherche des utilisateurs : dysfonctionnement des filtres à cocher qui s'appliquait quelle qu'était leur valeur.
 - [FIX] Ajout d'une mission d'enseignement : le bouton ne fonctionnait plus à cause d'une erreur de config de la route.
+- [FIX] Proposition de soutenance > Fichiers associés > Téléversement d'un justificatif : la liste des membres était toujours vide.
 
 8.0.0
 -----
