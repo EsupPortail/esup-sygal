@@ -56,7 +56,7 @@ $this->headTitle("Proposition de soutenance");
 ?>
 
 <?php echo $this->alertes()
-    ->withMatchingPlanning()
+    ->addAlertesFromDatabase()
     ->renderAsBootstrapToasts() ?>
 
 <h1 class="page-header">

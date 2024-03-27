@@ -58,7 +58,7 @@
         "twig/twig": "^3.0",
         "webmozart/assert": "^1.3",
 
-        "unicaen/alerte": "^2.0",
+        "unicaen/alerte": "^3.0",
         "unicaen/app": "6.0.*",
         "unicaen/auth": "^6.0",
         "unicaen/auth-token": "^6.0",

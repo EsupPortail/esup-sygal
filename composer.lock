@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f1927284ffa0b1abfba7db98c4aa5654",
+    "content-hash": "e88812e57dfb0dcd8416b507d1b316ab",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11158,11 +11158,11 @@
         },
         {
             "name": "unicaen/alerte",
-            "version": "2.0.1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/alerte.git",
-                "reference": "6375f2b1460fec3bfbc2423c1ded437af87b62e6"
+                "reference": "c2e565c6e9fd7caabab93f0baf4842fb8e1528c8"
             },
             "require": {
                 "doctrine/doctrine-laminas-hydrator": "^2.0 || ^3.0",
@@ -11185,7 +11185,7 @@
                 ]
             },
             "description": "Affichage d'alertes",
-            "time": "2022-12-16T09:50:01+00:00"
+            "time": "2024-03-14T15:42:25+00:00"
         },
         {
             "name": "unicaen/app",

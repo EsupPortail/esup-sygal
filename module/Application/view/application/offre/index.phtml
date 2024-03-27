@@ -17,7 +17,7 @@ $subtitle = $this->appInfos()->desc;
 <?php $this->headTitle($this->translate("Offres de thèse")); ?>
 
 <?php echo $this->alertes()
-    ->withMatchingPlanning()
+    ->addAlertesFromDatabase()
     ->renderAsBootstrapToasts() ?>
 
 <?php

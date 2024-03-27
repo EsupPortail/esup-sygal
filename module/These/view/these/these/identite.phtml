@@ -62,7 +62,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <?php echo $this->alertes()
-    ->withMatchingPlanning()
+    ->addAlertesFromDatabase()
     ->renderAsBootstrapToasts() ?>
 
 <h1 class="page-header">
