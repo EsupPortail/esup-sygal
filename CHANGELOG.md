@@ -8,6 +8,11 @@ Journal des modifications
 - Amélioration de l'affichage des acteurs sur la fiche thèse.
 - Proposition de soutenance : prise en compte dans l'assertion du profil Gestionnaire d'ED pour le privilège 'Modification d'une proposition de soutenance pour gestion'.
 - Proposition de soutenance : possibilité de rendre facultative la saisie de la date et heure de soutenance si besoin.
+- Ajout de la possibilité de saisie des domaines HAL à partir de la fiche de la thèse et/ou lors du formulaire de signalement
+- Amélioration de la gestion d'une suppression de proposition de soutenance
+  - Ajout d'un bouton directement à partir de la proposition de soutenance
+  - Ajout d'un privilège 
+  - Envoi d'un mail pour notifier les acteurs directs de la thèse
 - [FIX] Liste/recherche des utilisateurs : dysfonctionnement des filtres à cocher qui s'appliquait quelle qu'était leur valeur.
 - [FIX] Ajout d'une mission d'enseignement : le bouton ne fonctionnait plus à cause d'une erreur de config de la route.
 - [FIX] Proposition de soutenance > Fichiers associés > Téléversement d'un justificatif : la liste des membres était toujours vide.
