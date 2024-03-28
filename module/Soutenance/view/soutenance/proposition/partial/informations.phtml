@@ -11,11 +11,13 @@
  * @var string[] $emailsAspectDoctorats
  *
  * @var Acteur[] $directeurs
+ *
+ * @see \Soutenance\Controller\PropositionController::propositionAction()
  */
 
-use These\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
 use Soutenance\Entity\Proposition;
+use These\Entity\Db\Acteur;
 
 $these = $proposition->getThese();
 
@@ -44,20 +46,20 @@ $etablissement = $these->getEtablissement();
                 <h3>Direction de la thèse</h3>
 
                 <ul>
-                    <?php foreach ($directeurs as $directeur) : ?>
+                    <?php foreach ($directeurs as $acteur) : ?>
                         <li>
-                            <?php echo $directeur->getIndividu()->getNomComplet(); ?>
-                            (<?php echo ($directeur->getIndividu()->getEmailPro())?:'<span class="text-danger">Adresse électronique manquante</span>'; ?>)
+                            <?php echo $acteur->getIndividu()->getNomComplet(); ?>
+                            (<?php echo ($acteur->getIndividu()->getEmailPro())?:'<span class="text-danger">Adresse électronique manquante</span>'; ?>)
                             <br/>
                             Établissement :
-                            <?php echo ($directeur->getIndividu()->getEtablissement())?:'<span class="text-danger">Établissement manquant</span>'; ?>
+                            <?php echo $acteur->getEtablissementForce() ?: $acteur->getEtablissement() ?: $these->getEtablissement() ?: '<span class="text-danger">Établissement manquant</span>'; ?>
                             <br/>
                             Unité de recherche :
-                            <?php echo ($directeur->getIndividu()->getUniteRecherche())?:'<span class="text-danger">Unité de recherche manquante</span>'; ?>
+                            <?php echo $acteur->getUniteRecherche() ?: $these->getUniteRecherche() ?: '<span class="text-danger">Unité de recherche manquante</span>'; ?>
                             <br/>
                             <?php if ($canModifier) : ?>
                                 <?php /** @see \Individu\Controller\IndividuComplController::gererAction() */ ?>
-                                <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $directeur->getIndividu()->getId()], [], true); ?>" class="btn btn-primary btn-sm ajax-modal" data-event="modification">
+                                <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $acteur->getIndividu()->getId()], [], true); ?>" class="btn btn-primary btn-sm ajax-modal" data-event="modification">
                                     <span class="icon icon-editer"></span> Compléter les informations
                                 </a>
                             <?php endif; ?>

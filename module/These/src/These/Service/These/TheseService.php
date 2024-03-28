@@ -2,8 +2,10 @@
 
 namespace These\Service\These;
 
+use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
+use Application\Service\UserContextService;
 use Doctrine\ORM\ORMException;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -26,6 +28,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
     use FichierStorageServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use ThrowsFailedAssertionExceptionTrait;
 
     /**
      * @return TheseRepository
@@ -237,13 +240,13 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $listing = [];
         foreach ($directeurs as $directeur) {
             $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
-            $structure = $these->getUniteRecherche();
+            $structure = $acteur->getUniteRecherche() ?: $these->getUniteRecherche();
             if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
             $listing[] = ['individu' => $current, 'structure' => $structure];
         }
         foreach ($codirecteurs as $directeur) {
             $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
-            $structure = ($directeur->getIndividu()->getUniteRecherche())/*?:$directeur->getIndividu()->getEtablissement()*/?:$directeur->getEtablissement();
+            $structure = $acteur->getUniteRecherche() ?: $acteur->getEtablissementForce() ?: $acteur->getEtablissement();
             if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
             $listing[] = ['individu' => $current, 'structure' => $structure];
         }
@@ -344,5 +347,48 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
             if ($directeur->getIndividu() === $individu) return true;
         }
         return false;
+    }
+
+
+    public function assertAppartenanceThese(These $these, UserContextService $userContextService): void
+    {
+        $role = $userContextService->getSelectedIdentityRole();
+        if (!$role) {
+            return;
+        }
+
+        if ($role->isDoctorant()) {
+            $doctorant = $userContextService->getIdentityDoctorant();
+            $this->assertTrue(
+                $these->getDoctorant()->getId() === $doctorant->getId(),
+                "La thèse n'appartient pas au doctorant " . $doctorant
+            );
+        }
+        elseif ($roleEcoleDoctorale = $userContextService->getSelectedRoleEcoleDoctorale()) {
+            $this->assertTrue(
+                $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
+                "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
+            );
+        }
+        elseif ($roleUniteRech = $userContextService->getSelectedRoleUniteRecherche()) {
+            $this->assertTrue(
+                $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
+                "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
+            );
+        }
+        elseif ($userContextService->getSelectedRoleDirecteurThese()) {
+            $individuUtilisateur = $userContextService->getIdentityDb()->getIndividu();
+            $this->assertTrue(
+                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE),
+                "La thèse n'est pas dirigée par " . $individuUtilisateur
+            );
+        }
+        elseif ($userContextService->getSelectedRoleCodirecteurThese()) {
+            $individuUtilisateur = $userContextService->getIdentityDb()->getIndividu();
+            $this->assertTrue(
+                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
+                "La thèse n'est pas codirigée par " . $individuUtilisateur
+            );
+        }
     }
 }

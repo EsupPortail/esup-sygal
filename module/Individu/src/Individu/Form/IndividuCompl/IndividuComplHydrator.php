@@ -2,14 +2,13 @@
 
 namespace Individu\Form\IndividuCompl;
 
-use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuCompl;
-use Structure\Entity\Db\UniteRecherche;
 use Laminas\Hydrator\HydratorInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class IndividuComplHydrator implements HydratorInterface {
+class IndividuComplHydrator implements HydratorInterface
+{
     use EntityManagerAwareTrait;
 
     /**
@@ -24,14 +23,6 @@ class IndividuComplHydrator implements HydratorInterface {
                 'label' => ($object->getIndividu())?$object->getIndividu()->getNomComplet():null,
             ],
             'email' => ($object->getEmailPro())?:null,
-            'etablissement' => [
-                'id' => ($object->getEtablissement())?$object->getEtablissement()->getId():null,
-                'label' => ($object->getEtablissement())?$object->getEtablissement()->getStructure()->getLibelle():null,
-            ],
-            'uniteRecherche' => [
-                'id' => ($object->getUniteRecherche())?$object->getUniteRecherche()->getId():null,
-                'label' => ($object->getUniteRecherche())?$object->getUniteRecherche()->getStructure()->getLibelle():null,
-            ],
         ];
         return $data;
     }
@@ -48,19 +39,9 @@ class IndividuComplHydrator implements HydratorInterface {
         $individu = ($individuId)?$this->getEntityManager()->getRepository(Individu::class)->find($individuId):null;
         /** @var string $email */
         $email = (isset($data['email']) AND trim($data['email']) !== '')?trim($data['email']):null;
-        /** @var Etablissement|null $etablissement */
-        $etablissementId = (isset($data['etablissement']) AND isset($data['etablissement']['id']))?$data['etablissement']['id']:null;
-        $etablissement = ($etablissementId)?$this->getEntityManager()->getRepository(Etablissement::class)->find($etablissementId):null;
-        /** @var UniteRecherche|null $unite */
-        $uniteId = (isset($data['uniteRecherche']) AND isset($data['uniteRecherche']['id']))?$data['uniteRecherche']['id']:null;
-        $unite = ($uniteId)?$this->getEntityManager()->getRepository(UniteRecherche::class)->find($uniteId):null;
 
         if ($individu) $object->setIndividu($individu);
-        $object->setEtablissement($etablissement);
-        $object->setUniteRecherche($unite);
         if ($email) $object->setEmailPro($email);
         return $object;
     }
-
-
 }

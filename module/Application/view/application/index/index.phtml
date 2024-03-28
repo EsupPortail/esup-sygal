@@ -17,13 +17,13 @@ $subtitle = $this->appInfos()->desc;
 
 <?php $this->headTitle($this->translate("Accueil")); ?>
 
-<?php echo $this->alertes()
+<?php echo $this->alertes()->renderAsBootstrapToasts()
     ->addAlertesFromDatabase()
-    ->renderAsBootstrapToasts() ?>
+    ->addAlertesFromFlashMessenger() ?>
 
 <?php
 echo $this->messenger()
-    ->addMessagesFromFlashMessengerWithNoNamespace()
+//    ->addMessagesFromFlashMessengerWithNoNamespace()  // remplacé par $this->alertes()->addAlertesFromFlashMessenger()
     ->addMessagesFromFlashMessengerWithNamespace('UnicaenAuth/*'); ?>
 
 <div class="row">

@@ -3,6 +3,9 @@ Journal des modifications
 
 8.1.0
 -----
+- Refonte de la gestion des sites et structures des individus : ajout d'un périmètre supplémentaire à l'attribution
+  des rôles (individu_role_etablissement), déplacement de l'établissement et de l'UR de individu_compl vers acteur.
+- Amélioration de l'affichage des acteurs sur la fiche thèse.
 - Proposition de soutenance : prise en compte dans l'assertion du profil Gestionnaire d'ED pour le privilège 'Modification d'une proposition de soutenance pour gestion'.
 - Proposition de soutenance : possibilité de rendre facultative la saisie de la date et heure de soutenance si besoin.
 - [FIX] Liste/recherche des utilisateurs : dysfonctionnement des filtres à cocher qui s'appliquait quelle qu'était leur valeur.

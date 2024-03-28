@@ -5,18 +5,31 @@ use Individu\Form\IndividuCompl\IndividuComplForm;
 /**
  * @see \Individu\Controller\IndividuComplController::ajouterAction()
  * @see \Individu\Controller\IndividuComplController::modifierAction()
+ * @var \Individu\Entity\Db\IndividuCompl $individuCompl
  * @var IndividuComplForm $form
  */
 
+$form->get('detruire')
+    ->setAttribute('data-toggle', "confirmationx")
+    ->setAttribute('data-message', "Êtes-vous sûr·e de vouloir supprimer ce complément ?")
 ?>
 
-<?php echo $this->form()->openTag($form); ?>
+<div class="row">
+    <div class="col-md-6">
+        <?php echo $this->form()->openTag($form); ?>
+        <?php echo $this->formControlGroup()->render($form->get('individu')); ?>
+        <?php echo $this->formControlGroup()->render($form->get('individuEmail')); ?>
+        <?php echo $this->formControlGroup()->render($form->get('email')); ?>
+        <?php echo $this->formControlGroup()->render($form->get('enregistrer')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+    </div>
 
-<?php echo $this->formControlGroup()->render($form->get('individu')); ?>
-<?php echo $this->formControlGroup()->render($form->get('email')); ?>
-<?php echo $this->formControlGroup()->render($form->get('etablissement')); ?>
-<?php echo $this->formControlGroup()->render($form->get('uniteRecherche')); ?>
-
-<?php echo $this->formControlGroup()->render($form->get('enregistrer')); ?>
-
-<?php echo $this->form()->closeTag(); ?>
+    <div class="col-md-6">
+        <?php if ($individuCompl->getId()): ?>
+            <form class="float-end" method="post"
+                  action="<?php echo $this->url('individu-compl/detruire', ['individu-compl' => $individuCompl->getId()], [], true) ?>">
+                <?php echo $this->formControlGroup()->render($form->get('detruire')); ?>
+            </form>
+        <?php endif ?>
+    </div>
+</div>

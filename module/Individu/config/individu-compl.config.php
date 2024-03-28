@@ -102,26 +102,18 @@ return [
                         'options' => [
                             'route' => '/afficher/:individu-compl',
                             'defaults' => [
+                                /** @see IndividuComplController::afficherAction() */
                                 'controller' => IndividuComplController::class,
                                 'action' => 'afficher',
                             ],
                         ],
                     ],
-                    'gerer' => [
+                    'ajouter' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route' => '/gerer/:individu',
+                            'route' => '/ajouter/:individu',
                             'defaults' => [
-                                'controller' => IndividuComplController::class,
-                                'action' => 'gerer',
-                            ],
-                        ],
-                    ],
-                    'ajouter' => [
-                        'type' => Literal::class,
-                        'options' => [
-                            'route' => '/ajouter',
-                            'defaults' => [
+                                /** @see IndividuComplController::ajouterAction() */
                                 'controller' => IndividuComplController::class,
                                 'action' => 'ajouter',
                             ],
@@ -132,6 +124,7 @@ return [
                         'options' => [
                             'route' => '/modifier/:individu-compl',
                             'defaults' => [
+                                /** @see IndividuComplController::modifierAction() */
                                 'controller' => IndividuComplController::class,
                                 'action' => 'modifier',
                             ],
@@ -142,6 +135,7 @@ return [
                         'options' => [
                             'route' => '/historiser/:individu-compl',
                             'defaults' => [
+                                /** @see IndividuComplController::historiserAction() */
                                 'controller' => IndividuComplController::class,
                                 'action' => 'historiser',
                             ],
@@ -152,6 +146,7 @@ return [
                         'options' => [
                             'route' => '/restaurer/:individu-compl',
                             'defaults' => [
+                                /** @see IndividuComplController::restaurerAction() */
                                 'controller' => IndividuComplController::class,
                                 'action' => 'restaurer',
                             ],
@@ -162,6 +157,7 @@ return [
                         'options' => [
                             'route' => '/detruire/:individu-compl',
                             'defaults' => [
+                                /** @see IndividuComplController::detruireAction() */
                                 'controller' => IndividuComplController::class,
                                 'action' => 'detruire',
                             ],

@@ -22,7 +22,6 @@ use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Db\RoleInterface;
 
 /**
  * Class RoleService
@@ -57,7 +56,8 @@ class RoleService extends BaseService
         $repo = $this->entityManager->getRepository(Role::class);
         $qb = $repo->createQueryBuilder("r")
             ->join('r.structure', 's')->addSelect('s')
-            ->andWhereStructureIs($structure);
+            ->andWhereStructureIs($structure)
+            ->orderBy('r.ordreAffichage');
 
         return $qb->getQuery()->execute();
     }
@@ -80,14 +80,13 @@ class RoleService extends BaseService
     }
 
     /**
-     * Recherche des IndividuRole liés à la structure spécifiée.
+     * Recherche d'IndividuRole par structure du Role, éventuellement code du Role et périmètre établissement.
      *
-     * @param \Structure\Entity\Db\Structure $structure
-     * @param string|null $role
-     * @param \Structure\Entity\Db\Etablissement|null $etablissementIndividu
      * @return \Individu\Entity\Db\IndividuRole[]
      */
-    public function findIndividuRoleByStructure(Structure $structure, ?string $role = null, ?Etablissement $etablissementIndividu = null): array
+    public function findIndividuRoleByStructure(Structure $structure,
+                                                ?string $role = null,
+                                                ?Etablissement $perimetreEtablissement = null): array
     {
         /** @var \Application\Entity\Db\Repository\DefaultEntityRepository $repo */
         $repo = $this->entityManager->getRepository(IndividuRole::class);
@@ -96,24 +95,24 @@ class RoleService extends BaseService
             ->join("ir.individu", "i")->addSelect('i')
             ->join("ir.role", "r")->addSelect('r')
             ->leftJoin('r.structure', 's')->addSelect('s')
-            ->andWhereStructureIs($structure);
+            ->leftJoin('ir.individuRoleEtablissement', 'irp')->addSelect('irp')
+            ->leftJoin('irp.etablissement', 'irpe')->addSelect('irpe')
+            ->leftJoin('irpe.structure', 'irpes')->addSelect('irpes')
+            ->andWhereStructureIs($structure)
+            ->andWhereNotHistorise('i')
+            ->andWhereNotHistorise('r')
+            ->orderBy('r.ordreAffichage, s.libelle, i.nomUsuel, i.prenom1');
 
         if ($role !== null) {
             $qb->andWhere('r.code = :role')->setParameter('role', $role);
         }
 
-        $individuRoles = $qb->getQuery()->execute();
-
-        // filtrage selon l'établissement de l'individu, trop compliqué (?) à faire via le qb.
-        if ($etablissementIndividu !== null) {
-            $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) use ($etablissementIndividu) {
-                // NB : un individu n'étant rattaché à aucun établissement particulier EST ÉCARTÉ.
-                return $ir->getIndividu()->getEtablissement() !== null &&
-                    $ir->getIndividu()->getEtablissement()->getId() === $etablissementIndividu->getId();
-            });
+        // Si un établissement est spécifié, filtrage selon ce périmètre.
+        if ($perimetreEtablissement === null) {
+            $qb->andWhere('irpe is null or irpe = :etablissement')->setParameter('etablissement', $perimetreEtablissement);
         }
 
-        return $individuRoles;
+        return $qb->getQuery()->execute();
     }
 
     /**
@@ -354,13 +353,46 @@ class RoleService extends BaseService
     }
 
     /**
+     * @param string|null $typeStructureCode null = NON structure-dépendant
      * @return Role[]
      */
-    public function findAllRoles(): array
+    public function findRolesByTypeStructureDependant(?string $typeStructureCode): array
     {
         $qb = $this->getRepository()->createQueryBuilder('r')
-            ->addSelect('s')
-            ->leftJoin('r.structure', 's');
+            ->andWhere('r.theseDependant = :theseDependant')
+            ->setParameter('theseDependant', false);
+
+        if ($typeStructureCode !== null) {
+            $qb
+                ->addSelect('ts, s')
+                ->join('r.typeStructureDependant', 'ts', Join::WITH, 'ts.code = :codeTypeStructure')
+                ->setParameter('codeTypeStructure', $typeStructureCode)
+                ->join('r.structure', 's')
+                ->andWhereNotHistorise('s');
+
+            switch ($typeStructureCode) {
+                case TypeStructure::CODE_ETABLISSEMENT:
+                    $qb
+                        ->addSelect('e')
+                        ->join('s.etablissement', 'e')
+                        ->andWhereNotHistorise('e');
+                    break;
+                case TypeStructure::CODE_ECOLE_DOCTORALE:
+                    $qb
+                        ->addSelect('ed')
+                        ->join('s.ecoleDoctorale', 'ed')
+                        ->andWhereNotHistorise('ed');
+                    break;
+                case TypeStructure::CODE_UNITE_RECHERCHE:
+                    $qb
+                        ->addSelect('ur')
+                        ->join('s.uniteRecherche', 'ur')
+                        ->andWhereNotHistorise('ur');
+                    break;
+            }
+        } else {
+            $qb->andWhere('r.typeStructureDependant is null');
+        }
 
         $qb
             ->andWhere('r.roleId <> :roleCode')

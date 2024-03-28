@@ -26,7 +26,7 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
     </span>
 </h1>
 
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+<?php echo $this->alertes()->addAlertesFromFlashMessenger()->renderAsBootstrapToasts() ?>
 
 <div class="row">
 
@@ -83,12 +83,42 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
     <div class="col-md-7">
         <div class="box card">
             <div class="card-header bg-dark text-white">
+                <h2 class="first">Compément d'individu</h2>
+            </div>
+            <div class="card-body">
+                <?php if ($complement = $individu->getComplement()): ?>
+                    <?php echo $this->partial('individu/individu-compl/partial/fiche', ['complement' => $complement, 'includeIndividu' => false]) ?>
+                    <?php if ($canModifier) : ?>
+                        <a href="<?php echo $this->url("individu-compl/modifier", ['individu-compl' => $complement->getId()], [], true); ?>"
+                           class="btn btn-primary" data-event="modification" title="Modifier ce complément d'individu">
+                            <span class="icon icon-editer"></span> Modifier</a>
+                        <a href="<?php echo $this->url("individu-compl/historiser", ['individu-compl' => $complement->getId()], [], true); ?>"
+                           class="btn btn-danger float-end" data-event="modification" title="Supprimer ce complément d'individu"
+                           data-message="Êtes-vous sûr de vouloir supprimer ce complément ?"
+                           data-toggle="confirmationx">
+                            <span class="icon icon-delete"></span> Supprimer</a>
+                    <?php endif; ?>
+                <?php else:?>
+                    Aucun complément renseigné.
+                    <?php if ($canModifier) : ?>
+                        <a href="<?php echo $this->url("individu-compl/ajouter", ['individu' => $individu->getId()], [], true); ?>"
+                           class="btn btn-primary" data-event="modification">
+                            <span class="icon icon-editer"></span> Ajouter un complément d'individu</a>
+                    <?php endif; ?>
+                <?php endif ?>
+            </div>
+        </div>
+
+        <div class="box card">
+            <div class="card-header bg-dark text-white">
                 <h2 class="first">
                     <?php echo $this->translate("Rôles de l'individu") ?>
                 </h2>
             </div>
             <div class="row card-body">
-                <?php echo $this->partial('individu/individu/partial/roles', $rolesData) ?>
+                <?php echo $this->partial('individu/individu/partial/roles', array_merge($rolesData, [
+                        'redirect' => $this->url('individu/voir', ['individu' => $individu->getId()], [], true)
+                ])) ?>
             </div>
         </div>
     </div>

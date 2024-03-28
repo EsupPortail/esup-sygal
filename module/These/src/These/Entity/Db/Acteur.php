@@ -67,22 +67,17 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      * @var Role
      */
     private $role;
+
     /** @var string $qualite */
     private $qualite;
 
     /**
      * Etablissement auquel appartient l'individu.
-     *
-     * @var Etablissement
      */
-    private $etablissement;
+    private ?Etablissement $etablissement = null;
+    private ?Etablissement $etablissementForce = null;
 
-    /**
-     * Etablissement auquel appartient l'individu.
-     *
-     * @var UniteRecherche
-     */
-    private $uniteRecherche;
+    private ?UniteRecherche $uniteRecherche = null;
 
     /**
      * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur rôle.
@@ -121,10 +116,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     }
     public function estCoEncadrant() : bool
     {
-        return in_array($this->getRole()->getCode(), [
-                Role::CODE_CO_ENCADRANT,
-            ]
-        );
+        return $this->role->isCoEncadrant();
     }
 
     /**
@@ -292,7 +284,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      * @param Etablissement|null $etablissement
      * @return self
      */
-    public function setEtablissement(Etablissement $etablissement = null)
+    public function setEtablissement(Etablissement $etablissement = null): self
     {
         $this->etablissement = $etablissement;
 
@@ -307,12 +299,29 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
         return $this->etablissement;
     }
 
+    public function setEtablissementForce(?Etablissement $etablissementForce): self
+    {
+        $this->etablissementForce = $etablissementForce;
+        return $this;
+    }
+
+    public function getEtablissementForce(): ?Etablissement
+    {
+        return $this->etablissementForce;
+    }
+
     /**
      * Retourne l'éventuelle UR liée.
      */
     public function getUniteRecherche(): ?UniteRecherche
     {
         return $this->uniteRecherche;
+    }
+
+    public function setUniteRecherche(?UniteRecherche $uniteRecherche): self
+    {
+        $this->uniteRecherche = $uniteRecherche;
+        return $this;
     }
 
     /**

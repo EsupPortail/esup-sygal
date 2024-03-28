@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @var \Individu\Form\IndividuRole\IndividuRoleForm $form
+ *
+ * @see \Individu\Controller\IndividuRoleEtablissementController::modifierAction()
+ */
+
+$form->prepare();
+$fcg = $this->formControlGroup();
+?>
+
+<?php echo $this->form()->openTag($form); ?>
+
+<?php echo $fcg($form->get('individu')->setAttribute('disabled', true)); ?>
+<?php echo $fcg($form->get('role')->setAttribute('disabled', true)); ?>
+
+<div class="row">
+    <div class="col-md-6">
+        <?php echo $this->formElementCollection($form->get('individuRoleEtablissement')); ?>
+    </div>
+</div>
+
+<?php echo $fcg($form->get('enregistrer')); ?>
+
+<?php echo $this->form()->closeTag(); ?>

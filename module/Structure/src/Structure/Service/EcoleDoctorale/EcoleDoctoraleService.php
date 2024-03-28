@@ -169,17 +169,4 @@ class EcoleDoctoraleService extends BaseService
         $ecole = $this->getRepository()->find($id);
         return $ecole;
     }
-
-    //todo faire les filtrage et considerer que les UR internes
-    public function getEcolesDoctoralsAsOptions() : array
-    {
-        $ecoles = $this->getRepository()->findAll();
-
-        $options = [];
-        foreach ($ecoles as $ecole) {
-            $options[$ecole->getId()] = $ecole->getStructure()->getLibelle() . " " ."<span class='badge'>".$ecole->getStructure()->getSigle()."</span>";
-        }
-        return $options;
-    }
-
 }

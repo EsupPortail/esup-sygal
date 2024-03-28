@@ -3,7 +3,7 @@
 -- Divers
 --
 
-create unique index role_code_structure_id_uindex on role (code, structure_id);
+create unique index if not exists role_code_structure_id_uindex on role (code, structure_id);
 
 update role set ordre_affichage = 'aaa' where code = 'D';
 update role set ordre_affichage = 'bbb' where code = 'K';

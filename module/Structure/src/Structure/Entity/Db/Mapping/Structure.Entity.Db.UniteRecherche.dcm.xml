@@ -73,8 +73,5 @@
       </join-table>
     </many-to-many>
 
-    <one-to-many field="theses" target-entity="These\Entity\Db\These" mapped-by="id" />
-
-
   </entity>
 </doctrine-mapping>

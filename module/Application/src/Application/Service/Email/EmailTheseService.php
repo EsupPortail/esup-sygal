@@ -23,46 +23,23 @@ class EmailTheseService
 
     /**
      * @param IndividuRole[] $individuRoles
-     * @param These $these
-     * @return bool
      */
-    public function hasEmailsByEtablissement(array $individuRoles, These $these) : bool
-    {
-        foreach ($individuRoles as $individuRole) {
-            $individu = $individuRole->getIndividu();
-            if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmailPro() !== null) return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param IndividuRole[] $individuRoles
-     * @param These $these
-     * @return array
-     */
-    public function fetchEmailsByEtablissement(array $individuRoles, These $these) : array
+    public function collectEmailsFromIndividuRoles(array $individuRoles) : array
     {
         $allEmails = [];
         $emails = [];
         foreach ($individuRoles as $individuRole) {
             $individu = $individuRole->getIndividu();
-            if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmailPro() !== null) {
-                    {
-                        $emails[] = $individu->getEmailPro();
-                        $allEmails[] = $individu->getEmailPro();
-                    }
-
-                } else {
-                    $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
-                    foreach ($utilisateurs as $utilisateur) {
-                        if ($utilisateur->getEmail()) {
-                            $emails[] = $utilisateur->getEmail();
-                            $allEmails[] = $utilisateur->getEmail();
-                            break;
-                        }
+            if ($emailPro = $individu->getEmailPro()) {
+                $emails[] = $emailPro;
+                $allEmails[] = $emailPro;
+            } else {
+                $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
+                foreach ($utilisateurs as $utilisateur) {
+                    if ($email = $utilisateur->getEmail()) {
+                        $emails[] = $email;
+                        $allEmails[] = $email;
+                        break;
                     }
                 }
             }
@@ -72,27 +49,25 @@ class EmailTheseService
     }
 
     /**
-     * @param These $these
      * @return string[]
      */
     public function fetchEmailEcoleDoctorale(These $these) : array
     {
-        /** @var IndividuRole[] $individuRoles */
-        // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
+        $individuRoles = $this->roleService->findIndividuRoleByStructure(
+            $these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
+
+        return $this->collectEmailsFromIndividuRoles($individuRoles);
     }
 
     /**
-     * @param These $these
      * @return string[]
      */
     public function fetchEmailUniteRecherche(These $these) : array
     {
-        /** @var IndividuRole[] $individuRoles */
-        // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
+        $individuRoles = $this->roleService->findIndividuRoleByStructure(
+            $these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
+
+        return $this->collectEmailsFromIndividuRoles($individuRoles);
     }
 
     /**

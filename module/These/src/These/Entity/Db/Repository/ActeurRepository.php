@@ -16,9 +16,9 @@ class ActeurRepository extends DefaultEntityRepository
     /**
      * @param Individu $individu
      * @param These $these
-     * @return Individu|null
+     * @return Acteur|null
      */
-    public function findActeurByIndividuAndThese(Individu $individu, These $these): ?Individu
+    public function findActeurByIndividuAndThese(Individu $individu, These $these): ?Acteur
     {
         $qb = $this->createQueryBuilder('a')
             ->andWhereNotHistorise()

@@ -58,8 +58,21 @@ class UniteRecherche implements
     /** @var string RNSR */
     protected $RNSR;
 
-    /** @var These[] */
-    private $theses;
+    /**
+     * Convertit la collection d'entités spécifiée en un tableau d'options injectable dans un <select>.
+     *
+     * @param \Structure\Entity\Db\UniteRecherche[] $entities
+     * @return string[] id => libelle
+     */
+    static public function toValueOptions(iterable $entities): array
+    {
+        $options = [];
+        foreach ($entities as $entity) {
+            $options[$entity->getId()] = (string) $entity;
+        }
+
+        return $options;
+    }
 
     public function __construct()
     {
@@ -80,12 +93,7 @@ class UniteRecherche implements
 
     public function __toString(): string
     {
-        $str = '';
-        if ($code = $this->structure->getSigle()) {
-            $str .= $code . ' - ';
-        }
-        $str .= $this->structure->getLibelle();
-        return $str;
+        return ($this->structure->getSigle() ?: '???') . ' - ' . $this->structure->getLibelle();
     }
 
     /**
@@ -210,14 +218,6 @@ class UniteRecherche implements
     {
         $this->RNSR = $RNSR;
         return $this;
-    }
-
-    /**
-     * @return These[]
-     */
-    public function getTheses()
-    {
-        return $this->theses;
     }
 
     /**

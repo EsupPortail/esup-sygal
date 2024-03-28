@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var IndividuCompl $complement
+ * @var bool $includeIndividu
+ */
+
+use Individu\Entity\Db\IndividuCompl;
+
+?>
+
+<dl class="row">
+    <div class="col-md-7">
+        <?php if ($includeIndividu): ?>
+            <dt>Individu concerné</dt>
+            <dd><?php echo $complement->getIndividu() ?> </dd>
+        <?php endif; ?>
+
+        <dt>Adresse électronique professionnelle</dt>
+        <dd><?php echo $complement->getEmailPro() ?: "(Non renseignée)" ?> </dd>
+    </div>
+    <div class="col-md-5">
+        <dt>Création</dt>
+        <dd>
+            Le <?php echo $complement->getHistoCreation()->format("d/m/Y H:i:s") ?>
+            par <?php echo $complement->getHistoCreateur() ?>
+        </dd>
+        <?php if ($complement->getHistoModification() && $complement->getHistoModification() <> $complement->getHistoCreation()) : ?>
+            <dt>Modification</dt>
+            <dd>
+                Le <?php echo $complement->getHistoModification()->format("d/m/Y H:i:s") ?>
+                par <?php echo $complement->getHistoModificateur() ?>
+            </dd>
+        <?php endif; ?>
+    </div>
+</dl>

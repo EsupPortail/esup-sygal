@@ -48,8 +48,8 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
             <th>Id</th>
             <th>Nom d'usage</th>
             <th>Prénoms</th>
+            <th>Date de naissance</th>
             <th>Adresse électronique</th>
-            <th>Date naiss.</th>
             <th title="Complément d'individu">Compl.</th>
             <th>Source</th>
             <th class="action">Action</th>
@@ -76,12 +76,20 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
                         <?php echo implode(', ', array_filter([$individu->getPrenom2(), $individu->getPrenom3()])) ?>
                     </span>
                 </td>
-                <td><?php echo $individu->getEmailPro() ?></td>
-                <td><?php echo $individu->getDateNaissanceToString() ?></td>
+                <td>
+                    <?php echo $individu->getDateNaissanceToString() ?>
+                </td>
+                <td>
+                    <?php if ($email = $individu->getEmailProComplement()) : ?>
+                        <em title="Valeur forcée issue du complément d'individu"><?php echo $email ?></em>
+                    <?php else: ?>
+                        <?php echo $individu->getEmailPro(); ?>
+                    <?php endif; ?>
+                </td>
                 <td>
                     <?php if ($complement = $individu->getComplement()): ?>
                         <a href="<?php echo $this->url('individu-compl/afficher', ['individu-compl' => $complement->getId()]) ?>"
-                            title="Voir le complément de individu">
+                            title="Voir le complément d'individu">
                             <span class="icon icon-voir"></span>
                         </a>
                     <?php endif ?>

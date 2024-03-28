@@ -211,16 +211,4 @@ class UniteRechercheService extends BaseService
             }
         }
     }
-
-    //todo faire les filtrage et considerer que les UR internes
-    public function getUnitesRecherchesAsOptions() : array
-    {
-        $unites = $this->getRepository()->findAll();
-
-        $options = [];
-        foreach ($unites as $unite) {
-            $options[$unite->getId()] = $unite->getStructure()->getLibelle() . " " ."<span class='badge'>".$unite->getStructure()->getSigle()."</span>";
-        }
-        return $options;
-    }
 }

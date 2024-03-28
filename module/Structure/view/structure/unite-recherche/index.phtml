@@ -80,7 +80,6 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
                 </td>
                 <td> <?php echo $unite->getStructure()->getSigle(); ?> </td>
                 <td> <?php echo $unite->getRNSR(); ?> </td>
-<!--                <td> --><?php //echo count($unite->getTheses()); ?><!-- </td>-->
                 <td>
                     <?php if (($canModifier OR $canModifierCetteUnite) && !$historisee) : ?>
                         <a href="<?php echo $this->url('unite-recherche/supprimer', ['unite-recherche' => $unite->getId()], [], true); ?>"

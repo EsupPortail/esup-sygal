@@ -2,28 +2,36 @@
 
 namespace Application;
 
+use Application\View\Renderer\PhpRenderer;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Helper\RoleHelper;
-use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**
- * @var PhpRenderer $this
+ * @var \Application\View\Renderer\PhpRenderer $this
  * @var Individu $individu
- * @var Role[] $roles
+ * @var Role[] $rolesEtablissement
+ * @var Role[] $rolesEcoleDoctorale
+ * @var Role[] $rolesUniteRecherche
+ * @var Role[] $rolesStatiques
+ * @var IndividuRole[] $individusRoles
  * @var Role[] $rolesAffectes
  * @var Role[] $rolesAffectesAuto
  * @var Etablissement[] $etablissements
  * @var EcoleDoctorale[] $ecoles
  * @var UniteRecherche[] $unites
+ * @var string $redirect Eventuelle URL où rediriger après une éventuelle action
  *
  * @see \Individu\Controller\IndividuController::voirAction()
  */
+
+$roles = array_merge($rolesEtablissement, $rolesEcoleDoctorale, $rolesUniteRecherche, $rolesStatiques);
 
 $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
 ?>
@@ -55,26 +63,26 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <span class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
                   title="Ce sont les rôles attribués à l'individu manuellement parmi les rôles disponibles
                   dans la liste ci-contre."></span></h3>
-            <?php echo generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier) ?>
+            <?php echo generateRolesAffectes($this, $individu, $roles, $individusRoles, $canModifier) ?>
     </div>
     <div class="col-md-5">
         <h3>Rôles attribuables manuellement</h3>
         <dl>
             <dt> Rôles non liés à une structure</dt>
             <dd>
-                <?php echo generatesRoleStatiques($individu, $roles, $rolesAffectes, $canModifier) ?>
+                <?php echo generatesRoleStatiques($individu, $rolesStatiques, $rolesAffectes, $canModifier) ?>
             </dd>
             <dt> Rôles liés aux établissements</dt>
             <dd>
-                <?php echo generateRolesEtablissements($individu, $roles, $rolesAffectes, $etablissements, $canModifier) ?>
+                <?php echo generateRolesEtablissements($individu, $rolesEtablissement, $rolesAffectes, $etablissements, $canModifier) ?>
             </dd>
             <dt> Rôles liés aux écoles doctorales</dt>
             <dd>
-                <?php echo generateRolesEcoles($individu, $roles, $rolesAffectes, $ecoles, $canModifier) ?>
+                <?php echo generateRolesEcoles($individu, $rolesEcoleDoctorale, $rolesAffectes, $ecoles, $canModifier) ?>
             </dd>
             <dt> Rôles liés aux unités de recherche</dt>
             <dd>
-                <?php echo generateRolesUnites($individu, $roles, $rolesAffectes, $unites, $canModifier) ?>
+                <?php echo generateRolesUnites($individu, $rolesUniteRecherche, $rolesAffectes, $unites, $canModifier) ?>
             </dd>
         </dl>
     </div>
@@ -129,23 +137,33 @@ function generateSelect($structures, $id, $roles = null)
 /**
  * @param Individu $individu
  * @param Role[] $roles
- * @param Role[] $rolesAffectes
+ * @param IndividuRole[] $individusRoles
  * @param Boolean $canModifier
  * @return string
  */
-function generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier = false)
+function generateRolesAffectes(\Laminas\View\Renderer\PhpRenderer $renderer, Individu $individu, array $roles, array $individusRoles, bool $canModifier = false): string
 {
     $texte = "";
     $VH = new RoleHelper();
     foreach ($roles as $role) {
+        $individusRolesForRole = array_filter($individusRoles, fn(IndividuRole $ir) => $ir->getRole() === $role);
+        $individuRole = reset($individusRolesForRole) ?: null;
         $texte .= '<div id="affecte_' . $role->getId() . '"';
-        if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false || (array_search($role, $rolesAffectes) && $role->getAttributionAutomatique())){
+        if ($role->getAttributionAutomatique() || $individuRole === null) {
             $texte .= ' style="display:none;" ';
         }
         $texte .= '>';
         $texte .= $VH->render($role);
         if ($canModifier) {
-            $texte .= '<span class="remove-role icon icon-delete iconly iconly text-danger" title="Retirer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+            $urlPerimetre = $renderer->url('individu-role/modifier', ['individu' => $individu->getId(), 'role' => $role->getId()]);
+            $texte .= sprintf('<a href="%s" class="edit-perimetre fas fa-vector-square ajax-modal" data-event-modal-loading="modal-loading" data-event-modal-opened="modal-opened" data-event="modification" title="Modifier le périmètre d\'attribution de ce rôle"></a>', $urlPerimetre);
+            $texte .= '<a href="#" class="remove-role icon icon-delete iconly iconly text-danger" title="Retirer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></a>';
+        }
+        if ($individuRole !== null && $perimetre = $individuRole->getIndividuRoleEtablissementToString()) {
+            $texte .= '<ul>';
+            $texte .= '<li>Périmètre : ' . $perimetre;
+            $texte .= '</li>';
+            $texte .= '</ul>';
         }
         $texte .= '</div>';
     }
@@ -293,70 +311,95 @@ function generateRolesUnites($individu, $roles, $rolesAffectes, $unites, $canMod
             var role = splits[1];
             var individu = splits[0];
 
+            $("body").addClass('loading');
+
             var url = "<?php echo $this->url('utilisateur/retirer-role', ['individu' => '_INDIVIDU_', 'role' => '_ROLE_']) ?>"
                 .replace('_INDIVIDU_', individu)
                 .replace('_ROLE_', role);
-            $("#affecte_" + role).hide();
-            $("#disponible_" + role).show();
 
             $.ajax({
                 type: "POST",
-                url: url
+                url: url,
+                success:
+                    function(data) {
+                        $("#affecte_" + role).hide();
+                        $("#disponible_" + role).show();
+                        $("body").removeClass('loading');
+                    },
+                error:
+                    function(data) {
+                        $("body").removeClass('loading');
+                    }
             });
+            return false;
         });
-    });
-    $(document).ready(function () {
         $(".add-role").on("click", function () {
             var id = $(this).attr("id");
             var splits = id.split("_");
             var role = splits[1];
             var individu = splits[0];
 
+            $("body").addClass('loading');
+
             var url = "<?php echo $this->url('utilisateur/ajouter-role', ['individu' => '_INDIVIDU_', 'role' => '_ROLE_']) ?>"
                 .replace('_INDIVIDU_', individu)
                 .replace('_ROLE_', role);
-            $("#affecte_" + role).show();
-            $("#disponible_" + role).hide();
 
             $.ajax({
                 type: "POST",
-                url: url
+                url: url,
+                success:
+                    function(data) {
+                        $("#affecte_" + role).show();
+                        $("#disponible_" + role).hide();
+                        $("body").removeClass('loading');
+                    },
+                error:
+                    function(data) {
+                        $("body").removeClass('loading');
+                    }
             });
+            return false;
         });
-    });
-    $(document).ready(function () {
+        //$(".edit-perimetre").on("click", function () {
+        //    var id = $(this).attr("id");
+        //    var splits = id.split("_");
+        //    var role = splits[1];
+        //    var individu = splits[0];
+        //    $("body").addClass('loading');
+        //    document.location = "<?php //echo $this->url('individu-role/modifier', ['individu' => '_INDIVIDU_', 'role' => '_ROLE_'], ['query' => ['redirect' => $redirect ?? '']]) ?>//"
+        //        .replace('_INDIVIDU_', individu)
+        //        .replace('_ROLE_', role);
+        //    return false;
+        //});
         $("#etablissements").on("change", function () {
             $("div[id^=etablissement]").hide();
             var val = $("#etablissements").val();
             $("#etablissement_" + val).show();
         });
-    });
-    $(document).ready(function () {
         $("#ecoles").on("change", function () {
             $("div[id^=ecole]").hide();
             var val = $("#ecoles").val();
             $("#ecole_" + val).show();
         });
-    });
-    $(document).ready(function () {
         $("#unites").on("change", function () {
             $("div[id^=unite]").hide();
             var val = $("#unites").val();
             $("#unite_" + val).show();
         });
+
+        $("body").on("modification", function(event, data) {
+            $("body").addClass("loading");
+            event.div.modal('hide');
+            window.location.reload();
+        });
     });
 </script>
 <style>
     .remove-role,
+    .edit-perimetre,
     .add-role {
         margin-left: 5px;
-    }
-
-    .remove-role:hover {
-        cursor: pointer;
-    }
-    .add-role:hover {
-        cursor: pointer;
     }
 
     select {

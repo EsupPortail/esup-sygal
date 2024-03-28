@@ -23,12 +23,14 @@ trait StructureConcreteRepositoryTrait
             ->addSelect('src')
             ->join("$alias.source", 'src');
 
-        // Attention : il FAUT faire explicitement ces jointures sinon Doctrine génèrera d'office 3 select pour
-        // chacune des 3 relations 'one-to-one' (structure=>etablissement, structure=>ecoleDoctorale, structure=>uniteRecherche),
-        // ce qui multiplie le nombre de requêtes par 3 !
-        $qb->addSelect('s_e')->leftJoin('structure.etablissement', 's_e');
-        $qb->addSelect('s_ed')->leftJoin('structure.ecoleDoctorale', 's_ed');
-        $qb->addSelect('s_ur')->leftJoin('structure.uniteRecherche', 's_ur');
+//  Mis en commentaires le 19/03/2024 car ça n'a plus l'air d'être nécessaire... mais j'ai un doute :
+//
+//        // Attention : il FAUT faire explicitement ces jointures sinon Doctrine génèrera d'office 3 select pour
+//        // chacune des 3 relations 'one-to-one' (structure=>etablissement, structure=>ecoleDoctorale, structure=>uniteRecherche),
+//        // ce qui multiplie le nombre de requêtes par 3 !
+//        $qb->addSelect('s_e')->leftJoin('structure.etablissement', 's_e');
+//        $qb->addSelect('s_ed')->leftJoin('structure.ecoleDoctorale', 's_ed');
+//        $qb->addSelect('s_ur')->leftJoin('structure.uniteRecherche', 's_ur');
 
         return $qb;
     }
@@ -56,13 +58,8 @@ trait StructureConcreteRepositoryTrait
         }
     }
 
-    /**
-     * @return array[]
-     */
-    public function _findByText(DefaultQueryBuilder $qb, string $text): array
+    protected function _findByTextQb(DefaultQueryBuilder $qb, ?string $text): DefaultQueryBuilder
     {
-        if (strlen($text) < 2) return [];
-
         $params = [];
         foreach (array_filter(explode(' ', $text)) as $term) {
             $paramName = uniqid('t_');
@@ -78,6 +75,6 @@ trait StructureConcreteRepositoryTrait
             ->andWhere('structure.estFermee = :false')
             ->setParameter('false', false);
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb;
     }
 }

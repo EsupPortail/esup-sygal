@@ -3,14 +3,14 @@
 namespace Individu\Entity\Db;
 
 use Application\Constants;
-use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Pays;
 use Application\Entity\Db\Role;
-use Structure\Entity\Db\UniteRecherche;
 use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -131,11 +131,6 @@ class Individu implements
      * @var string
      */
     private $type;
-
-    /**
-     * @var \Structure\Entity\Db\Etablissement|null
-     */
-    private $etablissement;
 
     /**
      * @var \Application\Entity\Db\Pays|null
@@ -265,26 +260,41 @@ class Individu implements
 
     /**
      * Retourne l'adresse électronique professionnelle/institutionnelle de cet individu.
-     * Si une adresse existe dans un "complément", c'est elle qui est retournée.
      *
+     * @param bool $useComplement Si `true` et qu'une adresse non null existe dans le "complément d'individu" éventuel,
+     * c'est elle qui est retournée.
      * @return string|null
      */
-    public function getEmailPro(): ?string
+    public function getEmailPro(bool $useComplement = true): ?string
     {
-        $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise()
-                AND $complement->getEmailPro() !== null) {
-            return $complement->getEmailPro();
+        $email = $useComplement && $this->getEmailProComplement() ?
+            $this->getEmailProComplement() :
+            $this->email;
+
+        if ($email === null || trim($this->email) === '') {
+            return null;
         }
 
-        $email = $this->email;
-        if ($email === null or trim($this->email) === '') return null;
         return $email;
     }
 
     /**
-     * Retourne l'adresse mail de contact, renseignée par le doctorant lui-même.
-     * Voir {@see getEmailContactAutorisePourListeDiff()} pour savoir si l'utilisation de cette adresse est autorisée.
+     * Retourne l'adresse électronique professionnelle/institutionnelle de cet individu renseignée
+     * dans le "complément d'individu" éventuel.
+     *
+     * @return string|null
+     */
+    public function getEmailProComplement(): ?string
+    {
+        return $this->getComplement()?->getEmailPro();
+    }
+
+    /**
+     * Retourne l'adresse mail de contact (renseignée par le doctorant lui-même).
+     *
+     * À propos des doctorants :
+     *   - c'est eux qui renseignent leur adresse de contact ;
+     *   - ils consentent ou non à son utilisation pour les listes de diff : {@see getEmailContactAutorisePourListeDiff()}.
      *
      * @return string|null
      */
@@ -681,31 +691,6 @@ class Individu implements
     }
 
     /**
-     * Retourne l'éventuel établissement lié **ou l'établissement du complément d'individu le cas échéant**.
-     */
-    public function getEtablissement(): ?Etablissement
-    {
-        $etablissement = $this->etablissement;
-
-        $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise() AND $complement->getEtablissement() !== null) {
-            $etablissement = $complement->getEtablissement();
-        }
-
-        return $etablissement;
-    }
-
-    /**
-     * @param Etablissement|null $etablissement
-     * @return Individu
-     */
-    public function setEtablissement(?Etablissement $etablissement): Individu
-    {
-        $this->etablissement = $etablissement;
-        return $this;
-    }
-
-    /**
      * @return \Application\Entity\Db\Pays|null
      */
     public function getPaysNationalite(): ?Pays
@@ -724,26 +709,17 @@ class Individu implements
     }
 
     /**
-     * Retourne l'éventuelle UR liée *ou celle du complément d'individu le cas échéant*.
+     * Retourne l'eventuel complément d'individu, en écartant ou non les historisés.
      */
-    public function getUniteRecherche(): ?UniteRecherche
+    public function getComplement(bool $exclureHistorise = true) : ?IndividuCompl
     {
-        $uniteRecherche = null;
+        $complements = $this->complements;
 
-        $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise() AND $complement->getUniteRecherche() !== null) {
-            $uniteRecherche = $complement->getUniteRecherche();
+        if ($exclureHistorise) {
+            $complements = $complements->filter(fn(IndividuCompl $ic) => !$ic->estHistorise());
         }
 
-        return $uniteRecherche;
-    }
-
-    /**
-     * @return IndividuCompl|null
-     */
-    public function getComplement() : ?IndividuCompl
-    {
-        return $this->complements->first() ?: null;
+        return $complements->first() ?: null;
     }
 
     private function getMailConfirmationConfirme(): ?MailConfirmation

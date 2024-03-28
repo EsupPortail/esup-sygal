@@ -29,6 +29,7 @@ class UniteRechercheRepository extends DefaultEntityRepository
     public function findAll(): array
     {
         $qb = $this->createQueryBuilder("ur");
+        $qb->orderBy("coalesce(structure.sigle, 'aaaaa'), structure.libelle");
 
         return $this->_findAll($qb);
     }
@@ -50,9 +51,18 @@ class UniteRechercheRepository extends DefaultEntityRepository
      */
     public function findByText(?string $term) : array
     {
+        if (strlen($term) < 2) return [];
+
+        $qb = $this->findByTextQb($term);
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function findByTextQb(?string $term): DefaultQueryBuilder
+    {
         $qb = $this->createQueryBuilder("ur");
 
-        return $this->_findByText($qb, $term);
+        return $this->_findByTextQb($qb, $term);
     }
 
     public function find($id, $lockMode = null, $lockVersion = null) : ?UniteRecherche

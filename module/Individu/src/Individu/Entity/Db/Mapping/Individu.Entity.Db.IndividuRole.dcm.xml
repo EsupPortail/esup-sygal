@@ -18,5 +18,10 @@
             </join-columns>
         </many-to-one>
 
+        <one-to-many target-entity="Individu\Entity\Db\IndividuRoleEtablissement" mapped-by="individuRole" field="individuRoleEtablissement" orphan-removal="true">
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-many>
     </entity>
 </doctrine-mapping>

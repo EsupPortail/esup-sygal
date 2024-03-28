@@ -4,6 +4,7 @@ namespace Structure\Entity\Db;
 
 use Application\Entity\Db\Role;
 use Application\Search\Filter\SearchFilterValueInterface;
+use Individu\Entity\Db\IndividuRole;
 use Doctrine\Common\Collections\ArrayCollection;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
@@ -39,6 +40,22 @@ class Etablissement implements
     protected $theses;
     protected $doctorants;
     protected $roles;
+
+    /**
+     * Convertit la collection d'entités spécifiée en un tableau d'options injectable dans un <select>.
+     *
+     * @param \Structure\Entity\Db\Etablissement[] $entities
+     * @return string[] id => libelle
+     */
+    static public function toValueOptions(iterable $entities): array
+    {
+        $options = [];
+        foreach ($entities as $entity) {
+            $options[$entity->getId()] = $entity->getStructure()->getLibelle();
+        }
+
+        return $options;
+    }
 
     /**
      * @var string
