@@ -139,6 +139,7 @@ class PropositionAssertion implements  AssertionInterface {
                     default:
                         return false;
                 }
+            case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER:
             case PropositionPrivileges::PROPOSITION_MODIFIER_GESTION:
                 switch ($role) {
                     case Role::CODE_ADMIN_TECH :
@@ -244,13 +245,13 @@ class PropositionAssertion implements  AssertionInterface {
                     default:
                     return false;
                 }
-            case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER:
-                switch($role) {
+            case PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS:
+                switch ($role) {
                     case Role::CODE_ADMIN_TECH :
                         return true;
-                    case Role::CODE_BDD :
-                        return ($these->getEtablissement()->getStructure() === $structure);
-                    default :
+                    case Role::CODE_GEST_ED :
+                        return $structure === $these->getEcoleDoctorale()->getStructure();
+                    default:
                         return false;
                 }
             default :

@@ -194,6 +194,33 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
+    public function createNotificationSuppressionProposition(These $these): Notification
+    {
+        $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
+        $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
+        $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
+        $emails = array_merge(
+            $emailsED, $emailsUR, $emailsActeurs);
+        $emails = array_filter($emails, function ($s) {
+            return $s !== null;
+        });
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour les acteurs directs de la thèse {$these->getId()}");
+        }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::PROPOSITION_SUPPRESSION, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
+    }
+
     public function createNotificationPresoutenance($these): Notification
     {
         $emails = $this->emailTheseService->fetchEmailAspectsDoctorat($these);

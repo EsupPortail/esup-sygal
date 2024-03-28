@@ -62,6 +62,7 @@ return [
                             PropositionPrivileges::PROPOSITION_VALIDER_BDD,
                             PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE,
                             PropositionPrivileges::PROPOSITION_PRESIDENCE,
+                            PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS,
 
                             PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
                             PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER,
@@ -179,10 +180,9 @@ return [
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'toggle-sursis',
                         'suppression',
                     ],
-                    'privileges' => PropositionPrivileges::PROPOSITION_SURSIS,
+                    'privileges' => PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS,
                 ],
                 [
                     'controller' => PropositionController::class,
