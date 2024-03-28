@@ -719,8 +719,6 @@ class PropositionController extends AbstractController
             // aucun destinataire , todo : cas à gérer !
         }
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Suppression des informations de la soutenance");
-
         if ($redirectUrl = $this->params()->fromQuery('redirect')) {
             return $this->redirect()->toUrl($redirectUrl);
         }
