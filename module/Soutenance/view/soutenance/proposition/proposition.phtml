@@ -13,13 +13,14 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Validation\TypeValidation;
+use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 
 /**
  * @see \Soutenance\Controller\PropositionController::propositionAction()
  *
- * @var \Application\View\Renderer\PhpRenderer $this
+// * @var \Application\View\Renderer\PhpRenderer $this
  *
  * @var These $these
  * @var Proposition $proposition
@@ -51,6 +52,7 @@ use These\Entity\Db\These;
 
 $canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) or $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
 $canModifierJustificatif = ($this->isAllowed($these, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
+$canSuppression = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS));
 
 $this->headTitle("Proposition de soutenance");
 ?>
@@ -75,7 +77,34 @@ $this->headTitle("Proposition de soutenance");
     être validée.
 </div>
 
-<br/><br/>
+<?php if ($canSuppression) : ?>
+    <div class="box card">
+        <div class="card-header bg-dark text-white">
+            <h2>Gestion de la proposition de soutenance</h2>
+        </div>
+        <div class="card-body">
+            <div>
+                <p class="lead">
+                    <span class="icon icon-attention"></span>
+                    Attention, cela supprimera l'ensemble des informations déjà rentrées pour cette proposition de soutenance.
+                </p>
+                <a
+                    <?php
+                    $returnUrl = $this->url('soutenance/proposition', ['these' => $these->getId()], [], true);
+                    /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                        class="btn btn-danger"
+                        data-toggle="confirmationx" data-event="modification"
+                        title="Suppression des informations de la soutenance"
+                        data-message="Attention, cela supprimera l'ensemble des informations rentrées pour cette proposition de soutenance, êtes-vous sûr(e) ?">
+                    <span class="icon icon-delete"></span>
+                    Suppression des informations de la soutenance
+                </a>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<br/>
 
 <div class="INFORMATIONS"></div>
 <?php

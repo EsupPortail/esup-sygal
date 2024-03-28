@@ -712,7 +712,19 @@ class PropositionController extends AbstractController
             $this->getValidationService()->historise($validation);
         }
 
-        return $this->redirect()->toRoute('soutenance', [], [], true);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationSuppressionProposition($these);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire , todo : cas à gérer !
+        }
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Suppression des informations de la soutenance");
+
+        if ($redirectUrl = $this->params()->fromQuery('redirect')) {
+            return $this->redirect()->toUrl($redirectUrl);
+        }
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
     public function afficherSoutenancesParEcoleDoctoraleAction(): ViewModel

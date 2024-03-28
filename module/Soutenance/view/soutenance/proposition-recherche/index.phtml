@@ -9,11 +9,11 @@
 
 use Application\Entity\Db\Role;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenApp\Util;
 
 $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_FICHE));
-$canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 ?>
 
 <h1 class="page-header">
@@ -62,6 +62,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
         /** @var Proposition $proposition **/
         $these = $proposition->getThese();
         $unite = $these->getUniteRecherche();
+        $canSuppression = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS));
         ?>
         <tr>
             <td>
@@ -154,9 +155,13 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                 <br/>
                 <?php if ($canSuppression) : ?>
                     <a
-                        <?php /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
-                            href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
-                            title="">
+                        <?php
+                        $returnUrl = $this->url('soutenances/index-structure', [], [], true);
+                        /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                            href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                            data-toggle="confirmationx" data-event="modification"
+                            title="Suppression des informations de la soutenance"
+                            data-message="Attention, cela supprimera l'ensemble des informations rentrées pour cette proposition de soutenance, êtes-vous sûr(e) ?">
                         Suppression
                     </a>
                 <?php endif; ?>
