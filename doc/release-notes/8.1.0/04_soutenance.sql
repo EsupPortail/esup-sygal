@@ -33,7 +33,7 @@ where not exists (select * from role_privilege where role_id = p2r.role_id and p
 --
 INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
-VALUES ('PROPOSITION_REFUS',
+VALUES ('PROPOSITION_SUPPRESSION',
         '<p>Suppression des informations concernant la proposition de soutenance</p>', 'mail',
         'Votre proposition de soutenance a été supprimée', e'<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL</p>
