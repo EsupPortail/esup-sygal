@@ -15,8 +15,18 @@ class SoutenanceController extends AbstractController
 
     public function indexAction() : ViewModel
     {
+        $eds = null;
+        if ($this->actualiteService->isSoutenance()) {
+            $qb = $this->getEcoleDoctoraleService()->getRepository()->createQueryBuilder('ed')
+                ->join('ed.structure', 's')
+                ->andWhereNotHistorise('ed')
+                ->andWhereNotHistorise('s')
+                ->orderBy('s.sigle');
+            $eds = $qb->getQuery()->getResult();
+        }
+
         return new ViewModel([
-            'ecoles' => $this->actualiteService->isSoutenance() ? $this->getEcoleDoctoraleService()->getRepository()->findAll(): null,
+            'ecoles' => $eds,
             'informations' => $this->informationService->getInformations(true),
         ]);
     }

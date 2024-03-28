@@ -16,6 +16,7 @@ Journal des modifications
 - [FIX] Liste/recherche des utilisateurs : dysfonctionnement des filtres à cocher qui s'appliquait quelle qu'était leur valeur.
 - [FIX] Ajout d'une mission d'enseignement : le bouton ne fonctionnait plus à cause d'une erreur de config de la route.
 - [FIX] Proposition de soutenance > Fichiers associés > Téléversement d'un justificatif : la liste des membres était toujours vide.
+- [FIX] Soutenances à venir par ED : éviction des ED historisées et tri par sigle ; cosmétique dans la page consacrée à une ED. 
 
 8.0.0
 -----
