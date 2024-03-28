@@ -108,6 +108,16 @@ return [
                             ],
                         ],
                     ],
+                    'gerer' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/gerer/:individu',
+                            'defaults' => [
+                                /** @see IndividuComplController::gererAction() */
+                                'action' => 'gerer',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type' => Segment::class,
                         'options' => [

@@ -36,6 +36,21 @@ class IndividuComplController extends AbstractController
         ]);
     }
 
+    /**
+     * Ajout ou modification d'un complément d'individu.
+     */
+    public function gererAction() : Response
+    {
+        $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
+        $individuCompl = $this->individuComplService->getRepository()->findIndividuComplByIndividu($individu);
+
+        if ($individuCompl === null) {
+            return $this->redirect()->toRoute('individu-compl/ajouter', ['individu' => $individu->getId()], [], true);
+        }
+
+        return $this->redirect()->toRoute('individu-compl/modifier', ['individu-compl' => $individuCompl->getId()], [], true);
+    }
+
     public function ajouterAction()
     {
         $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
