@@ -14,3 +14,10 @@ update role set ordre_affichage = 'fff' where code = 'RESP_ED';
 update role set ordre_affichage = 'ggg' where code = 'RESP_UR';
 update role set ordre_affichage = 'hhh' where code = 'GEST_ED';
 update role set ordre_affichage = 'iii' where code = 'GEST_UR';
+
+update utilisateur u set last_role_id = null where last_role_id is not null and not exists (
+    select * from role where id = u.last_role_id
+);
+alter table utilisateur
+    add constraint utilisateur_role_id_fk
+        foreign key (last_role_id) references role;
