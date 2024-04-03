@@ -15,6 +15,7 @@ use These\Entity\Db\These;
  * @var These $these
  * @var RapportActivite[] $rapports
  * @var array $typesRapportPossiblesData
+ * @var array $typeRapportPossiblesOptions
  * @var array[] $operationss
  * @var string $returnUrl
  * @var \DateTime[] $campagneDepotDates
@@ -89,13 +90,21 @@ $campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             Ajouter un rapport d'activité
         </button>
-        <ul class="dropdown-menu">
-        <?php foreach ($typesRapportPossiblesData as $array): ?>
-            <li><a class="dropdown-item" href="<?php echo $this->url('rapport-activite/ajouter', [
-                    'these' => $these->getId(),
-                    'estFinContrat' => $array['value'],
-                ]) ?>"><?php echo $array['label'] ?></a></li>
-        <?php endforeach ?>
-        </ul>
+        <div class="dropdown-menu">
+            <?php
+            foreach ($typeRapportPossiblesOptions as $options): ?>
+                <h6 class="dropdown-header">
+                    <?= $options['label'] ?>
+                </h6>
+                <?php foreach ($options['options'] as $option) : ?>
+                    <a class="dropdown-item" href="<?php echo $this->url('rapport-activite/ajouter', [
+                        'these' => $these->getId(),
+                        'estFinContrat' => $options['value'],
+                        'anneeUniv' => $option,
+                    ]) ?>"><?php echo $options['label']." ".$option ?></a>
+                <?php endforeach; ?>
+
+            <?php endforeach ?>
+        </div>
     </div>
 <?php endif; ?>

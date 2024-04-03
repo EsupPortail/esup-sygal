@@ -28,6 +28,7 @@ use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use SplObjectStorage;
 use These\Entity\Db\These;
+use These\Entity\Db\TheseAnneeUniv;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -74,12 +75,31 @@ class RapportActiviteController extends AbstractController
         $this->rapportActiviteCreationRule->setRapportsExistants($this->rapports);
         $this->rapportActiviteCreationRule->execute();
 
+        $anneesUnivs = $this->these->getAnneesUnivInscription();
+        $this->rapportActiviteCreationRule->setAnneesUnivs($anneesUnivs->toArray());
+        $anneesUnivsPossiblesPourRapportAnnuel = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportAnnuel();
+        sort($anneesUnivsPossiblesPourRapportAnnuel);
+        $anneesUnivsPossiblesPourRapportFinContrat = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportFinContrat();
+        sort($anneesUnivsPossiblesPourRapportFinContrat);
+
         $typesRapportPossiblesData = [];
         if ($this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {
             $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_ANNUEL, 'value' => 0];
         }
         if ($this->rapportActiviteCreationRule->canCreateRapportFinContrat()) {
             $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_FIN_CONTRAT, 'value' => 1];
+        }
+
+        $typeRapportPossiblesOptions = [];
+        foreach ($typesRapportPossiblesData as $typeRapportPossible) {
+            $typeRapport = [];
+            $label = $typeRapportPossible["label"];
+            if ($label === RapportActivite::LIBELLE_ANNUEL || $label === RapportActivite::LIBELLE_FIN_CONTRAT) {
+                $typeRapport['label'] = $label;
+                $typeRapport['value'] =  $typeRapportPossible["value"];
+                $typeRapport['options'] = $label === RapportActivite::LIBELLE_ANNUEL ? $anneesUnivsPossiblesPourRapportAnnuel : $anneesUnivsPossiblesPourRapportFinContrat;
+                $typeRapportPossiblesOptions[] = $typeRapport;
+            }
         }
 
         $operationss = [];
@@ -94,7 +114,7 @@ class RapportActiviteController extends AbstractController
             'typesRapportPossiblesData' => $typesRapportPossiblesData,
             'operationss' => $operationss,
             'campagneDepotDates' => $this->rapportActiviteService->fetchParametresCampagneDepotDates(),
-
+            'typeRapportPossiblesOptions' => $typeRapportPossiblesOptions,
             'returnUrl' => $this->url()->fromRoute('rapport-activite/lister', ['these' => $this->these->getId()]),
         ]);
     }
@@ -120,16 +140,21 @@ class RapportActiviteController extends AbstractController
     {
         $this->these = $this->requestedThese();
         $estFinContrat = (bool)$this->params('estFinContrat');
+        $anneeUniv = $this->params('anneeUniv');
 
         $rapport = $this->rapportActiviteService->newRapportActivite($this->these);
         $rapport->setEstFinContrat($estFinContrat);
+        $rapport->setAnneeUniv($anneeUniv);
 
         // Si ce n'est pas le doctorant qui est connecté, on actionne le témoin "rapport créé par le dir de thèse".
         $rapport->setParDirecteurThese($this->userContextService->getSelectedRoleDoctorant() === null);
 
         $form = $rapport->estFinContrat() ? $this->finContratForm : $this->annuelForm;
         $this->initForm($form, $rapport);
+
         $form->bind($rapport);
+        $form->get("anneeUniv")->setValue($anneeUniv);
+        $form->setAnneesUnivsReadonly();
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -321,7 +346,7 @@ class RapportActiviteController extends AbstractController
             //   - soit modifier le comportement du formulaire pour faire saisir d'abord l'année seule (.e. validation group)
             //     et ensuite le formulaire entier (avec année grisée) initialisé avec les formations de l'année choisie.
             //     Cf. AnneeUnivService pour les bornes de début et de fin d'une année univ.
-            $formationInscriptions = $this->inscriptionService->getInscriptionByDoctorantAndAnnee($rapportActivite->getThese()->getDoctorant());
+            $formationInscriptions = $this->inscriptionService->getInscriptionByDoctorantAndAnnee($rapportActivite->getThese()->getDoctorant(), null, $rapportActivite->getAnneeUniv()->getPremiereAnnee());
             $rapportActivite->setFormationsFromInscriptions($formationInscriptions);
 
             if ($rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportFinContrat() ||

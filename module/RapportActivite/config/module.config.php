@@ -420,10 +420,11 @@ return [
                     'ajouter' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/ajouter/:these/:estFinContrat',
+                            'route' => '/ajouter/:these/:estFinContrat/:anneeUniv',
                             'constraints' => [
                                 'these' => '\d+',
                                 'estFinContrat' => '[0-1]',
+                                'anneeUniv' => '\d{4}',
                             ],
                             'defaults' => [
                                 'action' => 'ajouter',
