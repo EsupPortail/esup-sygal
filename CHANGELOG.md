@@ -17,6 +17,7 @@ Journal des modifications
 - [FIX] Ajout d'une mission d'enseignement : le bouton ne fonctionnait plus à cause d'une erreur de config de la route.
 - [FIX] Proposition de soutenance > Fichiers associés > Téléversement d'un justificatif : la liste des membres était toujours vide.
 - [FIX] Soutenances à venir par ED : éviction des ED historisées et tri par sigle ; cosmétique dans la page consacrée à une ED. 
+- [FIX] Notification de feu vert pour la soutenances : mauvais template spécifié donc plantage du rendu donc pas de notif. 
 
 8.0.0
 -----

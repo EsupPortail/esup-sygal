@@ -484,7 +484,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_PRERAPPORT, $vars);
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_FEU_VERT, $vars);
         $notif = new Notification();
         $notif
             ->setSubject($rendu->getSujet())
