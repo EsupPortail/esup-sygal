@@ -17,6 +17,7 @@ class DescriptionTheseForm extends Form
 
         $domainesHalFieldset = $this->getFormFactory()->getFormElementManager()->get(DomaineHalFieldset::class);
         $domainesHalFieldset->setName("domaineHal");
+        $domainesHalFieldset->setDomainesHalRequired(true);
 
         $this->add($domainesHalFieldset);
 

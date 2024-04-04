@@ -9,11 +9,18 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 class DomaineHalFieldset extends Fieldset implements InputFilterProviderInterface
 {
     private ?array $domainesHal = null;
+    private bool $domainesHalRequired = false;
+
 
     public function setDomainesHal($domainesHal): void
     {
         $this->domainesHal = $domainesHal;
         $this->get('domaineHal')->setValueOptions($this->domainesHal);
+    }
+
+    public function setDomainesHalRequired($domainesHalRequired)
+    {
+        $this->domainesHalRequired = (bool) $domainesHalRequired;
     }
 
     public function init()
@@ -38,7 +45,7 @@ class DomaineHalFieldset extends Fieldset implements InputFilterProviderInterfac
     {
         return [
             'domaineHal' => [
-                'required' => false,
+                'required' => $this->domainesHalRequired,
             ],
         ];
     }
