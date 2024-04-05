@@ -902,3 +902,5 @@ select * from structure order by id desc;
 select * from etablissement order by id desc;
 select * from substit_fetch_data_for_substituant_etablissement('etablissement,ETABLE_HISMAN');
 */
+
+rollback;

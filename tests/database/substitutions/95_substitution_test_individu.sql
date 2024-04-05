@@ -1293,3 +1293,5 @@ select i.id, v.* from v_diff_etablissement v join pre_etablissement i on v.sourc
 
 select substit_create_all_substitutions_etablissement(20); -- totalité : 23-24 min (avec ou sans les raise)
 */
+
+rollback;

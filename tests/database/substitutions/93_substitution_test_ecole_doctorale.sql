@@ -889,3 +889,4 @@ select test_substit_ecole_doct__adds_to_substit_si_npd_force(); -- NB : NPD forc
 select test_substit_ecole_doct__adds_to_substit_si_ajout_npd();
 select test_substit_ecole_doct__deletes_substit_si_plus_doublon();
 
+rollback;

@@ -1214,3 +1214,5 @@ select * from v_structure_doublon
 where nom_patronymique in ('HOCHAN', 'VIEILLE', 'BERNAUDIN', 'BRANDLE DE MOTTA', 'DEMOULIN', 'DURET')
 order by nom_patronymique;
 */
+
+rollback;

@@ -21,7 +21,8 @@ $$begin
     delete from substit_log sl where type = 'individu' and exists (select id from individu s where sl.substitue_id = s.id and nom_usuel = 'test1234');
     delete from substit_log sl where type = 'individu' and exists (select id from individu s where sl.substituant_id = s.id and nom_usuel = 'test1234');
 
-    alter table doctorant disable trigger substit_trigger_doctorant;
+    alter table doctorant disable trigger substit_trigger_doctorant_1;
+    alter table doctorant disable trigger substit_trigger_doctorant_2;
     alter table individu disable trigger substit_trigger_individu;
 
     alter table substit_individu disable trigger substit_trigger_on_substit_individu;
@@ -40,7 +41,8 @@ $$begin
 
     delete from individu where nom_usuel = 'test1234';
 
-    alter table doctorant enable trigger substit_trigger_doctorant;
+    alter table doctorant enable trigger substit_trigger_doctorant_1;
+    alter table doctorant enable trigger substit_trigger_doctorant_2;
     alter table individu enable trigger substit_trigger_individu;
 
     alter table substit_individu enable trigger substit_trigger_on_substit_individu;
@@ -413,7 +415,8 @@ $$declare
 begin
     perform test_substit_doctorant__set_up();
 
-    alter table doctorant enable trigger substit_trigger_doctorant;
+    alter table doctorant enable trigger substit_trigger_doctorant_1;
+    alter table doctorant enable trigger substit_trigger_doctorant_2;
     alter table substit_doctorant enable trigger substit_trigger_on_substit_doctorant; -- AVEC remplacement des FK
 
     select * into v_pre_etab from etablissement limit 1;
@@ -1394,3 +1397,5 @@ select i.id, v.* from v_diff_doctorant v join pre_doctorant i on v.source_code =
 
 select substit_create_all_substitutions_doctorant(20); -- totalité : 23-24 min (avec ou sans les raise)
 */
+
+rollback;
