@@ -2,6 +2,8 @@
 
 namespace Formation\Service\Inscription;
 
+use Application\Entity\AnneeUniv;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\ORMException;
@@ -12,6 +14,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class InscriptionService {
     use EntityManagerAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     /**
      * @return InscriptionRepository
@@ -116,13 +119,13 @@ class InscriptionService {
         }
 
         if ($annee !== null) {
-            $debut = DateTime::createFromFormat('d/m/Y','01/09/'.($annee-1));
-            $fin = DateTime::createFromFormat('d/m/Y','31/08/'.($annee));
+            $annee = AnneeUniv::fromPremiereAnnee($annee);
+            $debut = $this->anneeUnivService->computeDateDebut($annee);
+            $fin = $this->anneeUnivService->computeDateFin($annee);;
             $qb
                 ->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
                 ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
         }
-
         return $qb->getQuery()->getResult();
     }
 }

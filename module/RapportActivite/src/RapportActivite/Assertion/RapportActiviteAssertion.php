@@ -119,7 +119,8 @@ class RapportActiviteAssertion extends AbstractAssertion
 
             switch ($action) {
                 case 'ajouter':
-                    $this->assertCreationPossible();
+                    $anneeUniv = $this->getRouteMatch()->getParam('anneeUniv');
+                    $this->assertCreationPossible($anneeUniv);
                     break;
 
                 case 'modifier':
@@ -252,15 +253,19 @@ class RapportActiviteAssertion extends AbstractAssertion
         return true;
     }
 
-    private function assertCreationPossible()
+    private function assertCreationPossible(int $anneeUniv)
     {
         $these = $this->getRequestedThese();
         $rapportsTeleverses = $this->rapportActiviteService->findRapportsForThese($these);
+        $anneesUnivs = $these->getAnneesUnivInscription();
 
         $this->rapportActiviteCreationRule->setRapportsExistants($rapportsTeleverses);
+        $this->rapportActiviteCreationRule->setAnneesUnivs($anneesUnivs->toArray());
         $this->rapportActiviteCreationRule->execute();
 
-        if (!$this->rapportActiviteCreationRule->isCreationPossible()) {
+        $estFinContrat = $this->getRouteMatch()->getParam('estFinContrat');
+
+        if (!$this->rapportActiviteCreationRule->isCreationPossible($anneeUniv, $estFinContrat)) {
             throw new FailedAssertionException("La création n'est pas possible.");
         }
     }

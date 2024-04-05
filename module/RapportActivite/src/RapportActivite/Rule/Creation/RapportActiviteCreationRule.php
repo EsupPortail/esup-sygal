@@ -120,16 +120,19 @@ class RapportActiviteCreationRule implements RuleInterface
         return array_keys(array_filter($this->canCreateRapportFinContrat, fn($can) => $can));
     }
 
-    public function isCreationPossible(): bool
+    public function isCreationPossible(int $anneeUniv, bool $estFinContrat): bool
     {
         if (!$this->executed) {
             $this->execute();
         }
 
-        return
-            count(array_filter($this->canCreateRapportAnnuel)) > 0 ||
-            count(array_filter($this->canCreateRapportFinContrat)) > 0;
+        if ($estFinContrat) {
+            return isset($this->canCreateRapportFinContrat[$anneeUniv]) && $this->canCreateRapportFinContrat[$anneeUniv];
+        } else {
+            return isset($this->canCreateRapportAnnuel[$anneeUniv]) && $this->canCreateRapportAnnuel[$anneeUniv];
+        }
     }
+
 
     /**
      * Retourne les années universitaires disponibles (i.e. n'ayant pas fait l'objet de téléversement de rapport),
