@@ -77,6 +77,127 @@ select privilege__grant_privilege_to_profile('acteur', 'modifier-acteur-de-toute
 select privilege__grant_privilege_to_profile('acteur', 'modifier-acteur-de-toutes-theses', 'ADMIN_TECH');
 
 
+-- drop function substit_fetch_data_for_substituant_individu;
+create or replace function substit_fetch_data_for_substituant_individu(p_npd character varying)
+    returns TABLE(type character varying, civilite character varying, nom_patronymique character varying, nom_usuel character varying, prenom1 character varying, prenom2 character varying, prenom3 character varying, email character varying, date_naissance timestamp without time zone, nationalite character varying, supann_id character varying, pays_id_nationalite bigint)
+    language plpgsql
+as
+$$begin
+    --
+    -- Détermination des meilleures valeurs d'attributs des enregistrements en doublon en vue de les affecter à
+    -- l'enregistrement substituant.
+    --
+    -- Pour chaque attribut, la stratégie de choix de la "meilleure" valeur est la fonction 'mode()'
+    -- (cf. https://www.postgresql.org/docs/current/functions-aggregate).
+    --
+    -- NB : les enregistrements en doublon sont ceux ayant le même NPD et n'appartenant pas à la source
+    -- correspondnant à l'application.
+    -- NB : Les historisés ne sont pas écartés puisqu'ils peuvent être des enregistrements déjà subsitués.
+    --
+
+    raise notice 'Calcul des meilleures valeurs d''attributs parmi les doublons dont le NPD est %...', p_npd;
+
+    return query
+        select
+                    mode() within group (order by i.type) as type,
+                    mode() within group (order by i.civilite) as civilite,
+                    mode() within group (order by trim(i.nom_patronymique)::varchar) as nom_patronymique,
+                    mode() within group (order by trim(i.nom_usuel)::varchar) as nom_usuel,
+                    mode() within group (order by trim(i.prenom1)::varchar) as prenom1,
+                    mode() within group (order by trim(i.prenom2)::varchar) as prenom2,
+                    mode() within group (order by trim(i.prenom3)::varchar) as prenom3,
+                    mode() within group (order by trim(i.email)::varchar) as email,
+                    mode() within group (order by i.date_naissance) as date_naissance,
+                    mode() within group (order by i.nationalite) as nationalite,
+                    mode() within group (order by i.supann_id) as supann_id,
+                    mode() within group (order by i.pays_id_nationalite) as pays_id_nationalite
+        from individu i
+                 join v_individu_doublon v on v.id = i.id and v.npd = p_npd
+        group by v.npd;
+end;
+$$;
+
+create or replace function public.substit_create_substituant_individu(data record) returns bigint
+    language plpgsql
+as
+$$declare
+    substituant_id bigint;
+begin
+    --
+    -- Création d'un enregistrement "susbtituant", càd se substituant à plusieurs enregistrements considérés en doublon,
+    -- à partir des valeurs d'attributs spécifiées.
+    --
+
+    raise notice 'Insertion du substituant à partir des données %', data;
+    insert into individu (id,
+                          source_id,
+                          source_code,
+                          histo_createur_id,
+                          type,
+                          civilite,
+                          nom_patronymique,
+                          nom_usuel,
+                          prenom1,
+                          prenom2,
+                          prenom3,
+                          email,
+                          date_naissance,
+                          nationalite,
+                          supann_id,
+                          pays_id_nationalite)
+    select nextval('individu_id_seq') as id,
+           app_source_id() as source_id,
+           app_source_source_code() as source_code,
+           app_utilisateur_id(),
+           data.type,
+           data.civilite,
+           data.nom_patronymique,
+           data.nom_usuel,
+           data.prenom1,
+           data.prenom2,
+           data.prenom3,
+           data.email,
+           data.date_naissance,
+           data.nationalite,
+           data.supann_id,
+           data.pays_id_nationalite
+    returning id into substituant_id;
+
+    raise notice '=> Substituant %', substituant_id;
+
+    return substituant_id;
+end
+$$;
+
+create or replace function public.substit_update_substituant_individu(p_substituant_id bigint, data record) returns void
+    language plpgsql
+as
+$$begin
+    --
+    -- Mise à jour des attributs de l'enregistrement substituant spécifié, à partir des valeurs spécifiées.
+    --
+
+    update individu
+    set histo_modification = current_timestamp,
+        histo_modificateur_id = app_utilisateur_id(),
+        type = data.type,
+        civilite = data.civilite,
+        nom_patronymique = data.nom_patronymique,
+        nom_usuel = data.nom_usuel,
+        prenom1 = data.prenom1,
+        prenom2 = data.prenom2,
+        prenom3 = data.prenom3,
+        email = data.email,
+        date_naissance = data.date_naissance,
+        nationalite = data.nationalite,
+        supann_id = data.supann_id,
+        pays_id_nationalite = data.pays_id_nationalite
+    where id = p_substituant_id;
+end
+$$;
+
+
+
 
 --
 -- Vue utile quand il faudra créer à la main les 'individu_role_etablissement' pour remplacer le bricolage des
