@@ -76,6 +76,7 @@ class DomaineHalService {
                 "options" => $group["options"]
             ];
         }
+
         return $valueOptions;
     }
 

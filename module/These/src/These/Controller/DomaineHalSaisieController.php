@@ -30,7 +30,7 @@ class DomaineHalSaisieController extends AbstractActionController
         $these = $this->getTheseService()->getRepository()->find($theseId);
 
         $form = $this->getDomaineHalSaisieForm();
-        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions('docId');
+        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
         $form->get('domaineHalFieldset')->setDomainesHal($domainesHal);
         $form->setAttribute('action', $this->url()->fromRoute('these/saisie-domaine-hal', ['these' => $these->getId()], [], true));
 
