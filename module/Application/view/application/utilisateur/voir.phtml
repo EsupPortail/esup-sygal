@@ -15,7 +15,6 @@ use UnicaenAuthToken\Entity\Db\UserToken;
 /**
  * @var PhpRenderer $this
  * @var Utilisateur $utilisateur
- * @var Individu $individu
  * @var array $rolesData
  * @var UserToken[] $tokens
  * @var string $redirect
@@ -23,6 +22,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
  * @see \Application\Controller\UtilisateurController::voirAction()
  */
 
+$individu = $utilisateur->getIndividu();
 $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
 ?>
 
@@ -91,7 +91,7 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
 
     <div class="col-md-6">
 
-        <?php if ($individu = $utilisateur->getIndividu()) : ?>
+        <?php if ($individu) : ?>
 
             <div class="box card">
                 <div class="card-header <?php echo $individu->estHistorise() ? 'bg-danger' : 'bg-info' ?>">
@@ -162,8 +162,12 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
         </h2>
     </div>
     <div class="card-body">
-        Rendez-vous sur la <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()]) ?>"
-        >fiche détaillée de l'individu</a>...
+        <?php if ($individu) : ?>
+            Rendez-vous sur la <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()]) ?>"
+            >fiche détaillée de l'individu</a>...
+        <?php else: ?>
+            Vous devez lier ce compte utilisateur à un individu pour pouvoir ensuite attribuer un rôle à l'individu.
+        <?php endif ?>
     </div>
 </div>
 
