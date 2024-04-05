@@ -8,7 +8,7 @@
 -- Ajout des informations concernant l'import des domaines HAL
 --
 INSERT INTO source(id, code, libelle, etablissement_id, importable)
-VALUES (7, 'HAL', 'HAL', null, true) ON CONFLICT DO NOTHING;;
+VALUES (nextval('source_id_seq'), 'HAL', 'HAL', null, true) ;
 
 --Suppression des possibles données existantes concernant l'import des domaines HAL
 drop view if exists v_diff_domaine_hal;
