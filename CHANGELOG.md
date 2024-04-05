@@ -13,6 +13,7 @@ Journal des modifications
   - Ajout d'un bouton directement à partir de la proposition de soutenance
   - Ajout d'un privilège 
   - Envoi d'un mail pour notifier les acteurs directs de la thèse
+- Refonte du processus d'ajout d'un nouveau rapport d'activité : l'année du rapport est choisie en amont afin de de pouvoir filtrer les formations (affichées ensuite dans le formulaire)
 - [FIX] Liste/recherche des utilisateurs : dysfonctionnement des filtres à cocher qui s'appliquait quelle qu'était leur valeur.
 - [FIX] Ajout d'une mission d'enseignement : le bouton ne fonctionnait plus à cause d'une erreur de config de la route.
 - [FIX] Proposition de soutenance > Fichiers associés > Téléversement d'un justificatif : la liste des membres était toujours vide.
