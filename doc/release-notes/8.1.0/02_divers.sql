@@ -21,3 +21,7 @@ update utilisateur u set last_role_id = null where last_role_id is not null and 
 alter table utilisateur
     add constraint utilisateur_role_id_fk
         foreign key (last_role_id) references role;
+
+alter table unite_domaine_linker
+    add constraint unite_domaine_linker_unite_rech_id_fk
+        foreign key (unite_id) references unite_rech;
