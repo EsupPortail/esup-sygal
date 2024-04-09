@@ -25,3 +25,13 @@ alter table utilisateur
 alter table unite_domaine_linker
     add constraint unite_domaine_linker_unite_rech_id_fk
         foreign key (unite_id) references unite_rech;
+alter table unite_domaine_linker
+    drop constraint unite_domaine_linker_pkey;
+alter table unite_domaine_linker
+    add id bigserial;
+alter table unite_domaine_linker
+    add constraint unite_domaine_linker_pk
+        primary key (id);
+alter table unite_domaine_linker
+    add constraint unite_domaine_linker_pk_2
+        unique (unite_id, domaine_id);
