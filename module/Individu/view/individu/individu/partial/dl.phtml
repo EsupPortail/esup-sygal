@@ -35,6 +35,8 @@ if (!isset($verbose)) $verbose = false;
     <?php if ($verbose): ?>
         <dt class="<?php echo $dtClass ?>">Deuxième prénom</dt>
         <dd class="<?php echo $ddClass ?>"><?php echo $entity->getPrenom2() ?: "(Non renseigné)" ?></dd>
+        <dt class="<?php echo $dtClass ?>">Troisième prénom</dt>
+        <dd class="<?php echo $ddClass ?>"><?php echo $entity->getPrenom3() ?: "(Non renseigné)" ?></dd>
     <?php endif ?>
 
     <dt class="<?php echo $dtClass ?>">Date de naissance</dt>
