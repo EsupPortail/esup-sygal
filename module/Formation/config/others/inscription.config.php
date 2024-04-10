@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Formation\Assertion\InscriptionAssertion;
 use Formation\Controller\InscriptionController;
 use Formation\Controller\InscriptionControllerFactory;
 use Formation\Controller\Recherche\InscriptionRechercheController;
@@ -19,9 +20,28 @@ use Formation\View\Helper\InscriptionViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'Inscription' => []
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            InscriptionPrivileges::INSCRIPTION_AJOUTER
+                        ],
+                        'resources'  => ['Inscription'],
+                        'assertion'  => InscriptionAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -43,6 +63,7 @@ return [
                     'privileges' => [
                         InscriptionPrivileges::INSCRIPTION_AJOUTER,
                     ],
+                    'assertion' => InscriptionAssertion::class,
                 ],
                 [
                     'controller' => InscriptionController::class,

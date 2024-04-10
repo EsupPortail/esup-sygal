@@ -124,16 +124,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.301.4",
+            "version": "3.304.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1d04b11a621eaceb389d2cfbd82bcdc423903796"
+                "reference": "6dac9b3257873a807ac73f6dc4418bdc49a5d9db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1d04b11a621eaceb389d2cfbd82bcdc423903796",
-                "reference": "1d04b11a621eaceb389d2cfbd82bcdc423903796",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6dac9b3257873a807ac73f6dc4418bdc49a5d9db",
+                "reference": "6dac9b3257873a807ac73f6dc4418bdc49a5d9db",
                 "shasum": ""
             },
             "require": {
@@ -213,9 +213,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.301.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.304.1"
             },
-            "time": "2024-03-20T18:16:55+00:00"
+            "time": "2024-04-09T19:25:27+00:00"
         },
         {
             "name": "beberlei/assert",
@@ -1685,16 +1685,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.19.2",
+            "version": "2.19.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "40a0964f06e142e173b783c45688e5f5efaed6aa"
+                "reference": "1a5a4c674a416b4fdf76833c627c5e7f58bbb890"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/40a0964f06e142e173b783c45688e5f5efaed6aa",
-                "reference": "40a0964f06e142e173b783c45688e5f5efaed6aa",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/1a5a4c674a416b4fdf76833c627c5e7f58bbb890",
+                "reference": "1a5a4c674a416b4fdf76833c627c5e7f58bbb890",
                 "shasum": ""
             },
             "require": {
@@ -1780,9 +1780,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.19.2"
+                "source": "https://github.com/doctrine/orm/tree/2.19.3"
             },
-            "time": "2024-03-18T19:12:56+00:00"
+            "time": "2024-03-21T11:01:42+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -10844,16 +10844,16 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v2.5.2",
+            "version": "v2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "4b426aac47d6427cc1a1d0f7e2ac724627f5966c"
+                "reference": "a2329596ddc8fd568900e3fc76cba42489ecc7f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/4b426aac47d6427cc1a1d0f7e2ac724627f5966c",
-                "reference": "4b426aac47d6427cc1a1d0f7e2ac724627f5966c",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/a2329596ddc8fd568900e3fc76cba42489ecc7f3",
+                "reference": "a2329596ddc8fd568900e3fc76cba42489ecc7f3",
                 "shasum": ""
             },
             "require": {
@@ -10907,7 +10907,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v2.5.2"
+                "source": "https://github.com/symfony/service-contracts/tree/v2.5.3"
             },
             "funding": [
                 {
@@ -10923,7 +10923,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-30T19:17:29+00:00"
+            "time": "2023-04-21T15:04:16+00:00"
         },
         {
             "name": "symfony/string",
@@ -12398,11 +12398,11 @@
         },
         {
             "name": "unicaen/code",
-            "version": "6.1.0",
+            "version": "6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/code.git",
-                "reference": "eef7a24e18a66762c8e0140872a3d09dd8ec2700"
+                "reference": "100ed32686680e9c1e5ebb384c82623e11f650f3"
             },
             "require": {
                 "easybook/geshi": ">=1.0",
@@ -12419,7 +12419,7 @@
                 ]
             },
             "description": "Boite à outils pour la programmation avec la bibliothèque Unicaen",
-            "time": "2023-12-11T15:25:37+00:00"
+            "time": "2024-03-22T10:06:47+00:00"
         },
         {
             "name": "unicaen/test",
