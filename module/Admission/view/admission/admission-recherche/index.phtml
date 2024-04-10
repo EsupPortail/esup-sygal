@@ -35,16 +35,16 @@ echo $this->partial('admission/admission/partial/header', []); ?>
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <?php if($canRechercherDossiersAdmission) { ?>
-    <div class="form_admission">
+    <div class="admission-form">
         <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
-            <div class="row individu_recherche_index">
-                <div class="col-lg-4 col-sm-12 label_index">
+            <div class="row individu-recherche-index-container">
+                <div class="col-lg-4 col-sm-12 search-individu-label">
                     <label for="individuId">Entrez l'individu recherché :</label>
                 </div>
-                <div class="col-lg-4 col-sm-12 input_index">
+                <div class="col-lg-4 col-sm-12 search-individu-input">
                     <?php echo $this->formControlGroup($inputIndividu); ?>
                 </div>
-                <div class="col-lg-3 col-sm-12 bouton_acces_dossier_index">
+                <div class="col-lg-3 col-sm-12 access-admission-btn">
                     <button type="submit" class="btn btn-primary">Accéder à son dossier d'admission</button>
                 </div>
             </div>
@@ -172,7 +172,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                             }else{
                                 if(!empty($admission->getInscription()->first()->getDenominationDirecteurThese())){
                                     echo $admission->getInscription()->first()->getDenominationDirecteurThese();?>
-                                    <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                                    <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
                                         <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                                     </span>
                                 <?php }
@@ -231,8 +231,8 @@ echo $this->partial('admission/admission/partial/header', []); ?>
 
     <?php endif ?>
 <?php }else{ ?>
-    <div class="row bouton_acces_dossier">
-        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces_dossier">Accéder à votre dossier d'admission</a>
+    <div class="row acces-admission-btn-container">
+        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces-admission-btn">Accéder à votre dossier d'admission</a>
     </div>
 <?php } ?>
 

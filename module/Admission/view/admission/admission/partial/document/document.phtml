@@ -28,19 +28,19 @@ $canTelechargerDocument =
 ?>
 
 <div class="row subfield">
-    <div class="col-lg-3 col-sm-12 label-file">
+    <div class="col-lg-3 col-sm-12 filename-label">
         <?php echo $this->formlabel($fieldset) ?>
     </div>
     <div class="col-lg-9 col-sm-12">
-        <div class="row detail_file">
+        <div class="row detail-file-container">
             <?php
             $key = $fieldset->getAttribute('id');
             if($key=="ADMISSION_CHARTE_DOCTORAT"){ ?>
-                <div class="col-lg-12 upload_file">
+                <div class="col-lg-12 upload-file">
                    <?php if($validation_charte_doctorat->getId() == null){ ?>
-                        <a class="btn access_charte_doctorat required">Lire et valider la charte du doctorat</a>
+                        <a class="btn access-charte-doctorat-btn required">Lire et valider la charte du doctorat</a>
                     <?php }else{?>
-                       <a class="btn btn-primary access_charte_doctorat">Lire la charte du doctorat</a>
+                       <a class="btn btn-primary access-charte-doctorat-btn">Lire la charte du doctorat</a>
                     <?php }?>
                     <div class="modal fade" id="modalShowCharteDoctorale" tabindex="-1" role="dialog">
                         <div class="modal-dialog" role="document">
@@ -50,18 +50,18 @@ $canTelechargerDocument =
                                 </div>
                                 <div class="modal-body">
                                     <?php if($validation_charte_doctorat->getId() == null){ ?>
-                                        <div class="precisions_action">
+                                        <div class="precisions-action-container">
                                             <i class="fas fa-exclamation-circle"></i>
                                             <p>
                                                 L'étudiant (<?= $admission->getIndividu() ?>) doit lire l'intégralité de cette charte, puis certifier avoir effectivement pris connaissance de son contenu à la fin du document.
                                             </p>
                                         </div>
                                     <?php }?>
-                                    <div class="col-lg-5 upload_file file_charte_doctorat">
+                                    <div class="col-lg-5 upload-file file-charte-doctorat">
                                         <?php
                                         echo $this->formfile($fieldset); ?>
                                     </div>
-                                    <div class="charteDoctoraleOperations">
+                                    <div class="charte-doctorale-operations">
                                         <?php
                                         $libelleOperation = "J'atteste sur l'honneur avoir pris connaissance de l'intégralité de la charte doctorale mentionnée ci-dessus.";
                                         echo $this->partial('admission/admission/partial/operation-card', [
@@ -89,7 +89,7 @@ $canTelechargerDocument =
                 $canAccederConventionFormationDoctorale = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_MODIFIER));
                 $canGenererConventionFormationDoctorale =
                     $this->isAllowed($conventionFormationDoctorale, AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER); ?>
-                <div class="col-lg-12 upload_file">
+                <div class="col-lg-12 upload-file">
                     <?php if ($canAccederConventionFormationDoctorale && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE) {
                         $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation'; ?>
                         <a href="<?php echo $this->url($nameRoute, ['admission' => $admission->getId()], [], true) ?>"
@@ -98,7 +98,7 @@ $canTelechargerDocument =
                     <?php }
 
                     if ($canGenererConventionFormationDoctorale) { ?>
-                        <a class="btn btn-primary access_convention_formation_doctorale">Lire la convention de formation doctorale</a>
+                        <a class="btn btn-primary access-conv-form-doct-btn">Lire la convention de formation doctorale</a>
                         <div class="modal fade" id="modalShowConventionFormationDoctorale" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -106,7 +106,7 @@ $canTelechargerDocument =
                                         <h4 class="modal-title">Convention de formation doctorale</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="precisions_action">
+                                        <div class="precisions-action-container">
                                             <i class="fas fa-exclamation-circle"></i>
                                             <p>
                                                 Il est nécessaire de lire l'intégralité de cette convention, puis de
@@ -114,7 +114,7 @@ $canTelechargerDocument =
                                                 document.
                                             </p>
                                         </div>
-                                        <div class="col-lg-5 upload_file file_convention_formation_doctorale">
+                                        <div class="col-lg-5 upload-file file-convention-formation-doctorale">
                                             <div id="loading-indicator">
                                                 <div class="spinner"></div>
                                             </div>
@@ -123,7 +123,7 @@ $canTelechargerDocument =
                                                     type="application/pdf" width="100%" height="4000">
                                             </object>
                                         </div>
-                                        <div class="conventionFormationDoctoraleOperations">
+                                        <div class="convention-formation-doctorale-operations">
                                             <?php
                                             $count = 1;
                                             foreach ($conventionFormationDoctoraleOperations as $conventionFormationDoctoraleOperation) {
@@ -152,12 +152,12 @@ $canTelechargerDocument =
                     <?php } ?>
                 </div>
             <?php } else { ?>
-                <div class="col-lg-5 upload_file">
+                <div class="col-lg-5 upload-file">
                     <?php echo $this->formfile($fieldset) ?>
                 </div>
                 <?php
                 if(array_key_exists($key, $documents)){?>
-                    <div class="col-lg-3 date_televersement">
+                    <div class="col-lg-3 date-televersement-container">
                         <p>Téléversé le
                             <?php
                             echo $documents[$key]['televersement'];
@@ -165,7 +165,7 @@ $canTelechargerDocument =
                         </p>
                     </div>
                     <?php if($canTelechargerDocument){ ?>
-                        <div class="col-lg-1 action_file">
+                        <div class="col-lg-1 action-file-container">
                             <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $key], [],true) ?>"
                                class="icon icon-download iconly"
                                title="Télécharger ?"></a>

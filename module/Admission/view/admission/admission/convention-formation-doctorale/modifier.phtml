@@ -31,7 +31,7 @@ $form->prepare();
 
 
 <div class="convention-formation-doctorale-container">
-    <div class="precisions_convention_intro">
+    <div class="precisions-convention-intro-container">
         <i class="fas fa-exclamation-circle"></i>
         <p>
             Vous devez remplir tous les champs de ce formulaire afin de pouvoir l'enregistrer.
@@ -43,7 +43,7 @@ $form->prepare();
     <div class="row">
         <div class="col-md-7">
             <h3><?php echo $this->formlabel($form->get('calendrierProjetRecherche')); ?></h3>
-            <p class="precisions_convention">
+            <p class="precisions-convention-champs">
                 Préciser le calendrier et les jalons prévisionnels du projet de thèse, le lieu de recherche externe
                 le cas échéant. Si la thèse se fait dans le cadre d'une co-tutelle internationale, préciser le
                 calendrier prévisionnel des séjours dans les deux pays. Si la thèse se fait dans le cadre d’une
@@ -59,7 +59,7 @@ $form->prepare();
     <div class="row">
         <div class="col-md-7">
             <h3><?php echo $this->formlabel($form->get('modalitesEncadrSuiviAvancmtRech')); ?></h3>
-            <p class="precisions_convention">
+            <p class="precisions-convention-champs">
                 Préciser le rôle et les responsabilités spécifiques de chaque personne assurant l’encadrement
                 (direction, co-direction, co-encadrement non HDR), ainsi que le mode d’interaction des
                 encadrants entre eux, et des encadrants avec le doctorant.
@@ -76,7 +76,7 @@ $form->prepare();
     <div class="row">
         <div class="col-md-7">
             <h3><?php echo $this->formlabel($form->get('conditionsRealisationProjRech')); ?></h3>
-            <p class="precisions_convention">
+            <p class="precisions-convention-champs">
                 Préciser les moyens et méthodes disponibles qui devront être mis en œuvre pour mener à
                 bien le projet doctoral au sein de l'unité de recherche (archives, plates-formes, animalerie, sites
                 expérimentaux … ). Préciser, le cas échéant, le cadre d'utilisation de ces moyens (conditions
@@ -92,7 +92,7 @@ $form->prepare();
     <div class="row">
         <div class="col-md-7">
             <h3><?php echo $this->formlabel($form->get('modalitesIntegrationUr')); ?></h3>
-            <p class="precisions_convention">
+            <p class="precisions-convention-champs">
                 Précisez s’il y a signature d’un engagement de confidentialité et/ou du règlement intérieur du
                 laboratoire et si l’intégration implique une formation aux bonnes pratiques ou autres
                 obligations. Précisez les éventuelles responsabilités collectives que le doctorant pourra
@@ -106,7 +106,7 @@ $form->prepare();
     <div class="row">
         <div class="col-md-7">
             <h3><?php echo $this->formlabel($form->get('partenariatsProjThese')); ?></h3>
-            <p class="precisions_convention">
+            <p class="precisions-convention-champs">
                 Précisez si la thèse se déroule dans un contexte impliquant des conventions avec des
                 partenaires (hors co-tutelle internationale de thèse) et si oui lesquels et pour quoi (par exemple
                 si le projet de texte est mené dans le cadre d’une collaboration de recherche avec un industriel,
@@ -120,7 +120,7 @@ $form->prepare();
         <div class="row">
             <div class="col-md-7">
                 <h3><?php echo $this->formlabel($form->get('motivationDemandeConfidentialite')); ?></h3>
-                <p class="precisions_convention"></p>
+                <p class="precisions-convention-champs"></p>
                 <?php echo $this->formtextarea($form->get('motivationDemandeConfidentialite')); ?>
                 <?= $this->formelementerrors()->render($form->get('motivationDemandeConfidentialite'), ['class' => 'error text-danger']) ?>
             </div>
@@ -129,7 +129,7 @@ $form->prepare();
     <div class="row">
         <div class="col-md-7">
             <h3><?php echo $this->formlabel($form->get('projetProDoctorant')); ?></h3>
-            <p class="precisions_convention">
+            <p class="precisions-convention-champs">
                 Indiquez vos objectifs d’après-thèse en précisant si vous souhaitez vous orienter vers le milieu
                 académique ou le milieu socio-économique. Précisez les jalons de votre formation doctorale
                 qui vous seront utiles pour atteindre ces objectifs.

@@ -90,15 +90,15 @@ $form->prepare();
     <h2>Formations doctorales thématiques et transversales / <span class="en">Doctoral training</span></h2>
 
     <p class="help">
-        Formations spécifiques/thématiques proposées par votre ED (ou une autre structure) : précisez le volume
-        pour chaque formation suivie depuis votre 1re année d’inscription en thèse. Inclure les éventuelles autres
+        Formations spécifiques/thématiques proposées par votre ED (ou une autre structure) : précisez le volume horaire
+        pour chaque formation suivie au cours de l'année universitaire en question. Inclure les éventuelles autres
         activités comptabilisées par l’ED au titre de la formation. <br>
         <u>Dans le cas où vous n'auriez suivi aucune formation, merci de le justifier dans la partie Commentaires
         (située en fin de formulaire).</u>
     </p>
     <p class="help en">
-        Specific training, relevant to your field, offered by your doctoral school or another institution. For
-        each course since your first year, provide the time required by the course. Include any other activities
+        Specific training, relevant to your field, offered by your doctoral school or another institution. Specify
+        the number of hours for each training taken during the academic year in question. Include any other activities
         likely to be recognized as part of your training. <br>
         <u>If you have not followed any training, please justify it in the Comments section (located at the end of this form).</u>
     </p>
@@ -110,16 +110,17 @@ $form->prepare();
 
     <p class="help">
         Formations transversales/professionnalisantes proposées par le Collège doctoral (ou une autre structure) :
-        précisez le volume pour chaque formation suivie depuis votre 1re année d’inscription en thèse. <br>
+        précisez le volume horaire pour chaque formation suivie au cours de l'année universitaire en question. <br>
         <u>Dans le cas où vous n'auriez suivi aucune formation, merci de le justifier dans la partie Commentaires
         (située en fin de formulaire).</u>
     </p>
     <p class="help en">
         Transversal training (or training not specific to your field and which is relevant to the employment
-        market), offered by the Doctoral College or another institution. For each course since your first year,
-        provide the time required by the course. <br>
+        market), offered by the Doctoral College or another institution. Specify the number of hours for each training
+        taken during the academic year in question. <br>
         <u>If you have not followed any training, please justify it in the Comments section (located at the end of this form).</u>
     </p>
+
     <div class="row">
         <div class="col-md-7">
             <?php echo $this->formElementCollection($form->get('formationsTransversales')); ?>

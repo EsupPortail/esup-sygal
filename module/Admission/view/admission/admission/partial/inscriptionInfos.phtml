@@ -18,9 +18,9 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  */
 $form->prepare();
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Inscription demandée<label class="titre_sous_partie_en">&nbsp; /  Application for registration</label></h2>
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Inscription demandée<label class="admission-section-title-en">&nbsp; /  Application for registration</label></h2>
         </h2>
     </div>
     <div class="row subfield">
@@ -55,15 +55,15 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             if($inscriptionExist &&
                 ($admission->getInscription()->first()->getNomDirecteurThese() &&
                 empty($admission->getInscription()->first()->getDirecteur()))){ ?>
-                <label class="form-label individu_non_enregistre" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis supervisor</label>
-                <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                <label class="form-label individu-non-enregistre-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en individu-non-enregistre-label">&nbsp; / Lastname of thesis supervisor</label>
+                <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
                     <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                 </span>
             <?php }else{ ?>
                     <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis supervisor</label>
                         <?php if($inscriptionExist &&
                               $admission->getInscription()->first()->getDirecteur()){ ?>
-                    <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
+                    <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                         <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
                     </span>
                 <?php } ?>
@@ -83,9 +83,9 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         </div>
     </div>
     <div class="row subfield">
-        <div class="col-lg-12 titre_these">
+        <div class="col-lg-12 these-titre-container">
             <label class="form-label" for="inscription[titreThese]">Titre provisoire de la thèse</label><label class="titre_label_champ_form_en">&nbsp; / Provisional title of thesis</label>
-            <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
+            <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                 <span class="tooltip-text">Le titre saisi dans ce champ est provisoire et pourra être modifié ultérieurement durant votre parcours doctoral</span>
             </span>
         </div>
@@ -94,21 +94,21 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         </div>
     </div>
 </div>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
         <div class="row">
             <div class="col-lg-5 col-sm-12">
-                <h2 class="titre_sous_partie titre_specifites">Spécificités envisagées<label class="titre_sous_partie_en">&nbsp; / Specificity(ies) planned</label></h2>
+                <h2 class="admission-section-title specifites-section-title">Spécificités envisagées<label class="admission-section-title-en">&nbsp; / Specificity(ies) planned</label></h2>
             </div>
             <div class="col">
-                <p class="informations-title-sous-partie">Demande de spécificité(s) à émettre obligatoirement via le(s) formulaire(s) téléchargeable(s) sur le site internet UNICAEN</p>
+                <p class="admission-informations-title-section">Demande de spécificité(s) à émettre obligatoirement via le(s) formulaire(s) téléchargeable(s) sur le site internet UNICAEN</p>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="row subfield">
             <div class="col-lg-3 col-sm-12">
-                <div class="checkbox_admission">
+                <div class="admission-form-checkboxes">
                     <?php echo $this->formControlGroup($fieldset->get('confidentialite')) ?>
                 </div>
             </div>
@@ -119,7 +119,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                             <?php echo $this->formControlGroup($fieldset->get('dateConfidentialite')) ?>
                         </div>
                         <div class="col-lg-6 col-sm-12 informations-confidentialite-souhaitee">
-                            <p class="informations">A demander et motiver dans la convention de formation doctorale (présente à la dernière étape de ce formulaire)</p>
+                            <p class="admission-field-information">A demander et motiver dans la convention de formation doctorale (présente à la dernière étape de ce formulaire)</p>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
 
         <div class="row subfield">
             <div class="col-lg-3 col-sm-12">
-                <div class="checkbox_admission">
+                <div class="admission-form-checkboxes">
                     <?php echo $this->formControlGroup($fieldset->get('coTutelle')) ?>
                 </div>
             </div>
@@ -139,7 +139,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                             <?php echo $this->formControlGroup($fieldset->get('paysCoTutelle')) ?>
                         </div>
                         <div class="col-lg-6 col-sm-12">
-                            <p class="informations">Attention, il est OBLIGATOIRE d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/</a></p>
+                            <p class="admission-field-information">Attention, il est OBLIGATOIRE d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/partir à l'étranger/faire-sa-these-en-cotutelle-internationale/</a></p>
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         </div>
         <div class="row subfield">
             <div class="col-lg-3 col-sm-12">
-                <div class="checkbox_admission">
+                <div class="admission-form-checkboxes">
                     <?php echo $this->formControlGroup($fieldset->get('coDirection')) ?>
                 </div>
             </div>
@@ -159,15 +159,15 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                             <?php if($inscriptionExist &&
                                     $admission->getInscription()->first()->getNomCodirecteurThese() &&
                                     empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
-                                    <label class="form-label individu_non_enregistre" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en individu_non_enregistre">&nbsp; / Lastname of thesis co-supervisor</label>
-                                    <span class="icon icon-warning dossier_bulle_information" data-toggle="tooltip">
+                                    <label class="form-label individu-non-enregistre-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en individu-non-enregistre-label">&nbsp; / Lastname of thesis co-supervisor</label>
+                                    <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
                                         <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                                     </span>
                             <?php }else{ ?>
                                 <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis co-supervisor</label>
                                 <?php if($inscriptionExist &&
                                         $admission->getInscription()->first()->getCoDirecteur()){ ?>
-                                        <span class="icon icon-information dossier_bulle_information" data-toggle="tooltip">
+                                        <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                                             <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
                                         </span>
                                 <?php } ?>
@@ -199,12 +199,12 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         </div>
         <div class="row subfield">
             <div class="col-lg-3 col-sm-12">
-                <div class="checkbox_admission">
+                <div class="admission-form-checkboxes">
                     <?php echo $this->formControlGroup($fieldset->get('coEncadrement')) ?>
                 </div>
             </div>
             <div class="col-lg-9 col-sm-12">
-                <p class="informations">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D.R. Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
+                <p class="admission-field-information">Extrait de la décision du Conseil Académique de Normandie du 13 septembre 2016 : "Le co-encadrement de thèse s'adresse exclusivement aux personnes non H.D.R. de la ComUE Normandie université souhaitant acquérir une expérience en encadrement en vue de l'obtention de l'H.D.R. Retrouvez toutes les informations et le formulaire en ligne : <a href="https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/">https://unicaen.fr/recherche/etudes-doctorales/faire-une-these/sinscrire-en-doctorat/suivi-et-modification-du-doctorat/demande-de-reconnaissance-de-co-encadrement-de-these/</a></p>
             </div>
         </div>
     </div>

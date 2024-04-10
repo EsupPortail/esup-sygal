@@ -15,6 +15,8 @@ use Application\View\Renderer\PhpRenderer;
 
 <?php
 $multipageFormFieldset = $this->multipageFormFieldset();
-$multipageFormFieldset->setPartial('admission/partial/etudiantInfos');
-echo $multipageFormFieldset;
-?>
+$multipageFormFieldset->setPartial('admission/partial/etudiantInfos'); ?>
+<div class="admission">
+    <?php echo $multipageFormFieldset; ?>
+</div>
+

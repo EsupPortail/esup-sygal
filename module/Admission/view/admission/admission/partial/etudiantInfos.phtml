@@ -21,16 +21,16 @@ use Laminas\Form\Element\Select;
 $form->prepare();
 
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Étudiant<label class="titre_sous_partie_en">&nbsp; / Student</label></h2>
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Étudiant<label class="admission-section-title-en">&nbsp; / Student</label></h2>
     </div>
     <div class="row subfield">
         <div class="col-md-6">
             <div class="col-mb-2">
-                <label class='label_ine form-label'
+                <label class='ine-label form-label'
                        data-after=" / I.N.E number (number appearing on a French higher education transcript)"><?php echo $fieldset->get('ine')->getLabel() ?></label>
-                <button class="icon icon-information info_ine" data-toggle="tooltip"
+                <button class="icon icon-information info-ine-btn" data-toggle="tooltip"
                         title="Appuyez pour avoir plus d'informations"></button>
                 <?php echo $this->formInput($fieldset->get('ine')) ?>
             </div>
@@ -42,7 +42,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
-            <div class="checkbox_admission">
+            <div class="admission-form-checkboxes">
                 <?php echo $this->formControlGroup($fieldset->get('civilite')->setValue($individu->getCivilite())) ?>
             </div>
         </div>
@@ -94,9 +94,9 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
     </div>
     <div class="row subfield">
         <div class="col">
-            <div class="checkbox_admission">
+            <div class="admission-form-checkboxes">
                 <?php echo $this->formControlGroup($fieldset->get('situationHandicap')) ?>
-                <p class="informations">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
+                <p class="admission-field-information">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
                     N'hésitez pas à
                     contacter le Service Universitaire de Médecine Préventive (SUMPPS) <a href="mailto:sumpps@unicaen.fr">sumpps@unicaen.fr</a> ainsi que le
                     relais
@@ -105,12 +105,12 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         </div>
     </div>
 </div>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Niveau d'étude permettant l'accès en doctorat<label class="titre_sous_partie_en">&nbsp; /  Level of study for access to PhD</label></h2>
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Niveau d'étude permettant l'accès en doctorat<label class="admission-section-title-en">&nbsp; /  Level of study for access to PhD</label></h2>
     </div>
     <div class="row subfield">
-        <div class="checkbox_admission">
+        <div class="admission-form-checkboxes">
             <?php echo $this->formControlGroup($fieldset->get('niveauEtude')) ?>
         </div>
         <div id="additional_fields_diplome">
@@ -129,11 +129,11 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div id="additional_fields_autre">
             <div class="row subfield">
                 <div class="col">
-                    <div class="checkbox_admission checkbox_diplome">
+                    <div class="admission-form-checkboxes checkbox-diplome">
                         <?php echo $this->formControlGroup($fieldset->get('typeDiplomeAutre')) ?>
                     </div>
                 </div>
-                <p class="informations">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
+                <p class="admission-field-information">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
                     au préalable contacter le
                     service spécifique : <a href="mailto:vae@unicaen.fr">vae@unicaen.fr</a></p>
             </div>

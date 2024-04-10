@@ -27,16 +27,16 @@ echo $this->partial('admission/admission/partial/header', []); ?>
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <?php if($canRechercherDossiersAdmission) { ?>
-    <div class="form_admission">
+    <div class="admission-form">
         <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
-            <div class="row individu_recherche_index">
-                <div class="col-lg-4 col-sm-12 label_index">
+            <div class="row individu-recherche-index-container">
+                <div class="col-lg-4 col-sm-12 search-individu-label">
                     <label for="individuId">Entrez l'individu recherché :</label>
                 </div>
-                <div class="col-lg-4 col-sm-12 input_index">
+                <div class="col-lg-4 col-sm-12 search-individu-input">
                     <?php echo $this->formControlGroup($inputIndividu); ?>
                 </div>
-                <div class="col-lg-3 col-sm-12 bouton_acces_dossier_index">
+                <div class="col-lg-3 col-sm-12 access-admission-btn">
                     <button type="submit" class="btn btn-primary">Accéder à son dossier d'admission</button>
                 </div>
             </div>
@@ -89,14 +89,14 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                     <td><?php if($admission->getInscription()->first() && $admission->getInscription()->first()->getEcoleDoctorale()){
                             echo $admission->getInscription()->first()->getEcoleDoctorale();
                         }else{
-                            echo "<p class='structure_non_declaree'>Aucune ED déclarée</p>";
+                            echo "<p class='structure-non-declaree'>Aucune ED déclarée</p>";
                         }?>
                     </td>
                     <td>
                         <?php if($admission->getInscription()->first() && $admission->getInscription()->first()->getUniteRecherche()){
                             echo $admission->getInscription()->first()->getUniteRecherche();
                         }else{
-                            echo "<p class='structure_non_declaree'>Aucune UR déclarée</p>";
+                            echo "<p class='structure-non-declaree'>Aucune UR déclarée</p>";
                         }?>
                     <td>
                         <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>"
@@ -117,7 +117,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
     </table>
     <p><?php echo $countFilteredAdmissions." dossier(s) d'admission(s) trouvé(s)";?></p>
 <?php }else{ ?>
-    <div class="row bouton_acces_dossier">
-        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces_dossier">Accéder à votre dossier d'admission</a>
+    <div class="row acces-admission-btn-container">
+        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces-admission-btn">Accéder à votre dossier d'admission</a>
     </div>
 <?php } ?>

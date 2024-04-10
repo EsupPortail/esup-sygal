@@ -46,13 +46,13 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     let individuId = <?php echo $individu; ?>;
 </script>
 
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Pièces justificatives<label class="titre_sous_partie_en">&nbsp; /  Supporting documents</label></h2>
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Pièces justificatives<label class="admission-section-title-en">&nbsp; /  Supporting documents</label></h2>
     </div>
     <div class="row subfield">
-        <div class="col informations-pieces_justificatives">
-            <p>Obligatoires<label class="titre_sous_partie_type_document_en">&nbsp; / Required</label></p>
+        <div class="col infos-pieces-justificatives-container">
+            <p>Obligatoires<label class="admission-section-doctype-title-en">&nbsp; / Required</label></p>
         </div>
     </div>
     <?php
@@ -97,23 +97,23 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     ]);
     if ($etudiant->getNiveauEtude() == 2) { ?>
         <div class="row subfield">
-            <div class="col informations-pieces_justificatives">
-                <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="titre_sous_partie_type_document_en">&nbsp; / If other than a French Master's degree (Derogation)</label></p>
+            <div class="col infos-pieces-justificatives-container">
+                <p>Vous avez un autre diplôme qu'un master français (Dérogation) <label class="admission-section-doctype-title-en">&nbsp; / If other than a French Master's degree (Derogation)</label></p>
             </div>
         </div>
         <div class="row subfield">
-            <div class="col-lg-3 col-sm-12 label-file">
-                <?php echo $this->formlabel($fieldset->get('argumentaireDirecteurThese')) ?>
+            <div class="col-lg-3 col-sm-12 filename-label">
+                <label data-after=" / Argument of PhD director for the council of the doctoral school mandatory">Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire</label>
             </div>
             <div class="col-lg-9 col-sm-12">
-                <?php echo $this->formtextarea($fieldset->get('argumentaireDirecteurThese')) ?>
+                <?php echo $this->formControlGroup($fieldset->get('argumentaireDirecteurThese')) ?>
             </div>
         </div>
     <?php }
     if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 1) { ?>
         <div class="row subfield">
-            <div class="col informations-pieces_justificatives">
-                <p>Vous êtes titulaire d'un titre étranger<label class="titre_sous_partie_type_document_en">&nbsp; / If the student has a foreign qualification</label></p>
+            <div class="col infos-pieces-justificatives-container">
+                <p>Vous êtes titulaire d'un titre étranger<label class="admission-section-doctype-title-en">&nbsp; / If the student has a foreign qualification</label></p>
             </div>
         </div>
         <?php
@@ -135,7 +135,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     } ?>
     <?php if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 2){ ?>
         <div class="row subfield">
-            <div class="col informations-pieces_justificatives">
+            <div class="col infos-pieces-justificatives-container">
                 <p>Si l'étudiant est titulaire d'un diplôme français ne conférant pas le grade de master</p>
             </div>
         </div>
@@ -148,13 +148,13 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     } ?>
     <?php if ($inscription && ($inscription->getConfidentialite() || $inscription->getCoTutelle() || $inscription->getCoEncadrement())) { ?>
         <div class="row subfield">
-            <div class="col informations-pieces_justificatives">
-                <p>Spécificité(s) demandée(s)<label class="titre_sous_partie_type_document_en">&nbsp; /  Specificities requested</label></p>
+            <div class="col infos-pieces-justificatives-container">
+                <p>Spécificité(s) demandée(s)<label class="admission-section-doctype-title-en">&nbsp; /  Specificities requested</label></p>
             </div>
         </div>
         <?php if ($inscription->getConfidentialite()) { ?>
             <div class="row subfield">
-                <div class="col-lg-3 col-sm-12 label-file">
+                <div class="col-lg-3 col-sm-12 filename-label">
                     <?php echo $this->formlabel($fieldset->get('documentsDemandeConfidentialite')) ?>
                 </div>
             </div>
@@ -188,7 +188,7 @@ if($canAccederCommentaires) {
 }
 ?>
 
-<div class="row notifier_commentaires_ajoutes">
+<div class="row notifier-commentaires-ajoutes">
     <?php
     if($canNotifierDossierIncomplet && !$admission->isDossierComplet()){
         //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>
@@ -208,7 +208,7 @@ if($canAccederCommentaires) {
                             'admission/notifier-dossier-incomplet',
                             ['admission' => $admission->getId()],
                             ['query' => ['redirect' => $returnUrl]])?>"
-                           class="btn btn-success collapsable-action validation_action_operation"
+                           class="btn btn-success collapsable-action validation-operation-btn"
                            title="Notifier l'étudiant que son dossier est incomplet ?">
                             Valider
                         </a>
@@ -218,9 +218,9 @@ if($canAccederCommentaires) {
         </div>
     <?php } ?>
 </div>
-<div class="row_sous_partie">
-    <div class="title_sous_partie">
-        <h2 class="titre_sous_partie">Signatures</h2>
+<div class="admission-section-form">
+    <div class="admission-section-title-container">
+        <h2 class="admission-section-title">Signatures</h2>
     </div>
     <?php
     unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
@@ -247,7 +247,7 @@ if($canAccederCommentaires) {
     //ou soit que le dossier ne soit pas plus en cours de saisie et que le récap soit déjà uploadé
     if($canAccederRecapitulatifSigne){
         if($canGererRecapitulatifSigne || isset($documents[$fieldset->get('recapitulatifDossierSigne')->getAttribute('id')])){ ?>
-            <a class="btn btn-primary access_recapitulatif_dossier_signe" href="">
+            <a class="btn btn-primary access-recap-signe-btn" href="">
                 <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
                 <?php if ($canGererRecapitulatifSigne) { ?>
                     Téléverser le récapitulatif signé
@@ -255,7 +255,7 @@ if($canAccederCommentaires) {
                     Accéder au récapitulatif signé
                 <?php } ?>
             </a>
-            <div id="file_recapitulatif_dossier_signe">
+            <div id="file-recap-signe-container">
                 <?php if ($canGererRecapitulatifSigne) {
                     echo $this->partial('admission/partial/document/document', [
                         'fieldset' => $fieldset->get('recapitulatifDossierSigne')->setAttribute('disabled', false),

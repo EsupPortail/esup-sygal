@@ -15,13 +15,13 @@ $canSupprimerOperation =
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_DEVALIDER_TOUT);
 ?>
 <div class="row subfield">
-    <div class="col-lg-2 circle_etape etape_signature">
-        <span class="icon icon-checked circle_icon-ok"></span>
+    <div class="col-lg-2 circle-etape etape-signature-infos-container">
+        <span class="icon icon-checked operation-ok"></span>
     </div>
-    <div class="col-lg-6 libelle_etape etape_signature">
+    <div class="col-lg-6 libelle-etape-container etape-signature-infos-container">
         <label><?php echo $libelleOperation ?: $operation->getTypeValidation()->getLibelle(); ?></label>
     </div>
-    <div class="col-lg-2 text-sm text-muted info_validation etape_signature">
+    <div class="col-lg-2 text-sm text-muted info-validation-container etape-signature-infos-container">
         <p>
             Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
             le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(\Application\Constants::DATETIME_FORMAT) ?>
@@ -29,7 +29,7 @@ $canSupprimerOperation =
     </div>
     <?php
     if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
-        <div class="col-lg-2 bouton_etape_validation">
+        <div class="col-lg-2 etape-validation-btn-container">
             <a  class="btn btn-danger access_devalidation_operation" data-operation="DeValidationOperation">Dévalider</a>
         </div>
         <div class="modal fade" id="modalShowConfirmationDeValidationOperation" tabindex="-1" role="dialog">
@@ -51,7 +51,7 @@ $canSupprimerOperation =
                             ], [
                                 'query' => ['redirect' => $returnUrl],
                             ]) ?>"
-                           class="btn btn-danger collapsable-action validation_action_operation"
+                           class="btn btn-danger collapsable-action validation-operation-btn"
                            title="Dévalider cette étape du dossier d'admission ?">
                             Dévalider
                         </a>

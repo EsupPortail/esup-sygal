@@ -51,8 +51,8 @@ function updateButtonsState(isButtonDisabled) {
 const currentUrl = window.location.href;
 document.addEventListener("DOMContentLoaded", function() {
     //permet de afficher/cacher le textarea observations pour le gestionnaire
-    const commentairesDiv = document.querySelector(".commentaires_gestionnaire");
-    const radioButtons = document.querySelectorAll('.observations_gestionnaire .multicheckbox input[type="radio"]');
+    const commentairesDiv = document.querySelector(".commentaires-gestionnaire");
+    const radioButtons = document.querySelectorAll('.observations-gestionnaire .multicheckbox input[type="radio"]');
 
     radioButtons.forEach(radioButton => {
         radioButton.addEventListener('click', function () {
@@ -80,8 +80,8 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     //Gestion des commentaires du gestionnaire -> afin de pouvoir passer ou non à une autre étape
-    const boutonGestionnaireIncomplet = document.querySelector('.bouton_gestionnaire.incomplet');
-    const boutonGestionnaireComplet = document.querySelector('.bouton_gestionnaire.complet');
+    const boutonGestionnaireIncomplet = document.querySelector('.bouton-gestionnaire.incomplet');
+    const boutonGestionnaireComplet = document.querySelector('.bouton-gestionnaire.complet');
 
     tinymce.remove();
     tinymce.init({
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
         //désactive la possibilité de changer la civilité
         $('input:radio[name="etudiant[civilite]"]:not(:checked)').attr('disabled', true);
 
-        const btn_infos_ine = document.querySelector('.info_ine');
+        const btn_infos_ine = document.querySelector('.info-ine-btn');
         if (btn_infos_ine) {
             btn_infos_ine.addEventListener('click', function (e) {
                 e.preventDefault()
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                    load(myBlob)
                             });
                             if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
-                                $('.charteDoctoraleOperations').show();
+                                $('.charte-doctorale-operations').show();
                             }
                         }).catch(error => {
                             console.log(error)
@@ -305,8 +305,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             //GESTION DE LA CHARTE DOCTORALE
-            var accessButtonCharteDoctorale = document.querySelector('.access_charte_doctorat');
-            var fileCharteDoctoratDiv = document.querySelector('.file_charte_doctorat');
+            var accessButtonCharteDoctorale = document.querySelector('.access-charte-doctorat-btn');
+            var fileCharteDoctoratDiv = document.querySelector('.file-charte-doctorat');
 
             if(accessButtonCharteDoctorale){
                 accessButtonCharteDoctorale.addEventListener('click', function(event) {
@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 conventionFormationDoctorale.addEventListener("load", function () {
                     loadingIndicator.style.display = "none";
                     fileConventionFormationDoctoraleDiv.style.height = "auto";
-                    $('.conventionFormationDoctoraleOperations').show();
+                    $('.convention-formation-doctorale-operations').show();
                     conventionFormationDoctorale.setAttribute("height", "4000px");
                 });
             }
@@ -339,8 +339,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 loadingIndicator.style.display = "block";
             }
 
-            var fileConventionFormationDoctoraleDiv = document.querySelector('.file_convention_formation_doctorale');
-            var accessButtonConventionFormationDoctorale = document.querySelectorAll('.access_convention_formation_doctorale');
+            var fileConventionFormationDoctoraleDiv = document.querySelector('.file-convention-formation-doctorale');
+            var accessButtonConventionFormationDoctorale = document.querySelectorAll('.access-conv-form-doct-btn');
 
             if(accessButtonConventionFormationDoctorale){
                 accessButtonConventionFormationDoctorale.forEach(function(button) {
@@ -353,14 +353,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        const buttons = document.querySelectorAll('.access_validation_operation, .access_devalidation_operation, .access_suppression_operation, .access_notification_dossier_incomplet');
+        const buttons = document.querySelectorAll('.access_validation_operation, .access_devalidation_operation, .access-suppression-operation-btn, .access_notification_dossier_incomplet');
         buttons.forEach(function(button) {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
                 const modalId = '#modalShowConfirmation' + button.dataset.operation;
 
                 //Gestion des modals lorsqu'il y a deux modals superposés (convention de formation doctorale et les opérations)
-                var targetElement = document.querySelector('.access_convention_formation_doctorale') || document.querySelector('.access_charte_doctorat');
+                var targetElement = document.querySelector('.access-conv-form-doct-btn') || document.querySelector('.access-charte-doctorat-btn');
                 var modal = document.getElementById('modalShowConfirmation' + button.dataset.operation);
                 if(modal){
                     if(targetElement){
@@ -373,19 +373,19 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        const validations_action_operation = document.querySelectorAll('.validation_action_operation');
+        const validations_action_operation = document.querySelectorAll('.validation-operation-btn');
         if(validations_action_operation){
-            validations_action_operation.forEach(function(validation_action_operation) {
-                validation_action_operation.addEventListener('click', function (event) {
-                    validation_action_operation.classList.add('loading');
+            validations_action_operation.forEach(function(validationOperationBtn) {
+                validationOperationBtn.addEventListener('click', function (event) {
+                    validationOperationBtn.classList.add('loading-file');
                     document.body.style.pointerEvents = 'none';
                     document.body.style.cursor = 'wait';
                 });
             });
         }
 
-        var lienRecapitulatif = document.querySelector('.access_recapitulatif_dossier_signe');
-        var divRecapitulatif = document.getElementById('file_recapitulatif_dossier_signe');
+        var lienRecapitulatif = document.querySelector('.access-recap-signe-btn');
+        var divRecapitulatif = document.getElementById('file-recap-signe-container');
 
         if(lienRecapitulatif){
             lienRecapitulatif.addEventListener('click', function(event) {

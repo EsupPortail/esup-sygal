@@ -25,7 +25,7 @@ class VerificationFieldset extends Fieldset implements InputFilterProviderInterf
                         'value' => '0',
                         'label' => 'Incomplet',
                         'attributes' => [
-                            "class" => "bouton_gestionnaire incomplet",
+                            "class" => "bouton-gestionnaire incomplet",
                         ],
                         'label_attributes' => [
                             'class' => 'btn btn-danger',
@@ -35,7 +35,7 @@ class VerificationFieldset extends Fieldset implements InputFilterProviderInterf
                         'value' => '1',
                         'label' => 'Complet',
                         'attributes' => [
-                            "class" => "bouton_gestionnaire complet",
+                            "class" => "bouton-gestionnaire complet",
                         ],
                         'label_attributes' => [
                             'class' => 'btn btn-success',

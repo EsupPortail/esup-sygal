@@ -1,99 +1,112 @@
 @charset "UTF-8";
-label:not(:empty):not(:has(*))::after, .label_en::after, .titre_sous_partie_en, .titre_label_champ_form_en {
+label:not(:empty):not(:has(*))::after, .label_en::after, .admission-section-title-en {
   content: attr(data-after);
   font-style: italic;
   font-weight: bold; }
 
-h1 {
+div.header-admission h1 {
   color: #004980; }
-
-.introduction {
+div.header-admission .introduction {
   text-align: left;
   color: #707070;
   margin-left: 50px; }
 
-.row_sous_partie {
+/** Global **/
+.admission {
+  padding-bottom: 95px; }
+
+.admission-info-bulle {
+  position: relative;
+  display: inline-block;
+  cursor: pointer; }
+
+.admission-section-form {
   margin-top: 50px; }
 
-.title_sous_partie {
+.admission-section-title-container {
   background: #00498099;
   padding-left: 15px;
   border-radius: 8px; }
 
-.titre_sous_partie {
+.admission-section-title {
   text-align: left;
   padding: 5px;
   color: #FFFFFF;
   font-size: 20px;
   margin: 0; }
 
-.titre_sous_partie_en {
+.admission-section-title-en {
   margin-left: 10px;
   font-size: 15px; }
 
-.titre_sous_partie_type_document_en {
+.admission-section-doctype-title-en {
   margin-left: 10px;
   font-size: 10px;
   font-weight: bold; }
 
-.row_fin_formulaire {
-  text-align: end;
-  margin-top: 30px; }
-
-.col_fin_formulaire > input {
-  margin-right: 15px; }
-
-.informations-title-sous-partie {
+.admission-informations-title-section {
   color: #FFFFFF;
   margin-top: revert; }
 
 .row.subfield {
   margin: 15px; }
 
-.btn-warning {
-  background-color: #ffc107;
-  border-color: #ffc107; }
+.admission-form-checkboxes > .mb-2 > .multicheckbox > .form-check-label {
+  display: inline-block;
+  padding-right: 15px; }
 
-.boutons_gestionnaires {
-  display: flex;
-  text-align: end; }
-
-.bouton_gestionnaire {
+/** Fin Global **/
+/** Section des commentaires visibles à chaque étape du form **/
+.bouton-gestionnaire {
   margin-right: 15px; }
 
-.observations_gestionnaire {
+.observations-gestionnaire {
   margin-top: 10px;
   margin-bottom: 25px; }
 
-.observations_gestionnaire > .col {
+.observations-gestionnaire > .col {
   text-align: right;
   color: #ccc;
   text-decoration: none; }
 
-.observations_gestionnaire > div > div > div > label {
+.observations-gestionnaire > div > div > div > label {
   display: inline-flex;
   margin-right: 15px; }
 
-.observations_gestionnaire > div > div > div > label > input {
+.observations-gestionnaire > div > div > div > label > input {
   display: none; }
 
-.observations_gestionnaire > div > div > div > .btn-danger.selected::after {
+.observations-gestionnaire > div > div > div > .btn-danger.selected::after {
   content: "\2715"; }
 
-.commentaires_gestionnaire .partie_etudiant {
+.observations-gestionnaire > div > div > div > .btn-success.selected::after {
+  content: "\2713"; }
+
+.commentaires-gestionnaire .partie-etudiant {
   display: flex; }
 
-.commentaires_gestionnaire .commentaire_gestionnaire {
+.commentaires-gestionnaire .commentaire-gestionnaire {
   margin-left: 30px;
   margin-top: 30px; }
 
-.commentaires_gestionnaire .info-commentaire {
+.commentaire-gestionnaire {
+  background-color: #d23544;
+  color: #fff; }
+
+.commentaire-gestionnaire::before {
+  content: "\26A0"; }
+
+.commentaire-gestionnaire:hover {
+  background-color: #bb2d3b; }
+
+.commentaires-gestionnaire .info-commentaire {
   margin-left: 15px;
   display: flex;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  width: 500px; }
 
-.verification_gestionnaire {
+.verification-gestionnaire {
   margin-left: 30px;
   display: inline-block;
   padding: 8px 12px;
@@ -103,75 +116,52 @@ h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease; }
 
-.verification_gestionnaire::before {
+.verification-gestionnaire::before {
   margin-right: 8px; }
 
-.aucune_action_effectuee_commentaire {
+.aucune-action-effectuee-commentaire {
   background-color: #00498099;
   color: white; }
 
-.aucune_action_effectuee_commentaire::before {
+.aucune-action-effectuee-commentaire::before {
   content: "\002139"; }
 
-.aucune_action_effectuee_commentaire:hover {
+.aucune-action-effectuee-commentaire:hover {
   background-color: #003d6699; }
 
-.pas_de_commentaire_ajoute {
+.pas-de-commentaire-ajoute {
   background-color: #b95a26; }
 
-.pas_de_commentaire_ajoute::before {
+.pas-de-commentaire-ajoute::before {
   content: "\26A0"; }
 
-.pas_de_commentaire_ajoute:hover {
+.pas-de-commentaire-ajoute:hover {
   background-color: #824012; }
 
-.commentaire_gestionnaire {
-  background-color: #d23544;
-  color: #fff; }
-
-.commentaire_gestionnaire::before {
-  content: "\26A0"; }
-
-.commentaire_gestionnaire:hover {
-  background-color: #bb2d3b; }
-
-.info-commentaire {
-  width: 500px; }
-
-.partie_complete {
+.partie-complete {
   background-color: #38833b;
   color: #fff;
   border-radius: 4px; }
 
-.partie_complete::before {
+.partie-complete::before {
   content: "\2713"; }
 
-.partie_complete:hover {
+.partie-complete:hover {
   background-color: #45a049; }
 
-.notifier_commentaires_ajoutes, .notifier_gestionnaires {
+.partie-etudiant > p {
+  margin-top: 30px; }
+
+/** Fin Section des commentaires visibles à chaque étape du form **/
+.notifier-commentaires-ajoutes {
   display: flex;
   justify-content: flex-end; }
 
-.notifier_commentaires_ajoutes > a, .notifier_gestionnaires > a {
+.notifier-commentaires-ajoutes > a {
   width: auto; }
 
-.partie_etudiant > p {
-  margin-top: 30px; }
-
-.observations_gestionnaire > div > div > div > .btn-success.selected::after {
-  content: "\2713"; }
-
-.loading {
-  cursor: progress;
-  pointer-events: none; }
-
-.dossier_bulle_information {
-  position: relative;
-  display: inline-block;
-  cursor: pointer; }
-
-.form_admission {
+/** INDEX Admission **/
+.admission-form {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,40 +169,36 @@ h1 {
   min-height: 40vh;
   position: relative; }
 
-.label_ine {
+.search-individu-label, .search-individu-input, .access-admission-btn {
+  width: auto; }
+
+.access-admission-btn > button {
+  margin-top: initial; }
+
+.acces-admission-btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh; }
+
+.structure-non-declaree {
+  color: #a94442;
+  font-style: italic;
+  margin-bottom: unset; }
+
+/** Fin index Admission **/
+/** Partie Etudiant **/
+.info-ine-btn {
+  border-width: inherit;
+  padding: unset;
+  background-color: unset; }
+
+.ine-label {
   display: initial; }
 
 input[name="etudiant[ine]"] {
   margin-bottom: 0.8rem;
   margin-top: 0.18rem; }
-
-.label_index, .input_index, .bouton_acces_dossier_index {
-  width: auto; }
-
-.bouton_acces_dossier {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 25vh;
-  /* Pour centrer verticalement sur toute la hauteur de la fenêtre - ajustez selon vos besoins */ }
-
-.acces_dossier {
-  text-align: center;
-  width: fit-content; }
-
-.structure_non_declaree {
-  color: #a94442;
-  font-style: italic;
-  margin-bottom: unset; }
-
-.info_ine {
-  border-width: inherit;
-  padding: unset;
-  background-color: unset; }
-
-.checkbox_admission > .mb-2 > .multicheckbox > .form-check-label {
-  display: inline-block;
-  padding-right: 15px; }
 
 input[type="radio"][name="etudiant[civilite]"] {
   opacity: 0.5;
@@ -223,89 +209,77 @@ div.mb-2:has(input[type="hidden"][name="etudiant[paysNaissanceId]"]),
 div.mb-2:has(input[type="hidden"][name="etudiant[nationaliteId]"]) {
   display: none; }
 
-.informations {
+.admission-field-information {
   font-style: italic; }
 
-.checkbox_admission.checkbox_diplome {
+.admission-form-checkboxes.checkbox-diplome {
   margin-left: 20px;
   margin-top: 15px; }
 
-.form-select {
+select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anneeDobtentionDiplomeNational]"] {
   font-size: inherit;
   padding: .15rem .425rem .315rem .45rem; }
 
+/** Fin Partie Etudiant **/
+/** Partie Inscription **/
 .informations-confidentialite-souhaitee {
   align-items: center;
   display: flex; }
 
-.title_sous_partie > .row > .col {
-  align-items: center;
-  display: flex; }
-
-.titre_specifites {
+.specifites-section-title {
   margin-top: 7px !important; }
 
-.titre_these > span {
+.these-titre-container > span {
   display: inline-block;
   vertical-align: middle;
   padding-right: unset; }
 
-.titre_these > div {
+.these-titre-container > div {
   display: inline;
   float: left; }
 
-.individu_non_enregistre {
+.individu-non-enregistre-label {
   color: darkred; }
 
-.mb-2 > .multicheckbox > .form-check-label {
-  display: inline-block;
-  padding-right: 15px; }
-
-.informations-pieces_justificatives > p {
+/** Fin Partie Inscription **/
+/** Partie pièces justificatives **/
+.infos-pieces-justificatives-container > p {
   text-align: left;
   color: #004980;
   margin-bottom: 5px; }
 
-.informations-pieces_justificatives {
+.infos-pieces-justificatives-container {
   border-bottom: 1px dashed #004980; }
 
-.element {
-  display: inline-flex;
-  align-items: center; }
-
-.label-file,
-.date_televersement,
-.action_file {
+.filename-label,
+.date-televersement-container,
+.action-file-container {
   display: flex;
   align-items: center; }
 
-.upload_file > i {
+.upload-file {
+  margin-top: 20px; }
+
+.upload-file > input {
+  display: none; }
+
+.upload-file > i {
+  font-style: unset;
   cursor: pointer;
   font-size: 15px; }
 
-span {
-  margin-right: 7px; }
-
-i:hover {
-  opacity: 0.6; }
-
-.upload_file > input {
-  display: none; }
-
-.upload_file > i {
-  font-style: unset; }
-
-.upload_file {
-  margin-top: 20px; }
-
-.file_charte_doctorat, .file_convention_formation_doctorale {
+.file-charte-doctorat, .file-convention-formation-doctorale {
   display: none;
   width: auto; }
 
-.charteDoctoraleOperations, .conventionFormationDoctoraleOperations {
+.charte-doctorale-operations, .convention-formation-doctorale-operations {
   display: none; }
 
-.file_convention_formation_doctorale {
+.loading-file {
+  cursor: progress;
+  pointer-events: none; }
+
+.file-convention-formation-doctorale {
   height: 150px; }
 
 #modalShowConventionFormationDoctorale #loading-indicator {
@@ -333,19 +307,21 @@ i:hover {
     transform: rotate(0deg); }
   100% {
     transform: rotate(360deg); } }
-.date_televersement:empty {
+.date-televersement-container:empty {
   display: none; }
 
-.date_televersement {
+.date-televersement-container {
   width: auto; }
 
-.date_televersement > p {
+.date-televersement-container > p {
   margin-bottom: initial; }
 
-.action_file > a {
+.action-file-container > a {
   padding-right: 15px !important; }
 
-.circle {
+/** Fin Partie pièces justificatives **/
+/** Partie Circuit de signatures **/
+.rang-operation-container {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -358,7 +334,7 @@ i:hover {
   content: "1";
   margin-right: 15px; }
 
-.circle_icon-ok {
+.operation-ok, .circle-etape > .circle-icon-ok {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -373,7 +349,7 @@ i:hover {
   padding-right: unset;
   margin-right: unset; }
 
-.circle_waiting {
+.operation-waiting {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -388,7 +364,7 @@ i:hover {
   padding-right: unset;
   margin-right: unset; }
 
-.circle_icon-ko {
+.circle-etape > .circle-icon-ko {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -403,61 +379,34 @@ i:hover {
   padding-right: unset;
   margin-right: unset; }
 
-.circle > p {
+.rang-operation-container > p {
   color: #8E8E8E; }
 
-textarea {
-  width: 100%; }
-
-.multipage-nav.next, .multipage-nav, .multipage-nav.submit {
+.multipage-nav.next, .multipage-nav, .multipage-nav.submit, .multipage-nav.cancel {
   float: right; }
 
 .multipage-nav.cancel {
-  clear: both;
-  float: right; }
+  clear: both; }
 
-#contenu-principal {
-  padding-bottom: 95px; }
-
-.validation_attestation > div > div > div > label {
-  margin-left: 7px;
-  vertical-align: sub; }
-
-input[name="validation[saveAttestationHonneur]"] {
-  width: auto;
-  margin-top: revert !important; }
-
-.bouton_validation {
-  display: flex;
-  align-items: end; }
-
-.texte_validation_attestation_honneur {
-  margin-bottom: revert !important; }
-
-.validation_attestation {
-  margin-top: revert !important; }
-
-.access_convention_formation_doctorale.required, .access_charte_doctorat.required {
+.access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required {
   background-color: #F1732D;
   color: #fff;
   font-weight: bold; }
 
-.access_convention_formation_doctorale.required:hover, .access_charte_doctorat.required:hover {
+.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover {
   background-color: #824012; }
 
-/* Style de base de la bulle informative */
-.dossier_incomplet_validation_impossible {
+.dossier-incomplet-validation-impossible {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  /* Curseur de type pointer */
   margin-left: 10px;
   color: #F1732D; }
 
-.dossier_incomplet_validation_impossible:before {
+.dossier-incomplet-validation-impossible:before {
   font-size: large; }
 
-.dossier_incomplet_validation_impossible .tooltip-text, .dossier_bulle_information .tooltip-text {
+.dossier-incomplet-validation-impossible .tooltip-text, .admission-info-bulle .tooltip-text {
   visibility: hidden;
   width: 200px;
   background-color: #333;
@@ -473,65 +422,68 @@ input[name="validation[saveAttestationHonneur]"] {
   opacity: 0;
   transition: opacity 0.3s; }
 
-/* Affichage de la bulle informative lorsqu'elle est survolée */
-.dossier_incomplet_validation_impossible:hover .tooltip-text, .dossier_bulle_information:hover .tooltip-text {
+.dossier-incomplet-validation-impossible:hover .tooltip-text, .admission-info-bulle:hover .tooltip-text {
   visibility: visible;
   opacity: 1; }
 
-.circle_etape {
+.access-suppression-operation-btn, .btn-warning.validation-operation-btn {
+  background-color: #ffc107;
+  border-color: #ffc107; }
+
+.circle-etape {
   width: fit-content;
   padding-right: unset;
   margin-right: 15px; }
 
-.etape_signature {
+.etape-signature-infos-container {
   display: flex;
   align-items: center;
   width: auto;
   padding-left: unset; }
 
-.etape_signature > label {
+.etape-signature-infos-container > label {
   color: #707070;
   font-size: 15px; }
 
-.etape_signature .info_validation {
+.etape-signature-infos-container .info-validation-container {
   margin-left: 10px; }
 
-.info_validation {
+.info-validation-container {
   display: flex;
   justify-content: center;
   align-items: center; }
 
-.info_validation > p {
+.info-validation-container > p {
   margin-bottom: unset;
   margin-top: unset; }
 
-.etape_signature > a {
+.etape-signature-infos-container > a {
   margin-left: 10px; }
 
-.dossier_complet {
+.dossier-complet-card {
   border: 3px solid #37AF37;
   border-radius: 11px;
   max-width: fit-content; }
 
-.cardsValidation .card {
+.validations-cards-container .card {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease; }
 
-.dossier_incomplet {
+.dossier-incomplet-card {
   border: 3px solid #E69B18;
   border-radius: 11px;
   max-width: fit-content; }
 
-.dossier_refuse {
+.dossier-refuse-card {
   border: 3px solid #d23544;
   border-radius: 11px;
   max-width: fit-content; }
 
-.dossier_complet > div > p, .dossier_incomplet > div > p, .dossier_refuse > div > p {
+.dossier-complet-card > div > p, .dossier-incomplet-card > div > p, .dossier-refuse-card > div > p {
   color: #707070;
   font-size: 15px; }
 
-.dossier_complet > div > i, .dossier_incomplet > div > i, .dossier_refuse > div > i {
+.dossier-complet-card > div > i, .dossier-incomplet-card > div > i, .dossier-refuse-card > div > i {
   font-style: unset; }
 
 .card-body.text-success i.icon, .card-body.text-warning i.icon, .card-body.text-danger i.icon {
@@ -542,22 +494,22 @@ input[name="validation[saveAttestationHonneur]"] {
 .card-body.text-success p.card-title, .card-body.text-warning p.card-title, .card-body.text-danger p.card-title {
   display: inline-block; }
 
-.cardsValidation .card:hover {
+.validations-cards-container .card:hover {
   transform: translateY(-4px);
-  /* Effet de léger soulèvement au survol */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-  /* Ombre légèrement plus prononcée au survol */ }
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
 
-.cardsValidation {
+.validations-cards-container {
   margin-top: 15px; }
 
-#file_recapitulatif_dossier_signe {
+#file-recap-signe-container {
   display: none; }
 
+/** Fin Partie Circuit de signatures **/
+/** Formulaire Convention de formation doctorale **/
 .convention-formation-doctorale-container > form > .row {
   margin-bottom: 30px; }
 
-.precisions_action, .precisions_convention_intro {
+.precisions-action-container, .precisions-convention-intro-container {
   background-color: #f8d7da;
   color: #721c24;
   padding: 15px;
@@ -566,77 +518,72 @@ input[name="validation[saveAttestationHonneur]"] {
   margin-bottom: 20px;
   width: fit-content; }
 
-.precisions_action p, .precisions_convention_intro p {
+.precisions-action-container p, .precisions-convention-intro-container p {
   margin: 0;
   font-weight: bold;
   display: inline-block; }
 
-.precisions_action, .precisions_convention_intro i {
+.precisions-action-container, .precisions-convention-intro-container i {
   margin-right: 10px; }
 
-.precisions_convention {
+.precisions-convention-champs {
   font-style: italic; }
 
-.precisions_convention + textarea {
+.precisions-convention-champs + textarea {
   margin-bottom: 30px;
   height: 100px !important; }
 
+/** Fin Formulaire Convention de formation doctorale **/
 @media (max-width: 768px) {
-  .commentaires_gestionnaire .partie_etudiant {
+  /** Global **/
+  .commentaires-gestionnaire .partie-etudiant {
     flex-direction: column; }
 
-  .individu_recherche_index {
+  /** Fin Global **/
+  /** Index Admission **/
+  .individu-recherche-index-container {
     display: flex;
     justify-content: center; }
 
-  .inner.show {
-    position: absolute;
-    max-height: calc(100vh - 50px);
-    overflow-y: auto; }
-
-  ul.dropdown-menu.inner.show > li {
-    font-size: 9px; }
-
-  .detail_file {
+  /** Fin index Admission **/
+  /** Partie Justificatifs **/
+  .detail-file-container {
     display: flex;
     align-items: center;
     justify-content: center; }
 
-  .row > .date_televersement, .row > .action_file {
+  .row > .date-televersement-container, .row > .action-file-container {
     width: revert; }
 
-  .cards_validation .card {
-    margin: 0 auto;
-    float: none; }
-
-  .bouton_validation {
-    justify-content: center; }
-
-  .libelle_etape {
+  /** Fin Partie justificatifs **/
+  /** Partie circuit de signatures **/
+  .libelle-etape-container {
     display: flex;
     align-items: center; }
 
-  .libelle_etape > label {
+  .libelle-etape-container > label {
     color: #707070;
     font-size: 1.45vh;
     margin-left: unset; }
 
-  .circle_etape {
+  .circle-etape {
     margin-right: 10px; }
 
-  .info_validation {
+  .info-validation-container {
     margin-bottom: 10px;
     margin-top: 10px; }
 
-  .cardsValidation {
+  .validations-cards-container {
     margin-top: 20px; }
 
-  .bouton_etape_validation {
+  .etape-validation-btn-container {
     display: flex;
     justify-content: center;
     align-items: center; }
 
-  .access_recapitulatif_dossier_signe {
-    margin-top: 15px; } }
+  .access-recap-signe-btn {
+    margin-top: 15px; }
+
+  /** Fin Partie circuit de signatures **/ }
 
 /*# sourceMappingURL=admission.css.map */

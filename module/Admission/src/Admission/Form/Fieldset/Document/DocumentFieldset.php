@@ -63,9 +63,7 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
 
         $this->add(
             (new Textarea('argumentaireDirecteurThese'))
-                ->setLabel("Argumentaire du directeur de thèse pour le conseil de l'école doctorale obligatoire")
                 ->setAttributes(["id" => "argumentaireDirecteurThese"])
-                ->setLabelAttributes(['data-after' => " / Argument of PhD director for the council of the doctoral school mandatory"])
         );
 
         $this->add(

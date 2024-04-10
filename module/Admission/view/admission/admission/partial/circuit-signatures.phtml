@@ -39,23 +39,23 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         endforeach;
         ?>
     </div>
-    <div class="col-lg-5 col-sm-12 cardsValidation">
+    <div class="col-lg-5 col-sm-12 validations-cards-container">
         <?php if ($admission->isDossierComplet() && ($admission->getEtat()->getCode() === Admission::ETAT_EN_COURS_VALIDATION)) { ?>
-            <div class="card border-success mb-3 dossier_complet">
+            <div class="card border-success mb-3 dossier-complet-card">
                 <div class="card-body text-success">
                     <i class="icon icon-information"></i>
                     <p class="card-title">Le dossier est complet</p>
                 </div>
             </div>
         <?php }else if($admission->getEtat()->getCode() === Admission::ETAT_VALIDE){?>
-            <div class="card border-success mb-3 dossier_complet">
+            <div class="card border-success mb-3 dossier-complet-card">
                 <div class="card-body text-success">
                     <i class="icon icon-information"></i>
                     <p class="card-title">Le dossier est validé</p>
                 </div>
             </div>
         <?php }else if($admission->getEtat()->getCode() === Admission::ETAT_REJETE){ ?>
-            <div class="card mb-3 dossier_refuse">
+            <div class="card mb-3 dossier-refuse-card">
                 <div class="card-body text-danger">
                     <i class="icon icon-unchecked"></i>
                     <p class="card-title">La direction de l'établissement a émis un avis réservé sur ce dossier</p>
@@ -64,7 +64,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php }
 
         if ($operationEnAttente) { ?>
-            <div class="card mb-3 dossier_incomplet">
+            <div class="card mb-3 dossier-incomplet-card">
                 <div class="card-body text-warning">
                     <i class="icon icon-information"></i>
                     <?php
@@ -81,7 +81,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php }
         //Si la dernière opération a été déclarée comme réservée / incomplete
         else if ($operationEnAttente === false){ ?>
-            <div class="card mb-3 dossier_refuse">
+            <div class="card mb-3 dossier-refuse-card">
                 <div class="card-body text-danger">
                     <i class="icon icon-unchecked"></i>
                         <p class="card-title">Un avis réservé / incomplet a été déclaré sur le dossier</p>
@@ -90,7 +90,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php }
 
         if (isset($admission) && $admission->hasComments()) { ?>
-            <div class="card mb-3 dossier_incomplet">
+            <div class="card mb-3 dossier-incomplet-card">
                 <div class="card-body text-warning">
                     <i class="icon icon-information"></i>
                     <p class="card-title">Des commentaires ont été ajoutés au dossier</p>
