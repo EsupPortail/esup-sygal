@@ -29,8 +29,8 @@ $modifierSubstituantUrl = $this->url('substitution/substitution/voir/modifier-su
     ['type' => $type, 'id' => $substituant->getId(), 'substituantId' => $substituant->getId()], [], true);
 
 $uidSubstitue = Uuid::uuid1();
-$voirSubstitueUrl = $this->url('substitution/substitution/voir/voir-substituable',
-    ['type' => $type, 'id' => $substituant->getId(), 'substituableId' => $uidSubstitue/*temporaire*/], [], true);
+$voirSubstitueUrl = $this->url('substitution/substitution/voir-substituable',
+    ['type' => $type, 'substituableId' => $uidSubstitue/*temporaire*/], [], true);
 ?>
 
 <?php echo $this->messenger()->setMessagesFromFlashMessengerWithNoNamespace() ?>

@@ -1,0 +1,137 @@
+
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var string $type
+ * @var string $npd
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituable
+ * @var string[] $npdAttributes [name => label]
+ *
+ * @var string $informationPartial
+ * @var bool $includeGotoDetailsLink
+ *
+ * @see \Substitution\Controller\SubstitutionController::modifierAction()
+ */
+
+use Ramsey\Uuid\Uuid;
+use UnicaenApp\Form\Element\SearchAndSelect;
+
+$autocompleteUrl = $this->url('substitution/substitution/rechercher-substituable-manu',
+    ['type' => $type, 'npd' => $npd], [], true);
+
+$uidSubstitue = Uuid::uuid1();
+$voirSubstituableUrl = $this->url('substitution/substitution/voir-substituable',
+    ['type' => $type, 'substituableId' => $uidSubstitue/*temporaire*/], [], true);
+?>
+
+<?php echo $this->messenger()->setMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<h1 class="page-header">
+    Création manuelle d'une substitution
+    <span class="badge bg-primary text-uppercase p-1"><?php echo $type ?></span>
+    <!--<code><abbr title="NPD"><?php /*echo $substitution['npd'] */?></abbr></code>-->
+</h1>
+
+<p class="lead">
+
+</p>
+
+<div class="row align-items-start">
+    <div class="col col-md-9">
+        <h2>
+            Substitution
+        </h2>
+        <div class="filler">
+            <p>
+                Aucun enregistrement substitué pour l'instant.
+            </p>
+        </div>
+        <div class="row align-items-start">
+            <div class="col">
+                <?php echo $this->partial('substitution/substitution/_partial/substituant', [
+                    'type' => $type,
+                    'substituant' => null,
+                ]) ?>
+            </div>
+            <div class="col px-1">
+                <?php echo $this->partial('substitution/substitution/voir-substituable', [
+                    'type' => $type,
+                    'substituable' => $substituable,
+                    'npdAttributes' => $npdAttributes,
+                    'informationPartial' => $informationPartial,
+                ]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col col-md-3">
+        <h2>
+            Enregistrement à ajouter
+        </h2>
+        <form method="post" class="substituable"
+              action="<?php echo $this->url('substitution/substitution/ajouter-substitue-manu', ['type' => $type, 'npd' => $npd]) ?>">
+            <div class="filler">
+                <?php
+                $sas = new SearchAndSelect('substituable');
+                $sas->setAttributes(['id' => 'sas', 'placeholder' => "Entrez au moins 2 caractères", 'tabindex' => 1])
+                    ->setAutocompleteSource($autocompleteUrl);
+                echo $this->formControlGroup($sas);
+                ?>
+            </div>
+            <div class="selection" data-url="(générée en fonction de la sélection)">
+                <!-- contenu dynamique -->
+            </div>
+            <div class="controls" style="display: none;">
+                <input type="submit" value="Ajouter" class="btn btn-success"
+                       title="Ajouter cet enregistrement à la substitution"
+                       onclick="return confirm('Êtes-vous certain·e de vouloir ajouter manuellement cet enregistrement à cette substitution ?')"><br>
+                <input type="reset" value="Annuler"
+                       title="Abandonner l'ajout de cet enregistrement"
+                       class="btn btn-outline-secondary float-end">
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        /**
+         * Gestion du formulaire de recherche/ajout d'un substitué.
+         */
+        let $sas = $("#sas-autocomplete");
+        $sas.on("autocompleteselect", function (source, selected) {
+            $("body").addClass("loading");
+            let url = "<?php echo $voirSubstituableUrl ?>".replace('<?php echo $uidSubstitue ?>', selected.item.id);
+            $("form .selection").data('url', url).refresh(null, function() {
+                $("form .selection, form .controls").show('slide', { direction: "up" });
+                $("body").removeClass("loading");
+            });
+        }).on("autocompletesearch", function (source) {
+            $("form .selection, form .controls").hide();
+        });
+        $("form.substituable").on('reset', function() {
+            $sas.focus();
+            $("form .selection, form .controls").hide('slide', { direction: "up" });
+        });
+
+        /**
+         * Gestion du formulaire de modification du substituant.
+         */
+        $("[name=majAutomatiqueSubstituant]").on('change', function(event) {
+            $("form.substituant").submit();
+        });
+
+        /**
+         * Pour tous les formulaires.
+         */
+        $("form").on('submit', function() {
+            $("body").addClass("loading");
+        });
+    });
+</script>
+
+<style>
+    div.filler {
+        min-height: 40px;
+    }
+</style>

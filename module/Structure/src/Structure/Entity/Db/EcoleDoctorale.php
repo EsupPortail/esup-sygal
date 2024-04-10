@@ -178,4 +178,9 @@ class EcoleDoctorale implements
             'class' => $estFermee ? 'fermee' : '',
         ];
     }
+
+    public function getTypeSubstitution(): string
+    {
+        return 'ecole_doct';
+    }
 }

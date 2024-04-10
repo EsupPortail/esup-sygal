@@ -39,6 +39,11 @@ interface SpecificSubstitutionServiceInterface
     public function findOneSubstitutionBySubstituant(int $substituantId): Result;
 
     /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findOneSubstitutionBySubstitue(int $substitueId): Result;
+
+    /**
      * Recherche d'enregistrements pouvant être ajoutés manuellement à une substitution.
      */
     public function findSubstituablesByText(string $text, string $npd): array;
@@ -69,4 +74,11 @@ interface SpecificSubstitutionServiceInterface
      * @return string[] Format : 'nom_colonne' => "Libellé".
      */
     public function getEntityNpdAttributes(): array;
+
+    /**
+     * Calcul le NPD d'un enregistrement spécifié par son id.
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function computeEntityNpd(int $substituableId): string;
 }

@@ -48,9 +48,17 @@ class SubstitutionService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function findOneSubstitutionForType(string $type, int $substituantId): Result
+    public function findOneSubstitutionByTypeAndSubstituant(string $type, int $substituantId): Result
     {
         return $this->specificServices[$type]->findOneSubstitutionBySubstituant($substituantId);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function findOneSubstitutionByTypeAndSubstitue(string $type, int $substitueId): Result
+    {
+        return $this->specificServices[$type]->findOneSubstitutionBySubstitue($substitueId);
     }
 
     public function findSubstituableForTypeByText(string $type, string $text, string $npd): array
@@ -82,6 +90,14 @@ class SubstitutionService
         $entity->setEstSubstituantModifiable($data['estSubstituantModifiable']);
 
         $this->specificServices[$type]->saveEntity($entity);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function computeEntityNpd(string $type, int $substituableId): string
+    {
+        return $this->specificServices[$type]->computeEntityNpd($substituableId);
     }
 
     public function computeEntityNpdAttributesForType(string $type): array

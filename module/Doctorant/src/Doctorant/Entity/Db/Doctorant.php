@@ -419,4 +419,8 @@ class Doctorant implements
         return false;
     }
 
+    public function getTypeSubstitution(): string
+    {
+        return 'doctorant';
+    }
 }

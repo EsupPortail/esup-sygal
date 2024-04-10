@@ -348,4 +348,9 @@ class Etablissement implements
             'extra' => $this->structure->estFermee() ? 'Fermé' : null,
         ];
     }
+
+    public function getTypeSubstitution(): string
+    {
+        return 'etablissement';
+    }
 }

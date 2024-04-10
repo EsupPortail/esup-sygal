@@ -3,7 +3,7 @@
  * @var \Application\View\Renderer\PhpRenderer $this
  *
  * @var string $type
- * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituant
+ * @var ?\Substitution\Entity\Db\SubstitutionAwareEntityInterface $substituant
  * @var string[] $npdAttributes [name => label]
  * @var bool $canEdit
  *
@@ -19,6 +19,8 @@ $canEdit = ($canEdit ?? false) && $this->isAllowed(PrivilegeController::getResou
 
 $attributeToGetterFilter = new UnderscoreToCamelCase();
 ?>
+
+<?php if ($substituant !== null): ?>
 
 <div class="card substituant">
     <div class="card-header">
@@ -89,3 +91,23 @@ $attributeToGetterFilter = new UnderscoreToCamelCase();
         </li>
     </ul>
 </div>
+
+<?php else: ?>
+
+<div class="card substituant">
+    <div class="card-header">
+        <h3 class="card-title">
+            Substituant
+        </h3>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <p class="text-info">
+                <span class="icon icon-info"></span>
+                Aucun substituant tant que la substitution n'est pas enregistrée.
+            </p>
+        </li>
+    </ul>
+</div>
+
+<?php endif; ?>

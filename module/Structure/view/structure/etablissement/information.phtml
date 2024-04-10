@@ -62,9 +62,9 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php endif; ?>
 </ul>
 
-<div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
+<div class="tab-content <?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <?php echo $this->partial('structure/etablissement/partial/information', ['entity' => $etablissement]) ?>
         </div>
         <div class="col-md-4">
@@ -92,6 +92,16 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
                 </dd>
             </dl>
         </div>
+        <div class="col-md-4">
+            <div class="box card">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="first">Substitution</h2>
+                </div>
+                <div class="card-body">
+                    <?php echo $this->partial('substitution/substitution/_partial/substitution-statut', ['entity' => $etablissement]) ?>
+                </div>
+            </div>
+        </div>
     </div>
 
     <?php if($canModifierEtablissement): ?>
@@ -103,7 +113,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php endif; ?>
 </div>
 
-<div class="<?php echo $tab === StructureController::TAB_membres ? '' : 'd-none' ?>" id="membres">
+<div class="tab-content <?php echo $tab === StructureController::TAB_membres ? '' : 'd-none' ?>" id="membres">
 
 <h2>
     Rôles et membres
@@ -141,7 +151,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php endif; ?>
 </div>
 
-<div class="<?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
+<div class="tab-content <?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
 
     <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
 

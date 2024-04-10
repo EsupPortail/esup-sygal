@@ -57,6 +57,13 @@ abstract class SpecificSubstitutionAbstractService implements SpecificSubstituti
         );
     }
 
+    public function findOneSubstitutionBySubstitue(int $substitueId): Result
+    {
+        return $this->entityService->getEntityManager()->getConnection()->executeQuery(
+            $this->generateSqlToFindOneSubstitutionBySubstitue($substitueId)
+        );
+    }
+
     public function findOneEntityById(int $id): SubstitutionAwareEntityInterface
     {
         $entity = $this->entityService->getRepository()->find($id);
@@ -154,6 +161,18 @@ abstract class SpecificSubstitutionAbstractService implements SpecificSubstituti
     abstract protected function generateSqlToFindSubstitutionsBySubstituant(?int $substituantId = null): string;
 
     /**
+     * Génère le SQL permettant de rechercher les substituions dont l'un des substitués est celui spécifié.
+     */
+    protected function generateSqlToFindOneSubstitutionBySubstitue(int $substitueId): string
+    {
+        return <<<EOT
+select *
+from substit_{$this->type}
+where from_id = {$substitueId}
+EOT;
+    }
+
+    /**
      * Génère le SQL permettant de déclencher la création d'une nouvelle substitution pour le NPD spécifié.
      */
     protected function generateSqlToCreateSubstitution(string $npd, int $substituableId): string
@@ -165,4 +184,14 @@ abstract class SpecificSubstitutionAbstractService implements SpecificSubstituti
      * Recherche d'enregistrements substituables selon un motif texte.
      */
     abstract protected function findEntitiesByText(string $text, string $npd, int $limit = 0): array;
+
+    public function computeEntityNpd(int $substituableId): string
+    {
+        $sql = sprintf(
+            "select substit_npd_%s(t) from %s t where t.id = %s",
+            $this->type, $this->type, $substituableId
+        );
+
+        return $this->entityService->getEntityManager()->getConnection()->executeQuery($sql)->fetchOne();
+    }
 }

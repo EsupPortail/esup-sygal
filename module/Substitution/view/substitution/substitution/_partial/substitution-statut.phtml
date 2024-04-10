@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var \Substitution\Entity\Db\SubstitutionAwareEntityInterface $entity
+ */
+
+use Substitution\Provider\Privilege\SubstitutionPrivileges;
+
+$canRead = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTER));
+$canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFIER));
+
+if ($entity->estSubstituant()): ?>
+    <p class="text-danger">
+        <span class="icon icon-danger"></span> Cet enregistrement en substitue d'autres.
+        <?php if ($canRead): ?>
+            <a href="<?php echo $this->url('substitution/substitution/voir',
+                ['type' => $entity->getTypeSubstitution(), 'id' => $entity->getId()]) ?>"
+               title="Accéder aux détails de cette substitution">
+                Voir la substitution...</a>
+        <?php endif; ?>
+    </p>
+<?php elseif ($entity->estSubstitue()): ?>
+    <p class="text-danger">
+        <span class="icon icon-danger"></span> Cet enregistrement est substitué par un autre.
+        <?php if ($canRead): ?>
+            <a href="<?php echo $this->url('substitution/substitution/voir',
+                ['type' => $entity->getTypeSubstitution(), 'id' => $entity->getSubstituant()->getId()]) ?>"
+               title="Accéder aux détails de cette substitution">
+                Voir la substitution...</a>
+        <?php endif; ?>
+    </p>
+<?php else: ?>
+    <p>
+        Cet enregistrement ne fait partie d'aucune substitution.
+    </p>
+    <?php if ($canEdit): ?>
+        <p>
+            Si vous estimez que c'est un doublon d'un autre enregistrement, utilisez le bouton ci-dessous
+            pour créer manuellement une substitution. <br>
+            <a href="<?php echo $this->url('substitution/substitution/creer-manu',
+                ['type' => $entity->getTypeSubstitution(), 'substituableId' => $entity->getId()]) ?>"
+               title="Créer manuellement une substitution de cet enregistrement"
+               class="btn btn-secondary">Créer une substitution...</span></a>
+        </p>
+    <?php endif; ?>
+<?php endif ?>

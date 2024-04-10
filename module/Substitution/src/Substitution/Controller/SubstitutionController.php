@@ -80,6 +80,39 @@ class SubstitutionController extends AbstractActionController
     }
 
     /**
+     * Formulaire de création manuelle d'une substitution : un substituable de référence est pré-sélectionné et
+     * l'utilisateur peut sélectionner un 2e substituable pour créer la substitution.
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function creerManuAction(): ViewModel
+    {
+        $type = $this->getRequestedType();
+        $substituableId = $this->params()->fromRoute('substituableId');
+
+        try {
+            $substituable = $this->substitutionService->findOneEntityByTypeAndId($type, $substituableId);
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgumentException("Substituable spécifié introuvable.");
+        }
+
+        // le NPD du substituable spécifié sera utilisé comme NPD forcé des autres
+        $npdForce = $this->substitutionService->computeEntityNpd($type, $substituableId);
+
+        $vm = new ViewModel();
+        $vm
+            ->setVariables([
+                'type' => $type,
+                'substituable' => $substituable,
+                'npd' => $npdForce,
+                'npdAttributes' => $this->substitutionService->computeEntityNpdAttributesForType($type),
+                'informationPartial' => $this->computeEntityPartialPathForType($type),
+            ]);
+
+        return $vm;
+    }
+
+    /**
      * @throws \Doctrine\DBAL\Exception
      */
     public function modifierAction(): ViewModel
@@ -144,15 +177,43 @@ class SubstitutionController extends AbstractActionController
         $post = $request->getPost();
         Assert::keyExists($post, 'substituable');
         Assert::keyExists($post['substituable'], 'id');
+        $substituableId = $post['substituable']['id'];
 
         $substitutionData = $this->fetchSubstitutionData($type, $substituantId);
-        $substitueId = $post['substituable']['id'];
         $npd = $substitutionData['substitution']['npd'];
 
-        $this->substitutionService->addSubstitueToSubstitutionForType($type, $substitueId, $npd);
-        $this->flashMessenger()->addSuccessMessage("Enregistrement $substitueId ajouté avec succès à la substitution '$npd'.");
+        $this->substitutionService->addSubstitueToSubstitutionForType($type, $substituableId, $npd);
+        $this->flashMessenger()->addSuccessMessage("Enregistrement $substituableId ajouté avec succès à la substitution '$npd'.");
 
         return $this->redirect()->toRoute('substitution/substitution/voir', $this->params()->fromRoute(), [], true);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function ajouterSubstitueManuAction(): Response
+    {
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        $type = $this->getRequestedType();
+        $npd = $this->getRequestedNpd();
+
+        $post = $request->getPost();
+        Assert::keyExists($post, 'substituable');
+        Assert::keyExists($post['substituable'], 'id');
+        $substituableId = $post['substituable']['id'];
+
+        $this->substitutionService->addSubstitueToSubstitutionForType($type, $substituableId, $npd);
+        $this->flashMessenger()->addSuccessMessage("Substitution '$npd' créée avec succès.");
+
+        $result = $this->substitutionService->findOneSubstitutionByTypeAndSubstitue($type, $substituableId);
+        $substitution = $result->fetchAssociative();
+        $substituantId = $substitution['to_id'];
+
+        return $this->redirect()->toRoute('substitution/substitution/voir', ['type' => $type, 'id' => $substituantId], [], true);
     }
 
     /**
@@ -186,7 +247,7 @@ class SubstitutionController extends AbstractActionController
 
     /**
      * Ajax.
-     * Recherche d'un enregistrement à ajouter à une substitution.
+     * Recherche d'un enregistrement à ajouter à une substitution existante.
      *
      * @throws \Doctrine\DBAL\Exception
      */
@@ -194,12 +255,33 @@ class SubstitutionController extends AbstractActionController
     {
         if ($text = $this->params()->fromQuery('term')) {
             $type = $this->getRequestedType();
-            $substituantId = $this->getRequestedId();
-            $substitutionData = $this->fetchSubstitutionData($type, $substituantId);
-            $npd = $substitutionData['substitution']['npd'];
+            $substituantId = $this->getRequestedId(false);
+            if ($substituantId !== null) {
+                $substitutionData = $this->fetchSubstitutionData($type, $substituantId);
+                $npd = $substitutionData['substitution']['npd'];
+            } else {
+                $npd = $this->getRequestedNpd();
+            }
 
             return new JsonModel(
-                $this->substitutionService->findSubstituableForTypeByText($this->getRequestedType(), $text, $npd)
+                $this->substitutionService->findSubstituableForTypeByText($type, $text, $npd)
+            );
+        }
+        exit;
+    }
+
+    /**
+     * Ajax.
+     * Recherche d'un enregistrement à ajouter à une substitution n'existant pas encore mais qui aura le NPD spécifié.
+     */
+    public function rechercherSubstituableManuAction(): JsonModel
+    {
+        if ($text = $this->params()->fromQuery('term')) {
+            $type = $this->getRequestedType();
+            $npd = $this->getRequestedNpd();
+
+            return new JsonModel(
+                $this->substitutionService->findSubstituableForTypeByText($type, $text, $npd)
             );
         }
         exit;
@@ -212,7 +294,6 @@ class SubstitutionController extends AbstractActionController
     public function voirSubstituableAction(): ViewModel
     {
         $type = $this->getRequestedType();
-        $substituantId = $this->getRequestedId();
         $substituableId = $this->params()->fromRoute('substituableId');
 
         $substituable = $this->substitutionService->findOneEntityByTypeAndId($type, $substituableId);
@@ -221,7 +302,6 @@ class SubstitutionController extends AbstractActionController
         $vm
             ->setVariables([
                 'type' => $type,
-                'substituantId' => $substituantId,
                 'substituable' => $substituable,
                 'npdAttributes' => $this->substitutionService->computeEntityNpdAttributesForType($type),
                 'informationPartial' => $this->computeEntityPartialPathForType($type),
@@ -235,7 +315,7 @@ class SubstitutionController extends AbstractActionController
      */
     protected function fetchSubstitutionData(string $type, int $substituantId): array
     {
-        $result = $this->substitutionService->findOneSubstitutionForType($type, $substituantId);
+        $result = $this->substitutionService->findOneSubstitutionByTypeAndSubstituant($type, $substituantId);
         $substitution = $result->fetchAssociative();
 
         $substituesIds = explode('|', $substitution['from_ids']);
@@ -276,11 +356,21 @@ class SubstitutionController extends AbstractActionController
         };
     }
 
-    protected function getRequestedId(): int
+    protected function getRequestedId(bool $mandatory = true): ?int
     {
         $id = $this->params()->fromRoute('id');
-        Assert::notNull($id, "Un id doit être spécifié dans la requête.");
+        if ($mandatory) {
+            Assert::notNull($id, "Un id doit être spécifié dans la requête.");
+        }
 
         return $id;
+    }
+
+    protected function getRequestedNpd(): string
+    {
+        $npd = $this->params()->fromRoute('npd');
+        Assert::notNull($npd, "Un NPD doit être spécifié dans la requête.");
+
+        return $npd;
     }
 }

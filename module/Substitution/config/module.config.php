@@ -74,7 +74,6 @@ return [
                         'voir',
                         'voirSubstitue',
                         'voirSubstituant',
-                        'creer'
                     ],
                     'privileges' => [
                         SubstitutionPrivileges::SUBSTITUTION_CONSULTER,
@@ -83,11 +82,15 @@ return [
                 [
                     'controller' => SubstitutionController::class,
                     'action' => [
+                        'creer',
+                        'creerManu',
                         'modifier',
                         'modifierSubstituant',
                         'ajouterSubstitue',
                         'retirerSubstitue',
                         'rechercherSubstituable',
+                        'rechercherSubstituableManu',
+                        'ajouterSubstitueManu',
                         'voirSubstituable',
                     ],
                     'privileges' => [
@@ -228,19 +231,6 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'voir-substituable' => [
-                                        'type' => Segment::class,
-                                        'options' => [
-                                            'route' => '/voir-substituable/[:substituableId]',
-                                            'constraints' => [
-                                                'substituableId' => '\d+',
-                                            ],
-                                            'defaults' => [
-                                                /** @see SubstitutionController::voirSubstituableAction() */
-                                                'action' => 'voirSubstituable',
-                                            ],
-                                        ],
-                                    ],
                                     'retirer-substitue' => [
                                         'type' => Segment::class,
                                         'options' => [
@@ -267,6 +257,60 @@ return [
                                     'defaults' => [
                                         /** @see SubstitutionController::creerAction() */
                                         'action' => 'creer',
+                                    ],
+                                ],
+                            ],
+                            'creer-manu' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/:type/creer-manu/substituables/:substituableId',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                        'substituableId' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        /** @see SubstitutionController::creerManuAction() */
+                                        'action' => 'creerManu',
+                                    ],
+                                ],
+                            ],
+                            'rechercher-substituable-manu' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/:type/rechercher-substituable-manu/:npd',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                    ],
+                                    'defaults' => [
+                                        /** @see SubstitutionController::rechercherSubstituableAction() */
+                                        'action' => 'rechercherSubstituable',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-substitue-manu' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/:type/ajouter-substitue-manu/:npd',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                    ],
+                                    'defaults' => [
+                                        /** @see SubstitutionController::ajouterSubstitueManuAction() */
+                                        'action' => 'ajouterSubstitueManu',
+                                    ],
+                                ],
+                            ],
+                            'voir-substituable' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/:type/voir-substituable/[:substituableId]',
+                                    'constraints' => [
+                                        'type' => Constants::TYPES_REGEXP_CONSTRAINT,
+                                        'substituableId' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        /** @see SubstitutionController::voirSubstituableAction() */
+                                        'action' => 'voirSubstituable',
                                     ],
                                 ],
                             ],
@@ -402,7 +446,7 @@ return [
                                 'route' => 'substitution',
                                 'icon' => 'fas fa-object-group',
                                 'resource' => PrivilegeController::getResourceId(SubstitutionController::class, 'accueil'),
-                                'order' => 50,
+                                'order' => 105,
                                 'pages' => [
                                     'substitution' => [
                                         'label' => 'Substitutions existantes',

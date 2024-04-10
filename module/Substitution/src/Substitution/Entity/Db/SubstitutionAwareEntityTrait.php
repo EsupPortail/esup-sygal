@@ -3,19 +3,32 @@
 namespace Substitution\Entity\Db;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Laminas\Filter\Word\UnderscoreToCamelCase;
 use Webmozart\Assert\Assert;
 
 trait SubstitutionAwareEntityTrait
 {
-    protected Collection $substitues;
+    protected ?Collection $substitues = null;
+    protected ?Collection $substituants = null;
     protected ?string $npdForce = null;
     protected bool $estSubstituantModifiable = false;
 
     public function getSubstitues(): Collection
     {
+        if ($this->substitues === null) {
+            $this->substitues = new ArrayCollection();
+        }
         return $this->substitues;
+    }
+
+    public function getSubstituant(): ?SubstitutionAwareEntityInterface
+    {
+        if ($this->substituants === null) {
+            $this->substituants = new ArrayCollection();
+        }
+        return $this->substituants->first() ?: null;
     }
 
     public function getNpdForce(): ?string
@@ -28,9 +41,14 @@ trait SubstitutionAwareEntityTrait
         $this->npdForce = $npdForce;
     }
 
+    public function estSubstitue(): bool
+    {
+        return $this->getSubstituant() !== null;
+    }
+
     public function estSubstituant(): bool
     {
-        return !$this->substitues->isEmpty();
+        return !$this->getSubstitues()->isEmpty();
     }
 
     public function estSubstituantModifiable(): bool

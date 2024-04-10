@@ -517,4 +517,9 @@ class Structure implements
         }
         return $array;
     }
+
+    public function getTypeSubstitution(): string
+    {
+        return 'structure';
+    }
 }

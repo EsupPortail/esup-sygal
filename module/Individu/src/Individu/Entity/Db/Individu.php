@@ -168,6 +168,7 @@ class Individu implements
         $this->utilisateurs = new ArrayCollection();
         $this->complements = new ArrayCollection();
         $this->substitues = new ArrayCollection();
+        $this->substituants = new ArrayCollection();
     }
 
     /**
@@ -731,6 +732,12 @@ class Individu implements
         }
 
         return null;
+    }
+
+
+    public function getTypeSubstitution(): string
+    {
+        return 'individu';
     }
 
 

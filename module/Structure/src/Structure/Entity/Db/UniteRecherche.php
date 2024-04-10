@@ -243,4 +243,9 @@ class UniteRecherche implements
             'class' => $estFermee ? 'fermee' : '',
         ];
     }
+
+    public function getTypeSubstitution(): string
+    {
+        return 'unite_rech';
+    }
 }

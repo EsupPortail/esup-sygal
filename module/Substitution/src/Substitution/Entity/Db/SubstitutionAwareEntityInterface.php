@@ -10,6 +10,11 @@ use Doctrine\Common\Collections\Collection;
 interface SubstitutionAwareEntityInterface
 {
     /**
+     * Retourne le type associé à cet enregistrement, ex : 'individu', 'structure'.
+     */
+    public function getTypeSubstitution(): string;
+
+    /**
      * Retourne l'id de cet enregistrement.
      */
     public function getId();
