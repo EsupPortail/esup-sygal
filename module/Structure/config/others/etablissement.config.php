@@ -184,6 +184,7 @@ return [
                                 'label'    => 'Établissements',
                                 'route'    => 'etablissement',
                                 'resource' => PrivilegeController::getResourceId(EtablissementController::class, 'index'),
+                                'icon'     => 'fas fa-university',
                                 'order'    => 10,
                                 'pages' => [
                                     'modification' => [

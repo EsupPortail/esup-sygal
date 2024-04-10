@@ -163,7 +163,7 @@ return [
                                 'label'    => 'Écoles doctorales',
                                 'route'    => 'ecole-doctorale',
                                 'resource' => PrivilegeController::getResourceId(EcoleDoctoraleController::class, 'index'),
-
+                                'icon'     => 'fas fa-school',
                                 'order'    => 11,
                                 'pages' => [
                                     'modification' => [

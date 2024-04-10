@@ -79,6 +79,7 @@ return [
                                 'route'    => 'droits',
                                 'resource' => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'index'),
                                 'icon'     => 'fas fa-user-lock',
+                                'order'    => 0,
                                 'pages'    => [
                                     'roles'      => [
                                         'label'      => "Rôles",
@@ -102,6 +103,13 @@ return [
                                         'withtarget' => true,
                                     ],
                                 ],
+                            ],
+                            '---------------------droits-divider' => [
+                                'label' => null,
+                                'order' => 0,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
                             ],
                         ],
                     ],

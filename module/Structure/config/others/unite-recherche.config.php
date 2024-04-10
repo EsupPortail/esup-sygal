@@ -215,7 +215,7 @@ return [
                                 'label'    => 'Unités de recherche',
                                 'route'    => 'unite-recherche',
                                 'resource' => PrivilegeController::getResourceId(UniteRechercheController::class, 'index'),
-
+                                'icon'     => 'fas fa-flask',
                                 'order'    => 12,
                                 'pages' => [
                                     'modification' => [
@@ -239,6 +239,13 @@ return [
                                         ],
                                     ],
                                 ],
+                            ],
+                            '---------------------structures-divider' => [
+                                'label' => null,
+                                'order' => 13,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
                             ],
                         ],
                     ],
