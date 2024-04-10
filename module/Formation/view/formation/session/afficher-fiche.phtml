@@ -162,11 +162,20 @@ $this->headTitle($pageTitle);
     </tr>
     </thead>
     <tbody>
+    <?php /** @var Seance $seance */ ?>
     <?php foreach ($seances as $seance) : ?>
         <tr>
             <td>
                 <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
-                    <?php echo $seance->getLieu(); ?>
+                    <?php if ($seance->getLieu()) : ?>
+                        <?php echo $seance->getLieu(); ?>
+                    <?php endif; ?>
+                    <?php if ($seance->getLien()) : ?>
+                        <?php echo $seance->getLien(); ?>
+                        <?php if ($seance->getMotDePasse()) : ?>
+                            (mot de passe: <?php echo $seance->getMotDePasse(); ?>)
+                        <?php endif; ?>
+                    <?php endif; ?>
                     <?php if ($seance->getDescription() !== null) : ?>
                         <span class="icon icon-information"
                               title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
