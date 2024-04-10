@@ -114,13 +114,33 @@ class IndividuForm extends Form implements InputFilterProviderInterface
         );
     }
 
-    /**
-     * @return array
-     */
+    public function prepare(): self
+    {
+        /** @var \Individu\Entity\Db\Individu $individu */
+        $individu = $this->getObject();
+
+        $estModifiable = ! $individu->getSource()->getImportable();
+
+        $this->get('civilite')->setAttribute('disabled', !$estModifiable);
+        $this->get('nomUsuel')->setAttribute('disabled', !$estModifiable);
+        $this->get('nomPatronymique')->setAttribute('disabled', !$estModifiable);
+        $this->get('prenom1')->setAttribute('disabled', !$estModifiable);
+        $this->get('prenom2')->setAttribute('disabled', !$estModifiable);
+        $this->get('email')->setAttribute('disabled', !$estModifiable);
+        $this->get('dateNaissance')->setAttribute('disabled', !$estModifiable);
+        $this->get('paysNationalite')->setAttribute('disabled', !$estModifiable);
+        $this->get('supannId')->setAttribute('disabled', !$estModifiable);
+
+        return parent::prepare();
+
+    }
+
     public function getInputFilterSpecification(): array
     {
         /** @var \Individu\Entity\Db\Individu $individu */
         $individu = $this->getObject();
+
+        $estModifiable = ! $individu->getSource()->getImportable();
 
         $emailValidators = [];
         $emailValidators[] = [
@@ -140,15 +160,15 @@ class IndividuForm extends Form implements InputFilterProviderInterface
             ],
             'nomUsuel' => [
                 'name' => 'nomUsuel',
-                'required' => true,
+                'required' => $estModifiable,
             ],
             'nomPatronymique' => [
                 'name' => 'nomPatronymique',
-                'required' => false,
+                'required' => $estModifiable,
             ],
             'prenom1' => [
                 'name' => 'prenom1',
-                'required' => true,
+                'required' => $estModifiable,
             ],
             'prenom2' => [
                 'name' => 'prenom2',
