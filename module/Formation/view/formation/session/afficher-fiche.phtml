@@ -170,8 +170,11 @@ $this->headTitle($pageTitle);
                     <?php if ($seance->getLieu()) : ?>
                         <?php echo $seance->getLieu(); ?>
                     <?php endif; ?>
+                    <?php if ($seance->getLieu() AND $seance->getLien()) : ?>
+                        <br/>
+                    <?php endif;?>
                     <?php if ($seance->getLien()) : ?>
-                        <?php echo $seance->getLien(); ?>
+                        <a href="<?php echo $seance->getLien(); ?>"><?php echo $seance->getLien(); ?></a>
                         <?php if ($seance->getMotDePasse()) : ?>
                             (mot de passe: <?php echo $seance->getMotDePasse(); ?>)
                         <?php endif; ?>
