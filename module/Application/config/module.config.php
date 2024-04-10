@@ -344,7 +344,7 @@ return array(
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
-            '100_charte' => '/css/charte.css',
+            '066_charte' => '/css/charte.css',
             '200_fa' => '/vendor/fontawesome-free-5.12.0-web/css/all.min.css',
             '300_bs' => '/vendor/bootstrap-select-1.14.0-beta3/css/bootstrap-select.min.css',
             '400_faa' => '/vendor/font-awesome-animation.min.css',

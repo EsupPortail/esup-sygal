@@ -118,6 +118,7 @@ return [
                                 'label'    => 'Listes de diffusion',
                                 'route'    => 'liste-diffusion',
                                 'icon'     => 'icon icon-notifier',
+                                'order'    => 106,
                                 'resource' => PrivilegeController::getResourceId(ListeDiffusionController::class, 'index'),
                             ],
                         ],
