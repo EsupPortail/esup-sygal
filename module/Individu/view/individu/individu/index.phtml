@@ -47,7 +47,9 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
         <tr>
             <th>Id</th>
             <th>Nom d'usage</th>
-            <th>Prénoms</th>
+            <th>Nom patronymique</th>
+            <th>Prénom 1</th>
+            <th>Autres prénoms</th>
             <th>Date de naissance</th>
             <th>Adresse électronique</th>
             <th title="Complément d'individu">Compl.</th>
@@ -69,10 +71,17 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
                         </a>
                     </span>
                 </td>
-                <td><?php echo $individu->getNomUsuel() ?></td>
+                <td>
+                    <?php echo $individu->getNomUsuel() ?>
+                </td>
+                <td>
+                    <?php echo $individu->getNomPatronymique() ?>
+                </td>
                 <td>
                     <?php echo $individu->getPrenom1() ?>
-                    <span class="text-sm text-secondary">
+                </td>
+                <td>
+                    <span class="text-secondary">
                         <?php echo implode(', ', array_filter([$individu->getPrenom2(), $individu->getPrenom3()])) ?>
                     </span>
                 </td>
