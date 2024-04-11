@@ -77,7 +77,7 @@ select privilege__grant_privilege_to_profile('acteur', 'modifier-acteur-de-toute
 select privilege__grant_privilege_to_profile('acteur', 'modifier-acteur-de-toutes-theses', 'ADMIN_TECH');
 
 
--- drop function substit_fetch_data_for_substituant_individu;
+drop function substit_fetch_data_for_substituant_individu;
 create or replace function substit_fetch_data_for_substituant_individu(p_npd character varying)
     returns TABLE(type character varying, civilite character varying, nom_patronymique character varying, nom_usuel character varying, prenom1 character varying, prenom2 character varying, prenom3 character varying, email character varying, date_naissance timestamp without time zone, nationalite character varying, supann_id character varying, pays_id_nationalite bigint)
     language plpgsql
