@@ -165,7 +165,10 @@ echo "> $OUTPUT_FILE"
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/04_$NAME_INSERT_DATA.sql
 pg_dump --data-only --column-inserts \
+--table="admission_etat" \
+--table="admission_type_validation" \
 --table="categorie_privilege" \
+--table="discipline_sise" \
 --table="domaine_scientifique" \
 --table="formation_enquete_categorie" \
 --table="formation_enquete_question" \
@@ -180,6 +183,7 @@ pg_dump --data-only --column-inserts \
 --table="profil_privilege" \
 --table="soutenance_etat" \
 --table="soutenance_qualite" \
+--table="soutenance_qualite_sup" \
 --table="type_rapport" \
 --table="type_structure" \
 --table="type_validation" \

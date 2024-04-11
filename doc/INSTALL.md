@@ -4,8 +4,6 @@
 
 ## Création de la base de données
 
-À partir de la version 3.0.0, SyGAL s'appuie sur une base de données PostgreSQL et non plus Oracle.
-
 Reportez-vous au [README consacré à la création de la base de données](database/README.md).
 
 

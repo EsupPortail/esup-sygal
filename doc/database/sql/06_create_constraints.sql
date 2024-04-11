@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.11
--- Dumped by pg_dump version 15.4 (Ubuntu 15.4-1.pgdg20.04+1)
+-- Dumped from database version 15.5 (Debian 15.5-1.pgdg120+1)
+-- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -35,6 +35,94 @@ ALTER TABLE ONLY public.acteur
 
 
 --
+-- Name: admission_admission admission_admission_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_admission
+    ADD CONSTRAINT admission_admission_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_avis admission_avis_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_avis
+    ADD CONSTRAINT admission_avis_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_convention_formation_doctorale admission_convention_formation_doctorale_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_convention_formation_doctorale
+    ADD CONSTRAINT admission_convention_formation_doctorale_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_document admission_document_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_etat admission_etat_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etat
+    ADD CONSTRAINT admission_etat_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_financement admission_financement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_financement
+    ADD CONSTRAINT admission_financement_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_inscription admission_inscription_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_type_validation admission_type_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_type_validation
+    ADD CONSTRAINT admission_type_validation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_validation admission_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admission_verification admission_verification_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: api_log api_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -59,6 +147,14 @@ ALTER TABLE ONLY public.categorie_privilege
 
 
 --
+-- Name: composante_ens composante_ens_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.composante_ens
+    ADD CONSTRAINT composante_ens_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: csi_membre csi_membre_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -72,6 +168,14 @@ ALTER TABLE ONLY public.csi_membre
 
 ALTER TABLE ONLY public.diffusion
     ADD CONSTRAINT diffusion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: discipline_sise discipline_sise_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.discipline_sise
+    ADD CONSTRAINT discipline_sise_pkey PRIMARY KEY (id);
 
 
 --
@@ -96,6 +200,14 @@ ALTER TABLE ONLY public.doctorant_mission_enseignement
 
 ALTER TABLE ONLY public.doctorant
     ADD CONSTRAINT doctorant_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: domaine_hal domaine_hal_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal
+    ADD CONSTRAINT domaine_hal_pkey PRIMARY KEY (id);
 
 
 --
@@ -379,6 +491,14 @@ ALTER TABLE ONLY public.individu_rech
 
 
 --
+-- Name: individu_role_etablissement individu_role_etablissement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_role_etablissement
+    ADD CONSTRAINT individu_role_etablissement_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: individu_role individu_role_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -603,6 +723,14 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
+-- Name: region region_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.region
+    ADD CONSTRAINT region_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -715,11 +843,67 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_substit structure_substit_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: substit_structure structure_substit_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.structure_substit
+ALTER TABLE ONLY public.substit_structure
     ADD CONSTRAINT structure_substit_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_doctorant substit_doctorant_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_doctorant
+    ADD CONSTRAINT substit_doctorant_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_ecole_doct substit_ecole_doct_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_ecole_doct
+    ADD CONSTRAINT substit_ecole_doct_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_etablissement substit_etablissement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_etablissement
+    ADD CONSTRAINT substit_etablissement_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_fk_replacement substit_fk_replacement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_fk_replacement
+    ADD CONSTRAINT substit_fk_replacement_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_individu substit_individu_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_individu
+    ADD CONSTRAINT substit_individu_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_log substit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_log
+    ADD CONSTRAINT substit_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: substit_unite_rech substit_unite_rech_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_unite_rech
+    ADD CONSTRAINT substit_unite_rech_pkey PRIMARY KEY (id);
 
 
 --
@@ -760,6 +944,14 @@ ALTER TABLE ONLY public.these
 
 ALTER TABLE ONLY public.titre_acces
     ADD CONSTRAINT titre_acces_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transfert_these_log transfert_these_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.transfert_these_log
+    ADD CONSTRAINT transfert_these_log_pkey PRIMARY KEY (id);
 
 
 --
@@ -990,7 +1182,7 @@ ALTER TABLE ONLY public.wf_etape
 -- Name: acteur_acteur_etab_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX acteur_acteur_etab_id_idx ON public.acteur USING btree (acteur_etablissement_id);
+CREATE INDEX acteur_acteur_etab_id_idx ON public.acteur USING btree (etablissement_id);
 
 
 --
@@ -1106,6 +1298,41 @@ CREATE UNIQUE INDEX categorie_privilege_unique ON public.categorie_privilege USI
 
 
 --
+-- Name: composante_ens_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX composante_ens_hc_idx ON public.composante_ens USING btree (histo_createur_id);
+
+
+--
+-- Name: composante_ens_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX composante_ens_hd_idx ON public.composante_ens USING btree (histo_destructeur_id);
+
+
+--
+-- Name: composante_ens_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX composante_ens_hm_idx ON public.composante_ens USING btree (histo_modificateur_id);
+
+
+--
+-- Name: composante_ens_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX composante_ens_source_code_un ON public.composante_ens USING btree (source_code);
+
+
+--
+-- Name: composante_ens_source_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX composante_ens_source_idx ON public.composante_ens USING btree (source_id);
+
+
+--
 -- Name: diffusion_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1131,6 +1358,13 @@ CREATE INDEX diffusion_hm_idx ON public.diffusion USING btree (histo_modificateu
 --
 
 CREATE INDEX diffusion_these_idx ON public.diffusion USING btree (these_id);
+
+
+--
+-- Name: discipline_sise_un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX discipline_sise_un ON public.discipline_sise USING btree (code);
 
 
 --
@@ -1211,6 +1445,13 @@ CREATE INDEX doctorant_individu_idx ON public.doctorant USING btree (individu_id
 
 
 --
+-- Name: doctorant_ine_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX doctorant_ine_index ON public.doctorant USING btree (ine);
+
+
+--
 -- Name: doctorant_source_code_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1222,6 +1463,48 @@ CREATE UNIQUE INDEX doctorant_source_code_uniq ON public.doctorant USING btree (
 --
 
 CREATE INDEX doctorant_src_id_index ON public.doctorant USING btree (source_id);
+
+
+--
+-- Name: doctorant_substit_unique_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX doctorant_substit_unique_idx ON public.substit_doctorant USING btree (from_id);
+
+
+--
+-- Name: domaine_hal_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX domaine_hal_hc_idx ON public.domaine_hal USING btree (histo_createur_id);
+
+
+--
+-- Name: domaine_hal_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX domaine_hal_hd_idx ON public.domaine_hal USING btree (histo_destructeur_id);
+
+
+--
+-- Name: domaine_hal_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX domaine_hal_hm_idx ON public.domaine_hal USING btree (histo_modificateur_id);
+
+
+--
+-- Name: domaine_hal_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX domaine_hal_source_code_un ON public.domaine_hal USING btree (source_code);
+
+
+--
+-- Name: domaine_hal_source_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX domaine_hal_source_idx ON public.domaine_hal USING btree (source_id);
 
 
 --
@@ -1267,10 +1550,24 @@ CREATE INDEX ecole_doct_struct_id_idx ON public.ecole_doct USING btree (structur
 
 
 --
+-- Name: ecole_doct_substit_unique_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX ecole_doct_substit_unique_idx ON public.substit_ecole_doct USING btree (from_id);
+
+
+--
+-- Name: etablissement_domaine_histo_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX etablissement_domaine_histo_uindex ON public.etablissement USING btree (domaine, histo_destruction) WHERE (histo_destruction IS NOT NULL);
+
+
+--
 -- Name: etablissement_domaine_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX etablissement_domaine_uindex ON public.etablissement USING btree (domaine);
+CREATE UNIQUE INDEX etablissement_domaine_uindex ON public.etablissement USING btree (domaine) WHERE (histo_destruction IS NULL);
 
 
 --
@@ -1278,6 +1575,13 @@ CREATE UNIQUE INDEX etablissement_domaine_uindex ON public.etablissement USING b
 --
 
 CREATE INDEX etablissement_struct_id_idx ON public.etablissement USING btree (structure_id);
+
+
+--
+-- Name: etablissement_substit_unique_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX etablissement_substit_unique_idx ON public.substit_etablissement USING btree (from_id);
 
 
 --
@@ -1477,6 +1781,13 @@ CREATE UNIQUE INDEX individu_compl_id_uindex ON public.individu_compl USING btre
 
 
 --
+-- Name: individu_date_naissance_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX individu_date_naissance_index ON public.individu USING btree (date_naissance);
+
+
+--
 -- Name: individu_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1495,6 +1806,41 @@ CREATE INDEX individu_hdfk_idx ON public.individu USING btree (histo_destructeur
 --
 
 CREATE INDEX individu_hmfk_idx ON public.individu USING btree (histo_modificateur_id);
+
+
+--
+-- Name: individu_nom_patronymique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX individu_nom_patronymique_index ON public.individu USING btree (nom_patronymique);
+
+
+--
+-- Name: individu_prenom1_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX individu_prenom1_index ON public.individu USING btree (prenom1);
+
+
+--
+-- Name: individu_role_etablissement_individu_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX individu_role_etablissement_individu_idx ON public.individu_role_etablissement USING btree (individu_role_id);
+
+
+--
+-- Name: individu_role_etablissement_role_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX individu_role_etablissement_role_idx ON public.individu_role_etablissement USING btree (etablissement_id);
+
+
+--
+-- Name: individu_role_etablissement_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX individu_role_etablissement_uindex ON public.individu_role_etablissement USING btree (individu_role_id, etablissement_id);
 
 
 --
@@ -1544,6 +1890,13 @@ CREATE UNIQUE INDEX individu_source_code_uniq_2 ON public.individu USING btree (
 --
 
 CREATE INDEX individu_src_id_index ON public.individu USING btree (source_id);
+
+
+--
+-- Name: individu_substit_unique_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX individu_substit_unique_idx ON public.substit_individu USING btree (from_id);
 
 
 --
@@ -1862,6 +2215,13 @@ CREATE INDEX rdv_bu_these_idx ON public.rdv_bu USING btree (these_id);
 
 
 --
+-- Name: role_code_structure_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX role_code_structure_id_uindex ON public.role USING btree (code, structure_id);
+
+
+--
 -- Name: role_privilege_privilege_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1904,17 +2264,31 @@ CREATE UNIQUE INDEX source_code_unique ON public.etablissement USING btree (sour
 
 
 --
+-- Name: soutenance_proposition_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX soutenance_proposition_uniq ON public.soutenance_proposition USING btree (these_id) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: soutenance_proposition_uniq_histo; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX soutenance_proposition_uniq_histo ON public.soutenance_proposition USING btree (these_id, histo_destruction) WHERE (histo_destruction IS NOT NULL);
+
+
+--
 -- Name: str_substit_str_to_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX str_substit_str_to_idx ON public.structure_substit USING btree (to_structure_id);
+CREATE INDEX str_substit_str_to_idx ON public.substit_structure USING btree (to_id);
 
 
 --
--- Name: str_substit_unique; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: structure_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX str_substit_unique ON public.structure_substit USING btree (from_structure_id);
+CREATE INDEX structure_code_index ON public.structure USING btree (code);
 
 
 --
@@ -1925,10 +2299,24 @@ CREATE UNIQUE INDEX structure_source_code_un ON public.structure USING btree (so
 
 
 --
+-- Name: structure_substit_unique_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX structure_substit_unique_idx ON public.substit_structure USING btree (from_id);
+
+
+--
 -- Name: structure_type_str_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX structure_type_str_id_idx ON public.structure USING btree (type_structure_id);
+
+
+--
+-- Name: substit_fk_replacement_table_name_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX substit_fk_replacement_table_name_uindex ON public.substit_fk_replacement USING btree (type, table_name, column_name, record_id, from_id, to_id);
 
 
 --
@@ -2030,6 +2418,27 @@ CREATE UNIQUE INDEX tmp_acteur_unique_index ON public.tmp_acteur USING btree (so
 
 
 --
+-- Name: tmp_composante_ens_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_composante_ens_source_code_index ON public.tmp_composante_ens USING btree (source_code);
+
+
+--
+-- Name: tmp_composante_ens_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_composante_ens_source_id_index ON public.tmp_composante_ens USING btree (source_id);
+
+
+--
+-- Name: tmp_composante_ens_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_composante_ens_unique_index ON public.tmp_composante_ens USING btree (source_id, source_code);
+
+
+--
 -- Name: tmp_doctorant_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -2048,6 +2457,27 @@ CREATE INDEX tmp_doctorant_source_id_index ON public.tmp_doctorant USING btree (
 --
 
 CREATE UNIQUE INDEX tmp_doctorant_unique_index ON public.tmp_doctorant USING btree (source_id, source_code);
+
+
+--
+-- Name: tmp_domaine_hal_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_domaine_hal_source_code_index ON public.tmp_domaine_hal USING btree (source_code);
+
+
+--
+-- Name: tmp_domaine_hal_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_domaine_hal_source_id_index ON public.tmp_domaine_hal USING btree (source_id);
+
+
+--
+-- Name: tmp_domaine_hal_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_domaine_hal_unique_index ON public.tmp_domaine_hal USING btree (source_id, source_code);
 
 
 --
@@ -2562,6 +2992,13 @@ CREATE INDEX unite_rech_struct_id_idx ON public.unite_rech USING btree (structur
 
 
 --
+-- Name: unite_rech_substit_unique_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unite_rech_substit_unique_idx ON public.substit_unite_rech USING btree (from_id);
+
+
+--
 -- Name: user_token_user_action_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -2719,7 +3156,91 @@ CREATE UNIQUE INDEX version_fichier_uniq_code ON public.version_fichier USING bt
 -- Name: individu individu_rech_update; Type: TRIGGER; Schema: public; Owner: :dbuser
 --
 
-CREATE TRIGGER individu_rech_update AFTER INSERT OR DELETE OR UPDATE ON public.individu FOR EACH ROW EXECUTE PROCEDURE public.trigger_fct_individu_rech_update();
+CREATE TRIGGER individu_rech_update AFTER INSERT OR DELETE OR UPDATE ON public.individu FOR EACH ROW EXECUTE FUNCTION public.trigger_fct_individu_rech_update();
+
+
+--
+-- Name: doctorant substit_trigger_doctorant; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_doctorant AFTER INSERT OR DELETE OR UPDATE OF individu_id, ine, etablissement_id, code_apprenant_in_source, npd_force, histo_destruction, source_id ON public.doctorant FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('doctorant');
+
+
+--
+-- Name: ecole_doct substit_trigger_ecole_doct; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_ecole_doct AFTER INSERT OR DELETE OR UPDATE OF structure_id, npd_force, histo_destruction, source_id ON public.ecole_doct FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('ecole_doct');
+
+
+--
+-- Name: etablissement substit_trigger_etablissement; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_etablissement AFTER INSERT OR DELETE OR UPDATE OF structure_id, npd_force, histo_destruction, source_id ON public.etablissement FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('etablissement');
+
+
+--
+-- Name: individu substit_trigger_individu; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_individu AFTER INSERT OR DELETE OR UPDATE OF nom_patronymique, prenom1, date_naissance, type, civilite, nom_usuel, prenom2, prenom3, email, nationalite, supann_id, z_etablissement_id, pays_id_nationalite, npd_force, histo_destruction, source_id ON public.individu FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('individu');
+
+
+--
+-- Name: substit_doctorant substit_trigger_on_substit_doctorant; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_on_substit_doctorant AFTER INSERT OR DELETE ON public.substit_doctorant FOR EACH ROW EXECUTE FUNCTION public.substit_trigger_on_substit_fct('doctorant');
+
+
+--
+-- Name: substit_ecole_doct substit_trigger_on_substit_ecole_doct; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_on_substit_ecole_doct AFTER INSERT OR DELETE ON public.substit_ecole_doct FOR EACH ROW EXECUTE FUNCTION public.substit_trigger_on_substit_fct('ecole_doct');
+
+
+--
+-- Name: substit_etablissement substit_trigger_on_substit_etablissement; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_on_substit_etablissement AFTER INSERT OR DELETE ON public.substit_etablissement FOR EACH ROW EXECUTE FUNCTION public.substit_trigger_on_substit_fct('etablissement');
+
+
+--
+-- Name: substit_individu substit_trigger_on_substit_individu; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_on_substit_individu AFTER INSERT OR DELETE ON public.substit_individu FOR EACH ROW EXECUTE FUNCTION public.substit_trigger_on_substit_fct('individu');
+
+
+--
+-- Name: substit_structure substit_trigger_on_substit_structure; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_on_substit_structure AFTER INSERT OR DELETE ON public.substit_structure FOR EACH ROW EXECUTE FUNCTION public.substit_trigger_on_substit_fct('structure');
+
+
+--
+-- Name: substit_unite_rech substit_trigger_on_substit_unite_rech; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_on_substit_unite_rech AFTER INSERT OR DELETE ON public.substit_unite_rech FOR EACH ROW EXECUTE FUNCTION public.substit_trigger_on_substit_fct('unite_rech');
+
+
+--
+-- Name: structure substit_trigger_structure; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_structure AFTER INSERT OR DELETE OR UPDATE OF type_structure_id, code, sigle, libelle, npd_force, histo_destruction, source_id ON public.structure FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('structure');
+
+
+--
+-- Name: unite_rech substit_trigger_unite_rech; Type: TRIGGER; Schema: public; Owner: :dbuser
+--
+
+CREATE TRIGGER substit_trigger_unite_rech AFTER INSERT OR DELETE OR UPDATE OF structure_id, npd_force, histo_destruction, source_id ON public.unite_rech FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('unite_rech');
 
 
 --
@@ -2727,7 +3248,15 @@ CREATE TRIGGER individu_rech_update AFTER INSERT OR DELETE OR UPDATE ON public.i
 --
 
 ALTER TABLE ONLY public.acteur
-    ADD CONSTRAINT acteur_etab_id_fk FOREIGN KEY (acteur_etablissement_id) REFERENCES public.etablissement(id);
+    ADD CONSTRAINT acteur_etab_id_fk FOREIGN KEY (etablissement_id) REFERENCES public.etablissement(id);
+
+
+--
+-- Name: acteur acteur_etablissement_force_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.acteur
+    ADD CONSTRAINT acteur_etablissement_force_fk FOREIGN KEY (etablissement_force_id) REFERENCES public.etablissement(id);
 
 
 --
@@ -2791,7 +3320,495 @@ ALTER TABLE ONLY public.acteur
 --
 
 ALTER TABLE ONLY public.acteur
-    ADD CONSTRAINT acteur_unite_rech_id_fk FOREIGN KEY (acteur_uniterech_id) REFERENCES public.unite_rech(id) ON DELETE SET NULL;
+    ADD CONSTRAINT acteur_unite_rech_id_fk FOREIGN KEY (unite_rech_id) REFERENCES public.unite_rech(id) ON DELETE SET NULL;
+
+
+--
+-- Name: admission_admission admission_admission_etat_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_admission
+    ADD CONSTRAINT admission_admission_etat_code_fkey FOREIGN KEY (etat_code) REFERENCES public.admission_etat(code);
+
+
+--
+-- Name: admission_admission admission_admission_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_admission
+    ADD CONSTRAINT admission_admission_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_admission admission_admission_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_admission
+    ADD CONSTRAINT admission_admission_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_admission admission_admission_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_admission
+    ADD CONSTRAINT admission_admission_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_admission admission_admission_individu_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_admission
+    ADD CONSTRAINT admission_admission_individu_id_fkey FOREIGN KEY (individu_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: admission_avis admission_avis_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_avis
+    ADD CONSTRAINT admission_avis_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_avis admission_avis_avis_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_avis
+    ADD CONSTRAINT admission_avis_avis_id_fkey FOREIGN KEY (avis_id) REFERENCES public.unicaen_avis(id);
+
+
+--
+-- Name: admission_avis admission_avis_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_avis
+    ADD CONSTRAINT admission_avis_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_avis admission_avis_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_avis
+    ADD CONSTRAINT admission_avis_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_avis admission_avis_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_avis
+    ADD CONSTRAINT admission_avis_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_convention_formation_doctorale admission_convention_formation_docto_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_convention_formation_doctorale
+    ADD CONSTRAINT admission_convention_formation_docto_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_convention_formation_doctorale admission_convention_formation_doctor_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_convention_formation_doctorale
+    ADD CONSTRAINT admission_convention_formation_doctor_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_convention_formation_doctorale admission_convention_formation_doctorale_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_convention_formation_doctorale
+    ADD CONSTRAINT admission_convention_formation_doctorale_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_convention_formation_doctorale admission_convention_formation_doctorale_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_convention_formation_doctorale
+    ADD CONSTRAINT admission_convention_formation_doctorale_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_document admission_document_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_document admission_document_fichier_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_fichier_id_fkey FOREIGN KEY (fichier_id) REFERENCES public.fichier(id);
+
+
+--
+-- Name: admission_document admission_document_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_document admission_document_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_document admission_document_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_document admission_document_nature_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_document
+    ADD CONSTRAINT admission_document_nature_id_fkey FOREIGN KEY (nature_id) REFERENCES public.nature_fichier(id);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_nationalite_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_nationalite_id_fkey FOREIGN KEY (nationalite_id) REFERENCES public.pays(id);
+
+
+--
+-- Name: admission_etudiant admission_etudiant_pays_naissance_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_etudiant
+    ADD CONSTRAINT admission_etudiant_pays_naissance_id_fkey FOREIGN KEY (pays_naissance_id) REFERENCES public.pays(id);
+
+
+--
+-- Name: admission_financement admission_financement_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_financement
+    ADD CONSTRAINT admission_financement_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_financement admission_financement_financement_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_financement
+    ADD CONSTRAINT admission_financement_financement_id_fkey FOREIGN KEY (financement_id) REFERENCES public.origine_financement(id);
+
+
+--
+-- Name: admission_financement admission_financement_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_financement
+    ADD CONSTRAINT admission_financement_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_financement admission_financement_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_financement
+    ADD CONSTRAINT admission_financement_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_financement admission_financement_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_financement
+    ADD CONSTRAINT admission_financement_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_codirecteur_these_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_codirecteur_these_id_fkey FOREIGN KEY (codirecteur_these_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_composante_doctorat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_composante_doctorat_id_fkey FOREIGN KEY (composante_doctorat_id) REFERENCES public.composante_ens(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_directeur_these_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_directeur_these_id_fkey FOREIGN KEY (directeur_these_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_ecole_doctorale_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_ecole_doctorale_id_fkey FOREIGN KEY (ecole_doctorale_id) REFERENCES public.ecole_doct(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_etablissement_co_tutelle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_etablissement_co_tutelle_id_fkey FOREIGN KEY (etablissement_co_tutelle_id) REFERENCES public.etablissement(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_etablissement_inscription_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_etablissement_inscription_id_fkey FOREIGN KEY (etablissement_inscription_id) REFERENCES public.etablissement(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_etablissement_rattachement_codirecte_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_etablissement_rattachement_codirecte_fkey FOREIGN KEY (etablissement_rattachement_codirecteur_id) REFERENCES public.etablissement(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_fonction_codirecteur_these_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_fonction_codirecteur_these_id_fkey FOREIGN KEY (fonction_codirecteur_these_id) REFERENCES public.soutenance_qualite(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_fonction_directeur_these_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_fonction_directeur_these_id_fkey FOREIGN KEY (fonction_directeur_these_id) REFERENCES public.soutenance_qualite(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_pays_co_tutelle_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_pays_co_tutelle_id_fkey FOREIGN KEY (pays_co_tutelle_id) REFERENCES public.pays(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_unite_recherche_codirecteur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_unite_recherche_codirecteur_id_fkey FOREIGN KEY (unite_recherche_codirecteur_id) REFERENCES public.unite_rech(id);
+
+
+--
+-- Name: admission_inscription admission_inscription_unite_recherche_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_inscription
+    ADD CONSTRAINT admission_inscription_unite_recherche_id_fkey FOREIGN KEY (unite_recherche_id) REFERENCES public.unite_rech(id);
+
+
+--
+-- Name: admission_validation admission_validation_admission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_admission_id_fkey FOREIGN KEY (admission_id) REFERENCES public.admission_admission(id);
+
+
+--
+-- Name: admission_validation admission_validation_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_validation admission_validation_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_validation admission_validation_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_validation admission_validation_individu_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_individu_id_fkey FOREIGN KEY (individu_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: admission_validation admission_validation_type_validation_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_validation
+    ADD CONSTRAINT admission_validation_type_validation_id_fkey FOREIGN KEY (type_validation_id) REFERENCES public.admission_type_validation(id);
+
+
+--
+-- Name: admission_verification admission_verification_admission_document_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_admission_document_id_fkey FOREIGN KEY (admission_document_id) REFERENCES public.admission_document(id);
+
+
+--
+-- Name: admission_verification admission_verification_admission_etudiant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_admission_etudiant_id_fkey FOREIGN KEY (admission_etudiant_id) REFERENCES public.admission_etudiant(id);
+
+
+--
+-- Name: admission_verification admission_verification_admission_financement_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_admission_financement_id_fkey FOREIGN KEY (admission_financement_id) REFERENCES public.admission_financement(id);
+
+
+--
+-- Name: admission_verification admission_verification_admission_inscription_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_admission_inscription_id_fkey FOREIGN KEY (admission_inscription_id) REFERENCES public.admission_inscription(id);
+
+
+--
+-- Name: admission_verification admission_verification_histo_createur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_histo_createur_id_fkey FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_verification admission_verification_histo_destructeur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_histo_destructeur_id_fkey FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_verification admission_verification_histo_modificateur_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_histo_modificateur_id_fkey FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: admission_verification admission_verification_individu_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_verification
+    ADD CONSTRAINT admission_verification_individu_id_fkey FOREIGN KEY (individu_id) REFERENCES public.individu(id);
 
 
 --
@@ -2864,6 +3881,46 @@ ALTER TABLE ONLY public.soutenance_avis
 
 ALTER TABLE ONLY public.soutenance_avis
     ADD CONSTRAINT avis_validation_fk FOREIGN KEY (validation_id) REFERENCES public.validation(id);
+
+
+--
+-- Name: composante_ens composante_ens_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.composante_ens
+    ADD CONSTRAINT composante_ens_hcfk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: composante_ens composante_ens_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.composante_ens
+    ADD CONSTRAINT composante_ens_hdfk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: composante_ens composante_ens_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.composante_ens
+    ADD CONSTRAINT composante_ens_hmfk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: composante_ens composante_ens_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.composante_ens
+    ADD CONSTRAINT composante_ens_source_fk FOREIGN KEY (source_id) REFERENCES public.source(id) ON DELETE CASCADE;
+
+
+--
+-- Name: composante_ens composante_ens_structure_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.composante_ens
+    ADD CONSTRAINT composante_ens_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES public.structure(id);
 
 
 --
@@ -2979,6 +4036,78 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
+-- Name: substit_doctorant doctorant_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_doctorant
+    ADD CONSTRAINT doctorant_substit_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_doctorant doctorant_substit_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_doctorant
+    ADD CONSTRAINT doctorant_substit_from_fk FOREIGN KEY (from_id) REFERENCES public.doctorant(id);
+
+
+--
+-- Name: substit_doctorant doctorant_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_doctorant
+    ADD CONSTRAINT doctorant_substit_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_doctorant doctorant_substit_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_doctorant
+    ADD CONSTRAINT doctorant_substit_to_fk FOREIGN KEY (to_id) REFERENCES public.doctorant(id);
+
+
+--
+-- Name: domaine_hal domaine_hal_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal
+    ADD CONSTRAINT domaine_hal_hcfk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: domaine_hal domaine_hal_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal
+    ADD CONSTRAINT domaine_hal_hdfk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: domaine_hal domaine_hal_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal
+    ADD CONSTRAINT domaine_hal_hmfk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: domaine_hal domaine_hal_parent_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal
+    ADD CONSTRAINT domaine_hal_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.domaine_hal(id);
+
+
+--
+-- Name: domaine_hal domaine_hal_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal
+    ADD CONSTRAINT domaine_hal_source_fk FOREIGN KEY (source_id) REFERENCES public.source(id) ON DELETE CASCADE;
+
+
+--
 -- Name: ecole_doct ecole_doct_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -3016,6 +4145,38 @@ ALTER TABLE ONLY public.ecole_doct
 
 ALTER TABLE ONLY public.ecole_doct
     ADD CONSTRAINT ecole_doct_struct_fk FOREIGN KEY (structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+
+
+--
+-- Name: substit_ecole_doct ecole_doct_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_ecole_doct
+    ADD CONSTRAINT ecole_doct_substit_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_ecole_doct ecole_doct_substit_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_ecole_doct
+    ADD CONSTRAINT ecole_doct_substit_from_fk FOREIGN KEY (from_id) REFERENCES public.ecole_doct(id);
+
+
+--
+-- Name: substit_ecole_doct ecole_doct_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_ecole_doct
+    ADD CONSTRAINT ecole_doct_substit_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_ecole_doct ecole_doct_substit_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_ecole_doct
+    ADD CONSTRAINT ecole_doct_substit_to_fk FOREIGN KEY (to_id) REFERENCES public.ecole_doct(id);
 
 
 --
@@ -3064,6 +4225,38 @@ ALTER TABLE ONLY public.etablissement
 
 ALTER TABLE ONLY public.etablissement
     ADD CONSTRAINT etablissement_source_fk FOREIGN KEY (source_id) REFERENCES public.source(id) ON DELETE CASCADE;
+
+
+--
+-- Name: substit_etablissement etablissement_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_etablissement
+    ADD CONSTRAINT etablissement_substit_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_etablissement etablissement_substit_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_etablissement
+    ADD CONSTRAINT etablissement_substit_from_fk FOREIGN KEY (from_id) REFERENCES public.etablissement(id);
+
+
+--
+-- Name: substit_etablissement etablissement_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_etablissement
+    ADD CONSTRAINT etablissement_substit_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_etablissement etablissement_substit_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_etablissement
+    ADD CONSTRAINT etablissement_substit_to_fk FOREIGN KEY (to_id) REFERENCES public.etablissement(id);
 
 
 --
@@ -3619,11 +4812,19 @@ ALTER TABLE ONLY public.import_observ_result
 
 
 --
+-- Name: import_observ_result import_observ_result_source_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.import_observ_result
+    ADD CONSTRAINT import_observ_result_source_id_fkey FOREIGN KEY (source_id) REFERENCES public.source(id);
+
+
+--
 -- Name: individu_compl individu_compl_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu_compl
-    ADD CONSTRAINT individu_compl_etablissement_id_fk FOREIGN KEY (etablissement_id) REFERENCES public.etablissement(id) ON DELETE SET NULL;
+    ADD CONSTRAINT individu_compl_etablissement_id_fk FOREIGN KEY (z_etablissement_id) REFERENCES public.etablissement(id) ON DELETE SET NULL;
 
 
 --
@@ -3631,7 +4832,7 @@ ALTER TABLE ONLY public.individu_compl
 --
 
 ALTER TABLE ONLY public.individu_compl
-    ADD CONSTRAINT individu_compl_unite_rech_id_fk FOREIGN KEY (unite_id) REFERENCES public.unite_rech(id) ON DELETE SET NULL;
+    ADD CONSTRAINT individu_compl_unite_rech_id_fk FOREIGN KEY (z_unite_id) REFERENCES public.unite_rech(id) ON DELETE SET NULL;
 
 
 --
@@ -3667,6 +4868,22 @@ ALTER TABLE ONLY public.individu
 
 
 --
+-- Name: individu_role_etablissement individu_role_etablissement_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_role_etablissement
+    ADD CONSTRAINT individu_role_etablissement_etablissement_id_fk FOREIGN KEY (etablissement_id) REFERENCES public.etablissement(id);
+
+
+--
+-- Name: individu_role_etablissement individu_role_etablissement_individu_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_role_etablissement
+    ADD CONSTRAINT individu_role_etablissement_individu_role_id_fk FOREIGN KEY (individu_role_id) REFERENCES public.individu_role(id);
+
+
+--
 -- Name: individu_role individu_role_ind_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -3688,6 +4905,38 @@ ALTER TABLE ONLY public.individu_role
 
 ALTER TABLE ONLY public.individu
     ADD CONSTRAINT individu_source_fk FOREIGN KEY (source_id) REFERENCES public.source(id) ON DELETE CASCADE;
+
+
+--
+-- Name: substit_individu individu_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_individu
+    ADD CONSTRAINT individu_substit_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_individu individu_substit_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_individu
+    ADD CONSTRAINT individu_substit_from_fk FOREIGN KEY (from_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: substit_individu individu_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_individu
+    ADD CONSTRAINT individu_substit_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_individu individu_substit_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_individu
+    ADD CONSTRAINT individu_substit_to_fk FOREIGN KEY (to_id) REFERENCES public.individu(id);
 
 
 --
@@ -4015,7 +5264,7 @@ ALTER TABLE ONLY public.profil_to_role
 --
 
 ALTER TABLE ONLY public.profil_to_role
-    ADD CONSTRAINT profil_to_role_role_id_fk FOREIGN KEY (role_id) REFERENCES public.role(id);
+    ADD CONSTRAINT profil_to_role_role_id_fk FOREIGN KEY (role_id) REFERENCES public.role(id) ON DELETE CASCADE;
 
 
 --
@@ -4351,7 +5600,7 @@ ALTER TABLE ONLY public.role
 --
 
 ALTER TABLE ONLY public.role
-    ADD CONSTRAINT role_structure_id_fk FOREIGN KEY (structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+    ADD CONSTRAINT role_structure_id_fk FOREIGN KEY (structure_id) REFERENCES public.structure(id);
 
 
 --
@@ -4587,43 +5836,35 @@ ALTER TABLE ONLY public.step_star_log
 
 
 --
--- Name: structure_substit str_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: substit_structure str_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.structure_substit
+ALTER TABLE ONLY public.substit_structure
     ADD CONSTRAINT str_substit_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
 
 
 --
--- Name: structure_substit str_substit_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: substit_structure str_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.structure_substit
-    ADD CONSTRAINT str_substit_destructeur_fk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
-
-
---
--- Name: structure_substit str_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.structure_substit
+ALTER TABLE ONLY public.substit_structure
     ADD CONSTRAINT str_substit_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
 
 
 --
--- Name: structure_substit str_substit_str_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: substit_structure str_substit_str_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.structure_substit
-    ADD CONSTRAINT str_substit_str_from_fk FOREIGN KEY (from_structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.substit_structure
+    ADD CONSTRAINT str_substit_str_from_fk FOREIGN KEY (from_id) REFERENCES public.structure(id);
 
 
 --
--- Name: structure_substit str_substit_str_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: substit_structure str_substit_str_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.structure_substit
-    ADD CONSTRAINT str_substit_str_to_fk FOREIGN KEY (to_structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.substit_structure
+    ADD CONSTRAINT str_substit_str_to_fk FOREIGN KEY (to_id) REFERENCES public.structure(id);
 
 
 --
@@ -4984,6 +6225,38 @@ ALTER TABLE ONLY public.unite_rech
 
 ALTER TABLE ONLY public.unite_rech
     ADD CONSTRAINT unite_rech_struct_fk FOREIGN KEY (structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+
+
+--
+-- Name: substit_unite_rech unite_rech_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_unite_rech
+    ADD CONSTRAINT unite_rech_substit_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_unite_rech unite_rech_substit_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_unite_rech
+    ADD CONSTRAINT unite_rech_substit_from_fk FOREIGN KEY (from_id) REFERENCES public.unite_rech(id);
+
+
+--
+-- Name: substit_unite_rech unite_rech_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_unite_rech
+    ADD CONSTRAINT unite_rech_substit_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: substit_unite_rech unite_rech_substit_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.substit_unite_rech
+    ADD CONSTRAINT unite_rech_substit_to_fk FOREIGN KEY (to_id) REFERENCES public.unite_rech(id);
 
 
 --

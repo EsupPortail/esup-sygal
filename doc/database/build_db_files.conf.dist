@@ -4,8 +4,7 @@
 #============================================#
 
 #=============== Établissement =============#
-ETAB_CODE='UCN'                             # Code maison unique identifiant l'établissement (ex : 'UCN')
-ETAB_UAI='0141408E'                         # Code UAI (RNE) de l'établissement
+ETAB_CODE='UCN'                             # Code unique identifiant l'établissement (ex : 'UCN')
 ETAB_SIGLE='Unicaen'                        # Sigle ou surnom de l'établissement (ex : 'Unicaen')
 ETAB_LIBELLE='Université de Caen Normandie' # Libellé complet de l'établissement (ex : 'Université de Caen Normandie')
 ETAB_DOMAINE='unicaen.fr'                   # Domaine de l'établissement (ex : 'unicaen.fr')

@@ -76,5 +76,5 @@ meld /tmp/build/ ../../doc/database/
 Copier les fichiers générés vers le répertoire contenant la documentation, exemple :
 
 ```bash
-cp -r /tmp/build/* ../../doc/database/
+rm -r ../../doc/database/* && cp -r /tmp/build/* ../../doc/database/
 ```

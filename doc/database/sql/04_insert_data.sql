@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.11
--- Dumped by pg_dump version 15.4 (Ubuntu 15.4-1.pgdg20.04+1)
+-- Dumped from database version 15.5 (Debian 15.5-1.pgdg120+1)
+-- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -15,6 +15,31 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Data for Name: admission_etat; Type: TABLE DATA; Schema: public; Owner: :dbuser
+--
+
+INSERT INTO public.admission_etat (code, libelle, description, icone, couleur, ordre) VALUES ('C', 'En cours de saisie', 'Dossier d''admission en cours de saisie', '', '', 1);
+INSERT INTO public.admission_etat (code, libelle, description, icone, couleur, ordre) VALUES ('E', 'En cours de validation', 'Dossier d''admission en cours de validation', '', '', 2);
+INSERT INTO public.admission_etat (code, libelle, description, icone, couleur, ordre) VALUES ('A', 'Abandonné', 'Dossier d''admission abandonné', '', '', 4);
+INSERT INTO public.admission_etat (code, libelle, description, icone, couleur, ordre) VALUES ('R', 'Rejeté', 'Dossier d''admission rejeté', '', '', 5);
+INSERT INTO public.admission_etat (code, libelle, description, icone, couleur, ordre) VALUES ('V', 'Validé', 'Dossier d''admission validé', '', '', 3);
+
+
+--
+-- Data for Name: admission_type_validation; Type: TABLE DATA; Schema: public; Owner: :dbuser
+--
+
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (1, 'ATTESTATION_HONNEUR_CHARTE_DOCTORALE', 'Attestation par l''étudiant de la bonne lecture de sa charte doctorale');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (2, 'ATTESTATION_HONNEUR', 'Attestation sur l''honneur de la part de l''étudiant');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (3, 'VALIDATION_GESTIONNAIRE', 'Validation effectuée par les gestionnaires');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (4, 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_THESE', 'Validation de la bonne lecture de la convention de formation doctorale par la direction de thèse');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (5, 'VALIDATION_CONVENTION_FORMATION_DOCT_CODIR_THESE', 'Validation de la bonne lecture de la convention de formation doctorale par la co-direction de thèse');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (6, 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_UR', 'Validation de la bonne lecture de la convention de formation doctorale par la direction de l''unité de recherche');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (7, 'VALIDATION_CONVENTION_FORMATION_DOCT_DIR_ED', 'Validation de la bonne lecture de la convention de formation doctorale par la direction de l''école doctorale');
+INSERT INTO public.admission_type_validation (id, code, libelle) VALUES (8, 'SIGNATURE_PRESIDENT', 'Signature de la présidence de l''établissement d''inscription');
+
 
 --
 -- Data for Name: categorie_privilege; Type: TABLE DATA; Schema: public; Owner: :dbuser
@@ -35,7 +60,6 @@ INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (50, 'i
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (47, 'fichier-commun', 'Dépôt de fichier commun non lié à une thèse (ex: avenant à la convention de MEL)', 50);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (101, 'soutenance', 'Soutenance', 1000);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (102, 'co-encadrant', 'Gestion des co-encadrants', 21);
-INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (19, 'substitution', 'Substitution de structures', 300);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (7, 'page-information', 'Page d''information', NULL);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (3080, 'gestion-president', 'Gestion des Présidents du jury', 22);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (3121, 'rapport-activite', 'Rapports d''activité', 23);
@@ -62,6 +86,62 @@ INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5040, 
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5080, 'parametrecategorie', 'UnicaenParametre - Gestion des catégories de paramètres', 100);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5081, 'parametre', 'UnicaenParametre - Gestion des paramètres', 101);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5100, 'missionenseignement', 'Gestion des missions d''enseignement', 1000);
+INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (19, 'substitution', 'Substitutions', 300);
+INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5120, 'admission', 'Admission', 11000);
+INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5140, 'acteur', 'Acteurs des thèses', 20);
+
+
+--
+-- Data for Name: discipline_sise; Type: TABLE DATA; Schema: public; Owner: :dbuser
+--
+
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (1, '4200001', 'MATHEMATIQUES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (2, '4200002', 'PHYSIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (3, '4200003', 'CHIMIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (4, '4200004', 'MATHEMATIQUES APPLIQUEES ET SCIENCES SOCIALES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (5, '4200005', 'SCIENCES DE L''UNIVERS');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (6, '4200006', ' ASPECTS MOLECULAIRES ET CELLULAIRES DE LA BIOLOGIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (7, '4200007', 'PHYSIOLOGIE ET BIOLOGIE DES ORGANISMES - POPULATIONS - INTERACTIONS');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (8, '4200008', 'RECHERCHE CLINIQUE, INNOVATION TECHNOLOGIQUE, SANTE PUBLIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (9, '4200009', 'SCIENCES AGRONOMIQUES, BIOTECHNOLOGIES AGRO-ALIMENTAIRES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (10, '4200010', 'MEDECINE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (11, '4200011', 'ODONTOLOGIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (12, '4200012', 'PHARMACIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (13, '4200013', 'STAPS');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (14, '4200014', 'MECANIQUE DES FLUIDES, ENERGETIQUE, THERMIQUE, COMBUSTION, ACOUSTIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (15, '4200015', 'MECANIQUE DES SOLIDES, GENIE MECANIQUE, PRODUCTIQUE, TRANSPORT ET GENIE CIVIL');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (16, '4200016', 'GENIE CIVIL');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (17, '4200017', 'GENIE DES PROCEDES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (18, '4200018', 'INFORMATIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (19, '4200019', 'GENIE ELECTRIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (20, '4200020', 'ELECTRONIQUE, MICROELECTRONIQUE, OPTIQUE ET LASERS, OPTOELECTRONIQUE MICROONDES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (21, '4200021', 'SCIENCES ET TECHNOLOGIE INDUSTRIELLES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (22, '4200022', 'SCIENCES DU LANGAGE - LINGUISTIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (23, '4200023', 'LANGUES ET LITTERATURES ANCIENNES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (24, '4200024', 'LANGUES ET LITTERATURES FRANCAISES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (25, '4200025', 'LITTERATURE GENERALE ET COMPAREE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (26, '4200026', 'ARTS PLASTIQUES, MUSICOLOGIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (27, '4200027', 'FRANCAIS, LANGUE ETRANGERE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (28, '4200028', 'LANGUES ET LITTERATURES ETRANGERES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (29, '4200029', 'LANGUES ETRANGERES APPLIQUEES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (30, '4200030', 'CULTURES ET LANGUES REGIONALES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (31, '4200031', 'PHILOSOPHIE, EPISTEMOLOGIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (32, '4200032', 'HISTOIRE, HISTOIRE DE L’ART ET ARCHEOLOGIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (33, '4200033', 'GEOGRAPHIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (34, '4200034', 'AMENAGEMENT');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (35, '4200035', 'ARCHEOLOGIE, ETHNOLOGIE, PREHISTOIRE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (36, '4200036', 'SCIENCES RELIGIEUSES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (37, '4200037', 'PSYCHOLOGIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (38, '4200038', 'SOCIOLOGIE, DEMOGRAPHIE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (39, '4200039', 'SCIENCES DE L''EDUCATION');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (40, '4200040', 'SCIENCES DE L''INFORMATION ET DE LA COMMUNICATION');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (41, '4200041', 'SCIENCES JURIDIQUES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (42, '4200042', 'SCIENCES POLITIQUES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (43, '4200043', 'SCIENCES ECONOMIQUES');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (44, '4200044', 'SCIENCES DE GESTION');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (45, '4200045', 'ADMINISTRATION ECONOMIQUE ET SOCIALE (AES)');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (46, '4200046', 'AUTOMATIQUE, SIGNAL, PRODUCTIQUE, ROBOTIQUE');
+INSERT INTO public.discipline_sise (id, code, libelle) VALUES (47, '4200047', 'SCIENCES DE LA VIE ET DE LA SANTE');
 
 
 --
@@ -101,12 +181,12 @@ INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, 
 INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (7, 'Information préalable sur le contenu', NULL, 1, 26181, '2022-11-22 08:17:37', 26181, '2022-11-22 08:17:37', NULL, NULL, 4);
 INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (8, 'Durée de la formation', NULL, 2, 26181, '2022-11-22 08:17:49', 26181, '2022-11-22 08:17:49', NULL, NULL, 4);
 INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (9, 'Homogénéité du groupe', NULL, 3, 26181, '2022-11-22 08:18:01', 26181, '2022-11-22 08:18:01', NULL, NULL, 4);
-INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (10, 'Contenu adapté à mon niveau', NULL, 4, 26181, '2022-11-22 08:18:12', 26181, '2022-11-22 08:18:12', NULL, NULL, 4);
 INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (11, 'Contenu adapté au format (présentiel / distanciel)', NULL, 5, 26181, '2022-11-22 08:18:23', 26181, '2022-11-22 08:18:23', NULL, NULL, 4);
-INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (12, 'Maîtrise du sujet', NULL, 1, 26181, '2022-11-22 08:18:35', 26181, '2022-11-22 08:18:35', NULL, NULL, 5);
-INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (13, 'Qualité pédagogiques', NULL, 2, 26181, '2022-11-22 08:18:47', 26181, '2022-11-22 08:18:47', NULL, NULL, 5);
 INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (14, 'Favorable aux échanges et à la participation', NULL, 3, 26181, '2022-11-22 08:18:58', 26181, '2022-11-22 08:19:24', NULL, NULL, 5);
 INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (15, 'Satisfaction générale', NULL, 1, 26181, '2022-11-22 08:19:40', 26181, '2022-11-22 08:19:40', NULL, NULL, 6);
+INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (13, 'Démarche pédagogique', NULL, 2, 26181, '2022-11-22 08:18:47', 26181, '2023-09-26 10:58:23', NULL, NULL, 5);
+INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (10, 'Contenu adapté à mon niveau/besoin', NULL, 4, 26181, '2022-11-22 08:18:12', 26181, '2023-09-26 10:59:07', NULL, NULL, 4);
+INSERT INTO public.formation_enquete_question (id, libelle, description, ordre, histo_createur_id, histo_creation, histo_modificateur_id, histo_modification, histo_destructeur_id, histo_destruction, categorie_id) VALUES (12, 'Qualités des contenus', NULL, 1, 26181, '2022-11-22 08:18:35', 26181, '2023-09-26 10:59:53', NULL, NULL, 5);
 
 
 --
@@ -125,9 +205,9 @@ INSERT INTO public.formation_etat (code, libelle, description, icone, couleur, o
 -- Data for Name: import_observ; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
-INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (6, 'RESULTAT_PASSE_A_ADMIS', 'THESE', 'RESULTAT', 'UPDATE', '1', 'Le résultat de la thèse passe à 1 (admis)', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE = ''UCN'')');
-INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (9, 'CORRECTION_PASSE_A_FACULTATIVE', 'THESE', 'CORREC_AUTORISEE', 'UPDATE', 'facultative', 'Correction attendue passe à facultative', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE = ''UCN'')');
-INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (10, 'CORRECTION_PASSE_A_OBLIGATOIRE', 'THESE', 'CORREC_AUTORISEE', 'UPDATE', 'obligatoire', 'Correction attendue passe à obligatoire', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE = ''UCN'')');
+INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (6, 'RESULTAT_PASSE_A_ADMIS', 'THESE', 'RESULTAT', 'UPDATE', '1', 'Le résultat de la thèse passe à 1 (admis)', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE in (''UCN'',''URN'',''ULHN'',''INSA''))');
+INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (9, 'CORRECTION_PASSE_A_FACULTATIVE', 'THESE', 'CORREC_AUTORISEE', 'UPDATE', 'facultative', 'Correction attendue passe à facultative', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE in (''UCN'',''URN'',''ULHN'',''INSA''))');
+INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (10, 'CORRECTION_PASSE_A_OBLIGATOIRE', 'THESE', 'CORREC_AUTORISEE', 'UPDATE', 'obligatoire', 'Correction attendue passe à obligatoire', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE in (''UCN'',''URN'',''ULHN'',''INSA''))');
 
 
 --
@@ -172,6 +252,19 @@ INSERT INTO public.nature_fichier (id, code, libelle) VALUES (204, 'CHARTE_DOCTO
 INSERT INTO public.nature_fichier (id, code, libelle) VALUES (9, 'CONV_MISE_EN_LIGNE_AVENANT', 'Avenant à la convention de mise en ligne');
 INSERT INTO public.nature_fichier (id, code, libelle) VALUES (205, 'FORMATION_INTEGRITE_SCIENTIFIQUE', 'Justificatif de suivi de la formation "Intégrité scientifique"');
 INSERT INTO public.nature_fichier (id, code, libelle) VALUES (206, 'AUTORISATION_SOUTENANCE', ' ''Autorisation de soutenance''');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (207, 'ADMISSION_DIPLOME_BAC', 'Diplôme de Bac + 5 permettant l''accès au doctorat');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (208, 'ADMISSION_CURRICULUM_VITAE', 'Curriculum Vitae');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (209, 'ADMISSION_FINANCEMENT', 'Justificatif du financement (contrat, attestation de l''employeur)');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (210, 'ADMISSION_PROJET_THESE', 'Le projet de thèse et son titre');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (211, 'ADMISSION_CONVENTION', 'Convention de formation doctorale');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (212, 'ADMISSION_CHARTE_DOCTORAT', 'Charte du doctorat');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (213, 'ADMISSION_DIPLOMES_RELEVES_TRADUITS', 'Diplômes et relevés de notes traduits en français avec tampons originaux');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (214, 'ADMISSION_ACTE_NAISSANCE', 'Extrait d''acte de naissance');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (215, 'ADMISSION_PASSEPORT', 'Photocopie du passeport (ou de la carte d''identité pour les ressortissants européens)');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (216, 'ADMISSION_DIPLOMES_TRAVAUX_EXPERIENCE_PRO', 'Diplômes, travaux et expérience professionnelle détaillés');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (217, 'ADMISSION_DEMANDE_COTUTELLE', 'Formulaire de demande de cotutelle');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (218, 'ADMISSION_DEMANDE_COENCADREMENT', 'Formulaire de demande de co-encadrement');
+INSERT INTO public.nature_fichier (id, code, libelle) VALUES (219, 'ADMISSION_RECAPITULATIF_DOSSIER_SIGNE', 'Récapitulatif du dossier d''admission signé par la direction de l''établissement');
 
 
 --
@@ -518,6 +611,7 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (57
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (577, 3141, 'supprimer-sien', 'Supprimer un rapport concernant ses thèses', 600);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (425, 4, 'afficher-email-contact', 'Visualiser l''email de contact du doctorant', 20);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (578, 3141, 'telecharger-tout', 'Télécharger les rapports concernant toute thèse', 700);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (838, 5005, 'generer_attestation', 'Gerer l''attestation', 9);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (579, 3141, 'telecharger-sien', 'Télécharger les rapports concernant ses thèses', 800);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (580, 3141, 'telecharger-zip', 'Télécharger des rapports sous la forme d''une archive compressée (.zip)', 900);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (581, 3141, 'rechercher-tout', 'Rechercher des rapports concernant toute thèse', 1000);
@@ -600,14 +694,9 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (40
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (410, 3, 'modification-de-toutes-les-theses', 'Modification de toutes les thèses', 1200);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (411, 3, 'modification-de-ses-theses', 'Modification de ses thèses', 1300);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (281, 3, 'refresh-these', 'Réimporter la thèse', 3000);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (250, 19, 'automatique', 'Substitution automatique de structures', 100);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (487, 3102, 'justificatif_retirer', 'Retirer un justificatif la liste des interventions', 30);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (321, 3, 'saisie-correc-autorisee-forcee', 'Modification du témoin de correction autorisée forcée', 3045);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (10, 7, 'modifier-information', 'Modifier les pages d''information ', 50);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (36, 19, 'consultation-toutes-structures', 'Consultation de toutes les substitutions', 200);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (37, 19, 'consultation-sa-structure', 'Consultation de la substitution de sa structure', 300);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (38, 19, 'modification-toutes-structures', 'Modification de toutes les substitutions ', 400);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (39, 19, 'modification-sa-structure', 'Modification de la substitution de sa structure', 500);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (662, 101, 'simuler_remontees', 'Simulation des remontées du jury du SI', 1000);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (682, 3, 'accorder-sursis-correction', 'Accorder un sursis pour le téléversement de la version corrigée', 3047);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (701, 3121, 'ajouter-avis-tout', 'Ajouter un avis sur un rapport concernant toute thèse', 10);
@@ -667,7 +756,6 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (83
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (835, 5005, 'ajouter', 'Ajouter une inscription de formation', 3);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (836, 5005, 'gerer_liste', 'Gerer la liste d''une inscription', 7);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (837, 5005, 'index', 'Accès à l''index des inscriptions de formation', 1);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (838, 5005, 'generer_attestation', 'Gerer l''attestation', 9);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (839, 5005, 'generer_convocation', 'Generer la convoctation', 8);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (840, 5006, 'reponse_repondre', 'Répondre à l''enquête', 8);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (841, 5006, 'question_modifier', 'Modifier une question de l''enquête', 3);
@@ -714,6 +802,55 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (10
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1040, 5100, 'missionenseignement_modifier', 'Ajouter/Retirer des missions d''enseignement', 20);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1041, 5100, 'missionenseignement_visualiser', 'Visualiser les missions d''enseignement', 10);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1060, 101, 'proposition-revoquer-structure', 'Révoquer la validation (structure) de la proposition', 34);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1080, 4, 'lister-tout', 'Lister tous·tes les doctorant·es', 30);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1081, 4, 'lister-sien', 'Lister ses doctorant·es', 31);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1082, 4, 'consulter-tout', 'Consulter la fiche détaillée de n''importe quel·le doctorant·e', 40);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1083, 4, 'consulter-sien', 'Consulter la fiche détaillée d''un·e de ses doctorant·es', 41);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1100, 3, 'consultation-version-papier-corrigee', 'Consultation de la page consacrée à la version papier corrigée', 3100);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1144, 19, 'consulter', 'Consulter les substitutions, doublons, etc.', 10);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1145, 19, 'modifier', 'Modifier les substitutions', 20);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1160, 5120, 'admission-modifier-avis-sien', 'Modifier un avis de son dossier d''admission', 24);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1161, 5120, 'admission-ajouter-avis-sien', 'Ajouter un avis à son dossier d''admission', 22);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1162, 5120, 'admission-afficher-son-dossier-admission', 'Consulter son dossier d''admission', 2);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1163, 5120, 'admission-ajouter-avis-tout', 'Ajouter un avis à un dossier d''admission', 21);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1164, 5120, 'admission-supprimer-avis-tout', 'Supprimer un avis d''un dossier d''admission', 25);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1165, 5120, 'admission-convention-formation-modifier', 'Modifier la convention de formation doctorale du dossier d''admission', 22);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1166, 5120, 'admission-televerser-son-document', 'Téléverser un document dans son d''admission', 13);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1167, 5120, 'admission-modifier-avis-tout', 'Modifier un avis d''un dossier d''admission', 23);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1168, 5120, 'admission-supprimer-son-dossier-admission', 'Supprimer son dossier d''admission', 6);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1169, 5120, 'admission-gerer-recapitulatif-signe-dossier', 'Gérer l''ajout/retrait du récapitulatif signé du dossier d''admission', 17);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1170, 5120, 'admission-convention-formation-visualiser', 'Visualiser la convention de formation doctorale du dossier d''admission', 23);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1171, 5120, 'admission-telecharger-son-document', 'Télécharger un document dans son dossier d''admission', 17);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1172, 5120, 'admission-verifier', 'Ajouter des commentaires au dossier d''admission', 7);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1173, 5120, 'admission-generer-recapitulatif', 'Générer le récapitulatif du dossier d''admission', 20);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1174, 5120, 'admission-televerser-tout-document', 'Téléverser un document dans un dossier d''admission', 12);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1175, 5120, 'admission-devalider-sien', 'Dévalider un dossier d''admission', 11);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1176, 5120, 'admission-acceder-recapitulatif-signe-dossier', 'Accéder au récapitulatif signé du dossier d''admission', 17);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1177, 5120, 'admission-historiser', 'Historiser un dossier d''admission', 5);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1178, 5120, 'admission-valider-sien', 'Valider son dossier d''admission', 9);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1179, 5120, 'admission-devalider-tout', 'Dévalider son dossier d''admission', 10);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1180, 5120, 'admission-lister-mes-dossiers-admission', 'Lister mes dossiers d''admission en cours', 1);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1181, 5120, 'admission-modifier-son-dossier-admission', 'Modifier son dossier d''admission', 4);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1182, 5120, 'admission-valider-tout', 'Valider un dossier d''admission', 8);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1183, 5120, 'admission-modifier-tous-dossiers-admission', 'Modifier un dossier d''admission', 4);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1184, 5120, 'admission-afficher-tous-dossiers-admission', 'Consulter un dossier d''admission', 2);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1185, 5120, 'admission-convention-formation-generer', 'Générer la convention de formation doctorale du dossier d''admission', 24);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1186, 5120, 'admission-telecharger-tout-document', 'Télécharger un document dans un dossier d''admission', 16);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1187, 5120, 'admission-acceder-commentaires', 'Accéder à la saisie/vue des commentaires du dossier d''admission', 7);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1188, 5120, 'admission-supprimer-avis-sien', 'Supprimer un avis de son dossier d''admission', 26);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1189, 5120, 'admission-commentaires-ajoutes', 'Notifier l''étudiant des commentaires ajoutés sur son dossier d''admission', 19);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1190, 5120, 'admission-supprimer-tous-dossiers-admission', 'Supprimer un dossier d''admission', 6);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1191, 5120, 'admission-initialiser-son-dossier-admission', 'Initialiser son dossier d''admission', 27);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1192, 5120, 'admission-rechercher-dossiers-admission', 'Rechercher un dossier d''admission', 25);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1193, 5120, 'admission-supprimer-son-document', 'Supprimer un document dans son dossier d''admission', 15);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1194, 5120, 'admission-notifier-dossier-incomplet', 'Notifier l''étudiant que son dossier d''admission est incomplet', 21);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1195, 5120, 'admission-afficher-son-dossier-admission-dans-liste', 'Afficher son dossier d''admission dans la liste des dossiers d''admission en cours', 26);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1196, 5120, 'admission-supprimer-tout-document', 'Supprimer un document dans un dossier d''admission', 14);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1197, 5005, 'accorder_sursis', 'Accorder un sursis concernant la saisie de l''enquête', 847);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1200, 5140, 'modifier-acteur-de-toutes-theses', 'Modifier les acteurs de n''importe quelle thèse', 2000);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1201, 5140, 'modifier-acteur-de-ses-theses', 'Modifier les acteurs des thèses qui me concernent', 2010);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1220, 3, 'modification-domaines-hal-these', 'Modifier les domaines HAL de sa thèse', 3100);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1240, 101, 'proposition-supprimer', 'Supprimer l''ensemble des informations d''une proposition', 34);
 
 
 --
@@ -723,6 +860,7 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (10
 INSERT INTO public.type_structure (id, code, libelle) VALUES (1, 'etablissement', 'Établissement');
 INSERT INTO public.type_structure (id, code, libelle) VALUES (2, 'ecole-doctorale', 'École doctorale');
 INSERT INTO public.type_structure (id, code, libelle) VALUES (3, 'unite-recherche', 'Unité de recherche');
+INSERT INTO public.type_structure (id, code, libelle) VALUES (4, 'composante-enseignement', 'Composante d''enseignement');
 
 
 --
@@ -748,14 +886,13 @@ INSERT INTO public.profil (id, libelle, role_id, structure_type, description, or
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (1, 'Responsable Unité de recherche', 'RESP_UR', 3, NULL, 40);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (2, 'Responsable École doctorale', 'RESP_ED', 2, NULL, 30);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (81, 'Formateur·trice', 'FORMATEUR', NULL, NULL, 0);
-INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (82, 'Gestionnaire de formation', 'GEST_FORMATION', NULL, NULL, 0);
+INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (102, 'Gestionnaire de formation', 'GEST_FORM', 1, NULL, 0);
 
 
 --
 -- Data for Name: profil_privilege; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 1);
@@ -777,7 +914,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (513, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (523, 1);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 2);
@@ -818,7 +954,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (580, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (582, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (11, 3);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (15, 3);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 3);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 3);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 3);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (177, 3);
@@ -840,7 +975,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (3, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (10, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (15, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (22, 4);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (41, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (42, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (43, 4);
@@ -943,7 +1077,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (3, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (10, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (22, 5);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (41, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (42, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (43, 5);
@@ -1009,11 +1142,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (11, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (14, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (15, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (22, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (36, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (37, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (38, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (39, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (41, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (42, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (43, 6);
@@ -1047,11 +1175,7 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (177, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (197, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (198, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (199, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (250, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (260, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (270, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (271, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (272, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (273, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (281, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (321, 6);
@@ -1197,7 +1321,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (573, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (575, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (577, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (579, 7);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 8);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 8);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 8);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (83, 8);
@@ -1280,7 +1403,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 11);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (522, 11);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (177, 12);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (381, 12);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 21);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 21);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 21);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (83, 21);
@@ -1323,7 +1445,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 41);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (661, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (662, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 7);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 65);
@@ -1362,7 +1483,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (577, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (579, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (580, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (582, 65);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 64);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 64);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 64);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 64);
@@ -1519,49 +1639,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (818, 81);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (831, 81);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (827, 81);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (842, 81);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (803, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (810, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (809, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (808, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (807, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (806, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (805, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (804, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (886, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (885, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (884, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (883, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (882, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (881, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (824, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (823, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (822, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (821, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (820, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (819, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (818, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (831, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (830, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (829, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (828, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (827, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (826, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (825, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (839, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (838, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (837, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (836, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (835, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (834, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (833, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (832, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (846, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (845, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (844, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (843, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (842, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (841, 82);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (840, 82);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (861, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (864, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (863, 6);
@@ -1697,9 +1774,207 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1060, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1040, 3);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1040, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1040, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1040, 82);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (515, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (516, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1041, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1041, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1041, 3);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (367, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (368, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1080, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1080, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1080, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1082, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1082, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1082, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1081, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1081, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1081, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1081, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1081, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1081, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1083, 7);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (803, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (804, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (806, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (810, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (807, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (808, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (805, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (885, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (886, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (882, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (883, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (881, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (820, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (818, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (819, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (821, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (823, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (822, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (830, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (827, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (825, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (828, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (829, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (831, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (837, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (833, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (835, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (834, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (836, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (839, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (838, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (844, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (841, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (845, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (846, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (842, 102);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (270, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (271, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1100, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1100, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1100, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1100, 7);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1100, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1144, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1145, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1160, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1161, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1163, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1164, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1165, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1166, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1167, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1168, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1169, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1170, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1173, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1174, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1175, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1177, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1178, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1179, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1181, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1182, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1183, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1184, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1186, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1188, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1189, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1190, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1192, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1193, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1194, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1196, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1192, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1192, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1192, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1192, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1192, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1188, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1188, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1188, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1188, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1188, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1178, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1178, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1178, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1178, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1178, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1175, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1175, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1175, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1175, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1175, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1170, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1170, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1170, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1170, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1170, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1161, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1161, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1161, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1161, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1161, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1160, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1160, 10);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1160, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1160, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1160, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1176, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1171, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1185, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1195, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1162, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1180, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1187, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1172, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1173, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1189, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1169, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1194, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1168, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1181, 9);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1197, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1197, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1201, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1200, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1200, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 7);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 65);
 
 
 --
@@ -1717,47 +1992,60 @@ INSERT INTO public.soutenance_etat (id, code, libelle, histo_creation, histo_cre
 -- Data for Name: soutenance_qualite; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (9, 'Ingénieur de Recherche ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (2, 'Directeur de recherche', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (4, 'Maître de conférences', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (5, 'Chargé de recherche', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (35, 'Membre étranger de rang B', 'B', 'N', 'N', '2021-05-28 15:22:37', 1446, '2021-05-28 15:22:37', 1446, NULL, NULL, 'O');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (74, 'Professeur des universités-praticien hospitalier ', 'A', 'O', 'N', '2021-07-12 13:43:02', 1446, '2021-07-12 13:43:02', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (134, 'Professeur (dans un établissement à l''étranger)', 'A', 'O', 'N', '2021-10-27 11:19:13', 1461, '2021-10-27 16:39:19', 1446, NULL, NULL, 'O');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (34, 'Membre étranger de rang A', 'A', 'O', 'N', '2021-05-28 15:22:14', 1446, '2021-10-27 11:14:29', 1461, NULL, NULL, 'O');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (1, 'Professeur des universités (université Française)', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:15:18', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (454, 'Membre étranger de rang B HDR', 'B', 'O', 'N', '2021-11-16 16:59:01', 1446, '2022-07-19 08:17:48', 1446, NULL, NULL, 'O');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (494, 'Enseignant Chercheur retraité', ' ', 'N', 'N', '2022-04-29 15:26:58', 1461, '2022-04-29 15:26:58', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (12, 'Chercheur', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:24:15', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (474, 'Autre membre de rang A', 'A', 'O', 'N', '2022-04-08 15:45:43', 1461, '2023-01-23 13:46:08', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (11, 'Ingénieur d''Etudes ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:32:56', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (94, 'Maître de Conférences - Praticien Hospitalier', 'B', 'N', 'N', '2021-10-07 15:25:14', 1446, '2021-10-27 11:33:53', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (514, 'Ingénieur des ponts, eaux  et forêts', 'A', 'O', 'N', '2023-01-23 13:48:14', 1446, '2023-01-23 13:48:14', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (536, 'Autre membre de rang B', 'B', 'N', 'N', '2023-04-25 12:46:21.594642', 1, '2023-04-25 12:46:21.594642', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (16, 'Adjoint administratif', 'B', 'N', 'N', '2021-04-28 09:17:37', 1446, '2021-10-27 11:37:48', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (174, 'Assistant ingénieur', 'B', 'N', 'N', '2021-10-27 11:38:52', 1461, '2021-10-27 11:38:52', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (194, 'Associate Professor', 'B', 'N', 'N', '2021-10-27 11:39:18', 1461, '2021-10-27 11:39:18', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (214, 'Assistant professor', 'B', 'N', 'N', '2021-10-27 11:39:46', 1461, '2021-10-27 11:39:46', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (254, 'Cadre de recherche', 'B', 'N', 'N', '2021-10-27 11:41:03', 1461, '2021-10-27 11:41:03', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (274, 'Chef d''entreprise', 'B', 'N', 'N', '2021-10-27 11:41:25', 1461, '2021-10-27 11:41:25', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (294, 'Directeur', 'B', 'N', 'N', '2021-10-27 11:42:01', 1461, '2021-10-27 11:42:01', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (314, 'Docteur', 'B', 'N', 'N', '2021-10-27 11:42:26', 1461, '2021-10-27 11:42:26', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (354, 'Maître assistant', 'B', 'N', 'N', '2021-10-27 11:43:39', 1461, '2021-10-27 11:43:39', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (374, 'Médecin', 'B', 'N', 'N', '2021-10-27 11:44:01', 1461, '2021-10-27 11:44:01', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (394, ' Praticien Hospitalier', 'B', 'N', 'N', '2021-10-27 11:44:33', 1461, '2021-10-27 11:44:33', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (414, 'Senior lecturer', 'B', 'N', 'N', '2021-10-27 11:45:13', 1461, '2021-10-27 11:45:36', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (234, 'Chargé d''enseignement', 'B', 'N', 'N', '2021-10-27 11:40:14', 1461, '2021-10-27 11:45:58', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (537, 'Associate Professor - Équivalent HDR', 'B', 'O', 'N', '2023-04-25 12:52:30.492962', 1, '2023-04-25 12:52:30.492962', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (434, 'Docent', 'B', 'N', 'N', '2021-10-27 11:50:36', 1461, '2021-10-27 11:50:36', 1461, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (114, 'Directeur de recherche émérite', 'A', 'O', 'O', '2021-10-27 11:17:13', 1461, '2021-10-27 16:36:56', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (7, 'Professeur des universités émerite', 'A', 'O', 'O', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:08', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (8, 'Chargé de Recherche HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:17', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (54, 'Chercheur HDR', 'B', 'O', 'N', '2021-07-07 09:07:44', 1461, '2021-10-27 16:37:24', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (334, 'Docteur HDR', 'B', 'O', 'N', '2021-10-27 11:42:48', 1461, '2021-10-27 16:37:33', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (154, 'Ingenieur d''études HDR', 'B', 'O', 'N', '2021-10-27 11:32:23', 1461, '2021-10-27 16:37:41', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (10, 'Ingénieur de Recherche HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:54', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (6, 'Maître de conférences HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:38:07', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (0, 'Maître de Conférences HDR - Praticien Hospitalier', 'B', 'O', 'N', '2021-10-27 16:38:18', 1446, '2021-10-27 16:38:18', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (594, 'Enseignant- Chercheur', 'B', 'N', 'N', '2023-10-24 10:26:27', 1461, '2023-10-24 10:26:27', 1461, NULL, NULL, 'N', NULL);
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (4, 'Maître de conférences', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (0, 'Maître de Conférences HDR - Praticien Hospitalier', 'B', 'O', 'N', '2021-10-27 16:38:18', 1446, '2021-10-27 16:38:18', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (554, 'Maître de Conférences HDR- Emerite', 'B', 'O', 'O', '2023-09-01 15:08:43', 1461, '2023-09-01 15:08:43', 1461, NULL, NULL, 'O', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (12, 'Chercheur', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:24:15', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (16, 'Adjoint administratif', 'B', 'N', 'N', '2021-04-28 09:17:37', 1446, '2021-10-27 11:37:48', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (174, 'Assistant ingénieur', 'B', 'N', 'N', '2021-10-27 11:38:52', 1461, '2021-10-27 11:38:52', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (11, 'Ingénieur d''Etudes ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:32:56', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (574, 'Maître de Conéfrences Emerite', 'B', 'N', 'O', '2023-09-01 15:09:20', 1461, '2023-09-01 15:09:20', 1461, NULL, NULL, 'O', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (434, 'Docent', 'B', 'N', 'N', '2021-10-27 11:50:36', 1461, '2021-10-27 11:50:36', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (94, 'Maître de Conférences - Praticien Hospitalier', 'B', 'N', 'N', '2021-10-07 15:25:14', 1446, '2021-10-27 11:33:53', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (7, 'Professeur des universités émerite', 'A', 'O', 'O', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:08', 1446, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (394, ' Praticien Hospitalier', 'B', 'N', 'N', '2021-10-27 11:44:33', 1461, '2021-10-27 11:44:33', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (254, 'Cadre de recherche', 'B', 'N', 'N', '2021-10-27 11:41:03', 1461, '2021-10-27 11:41:03', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (5, 'Chargé de recherche', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (114, 'Directeur de recherche émérite', 'A', 'O', 'O', '2021-10-27 11:17:13', 1461, '2021-10-27 16:36:56', 1446, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (474, 'Autre membre de rang A', 'A', 'O', 'N', '2022-04-08 15:45:43', 1461, '2023-01-23 13:46:08', 1446, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (134, 'Professeur (dans un établissement à l''étranger)', 'A', 'O', 'N', '2021-10-27 11:19:13', 1461, '2021-10-27 16:39:19', 1446, NULL, NULL, 'O', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (454, 'Membre étranger de rang B HDR', 'B', 'O', 'N', '2021-11-16 16:59:01', 1446, '2022-07-19 08:17:48', 1446, NULL, NULL, 'O', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (214, 'Assistant professor', 'B', 'N', 'N', '2021-10-27 11:39:46', 1461, '2021-10-27 11:39:46', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (8, 'Chargé de Recherche HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:17', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (10, 'Ingénieur de Recherche HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:54', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (6, 'Maître de conférences HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:38:07', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (154, 'Ingenieur d''études HDR', 'B', 'O', 'N', '2021-10-27 11:32:23', 1461, '2021-10-27 16:37:41', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (374, 'Médecin', 'B', 'N', 'N', '2021-10-27 11:44:01', 1461, '2021-10-27 11:44:01', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (494, 'Enseignant Chercheur retraité', ' ', 'N', 'N', '2022-04-29 15:26:58', 1461, '2022-04-29 15:26:58', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (2, 'Directeur de recherche', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (274, 'Chef d''entreprise', 'B', 'N', 'N', '2021-10-27 11:41:25', 1461, '2021-10-27 11:41:25', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (414, 'Senior lecturer', 'B', 'N', 'N', '2021-10-27 11:45:13', 1461, '2021-10-27 11:45:36', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (537, 'Associate Professor - Équivalent HDR', 'B', 'O', 'N', '2023-04-25 12:52:30.492962', 1, '2023-04-25 12:52:30.492962', 1, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (54, 'Chercheur HDR', 'B', 'O', 'N', '2021-07-07 09:07:44', 1461, '2021-10-27 16:37:24', 1446, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (9, 'Ingénieur de Recherche ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (354, 'Maître assistant', 'B', 'N', 'N', '2021-10-27 11:43:39', 1461, '2021-10-27 11:43:39', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (1, 'Professeur des universités (université Française)', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:15:18', 1461, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (34, 'Membre étranger de rang A', 'A', 'O', 'N', '2021-05-28 15:22:14', 1446, '2021-10-27 11:14:29', 1461, NULL, NULL, 'O', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (536, 'Autre membre de rang B', 'B', 'N', 'N', '2023-04-25 12:46:21.594642', 1, '2023-04-25 12:46:21.594642', 1, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (294, 'Directeur', 'B', 'N', 'N', '2021-10-27 11:42:01', 1461, '2021-10-27 11:42:01', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (514, 'Ingénieur des ponts, eaux  et forêts', 'A', 'O', 'N', '2023-01-23 13:48:14', 1446, '2023-01-23 13:48:14', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (74, 'Professeur des universités-praticien hospitalier ', 'A', 'O', 'N', '2021-07-12 13:43:02', 1446, '2021-07-12 13:43:02', 1446, NULL, NULL, 'N', 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (194, 'Associate Professor', 'B', 'N', 'N', '2021-10-27 11:39:18', 1461, '2021-10-27 11:39:18', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (234, 'Chargé d''enseignement', 'B', 'N', 'N', '2021-10-27 11:40:14', 1461, '2021-10-27 11:45:58', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (314, 'Docteur', 'B', 'N', 'N', '2021-10-27 11:42:26', 1461, '2021-10-27 11:42:26', 1461, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (334, 'Docteur HDR', 'B', 'O', 'N', '2021-10-27 11:42:48', 1461, '2021-10-27 16:37:33', 1446, NULL, NULL, 'N', 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif, admission) VALUES (35, 'Membre étranger de rang B', 'B', 'N', 'N', '2021-05-28 15:22:37', 1446, '2021-05-28 15:22:37', 1446, NULL, NULL, 'O', 'N');
+
+
+--
+-- Data for Name: soutenance_qualite_sup; Type: TABLE DATA; Schema: public; Owner: :dbuser
+--
+
+INSERT INTO public.soutenance_qualite_sup (id, qualite_id, libelle, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id) VALUES (1, 5, 'CHARGE DE RECHERCHE', '2019-12-17 10:01:15', 1, '2019-12-17 10:01:22', 1, NULL, NULL);
+INSERT INTO public.soutenance_qualite_sup (id, qualite_id, libelle, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id) VALUES (4, 1, 'PROFESSEUR DES UNIVERSITES', '2019-12-17 11:54:12', 1446, '2019-12-17 11:54:12', 1446, NULL, NULL);
+INSERT INTO public.soutenance_qualite_sup (id, qualite_id, libelle, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id) VALUES (2, 2, 'DIRECTEUR DE RECHERCHE', '2019-12-17 11:26:10', 1446, '2019-12-17 11:26:10', 1446, NULL, NULL);
+INSERT INTO public.soutenance_qualite_sup (id, qualite_id, libelle, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id) VALUES (3, 1, 'PROFESSEUR DES UNIVERSITÉS', '2019-12-17 11:27:29', 1446, '2019-12-17 11:27:29', 1446, NULL, NULL);
 
 
 --
@@ -1798,8 +2086,8 @@ INSERT INTO public.type_validation (id, code, libelle) VALUES (42, 'RAPPORT_ACTI
 -- Data for Name: unicaen_alerte_alerte; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
-INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (4, 'ALERTE_MAINTENANCE', 'Maintenance à venir', '<p>L''application ESUP-SyGAL sera en maintenance donc indisponible aujourd''hui de 10h30 à 12h au plus tard.</p>', 'danger', 0, true);
 INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (3, 'ALERTE_FERMETURE_ESTIVALE', 'DEMANDE DE SOUTENANCE', '<p>En raison de la période estivale le délai de traitement de 2 mois est repoussé pendant la période de fermeture des services de l’établissement soit du 22/07 au 27/08/2023.</p>', 'danger', 0, true);
+INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (4, 'ALERTE_MAINTENANCE', 'Maintenance à venir', '<p>L''application ESUP-SyGAL sera en maintenance donc indisponible jeudi 14 mars de 14h à 16h.</p>', 'danger', 0, true);
 
 
 --
@@ -1811,6 +2099,11 @@ INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VAL
 INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (4, 'AVIS_RAPPORT_ACTIVITE_CODIR_THESE', 'Avis et validation électronique de la codirection de thèse', 'Point de vue de la codirection de thèse', 20);
 INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (5, 'AVIS_RAPPORT_ACTIVITE_DIR_UR', 'Avis et validation électronique de la direction de l''unité de recherche', 'Point de vue de la direction d''UR', 20);
 INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (2, 'AVIS_RAPPORT_ACTIVITE_DIR_ED', 'Avis et validation électronique de la direction de l''école doctorale', 'Point de vue de la Direction d''ED', 20);
+INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (6, 'AVIS_ADMISSION_DIR_THESE', 'Avis de la direction de thèse', 'Point de vue de la direction de thèse', 30);
+INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (7, 'AVIS_ADMISSION_CODIR_THESE', 'Avis de la codirection de thèse', 'Point de vue de la codirection de thèse', 30);
+INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (8, 'AVIS_ADMISSION_DIR_UR', 'Avis de la direction de l''unité de recherche', 'Point de vue de la direction d''UR', 30);
+INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (9, 'AVIS_ADMISSION_DIR_ED', 'Avis de la direction de l''école doctorale', 'Point de vue de la direction d''ED', 30);
+INSERT INTO public.unicaen_avis_type (id, code, libelle, description, ordre) VALUES (10, 'AVIS_ADMISSION_PRESIDENCE', 'Signature du dossier par la direction de l''établissement', 'Point de vue de la présidence de l''établissement d''inscription', 30);
 
 
 --
@@ -1822,6 +2115,10 @@ INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ord
 INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (4, 'AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF', 'Avis positif', true, 'icon-ok', 4, NULL);
 INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (5, 'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF', 'Avis réservé', false, 'icon-ko', 5, NULL);
 INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (3, 'AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET', 'Rapport incomplet', false, 'icon-ko', 3, NULL);
+INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (6, 'AVIS_ADMISSION_VALEUR_COMPLET', 'Dossier d''admission complet', true, 'icon-ok', 6, NULL);
+INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (7, 'AVIS_ADMISSION_VALEUR_INCOMPLET', 'Dossier d''admission incomplet', false, 'icon-ko', 7, NULL);
+INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (8, 'AVIS_ADMISSION_VALEUR_POSITIF', 'Avis positif', true, 'icon-ok', 8, NULL);
+INSERT INTO public.unicaen_avis_valeur (id, code, valeur, valeur_bool, tags, ordre, description) VALUES (9, 'AVIS_ADMISSION_VALEUR_NEGATIF', 'Avis réservé', false, 'icon-ko', 9, NULL);
 
 
 --
@@ -1840,6 +2137,20 @@ INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) V
 INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (10, 4, 5);
 INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (11, 5, 4);
 INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (12, 5, 5);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (13, 6, 7);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (14, 6, 8);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (15, 6, 9);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (16, 7, 7);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (17, 7, 8);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (18, 7, 9);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (19, 8, 7);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (20, 8, 8);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (21, 8, 9);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (22, 9, 7);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (23, 9, 8);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (24, 9, 9);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (25, 10, 8);
+INSERT INTO public.unicaen_avis_type_valeur (id, avis_type_id, avis_valeur_id) VALUES (26, 10, 9);
 
 
 --
@@ -1871,6 +2182,31 @@ INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, pa
 INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (23, 12, NULL, 'AVIS_RAPPORT_ACTIVITE_DIR_UR__AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF__PB_MOTIF', 'Motif', 'textarea', 23, false, true);
 INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (24, 11, NULL, 'AVIS_RAPPORT_ACTIVITE_DIR_UR__AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 24, false, false);
 INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (25, 12, NULL, 'AVIS_RAPPORT_ACTIVITE_DIR_UR__AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 25, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (26, 13, NULL, 'AVIS_ADMISSION_DIR_THESE__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_INFOS', 'Si le dossier d''admission est jugé incomplet, l''étudiant devra reprendre le circuit de signatures depuis le début...', 'information', 26, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (27, 13, NULL, 'AVIS_ADMISSION_DIR_THESE__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_MOTIF', 'Motif', 'textarea', 27, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (28, 15, NULL, 'AVIS_ADMISSION_DIR_THESE__AVIS_ADMISSION_VALEUR_NEGATIF__PB_MOTIF', 'Motif', 'textarea', 28, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (29, 13, NULL, 'AVIS_ADMISSION_DIR_THESE__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_COMMENTAIRES', 'Commentaires', 'textarea', 29, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (30, 14, NULL, 'AVIS_ADMISSION_DIR_THESE__AVIS_ADMISSION_VALEUR_POSITIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 30, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (31, 15, NULL, 'AVIS_ADMISSION_DIR_THESE__AVIS_ADMISSION_VALEUR_NEGATIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 31, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (32, 16, NULL, 'AVIS_ADMISSION_CODIR_THESE__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_INFOS', 'Si le dossier d''admission est jugé incomplet, l''étudiant devra reprendre le circuit de signatures depuis le début...', 'information', 32, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (33, 16, NULL, 'AVIS_ADMISSION_CODIR_THESE__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_MOTIF', 'Motif', 'textarea', 33, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (34, 18, NULL, 'AVIS_ADMISSION_CODIR_THESE__AVIS_ADMISSION_VALEUR_NEGATIF__PB_MOTIF', 'Motif', 'textarea', 34, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (35, 16, NULL, 'AVIS_ADMISSION_CODIR_THESE__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_COMMENTAIRES', 'Commentaires', 'textarea', 35, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (36, 19, NULL, 'AVIS_ADMISSION_DIR_UR__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_INFOS', 'Si le dossier d''admission est jugé incomplet, l''étudiant devra reprendre le circuit de signatures depuis le début...', 'information', 36, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (37, 19, NULL, 'AVIS_ADMISSION_DIR_UR__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_MOTIF', 'Motif', 'textarea', 37, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (38, 21, NULL, 'AVIS_ADMISSION_DIR_UR__AVIS_ADMISSION_VALEUR_NEGATIF__PB_MOTIF', 'Motif', 'textarea', 38, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (39, 19, NULL, 'AVIS_ADMISSION_DIR_UR__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_COMMENTAIRES', 'Commentaires', 'textarea', 39, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (40, 20, NULL, 'AVIS_ADMISSION_DIR_UR__AVIS_ADMISSION_VALEUR_POSITIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 40, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (41, 21, NULL, 'AVIS_ADMISSION_DIR_UR__AVIS_ADMISSION_VALEUR_NEGATIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 41, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (42, 22, NULL, 'AVIS_ADMISSION_DIR_ED__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_INFOS', 'Si le dossier d''admission est jugé incomplet, l''étudiant devra reprendre le circuit de signatures depuis le début...', 'information', 42, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (43, 22, NULL, 'AVIS_ADMISSION_DIR_ED__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_MOTIF', 'Motif', 'textarea', 43, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (44, 24, NULL, 'AVIS_ADMISSION_DIR_ED__AVIS_ADMISSION_VALEUR_NEGATIF__PB_MOTIF', 'Motif', 'textarea', 44, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (45, 22, NULL, 'AVIS_ADMISSION_DIR_ED__AVIS_ADMISSION_VALEUR_INCOMPLET__PB_COMMENTAIRES', 'Commentaires', 'textarea', 45, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (46, 23, NULL, 'AVIS_ADMISSION_DIR_ED__AVIS_ADMISSION_VALEUR_POSITIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 46, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (47, 24, NULL, 'AVIS_ADMISSION_DIR_ED__AVIS_ADMISSION_VALEUR_NEGATIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 47, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (48, 26, NULL, 'AVIS_ADMISSION_PRESIDENCE__AVIS_ADMISSION_VALEUR_NEGATIF__PB_MOTIF', 'Motif', 'textarea', 48, false, true);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (49, 25, NULL, 'AVIS_ADMISSION_PRESIDENCE__AVIS_ADMISSION_VALEUR_POSITIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 49, false, false);
+INSERT INTO public.unicaen_avis_type_valeur_complem (id, avis_type_valeur_id, parent_id, code, libelle, type, ordre, obligatoire, obligatoire_un_au_moins) VALUES (50, 26, NULL, 'AVIS_ADMISSION_PRESIDENCE__AVIS_ADMISSION_VALEUR_NEGATIF__PB_COMMENTAIRES', 'Commentaires', 'textarea', 50, false, false);
 
 
 --
@@ -1894,7 +2230,6 @@ INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle,
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (6, 1, 'DOC_REDACTION_ANGLAIS', 'Formulaire de demande de rédaction en anglais', NULL, 'String', NULL, 2400);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (7, 1, 'DOC_LABEL_EUROPEEN', 'Formulaire de demande de label europeen', NULL, 'String', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_LABEL_EUROPEEN', 2300);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (9, 1, 'NB_MIN_MEMBRE_JURY', 'Nombre minimal de membres dans le jury', NULL, 'Number', '4', 10);
-INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (10, 1, 'DOC_CONFIDENTIALITE', 'Formulaire de demande de confidentialité', NULL, 'String', 'https://sygal-test.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE', 2500);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (11, 1, 'RATIO_MIN_EXTERIEUR', 'Ratio minimal de membres extérieurs', NULL, 'String', '0.5', 600);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (12, 1, 'NB_MAX_MEMBRE_JURY', 'Nombre maximal de membres dans le jury', NULL, 'Number', '8', 20);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (13, 1, 'DOC_DELEGATION_SIGNATURE', 'Formulaire de délégation de signature', NULL, 'String', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DELEGATION_SIGNATURE', 2200);
@@ -1903,9 +2238,10 @@ INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle,
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (18, 4, 'SPEC_ANNEE_UNIV_DATE_DEBUT', 'Spécification de la date de début', 'Spécification de la date de début d''une année universitaire, *fonction de la date de bascule*', NULL, '01/11/%s 00:00:00', 9999);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (5, 1, 'EQUILIBRE_FEMME_HOMME', 'Équilibre Femme/Homme dans le jury', '<p>N''est que indicatif car ne peut &ecirc;tre <em>enforced</em> dans certaines disciplines.</p>', 'String', '0', 400);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (19, 4, 'SPEC_ANNEE_UNIV_DATE_FIN', 'Spécification de la date de fin', 'Spécification de la date de fin d''une année universitaire, *fonction de la date de bascule*', NULL, '31/10/%s 23:59:59', 9999);
-INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '200', 10);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (15, 3, 'CAMPAGNE_DEPOT_DEBUT', 'Jour et mois de début de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 01/04/N+1.', NULL, 'String', '04/05/N+1', 100);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (16, 3, 'CAMPAGNE_DEPOT_FIN', 'Jour et mois de fin de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 15/06/N+1.', NULL, 'String', '31/06/N+1', 200);
+INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (10, 1, 'DOC_CONFIDENTIALITE', 'Formulaire de demande de confidentialité', NULL, 'String', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE', 2500);
+INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '15', 10);
 
 
 --
@@ -1939,6 +2275,87 @@ INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name,
 INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (35, 'Etablissement#Libelle', NULL, 'etablissement', '__toString');
 INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (36, 'UniteRecherche#Libelle', NULL, 'unite-recherche', '__toString');
 INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (43, 'Url#SoutenancePresoutenance', NULL, 'Url', 'getSoutenancePresoutenance');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (44, 'Acteur#Denomination', '<p>Retourne la dénomination de l''acteur sous la forme  - Prénom Nom -</p>', 'acteur', 'getDenomination');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (45, 'Acteur#Etablissement', '<p>Retourne le libellé de l''établissement du co-encadrant</p>', 'acteur', 'getEtablissementAsLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (46, 'Acteur#Qualite', '<p>retourne la qualité de l''acteur (maître de conférence, directeur de recherche, ...)</p>', 'acteur', 'getQualite');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (48, 'Soutenance#DateRetourRapport', '<p>Affiche la date de retour des rapports</p>', 'soutenance', 'toStringDateRetourRapport');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (49, 'Url#PrerapportSoutenance', '<p>Adresse de téléchargement du pré-rapport de soutenance d''un rapporteur</p>', 'Url', 'getPrerapportSoutenance');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (50, 'Avis#Justification', NULL, 'Avis', 'getMotif');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (51, 'String#ToString', NULL, 'stringelement', 'getTexte');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (52, 'Role#getLibelle', NULL, 'role', 'getLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (53, 'Individu#getDenomination', NULL, 'individu', 'getNomComplet');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (54, 'Soutenance#Date', '<p>Retourne la date de soutenance inscrite dans la proposition</p>', 'soutenance', 'toStringDateSoutenance');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (55, 'Soutenance#Lieu', '<p>Retourne le lieu inscrit dans la proposition</p>', 'soutenance', 'toStringLieu');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (56, 'Soutenance#ModeSoutenance', '<p>Précise le caractère public ou huis clos</p>', 'soutenance', 'toStringPublicOuHuisClos');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (57, 'Url#ConvocationMembre', NULL, 'Url', 'getSoutenanceConvocationMembre');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (58, 'Url#ConvocationDoctorant', NULL, 'Url', 'getSoutenanceConvocationDoctorant');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (59, 'These#Encadrement', NULL, 'these', 'toStringEncadrement');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (60, 'Url#TableauPrerapports', NULL, 'Url', 'generateTablePrerapport');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (61, 'Soutenance#Adresse', NULL, 'soutenance', 'toStringAdresse');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (62, 'Url#Enquete', '<p>Ajoute le lien vers l''enquête</p>', 'Url', 'getUrlEnquete');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (63, 'Admission#Date', '<p>Retourne la date de création d''un dossier d''admission</p>', 'admission', 'getDateToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (64, 'Admission#Libelle', '', 'admission', '__toString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (65, 'AdmissionOperationAttenduNotification#Anomalies', '<p>Retourne les possibles anomalies rencontrées lors de la création d''une notification Operation Attendue</p>', 'anomalies', 'getAnomalies');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (66, 'AdmissionValidation#Auteur', '<p>Retourne l''auteur de la validation concernant un dossier d''admission</p>', 'admissionValidation', 'getAuteurToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (67, 'AdmissionValidation#Date', '<p>Retourne la date de la validation concernant un dossier d''admission</p>', 'admissionValidation', 'getDateToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (68, 'AdmissionValidation#Destructeur', '<p>Retourne le nom/prénom du destructeur de la validation concernant un dossier d''admission</p>', 'admissionValidation', 'getDestructeurToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (69, 'AdmissionAvis#Auteur', '<p>Retourne l''auteur de l''avis concernant un dossier d''admission</p>', 'admissionAvis', 'getAuteurToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (70, 'AdmissionAvis#Date', '<p>Retourne la date de l''avis concernant un dossier d''admission</p>', 'admissionAvis', 'getDateToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (71, 'AdmissionAvis#Destructeur', '<p>Retourne le nom/prénom du destructeur de l''avis concernant un dossier d''admission</p>', 'admissionAvis', 'getDestructeurToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (72, 'AdmissionAvis#Modificateur', '<p>Retourne le nom/prénom du modificateur de l''avis concernant un dossier d''admission</p>', 'admissionAvis', 'getModificateurToString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (73, 'Individu#Denomination', '', 'individu', 'getNomComplet');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (74, 'Url#Admission', '<p>Permet de récupérer l''url du dossier d''admission d''un étudiant</p>', 'Url', 'getAdmission');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (75, 'TypeValidation#Libelle', '', 'typeValidation', '__toString');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (76, 'AdmissionEtudiant#INE', '<p>Retourne le numéro INE de l''étudiant</p>', 'admissionEtudiant', 'getINE');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (77, 'AdmissionEtudiant#DenominationEtudiant', '<p>Retourne la dénomination de l''étudiant</p>', 'admissionEtudiant', 'getDenominationEtudiant');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (78, 'AdmissionEtudiant#DateNaissance', '<p>Retourne la date de naissance formatée de l''étudiant</p>', 'admissionEtudiant', 'getDateNaissanceFormat');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (79, 'AdmissionEtudiant#VilleNaissance', '<p>Retourne la ville de naissance de l''étudiant</p>', 'admissionEtudiant', 'getVilleNaissance');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (80, 'AdmissionEtudiant#PaysNaissance', '<p>Retourne le pays de naissance de l''étudiant</p>', 'admissionEtudiant', 'getPaysNaissanceLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (81, 'AdmissionEtudiant#Nationalite', '<p>Retourne la nationalité de l''étudiant</p>', 'admissionEtudiant', 'getNationaliteLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (82, 'AdmissionEtudiant#Adresse', '<p>Retourne l''adresse de l''étudiant</p>', 'admissionEtudiant', 'getAdresseLigne3Bvoie');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (83, 'AdmissionEtudiant#CodePostal', '<p>Retourne le code postal de l''adresse de l''étudiant</p>', 'admissionEtudiant', 'getAdresseCodePostal');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (84, 'AdmissionEtudiant#VilleEtudiant', '<p>Retourne la ville de l''étudiant</p>', 'admissionEtudiant', 'getAdresseCodeCommune');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (85, 'AdmissionEtudiant#NumeroTelephone', '<p>Retourne le numéro de téléphone de l''étudiant</p>', 'admissionEtudiant', 'getNumeroTelephone1');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (86, 'AdmissionEtudiant#MailEtudiant', '<p>Retourne le mail de l''étudiant</p>', 'admissionEtudiant', 'getCourriel');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (87, 'AdmissionEtudiant#SituationHandicap', '<p>Retourne la situation de l''handicap de l''étudiant</p>', 'admissionEtudiant', 'getSituationHandicapLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (88, 'AdmissionEtudiant#NiveauEtude', '<p>Retourne le niveau d''étude de l''étudiant</p>', 'admissionEtudiant', 'getNiveauEtudeInformations');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (89, 'AdmissionRecapitulatif#InfosDiplome', '<p>Retourne les informations concernant le diplôme de l''étudiant</p>', 'admissionRecapitulatif', 'getDiplomeIntituleInformationstoHtmlArray');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (90, 'AdmissionInscription#SpecialiteDoctorat', '<p>Retourne la spécialité du doctorat choisie par l''étudiant</p>', 'admissionInscription', 'getSpecialiteDoctoratLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (91, 'AdmissionInscription#ComposanteRattachement', '<p>Retourne la composante choisie pour le doctorat de l''étudiant</p>', 'admissionInscription', 'getComposanteRattachementLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (92, 'AdmissionInscription#EcoleDoctorale', '<p>Retourne l''école doctorale choisie pour le doctorat de l''étudiant</p>', 'admissionInscription', 'getEcoleDoctoraleLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (93, 'AdmissionInscription#UniteRecherche', '<p>Retourne l''unité de recherche choisie pour le doctorat de l''étudiant</p>', 'admissionInscription', 'getUniteRechercheLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (94, 'AdmissionInscription#EtablissementInscription', '<p>Retourne l''établissement d''inscription choisie pour le doctorat de l''étudiant</p>', 'admissionInscription', 'getEtablissementInscriptionLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (95, 'AdmissionInscription#DenominationDirecteurThese', '<p>Retourne la dénomination du directeur de thèse de l''étudiant</p>', 'admissionInscription', 'getDenominationDirecteurThese');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (96, 'AdmissionInscription#MailDirecteurThese', '<p>Retourne le mail du directeur de thèse</p>', 'admissionInscription', 'getEmailDirecteurThese');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (97, 'AdmissionInscription#FonctionDirecteurThese', '<p>Retourne la fonction du directeur de thèse</p>', 'admissionInscription', 'getFonctionDirecteurLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (98, 'AdmissionInscription#TitreThese', '<p>Retourne le titre provisoire de la thèse de l''étudiant</p>', 'admissionInscription', 'getTitreThese');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (99, 'AdmissionInscription#ConfidentialiteSouhaitee', '<p>Retourne la confidentialité voulue pour la thèse de l''étudiant</p>', 'admissionInscription', 'getConfidentialiteSouhaiteeLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (100, 'AdmissionInscription#CotutelleEnvisagee', '<p>Retourne si une cotutelle est envisagée pour la thèse de l''étudiant</p>', 'admissionInscription', 'getCotutelleEnvisageeLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (101, 'AdmissionInscription#CoDirectionDemandee', '<p>Retourne si une codirection est demandée pour la thèse de l''étudiant</p>', 'admissionInscription', 'getCoDirectionDemandeeLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (102, 'AdmissionInscription#UniteRechercheCoDirection', '<p>Retourne l''unité de recherche du co-directeur de thèse pour le doctorat de l''étudiant</p>', 'admissionInscription', 'getUniteRechercheCoDirecteurLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (103, 'AdmissionInscription#EtablissementRattachementCoDirection', '<p>Retourne l''établissement d''inscription du co-directeur de thèse pour le doctorat de l''étudiant</p>', 'admissionInscription', 'getEtablissementRattachementCoDirecteurLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (104, 'AdmissionInscription#FonctionCoDirecteurThese', '<p>Retourne la fonction du co-directeur de thèse</p>', 'admissionInscription', 'getFonctionCoDirecteurLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (105, 'AdmissionInscription#CoEncadrementEnvisage', '<p>Retourne si un co-encadrement est envisagé pour la thèse de l''étudiant</p>', 'admissionInscription', 'getCoEncadrementLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (106, 'AdmissionFinancement#ContratDoctoral', '<p>Retourne si un contrat doctoral est prévu pour la thèse de l''étudiant, et si oui l''employeur est retourné</p>', 'admissionFinancement', 'getContratDoctoralLibelle');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (107, 'AdmissionFinancement#DetailContratDoctoral', '<p>Retourne si les détails du contrat doctoral pour la thèse de l''étudiant</p>', 'admissionFinancement', 'getDetailContratDoctoral');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (108, 'AdmissionFinancement#TempsTravail', '<p>Retourne si les détails du temps de travail pour la thèse de l''étudiant</p>', 'admissionFinancement', 'getTempsTravailInformations');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (109, 'AdmissionFinancement#EstSalarie', '<p>Retourne si le doctorant sera salarié</p>', 'admissionFinancement', 'getEstSalarieInfos');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (110, 'AdmissionFinancement#StatutProfessionnel', '<p>Retourne si les détails du statut professionnel pour la thèse de l''étudiant</p>', 'admissionFinancement', 'getStatutProfessionnel');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (111, 'AdmissionFinancement#EtablissementLaboratoireRecherche', '<p>Retourne si l''établissement hébergeant le laboratoire de recherche</p>', 'admissionFinancement', 'getEtablissementLaboratoireRecherche');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (112, 'AdmissionRecapitulatif#Operations', '<p>Retourne les opérations accordées au dossier d''admission de l''étudiant</p>', 'admissionRecapitulatif', 'getOperationstoHtmlArray');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (113, 'AdmissionConventionFormationDoctorale#InfosCoDirecteur', '<p>Retourne les informations concernant le co-directeur du dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getCoDirectionInformationstoHtml');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (114, 'AdmissionConventionFormationDoctorale#InfosCoTutelle', '<p>Retourne les informations concernant la co-tutelle du dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getCoTutelleInformationstoHtml');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (115, 'AdmissionConventionFormationDoctorale#InfosConventionCollaboration', '<p>Retourne les informations concernant la convention de collaboration du dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getConventionCollaborationInformationstoHtml');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (116, 'AdmissionConventionFormationDoctorale#ResponsablesURDirecteurThese', '<p>Retourne les responsables de l''UR du directeur de thèse du dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getResponsablesURDirecteurtoHtml');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (117, 'AdmissionConventionFormationDoctorale#ResponsablesURCoDirecteurThese', '<p>Retourne les responsables de l''UR du co-directeur de thèse du dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getResponsablesURCoDirecteurtoHtml');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (118, 'AdmissionConventionFormationDoctorale#CalendrierPrevisionnel', '<p>Retourne les informations concernant le calendrier prévisionnel de la convention de formation doctorale du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getCalendrierProjetRecherche');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (119, 'AdmissionConventionFormationDoctorale#ModalitesEncadrement', '<p>Retourne les informations concernant les modalités d''encadrement, de suivi de la formation et d''avancement des recherches de la convention de formation doctorale du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getModalitesEncadrSuiviAvancmtRech');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (120, 'AdmissionConventionFormationDoctorale#ConditionsProjRech', '<p>Retourne les informations concernant les conditions matérielles de réalisation du projet de recherche et conditions de sécurité spécifiques de la convention de formation doctorale du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getConditionsRealisationProjRech');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (121, 'AdmissionConventionFormationDoctorale#ModalitesIntegrationUR', '<p>Retourne les informations concernant les modalités d''intégration dans l''unité ou l’équipe de recherche de la convention de formation doctorale du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getModalitesIntegrationUr');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (122, 'AdmissionConventionFormationDoctorale#PartenariatsProjThese', '<p>Retourne les informations concernant les Partenariats impliqués par le projet de thèse de la convention de formation doctorale du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getPartenariatsProjThese');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (123, 'AdmissionConventionFormationDoctorale#MotivationDemandeConfidentialite', '<p>Retourne les informations concernant le calendrier prévisionnel de la convention de collaboration du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getMotivationDemandeConfidentialite');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (124, 'AdmissionConventionFormationDoctorale#ProjetProDoctorant', '<p>Retourne les informations concernant le projet professionnel du doctorant de la convention de collaboration du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getProjetProDoctorant');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (125, 'AdmissionConventionFormationDoctorale#Operations', '<p>Retourne les opérations liées  à la convention de formations doctorale accordées au dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getOperationstoHtmlArray');
 
 
 --
@@ -1963,7 +2380,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p>Les séances de cette formation se tiendront :<br />VAR[Session#SeancesTable]</p>
 <p><br />Cordialement,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (22, 'DEMANDE_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique notifiant un·e futur·e rapporteur·e pour la signature de l''engagement d''impartialité.<br />Envoyé lors de l''appariement membre/acteur</p>', 'mail', 'Demande de signature de l''engagement d''impartialité de la thèse de VAR[Doctorant#Denomination]', '<p>-- Version française ---------------------------------------------------------------</p><p>Bonjour,</p><p>Afin de pouvoir devenir rapporteur de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong>, il est nécessaire de signer électroniquement l''engagement d''impartialité dans l''application <em>ESUP-SyGAL</em> :<strong> VAR[Url#RapporteurDashboard]</strong>.<br /><br />Vous accéderez ainsi à une page "index de la soutenance" listant les membres du jury.<br />Cliquez ensuite sur "accès à l’engagement d’impartialité".<br />Puis après avoir pris connaissance des conditions relatives à cet engagement, vous pourrez signer ou non cet engagement d’impartialité.<br />Si vous signez, vous pourrez alors télécharger le PDF du manuscrit de thèse.</p><p>Cordialement<br /><br />-- English version ------------------------------------------------------------------<br /><br />Dear Mrs/Mr,</p><p>Before being officially registered as an external referee for the PhD thesis presented by <strong>VAR[Doctorant#Denomination]</strong> entitled <strong>VAR[These#Titre]</strong>, you have to sign the "impartiality commitment" available in your dashborad : <strong>VAR[Url#RapporteurDashboard]</strong>.<br /><br />You will then be connected to a web page entitled "index of the PhD defense" listing the PhD jury members.<br />Click then on "access to the impartiality commitment".<br />Then, after reading the requirements regarding the impartiality commitment of an external referee, you sign it or not.<br />If you sign it, you will be able to download the PDF version of the PhD manuscript.</p><p>Best regards,</p><p>-- Justification ----------------------------------------------------------------------<br /><br />Vous avez reçu ce mail car :</p><ul><li>vous avez été désigné rapporteur pour la thèse de VAR[Doctorant#Denomination]</li><li>la signature a été annulée<br /><br /></li></ul>', NULL, 'Soutenance\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (23, 'SIGNATURE_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique envoyé vers les maisons du doctorat lors de la signature de l''engagement d''impartialité par un rapporteur</p>', 'mail', 'Signature de l''engagement d''impartialité de la thèse de VAR[Doctorant#Denomination] par VAR[Membre#Denomination]', '<p>Bonjour,</p><p><strong>VAR[Membre#Denomination]</strong> vient de signer l''engagement d''impartialité de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong>.</p><p>-- Justification ----------------------------------------------------------------------<br /><br />Vous avez reçu ce mail car :</p><ul><li>le rapporteeur VAR[Membre#Denomination] vient de signer l''engagement d''impartialité; </li><li>vous êtes un gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant . <br /><br /></li></ul>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (24, 'REFUS_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique envoyé lors du refus de l''engagement d''impartialité</p>', 'mail', 'Refus de l''engagement d''impartialité de la thèse de VAR[Doctorant#Denomination] par VAR[Membre#Denomination]', '<p>Bonjour,</p><p><strong>VAR[Membre#Denomination]</strong> vient de refuser l''engagement d''impartialité de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong>.</p><p>-- Justification ----------------------------------------------------------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>le rapporteur VAR[Membre#Denomination] vient de refuser de signer l''engagement d''impartialité;</li><li>vous êtes :<ul><li>soit un des acteurs directs de la thèse de VAR[Doctorant#Denomination],</li><li>soit un gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant.<br />            <br /><br /></li></ul></li></ul>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (25, 'ANNULATION_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique envoyé lors de l''annulation d''un engagement d''impartialité</p>', 'mail', 'Annulation de la signature de l''engagement d''impartialité de VAR[Membre#Denomination] pour la thèse de VAR[Doctorant#Denomination]', '<p>Bonjour,</p><p><br />Votre signature de l''engagement d''impartialité de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong> vient d''être annulée.</p> <p>-- Justification ----------------------------------------------------------------------</p> <p>Vous avez reçu ce mail car :</p><ul><li>vous avez signé l''engagement d''impartialité pour la thèse de VAR[Doctorant#Denomination];  </li><li>la signature a été annulée. </li></ul>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (26, 'SOUTENANCE_VALIDATION_ANNULEE', '<p>Annulation de la validation</p>', 'mail', 'Votre validation de la proposition de soutenance de VAR[Doctorant#Denomination] a été annulée', '<p>Bonjour,</p><p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL</p><p>Suite à la modification de la proposition de soutenance, votre validation (faite le VAR[Validation#Date]) a été annulée. Si la nouvelle proposition vous convient, veuillez valider la proposition de soutenance à nouveau.<br /><br />Pour consulter, les modifications faites connectez-vous à  ESUP SyGAL et visualisez la proposition de soutenance en utilisant le lien suivant : VAR[Url#SoutenanceProposition].</p><p><span style="text-decoration: underline;">NB :</span> La proposition de soutenance sera envoyée automatiquement à votre unité de recherche puis à votre école doctorale, une fois que tous les intervenants directs auront validé celle-ci (c.-à-d. doctorant, directeur et co-directeur(s)).<br /><br />-- Justification ----------------------------------------------------------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>vous avez validé la proposition de soutenance de VAR[Doctorant#Denomination] ;</li><li>une modification de la proposition a été faite ou demandée.</li></ul>', NULL, 'Soutenance\Provider\Template');
@@ -1974,6 +2390,9 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (1, 'FORMATION_INSCRIPTION_ENREGISTREE', '<p>Mail envoyé au doctorant·e lors d''une inscription à une session de formation</p>', 'mail', 'Validation de votre inscription à la session de formation VAR[Formation#Libelle]', '<p>Bonjour VAR[Doctorant#Denomination],</p>
 <p>Nous avons bien reçu votre demande d’inscription à la formation VAR[Formation#Libelle] se déroulant : <br />VAR[Session#SeancesTable]</p>
 <p><br />Cordialement,<br />VAR[Formation#Responsable]<br /><br style="background-color: #2b2b2b; color: #a9b7c6; font-family: ''JetBrains Mono'',monospace; font-size: 9,8pt;" /></p>', NULL, 'Formation\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (67, 'ADMISSION_AVIS_AJOUTE', '<p>Mail pour notifier qu''un avis a été ajouté au dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination] ', '<p>Bonjour,</p>
+           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Un avis a été ajouté au <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>', NULL, 'Admission\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (3, 'FORMATION_INSCRIPTION_LISTE_COMPLEMENTAIRE', NULL, 'mail', 'Vous êtes sur la liste complémentaire de la formation VAR[Formation#Libelle]', '<p>Bonjour VAR[Doctorant#Denomination],<br /><br />Vous êtes inscrit·e en <strong>liste complémentaire</strong> de la session de formation VAR[Formation#Libelle].<br />Vous êtes à la position VAR[Inscription#PositionComplementaire] sur cette liste.</p>
 <p><br />La session de formation se déroulera selon les dates suivantes :<br />VAR[Session#SeancesTable]<br />Si une place en liste principale se libère vous serez informé·e par l''application ESUP-SyGAL.<br /><br />Cordialement,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (6, 'FORMATION_SESSION_TERMINEE', NULL, 'mail', 'La session de formation VAR[Formation#Libelle] est maintenant terminée.', '<p>Bonjour VAR[Doctorant#Denomination],</p>
@@ -1993,8 +2412,395 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p> </p>
 <p> </p>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (41, 'FORMATION_SESSION_IMMINENTE_FORMATEUR', '<p>Courrier électronique envoyé aux formateur·trices lorsque la session est imminente</p>', 'mail', 'La session de formation VAR[Formation#Libelle] va bientôt débutée', '<p>Bonjour,</p> <p>Nous vous rappelons que la formation VAR[Formation#Libelle] dont vous êtes déclaré·e comme formateur·trice va bientôt débuter.<br /><br />Les séances de cette formation se tiendront :<br />VAR[Session#SeancesTable]</p> <p>Cordialement,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (42, 'VALIDATION_SOUTENANCE_AVANT_PRESOUTENANCE', '<p>Courrier électronique indiquant aux acteurs directs et aux structures que le dossiers est complet et par pour saisie en présoutenance</p>', 'mail', 'Validation de proposition de soutenance de VAR[Doctorant#Denomination]', '<p>Bonjour,</p><p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.<br /><br />La proposition de soutenance de thèse suivante a été validée par tous les acteurs et structures associées :</p><table><tbody><tr><th>Titre :</th><td>VAR[These#Titre]</td></tr><tr><th>Doctorant :</th><td>VAR[Doctorant#Denomination]</td></tr></tbody></table><p>Pour examiner cette proposition merci de vous rendre dans l''application ESUP-SyGAL : VAR[Url#SoutenanceProposition].</p><p>-----------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>la proposition de soutenance vient d''être validée par tous les acteurs directs et toutes les structures concernées ;</li><li>vous êtes soit :<ul><li>un des acteurs directs de la thèse de VAR[Doctorant#Denomination]</li><li>un·e responsable de l''école de doctorale gérant la thèse,</li><li>un·e responsable de l''unité de recherche encadrant la thèse,</li><li>un·e gestionnaire du bureau des doctorat de l''établissement d''inscription du doctorant. <br /><br /></li></ul></li></ul>', 'table { width:100%; } th { text-align:left; }', 'Soutenance\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (43, 'VALIDATION_SOUTENANCE_ENVOI_PRESOUTENANCE', '<p>Courrier électronique pour indiquer que la thèse peut début le circuit de présoutenance</p>', 'mail', 'Vous pouvez maintenant procéder au renseignement des informations liées à la soutenance de VAR[Doctorant#Denomination]', '<p>Bonjour,</p><p>La proposition de soutenance de la thèse suivante a été totalement validée :</p><table><tbody><tr><th>Titre :</th><td>VAR[These#Titre]</td></tr><tr><th>Doctorant :</th><td>VAR[Doctorant#Denomination]</td></tr></tbody></table><p>Vous pouvez maintenance procéder à la saisie des informations liées à la soutenance : VAR[Url#SoutenancePresoutenance]</p><p>---------------------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>la proposition de soutenance de thèse de VAR[Doctorant#Denomination] a été complètement validée </li><li>vous êtes gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant. </li></ul>', 'table { width:100%; } th { text-align:left; }', 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (44, 'COENCADREMENTS_JUSTIFICATIF', NULL, 'pdf', 'Justificatif de co-encadrements de VAR[Acteur#Denomination]', '<h1>Justificatif de co-encadrements</h1>
+<p>Ce document certifie que VAR[Acteur#Denomination], actuellement VAR[Acteur#Qualite] à VAR[Acteur#Etablissement], a assuré la fonction de co-encadrant sur pour les thèses suivantes :<br />###LISTING_THESE###</p>', NULL, 'These\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (43, 'VALIDATION_SOUTENANCE_ENVOI_PRESOUTENANCE', '<p>Courrier électronique pour indiquer que la thèse peut débuter le circuit de présoutenance</p>', 'mail', 'Vous pouvez maintenant procéder au renseignement des informations liées à la soutenance de VAR[Doctorant#Denomination]', '<p>Bonjour,</p>
+<p>La proposition de soutenance de la thèse suivante a été totalement validée :</p>
+<table>
+<tbody>
+<tr>
+<th>Titre :</th>
+<td>VAR[These#Titre]</td>
+</tr>
+<tr>
+<th>Doctorant :</th>
+<td>VAR[Doctorant#Denomination]</td>
+</tr>
+</tbody>
+</table>
+<p>Vous pouvez maintenance procéder à la saisie des informations liées à la soutenance : VAR[Url#SoutenancePresoutenance]</p>
+<p>---------------------------------</p>
+<p>Vous avez reçu ce mail car :</p>
+<ul>
+<li>la proposition de soutenance de thèse de VAR[Doctorant#Denomination] a été complètement validée</li>
+<li>vous êtes gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant.</li>
+</ul>', 'table { width:100%; } th { text-align:left; }', 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (42, 'VALIDATION_SOUTENANCE_AVANT_PRESOUTENANCE', '<p>Courrier électronique indiquant aux acteurs directs et aux structures que le dossiers est complet et part pour saisie en présoutenance</p>', 'mail', 'Validation de proposition de soutenance de VAR[Doctorant#Denomination]', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.<br /><br />La proposition de soutenance de thèse suivante a été validée par tous les acteurs et structures associées :</p>
+<table>
+<tbody>
+<tr>
+<th>Titre :</th>
+<td>VAR[These#Titre]</td>
+</tr>
+<tr>
+<th>Doctorant :</th>
+<td>VAR[Doctorant#Denomination]</td>
+</tr>
+</tbody>
+</table>
+<p>Pour examiner cette proposition merci de vous rendre dans l''application ESUP-SyGAL : VAR[Url#SoutenanceProposition].</p>
+<p>-----------------------</p>
+<p>Vous avez reçu ce mail car :</p>
+<ul>
+<li>la proposition de soutenance vient d''être validée par tous les acteurs directs et toutes les structures concernées ;</li>
+<li>vous êtes soit :
+<ul>
+<li>un des acteurs directs de la thèse de VAR[Doctorant#Denomination]</li>
+<li>un·e responsable de l''école de doctorale gérant la thèse,</li>
+<li>un·e responsable de l''unité de recherche encadrant la thèse,</li>
+<li>un·e gestionnaire du bureau des doctorat de l''établissement d''inscription du doctorant. <br /><br /></li>
+</ul>
+</li>
+</ul>', 'table { width:100%; } th { text-align:left; }', 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (48, 'SOUTENANCE_AVIS_FAVORABLE', NULL, 'mail', 'VAR[Acteur#Denomination] vient de rendre un avis favorable pour la thèse de VAR[Doctorant#Denomination]', '<p>Bonjour,</p>
+<p>Le rapporteur VAR[Acteur#Denomination] vient de rendre un avis favorable pour la thèse de VAR[Doctorant#Denomination] intitulée VAR[These#Titre].</p>
+<p>Vous pouvez consulter le rapport de pré-soutenance en allant sur la page de gestion de la soutenance VAR[Url#SoutenanceProposition] ou en utilisante le lien suivant : VAR[Url#PrerapportSoutenance]</p>
+<p>Vous avez reçu ce courrier électronique car :</p>
+<ul>
+<li>un avis favorable a été rendu par un rapporteur</li>
+<li>vous êtes soit :
+<ul>
+<li>un·e gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant</li>
+<li>un·e responsable de l''école doctorale gérant la thèse de VAR[Doctorant#Denomination]</li>
+<li>un·e responsable de l''unité de recherche accueillant la thèse de VAR[Doctorant#Denomination]</li>
+<li>une personne participant à la direction de la thèse de VAR[Doctorant#Denomination]</li>
+</ul>
+</li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (49, 'SOUTENANCE_AVIS_DEFAVORABLE', NULL, 'mail', 'VAR[Acteur#Denomination] vient de rendre un avis défavorable pour la thèse de VAR[Doctorant#Denomination]', '<p>Bonjour,</p>
+<p>Le rapporteur VAR[Acteur#Denomination] vient de rendre un avis défavorable pour la thèse de VAR[Doctorant#Denomination] intitulée VAR[These#Titre].<br />VAR[Acteur#Denomination] motive ce refus avec le justification suivante : VAR[Avis#Justification]</p>
+<p> </p>
+<p>Vous pouvez consulter le rapport de pré-soutenance en allant sur la page de gestion de la soutenance VAR[Url#SoutenanceProposition] ou en utilisante le lien suivant : VAR[Url#PrerapportSoutenance]</p>
+<p>Vous avez reçu ce courrier électronique car :</p>
+<ul>
+<li>un avis défavorable a été rendu par un rapporteur</li>
+<li>vous êtes soit :
+<ul>
+<li>un·e gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant</li>
+<li>un·e responsable de l''école doctorale gérant la thèse de VAR[Doctorant#Denomination]</li>
+<li>un·e responsable de l''unité de recherche accueillant la thèse de VAR[Doctorant#Denomination]</li>
+<li>une personne participant à la direction de la thèse de VAR[Doctorant#Denomination]</li>
+</ul>
+</li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (50, 'PROPOSITION_REFUS', '<p>Courrier électronique envoyé aux acteurs directs de la thèse lors du refus de la proposition</p>', 'mail', 'Votre proposition de soutenance a été réfusée', '<p>Bonjour,</p>
+<p>VAR[Individu#getDenomination] (VAR[Role#getLibelle] <em>VAR[Etablissement#Libelle]</em>) a refusé votre proposition de soutenance.<br />Le motif du refus est le suivant :</p>
+<table>
+<tbody>
+<tr>
+<td>VAR[String#ToString]</td>
+</tr>
+</tbody>
+</table>
+<p>Suite à ce refus toutes les validations associées à cette proposition ont été annulées.<br /><br />Vous avez reçu ce mail car :</p>
+<ul>
+<li>la proposition de soutenance de thèse de VAR[Doctorant#Denomination] a été refusée ;</li>
+<li>vous êtes un des acteurs directs de la thèse.<br /><br /></li>
+</ul>', 'td {border: 1px solid black;}', 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (51, 'SOUTENANCE_TOUS_AVIS_RENDUS', '<p>Courrier électronique vers les <em>aspects doctorals</em>  indiquant que tous les avis ont été rendus</p>', 'mail', 'Tous les avis de soutenance de la thèse de VAR[Doctorant#Denomination] ont été rendus.', '<p>Bonjour,</p>
+<p>Les rapporteurs de la thèse de VAR[Doctorant#Denomination] ont rendu leur rapport de pré-soutenance.</p>
+<p>Vous pouvez les consulter sur la page de gestion de la pré-soutenance de cette thèse : VAR[Url#SoutenancePresoutenance]<br /><br />Vous avez reçu ce mail car :</p>
+<ul>
+<li>tous les avis de soutenance de la thèse de VAR[Doctorant#Denomination] ont été rendus ;</li>
+<li>vous êtes gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant</li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (46, 'DEMANDE_RAPPORT_SOUTENANCE', '<p>Courrier électronique de demande du rapport de présoutenance à un·e rapporteur·trice</p>', 'mail', 'Demande de rapport de présoutenance pour la thèse de VAR[Doctorant#Denomination]', '<p><em>-- Version française -----------------------------------------------------------</em><br /><br />Bonjour,</p>
+<p>Vous venez d''être désigné comme rapporteur pour la thèse de VAR[Doctorant#Denomination] intitulée <strong>VAR[These#Titre]</strong>.</p>
+<p>Ce courrier électronique a pour but de vous rappeler que vous devez rendre votre avis de soutenance pour la date du <strong>VAR[Soutenance#DateRetourRapport]</strong>.<br />Pour rendre votre avis, connectez-vous à l''application ESUP-SyGAL en utilisant l''adresse suivante : VAR[Url#RapporteurDashboard].</p>
+<p>Si vous êtes favorable à cette soutenance, nous vous remercions d''indiquer, à la fin de votre rapport, la mention suivante : « Par conséquent, je suis favorable à la soutenance de thèse de VAR[Doctorant#Denomination] pour obtenir le grade de Docteur de l''VAR[Etablissement#Libelle] et de Normandie Université.</p>
+<p> Cordialement,</p>
+<p><em>--  English version -----------------------------------------------------------</em></p>
+<p><br />Dear Mrs/Mr,</p>
+<p>You have been appointed as an external referee for the PhD thesis presented by VAR[Doctorant#Denomination] entitled <strong>VAR[These#Titre]</strong>.</p>
+<p>This mail is a reminder that you have until <strong>VAR[Soutenance#DateRetourRapport]</strong> to submit your report.<br />To do so you can use the following link : VAR[Url#RapporteurDashboard].</p>
+<p>For these reasons, I am in favor of VAR[Doctorant#Denomination]''s thesis defense ; and thus for VAR[Doctorant#Denomination] to be able to claim the title of doctor from VAR[Etablissement#Libelle] and Normandie Université.</p>
+<p>Best regards,</p>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (52, 'SOUTENANCE_TOUS_AVIS_RENDUS_DIRECTION', '<p>Courrier électronique adressé aux encadrants d''une thèse lorsque tous les avis sont rendus.</p>', 'mail', 'Tous les avis de soutenance de la thèse de VAR[Doctorant#Denomination] ont été rendus.', '<p>Bonjour,</p>
+<p>Les rapporteurs de la thèse de VAR[Doctorant#Denomination] ont rendu leur rapport de pré-soutenance.</p>
+<p>Vous pouvez les consulter ceux-ci sur la page de la proposition de soutenance : VAR[Url#SoutenanceProposition]<br /><br />Vous avez reçu ce mail car :</p>
+<ul>
+<li>tous les avis de soutenance de la thèse de VAR[Doctorant#Denomination] ont été rendus ;</li>
+<li>vous êtes membre de la direction de la thèse de VAR[Doctorant#Denomination]. <br /><br /></li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (64, 'ADMISSION_COMMENTAIRES_AJOUTES', '<p>Notification lorsque le gestionnaire a ajouté des commentaires au dossier d''admission</p>', 'mail', 'Commentaires ajoutés à votre dossier d''admission', '<p>Bonjour, </p>
+<p style="font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px; background-color: #fdfcfa;">Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p><strong>Des commentaires ont été ajoutés</strong> par vos gestionnaires à votre dossier d''admission. </p>
+<p><span style="background-color: #fdfcfa; font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px;">Merci de prendre connaissance des commentaires en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</span><span style="background-color: #fdfcfa; font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px;"> </span></p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (53, 'DEMANDE_PRERAPPORT', '<p>Courrier électronique envoyé au rapport pour leur demander leur pré-rapport de soutenance</p>', 'mail', 'Demande de l''avis de soutenance de la thèse de VAR[Doctorant#Denomination]', '<p><em>-- Version française----------------------------------------------------</em><br /><br />Bonjour,</p>
+<p>Vous pouvez commencer à examiner les travaux thèse de <strong>VAR[Doctorant#Denomination]</strong> ayant pour titre VAR[These#Titre].</p>
+<p>Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours avant la date de soutenance, puis le déposer sur la plateforme ESUP-SyGAL à l’adresse suivante : VAR[Url#RapporteurDashboard].</p>
+<p>Si votre avis est négatif, pourriez-vous indiquer brièvement les raisons de ce choix puis déposer votre rapport.</p>
+<p><span style="text-decoration: underline;">Rappel :</span> <strong>Le rapport est attendu pour le VAR[Soutenance#DateRetourRapport].</strong><br />Au delà de cette date, vous ne pourrez plus rendre votre rapport.</p>
+<p>Cordialement,</p>
+<p><em>-- English version -----------------------------------------------------</em><br /><br />Dear Mrs/Mr,</p>
+<p>Since you have signed the "impartiality commitment", you can start the evaluation of the PhD thesis presented by <strong>VAR[Doctorant#Denomination]</strong>, entitled VAR[These#Titre].<br />Then, you must give your opinion about the PhD thesis and upload your signed PhD report at least 14 days before the date of the PhD defense at : VAR[Url#RapporteurDashboard].</p>
+<p>In case of a negative opinion, please indicate briefly the main reasons for the rejection and upload your signed PhD report.</p>
+<p><strong>Keep in mind that your report must be uploaded before VAR[Soutenance#DateRetourRapport].</strong><br />After the deadline, you won''t be able to upload your report.</p>
+<p>Best regards,</p>
+<p> </p>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (55, 'SOUTENANCE_CONVOCATION_DOCTORANT', NULL, 'mail', 'Convocation pour la soutenance de thèse de VAR[Doctorant#Denomination]', '<p>Bonjour,</p>
+<p>Par décision en date du VAR[Validation#Date], vous avez été autorisé·e à présenter en soutenance vos travaux en vue de l''obtention du diplôme : Doctorat en VAR[These#Discipline].<br /><br />La soutenance aura lieu le VAR[Soutenance#Date] à l''adresse suivante : <br />VAR[Soutenance#Adresse]<br /><br />La soutenance VAR[Soutenance#ModeSoutenance].<br /><br />Vous pouvez accéder aux pré-rapports de soutenance sur la page de la proposition de soutenance : VAR[Url#SoutenanceProposition]<br /><br />Nous vous prions d''agréer, l''expression de nos salutations distinguées.<br /><br /><span style="text-decoration: underline;">P.S.:</span> Vous pouvez obtenir une version imprimable de cette convocation à l''adresse suivante : VAR[Url#ConvocationDoctorant]<br /><br /></p>
+<p><em>-- Justification -------------------------------------------------------------------------------</em></p>
+<p>Vous avez reçu ce mail car :</p>
+<ul>
+<li>votre proposition de soutenance a été validé par la maison du doctorat; </li>
+<li>vous êtes le doctorant associé à la proposition de soutenance. </li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (23, 'SIGNATURE_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique envoyé vers les maisons du doctorat lors de la signature de l''engagement d''impartialité par un rapporteur</p>', 'mail', 'Signature de l''engagement d''impartialité de la thèse de VAR[Doctorant#Denomination] par VAR[Membre#Denomination]', '<p>Bonjour,</p>
+<p><strong>VAR[Membre#Denomination]</strong> vient de signer l''engagement d''impartialité de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong>.</p>
+<p>-- Justification ----------------------------------------------------------------------<br /><br />Vous avez reçu ce mail car :</p>
+<ul>
+<li>le rapporteur VAR[Membre#Denomination] vient de signer l''engagement d''impartialité;</li>
+<li>vous êtes un gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant . <br /><br /></li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (54, 'SOUTENANCE_FEU_VERT', NULL, 'mail', 'La soutenance de VAR[Doctorant#Denomination] a été acceptée par votre établissement.', '<p>Bonjour,</p>
+<p>La soutenance de VAR[Doctorant#Denomination] a été acceptée par votre établissement.<br />Conformément aux informations que vous avez fournies celle-ci se tiendra le VAR[Soutenance#Date] dans VAR[Soutenance#Lieu].</p>
+<p>Vous pouvez consulter les rapports de pré-soutenance en bas de la page de la proposition de soutenance : VAR[Url#SoutenanceProposition]</p>
+<p><em>-- Justification ---------------------------------------------------------------------------</em></p>
+<p>Vous avez reçu ce mail car :</p>
+<ul>
+<li>la maison du doctorat vient de donner son feu vert pour la soutenance</li>
+<li>vous êtes soit :<br />
+<ul>
+<li>un·e acteur·trice direct·e de la thèse de  VAR[Doctorant#Denomination] ;</li>
+<li>un·e responsable de l''école de doctorale gérant la thèse ;</li>
+<li>un·e responsable de l''unité de recherche encadrant la thèse.</li>
+</ul>
+</li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (56, 'SOUTENANCE_CONVOCATION_MEMBRE', NULL, 'mail', 'Convocation pour la soutenance de thèse de VAR[Doctorant#Denomination]', '<p>Bonjour,</p>
+<p>Par décision en date du VAR[Validation#Date], le chef de l''établissement VAR[Etablissement#Libelle] vous a désigné·e pour participer au jury devant examiner les travaux de VAR[Doctorant#Denomination] en vue de l''obtention du diplôme : Doctorat en VAR[These#Discipline].</p>
+<p>Le titre des travaux est : VAR[These#Titre]<br /><br /><br />Les travaux sont dirigés par VAR[These#Encadrement]</p>
+<p>La soutenance aura lieu le VAR[Soutenance#Date] à l''adresse suivante :<br />VAR[Soutenance#Adresse]</p>
+<p>La soutenance est encadrée par VAR[Soutenance#ModeSoutenance].</p>
+<p>Vous pouvez accéder aux rapports de pré-soutenance grâce aux liens suivants :<br />VAR[Url#TableauPrerapports]<br /><br />Je vous prie d''agréer, l''expression de mes salutations distinguées.<br /><br />P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l''adresse suivante : VAR[Url#ConvocationMembre]<br /><br /><em>-- Justification -----------------------------------------------------------------</em></p>
+<p>Vous avez reçu ce mail car :</p>
+<ul>
+<li>la proposition de soutenance de VAR[Doctorant#Denomination] a été validée; </li>
+<li>vous avez été désigné comme membre du jury pour la thèse de VAR[Doctorant#Denomination].</li>
+</ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (65, 'ADMISSION_NOTIFICATION_DOSSIER_COMPLET', '<p>Mail pour notifier l''étudiant que son dossier est complet</p>', 'mail', 'Votre dossier d''admission est complet', '<p>Bonjour, </p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Votre dossier d''admission est noté comme <strong>complet</strong> par votre gestionnaire.</p>
+<p>Vous pouvez dès à présent faire votre attestation sur l''honneur en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (66, 'ADMISSION_NOTIFICATION_DOSSIER_INCOMPLET', '<p>Mail pour notifier l''étudiant que son dossier est incomplet</p>', 'mail', 'Votre dossier d''admission est incomplet', '<p>Bonjour, </p>
+           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Votre dossier d''admission est noté comme <strong>incomplet</strong> par votre gestionnaire.</p>
+           <p>Veuillez prendre connaissance des commentaires ajoutés à votre dossier, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (47, 'CONNEXION_RAPPORTEUR', '<p>Courrier électronique envoyé aux rapporteur·trices  pour la connexion à SyGAL</p>', 'mail', 'Connexion en tant que rapporteur de la thèse de VAR[Doctorant#Denomination]', '<p><em>-- Version française----------------------------------------------------</em><br /><br />Bonjour,</p>
+<p>Vous venez d''être désigné comme rapporteur pour la thèse de VAR[Doctorant#Denomination] intitulée <strong>VAR[These#Titre].</strong> Afin de pouvoir vous connecter à l''application ESUP-SyGAL et ainsi pouvoir rendre votre avis de pré-soutenance, vous pouvez utiliser l''adresse suivante : VAR[Url#RapporteurDashboard].<br /><br />Vous avez jusqu''au <strong>VAR[Soutenance#DateRetourRapport]</strong> pour effectuer ce dépôt.</p>
+<p>Si vous êtes favorable à cette soutenance, nous vous remercions d''indiquer, à la fin de votre rapport, la mention suivante : « Par conséquent, je suis favorable à la soutenance de thèse de VAR[Doctorant#Denomination] pour obtenir le grade de Docteur de l''VAR[Etablissement#Libelle] et de Normandie Université.</p>
+<p> <br />Cordialement,</p>
+<p><br /><em>-- English version -----------------------------------------------------</em><br /><br />Dear Mrs/Mr,</p>
+<p>You have been appointed as an external referee for the PhD thesis presented by VAR[Doctorant#Denomination] entitled <strong>VAR[These#Titre]</strong>. In order to have access to ESUP-SyGAL  web-based application for submitting your report, you can use the following link : VAR[Url#RapporteurDashboard].</p>
+<p>You have until the <strong>VAR[Soutenance#DateRetourRapport]</strong> to upload your report.</p>
+<p>For these reasons, I am in favor of VAR[Doctorant#Denomination]''s thesis defense ; and thus for VAR[Doctorant#Denomination] to be able to claim the title of doctor from VAR[Etablissement#Libelle] and Normandie Université.<br /><br /></p>
+<p>Best regards,<br /><br /><br /></p>
+<p> </p>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (57, 'ADMISSION_OPERATION_ATTENDUE', '<p>Mail pour notifier les acteurs de la prochaine opération attendue du dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination]', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL. </p>
+<p><em>VAR[AdmissionOperationAttenduNotification#Anomalies]</em></p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> est en attente de l''opération suivante de votre part : <strong>VAR[TypeValidation#Libelle]</strong>.</p>
+<p>Merci de vous connecter sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</p>
+<p><strong>Note importante : une fois connecté, pensez à vérifier le rôle que vous endossez (en cliquant sur votre nom en haut à droite des pages de l''application) et le cas échéant à sélectionner celui permettant de réaliser l''opération attendue.</strong></p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (58, 'ADMISSION_VALIDATION_AJOUTEE', '<p>Mail pour notifier qu''une validation a été ajoutée au dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination] ', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionValidation#Auteur], le VAR[AdmissionValidation#Date]</p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (59, 'ADMISSION_NOTIFICATION_GESTIONNAIRE', '<p>Envoi d''un mail à l''initiative de l''étudiant, afin de notifier le(s) gestionnaire(s) que le dossier est prêt à être vérifié</p>', 'mail', 'La saisie du dossier d''admission de VAR[Individu#Denomination] est terminée', '<p>Bonjour,</p>
+<p>VAR[Individu#Denomination] a terminé la saisie de son dossier d''admission.</p>
+<p>Merci de prendre connaissance des informations saisies en vous connectant sur la plateforme ESUP-SyGAL via le lien : VAR[Url#Admission].</p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (60, 'ADMISSION_VALIDATION_SUPPRIMEE', '<p>Mail pour notifier qu''une validation a été supprimée du dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination] dévalidé', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>La <strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionValidation#Date] a été <strong>annulée </strong>VAR[AdmissionValidation#Destructeur]</p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (61, 'ADMISSION_NOTIFICATION_DECLARATION_DOSSIER_INCOMPLET', '<p>Notification lorsque qu''un avis émis est ''Dossier incomplet'' lors du circuit de signatures du dossier d''admission</p>', 'mail', 'Le dossier d''admission de VAR[Individu#Denomination] est incomplet', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été déclaré comme <strong>incomplet</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date].</p>
+<p>Cela a pour conséquence de supprimer l''intégralité des validations préalablement effectuées.</p>
+<p>Veuillez prendre connaissance de cette déclaration, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (62, 'ADMISSION_CONVENTION_FORMATION_DOCTORALE', '<p>Convention de formation doctorale appartenant à un dossier d''admission</p>', 'pdf', 'Convention de formation doctorale de VAR[Individu#Denomination]', '<h1 style="text-align: center;">Convention de formation doctorale</h1>
+<h1 style="text-align: center;">de VAR[Individu#Denomination]</h1>
+<p> </p>
+<p><strong>Entre</strong> VAR[AdmissionEtudiant#DenominationEtudiant]<br /><strong>né le</strong> VAR[AdmissionEtudiant#DateNaissance]<br /><strong>à</strong> VAR[AdmissionEtudiant#VilleNaissance], VAR[AdmissionEtudiant#PaysNaissance] (VAR[AdmissionEtudiant#Nationalite])<br /><strong>ayant pour adresse</strong> VAR[AdmissionEtudiant#Adresse] VAR[AdmissionEtudiant#CodePostal], VAR[AdmissionEtudiant#VilleEtudiant]<br /><strong>Mail</strong> : VAR[AdmissionEtudiant#MailEtudiant]</p>
+<p><strong>ci-après dénommé le Doctorant</strong></p>
+<p><strong>Et</strong> VAR[AdmissionInscription#DenominationDirecteurThese], directeur(-trice) de thèse<br /><strong>Fonction</strong> : VAR[AdmissionInscription#FonctionDirecteurThese]<br /><strong>Unité de recherche </strong>: VAR[AdmissionInscription#UniteRecherche]<br /><strong>Établissement de rattachement</strong> : VAR[AdmissionInscription#EtablissementInscription]<br /><strong>Mail</strong> : VAR[AdmissionInscription#MailDirecteurThese]</p>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosCoDirecteur]</p>
+<p>- Vu l’article L612-7 du Code de l’éducation, Vu les articles L412-1 et L412-2 du Code de la recherche,</p>
+<p>- Vu l’arrêté du 25 mai 2016 fixant le cadre national de la formation et les modalités conduisant à la délivrance du diplôme national de doctorat, modifié par l’arrêté du 26 août 2022,</p>
+<p>- Vu la charte du doctorat dans le cadre de la délivrance conjointe du doctorat entre la ComUE Normandie Université et les établissements d’inscription co-accrédités en date du 1er septembre 2023, </p>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosCoTutelle]</p>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosConventionCollaboration]</p>
+<p>Il est établi la convention de formation doctorale suivante. Cette convention peut être modifiée par avenant autant de fois que nécessaire pendant le doctorat.</p>
+<h3><strong>Article 1 - Objet de la convention de formation doctorale</strong></h3>
+<p>La présente convention de formation, signée à la première inscription par le Doctorant, par le (ou les) (co)Directeur(s) de Thèse et, le cas échéant, par le(s) co-encadrant(s) de thèse, fixe les conditions de suivi et d''encadrement de la thèse, sous la responsabilité de l’VAR[AdmissionInscription#EtablissementInscription] (établissement d’inscription), établissement de préparation du doctorat. En cas de besoin, la convention de formation doctorale est révisable annuellement par un avenant à la convention initiale.</p>
+<p>Les règles générales en matière de signature des travaux issus de la thèse, de confidentialité et de propriété intellectuelle sont précisées dans la Charte du doctorat adoptée par Normandie Université et l’VAR[AdmissionInscription#EtablissementInscription] (établissement d’inscription), également signée à la première inscription, par le Doctorant et le (ou les) Directeur(s) de Thèse.</p>
+<p><strong>Titre de la thèse </strong></p>
+<p>VAR[AdmissionInscription#TitreThese]</p>
+<p><strong>Spécialité du diplôme</strong></p>
+<p>VAR[AdmissionInscription#SpecialiteDoctorat]</p>
+<p><strong>Financement</strong></p>
+<p>VAR[AdmissionFinancement#ContratDoctoral]</p>
+<p><strong>Établissement d''inscription du doctorant</strong></p>
+<p>VAR[AdmissionInscription#EtablissementInscription]</p>
+<p><strong>École doctorale</strong></p>
+<p>VAR[AdmissionInscription#EcoleDoctorale]</p>
+<p><strong>Temps de travail du Doctorat mené à</strong> : VAR[AdmissionFinancement#TempsTravail]</p>
+<p><strong>Statut professionnel </strong>: VAR[AdmissionFinancement#StatutProfessionnel]</p>
+<h3><strong>Article 2 – Laboratoire d’accueil</strong></h3>
+<p>Le doctorant réalise sa thèse au sein de :</p>
+<ul>
+<li style="font-weight: 400; text-align: start;">Unité d''accueil (UMR, U INSERM, UR, Laboratoire privé...) : VAR[AdmissionInscription#UniteRecherche]</li>
+<li style="font-weight: 400; text-align: start;">Directeur de l''unité (Nom, Prénom, coordonnées téléphoniques et courriel) : VAR[AdmissionConventionFormationDoctorale#ResponsablesURDirecteurThese]</li>
+</ul>
+<p>Et (en cas de co-tutelle ou co-direction de thèse) :</p>
+<ul>
+<li style="font-weight: 400; text-align: start;">Unité d''accueil (EA, UMR, U INSERM, UR, Laboratoire privé …) : VAR[AdmissionInscription#UniteRechercheCoDirection]</li>
+<li style="font-weight: 400; text-align: start;">Directeur de l''unité (Nom, Prénom, coordonnées téléphoniques et courriel) : VAR[AdmissionConventionFormationDoctorale#ResponsablesURCoDirecteurThese]</li>
+</ul>
+<h3><strong>Article 3 - Méthodes et Moyens</strong></h3>
+<p><strong>3-1 Calendrier prévisionnel du projet de recherche</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#CalendrierPrevisionnel]</p>
+<p><strong>3-2 Modalités d''encadrement, de suivi de la formation et d''avancement des recherches du doctorant</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#ModalitesEncadrement]</p>
+<p><strong>3-3 Conditions matérielles de réalisation du projet de recherche et conditions de sécurité spécifiques si nécessaire</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#ConditionsProjRech]</p>
+<p><strong>3-4 Modalités d''intégration dans l''unité ou l’équipe de recherche</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#ModalitesIntegrationUR]</p>
+<p><strong>3-5 Partenariats impliqués par le projet de thèse</strong></p>
+<p>VAR[AdmissionConventionFormationDoctorale#PartenariatsProjThese]</p>
+<h3><strong>Article 4 - Confidentialité des travaux de recherche</strong></h3>
+<p>Caractère confidentiel des travaux :</p>
+<p>VAR[AdmissionInscription#ConfidentialiteSouhaitee]</p>
+<p>Si oui, motivation de la demande de confidentialité par le doctorant et la direction de thèse:</p>
+<p>VAR[AdmissionConventionFormationDoctorale#MotivationDemandeConfidentialite]</p>
+<h3><strong>Article 5 - Projet professionnel du doctorant</strong></h3>
+<p>VAR[AdmissionConventionFormationDoctorale#ProjetProDoctorant]</p>
+<p> </p>
+<h2>Validations accordées à la convention de formation doctorale</h2>
+<p>VAR[AdmissionConventionFormationDoctorale#Operations]</p>', 'table { border-collapse: collapse;  width: 100%;  } th, td { border: 1px solid #000; padding: 8px;  }body{font-size: 9pt;}.pas_valeur_avis_renseigne { background-color: #dddddd;} p{padding:unset}', 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (63, 'ADMISSION_RECAPITULATIF', NULL, 'pdf', 'Récapitulatif du dossier d''admission de VAR[Individu#Denomination]', '<h1 style="text-align: center;">Récapitulatif du dossier d''admission</h1>
+<h1 style="text-align: center;">de VAR[Individu#Denomination]</h1>
+<h2>Étudiant</h2>
+<h3>Informations concernant l''étudiant</h3>
+<table style="height: 125px; width: 929px;">
+<tbody>
+<tr>
+<td style="width: 163.5px;"><strong>Numéro I.N.E :</strong></td>
+<td style="width: 285.5px;">VAR[AdmissionEtudiant#INE]</td>
+<td style="width: 145px;"><strong> </strong></td>
+<td style="width: 303px;"> </td>
+</tr>
+<tr>
+<td style="width: 163.5px;"><strong>Étudiant :</strong></td>
+<td style="width: 285.5px;">VAR[AdmissionEtudiant#DenominationEtudiant]</td>
+<td style="width: 145px;"><strong>Date de naissance :</strong></td>
+<td style="width: 303px;">VAR[AdmissionEtudiant#DateNaissance]</td>
+</tr>
+<tr>
+<td style="width: 163.5px;"><strong>Ville de naissance :</strong></td>
+<td style="width: 285.5px;">VAR[AdmissionEtudiant#VilleNaissance]</td>
+<td style="width: 145px;"><strong>Pays de naissance :</strong></td>
+<td style="width: 303px;">VAR[AdmissionEtudiant#PaysNaissance]</td>
+</tr>
+<tr>
+<td style="width: 163.5px;"><strong>Nationalité :</strong></td>
+<td style="width: 285.5px;">VAR[AdmissionEtudiant#Nationalite]</td>
+<td style="width: 145px;"><strong>Adresse :</strong></td>
+<td style="width: 303px;">VAR[AdmissionEtudiant#Adresse]</td>
+</tr>
+<tr>
+<td style="width: 163.5px;"><strong>Code postal :</strong></td>
+<td style="width: 285.5px;">VAR[AdmissionEtudiant#CodePostal]</td>
+<td style="width: 145px;"><strong>Ville :</strong></td>
+<td style="width: 303px;">VAR[AdmissionEtudiant#VilleEtudiant]</td>
+</tr>
+<tr>
+<td style="width: 163.5px;"><strong>Numéro de téléphone :</strong></td>
+<td style="width: 285.5px;">VAR[AdmissionEtudiant#NumeroTelephone]</td>
+<td style="width: 145px;"><strong>Mail :</strong></td>
+<td style="width: 303px;">VAR[AdmissionEtudiant#MailEtudiant]</td>
+</tr>
+</tbody>
+</table>
+<p>Etes-vous en situation de handicap ? VAR[AdmissionEtudiant#SituationHandicap]</p>
+<h3>Niveau permettant l''accès au doctorat</h3>
+<p>VAR[AdmissionEtudiant#NiveauEtude] </p>
+<p>VAR[AdmissionRecapitulatif#InfosDiplome]</p>
+<h2>Inscription </h2>
+<h3>Informations concernant son inscription demandée</h3>
+<ul>
+<li><strong>Spécialité d''inscription :</strong> VAR[AdmissionInscription#SpecialiteDoctorat]</li>
+<li><strong>Composante de rattachement : </strong>VAR[AdmissionInscription#ComposanteRattachement]</li>
+<li><strong>École Doctorale :</strong> VAR[AdmissionInscription#EcoleDoctorale]</li>
+<li><strong>Unité de recherche :</strong> VAR[AdmissionInscription#UniteRecherche]</li>
+<li><strong>Établissement d''inscription</strong> : VAR[AdmissionInscription#EtablissementInscription] </li>
+<li><strong>Directeur(-trice) de thèse :</strong> VAR[AdmissionInscription#DenominationDirecteurThese]
+<ul>
+<li><strong>Fonction du directeur(-trice) de thèse :</strong> VAR[AdmissionInscription#FonctionDirecteurThese]</li>
+</ul>
+</li>
+<li><strong>Titre provisoire de la thèse :</strong> VAR[AdmissionInscription#TitreThese]</li>
+</ul>
+<h3>Spéciﬁcités envisagées concernant son inscription</h3>
+<ul>
+<li><strong>Conﬁdentialité souhaitée :</strong> VAR[AdmissionInscription#ConfidentialiteSouhaitee]</li>
+<li><strong>Cotutelle envisagée :</strong> VAR[AdmissionInscription#CotutelleEnvisagee]</li>
+<li><strong>Codirection demandée :</strong> VAR[AdmissionInscription#CoDirectionDemandee]
+<ul>
+<li><strong>Si oui, fonction du codirecteur(-trice) de thèse :</strong> VAR[AdmissionInscription#FonctionCoDirecteurThese]</li>
+</ul>
+</li>
+<li><strong>Co-encadrement envisagé :</strong> VAR[AdmissionInscription#CoEncadrementEnvisage]</li>
+</ul>
+<h2>Financement</h2>
+<p><strong>Avez-vous un contrat doctoral</strong> <strong>?</strong> VAR[AdmissionFinancement#ContratDoctoral]</p>
+<p><strong>Si oui, détails du contrat doctoral</strong> : VAR[AdmissionFinancement#DetailContratDoctoral]</p>
+<p><strong>Temps de travail du Doctorat mené à</strong> : VAR[AdmissionFinancement#TempsTravail]</p>
+<p><strong>Êtes-vous salarié ?</strong> VAR[AdmissionFinancement#EstSalarie]</p>
+<ul>
+<li><strong>Si oui, Statut professionnel </strong>: VAR[AdmissionFinancement#StatutProfessionnel]</li>
+<li><strong>Si oui, Établissement hébergeant le laboratoire de recherche</strong> :  VAR[AdmissionFinancement#EtablissementLaboratoireRecherche]</li>
+</ul>
+<p> </p>
+<h2>Validations et Avis accordés au dossier d''admission</h2>
+<p>VAR[AdmissionRecapitulatif#Operations]</p>
+<h2>Validation par la direction de l''établissement</h2>
+<ul>
+<li>Favorable</li>
+<li>Défavorable
+<ul>
+<li>Motif du refus :</li>
+</ul>
+</li>
+</ul>
+<p> </p>
+<p> </p>
+<p>Fait à ____________________, le ________________,</p>
+<p>Signature de VAR[String#ToString]</p>', 'table { border-collapse: collapse;  width: 100%;  } th, td { border: 1px solid #000; padding: 8px;  }body{font-size: 9pt;}.pas_valeur_avis_renseigne { background-color: #dddddd;}', 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (68, 'ADMISSION_AVIS_MODIFIE', '<p>Mail pour notifier qu''un avis a été modifié du dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination]', '<p>Bonjour,</p>
+           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>L''<strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionAvis#Date] a été modifié<strong> </strong>VAR[AdmissionAvis#Modificateur]</p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (69, 'ADMISSION_AVIS_SUPPRIME', '<p>Mail pour notifier qu''un avis a été supprimé du dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination]', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>L''<strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionAvis#Date] a été <strong>supprimé </strong>VAR[AdmissionAvis#Destructeur]</p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (70, 'ADMISSION_DERNIERE_VALIDATION_AJOUTEE', '<p>Mail pour notifier que la dernière validation a été ajoutée au dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination] ', '<p>Bonjour,</p>
+           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>
+<p>Le circuit de signature de votre dossier est maintenant terminé. </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (71, 'PROPOSITION_SUPPRESSION', '<p>Suppression des informations concernant la proposition de soutenance</p>', 'mail', 'Votre proposition de soutenance a été supprimée', '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL</p>
+<p>Votre proposition de soutenance vient d''être <strong>supprimée.</strong></p>
+<p>Veuillez vous rapprocher de la/le gestionnaire de votre école doctorale afin d''avoir plus d''informations à ce sujet.</p>', NULL, 'Soutenance\Provider\Template');
 
 
 --
@@ -2038,10 +2844,24 @@ INSERT INTO public.wf_etape (id, code, ordre, chemin, obligatoire, route, libell
 
 
 --
+-- Name: admission_type_validation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
+--
+
+SELECT pg_catalog.setval('public.admission_type_validation_id_seq', 8, true);
+
+
+--
 -- Name: categorie_privilege_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.categorie_privilege_id_seq', 5119, true);
+SELECT pg_catalog.setval('public.categorie_privilege_id_seq', 5159, true);
+
+
+--
+-- Name: discipline_sise_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
+--
+
+SELECT pg_catalog.setval('public.discipline_sise_id_seq', 47, true);
 
 
 --
@@ -2062,21 +2882,21 @@ SELECT pg_catalog.setval('public.formation_enquete_question_id_seq', 15, true);
 -- Name: privilege_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.privilege_id_seq', 1079, true);
+SELECT pg_catalog.setval('public.privilege_id_seq', 1259, true);
 
 
 --
 -- Name: unicaen_avis_type_valeur_complem_ordre_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.unicaen_avis_type_valeur_complem_ordre_seq', 25, true);
+SELECT pg_catalog.setval('public.unicaen_avis_type_valeur_complem_ordre_seq', 50, true);
 
 
 --
 -- Name: unicaen_avis_valeur_ordre_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.unicaen_avis_valeur_ordre_seq', 5, true);
+SELECT pg_catalog.setval('public.unicaen_avis_valeur_ordre_seq', 9, true);
 
 
 --
@@ -2097,14 +2917,14 @@ SELECT pg_catalog.setval('public.unicaen_parametre_parametre_id_seq', 19, true);
 -- Name: unicaen_renderer_macro_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.unicaen_renderer_macro_id_seq', 43, true);
+SELECT pg_catalog.setval('public.unicaen_renderer_macro_id_seq', 125, true);
 
 
 --
 -- Name: unicaen_renderer_template_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.unicaen_renderer_template_id_seq', 43, true);
+SELECT pg_catalog.setval('public.unicaen_renderer_template_id_seq', 71, true);
 
 
 --
