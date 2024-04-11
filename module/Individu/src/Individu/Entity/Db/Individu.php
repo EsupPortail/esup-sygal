@@ -272,7 +272,7 @@ class Individu implements
             $this->getEmailProComplement() :
             $this->email;
 
-        if ($email === null || trim($this->email) === '') {
+        if ($email === null || trim($email) === '') {
             return null;
         }
 
