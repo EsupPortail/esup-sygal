@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.5 (Debian 15.5-1.pgdg120+1)
+-- Dumped from database version 15.5 (Debian 15.5-0+deb12u1)
 -- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
@@ -723,14 +723,6 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
--- Name: region region_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.region
-    ADD CONSTRAINT region_pkey PRIMARY KEY (id);
-
-
---
 -- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -1083,11 +1075,19 @@ ALTER TABLE ONLY public.unicaen_parametre_parametre
 
 
 --
--- Name: unite_domaine_linker unite_domaine_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: unite_domaine_linker unite_domaine_linker_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_domaine_linker
-    ADD CONSTRAINT unite_domaine_linker_pkey PRIMARY KEY (unite_id, domaine_id);
+    ADD CONSTRAINT unite_domaine_linker_pk PRIMARY KEY (id);
+
+
+--
+-- Name: unite_domaine_linker unite_domaine_linker_pk_2; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unite_domaine_linker
+    ADD CONSTRAINT unite_domaine_linker_pk_2 UNIQUE (unite_id, domaine_id);
 
 
 --
@@ -6188,6 +6188,14 @@ ALTER TABLE ONLY public.unicaen_parametre_parametre
 
 
 --
+-- Name: unite_domaine_linker unite_domaine_linker_unite_rech_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unite_domaine_linker
+    ADD CONSTRAINT unite_domaine_linker_unite_rech_id_fk FOREIGN KEY (unite_id) REFERENCES public.unite_rech(id);
+
+
+--
 -- Name: unite_rech unite_rech_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -6281,6 +6289,14 @@ ALTER TABLE ONLY public.individu_compl
 
 ALTER TABLE ONLY public.utilisateur
     ADD CONSTRAINT utilisateur_individu_fk FOREIGN KEY (individu_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: utilisateur utilisateur_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.utilisateur
+    ADD CONSTRAINT utilisateur_role_id_fk FOREIGN KEY (last_role_id) REFERENCES public.role(id);
 
 
 --

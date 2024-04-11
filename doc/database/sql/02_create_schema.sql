@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.5 (Debian 15.5-1.pgdg120+1)
+-- Dumped from database version 15.5 (Debian 15.5-0+deb12u1)
 -- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
@@ -15,6 +15,15 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO postgres;
 
 --
 -- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
@@ -5797,47 +5806,6 @@ CREATE SEQUENCE public.rdv_bu_id_seq
 ALTER SEQUENCE public.rdv_bu_id_seq OWNER TO :dbuser;
 
 --
--- Name: region; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.region (
-    id bigint NOT NULL,
-    code integer NOT NULL,
-    nom character varying(200) NOT NULL,
-    source_id bigint NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone,
-    histo_modificateur_id bigint,
-    histo_modification timestamp without time zone
-);
-
-
-ALTER TABLE public.region OWNER TO :dbuser;
-
---
--- Name: region_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
---
-
-CREATE SEQUENCE public.region_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.region_id_seq OWNER TO :dbuser;
-
---
--- Name: region_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
---
-
-ALTER SEQUENCE public.region_id_seq OWNED BY public.region.id;
-
-
---
 -- Name: role_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
@@ -6592,7 +6560,7 @@ CREATE VIEW public.src_acteur AS
             i.id AS individu_id,
             t.id AS these_id,
             r.id AS role_id,
-            eact.id AS acteur_etablissement_id,
+            eact.id AS etablissement_id,
             tmp.lib_cps AS qualite,
             tmp.lib_roj_compl AS lib_role_compl
            FROM (((((public.tmp_acteur tmp
@@ -6608,7 +6576,7 @@ CREATE VIEW public.src_acteur AS
             i.id AS individu_id,
             t.id AS these_id,
             r_pj.id AS role_id,
-            eact.id AS acteur_etablissement_id,
+            eact.id AS etablissement_id,
             tmp.lib_cps AS qualite,
             NULL::character varying AS lib_role_compl
            FROM ((((((public.tmp_acteur tmp
@@ -6626,7 +6594,7 @@ CREATE VIEW public.src_acteur AS
             i.id AS individu_id,
             t.id AS these_id,
             r.id AS role_id,
-            eact.id AS acteur_etablissement_id,
+            eact.id AS etablissement_id,
             tmp.lib_cps AS qualite,
             NULL::character varying AS lib_role_compl
            FROM (((((public.tmp_acteur tmp
@@ -6642,12 +6610,12 @@ CREATE VIEW public.src_acteur AS
     pre.these_id,
     pre.role_id,
     COALESCE(isub.to_id, pre.individu_id) AS individu_id,
-    COALESCE(esub.to_id, pre.acteur_etablissement_id) AS acteur_etablissement_id,
+    COALESCE(esub.to_id, pre.etablissement_id) AS etablissement_id,
     pre.qualite,
     pre.lib_role_compl
    FROM ((pre
      LEFT JOIN public.substit_individu isub ON ((isub.from_id = pre.individu_id)))
-     LEFT JOIN public.substit_etablissement esub ON ((esub.from_id = pre.acteur_etablissement_id)));
+     LEFT JOIN public.substit_etablissement esub ON ((esub.from_id = pre.etablissement_id)));
 
 
 ALTER VIEW public.src_acteur OWNER TO :dbuser;
@@ -9162,11 +9130,33 @@ ALTER SEQUENCE public.unicaen_renderer_template_id_seq OWNED BY public.unicaen_r
 
 CREATE TABLE public.unite_domaine_linker (
     unite_id bigint NOT NULL,
-    domaine_id bigint NOT NULL
+    domaine_id bigint NOT NULL,
+    id bigint NOT NULL
 );
 
 
 ALTER TABLE public.unite_domaine_linker OWNER TO :dbuser;
+
+--
+-- Name: unite_domaine_linker_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unite_domaine_linker_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.unite_domaine_linker_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unite_domaine_linker_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unite_domaine_linker_id_seq OWNED BY public.unite_domaine_linker.id;
+
 
 --
 -- Name: unite_rech_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -9350,9 +9340,9 @@ CREATE VIEW public.v_diff_acteur AS
                     ELSE 0
                 END AS u_individu_id,
                 CASE
-                    WHEN ((d.etablissement_id <> s.acteur_etablissement_id) OR ((d.etablissement_id IS NULL) AND (s.acteur_etablissement_id IS NOT NULL)) OR ((d.etablissement_id IS NOT NULL) AND (s.acteur_etablissement_id IS NULL))) THEN 1
+                    WHEN ((d.etablissement_id <> s.etablissement_id) OR ((d.etablissement_id IS NULL) AND (s.etablissement_id IS NOT NULL)) OR ((d.etablissement_id IS NOT NULL) AND (s.etablissement_id IS NULL))) THEN 1
                     ELSE 0
-                END AS u_acteur_etablissement_id,
+                END AS u_etablissement_id,
                 CASE
                     WHEN ((d.these_id <> s.these_id) OR ((d.these_id IS NULL) AND (s.these_id IS NOT NULL)) OR ((d.these_id IS NOT NULL) AND (s.these_id IS NULL))) THEN 1
                     ELSE 0
@@ -9368,14 +9358,14 @@ CREATE VIEW public.v_diff_acteur AS
             s.source_id AS s_source_id,
             s.role_id AS s_role_id,
             s.individu_id AS s_individu_id,
-            s.acteur_etablissement_id AS s_acteur_etablissement_id,
+            s.etablissement_id AS s_etablissement_id,
             s.these_id AS s_these_id,
             s.qualite AS s_qualite,
             s.lib_role_compl AS s_lib_role_compl,
             d.source_id AS d_source_id,
             d.role_id AS d_role_id,
             d.individu_id AS d_individu_id,
-            d.etablissement_id AS d_acteur_etablissement_id,
+            d.etablissement_id AS d_etablissement_id,
             d.these_id AS d_these_id,
             d.qualite AS d_qualite,
             d.lib_role_compl AS d_lib_role_compl
@@ -9389,26 +9379,26 @@ CREATE VIEW public.v_diff_acteur AS
     diff.u_source_id,
     diff.u_role_id,
     diff.u_individu_id,
-    diff.u_acteur_etablissement_id,
+    diff.u_etablissement_id,
     diff.u_these_id,
     diff.u_qualite,
     diff.u_lib_role_compl,
     diff.s_source_id,
     diff.s_role_id,
     diff.s_individu_id,
-    diff.s_acteur_etablissement_id,
+    diff.s_etablissement_id,
     diff.s_these_id,
     diff.s_qualite,
     diff.s_lib_role_compl,
     diff.d_source_id,
     diff.d_role_id,
     diff.d_individu_id,
-    diff.d_acteur_etablissement_id,
+    diff.d_etablissement_id,
     diff.d_these_id,
     diff.d_qualite,
     diff.d_lib_role_compl
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_role_id) + diff.u_individu_id) + diff.u_acteur_etablissement_id) + diff.u_these_id) + diff.u_qualite) + diff.u_lib_role_compl))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_role_id) + diff.u_individu_id) + diff.u_etablissement_id) + diff.u_these_id) + diff.u_qualite) + diff.u_lib_role_compl))));
 
 
 ALTER VIEW public.v_diff_acteur OWNER TO :dbuser;
@@ -9531,6 +9521,106 @@ CREATE VIEW public.v_diff_doctorant AS
 
 
 ALTER VIEW public.v_diff_doctorant OWNER TO :dbuser;
+
+--
+-- Name: v_diff_domaine_hal; Type: VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE VIEW public.v_diff_domaine_hal AS
+ WITH diff AS (
+         SELECT COALESCE(s.source_code, d.source_code) AS source_code,
+            COALESCE(s.source_id, d.source_id) AS source_id,
+                CASE
+                    WHEN ((src.synchro_insert_enabled = true) AND (s.source_code IS NOT NULL) AND (d.source_code IS NULL)) THEN 'insert'::text
+                    WHEN ((src.synchro_undelete_enabled = true) AND (s.source_code IS NOT NULL) AND (d.source_code IS NOT NULL) AND (d.histo_destruction IS NOT NULL) AND (d.histo_destruction <= LOCALTIMESTAMP(0))) THEN 'undelete'::text
+                    WHEN ((src.synchro_update_enabled = true) AND (s.source_code IS NOT NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > LOCALTIMESTAMP(0)))) THEN 'update'::text
+                    WHEN ((src.synchro_delete_enabled = true) AND (s.source_code IS NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > LOCALTIMESTAMP(0)))) THEN 'delete'::text
+                    ELSE NULL::text
+                END AS operation,
+                CASE
+                    WHEN ((d.docid <> s.docid) OR ((d.docid IS NULL) AND (s.docid IS NOT NULL)) OR ((d.docid IS NOT NULL) AND (s.docid IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_docid,
+                CASE
+                    WHEN ((d.havenext_bool <> s.havenext_bool) OR ((d.havenext_bool IS NULL) AND (s.havenext_bool IS NOT NULL)) OR ((d.havenext_bool IS NOT NULL) AND (s.havenext_bool IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_havenext_bool,
+                CASE
+                    WHEN ((d.level_i <> s.level_i) OR ((d.level_i IS NULL) AND (s.level_i IS NOT NULL)) OR ((d.level_i IS NOT NULL) AND (s.level_i IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_level_i,
+                CASE
+                    WHEN ((d.parent_id <> s.parent_id) OR ((d.parent_id IS NULL) AND (s.parent_id IS NOT NULL)) OR ((d.parent_id IS NOT NULL) AND (s.parent_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_parent_id,
+                CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
+                    WHEN (((d.code_s)::text <> (s.code_s)::text) OR ((d.code_s IS NULL) AND (s.code_s IS NOT NULL)) OR ((d.code_s IS NOT NULL) AND (s.code_s IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_code_s,
+                CASE
+                    WHEN (((d.fr_domain_s)::text <> (s.fr_domain_s)::text) OR ((d.fr_domain_s IS NULL) AND (s.fr_domain_s IS NOT NULL)) OR ((d.fr_domain_s IS NOT NULL) AND (s.fr_domain_s IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_fr_domain_s,
+                CASE
+                    WHEN (((d.en_domain_s)::text <> (s.en_domain_s)::text) OR ((d.en_domain_s IS NULL) AND (s.en_domain_s IS NOT NULL)) OR ((d.en_domain_s IS NOT NULL) AND (s.en_domain_s IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_en_domain_s,
+            s.docid AS s_docid,
+            s.havenext_bool AS s_havenext_bool,
+            s.level_i AS s_level_i,
+            s.parent_id AS s_parent_id,
+            s.source_id AS s_source_id,
+            s.code_s AS s_code_s,
+            s.fr_domain_s AS s_fr_domain_s,
+            s.en_domain_s AS s_en_domain_s,
+            d.docid AS d_docid,
+            d.havenext_bool AS d_havenext_bool,
+            d.level_i AS d_level_i,
+            d.parent_id AS d_parent_id,
+            d.source_id AS d_source_id,
+            d.code_s AS d_code_s,
+            d.fr_domain_s AS d_fr_domain_s,
+            d.en_domain_s AS d_en_domain_s
+           FROM ((public.domaine_hal d
+             FULL JOIN public.src_domaine_hal s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
+             JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
+        )
+ SELECT diff.source_code,
+    diff.source_id,
+    diff.operation,
+    diff.u_docid,
+    diff.u_havenext_bool,
+    diff.u_level_i,
+    diff.u_parent_id,
+    diff.u_source_id,
+    diff.u_code_s,
+    diff.u_fr_domain_s,
+    diff.u_en_domain_s,
+    diff.s_docid,
+    diff.s_havenext_bool,
+    diff.s_level_i,
+    diff.s_parent_id,
+    diff.s_source_id,
+    diff.s_code_s,
+    diff.s_fr_domain_s,
+    diff.s_en_domain_s,
+    diff.d_docid,
+    diff.d_havenext_bool,
+    diff.d_level_i,
+    diff.d_parent_id,
+    diff.d_source_id,
+    diff.d_code_s,
+    diff.d_fr_domain_s,
+    diff.d_en_domain_s
+   FROM diff
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((diff.u_docid + diff.u_havenext_bool) + diff.u_level_i) + diff.u_parent_id) + diff.u_source_id) + diff.u_code_s) + diff.u_fr_domain_s) + diff.u_en_domain_s))));
+
+
+ALTER VIEW public.v_diff_domaine_hal OWNER TO :dbuser;
 
 --
 -- Name: v_diff_ecole_doct; Type: VIEW; Schema: public; Owner: :dbuser
@@ -12607,13 +12697,6 @@ ALTER TABLE ONLY public.privilege ALTER COLUMN id SET DEFAULT nextval('public.pr
 
 
 --
--- Name: region id; Type: DEFAULT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.region ALTER COLUMN id SET DEFAULT nextval('public.region_id_seq'::regclass);
-
-
---
 -- Name: step_star_log id; Type: DEFAULT; Schema: public; Owner: :dbuser
 --
 
@@ -12838,7 +12921,14 @@ ALTER TABLE ONLY public.unicaen_renderer_template ALTER COLUMN id SET DEFAULT ne
 
 
 --
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
+-- Name: unite_domaine_linker id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unite_domaine_linker ALTER COLUMN id SET DEFAULT nextval('public.unite_domaine_linker_id_seq'::regclass);
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
 --
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;

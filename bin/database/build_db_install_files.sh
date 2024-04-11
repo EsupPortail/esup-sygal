@@ -187,7 +187,6 @@ pg_dump --data-only --column-inserts \
 --table="type_rapport" \
 --table="type_structure" \
 --table="type_validation" \
---table="unicaen_alerte_alerte" \
 --table="unicaen_avis_type" \
 --table="unicaen_avis_type_valeur" \
 --table="unicaen_avis_type_valeur_complem" \

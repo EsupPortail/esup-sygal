@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.5 (Debian 15.5-1.pgdg120+1)
+-- Dumped from database version 15.5 (Debian 15.5-0+deb12u1)
 -- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
@@ -88,7 +88,7 @@ INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5081, 
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5100, 'missionenseignement', 'Gestion des missions d''enseignement', 1000);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (19, 'substitution', 'Substitutions', 300);
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5120, 'admission', 'Admission', 11000);
-INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5140, 'acteur', 'Acteurs des thèses', 20);
+INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (5160, 'acteur', 'Acteurs des thèses', 20);
 
 
 --
@@ -611,7 +611,6 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (57
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (577, 3141, 'supprimer-sien', 'Supprimer un rapport concernant ses thèses', 600);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (425, 4, 'afficher-email-contact', 'Visualiser l''email de contact du doctorant', 20);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (578, 3141, 'telecharger-tout', 'Télécharger les rapports concernant toute thèse', 700);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (838, 5005, 'generer_attestation', 'Gerer l''attestation', 9);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (579, 3141, 'telecharger-sien', 'Télécharger les rapports concernant ses thèses', 800);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (580, 3141, 'telecharger-zip', 'Télécharger des rapports sous la forme d''une archive compressée (.zip)', 900);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (581, 3141, 'rechercher-tout', 'Rechercher des rapports concernant toute thèse', 1000);
@@ -756,6 +755,7 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (83
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (835, 5005, 'ajouter', 'Ajouter une inscription de formation', 3);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (836, 5005, 'gerer_liste', 'Gerer la liste d''une inscription', 7);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (837, 5005, 'index', 'Accès à l''index des inscriptions de formation', 1);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (838, 5005, 'generer_attestation', 'Gerer l''attestation', 9);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (839, 5005, 'generer_convocation', 'Generer la convoctation', 8);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (840, 5006, 'reponse_repondre', 'Répondre à l''enquête', 8);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (841, 5006, 'question_modifier', 'Modifier une question de l''enquête', 3);
@@ -847,9 +847,9 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (11
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1195, 5120, 'admission-afficher-son-dossier-admission-dans-liste', 'Afficher son dossier d''admission dans la liste des dossiers d''admission en cours', 26);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1196, 5120, 'admission-supprimer-tout-document', 'Supprimer un document dans un dossier d''admission', 14);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1197, 5005, 'accorder_sursis', 'Accorder un sursis concernant la saisie de l''enquête', 847);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1200, 5140, 'modifier-acteur-de-toutes-theses', 'Modifier les acteurs de n''importe quelle thèse', 2000);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1201, 5140, 'modifier-acteur-de-ses-theses', 'Modifier les acteurs des thèses qui me concernent', 2010);
-INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1220, 3, 'modification-domaines-hal-these', 'Modifier les domaines HAL de sa thèse', 3100);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1220, 5160, 'modifier-acteur-de-toutes-theses', 'Modifier les acteurs de n''importe quelle thèse', 2000);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1221, 5160, 'modifier-acteur-de-ses-theses', 'Modifier les acteurs des thèses qui me concernent', 2010);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1222, 3, 'modification-domaines-hal-these', 'Modifier les domaines HAL de sa thèse', 3100);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1240, 101, 'proposition-supprimer', 'Supprimer l''ensemble des informations d''une proposition', 34);
 
 
@@ -1966,13 +1966,13 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1168, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1181, 9);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1197, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1197, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1201, 65);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1200, 4);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1200, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1221, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 7);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1220, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 7);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 65);
 
@@ -2087,7 +2087,7 @@ INSERT INTO public.type_validation (id, code, libelle) VALUES (42, 'RAPPORT_ACTI
 --
 
 INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (3, 'ALERTE_FERMETURE_ESTIVALE', 'DEMANDE DE SOUTENANCE', '<p>En raison de la période estivale le délai de traitement de 2 mois est repoussé pendant la période de fermeture des services de l’établissement soit du 22/07 au 27/08/2023.</p>', 'danger', 0, true);
-INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (4, 'ALERTE_MAINTENANCE', 'Maintenance à venir', '<p>L''application ESUP-SyGAL sera en maintenance donc indisponible jeudi 14 mars de 14h à 16h.</p>', 'danger', 0, true);
+INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (4, 'ALERTE_MAINTENANCE', 'Maintenance à venir', '<p>L''application ESUP-SyGAL sera en maintenance donc indisponible <strong>jeudi 11 avril de 9h à 11h</strong>.</p>', 'danger', 0, true);
 
 
 --
@@ -2241,7 +2241,7 @@ INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle,
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (15, 3, 'CAMPAGNE_DEPOT_DEBUT', 'Jour et mois de début de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 01/04/N+1.', NULL, 'String', '04/05/N+1', 100);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (16, 3, 'CAMPAGNE_DEPOT_FIN', 'Jour et mois de fin de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 15/06/N+1.', NULL, 'String', '31/06/N+1', 200);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (10, 1, 'DOC_CONFIDENTIALITE', 'Formulaire de demande de confidentialité', NULL, 'String', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE', 2500);
-INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '15', 10);
+INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '26', 10);
 
 
 --
@@ -2390,9 +2390,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (1, 'FORMATION_INSCRIPTION_ENREGISTREE', '<p>Mail envoyé au doctorant·e lors d''une inscription à une session de formation</p>', 'mail', 'Validation de votre inscription à la session de formation VAR[Formation#Libelle]', '<p>Bonjour VAR[Doctorant#Denomination],</p>
 <p>Nous avons bien reçu votre demande d’inscription à la formation VAR[Formation#Libelle] se déroulant : <br />VAR[Session#SeancesTable]</p>
 <p><br />Cordialement,<br />VAR[Formation#Responsable]<br /><br style="background-color: #2b2b2b; color: #a9b7c6; font-family: ''JetBrains Mono'',monospace; font-size: 9,8pt;" /></p>', NULL, 'Formation\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (67, 'ADMISSION_AVIS_AJOUTE', '<p>Mail pour notifier qu''un avis a été ajouté au dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination] ', '<p>Bonjour,</p>
-           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
-<p>Un avis a été ajouté au <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>', NULL, 'Admission\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (3, 'FORMATION_INSCRIPTION_LISTE_COMPLEMENTAIRE', NULL, 'mail', 'Vous êtes sur la liste complémentaire de la formation VAR[Formation#Libelle]', '<p>Bonjour VAR[Doctorant#Denomination],<br /><br />Vous êtes inscrit·e en <strong>liste complémentaire</strong> de la session de formation VAR[Formation#Libelle].<br />Vous êtes à la position VAR[Inscription#PositionComplementaire] sur cette liste.</p>
 <p><br />La session de formation se déroulera selon les dates suivantes :<br />VAR[Session#SeancesTable]<br />Si une place en liste principale se libère vous serez informé·e par l''application ESUP-SyGAL.<br /><br />Cordialement,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (6, 'FORMATION_SESSION_TERMINEE', NULL, 'mail', 'La session de formation VAR[Formation#Libelle] est maintenant terminée.', '<p>Bonjour VAR[Doctorant#Denomination],</p>
@@ -2403,10 +2400,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p>Si vous avez besoin d''une convocation, vous pouvez retrouver celle-ci dans ESUP-SyGAL dans la partie ''<em>Mes formations</em>'' onglet ''<em>Mes inscriptions en cours</em>''.</p>
 <p>En cas d’empêchement pensez à vous désinscrire afin de libérer votre place pour une personne de la liste complémentaire.</p>
 <p>Cordialement,<br />VAR[Formation#Responsable]<br /><br /></p>', NULL, 'Formation\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (4, 'FORMATION_INSCRIPTION_ECHEC', '<p>Courrier envoyé lors qu''un doctorant est non classé</p>', 'mail', 'Information sur la formation VAR[Formation#Libelle]', '<p>Bonjour VAR[Doctorant#Denomination],</p>
-<p>Vous étiez inscrit sur liste complémentaire à la formation VAR[Formation#Libelle] se déroulant :<br />VAR[Session#SeancesTable]</p>
-<p><strong>Cependant, aucune place ne s’étant libérée, nous sommes au regret de vous informer que vous ne pourrez pas participer à la formation.</strong></p>
-<p><br />Cordialement,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (9, 'SERMENT_DU_DOCTEUR', '<p>Texte du serment du doctorant</p>', 'pdf', 'serment_du_docteur.pdf', '<p>Version Française :<br />« En présence de mes pairs.<br /> Parvenu(e) à l''issue de mon doctorat en VAR[These#Discipline], et ayant ainsi pratiqué, dans ma quête du savoir, l''exercice d''une recherche scientifique exigeante, en cultivant la rigueur intellectuelle, la réflexivité éthique et dans le respect des principes de l''intégrité scientifique, je m''engage, pour ce qui dépendra de moi, dans la suite de ma carrière professionnelle quel qu''en soit le secteur ou le domaine d''activité, à maintenir une conduite intègre dans mon rapport au savoir, mes méthodes et mes résultats. »<br /><br />English version :<br />« In the presence of my peers.<br /> With the completion of my doctorate in VAR[These#Discipline], in my quest for knowledge, I have carried out demanding research, demonstrated intellectual rigour, ethical reflection, and respect for the principles of research integrity. As I pursue my professional career, whatever my chosen field, I pledge, to the greatest of my ability, to continue to maintain integrity in my relationship to knowledge, in my methods and in my results »<br /><br /></p>
 <p><br class="Apple-interchange-newline" /><br /></p>
 <p> </p>
@@ -2533,10 +2526,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <li>tous les avis de soutenance de la thèse de VAR[Doctorant#Denomination] ont été rendus ;</li>
 <li>vous êtes membre de la direction de la thèse de VAR[Doctorant#Denomination]. <br /><br /></li>
 </ul>', NULL, 'Soutenance\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (64, 'ADMISSION_COMMENTAIRES_AJOUTES', '<p>Notification lorsque le gestionnaire a ajouté des commentaires au dossier d''admission</p>', 'mail', 'Commentaires ajoutés à votre dossier d''admission', '<p>Bonjour, </p>
-<p style="font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px; background-color: #fdfcfa;">Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
-<p><strong>Des commentaires ont été ajoutés</strong> par vos gestionnaires à votre dossier d''admission. </p>
-<p><span style="background-color: #fdfcfa; font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px;">Merci de prendre connaissance des commentaires en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</span><span style="background-color: #fdfcfa; font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px;"> </span></p>', NULL, 'Admission\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (53, 'DEMANDE_PRERAPPORT', '<p>Courrier électronique envoyé au rapport pour leur demander leur pré-rapport de soutenance</p>', 'mail', 'Demande de l''avis de soutenance de la thèse de VAR[Doctorant#Denomination]', '<p><em>-- Version française----------------------------------------------------</em><br /><br />Bonjour,</p>
 <p>Vous pouvez commencer à examiner les travaux thèse de <strong>VAR[Doctorant#Denomination]</strong> ayant pour titre VAR[These#Titre].</p>
 <p>Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours avant la date de soutenance, puis le déposer sur la plateforme ESUP-SyGAL à l’adresse suivante : VAR[Url#RapporteurDashboard].</p>
@@ -2590,14 +2579,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <li>la proposition de soutenance de VAR[Doctorant#Denomination] a été validée; </li>
 <li>vous avez été désigné comme membre du jury pour la thèse de VAR[Doctorant#Denomination].</li>
 </ul>', NULL, 'Soutenance\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (65, 'ADMISSION_NOTIFICATION_DOSSIER_COMPLET', '<p>Mail pour notifier l''étudiant que son dossier est complet</p>', 'mail', 'Votre dossier d''admission est complet', '<p>Bonjour, </p>
-<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
-<p>Votre dossier d''admission est noté comme <strong>complet</strong> par votre gestionnaire.</p>
-<p>Vous pouvez dès à présent faire votre attestation sur l''honneur en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (66, 'ADMISSION_NOTIFICATION_DOSSIER_INCOMPLET', '<p>Mail pour notifier l''étudiant que son dossier est incomplet</p>', 'mail', 'Votre dossier d''admission est incomplet', '<p>Bonjour, </p>
-           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
-<p>Votre dossier d''admission est noté comme <strong>incomplet</strong> par votre gestionnaire.</p>
-           <p>Veuillez prendre connaissance des commentaires ajoutés à votre dossier, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (47, 'CONNEXION_RAPPORTEUR', '<p>Courrier électronique envoyé aux rapporteur·trices  pour la connexion à SyGAL</p>', 'mail', 'Connexion en tant que rapporteur de la thèse de VAR[Doctorant#Denomination]', '<p><em>-- Version française----------------------------------------------------</em><br /><br />Bonjour,</p>
 <p>Vous venez d''être désigné comme rapporteur pour la thèse de VAR[Doctorant#Denomination] intitulée <strong>VAR[These#Titre].</strong> Afin de pouvoir vous connecter à l''application ESUP-SyGAL et ainsi pouvoir rendre votre avis de pré-soutenance, vous pouvez utiliser l''adresse suivante : VAR[Url#RapporteurDashboard].<br /><br />Vous avez jusqu''au <strong>VAR[Soutenance#DateRetourRapport]</strong> pour effectuer ce dépôt.</p>
 <p>Si vous êtes favorable à cette soutenance, nous vous remercions d''indiquer, à la fin de votre rapport, la mention suivante : « Par conséquent, je suis favorable à la soutenance de thèse de VAR[Doctorant#Denomination] pour obtenir le grade de Docteur de l''VAR[Etablissement#Libelle] et de Normandie Université.</p>
@@ -2787,6 +2768,21 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p> </p>
 <p>Fait à ____________________, le ________________,</p>
 <p>Signature de VAR[String#ToString]</p>', 'table { border-collapse: collapse;  width: 100%;  } th, td { border: 1px solid #000; padding: 8px;  }body{font-size: 9pt;}.pas_valeur_avis_renseigne { background-color: #dddddd;}', 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (64, 'ADMISSION_COMMENTAIRES_AJOUTES', '<p>Notification lorsque le gestionnaire a ajouté des commentaires au dossier d''admission</p>', 'mail', 'Commentaires ajoutés à votre dossier d''admission', '<p>Bonjour, </p>
+<p style="font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px; background-color: #fdfcfa;">Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p><strong>Des commentaires ont été ajoutés</strong> par vos gestionnaires à votre dossier d''admission. </p>
+<p><span style="background-color: #fdfcfa; font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px;">Merci de prendre connaissance des commentaires en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</span><span style="background-color: #fdfcfa; font-family: ''Segoe UI'', ''Lucida Sans'', sans-serif; font-size: 14.16px;"> </span></p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (65, 'ADMISSION_NOTIFICATION_DOSSIER_COMPLET', '<p>Mail pour notifier l''étudiant que son dossier est complet</p>', 'mail', 'Votre dossier d''admission est complet', '<p>Bonjour, </p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Votre dossier d''admission est noté comme <strong>complet</strong> par votre gestionnaire.</p>
+<p>Vous pouvez dès à présent faire votre attestation sur l''honneur en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (66, 'ADMISSION_NOTIFICATION_DOSSIER_INCOMPLET', '<p>Mail pour notifier l''étudiant que son dossier est incomplet</p>', 'mail', 'Votre dossier d''admission est incomplet', '<p>Bonjour, </p>
+           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Votre dossier d''admission est noté comme <strong>incomplet</strong> par votre gestionnaire.</p>
+           <p>Veuillez prendre connaissance des commentaires ajoutés à votre dossier, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission] </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (67, 'ADMISSION_AVIS_AJOUTE', '<p>Mail pour notifier qu''un avis a été ajouté au dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination] ', '<p>Bonjour,</p>
+           <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Un avis a été ajouté au <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>', NULL, 'Admission\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (68, 'ADMISSION_AVIS_MODIFIE', '<p>Mail pour notifier qu''un avis a été modifié du dossier d''admission</p>', 'mail', 'Dossier d''admission de VAR[Individu#Denomination]', '<p>Bonjour,</p>
            <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
 <p>L''<strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionAvis#Date] a été modifié<strong> </strong>VAR[AdmissionAvis#Modificateur]</p>', NULL, 'Admission\Provider\Template');
@@ -2797,6 +2793,11 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
            <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
 <p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>
 <p>Le circuit de signature de votre dossier est maintenant terminé. </p>', NULL, 'Admission\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (4, 'FORMATION_INSCRIPTION_ECHEC', '<p>Courrier envoyé lors qu''un doctorant est non classé</p>', 'mail', 'Information sur la formation VAR[Formation#Libelle]', '<p>Bonjour VAR[Doctorant#Denomination],</p>
+<p>Vous étiez inscrit sur liste complémentaire à la formation VAR[Formation#Libelle] se déroulant :<br />VAR[Session#SeancesTable]</p>
+<p><strong>Cependant, aucune place ne s’étant libérée, nous sommes au regret de vous informer que vous ne pourrez pas participer à la formation.</strong></p>
+<p><br />Cordialement,</p>
+<p>VAR[Session#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (71, 'PROPOSITION_SUPPRESSION', '<p>Suppression des informations concernant la proposition de soutenance</p>', 'mail', 'Votre proposition de soutenance a été supprimée', '<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL</p>
 <p>Votre proposition de soutenance vient d''être <strong>supprimée.</strong></p>
@@ -2854,7 +2855,7 @@ SELECT pg_catalog.setval('public.admission_type_validation_id_seq', 8, true);
 -- Name: categorie_privilege_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.categorie_privilege_id_seq', 5159, true);
+SELECT pg_catalog.setval('public.categorie_privilege_id_seq', 5179, true);
 
 
 --
