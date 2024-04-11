@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e88812e57dfb0dcd8416b507d1b316ab",
+    "content-hash": "cc8bd7417a71152059a994f5dbc92476",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11451,11 +11451,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "dev-release_6.1.2",
+            "version": "6.1.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "ad5ea6867afaf849d5a8589e3443aed4544a5341"
+                "reference": "ae9d301b8a907185b46308d11ba358ab0b2c5b51"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -11488,7 +11488,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2024-03-20T10:31:24+00:00"
+            "time": "2024-04-11T08:39:40+00:00"
         },
         {
             "name": "unicaen/etat",
@@ -12457,7 +12457,6 @@
     "stability-flags": {
         "laminas-api-tools/api-tools-doctrine": 20,
         "laminas-api-tools/api-tools-doctrine-querybuilder": 20,
-        "unicaen/db-import": 20,
         "unicaen/idref": 20,
         "unicaen/sygal-api": 20
     },
