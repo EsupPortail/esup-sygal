@@ -534,6 +534,7 @@ const CONFIG_IMPORTS = [
             'column_name_filter' => [
                 'individuId' => 'individu_id',
                 'ine' => 'ine',
+                'codeApprenantInSource' => 'code_apprenant_in_source',
                 'sourceCode' => 'source_code',
                 'sourceId' => 'source_id',
                 'sourceInsertDate' => 'source_insert_date',
