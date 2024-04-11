@@ -58,6 +58,72 @@ create index individu_role_etablissement_individu_idx on individu_role_etablisse
 create index individu_role_etablissement_role_idx on individu_role_etablissement (etablissement_id);
 ---> NB : la reprise de données pour alimenter individu_role_etablissement devra se faire à la main (cf. vue plus bas) !
 
+drop view src_acteur;
+create or replace view src_acteur(id, source_id, source_code, these_id, role_id, individu_id, etablissement_id, qualite, lib_role_compl) as
+WITH pre AS (
+    SELECT NULL::bigint AS id,
+           tmp.source_code,
+           src.id AS source_id,
+           i.id AS individu_id,
+           t.id AS these_id,
+           r.id AS role_id,
+           eact.id AS etablissement_id,
+           tmp.lib_cps AS qualite,
+           tmp.lib_roj_compl AS lib_role_compl
+    FROM tmp_acteur tmp
+             JOIN source src ON src.id = tmp.source_id
+             JOIN individu i ON i.source_code::text = tmp.individu_id::text
+             JOIN these t ON t.source_code::text = tmp.these_id::text
+             JOIN role r ON r.source_code::text = tmp.role_id::text AND r.code::text = 'P'::text
+             LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text
+    UNION ALL
+    SELECT NULL::bigint AS id,
+           tmp.source_code::text || 'P'::text AS source_code,
+           src.id AS source_id,
+           i.id AS individu_id,
+           t.id AS these_id,
+           r_pj.id AS role_id,
+           eact.id AS etablissement_id,
+           tmp.lib_cps AS qualite,
+           NULL::character varying AS lib_role_compl
+    FROM tmp_acteur tmp
+             JOIN source src ON src.id = tmp.source_id
+             JOIN individu i ON i.source_code::text = tmp.individu_id::text
+             JOIN these t ON t.source_code::text = tmp.these_id::text
+             JOIN role r ON r.source_code::text = tmp.role_id::text AND r.code::text = 'M'::text
+             JOIN role r_pj ON r_pj.code::text = 'P'::text AND r_pj.structure_id = r.structure_id
+             LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text
+    WHERE tmp.lib_roj_compl::text = 'Président du jury'::text
+    UNION ALL
+    SELECT NULL::bigint AS id,
+           tmp.source_code,
+           src.id AS source_id,
+           i.id AS individu_id,
+           t.id AS these_id,
+           r.id AS role_id,
+           eact.id AS etablissement_id,
+           tmp.lib_cps AS qualite,
+           NULL::character varying AS lib_role_compl
+    FROM tmp_acteur tmp
+             JOIN source src ON src.id = tmp.source_id
+             JOIN individu i ON i.source_code::text = tmp.individu_id::text
+             JOIN these t ON t.source_code::text = tmp.these_id::text
+             JOIN role r ON r.source_code::text = tmp.role_id::text AND r.code::text <> 'P'::text
+             LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text
+)
+SELECT pre.id,
+       pre.source_id,
+       pre.source_code,
+       pre.these_id,
+       pre.role_id,
+       COALESCE(isub.to_id, pre.individu_id) AS individu_id,
+       COALESCE(esub.to_id, pre.etablissement_id) AS etablissement_id,
+       pre.qualite,
+       pre.lib_role_compl
+FROM pre
+         LEFT JOIN substit_individu isub ON isub.from_id = pre.individu_id
+         LEFT JOIN substit_etablissement esub ON esub.from_id = pre.etablissement_id;
+
 --
 -- Privilèges
 --
