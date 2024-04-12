@@ -80,7 +80,7 @@ table.formation-presence tr td.reponse {
   min-width: 3rem;
   min-height: 3rem; }
 
-.table-index-formations td .afficher-formation-btn, .table-index-sessions td .afficher-session-btn {
+.table-index-formations td .afficher-formation-btn, .table-index-sessions td .afficher-session-btn, .table-index-modules td .afficher-module-btn {
   margin-right: 10px; }
 
 /*# sourceMappingURL=formation.css.map */
