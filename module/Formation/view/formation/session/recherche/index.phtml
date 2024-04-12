@@ -45,7 +45,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
         <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("formation·s trouvée·s.") ?>
     </p>
 
-    <table class="table table-sm">
+    <table class="table table-sm table-index-sessions">
         <thead>
         <tr>
             <th>
@@ -152,7 +152,8 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                 <td>
                     <?php if ($canAfficherSession) : ?>
                         <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
-                        <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                        <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
+                           class="afficher-session-btn">
                         <span class="icon icon-voir"
                               title="Examiner la session"
                               data-bs-toggle="tooltip" data-bs-html="true">
@@ -164,7 +165,10 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                             <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], [], true); ?>"
                                title="Historiser la session"
-                               data-bs-toggle="tooltip" data-bs-html="true">
+                               class="historiser-session-btn"
+                               data-bs-toggle="tooltip" data-bs-html="true"
+                               data-toggle="confirmationx"
+                               data-message="Êtes-vous sûr de vouloir historiser cette session ?">
                                 <span class="icon icon-historiser"></span>
                             </a>
                         <?php else : ?>
@@ -179,9 +183,11 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <?php if ($canSupprimerSession AND $session->estHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
-                           class="ajax-modal" data-event="modification"
+                           class="ajax-modal supprimer-session-btn" data-event="modification"
                            title="Supprimer la session"
-                           data-bs-toggle="tooltip" data-bs-html="true">
+                           data-bs-toggle="tooltip" data-bs-html="true"
+                           data-toggle="confirmationx"
+                           data-message="Êtes-vous sûr de vouloir supprimer cette session ?">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>

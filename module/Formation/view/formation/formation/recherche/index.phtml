@@ -56,7 +56,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
         <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("formation·s trouvée·s.") ?>
     </p>
 
-    <table class="table table-sm table-hover">
+    <table class="table table-sm table-hover table-index-formations">
         <thead>
         <tr>
             <th>
@@ -148,7 +148,8 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php /** @see \Formation\Controller\FormationController::afficherAction() */ ?>
                         <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
                            title="afficher la formation #<?php echo $formation->getId(); ?>"
-                           data-bs-toggle="tooltip" data-bs-html="true">
+                           data-bs-toggle="tooltip" data-bs-html="true"
+                           class="afficher-formation-btn">
                             <span class="icon icon-voir"></span>
                         </a>
                     <?php endif; ?>
@@ -157,7 +158,9 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                             <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], [], true); ?>"
                                title="Historiser la formation #<?php echo $formation->getId(); ?>"
-                               data-bs-toggle="tooltip" data-bs-html="true">
+                               data-bs-toggle="tooltip" data-bs-html="true" class="historiser-formation-btn"
+                               data-toggle="confirmationx"
+                               data-message="Êtes-vous sûr de vouloir historiser cette formation ?">
                                 <span class="icon icon-historiser"></span>
                             </a>
                         <?php else : ?>
@@ -174,7 +177,9 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php /** @see \Formation\Controller\FormationController::supprimerAction() */?>
                         <a href="<?php echo $this->url('formation/formation/supprimer',['formation' => $formation->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
-                           title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                           title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                           data-toggle="confirmationx"
+                           data-message="Êtes-vous sûr de vouloir supprimer cette formation ?">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>
