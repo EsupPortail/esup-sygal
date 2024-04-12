@@ -16,7 +16,7 @@ WHERE NOT EXISTS (SELECT 1
                   FROM PRIVILEGE p
                   WHERE p.CODE = d.code);
 --
--- Accord de privilèges à des profils.
+-- Accord du privilège aux profils ADMIN_TECH, MAISON DU DOCTORAT, FORMATEUR, RESPONSABLE_ED, DOCTORANT.
 --
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
 with data(categ, priv) as (select 'formation_session', 'voir_lieu')
@@ -28,6 +28,28 @@ from data
                                            'FORMATEUR',
                                            'RESP_ED',
                                            'DOCTORANT'
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
+select p2r.ROLE_ID, pp.PRIVILEGE_ID
+from PROFIL_TO_ROLE p2r
+         join profil pr on pr.id = p2r.PROFIL_ID
+         join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
+where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
+;
+
+--
+-- Accord de privilèges au profil Formateur pour accéder à l'index de ses formations.
+--
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'formation', 'index_formateur')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+    'FORMATEUR'
     )
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
