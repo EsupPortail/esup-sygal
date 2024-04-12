@@ -1,6 +1,6 @@
 <?php
 
-namespace Formation\Assertion;
+namespace Formation\Assertion\Inscription;
 
 use Doctorant\Service\DoctorantService;
 use Formation\Provider\Parametre\FormationParametres;

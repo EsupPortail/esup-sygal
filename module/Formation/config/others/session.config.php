@@ -2,6 +2,8 @@
 
 namespace Formation;
 
+use Formation\Assertion\Session\SessionAssertion;
+use Formation\Assertion\Session\SessionAssertionFactory;
 use Formation\Controller\Console\SessionConsoleController;
 use Formation\Controller\Console\SessionConsoleControllerFactory;
 use Formation\Controller\Recherche\SessionRechercheController;
@@ -20,9 +22,28 @@ use Formation\Service\Session\SessionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'Session' => []
+            ],
+        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            SessionPrivileges::SESSION_VOIR_LIEU
+                        ],
+                        'resources'  => ['Session'],
+                        'assertion'  => SessionAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -316,6 +337,7 @@ return [
         'factories' => [
             SessionService::class => SessionServiceFactory::class,
             SessionSearchService::class => SessionSearchServiceFactory::class,
+            SessionAssertion::class => SessionAssertionFactory::class
         ],
     ],
     'controllers'     => [

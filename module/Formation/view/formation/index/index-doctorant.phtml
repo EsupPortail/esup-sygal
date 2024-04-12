@@ -308,7 +308,9 @@ $now = new DateTime();
             </thead>
             <tbody>
             <?php foreach ($encours as $inscription) : ?>
-                <?php $session = $inscription->getSession(); $formation = $session->getFormation(); $module = $formation->getModule(); ?>
+                <?php
+                $canAnnulerInscription = $this->isAllowed($inscription, InscriptionPrivileges::INSCRIPTION_AJOUTER);
+                $session = $inscription->getSession(); $formation = $session->getFormation(); $module = $formation->getModule(); ?>
                 <tr>
                     <td> <span class="formation-typage">Formation</span>
                         <?php echo $formation->getLibelle(); ?>
@@ -340,7 +342,7 @@ $now = new DateTime();
                            class="ajax-modal">
                             <span class="icon icon-voir"></span> Afficher les informations </a>
                         <br/>
-                        <?php if ($canSupprimerInscription and $session->getEtat()->getCode() !== Etat::CODE_IMMINENT) : ?>
+                        <?php if ($canAnnulerInscription) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
                             <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"

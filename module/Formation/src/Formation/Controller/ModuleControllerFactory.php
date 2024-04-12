@@ -2,10 +2,12 @@
 
 namespace Formation\Controller;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Module\ModuleForm;
 use Formation\Service\Formation\FormationService;
 use Formation\Service\Module\ModuleService;
+use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -28,7 +30,7 @@ class ModuleControllerFactory {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $formationService = $container->get(FormationService::class);
         $moduleService = $container->get(ModuleService::class);
-
+        $anneeUnivService = $container->get(AnneeUnivService::class);
         /**
          * @var ModuleForm $moduleForm
          */
@@ -38,6 +40,7 @@ class ModuleControllerFactory {
         $controller->setEntityManager($entityManager);
         $controller->setFormationService($formationService);
         $controller->setModuleService($moduleService);
+        $controller->setAnneeUnivService($anneeUnivService);
         $controller->setModuleForm($moduleForm);
         return $controller;
     }

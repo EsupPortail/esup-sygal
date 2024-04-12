@@ -2,7 +2,8 @@
 
 namespace Formation;
 
-use Formation\Assertion\InscriptionAssertion;
+use Formation\Assertion\Inscription\InscriptionAssertion;
+use Formation\Assertion\Inscription\InscriptionAssertionFactory;
 use Formation\Controller\InscriptionController;
 use Formation\Controller\InscriptionControllerFactory;
 use Formation\Controller\Recherche\InscriptionRechercheController;
@@ -12,14 +13,14 @@ use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Attestation\AttestationExporterFactory;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporterFactory;
-use Formation\Service\Inscription\Search\InscriptionSearchServiceFactory;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;
 use Formation\Service\Inscription\Search\InscriptionSearchService;
+use Formation\Service\Inscription\Search\InscriptionSearchServiceFactory;
 use Formation\View\Helper\InscriptionViewHelper;
-use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
@@ -303,6 +304,7 @@ return [
             InscriptionSearchService::class => InscriptionSearchServiceFactory::class,
             AttestationExporter::class => AttestationExporterFactory::class,
             ConvocationExporter::class => ConvocationExporterFactory::class,
+            InscriptionAssertion::class => InscriptionAssertionFactory::class
         ],
     ],
     'controllers'     => [

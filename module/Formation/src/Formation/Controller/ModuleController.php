@@ -3,6 +3,8 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Entity\AnneeUniv;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Formation\FormationServiceAwareTrait;
@@ -17,6 +19,7 @@ class ModuleController extends AbstractController
     use FormationServiceAwareTrait;
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     public function afficherAction(): ViewModel
     {
@@ -125,25 +128,23 @@ class ModuleController extends AbstractController
 
     public function catalogueAction(): ViewModel
     {
-        $modules = $this->getModuleService()->getRepository()->getModules();
+        $anneeCourante = $this->anneeUnivService->courante()->getAnneeUnivToString();
+        $anneeUniv = empty($this->params()->fromRoute('anneeUniv')) ? $anneeCourante : $this->params()->fromRoute('anneeUniv');
+        $annee = AnneeUniv::fromPremiereAnnee((int)$anneeUniv);
+        $debut = $this->anneeUnivService->computeDateDebut($annee);
+        $fin = $this->anneeUnivService->computeDateFin($annee);
 
-        $catalogue = [];
-        foreach ($modules as $module) {
-            if ($module->estNonHistorise()) {
-                $liste = $this->getFormationService()->getRepository()->fetchFormationsByModule($module);
-                $catalogue[$module->getId()]["module"] = $module;
-                $catalogue[$module->getId()]["formations"] = $liste;
-            }
-        }
+        $modules = $this->moduleService->getRepository()->getModulesCatalogue($debut, $fin);
 
-        {
-            $liste = $this->getFormationService()->getRepository()->fetchFormationsByModule(null);
-            $catalogue[-1]["module"] = null;
-            $catalogue[-1]["formations"] = $liste;
-        }
+        // gestion d'anomalies INUTILE !!!!
+//        {
+//            $liste = $this->getFormationService()->getRepository()->fetchFormationsByModule(null);
+//            $catalogue[-1]["module"] = null;
+//            $catalogue[-1]["formations"] = $liste;
+//        }
 
         return new ViewModel([
-            'catalogue' => $catalogue
+            'modules' => $modules,
         ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Formation\Assertion;
+namespace Formation\Assertion\Inscription;
 
 use Application\Assertion\AbstractAssertion;
 use Application\Entity\Db\Role;
@@ -74,36 +74,34 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
         switch($action) {
             case 'desinscription' :
                 if ($inscription !== null) {
-                    return $this->canDescinscrire($inscription);
+                    return $this->canDesinscrire($inscription);
                 }
                 return false;
         }
         return true;
     }
 
-
+    /** @var Inscription $entity */
     protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
         if (!parent::assertEntity($entity, $privilege)) {
             return false;
         }
-        $this->admission = $entity;
-
 
         switch ($privilege) {
             case InscriptionPrivileges::INSCRIPTION_AJOUTER :
-                return $this->canDescinscrire($entity);
+                return $this->canDesinscrire($entity);
         }
 
         return true;
     }
 
-    private function canDescinscrire(?Inscription $inscription): bool
+    private function canDesinscrire(?Inscription $inscription): bool
     {
         if (!$this->scopeValide($inscription)) return false;
         $session = $inscription->getSession();
         $etatSession = $session->getEtat();
-        if (!in_array($etatSession->getCode(), [Session::ETAT_IMMINENTE, Session::ETAT_EN_COURS, Session::ETAT_CLOS_FINAL])) return false;
+        if (in_array($etatSession->getCode(), [Session::ETAT_IMMINENTE, Session::ETAT_EN_COURS, Session::ETAT_CLOS_FINAL])) return false;
 
         $dateMax = DateTime::createFromFormat('d/m/Y H:m', $session->getDateDebut()->format('d/m/Y H:m'));
         try {

@@ -33,6 +33,7 @@ class ModuleRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('module')
             ->leftjoin('module.formations', 'formation')->addSelect('formation');
+
         return $qb;
     }
 
@@ -40,6 +41,23 @@ class ModuleRepository extends EntityRepository
     {
         $qb = $this->createQB()
             ->orderBy("module.".$champ, $ordre);
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    public function getModulesCatalogue(?\DateTime $debut = null, ?\DateTime $fin = null)
+    {
+        $qb = $this->createQB()
+            ->join('formation.sessions', 'session')->addSelect('session')
+            ->join('session.seances', 'seance')->addSelect('seance')
+            ->orderBy("module.libelle, formation.libelle, seance.debut", "ASC")
+        ;
+
+        if ($debut !== null && $fin !== null) {
+            $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+        }
+
         $result = $qb->getQuery()->getResult();
         return $result;
     }

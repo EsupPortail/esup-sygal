@@ -132,10 +132,13 @@ return [
             'formation' => [
                 'child_routes' => [
                     'catalogue' => [
-                        'type'  => Literal::class,
+                        'type'  => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/catalogue',
+                            'route'    => '/catalogue[/:anneeUniv]',
+                            'constraints' => [
+                                'anneeUniv' => '\d{4}',
+                            ],
                             'defaults' => [
                                 'controller' => ModuleController::class,
                                 'action'     => 'catalogue',
