@@ -23,7 +23,7 @@ SET row_security = off;
 -- *not* creating schema, since initdb creates it
 
 
-ALTER SCHEMA public OWNER TO postgres;
+ALTER SCHEMA public OWNER TO :dbuser;
 
 --
 -- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
@@ -6218,8 +6218,8 @@ CREATE TABLE public.soutenance_etat (
     libelle character varying(255) NOT NULL,
     histo_creation timestamp without time zone DEFAULT now() NOT NULL,
     histo_createur_id bigint DEFAULT 1 NOT NULL,
-    histo_modification timestamp without time zone DEFAULT now() NOT NULL,
-    histo_modificateur_id bigint DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone DEFAULT now(),
+    histo_modificateur_id bigint DEFAULT 1,
     histo_destruction timestamp without time zone,
     histo_destructeur_id bigint,
     ordre integer
@@ -9332,6 +9332,10 @@ CREATE VIEW public.v_diff_acteur AS
                     ELSE 0
                 END AS u_source_id,
                 CASE
+                    WHEN ((d.these_id <> s.these_id) OR ((d.these_id IS NULL) AND (s.these_id IS NOT NULL)) OR ((d.these_id IS NOT NULL) AND (s.these_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_these_id,
+                CASE
                     WHEN ((d.role_id <> s.role_id) OR ((d.role_id IS NULL) AND (s.role_id IS NOT NULL)) OR ((d.role_id IS NOT NULL) AND (s.role_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_role_id,
@@ -9344,10 +9348,6 @@ CREATE VIEW public.v_diff_acteur AS
                     ELSE 0
                 END AS u_etablissement_id,
                 CASE
-                    WHEN ((d.these_id <> s.these_id) OR ((d.these_id IS NULL) AND (s.these_id IS NOT NULL)) OR ((d.these_id IS NOT NULL) AND (s.these_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_these_id,
-                CASE
                     WHEN (((d.qualite)::text <> (s.qualite)::text) OR ((d.qualite IS NULL) AND (s.qualite IS NOT NULL)) OR ((d.qualite IS NOT NULL) AND (s.qualite IS NULL))) THEN 1
                     ELSE 0
                 END AS u_qualite,
@@ -9356,17 +9356,17 @@ CREATE VIEW public.v_diff_acteur AS
                     ELSE 0
                 END AS u_lib_role_compl,
             s.source_id AS s_source_id,
+            s.these_id AS s_these_id,
             s.role_id AS s_role_id,
             s.individu_id AS s_individu_id,
             s.etablissement_id AS s_etablissement_id,
-            s.these_id AS s_these_id,
             s.qualite AS s_qualite,
             s.lib_role_compl AS s_lib_role_compl,
             d.source_id AS d_source_id,
+            d.these_id AS d_these_id,
             d.role_id AS d_role_id,
             d.individu_id AS d_individu_id,
             d.etablissement_id AS d_etablissement_id,
-            d.these_id AS d_these_id,
             d.qualite AS d_qualite,
             d.lib_role_compl AS d_lib_role_compl
            FROM ((public.acteur d
@@ -9377,28 +9377,28 @@ CREATE VIEW public.v_diff_acteur AS
     diff.source_id,
     diff.operation,
     diff.u_source_id,
+    diff.u_these_id,
     diff.u_role_id,
     diff.u_individu_id,
     diff.u_etablissement_id,
-    diff.u_these_id,
     diff.u_qualite,
     diff.u_lib_role_compl,
     diff.s_source_id,
+    diff.s_these_id,
     diff.s_role_id,
     diff.s_individu_id,
     diff.s_etablissement_id,
-    diff.s_these_id,
     diff.s_qualite,
     diff.s_lib_role_compl,
     diff.d_source_id,
+    diff.d_these_id,
     diff.d_role_id,
     diff.d_individu_id,
     diff.d_etablissement_id,
-    diff.d_these_id,
     diff.d_qualite,
     diff.d_lib_role_compl
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_role_id) + diff.u_individu_id) + diff.u_etablissement_id) + diff.u_these_id) + diff.u_qualite) + diff.u_lib_role_compl))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_these_id) + diff.u_role_id) + diff.u_individu_id) + diff.u_etablissement_id) + diff.u_qualite) + diff.u_lib_role_compl))));
 
 
 ALTER VIEW public.v_diff_acteur OWNER TO :dbuser;
@@ -9465,10 +9465,6 @@ CREATE VIEW public.v_diff_doctorant AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
-                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_source_id,
-                CASE
                     WHEN ((d.individu_id <> s.individu_id) OR ((d.individu_id IS NULL) AND (s.individu_id IS NOT NULL)) OR ((d.individu_id IS NOT NULL) AND (s.individu_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_individu_id,
@@ -9477,6 +9473,10 @@ CREATE VIEW public.v_diff_doctorant AS
                     ELSE 0
                 END AS u_etablissement_id,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN (((d.ine)::text <> (s.ine)::text) OR ((d.ine IS NULL) AND (s.ine IS NOT NULL)) OR ((d.ine IS NOT NULL) AND (s.ine IS NULL))) THEN 1
                     ELSE 0
                 END AS u_ine,
@@ -9484,14 +9484,14 @@ CREATE VIEW public.v_diff_doctorant AS
                     WHEN (((d.code_apprenant_in_source)::text <> (s.code_apprenant_in_source)::text) OR ((d.code_apprenant_in_source IS NULL) AND (s.code_apprenant_in_source IS NOT NULL)) OR ((d.code_apprenant_in_source IS NOT NULL) AND (s.code_apprenant_in_source IS NULL))) THEN 1
                     ELSE 0
                 END AS u_code_apprenant_in_source,
-            s.source_id AS s_source_id,
             s.individu_id AS s_individu_id,
             s.etablissement_id AS s_etablissement_id,
+            s.source_id AS s_source_id,
             s.ine AS s_ine,
             s.code_apprenant_in_source AS s_code_apprenant_in_source,
-            d.source_id AS d_source_id,
             d.individu_id AS d_individu_id,
             d.etablissement_id AS d_etablissement_id,
+            d.source_id AS d_source_id,
             d.ine AS d_ine,
             d.code_apprenant_in_source AS d_code_apprenant_in_source
            FROM ((public.doctorant d
@@ -9501,23 +9501,23 @@ CREATE VIEW public.v_diff_doctorant AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
-    diff.u_source_id,
     diff.u_individu_id,
     diff.u_etablissement_id,
+    diff.u_source_id,
     diff.u_ine,
     diff.u_code_apprenant_in_source,
-    diff.s_source_id,
     diff.s_individu_id,
     diff.s_etablissement_id,
+    diff.s_source_id,
     diff.s_ine,
     diff.s_code_apprenant_in_source,
-    diff.d_source_id,
     diff.d_individu_id,
     diff.d_etablissement_id,
+    diff.d_source_id,
     diff.d_ine,
     diff.d_code_apprenant_in_source
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((diff.u_source_id + diff.u_individu_id) + diff.u_etablissement_id) + diff.u_ine) + diff.u_code_apprenant_in_source))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((diff.u_individu_id + diff.u_etablissement_id) + diff.u_source_id) + diff.u_ine) + diff.u_code_apprenant_in_source))));
 
 
 ALTER VIEW public.v_diff_doctorant OWNER TO :dbuser;
@@ -9538,6 +9538,10 @@ CREATE VIEW public.v_diff_domaine_hal AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.docid <> s.docid) OR ((d.docid IS NULL) AND (s.docid IS NOT NULL)) OR ((d.docid IS NOT NULL) AND (s.docid IS NULL))) THEN 1
                     ELSE 0
                 END AS u_docid,
@@ -9545,18 +9549,6 @@ CREATE VIEW public.v_diff_domaine_hal AS
                     WHEN ((d.havenext_bool <> s.havenext_bool) OR ((d.havenext_bool IS NULL) AND (s.havenext_bool IS NOT NULL)) OR ((d.havenext_bool IS NOT NULL) AND (s.havenext_bool IS NULL))) THEN 1
                     ELSE 0
                 END AS u_havenext_bool,
-                CASE
-                    WHEN ((d.level_i <> s.level_i) OR ((d.level_i IS NULL) AND (s.level_i IS NOT NULL)) OR ((d.level_i IS NOT NULL) AND (s.level_i IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_level_i,
-                CASE
-                    WHEN ((d.parent_id <> s.parent_id) OR ((d.parent_id IS NULL) AND (s.parent_id IS NOT NULL)) OR ((d.parent_id IS NOT NULL) AND (s.parent_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_parent_id,
-                CASE
-                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_source_id,
                 CASE
                     WHEN (((d.code_s)::text <> (s.code_s)::text) OR ((d.code_s IS NULL) AND (s.code_s IS NOT NULL)) OR ((d.code_s IS NOT NULL) AND (s.code_s IS NULL))) THEN 1
                     ELSE 0
@@ -9569,22 +9561,30 @@ CREATE VIEW public.v_diff_domaine_hal AS
                     WHEN (((d.en_domain_s)::text <> (s.en_domain_s)::text) OR ((d.en_domain_s IS NULL) AND (s.en_domain_s IS NOT NULL)) OR ((d.en_domain_s IS NOT NULL) AND (s.en_domain_s IS NULL))) THEN 1
                     ELSE 0
                 END AS u_en_domain_s,
+                CASE
+                    WHEN ((d.level_i <> s.level_i) OR ((d.level_i IS NULL) AND (s.level_i IS NOT NULL)) OR ((d.level_i IS NOT NULL) AND (s.level_i IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_level_i,
+                CASE
+                    WHEN ((d.parent_id <> s.parent_id) OR ((d.parent_id IS NULL) AND (s.parent_id IS NOT NULL)) OR ((d.parent_id IS NOT NULL) AND (s.parent_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_parent_id,
+            s.source_id AS s_source_id,
             s.docid AS s_docid,
             s.havenext_bool AS s_havenext_bool,
-            s.level_i AS s_level_i,
-            s.parent_id AS s_parent_id,
-            s.source_id AS s_source_id,
             s.code_s AS s_code_s,
             s.fr_domain_s AS s_fr_domain_s,
             s.en_domain_s AS s_en_domain_s,
+            s.level_i AS s_level_i,
+            s.parent_id AS s_parent_id,
+            d.source_id AS d_source_id,
             d.docid AS d_docid,
             d.havenext_bool AS d_havenext_bool,
-            d.level_i AS d_level_i,
-            d.parent_id AS d_parent_id,
-            d.source_id AS d_source_id,
             d.code_s AS d_code_s,
             d.fr_domain_s AS d_fr_domain_s,
-            d.en_domain_s AS d_en_domain_s
+            d.en_domain_s AS d_en_domain_s,
+            d.level_i AS d_level_i,
+            d.parent_id AS d_parent_id
            FROM ((public.domaine_hal d
              FULL JOIN public.src_domaine_hal s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -9592,32 +9592,32 @@ CREATE VIEW public.v_diff_domaine_hal AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_docid,
     diff.u_havenext_bool,
-    diff.u_level_i,
-    diff.u_parent_id,
-    diff.u_source_id,
     diff.u_code_s,
     diff.u_fr_domain_s,
     diff.u_en_domain_s,
+    diff.u_level_i,
+    diff.u_parent_id,
+    diff.s_source_id,
     diff.s_docid,
     diff.s_havenext_bool,
-    diff.s_level_i,
-    diff.s_parent_id,
-    diff.s_source_id,
     diff.s_code_s,
     diff.s_fr_domain_s,
     diff.s_en_domain_s,
+    diff.s_level_i,
+    diff.s_parent_id,
+    diff.d_source_id,
     diff.d_docid,
     diff.d_havenext_bool,
-    diff.d_level_i,
-    diff.d_parent_id,
-    diff.d_source_id,
     diff.d_code_s,
     diff.d_fr_domain_s,
-    diff.d_en_domain_s
+    diff.d_en_domain_s,
+    diff.d_level_i,
+    diff.d_parent_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((diff.u_docid + diff.u_havenext_bool) + diff.u_level_i) + diff.u_parent_id) + diff.u_source_id) + diff.u_code_s) + diff.u_fr_domain_s) + diff.u_en_domain_s))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((diff.u_source_id + diff.u_docid) + diff.u_havenext_bool) + diff.u_code_s) + diff.u_fr_domain_s) + diff.u_en_domain_s) + diff.u_level_i) + diff.u_parent_id))));
 
 
 ALTER VIEW public.v_diff_domaine_hal OWNER TO :dbuser;
@@ -9738,14 +9738,6 @@ CREATE VIEW public.v_diff_financement AS
                     ELSE 0
                 END AS u_these_id,
                 CASE
-                    WHEN ((d.date_debut <> s.date_debut) OR ((d.date_debut IS NULL) AND (s.date_debut IS NOT NULL)) OR ((d.date_debut IS NOT NULL) AND (s.date_debut IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_date_debut,
-                CASE
-                    WHEN ((d.date_fin <> s.date_fin) OR ((d.date_fin IS NULL) AND (s.date_fin IS NOT NULL)) OR ((d.date_fin IS NOT NULL) AND (s.date_fin IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_date_fin,
-                CASE
                     WHEN (((d.annee)::numeric <> s.annee) OR ((d.annee IS NULL) AND (s.annee IS NOT NULL)) OR ((d.annee IS NOT NULL) AND (s.annee IS NULL))) THEN 1
                     ELSE 0
                 END AS u_annee,
@@ -9753,10 +9745,6 @@ CREATE VIEW public.v_diff_financement AS
                     WHEN ((d.origine_financement_id <> s.origine_financement_id) OR ((d.origine_financement_id IS NULL) AND (s.origine_financement_id IS NOT NULL)) OR ((d.origine_financement_id IS NOT NULL) AND (s.origine_financement_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_origine_financement_id,
-                CASE
-                    WHEN (((d.libelle_type_financement)::text <> (s.libelle_type_financement)::text) OR ((d.libelle_type_financement IS NULL) AND (s.libelle_type_financement IS NOT NULL)) OR ((d.libelle_type_financement IS NOT NULL) AND (s.libelle_type_financement IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_libelle_type_financement,
                 CASE
                     WHEN (((d.complement_financement)::text <> (s.complement_financement)::text) OR ((d.complement_financement IS NULL) AND (s.complement_financement IS NOT NULL)) OR ((d.complement_financement IS NOT NULL) AND (s.complement_financement IS NULL))) THEN 1
                     ELSE 0
@@ -9766,29 +9754,41 @@ CREATE VIEW public.v_diff_financement AS
                     ELSE 0
                 END AS u_quotite_financement,
                 CASE
+                    WHEN ((d.date_debut <> s.date_debut) OR ((d.date_debut IS NULL) AND (s.date_debut IS NOT NULL)) OR ((d.date_debut IS NOT NULL) AND (s.date_debut IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_date_debut,
+                CASE
+                    WHEN ((d.date_fin <> s.date_fin) OR ((d.date_fin IS NULL) AND (s.date_fin IS NOT NULL)) OR ((d.date_fin IS NOT NULL) AND (s.date_fin IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_date_fin,
+                CASE
                     WHEN (((d.code_type_financement)::text <> (s.code_type_financement)::text) OR ((d.code_type_financement IS NULL) AND (s.code_type_financement IS NOT NULL)) OR ((d.code_type_financement IS NOT NULL) AND (s.code_type_financement IS NULL))) THEN 1
                     ELSE 0
                 END AS u_code_type_financement,
+                CASE
+                    WHEN (((d.libelle_type_financement)::text <> (s.libelle_type_financement)::text) OR ((d.libelle_type_financement IS NULL) AND (s.libelle_type_financement IS NOT NULL)) OR ((d.libelle_type_financement IS NOT NULL) AND (s.libelle_type_financement IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_libelle_type_financement,
             s.source_id AS s_source_id,
             s.these_id AS s_these_id,
-            s.date_debut AS s_date_debut,
-            s.date_fin AS s_date_fin,
             s.annee AS s_annee,
             s.origine_financement_id AS s_origine_financement_id,
-            s.libelle_type_financement AS s_libelle_type_financement,
             s.complement_financement AS s_complement_financement,
             s.quotite_financement AS s_quotite_financement,
+            s.date_debut AS s_date_debut,
+            s.date_fin AS s_date_fin,
             s.code_type_financement AS s_code_type_financement,
+            s.libelle_type_financement AS s_libelle_type_financement,
             d.source_id AS d_source_id,
             d.these_id AS d_these_id,
-            d.date_debut AS d_date_debut,
-            d.date_fin AS d_date_fin,
             d.annee AS d_annee,
             d.origine_financement_id AS d_origine_financement_id,
-            d.libelle_type_financement AS d_libelle_type_financement,
             d.complement_financement AS d_complement_financement,
             d.quotite_financement AS d_quotite_financement,
-            d.code_type_financement AS d_code_type_financement
+            d.date_debut AS d_date_debut,
+            d.date_fin AS d_date_fin,
+            d.code_type_financement AS d_code_type_financement,
+            d.libelle_type_financement AS d_libelle_type_financement
            FROM ((public.financement d
              FULL JOIN public.src_financement s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -9798,36 +9798,36 @@ CREATE VIEW public.v_diff_financement AS
     diff.operation,
     diff.u_source_id,
     diff.u_these_id,
-    diff.u_date_debut,
-    diff.u_date_fin,
     diff.u_annee,
     diff.u_origine_financement_id,
-    diff.u_libelle_type_financement,
     diff.u_complement_financement,
     diff.u_quotite_financement,
+    diff.u_date_debut,
+    diff.u_date_fin,
     diff.u_code_type_financement,
+    diff.u_libelle_type_financement,
     diff.s_source_id,
     diff.s_these_id,
-    diff.s_date_debut,
-    diff.s_date_fin,
     diff.s_annee,
     diff.s_origine_financement_id,
-    diff.s_libelle_type_financement,
     diff.s_complement_financement,
     diff.s_quotite_financement,
+    diff.s_date_debut,
+    diff.s_date_fin,
     diff.s_code_type_financement,
+    diff.s_libelle_type_financement,
     diff.d_source_id,
     diff.d_these_id,
-    diff.d_date_debut,
-    diff.d_date_fin,
     diff.d_annee,
     diff.d_origine_financement_id,
-    diff.d_libelle_type_financement,
     diff.d_complement_financement,
     diff.d_quotite_financement,
-    diff.d_code_type_financement
+    diff.d_date_debut,
+    diff.d_date_fin,
+    diff.d_code_type_financement,
+    diff.d_libelle_type_financement
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((((diff.u_source_id + diff.u_these_id) + diff.u_date_debut) + diff.u_date_fin) + diff.u_annee) + diff.u_origine_financement_id) + diff.u_libelle_type_financement) + diff.u_complement_financement) + diff.u_quotite_financement) + diff.u_code_type_financement))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((((diff.u_source_id + diff.u_these_id) + diff.u_annee) + diff.u_origine_financement_id) + diff.u_complement_financement) + diff.u_quotite_financement) + diff.u_date_debut) + diff.u_date_fin) + diff.u_code_type_financement) + diff.u_libelle_type_financement))));
 
 
 ALTER VIEW public.v_diff_financement OWNER TO :dbuser;
@@ -9852,13 +9852,9 @@ CREATE VIEW public.v_diff_individu AS
                     ELSE 0
                 END AS u_source_id,
                 CASE
-                    WHEN ((d.date_naissance <> s.date_naissance) OR ((d.date_naissance IS NULL) AND (s.date_naissance IS NOT NULL)) OR ((d.date_naissance IS NOT NULL) AND (s.date_naissance IS NULL))) THEN 1
+                    WHEN (((d.type)::text <> (s.type)::text) OR ((d.type IS NULL) AND (s.type IS NOT NULL)) OR ((d.type IS NOT NULL) AND (s.type IS NULL))) THEN 1
                     ELSE 0
-                END AS u_date_naissance,
-                CASE
-                    WHEN ((d.pays_id_nationalite <> s.pays_id_nationalite) OR ((d.pays_id_nationalite IS NULL) AND (s.pays_id_nationalite IS NOT NULL)) OR ((d.pays_id_nationalite IS NOT NULL) AND (s.pays_id_nationalite IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_pays_id_nationalite,
+                END AS u_type,
                 CASE
                     WHEN (((d.supann_id)::text <> (s.supann_id)::text) OR ((d.supann_id IS NULL) AND (s.supann_id IS NOT NULL)) OR ((d.supann_id IS NOT NULL) AND (s.supann_id IS NULL))) THEN 1
                     ELSE 0
@@ -9892,16 +9888,19 @@ CREATE VIEW public.v_diff_individu AS
                     ELSE 0
                 END AS u_email,
                 CASE
+                    WHEN ((d.date_naissance <> s.date_naissance) OR ((d.date_naissance IS NULL) AND (s.date_naissance IS NOT NULL)) OR ((d.date_naissance IS NOT NULL) AND (s.date_naissance IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_date_naissance,
+                CASE
                     WHEN (((d.nationalite)::text <> (s.nationalite)::text) OR ((d.nationalite IS NULL) AND (s.nationalite IS NOT NULL)) OR ((d.nationalite IS NOT NULL) AND (s.nationalite IS NULL))) THEN 1
                     ELSE 0
                 END AS u_nationalite,
                 CASE
-                    WHEN (((d.type)::text <> (s.type)::text) OR ((d.type IS NULL) AND (s.type IS NOT NULL)) OR ((d.type IS NOT NULL) AND (s.type IS NULL))) THEN 1
+                    WHEN ((d.pays_id_nationalite <> s.pays_id_nationalite) OR ((d.pays_id_nationalite IS NULL) AND (s.pays_id_nationalite IS NOT NULL)) OR ((d.pays_id_nationalite IS NOT NULL) AND (s.pays_id_nationalite IS NULL))) THEN 1
                     ELSE 0
-                END AS u_type,
+                END AS u_pays_id_nationalite,
             s.source_id AS s_source_id,
-            s.date_naissance AS s_date_naissance,
-            s.pays_id_nationalite AS s_pays_id_nationalite,
+            s.type AS s_type,
             s.supann_id AS s_supann_id,
             s.civilite AS s_civilite,
             s.nom_usuel AS s_nom_usuel,
@@ -9910,11 +9909,11 @@ CREATE VIEW public.v_diff_individu AS
             s.prenom2 AS s_prenom2,
             s.prenom3 AS s_prenom3,
             s.email AS s_email,
+            s.date_naissance AS s_date_naissance,
             s.nationalite AS s_nationalite,
-            s.type AS s_type,
+            s.pays_id_nationalite AS s_pays_id_nationalite,
             d.source_id AS d_source_id,
-            d.date_naissance AS d_date_naissance,
-            d.pays_id_nationalite AS d_pays_id_nationalite,
+            d.type AS d_type,
             d.supann_id AS d_supann_id,
             d.civilite AS d_civilite,
             d.nom_usuel AS d_nom_usuel,
@@ -9923,8 +9922,9 @@ CREATE VIEW public.v_diff_individu AS
             d.prenom2 AS d_prenom2,
             d.prenom3 AS d_prenom3,
             d.email AS d_email,
+            d.date_naissance AS d_date_naissance,
             d.nationalite AS d_nationalite,
-            d.type AS d_type
+            d.pays_id_nationalite AS d_pays_id_nationalite
            FROM ((public.individu d
              FULL JOIN public.src_individu s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -9933,8 +9933,7 @@ CREATE VIEW public.v_diff_individu AS
     diff.source_id,
     diff.operation,
     diff.u_source_id,
-    diff.u_date_naissance,
-    diff.u_pays_id_nationalite,
+    diff.u_type,
     diff.u_supann_id,
     diff.u_civilite,
     diff.u_nom_usuel,
@@ -9943,11 +9942,11 @@ CREATE VIEW public.v_diff_individu AS
     diff.u_prenom2,
     diff.u_prenom3,
     diff.u_email,
+    diff.u_date_naissance,
     diff.u_nationalite,
-    diff.u_type,
+    diff.u_pays_id_nationalite,
     diff.s_source_id,
-    diff.s_date_naissance,
-    diff.s_pays_id_nationalite,
+    diff.s_type,
     diff.s_supann_id,
     diff.s_civilite,
     diff.s_nom_usuel,
@@ -9956,11 +9955,11 @@ CREATE VIEW public.v_diff_individu AS
     diff.s_prenom2,
     diff.s_prenom3,
     diff.s_email,
+    diff.s_date_naissance,
     diff.s_nationalite,
-    diff.s_type,
+    diff.s_pays_id_nationalite,
     diff.d_source_id,
-    diff.d_date_naissance,
-    diff.d_pays_id_nationalite,
+    diff.d_type,
     diff.d_supann_id,
     diff.d_civilite,
     diff.d_nom_usuel,
@@ -9969,10 +9968,11 @@ CREATE VIEW public.v_diff_individu AS
     diff.d_prenom2,
     diff.d_prenom3,
     diff.d_email,
+    diff.d_date_naissance,
     diff.d_nationalite,
-    diff.d_type
+    diff.d_pays_id_nationalite
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((diff.u_source_id + diff.u_date_naissance) + diff.u_pays_id_nationalite) + diff.u_supann_id) + diff.u_civilite) + diff.u_nom_usuel) + diff.u_nom_patronymique) + diff.u_prenom1) + diff.u_prenom2) + diff.u_prenom3) + diff.u_email) + diff.u_nationalite) + diff.u_type))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((diff.u_source_id + diff.u_type) + diff.u_supann_id) + diff.u_civilite) + diff.u_nom_usuel) + diff.u_nom_patronymique) + diff.u_prenom1) + diff.u_prenom2) + diff.u_prenom3) + diff.u_email) + diff.u_date_naissance) + diff.u_nationalite) + diff.u_pays_id_nationalite))));
 
 
 ALTER VIEW public.v_diff_individu OWNER TO :dbuser;
@@ -10061,6 +10061,18 @@ CREATE VIEW public.v_diff_role AS
                     ELSE 0
                 END AS u_source_id,
                 CASE
+                    WHEN (((d.libelle)::text <> (s.libelle)::text) OR ((d.libelle IS NULL) AND (s.libelle IS NOT NULL)) OR ((d.libelle IS NOT NULL) AND (s.libelle IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_libelle,
+                CASE
+                    WHEN (((d.code)::text <> s.code) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_code,
+                CASE
+                    WHEN (((d.role_id)::text <> s.role_id) OR ((d.role_id IS NULL) AND (s.role_id IS NOT NULL)) OR ((d.role_id IS NOT NULL) AND (s.role_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_role_id,
+                CASE
                     WHEN ((d.these_dep <> s.these_dep) OR ((d.these_dep IS NULL) AND (s.these_dep IS NOT NULL)) OR ((d.these_dep IS NOT NULL) AND (s.these_dep IS NULL))) THEN 1
                     ELSE 0
                 END AS u_these_dep,
@@ -10072,32 +10084,20 @@ CREATE VIEW public.v_diff_role AS
                     WHEN ((d.type_structure_dependant_id <> s.type_structure_dependant_id) OR ((d.type_structure_dependant_id IS NULL) AND (s.type_structure_dependant_id IS NOT NULL)) OR ((d.type_structure_dependant_id IS NOT NULL) AND (s.type_structure_dependant_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_type_structure_dependant_id,
-                CASE
-                    WHEN (((d.role_id)::text <> s.role_id) OR ((d.role_id IS NULL) AND (s.role_id IS NOT NULL)) OR ((d.role_id IS NOT NULL) AND (s.role_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_role_id,
-                CASE
-                    WHEN (((d.libelle)::text <> (s.libelle)::text) OR ((d.libelle IS NULL) AND (s.libelle IS NOT NULL)) OR ((d.libelle IS NOT NULL) AND (s.libelle IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_libelle,
-                CASE
-                    WHEN (((d.code)::text <> s.code) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_code,
             s.source_id AS s_source_id,
+            s.libelle AS s_libelle,
+            s.code AS s_code,
+            s.role_id AS s_role_id,
             s.these_dep AS s_these_dep,
             s.structure_id AS s_structure_id,
             s.type_structure_dependant_id AS s_type_structure_dependant_id,
-            s.role_id AS s_role_id,
-            s.libelle AS s_libelle,
-            s.code AS s_code,
             d.source_id AS d_source_id,
+            d.libelle AS d_libelle,
+            d.code AS d_code,
+            d.role_id AS d_role_id,
             d.these_dep AS d_these_dep,
             d.structure_id AS d_structure_id,
-            d.type_structure_dependant_id AS d_type_structure_dependant_id,
-            d.role_id AS d_role_id,
-            d.libelle AS d_libelle,
-            d.code AS d_code
+            d.type_structure_dependant_id AS d_type_structure_dependant_id
            FROM ((public.role d
              FULL JOIN public.src_role s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -10106,28 +10106,28 @@ CREATE VIEW public.v_diff_role AS
     diff.source_id,
     diff.operation,
     diff.u_source_id,
+    diff.u_libelle,
+    diff.u_code,
+    diff.u_role_id,
     diff.u_these_dep,
     diff.u_structure_id,
     diff.u_type_structure_dependant_id,
-    diff.u_role_id,
-    diff.u_libelle,
-    diff.u_code,
     diff.s_source_id,
+    diff.s_libelle,
+    diff.s_code,
+    diff.s_role_id,
     diff.s_these_dep,
     diff.s_structure_id,
     diff.s_type_structure_dependant_id,
-    diff.s_role_id,
-    diff.s_libelle,
-    diff.s_code,
     diff.d_source_id,
+    diff.d_libelle,
+    diff.d_code,
+    diff.d_role_id,
     diff.d_these_dep,
     diff.d_structure_id,
-    diff.d_type_structure_dependant_id,
-    diff.d_role_id,
-    diff.d_libelle,
-    diff.d_code
+    diff.d_type_structure_dependant_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_these_dep) + diff.u_structure_id) + diff.u_type_structure_dependant_id) + diff.u_role_id) + diff.u_libelle) + diff.u_code))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_libelle) + diff.u_code) + diff.u_role_id) + diff.u_these_dep) + diff.u_structure_id) + diff.u_type_structure_dependant_id))));
 
 
 ALTER VIEW public.v_diff_role OWNER TO :dbuser;
@@ -10148,6 +10148,10 @@ CREATE VIEW public.v_diff_structure AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN (((d.code)::text <> s.code) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_code,
+                CASE
                     WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_source_id,
@@ -10163,20 +10167,16 @@ CREATE VIEW public.v_diff_structure AS
                     WHEN (((d.libelle)::text <> (s.libelle)::text) OR ((d.libelle IS NULL) AND (s.libelle IS NOT NULL)) OR ((d.libelle IS NOT NULL) AND (s.libelle IS NULL))) THEN 1
                     ELSE 0
                 END AS u_libelle,
-                CASE
-                    WHEN (((d.code)::text <> s.code) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_code,
+            s.code AS s_code,
             s.source_id AS s_source_id,
             s.type_structure_id AS s_type_structure_id,
             s.sigle AS s_sigle,
             s.libelle AS s_libelle,
-            s.code AS s_code,
+            d.code AS d_code,
             d.source_id AS d_source_id,
             d.type_structure_id AS d_type_structure_id,
             d.sigle AS d_sigle,
-            d.libelle AS d_libelle,
-            d.code AS d_code
+            d.libelle AS d_libelle
            FROM ((public.structure d
              FULL JOIN public.src_structure s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -10184,23 +10184,23 @@ CREATE VIEW public.v_diff_structure AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_code,
     diff.u_source_id,
     diff.u_type_structure_id,
     diff.u_sigle,
     diff.u_libelle,
-    diff.u_code,
+    diff.s_code,
     diff.s_source_id,
     diff.s_type_structure_id,
     diff.s_sigle,
     diff.s_libelle,
-    diff.s_code,
+    diff.d_code,
     diff.d_source_id,
     diff.d_type_structure_id,
     diff.d_sigle,
-    diff.d_libelle,
-    diff.d_code
+    diff.d_libelle
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((diff.u_source_id + diff.u_type_structure_id) + diff.u_sigle) + diff.u_libelle) + diff.u_code))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((diff.u_code + diff.u_source_id) + diff.u_type_structure_id) + diff.u_sigle) + diff.u_libelle))));
 
 
 ALTER VIEW public.v_diff_structure OWNER TO :dbuser;
@@ -10221,9 +10221,13 @@ CREATE VIEW public.v_diff_these AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
-                    WHEN ((d.date_transfert <> s.date_transfert) OR ((d.date_transfert IS NULL) AND (s.date_transfert IS NOT NULL)) OR ((d.date_transfert IS NOT NULL) AND (s.date_transfert IS NULL))) THEN 1
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
                     ELSE 0
-                END AS u_date_transfert,
+                END AS u_source_id,
+                CASE
+                    WHEN ((d.doctorant_id <> s.doctorant_id) OR ((d.doctorant_id IS NULL) AND (s.doctorant_id IS NOT NULL)) OR ((d.doctorant_id IS NOT NULL) AND (s.doctorant_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_doctorant_id,
                 CASE
                     WHEN ((d.etablissement_id <> s.etablissement_id) OR ((d.etablissement_id IS NULL) AND (s.etablissement_id IS NOT NULL)) OR ((d.etablissement_id IS NOT NULL) AND (s.etablissement_id IS NULL))) THEN 1
                     ELSE 0
@@ -10237,9 +10241,25 @@ CREATE VIEW public.v_diff_these AS
                     ELSE 0
                 END AS u_unite_rech_id,
                 CASE
+                    WHEN (((d.titre)::text <> (s.titre)::text) OR ((d.titre IS NULL) AND (s.titre IS NOT NULL)) OR ((d.titre IS NOT NULL) AND (s.titre IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_titre,
+                CASE
+                    WHEN (((d.etat_these)::text <> (s.etat_these)::text) OR ((d.etat_these IS NULL) AND (s.etat_these IS NOT NULL)) OR ((d.etat_these IS NOT NULL) AND (s.etat_these IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_etat_these,
+                CASE
                     WHEN (((d.resultat)::numeric <> s.resultat) OR ((d.resultat IS NULL) AND (s.resultat IS NOT NULL)) OR ((d.resultat IS NOT NULL) AND (s.resultat IS NULL))) THEN 1
                     ELSE 0
                 END AS u_resultat,
+                CASE
+                    WHEN (((d.code_sise_disc)::text <> (s.code_sise_disc)::text) OR ((d.code_sise_disc IS NULL) AND (s.code_sise_disc IS NOT NULL)) OR ((d.code_sise_disc IS NOT NULL) AND (s.code_sise_disc IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_code_sise_disc,
+                CASE
+                    WHEN (((d.lib_disc)::text <> (s.lib_disc)::text) OR ((d.lib_disc IS NULL) AND (s.lib_disc IS NOT NULL)) OR ((d.lib_disc IS NOT NULL) AND (s.lib_disc IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_lib_disc,
                 CASE
                     WHEN ((d.date_prem_insc <> s.date_prem_insc) OR ((d.date_prem_insc IS NULL) AND (s.date_prem_insc IS NOT NULL)) OR ((d.date_prem_insc IS NOT NULL) AND (s.date_prem_insc IS NULL))) THEN 1
                     ELSE 0
@@ -10257,21 +10277,13 @@ CREATE VIEW public.v_diff_these AS
                     ELSE 0
                 END AS u_date_fin_confid,
                 CASE
-                    WHEN ((d.date_autoris_soutenance <> s.date_autoris_soutenance) OR ((d.date_autoris_soutenance IS NULL) AND (s.date_autoris_soutenance IS NOT NULL)) OR ((d.date_autoris_soutenance IS NOT NULL) AND (s.date_autoris_soutenance IS NULL))) THEN 1
+                    WHEN (((d.lib_etab_cotut)::text <> (s.lib_etab_cotut)::text) OR ((d.lib_etab_cotut IS NULL) AND (s.lib_etab_cotut IS NOT NULL)) OR ((d.lib_etab_cotut IS NOT NULL) AND (s.lib_etab_cotut IS NULL))) THEN 1
                     ELSE 0
-                END AS u_date_autoris_soutenance,
+                END AS u_lib_etab_cotut,
                 CASE
-                    WHEN ((d.date_abandon <> s.date_abandon) OR ((d.date_abandon IS NULL) AND (s.date_abandon IS NOT NULL)) OR ((d.date_abandon IS NOT NULL) AND (s.date_abandon IS NULL))) THEN 1
+                    WHEN (((d.lib_pays_cotut)::text <> (s.lib_pays_cotut)::text) OR ((d.lib_pays_cotut IS NULL) AND (s.lib_pays_cotut IS NOT NULL)) OR ((d.lib_pays_cotut IS NOT NULL) AND (s.lib_pays_cotut IS NULL))) THEN 1
                     ELSE 0
-                END AS u_date_abandon,
-                CASE
-                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_source_id,
-                CASE
-                    WHEN ((d.doctorant_id <> s.doctorant_id) OR ((d.doctorant_id IS NULL) AND (s.doctorant_id IS NOT NULL)) OR ((d.doctorant_id IS NOT NULL) AND (s.doctorant_id IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_doctorant_id,
+                END AS u_lib_pays_cotut,
                 CASE
                     WHEN (((d.correc_autorisee)::text <> (s.correc_autorisee)::text) OR ((d.correc_autorisee IS NULL) AND (s.correc_autorisee IS NOT NULL)) OR ((d.correc_autorisee IS NOT NULL) AND (s.correc_autorisee IS NULL))) THEN 1
                     ELSE 0
@@ -10285,79 +10297,67 @@ CREATE VIEW public.v_diff_these AS
                     ELSE 0
                 END AS u_soutenance_autoris,
                 CASE
+                    WHEN ((d.date_autoris_soutenance <> s.date_autoris_soutenance) OR ((d.date_autoris_soutenance IS NULL) AND (s.date_autoris_soutenance IS NOT NULL)) OR ((d.date_autoris_soutenance IS NOT NULL) AND (s.date_autoris_soutenance IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_date_autoris_soutenance,
+                CASE
                     WHEN (((d.tem_avenant_cotut)::text <> (s.tem_avenant_cotut)::text) OR ((d.tem_avenant_cotut IS NULL) AND (s.tem_avenant_cotut IS NOT NULL)) OR ((d.tem_avenant_cotut IS NOT NULL) AND (s.tem_avenant_cotut IS NULL))) THEN 1
                     ELSE 0
                 END AS u_tem_avenant_cotut,
                 CASE
-                    WHEN (((d.lib_etab_cotut)::text <> (s.lib_etab_cotut)::text) OR ((d.lib_etab_cotut IS NULL) AND (s.lib_etab_cotut IS NOT NULL)) OR ((d.lib_etab_cotut IS NOT NULL) AND (s.lib_etab_cotut IS NULL))) THEN 1
+                    WHEN ((d.date_abandon <> s.date_abandon) OR ((d.date_abandon IS NULL) AND (s.date_abandon IS NOT NULL)) OR ((d.date_abandon IS NOT NULL) AND (s.date_abandon IS NULL))) THEN 1
                     ELSE 0
-                END AS u_lib_etab_cotut,
+                END AS u_date_abandon,
                 CASE
-                    WHEN (((d.titre)::text <> (s.titre)::text) OR ((d.titre IS NULL) AND (s.titre IS NOT NULL)) OR ((d.titre IS NOT NULL) AND (s.titre IS NULL))) THEN 1
+                    WHEN ((d.date_transfert <> s.date_transfert) OR ((d.date_transfert IS NULL) AND (s.date_transfert IS NOT NULL)) OR ((d.date_transfert IS NOT NULL) AND (s.date_transfert IS NULL))) THEN 1
                     ELSE 0
-                END AS u_titre,
-                CASE
-                    WHEN (((d.etat_these)::text <> (s.etat_these)::text) OR ((d.etat_these IS NULL) AND (s.etat_these IS NOT NULL)) OR ((d.etat_these IS NOT NULL) AND (s.etat_these IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_etat_these,
-                CASE
-                    WHEN (((d.lib_pays_cotut)::text <> (s.lib_pays_cotut)::text) OR ((d.lib_pays_cotut IS NULL) AND (s.lib_pays_cotut IS NOT NULL)) OR ((d.lib_pays_cotut IS NOT NULL) AND (s.lib_pays_cotut IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_lib_pays_cotut,
-                CASE
-                    WHEN (((d.code_sise_disc)::text <> (s.code_sise_disc)::text) OR ((d.code_sise_disc IS NULL) AND (s.code_sise_disc IS NOT NULL)) OR ((d.code_sise_disc IS NOT NULL) AND (s.code_sise_disc IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_code_sise_disc,
-                CASE
-                    WHEN (((d.lib_disc)::text <> (s.lib_disc)::text) OR ((d.lib_disc IS NULL) AND (s.lib_disc IS NOT NULL)) OR ((d.lib_disc IS NOT NULL) AND (s.lib_disc IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_lib_disc,
-            s.date_transfert AS s_date_transfert,
+                END AS u_date_transfert,
+            s.source_id AS s_source_id,
+            s.doctorant_id AS s_doctorant_id,
             s.etablissement_id AS s_etablissement_id,
             s.ecole_doct_id AS s_ecole_doct_id,
             s.unite_rech_id AS s_unite_rech_id,
+            s.titre AS s_titre,
+            s.etat_these AS s_etat_these,
             s.resultat AS s_resultat,
+            s.code_sise_disc AS s_code_sise_disc,
+            s.lib_disc AS s_lib_disc,
             s.date_prem_insc AS s_date_prem_insc,
             s.date_prev_soutenance AS s_date_prev_soutenance,
             s.date_soutenance AS s_date_soutenance,
             s.date_fin_confid AS s_date_fin_confid,
-            s.date_autoris_soutenance AS s_date_autoris_soutenance,
-            s.date_abandon AS s_date_abandon,
-            s.source_id AS s_source_id,
-            s.doctorant_id AS s_doctorant_id,
+            s.lib_etab_cotut AS s_lib_etab_cotut,
+            s.lib_pays_cotut AS s_lib_pays_cotut,
             s.correc_autorisee AS s_correc_autorisee,
             s.correc_effectuee AS s_correc_effectuee,
             s.soutenance_autoris AS s_soutenance_autoris,
+            s.date_autoris_soutenance AS s_date_autoris_soutenance,
             s.tem_avenant_cotut AS s_tem_avenant_cotut,
-            s.lib_etab_cotut AS s_lib_etab_cotut,
-            s.titre AS s_titre,
-            s.etat_these AS s_etat_these,
-            s.lib_pays_cotut AS s_lib_pays_cotut,
-            s.code_sise_disc AS s_code_sise_disc,
-            s.lib_disc AS s_lib_disc,
-            d.date_transfert AS d_date_transfert,
+            s.date_abandon AS s_date_abandon,
+            s.date_transfert AS s_date_transfert,
+            d.source_id AS d_source_id,
+            d.doctorant_id AS d_doctorant_id,
             d.etablissement_id AS d_etablissement_id,
             d.ecole_doct_id AS d_ecole_doct_id,
             d.unite_rech_id AS d_unite_rech_id,
+            d.titre AS d_titre,
+            d.etat_these AS d_etat_these,
             d.resultat AS d_resultat,
+            d.code_sise_disc AS d_code_sise_disc,
+            d.lib_disc AS d_lib_disc,
             d.date_prem_insc AS d_date_prem_insc,
             d.date_prev_soutenance AS d_date_prev_soutenance,
             d.date_soutenance AS d_date_soutenance,
             d.date_fin_confid AS d_date_fin_confid,
-            d.date_autoris_soutenance AS d_date_autoris_soutenance,
-            d.date_abandon AS d_date_abandon,
-            d.source_id AS d_source_id,
-            d.doctorant_id AS d_doctorant_id,
+            d.lib_etab_cotut AS d_lib_etab_cotut,
+            d.lib_pays_cotut AS d_lib_pays_cotut,
             d.correc_autorisee AS d_correc_autorisee,
             d.correc_effectuee AS d_correc_effectuee,
             d.soutenance_autoris AS d_soutenance_autoris,
+            d.date_autoris_soutenance AS d_date_autoris_soutenance,
             d.tem_avenant_cotut AS d_tem_avenant_cotut,
-            d.lib_etab_cotut AS d_lib_etab_cotut,
-            d.titre AS d_titre,
-            d.etat_these AS d_etat_these,
-            d.lib_pays_cotut AS d_lib_pays_cotut,
-            d.code_sise_disc AS d_code_sise_disc,
-            d.lib_disc AS d_lib_disc
+            d.date_abandon AS d_date_abandon,
+            d.date_transfert AS d_date_transfert
            FROM ((public.these d
              FULL JOIN public.src_these s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -10365,77 +10365,77 @@ CREATE VIEW public.v_diff_these AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
-    diff.u_date_transfert,
+    diff.u_source_id,
+    diff.u_doctorant_id,
     diff.u_etablissement_id,
     diff.u_ecole_doct_id,
     diff.u_unite_rech_id,
+    diff.u_titre,
+    diff.u_etat_these,
     diff.u_resultat,
+    diff.u_code_sise_disc,
+    diff.u_lib_disc,
     diff.u_date_prem_insc,
     diff.u_date_prev_soutenance,
     diff.u_date_soutenance,
     diff.u_date_fin_confid,
-    diff.u_date_autoris_soutenance,
-    diff.u_date_abandon,
-    diff.u_source_id,
-    diff.u_doctorant_id,
+    diff.u_lib_etab_cotut,
+    diff.u_lib_pays_cotut,
     diff.u_correc_autorisee,
     diff.u_correc_effectuee,
     diff.u_soutenance_autoris,
+    diff.u_date_autoris_soutenance,
     diff.u_tem_avenant_cotut,
-    diff.u_lib_etab_cotut,
-    diff.u_titre,
-    diff.u_etat_these,
-    diff.u_lib_pays_cotut,
-    diff.u_code_sise_disc,
-    diff.u_lib_disc,
-    diff.s_date_transfert,
+    diff.u_date_abandon,
+    diff.u_date_transfert,
+    diff.s_source_id,
+    diff.s_doctorant_id,
     diff.s_etablissement_id,
     diff.s_ecole_doct_id,
     diff.s_unite_rech_id,
+    diff.s_titre,
+    diff.s_etat_these,
     diff.s_resultat,
+    diff.s_code_sise_disc,
+    diff.s_lib_disc,
     diff.s_date_prem_insc,
     diff.s_date_prev_soutenance,
     diff.s_date_soutenance,
     diff.s_date_fin_confid,
-    diff.s_date_autoris_soutenance,
-    diff.s_date_abandon,
-    diff.s_source_id,
-    diff.s_doctorant_id,
+    diff.s_lib_etab_cotut,
+    diff.s_lib_pays_cotut,
     diff.s_correc_autorisee,
     diff.s_correc_effectuee,
     diff.s_soutenance_autoris,
+    diff.s_date_autoris_soutenance,
     diff.s_tem_avenant_cotut,
-    diff.s_lib_etab_cotut,
-    diff.s_titre,
-    diff.s_etat_these,
-    diff.s_lib_pays_cotut,
-    diff.s_code_sise_disc,
-    diff.s_lib_disc,
-    diff.d_date_transfert,
+    diff.s_date_abandon,
+    diff.s_date_transfert,
+    diff.d_source_id,
+    diff.d_doctorant_id,
     diff.d_etablissement_id,
     diff.d_ecole_doct_id,
     diff.d_unite_rech_id,
+    diff.d_titre,
+    diff.d_etat_these,
     diff.d_resultat,
+    diff.d_code_sise_disc,
+    diff.d_lib_disc,
     diff.d_date_prem_insc,
     diff.d_date_prev_soutenance,
     diff.d_date_soutenance,
     diff.d_date_fin_confid,
-    diff.d_date_autoris_soutenance,
-    diff.d_date_abandon,
-    diff.d_source_id,
-    diff.d_doctorant_id,
+    diff.d_lib_etab_cotut,
+    diff.d_lib_pays_cotut,
     diff.d_correc_autorisee,
     diff.d_correc_effectuee,
     diff.d_soutenance_autoris,
+    diff.d_date_autoris_soutenance,
     diff.d_tem_avenant_cotut,
-    diff.d_lib_etab_cotut,
-    diff.d_titre,
-    diff.d_etat_these,
-    diff.d_lib_pays_cotut,
-    diff.d_code_sise_disc,
-    diff.d_lib_disc
+    diff.d_date_abandon,
+    diff.d_date_transfert
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((((((((((((diff.u_date_transfert + diff.u_etablissement_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_resultat) + diff.u_date_prem_insc) + diff.u_date_prev_soutenance) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_date_autoris_soutenance) + diff.u_date_abandon) + diff.u_source_id) + diff.u_doctorant_id) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_tem_avenant_cotut) + diff.u_lib_etab_cotut) + diff.u_titre) + diff.u_etat_these) + diff.u_lib_pays_cotut) + diff.u_code_sise_disc) + diff.u_lib_disc))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((((((((((((diff.u_source_id + diff.u_doctorant_id) + diff.u_etablissement_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_titre) + diff.u_etat_these) + diff.u_resultat) + diff.u_code_sise_disc) + diff.u_lib_disc) + diff.u_date_prem_insc) + diff.u_date_prev_soutenance) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_lib_etab_cotut) + diff.u_lib_pays_cotut) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_date_autoris_soutenance) + diff.u_tem_avenant_cotut) + diff.u_date_abandon) + diff.u_date_transfert))));
 
 
 ALTER VIEW public.v_diff_these OWNER TO :dbuser;
@@ -10697,13 +10697,9 @@ CREATE VIEW public.v_diff_variable AS
                     ELSE 0
                 END AS u_etablissement_id,
                 CASE
-                    WHEN ((d.date_deb_validite <> s.date_deb_validite) OR ((d.date_deb_validite IS NULL) AND (s.date_deb_validite IS NOT NULL)) OR ((d.date_deb_validite IS NOT NULL) AND (s.date_deb_validite IS NULL))) THEN 1
+                    WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
                     ELSE 0
-                END AS u_date_deb_validite,
-                CASE
-                    WHEN ((d.date_fin_validite <> s.date_fin_validite) OR ((d.date_fin_validite IS NULL) AND (s.date_fin_validite IS NOT NULL)) OR ((d.date_fin_validite IS NOT NULL) AND (s.date_fin_validite IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_date_fin_validite,
+                END AS u_code,
                 CASE
                     WHEN (((d.description)::text <> (s.description)::text) OR ((d.description IS NULL) AND (s.description IS NOT NULL)) OR ((d.description IS NOT NULL) AND (s.description IS NULL))) THEN 1
                     ELSE 0
@@ -10713,23 +10709,27 @@ CREATE VIEW public.v_diff_variable AS
                     ELSE 0
                 END AS u_valeur,
                 CASE
-                    WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    WHEN ((d.date_deb_validite <> s.date_deb_validite) OR ((d.date_deb_validite IS NULL) AND (s.date_deb_validite IS NOT NULL)) OR ((d.date_deb_validite IS NOT NULL) AND (s.date_deb_validite IS NULL))) THEN 1
                     ELSE 0
-                END AS u_code,
+                END AS u_date_deb_validite,
+                CASE
+                    WHEN ((d.date_fin_validite <> s.date_fin_validite) OR ((d.date_fin_validite IS NULL) AND (s.date_fin_validite IS NOT NULL)) OR ((d.date_fin_validite IS NOT NULL) AND (s.date_fin_validite IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_date_fin_validite,
             s.source_id AS s_source_id,
             s.etablissement_id AS s_etablissement_id,
-            s.date_deb_validite AS s_date_deb_validite,
-            s.date_fin_validite AS s_date_fin_validite,
+            s.code AS s_code,
             s.description AS s_description,
             s.valeur AS s_valeur,
-            s.code AS s_code,
+            s.date_deb_validite AS s_date_deb_validite,
+            s.date_fin_validite AS s_date_fin_validite,
             d.source_id AS d_source_id,
             d.etablissement_id AS d_etablissement_id,
-            d.date_deb_validite AS d_date_deb_validite,
-            d.date_fin_validite AS d_date_fin_validite,
+            d.code AS d_code,
             d.description AS d_description,
             d.valeur AS d_valeur,
-            d.code AS d_code
+            d.date_deb_validite AS d_date_deb_validite,
+            d.date_fin_validite AS d_date_fin_validite
            FROM ((public.variable d
              FULL JOIN public.src_variable s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -10739,27 +10739,27 @@ CREATE VIEW public.v_diff_variable AS
     diff.operation,
     diff.u_source_id,
     diff.u_etablissement_id,
-    diff.u_date_deb_validite,
-    diff.u_date_fin_validite,
+    diff.u_code,
     diff.u_description,
     diff.u_valeur,
-    diff.u_code,
+    diff.u_date_deb_validite,
+    diff.u_date_fin_validite,
     diff.s_source_id,
     diff.s_etablissement_id,
-    diff.s_date_deb_validite,
-    diff.s_date_fin_validite,
+    diff.s_code,
     diff.s_description,
     diff.s_valeur,
-    diff.s_code,
+    diff.s_date_deb_validite,
+    diff.s_date_fin_validite,
     diff.d_source_id,
     diff.d_etablissement_id,
-    diff.d_date_deb_validite,
-    diff.d_date_fin_validite,
+    diff.d_code,
     diff.d_description,
     diff.d_valeur,
-    diff.d_code
+    diff.d_date_deb_validite,
+    diff.d_date_fin_validite
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_etablissement_id) + diff.u_date_deb_validite) + diff.u_date_fin_validite) + diff.u_description) + diff.u_valeur) + diff.u_code))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_etablissement_id) + diff.u_code) + diff.u_description) + diff.u_valeur) + diff.u_date_deb_validite) + diff.u_date_fin_validite))));
 
 
 ALTER VIEW public.v_diff_variable OWNER TO :dbuser;

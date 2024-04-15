@@ -68,6 +68,7 @@ function replacePgDatabaseAndUserInScript() {
   FILE=$1
   # NB : d'abord le nom de la base puis le user
 #  sed -i -e "s|$PGDATABASE|${DBNAME}|g" $FILE
+  sed -i -e "s|OWNER TO postgres|OWNER TO ${DBUSER}|g" $FILE
   sed -i -e "s|OWNER TO $PGUSER|OWNER TO ${DBUSER}|g" $FILE
   sed -i -e "s|Owner: $PGUSER|Owner: ${DBUSER}|g" $FILE
 }

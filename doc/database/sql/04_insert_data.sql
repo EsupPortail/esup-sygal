@@ -1975,6 +1975,8 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (781, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (782, 5);
 
 
 --
@@ -2080,14 +2082,6 @@ INSERT INTO public.type_validation (id, code, libelle) VALUES (22, 'DOCTORANT_RE
 INSERT INTO public.type_validation (id, code, libelle) VALUES (7, 'RAPPORT_ACTIVITE_AUTO', 'Validation finale du rapport d''activité non dématérialisé (ancien module)');
 INSERT INTO public.type_validation (id, code, libelle) VALUES (41, 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation électronique du rapport d''activité par le doctorant');
 INSERT INTO public.type_validation (id, code, libelle) VALUES (42, 'RAPPORT_ACTIVITE', 'Validation finale du rapport d''activité non dématérialisé (ancien module)');
-
-
---
--- Data for Name: unicaen_alerte_alerte; Type: TABLE DATA; Schema: public; Owner: :dbuser
---
-
-INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (3, 'ALERTE_FERMETURE_ESTIVALE', 'DEMANDE DE SOUTENANCE', '<p>En raison de la période estivale le délai de traitement de 2 mois est repoussé pendant la période de fermeture des services de l’établissement soit du 22/07 au 27/08/2023.</p>', 'danger', 0, true);
-INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (4, 'ALERTE_MAINTENANCE', 'Maintenance à venir', '<p>L''application ESUP-SyGAL sera en maintenance donc indisponible <strong>jeudi 11 avril de 9h à 11h</strong>.</p>', 'danger', 0, true);
 
 
 --
