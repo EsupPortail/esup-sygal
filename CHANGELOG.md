@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.2.0
+-----
+- [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
+
 8.1.0
 -----
 - Refonte de la gestion des sites et structures des individus : ajout d'un périmètre supplémentaire à l'attribution

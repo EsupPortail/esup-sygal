@@ -55,7 +55,7 @@ class FetchService
 
         $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
         $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
-        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou '6m'
+        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou 'P6M'
         $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
 
         $qb = $this->createQueryBuilder();
@@ -84,7 +84,7 @@ class FetchService
             }
             if ($etablissement !== null) {
                 $codesEtabs = array_map('trim', explode(',', $etablissement));
-                $qb->andWhere($qb->expr()->in('es.code', $codesEtabs));
+                $qb->andWhere($qb->expr()->in('es.sourceCode', $codesEtabs));
             }
         }
 
@@ -120,7 +120,7 @@ class FetchService
             ->leftJoin('a.individu', 'ai', Join::WITH, 'ai.histoDestruction is null')
             ->leftJoin('a.role', 'r', Join::WITH, 'r.histoDestruction is null')
             ->andWhereNotHistorise()
-            ->orderBy('es.code, t.id');
+            ->orderBy('es.sourceCode, t.id');
 
         try {
             $qb->indexBy('t', 't.id');
