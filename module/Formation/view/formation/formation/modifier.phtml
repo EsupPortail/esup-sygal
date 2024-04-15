@@ -27,7 +27,12 @@ echo $this->form()->openTag($form);
 <?php echo $this->formControlGroup($form->get('modalite')); ?>
 <?php echo $this->formControlGroup($form->get('type')); ?>
 <div id="type_structure">
-<?php echo $this->formControlGroup($form->get('type_structure')); ?></div>
+    <?php echo $this->formControlGroup($form->get('type_structure')); ?>
+</div>
+<div class="alert alert-warning">
+    <span class="icon icon-attention"></span>
+    Lorsque le site organisateur et la structure associée à la formation spécifique sont renseignés (ou modifiés par la suite), un mail sera envoyé aux doctorants afin de les notifier de l'ouverture de la formation.
+</div>
 <?php echo $this->formControlGroup($form->get('taille_liste_principale')); ?>
 <?php echo $this->formControlGroup($form->get('taille_liste_complementaire')); ?>
 

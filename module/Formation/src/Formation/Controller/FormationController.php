@@ -4,8 +4,11 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Formation\Service\Module\ModuleServiceAwareTrait;
+use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use Laminas\Http\Response;
+use Notification\Exception\RuntimeException;
+use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Formation;
 use Formation\Form\Formation\FormationFormAwareTrait;
@@ -20,6 +23,8 @@ class FormationController extends AbstractController
     use ModuleServiceAwareTrait;
     use SessionServiceAwareTrait;
     use FormationFormAwareTrait;
+    use NotifierServiceAwareTrait;
+    use FormationNotificationFactoryAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -51,6 +56,19 @@ class FormationController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getFormationService()->create($formation);
+                //Envoi d'un mail lors de la création d'une formation spécifique à la liste de diffusion du site déclaré
+                if($formation->getType() === Formation::TYPE_CODE_SPECIFIQUE && $formation->getSite() && $formation->getTypeStructure()){
+                    try {
+                        $notif = $this->formationNotificationFactory->createNotificationFormationSpecifiqueAjoutee($formation);
+                        $this->notifierService->trigger($notif);
+                        $this->flashMessenger()->addInfoMessage("Une notification par mail a été envoyée aux doctorants appartenant au site organisateur {$formation->getSite()}, et à l'ED {$formation->getTypeStructure()}.");
+                    } catch (RuntimeException $e) {
+                        $ed = $formation->getTypeStructure()->getEcoleDoctorale();
+                        $this->flashMessenger()->addErrorMessage("La session a bien été créee, cependant aucune liste de diffusion trouvée pour l'ED {$ed} (afin de notifier les doctorants).");
+                    }
+                }else if($formation->getType() === Formation::TYPE_CODE_SPECIFIQUE && !($formation->getSite() && $formation->getTypeStructure())){
+                    $this->flashMessenger()->addWarningMessage("La session a bien été créee, cependant si vous voulez la notification des doctorants de l'ouverture de cette formation spécifique ({$formation->getLibelle()}), il faut renseigner le site organisateur et la structure associée.");
+                }
             }
         }
 
@@ -70,11 +88,26 @@ class FormationController extends AbstractController
         $form->setAttribute('action', $this->url()->fromRoute('formation/formation/modifier', [], [], true));
         $form->bind($formation);
 
+        $oldSite = $formation->getSite();
+        $oldStructure = $formation->getTypeStructure();
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
+                // Envoi d'un mail lors de la création d'une formation spécifique à la liste de diffusion du site déclaré
+                // seulement si le site et la structure ont été renseignés
+                // et des informations ont été modifiées
+                if ($formation->getType() === Formation::TYPE_CODE_SPECIFIQUE && ($formation->getSite() && $formation->getTypeStructure()) && ($formation->getSite() !== $oldSite || $formation->getTypeStructure() !== $oldStructure)) {
+                    try {
+                        $notif = $this->formationNotificationFactory->createNotificationFormationSpecifiqueAjoutee($formation);
+                        $this->notifierService->trigger($notif);
+                        $this->flashMessenger()->addInfoMessage("Le site organisateur et/ou la structure associée ont été modifiés. <br>Une notification par mail a donc été envoyée aux doctorants appartenant au site organisateur {$formation->getSite()}, et à l'ED {$formation->getTypeStructure()}.");
+                    } catch (RuntimeException $e) {
+                        $ed = $formation->getTypeStructure()->getEcoleDoctorale();
+                        $this->flashMessenger()->addErrorMessage("La session a bien été modifiée, cependant aucune liste de diffusion trouvée pour l'ED {$ed} (afin de notifier les doctorants).");
+                    }
+                }
                 $this->getFormationService()->update($formation);
             }
         }

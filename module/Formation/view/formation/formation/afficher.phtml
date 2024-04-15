@@ -25,6 +25,7 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 $canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AJOUTER));
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 
 ?>
 

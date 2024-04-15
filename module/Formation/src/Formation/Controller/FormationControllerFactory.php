@@ -3,7 +3,9 @@
 namespace Formation\Controller;
 
 use Formation\Service\Module\ModuleService;
+use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Session\SessionService;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
@@ -34,6 +36,9 @@ class FormationControllerFactory {
         $formationService = $container->get(FormationService::class);
         $moduleService = $container->get(ModuleService::class);
         $sessionService = $container->get(SessionService::class);
+        $notificationService = $container->get(NotifierService::class);
+        /** @var FormationNotificationFactory $formationNotificationFactory */
+        $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
 
         /**
          * @var FormationForm $formationForm
@@ -47,6 +52,9 @@ class FormationControllerFactory {
         $controller->setModuleService($moduleService);
         $controller->setSessionService($sessionService);
         $controller->setFormationForm($formationForm);
+        $controller->setNotifierService($notificationService);
+        $controller->setFormationNotificationFactory($formationNotificationFactory);
+
         return $controller;
     }
 }
