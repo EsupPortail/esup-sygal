@@ -4,6 +4,7 @@ Journal des modifications
 8.2.0
 -----
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
+- [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
 
 8.1.0
 -----
