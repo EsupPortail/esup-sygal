@@ -3,13 +3,28 @@
 namespace StepStar;
 
 return [
+    /**
+     * Options du module StepStar.
+     */
     'step_star' => [
+        /**
+         * Options pour la génération des fichiers au format TEF.
+         */
         'tef' => [
             'xsl_template_params' => [
+                // identifiant STEP/STAR de l'établissement
                 'etablissementStepStar' => 'XXXX',
+                // identifiant "autorité SUDOC" de l'établissement de soutenance
                 'autoriteSudoc_etabSoutenance' => '123456789',
             ],
+            // préfixe des répertoires temporaires créés lors de la génération
+            'output_dir_path_prefix' => '/tmp/sygal_stepstar_',
+            // faut-il supprimer les répertoires/fichiers temporaires après la génération ?
+            'clean_after_work' => true,
         ],
+        /**
+         * Options pour l'appel du web service Step-Star.
+         */
         'api' => [
             'soap_client' => [
                 'wsdl' => [
@@ -22,6 +37,7 @@ return [
                 ],
             ],
             'params' => [
+                // identifiant STEP/STAR de l'établissement (todo: identique à 'etablissementStepStar' ?)
                 'idEtablissement' => 'XXXX',
             ],
         ],

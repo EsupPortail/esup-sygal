@@ -54,8 +54,15 @@ use Unicaen\Console\Router\Simple;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [
+    /**
+     * Options du module StepStar.
+     */
     'step_star' => [
+        /**
+         * Options pour la génération du fichier XML intermédiaire (avant génération TEF).
+         */
         'xml' => [
+            // codes des types de financements correspondant à un contrat doctoral
             'codes_type_financ_contrat_doctoral' => [
                 '1', // Contrat doctoral
                 '2', // Contrat doctoral-mission d'enseignement
@@ -78,26 +85,42 @@ return [
                 'Y', // Contrat Doctoral Etablissement
                 'Y', // Contrat doctoral Région RIN 50%
             ],
+            // codes des types de financements correspondant au dispositif CIFRE
             'codes_orig_financ_cifre' => [
                 '31', // Conventions CIFRE
             ],
+            // paramètres concernant la section "partenaires de recherche"
             'params_partenaire_recherche' => [
                 'libelle' => "Établissement co-accrédité",
             ],
         ],
+        /**
+         * Options pour la génération des fichiers au format TEF.
+         */
         'tef' => [
+            // chemin du template twig permettant de générer le fichier de transformation XSL
+            // (fichier XSL étant ensuite utilisé pour générer les fichiers TEF à partir du fichier XML intermédiaire)
             'xsl_template_path' => __DIR__ . '/xml2tef.xsl.twig',
+            // paramètres nécessaires à la génération du fichier XSL à partir du template twig
             'xsl_template_params' => [
+                // identifiant STEP/STAR de l'établissement
                 'etablissementStepStar' => 'XXXX',
+                // identifiant "autorité SUDOC" de l'établissement de soutenance
                 'autoriteSudoc_etabSoutenance' => '123456789',
+                // noms de balises
                 'these' => [
                     'rootTag' => 'THESES',
                     'tag' => 'THESE',
                 ],
             ],
+            // préfixe des répertoires temporaires créés lors de la génération
             'output_dir_path_prefix' => '/tmp/sygal_stepstar_',
+            // faut-il supprimer les répertoires/fichiers temporaires après la génération ?
             'clean_after_work' => false,
         ],
+        /**
+         * Options pour l'appel du web service Step-Star.
+         */
         'api' => [
             'soap_client' => [
                 'wsdl' => [
@@ -116,14 +139,21 @@ return [
                 'deposer_avec_zip' => 'DepotAvecZip',
             ],
             'params' => [
+                // identifiant STEP/STAR de l'établissement (todo: identique à 'etablissementStepStar' ?)
                 'idEtablissement' => 'XXXX',
             ],
         ],
+        /**
+         * Options concernant les notifications
+         */
         'notification' => [
             'templates' => [
                 'erreur_envoi' => __DIR__ . '/../view/step-star/notification/envois_en_erreur.phtml'
             ],
         ],
+        /**
+         * Options concernant la classification Dewey (sets OAI-PMH)
+         */
         'oai' => [
             'sise_oai_set_file_path' => __DIR__ . '/../data/oai/siseOaiSet.xml',
             'oai_sets_file_path' => __DIR__ . '/../data/oai/oaiSets.xml', // https://www.theses.fr/schemas/tef/recommandation/oaiSets.xml
