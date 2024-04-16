@@ -14,7 +14,7 @@ $appName = $this->appInfos()->nom;
 $subtitle = $this->appInfos()->desc;
 ?>
 
-<?php $this->headTitle($this->translate("Soutenances à venir")); ?>
+<?php $this->headTitle($this->translate("Soutenances actuelles")); ?>
 
 <?php echo $this->alertes()
     ->addAlertesFromDatabase(true)
@@ -45,7 +45,7 @@ echo $this->messenger()
             <?php echo $this->partial('application/index/partial/soutenances', ['ecoles' => $ecoles]) ?>
         <?php else: ?>
             <div class="alert alert-warning">
-                L'affichage des soutenances à venir est désactivé.
+                L'affichage des soutenances actuelles est désactivé.
             </div>
         <?php endif; ?>
     </div>

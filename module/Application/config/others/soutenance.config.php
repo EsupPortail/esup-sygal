@@ -23,10 +23,10 @@ return [
     ],
     'router' => [
         'routes' => [
-            'soutenances-a-venir' => [
+            'soutenances-actuelles' => [
                 'type'          => Literal::class,
                 'options'       => [
-                    'route'    => '/soutenances-a-venir',
+                    'route'    => '/soutenances-actuelles',
                     'defaults' => [
                         'controller'    => SoutenanceController::class,
                         'action'        => 'index',
