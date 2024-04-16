@@ -69,6 +69,6 @@ INSERT INTO public.unicaen_renderer_template (code, description, document_type, 
 VALUES ('FORMATION_FORMATION_SPECIFIQUE_OUVERTE',
         '<p>Mail envoyé au doctorant·e lorsqu''une formation spécifique est ouverte au sein de leur ED</p>', 'mail',
         'Nouvelle formation spécifique ouverte dans votre ED', e'<p>Bonjour,</p>
-<p>La formation <strong>VAR[Formation#Libelle]</strong> vient d\'ouvrir dans votre École Doctorale. Si vous voulez plus d\'informations, rendez-vous dans l\'application ESUP-SyGAL, onglet <em>\'mes formations\'.</em></p>
+<p>La formation spécifique <strong>VAR[Formation#Libelle]</strong> vient d\'ouvrir. Si vous voulez plus d\'informations, rendez-vous dans l\'application ESUP-SyGAL, onglet <em>\'mes formations\'.</em></p>
 <p>En vous souhaitant une bonne journée,<br />VAR[Formation#Responsable]</p>',
         null, 'Formation\Provider\Template');
