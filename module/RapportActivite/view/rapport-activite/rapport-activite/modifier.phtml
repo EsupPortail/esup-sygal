@@ -34,7 +34,15 @@ $form->prepare();
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
+<div class="alert alert-warning">
+    <span class="icon icon-info"></span>
+    La sauvegarde régulière de vos données est cruciale en cas de dysfonctionnement réseau ou machine par exemple.<br>
+    Cela vous évitera la perte totale des données saisies et n’empêche aucunement leurs modifications.<br>
+    Nous vous invitons donc à procéder à la sauvegarde régulière des données saisies dans ce formulaire.<br><br>
 
+    <b>Puisque les champs de ce dernier sont obligatoires, vous avez la possibilité de saisir des informations inexactes pour pouvoir le soumettre.
+        Après l'enregistrement, vous pourrez revenir ultérieurement tant de fois que vous le voulez, afin de corriger les données saisies.</b>
+</div>
 <div class="rapport-activite-container">
 
     <?php echo $this->form()->openTag($form) ?>
