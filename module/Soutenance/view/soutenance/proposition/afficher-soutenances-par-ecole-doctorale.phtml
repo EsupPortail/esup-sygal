@@ -32,7 +32,7 @@ $count = count($soutenances);
         </h1>
 
         <?php if ($count > 0) : ?>
-    <h2>Liste des soutenances à venir <span class="badge"><?php echo $count; ?> </span></h2>
+    <h2>Liste des soutenances actuelles <span class="badge"><?php echo $count; ?> </span></h2>
     <?php foreach ($soutenances as $soutenance) : ?>
 
         <?php
@@ -128,7 +128,7 @@ $count = count($soutenances);
         </div>
     <?php endforeach; ?>
 <?php else: ?>
-    <p class="lead">Aucune soutenance à venir</p>
+    <p class="lead">Aucune soutenance actuellement</p>
 <?php endif; ?>
     </div>
 </div>

@@ -600,10 +600,14 @@ class PropositionService extends BaseService
      */
     public function findSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
     {
-        $qb = $this->createQueryBuilder()
+        $qb = $this->getRepository()->createQueryBuilder("proposition")
+            ->addSelect('etat')->join('proposition.etat', 'etat')
+            ->addSelect('these')->join('proposition.these', 'these')
+            ->addSelect('ecole')->leftJoin('these.ecoleDoctorale', 'ecole')
+            ->addSelect('structure_ed')->leftJoin('ecole.structure', 'structure_ed')
             ->andWhereStructureIs($ecole->getStructure(), 'structure_ed')
             ->andWhere('etat.code = :autorise')
-            ->andWhere('these.dateSoutenance >= :date')
+            ->andWhere('DATE_ADD(these.dateSoutenance, 1, \'YEAR\') > :date')
             ->setParameter('autorise', Etat::VALIDEE)
             ->setParameter('date', new DateTime())
             ->orderBy('these.dateSoutenance', 'ASC');

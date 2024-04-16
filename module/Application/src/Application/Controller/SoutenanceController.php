@@ -21,6 +21,7 @@ class SoutenanceController extends AbstractController
                 ->join('ed.structure', 's')
                 ->andWhereNotHistorise('ed')
                 ->andWhereNotHistorise('s')
+                ->andWhere("s.estFermee = false")
                 ->orderBy('s.sigle');
             $eds = $qb->getQuery()->getResult();
         }
