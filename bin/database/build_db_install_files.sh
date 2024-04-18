@@ -118,6 +118,7 @@ NAME_CREATE_SCHEMA='create_schema'
 NAME_INSERT_BOOTSTRAP_DATA='insert_bootstrap_data'
 NAME_INSERT_DATA='insert_data'
 NAME_PREPARE_DATA='prepare_data'
+NAME_PREPARE_SEQUENCES='prepare_sequences'
 NAME_CREATE_COMUE='create_comue'
 NAME_CREATE_CED='create_ced'
 NAME_INIT='init'
@@ -211,9 +212,17 @@ cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
+# prepare sequences
+#
+OUTPUT_FILE=$OUTPUT_DIR/sql/06_$NAME_PREPARE_SEQUENCES.sql
+SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_PREPARE_SEQUENCES.sql
+cp $SRC_SCRIPT $OUTPUT_FILE
+echo "> $OUTPUT_FILE"
+
+#
 # constraints
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/06_$NAME_CREATE_CONSTRAINTS.sql
+OUTPUT_FILE=$OUTPUT_DIR/sql/07_$NAME_CREATE_CONSTRAINTS.sql
 pg_dump --section=post-data --schema-only --exclude-table="mv_indicateur_*" >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -221,7 +230,7 @@ echo "> $OUTPUT_FILE"
 #
 # COMUE
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/07_$NAME_CREATE_COMUE.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/08_$NAME_CREATE_COMUE.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_COMUE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -229,7 +238,7 @@ echo "> $OUTPUT_FILE"
 #
 # CED
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/08_$NAME_CREATE_CED.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/09_$NAME_CREATE_CED.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_CED.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -237,7 +246,7 @@ echo "> $OUTPUT_FILE"
 #
 # init
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/09_$NAME_INIT.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/10_$NAME_INIT.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_INIT.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -245,7 +254,7 @@ echo "> $OUTPUT_FILE"
 #
 # fixtures
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/10_$NAME_CREATE_FIXTURE.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/11_$NAME_CREATE_FIXTURE.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_FIXTURE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"

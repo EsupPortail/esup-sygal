@@ -1,13 +1,11 @@
 Création d'une base de données pour ESUP-SyGAL
 ==============================================
 
-Cette documentation explique comment créer une base de données PostgreSQL neuve pour l'application ESUP-SyGAL.
-
 Les fichiers fournis permettant de créer une base de données neuve pour ESUP-SyGAL sont :
 
-- d'une part, le script bash de construction et son fichier de config associé :
+- d'une part, le fichier de config et le script bash de construction :
+    - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adapter et à renommer en `.conf`)
     - [`build_db_files.sh`](build_db_files.sh)
-    - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à renommer en `.conf` puis à adapter)
     
 - d'autre part, les scripts SQL situés dans le répertoire [`sql/`](sql) :
     - [`admin/01_create_db_user.sql`](sql/admin/01_create_db_user.sql)
@@ -48,12 +46,13 @@ Pour les préparer, vous devez dans l'ordre :
 - Modifier le fichier `build_db_files.conf` selon votre situation (cf. commentaires inclus).
    
 - Lancer le script bash [`build_db_files.sh`](build_db_files.sh), en lui spécifiant le fichier de config
-   et le répertoire des scripts SQL à préparer :
+   et le répertoire des scripts SQL à préparer. 
+   Exemple :
     ```bash
     ./build_db_files.sh -c ./build_db_files.conf -i ./sql/
     ```
 
-Une fois le script bash exécuté, vous devriez vous retrouver avec 4 scripts SQL supplémentaires dans le répertoire 
+Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQL supplémentaires dans le répertoire 
 [`sql/`](sql) :
   - [`07_create_comue.sql`](sql/07_create_comue.sql)
   - [`08_create_ced.sql`](sql/08_create_ced.sql)
@@ -78,7 +77,7 @@ SYGAL_PASSWORD='azerty'
 ## Création de la base de données et de l'utilisateur
 
 - Dans les lignes de commande suivantes, renseignez correctement les variables d'environnement `PG*` permettant 
-  de se connecter au serveur PostgreSQL *en tant que super-utilisateur* puis lancez-les :
+  de se connecter au serveur Postgres en tant que super-utilisateur puis lancez-les :
 
 ```bash
 PGHOST=localhost \

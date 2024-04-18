@@ -6423,8 +6423,8 @@ CREATE TABLE public.soutenance_qualite (
     emeritat character varying(1) NOT NULL,
     histo_creation timestamp without time zone NOT NULL,
     histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id bigint,
     histo_destruction timestamp without time zone,
     histo_destructeur_id bigint,
     justificatif character varying(1) DEFAULT 'N'::character varying NOT NULL,
@@ -6458,8 +6458,8 @@ CREATE TABLE public.soutenance_qualite_sup (
     libelle character varying(255) NOT NULL,
     histo_creation timestamp without time zone NOT NULL,
     histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id bigint,
     histo_destruction timestamp without time zone,
     histo_destructeur_id bigint
 );
