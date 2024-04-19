@@ -3,6 +3,8 @@
 /**
  * @var \Application\Entity\Db\Profil[] $profils
  * @var \Application\Entity\Db\Privilege[] $privileges
+ *
+ * @see \Application\Controller\ProfilController::indexAction()
  */
 $this->headTitle("Profils");
 
@@ -12,6 +14,10 @@ $canManage = true;
 $canChangePrivilege = true;
 ?>
 
+<a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary float-end ajax-modal" data-event="modification">
+    <span class="icon icon-plus"></span> Ajouter un nouveau profil
+</a>
+
 <h1 class="page-header">
     Profils
     <span class="badge bg-secondary">
@@ -19,19 +25,13 @@ $canChangePrivilege = true;
     </span>
 </h1>
 
-<h2> Liste des profils </h2>
-
-<a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary ajax-modal" data-event="modification">
-    <span class="icon icon-plus"></span> Ajouter un nouveau profil
-</a>
-
 <table class="table table-sm">
     <thead>
     <tr>
         <th> Code </th>
         <th> Libellé </th>
         <th> Structure dépendant </th>
-        <th> Nombre de rôle ayant le profil </th>
+        <th> Nombre de rôles ayant le profil </th>
         <th> Action </th>
     </tr>
     </thead>
@@ -69,9 +69,9 @@ $canChangePrivilege = true;
     </tbody>
 </table>
 
-<h2> Gestion des privilèges accordés aux profils </h2>
+<h2> Privilèges accordés aux profils </h2>
 
-<table class="table table--condensed">
+<table class="table table-extra-condensed">
     <thead>
     <tr>
         <th> Privilège </th>
@@ -86,11 +86,23 @@ $canChangePrivilege = true;
         <?php if ($previous != $privilege->getCategorie()): ?>
             <tr>
                 <?php $previous = $privilege->getCategorie(); ?>
-                <td class="categorie" colspan="<?php echo (1 + count($profils)); ?>"><span title="<?php echo $previous->getCode() ?>"><?php echo $previous ?></span></td>
+                <td class="categorie" colspan="<?php echo (1 + count($profils)); ?>">
+                    <?php $id = $privilege->getCategorie()->getCode() ?>
+                    <a id="<?php echo $id ?>" class="anchor" href="#<?php echo $id ?>"></a>
+                    <a href="#<?php echo $id ?>" class="anchored">
+                        <h3 title="<?php echo $previous->getCode() ?>"><?php echo $previous ?></h3>
+                    </a>
+                </td>
             </tr>
         <?php endif; ?>
         <tr data-legend="<?php echo $privilege->getLibelle() ?>">
-            <th><span title="<?php echo $privilege->getCode() ?>"><?php echo $privilege ?></span></th>
+            <th class="privilege">
+                <?php $id = $privilege->getCategorie()->getCode() . '-' . $privilege->getCode() ?>
+                <a id="<?php echo $id ?>" class="anchor" href="#<?php echo $id ?>"></a>
+                <a href="#<?php echo $id ?>" class="anchored">
+                    <span title="<?php echo $privilege->getCode() ?>"><?php echo $privilege ?></span>
+                </a>
+            </th>
             <?php foreach ($profils as $profil) : ?>
                 <td class="<?php echo ($profil->getStructureType())?$profil->getStructureType()->getCode():"aucun"; ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>"
                     data-legend="<?php echo $profil->getLibelle() ?>">
@@ -108,23 +120,25 @@ $canChangePrivilege = true;
 
 
 <style>
-    td.categorie {
-        font-size:  small;
-        background-color: lightblue;
+    td.categorie h3 {
+        margin: .5rem 0 0;
+    }
+    th.privilege {
+        font-weight: 400;
     }
 
     td.aucun {
-        background-color: lightgoldenrodyellow;
+        background-color: rgba(250, 250, 210, 0.75);
     }
 
     td.ecole-doctorale {
-        background-color: #F1CEFF;
+        background-color: rgba(241, 206, 255, 0.75);
     }
     td.unite-recherche {
-        background-color: #c8e7ff;
+        background-color: rgba(200, 231, 255, 0.75);
     }
     td.etablissement {
-        background-color: #dcffe9;
+        background-color: rgba(220, 255, 233, 0.75);
     }
 
     span.checkable {

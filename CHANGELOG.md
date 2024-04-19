@@ -3,6 +3,7 @@ Journal des modifications
 
 8.2.0
 -----
+- Page des privilèges accordés aux profils : cosmétiques + ancres de navigation sur les catégories et privilèges.
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
 
