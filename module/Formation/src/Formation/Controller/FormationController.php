@@ -56,23 +56,6 @@ class FormationController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getFormationService()->create($formation);
-                //Envoi d'un mail lors de la création d'une formation spécifique à la liste de diffusion du site déclaré
-                if($formation->getType() === Formation::TYPE_CODE_SPECIFIQUE && $formation->getSite() && $formation->getTypeStructure()){
-                    try {
-                        $notif = $this->formationNotificationFactory->createNotificationFormationSpecifiqueAjoutee($formation);
-                        $this->notifierService->trigger($notif);
-                        $destinataires = implode(', ', array_reduce(array_keys($notif->getTo()), function(array $accu, string $key) use ($notif) {
-                            $accu[] = sprintf('%s (%s)', $notif->getTo()[$key], $key);
-                            return $accu;
-                        }, []));
-                        $this->flashMessenger()->addInfoMessage("Une notification par mail a été envoyée aux doctorants appartenant à la liste de diffusion suivante : ".$destinataires);
-                    } catch (RuntimeException $e) {
-                        $ed = $formation->getTypeStructure()->getEcoleDoctorale();
-                        $this->flashMessenger()->addErrorMessage("La session a bien été créee, cependant aucune liste de diffusion trouvée pour l'ED {$ed} (afin de notifier les doctorants).");
-                    }
-                }else if($formation->getType() === Formation::TYPE_CODE_SPECIFIQUE && !($formation->getSite() && $formation->getTypeStructure())){
-                    $this->flashMessenger()->addWarningMessage("La session a bien été créee, cependant si vous voulez la notification des doctorants de l'ouverture de cette formation spécifique ({$formation->getLibelle()}), il faut renseigner le site organisateur et la structure associée.");
-                }
             }
         }
 

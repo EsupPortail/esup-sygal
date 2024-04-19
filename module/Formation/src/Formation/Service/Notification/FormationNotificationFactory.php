@@ -9,10 +9,12 @@ use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionStructureValide;
 use Formation\Provider\Template\MailTemplates;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
+use Structure\Entity\Db\Structure;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /**
@@ -254,12 +256,11 @@ class FormationNotificationFactory extends NotificationFactory
     }
 
     /** FORMATIONS ******************************************************************************************************/
-    public function createNotificationFormationSpecifiqueAjoutee(Formation $formation): Notification
+    public function createNotificationFormationSpecifiqueAjoutee(Formation $formation, SessionStructureValide $structureValide): Notification
     {
-        $ed = $formation->getTypeStructure()->getEcoleDoctorale();
-        $site = $formation->getSite();
-        $role = $this->roleService->getRepository()->findOneByCodeAndStructure(Role::CODE_DOCTORANT, $site->getStructure());
-        $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, $role->getStructure());
+        $ed = $structureValide->getStructure()->getEcoleDoctorale();
+        $role = $this->roleService->getRepository()->findOneBy(["code" => Role::CODE_DOCTORANT]);
+        $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, null);
         $domain = $this->listeDiffusionService->getEmailDomain();
         $ng->setDomain($domain);
 
@@ -277,7 +278,7 @@ class FormationNotificationFactory extends NotificationFactory
 
         //si une liste a été récupérée et qu'elle n'est pas active
         if(!$mail || !in_array($mail, $adressesListesActives)){
-            throw new RuntimeException("Aucune liste de diffusion trouvée pour l'ED {$ed}.");
+            throw new RuntimeException($ed);
         }
 
         $notif = new Notification();
