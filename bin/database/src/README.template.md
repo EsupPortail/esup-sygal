@@ -45,6 +45,9 @@ Pour les préparer, vous devez dans l'ordre :
   `build_db_files.conf` (i.e. suppression du `.dist`).
 
 - Modifier le fichier `build_db_files.conf` selon votre situation (cf. commentaires inclus).
+  Pensez bien à changer le paramètre `TEST_USER_PASSWORD_RESET_TOKEN` avec une valeur que vous génèrerez à l'aide
+  de la commande `pwgen 64 1 --secure` par exemple. Ce token vous permettra de choisir le mot de passe du compte 
+  utilisateur de test local via l'application.
    
 - Lancer le script bash [`build_db_files.sh`](build_db_files.sh), en lui spécifiant le fichier de config
    et le répertoire des scripts SQL à préparer. 
@@ -133,6 +136,6 @@ PGPORT=5432 \
 PGDATABASE=postgres \
 PGUSER=postgres \
 PGPASSWORD=admin \
-psql -c "drop database ${SYGAL_DB}; drop user ${SYGAL_USER};"
+psql -c "drop database if exists ${SYGAL_DB}; drop user if exists ${SYGAL_USER};"
 ```
 

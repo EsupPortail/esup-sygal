@@ -1261,7 +1261,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (579, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (580, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (581, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (582, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (583, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (584, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (585, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 6);
@@ -1759,8 +1758,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (762, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (703, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (762, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 65);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 4);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (585, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (584, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 64);
@@ -1977,6 +1974,7 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (781, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (782, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (583, 6);
 
 
 --

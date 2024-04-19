@@ -13,11 +13,12 @@ Les fichiers fournis permettant de créer une base de données neuve pour ESUP-S
     - [`03_insert_bootstrap_data.sql`](sql/03_insert_bootstrap_data.sql)
     - [`04_insert_data.sql`](sql/04_insert_data.sql)
     - [`05_prepare_data.sql`](sql/05_prepare_data.sql)
-    - [`06_create_constraints.sql`](sql/06_create_constraints.sql)
-    - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist)
-    - [`08_create_ced.sql.dist`](sql/08_create_ced.sql.dist)
-    - [`09_init.sql.dist`](sql/09_init.sql.dist)
-    - [`10_create_fixture.sql.dist`](sql/10_create_fixture.sql.dist)
+    - [`06_prepare_sequences.sql`](sql/06_prepare_sequences.sql)
+    - [`07_create_constraints.sql`](sql/07_create_constraints.sql)
+    - [`08_create_comue.sql.dist`](sql/08_create_comue.sql.dist)
+    - [`09_create_ced.sql.dist`](sql/09_create_ced.sql.dist)
+    - [`10_init.sql.dist`](sql/10_init.sql.dist)
+    - [`11_create_fixture.sql.dist`](sql/11_create_fixture.sql.dist)
 
 
 ## Case départ
@@ -33,10 +34,10 @@ mkdir -p /tmp/sygal && cp -r . /tmp/sygal/database && cd /tmp/sygal/database
 ## Préparation de certains scripts SQL
 
 Les scripts SQL à "préparer" portent l'extension `.sql.dist` :
-  - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist)
-  - [`08_create_ced.sql.dist`](sql/08_create_ced.sql.dist)
-  - [`09_init.sql.dist`](sql/09_init.sql.dist)
-  - [`10_create_fixture.sql.dist`](sql/10_create_fixture.sql.dist)
+  - [`08_create_comue.sql.dist`](sql/08_create_comue.sql.dist)
+  - [`09_create_ced.sql.dist`](sql/09_create_ced.sql.dist)
+  - [`10_init.sql.dist`](sql/10_init.sql.dist)
+  - [`11_create_fixture.sql.dist`](sql/11_create_fixture.sql.dist)
 
 Pour les préparer, vous devez dans l'ordre :
 
@@ -44,6 +45,9 @@ Pour les préparer, vous devez dans l'ordre :
   `build_db_files.conf` (i.e. suppression du `.dist`).
 
 - Modifier le fichier `build_db_files.conf` selon votre situation (cf. commentaires inclus).
+  Pensez bien à changer le paramètre `TEST_USER_PASSWORD_RESET_TOKEN` avec une valeur que vous génèrerez à l'aide
+  de la commande `pwgen 64 1 --secure` par exemple. Ce token vous permettra de choisir le mot de passe du compte 
+  utilisateur de test local via l'application.
    
 - Lancer le script bash [`build_db_files.sh`](build_db_files.sh), en lui spécifiant le fichier de config
    et le répertoire des scripts SQL à préparer. 
@@ -54,10 +58,10 @@ Pour les préparer, vous devez dans l'ordre :
 
 Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQL supplémentaires dans le répertoire 
 [`sql/`](sql) :
-  - [`07_create_comue.sql`](sql/07_create_comue.sql)
-  - [`08_create_ced.sql`](sql/08_create_ced.sql)
-  - [`09_init.sql`](sql/09_init.sql)
-  - [`10_create_fixture.sql`](sql/10_create_fixture.sql)
+  - [`08_create_comue.sql`](sql/08_create_comue.sql)
+  - [`09_create_ced.sql`](sql/09_create_ced.sql)
+  - [`10_init.sql`](sql/10_init.sql)
+  - [`11_create_fixture.sql`](sql/11_create_fixture.sql)
 
 À présent, tout est prêt pour lancer la création de la base de données.
 
@@ -132,6 +136,6 @@ PGPORT=5432 \
 PGDATABASE=postgres \
 PGUSER=postgres \
 PGPASSWORD=admin \
-psql -c "drop database ${SYGAL_DB}; drop user ${SYGAL_USER};"
+psql -c "drop database if exists ${SYGAL_DB}; drop user if exists ${SYGAL_USER};"
 ```
 

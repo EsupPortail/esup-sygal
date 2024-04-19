@@ -18,7 +18,7 @@ mkdir -p upload && \
   chmod -R 770 upload
 
 # Composer install
-composer install --no-interaction --no-suggest --prefer-dist --optimize-autoloader
+composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Création ou vidange des répertoires de cache
 mkdir -p data/cache && chmod 777 data/cache && rm -rf data/cache/*

@@ -65,6 +65,19 @@ Exemple de configuration dans `config/autoload/xxxx.local.php` :
             ],
             
             /**
+             * Simulation d'authentification d'un utilisateur.
+             */
+            /*'simulate' => [
+                'HTTP_EPPN'           => $eppn = 'premierf@domaine.fr',
+                'HTTP_SUPANNEMPID'    => '00012345',
+                'HTTP_DISPLAYNAME'    => $eppn,
+                'HTTP_MAIL'           => $eppn,
+                'HTTP_GIVENNAME'      => 'François',
+                'HTTP_SN'             => 'Premier',
+                'HTTP_SUPANNCIVILITE' => 'M.',
+            ],*/
+            
+            /**
              * Configuration de la stratégie d'extraction d'un identifiant utile parmi les données d'authentification
              * shibboleth.
              * Ex: identifiant de l'usager au sein du référentiel établissement, transmis par l'IDP via le supannRefId.
@@ -103,7 +116,7 @@ Exemple de configuration dans `config/autoload/xxxx.local.php` :
                     'supannEmpId' => ['name' => 'supannEmpId'],
                 ],
             ],
-            
+                
             /**
              * URL de déconnexion.
              */

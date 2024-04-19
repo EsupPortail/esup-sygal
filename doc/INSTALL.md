@@ -1,4 +1,4 @@
-# Installation de ESUP-SyGAL
+**# Installation de ESUP-SyGAL
 
 
 
@@ -228,34 +228,6 @@ Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
 ```
 
 
-## Test
-
-Théoriquement, à ce stade l'application ESUP-SyGAL devrait être accessible.
-
-
-## Authentification
-
-- Reportez-vous à la [documentation consacrée à l'authentification](authentification/auth.md).
-
-- Si vous avez activé pour le mode d'authentification Shibboleth, les lignes de config suivantes permettent de simuler 
-  l'authentification d'un utilisateur 'premierf@xxxxx.fr' ayant le rôle "Administrateur technique" (sensé avoir été 
-  créé en base de données par l'un des scripts de création de la base de données).
-  Cela permet d'avoir un accès quasi omnipotent à l'application, notamment aux pages de gestion des droits d'accès.
-
-```php
-    'unicaen-auth' => [
-        'shib' => [
-            'simulate' => [
-                'HTTP_EPPN'           => $eppn = 'premierf@domaine.fr',
-                'HTTP_SUPANNEMPID'    => '00012345',
-                'HTTP_DISPLAYNAME'    => $eppn,
-                'HTTP_MAIL'           => $eppn,
-                'HTTP_GIVENNAME'      => 'François',
-                'HTTP_SN'             => 'Premier',
-                'HTTP_SUPANNCIVILITE' => 'M.',
-```
-
-
 ## Script d'install des dépendances et d'init de l'application
 
 Lancez le script suivant :
@@ -264,6 +236,29 @@ Lancez le script suivant :
 bash install.sh
 ```
 
+
+## Test
+
+Théoriquement, à ce stade l'application ESUP-SyGAL devrait être accessible.
+
+
+## Authentification
+
+L'un des scripts de création de la base de données a créé un compte utilisateur de test local possédant le rôle
+"Administrateur technique".
+
+- Reprenez le fichier de config dans lequel vous avez renseigné certains paramètres de ce compte local de test,
+  retrouvez la valeur choisie pour le token `TEST_USER_PASSWORD_RESET_TOKEN` puis ouvrez ESUP-SyGAL
+  à l'adresse `https://<server>/utilisateur/init-compte/<token>` (en remplaçant `<server>` par l'adresse de votre
+  serveur et `<token>` par le token en question. Vous serez invité·e à choisir le mot de passe du compte local de test.
+
+- Une fois le mot de passe choisi, vous pourrez vous authentifier avec ce compte en cliquant sur "Connexion" en haut
+  à droite de la page d'accueil de l'appli puis en choisissant la connexion "Avec un compte local".
+
+- Attention, le rôle "Administrateur technique" permet d'avoir un accès quasi omnipotent à l'application, notamment
+  aux pages de gestion des droits d'accès et de création de comptes utilisateurs locaux.
+
+Pour d'autres modes d'authentification, reportez-vous à la [documentation consacrée à l'authentification](authentification/auth.md).**
 
 
 ## Dans l'application ESUP-SyGAL elle-même
