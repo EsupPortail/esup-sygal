@@ -18,6 +18,16 @@ class ListeDiffusion implements HistoriqueAwareInterface
     private $id;
 
     /**
+     * Adresse complète de la liste de diffusion, ex :
+     * - ed591.doctorants.insa@normandie-univ.fr
+     * - ed591.doctorants@normandie-univ.fr
+     * - ed591.dirtheses@normandie-univ.fr
+     *
+     * Où :
+     * - '591' est le numéro national de l'école doctorale ;
+     * - 'doctorants' (ou 'dirtheses') est la "cible" ;
+     * - 'insa' est le source_code unique de l'établissement en minuscules.
+     *
      * @var string
      */
     private $adresse;

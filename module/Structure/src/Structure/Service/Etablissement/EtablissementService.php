@@ -174,17 +174,20 @@ class EtablissementService extends BaseService
     }
 
     /**
-     * Instancie un pseudo-établissement "Tout établissement confondu" utile dans les vues.
-     *
-     * @return Etablissement
+     * Instancie un pseudo-établissement "Tout établissement confondu".
      */
-    public function createToutEtablissementConfondu()
+    public function createToutEtablissementConfondu(): Etablissement
     {
+        $code = Etablissement::CODE_TOUT_ETABLISSEMENT_CONFONDU;
+
         $structure = new Structure();
         $structure
-            ->setCode(ETABLISSEMENT::CODE_TOUT_ETABLISSEMENT_CONFONDU)
+            ->setSourceCode($code)
+            ->setCode($code)
             ->setLibelle("Tout établissement confondu");
+
         $etablissement = new Etablissement();
+        $etablissement->setSourceCode($code);
         $etablissement->setStructure($structure);
 
         return $etablissement;

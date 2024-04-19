@@ -5,22 +5,18 @@ namespace Application\Service\ListeDiffusion\Address;
 class ListeDiffusionAddressParserResult
 {
     /**
-     * Code du rôle concerné éventuel en minuscule (ex: 'admin_tech', 'bu', 'bdd') ;
+     * Code du rôle concerné en minuscule (ex: 'admin_tech', 'bu', 'bdd') ;
      * ou alias de rôle (ex: 'doctorants', 'dirtheses').
-     *
-     * @var string
      */
-    protected $role;
+    protected string $role;
 
     /**
      * Code de l'établissement concerné éventuel.
-     *
-     * @var string
      */
-    protected $etablissement;
+    protected ?string $etablissement = null;
 
     /**
-     * @return string
+     * Retourne le code du rôle concerné en minuscule.
      */
     public function getRole(): string
     {
@@ -28,17 +24,16 @@ class ListeDiffusionAddressParserResult
     }
 
     /**
-     * @param string $role
-     * @return ListeDiffusionAddressParserResult
+     * Spécifie le code du rôle concerné en minuscule.
      */
-    public function setRole(string $role): ListeDiffusionAddressParserResult
+    public function setRole(string $role): self
     {
         $this->role = $role;
         return $this;
     }
 
     /**
-     * @return string|null
+     * Retourne le code de l'établissement concerné éventuel.
      */
     public function getEtablissement(): ?string
     {
@@ -46,10 +41,9 @@ class ListeDiffusionAddressParserResult
     }
 
     /**
-     * @param string|null $etablissement
-     * @return ListeDiffusionAddressParserResult
+     * Spécifie le code de l'établissement concerné.
      */
-    public function setEtablissement(?string $etablissement = null): ListeDiffusionAddressParserResult
+    public function setEtablissement(?string $etablissement): self
     {
         $this->etablissement = $etablissement;
         return $this;

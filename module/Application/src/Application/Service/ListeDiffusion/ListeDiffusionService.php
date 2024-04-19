@@ -2,54 +2,37 @@
 
 namespace Application\Service\ListeDiffusion;
 
-use Structure\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\ListeDiffusion;
 use Application\Entity\Db\Role;
-use Structure\Entity\Db\Structure;
 use Application\Service\BaseService;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerInterface;
-use Doctrine\ORM\ORMException;
+use Application\Service\ListeDiffusion\Url\UrlServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use InvalidArgumentException;
-use Webmozart\Assert\Assert;
 use Laminas\Mvc\Controller\Plugin\Url;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Structure;
+use Webmozart\Assert\Assert;
 
 class ListeDiffusionService extends BaseService
 {
     use IndividuServiceAwareTrait;
+    use UrlServiceAwareTrait;
 
     /**
      * @var ListeDiffusionHandlerInterface[]
      */
-    protected $availableHandlers = [];
+    protected array $availableHandlers = [];
 
-    /**
-     * @var ListeDiffusionHandlerInterface
-     */
-    protected $handler;
+    protected ListeDiffusionHandlerInterface $handler;
 
     /**
      * @var string[]
      */
-    protected $config = [];
+    protected array $config = [];
 
-    /**
-     * Nom de la liste de diffusion.
-     *
-     * Le nom de liste peut avoir 3 formes :
-     * 1/ ed591.doctorants.insa@normandie-univ.fr
-     * 2/ ed591.doctorants@normandie-univ.fr
-     * 3/ ed591.dirtheses@normandie-univ.fr
-     *
-     * Dans lesquelles :
-     * - '591' est le numéro national de l'école doctorale ;
-     * - 'doctorants' est la "cible" ;
-     * - 'insa' est le source_code unique de l'établissement en minuscules.
-     *
-     * @var ListeDiffusion
-     */
-    protected $liste;
+    protected ?ListeDiffusion $liste = null;
 
     /**
      * @param ListeDiffusionHandlerInterface[] $handlers
@@ -134,7 +117,7 @@ class ListeDiffusionService extends BaseService
     /**
      * Initialisation ind
      */
-    public function init()
+    public function init(): void
     {
         Assert::notNull($this->liste, "La liste cible doit être spécifiée avant d'appeler " . __METHOD__);
         $this->handler = $this->pickHandlerForListe($this->liste);
@@ -277,9 +260,9 @@ class ListeDiffusionService extends BaseService
 
     /**
      * @param ListeDiffusion[] $listes
-     * @throws ORMException
+     * @throws \Doctrine\ORM\Exception\ORMException
      */
-    public function saveListesDiffusions(array $listes)
+    public function saveListesDiffusions(array $listes): void
     {
         foreach ($listes as $liste) {
             if ($liste->getId() === null) {
@@ -289,11 +272,7 @@ class ListeDiffusionService extends BaseService
         $this->entityManager->flush($listes);
     }
 
-    /**
-     * @param Url $urlPlugin
-     * @return array
-     */
-    public function createDataForCsvExport(Url $urlPlugin)
+    public function createDataForCsvExport(Url $urlPlugin): array
     {
         $data = [];
         $data[] = [
@@ -305,10 +284,8 @@ class ListeDiffusionService extends BaseService
         foreach ($listesDiffusionActives as $listeDiffusion) {
             $data[] = [
                 $listeDiffusion->getAdresse(),
-                $urlPlugin->fromRoute('liste-diffusion/liste/generate-member-include',
-                    ['adresse' => $listeDiffusion->getAdresse()], ['force_canonical' => true]),
-                $urlPlugin->fromRoute('liste-diffusion/liste/generate-owner-include',
-                    ['adresse' => $listeDiffusion->getAdresse()], ['force_canonical' => true]) ,
+                $this->urlService->generateMemberIncludeUrl($listeDiffusion),
+                $this->urlService->generateOwnerIncludeUrl($listeDiffusion),
             ];
         }
 

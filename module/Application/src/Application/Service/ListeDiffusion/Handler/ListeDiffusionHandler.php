@@ -2,19 +2,19 @@
 
 namespace Application\Service\ListeDiffusion\Handler;
 
-use These\Entity\Db\Acteur;
-use Doctorant\Entity\Db\Doctorant;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use Doctorant\Service\DoctorantServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResult;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResultWithED;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use BadMethodCallException;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Service\DoctorantServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 
 class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
 {
@@ -33,15 +33,13 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
 
     /**
      * Etablissement concerné éventuel.
-     *
-     * @var Etablissement
      */
     protected ?Etablissement $etablissement = null;
 
     /**
      * @inheritDoc
      */
-    protected function parseAdresse()
+    protected function parseAdresse(): void
     {
         parent::parseAdresse();
 
@@ -141,8 +139,8 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     protected function computeCritereED(): ?array
     {
         if ($this->parserResult instanceof ListeDiffusionAddressParserResultWithED) {
-            $sigleSansEspace = $this->parserResult->getEcoleDoctorale();
-            return ["REPLACE(%s.sigle,' ','')" => $sigleSansEspace];
+            $code = $this->parserResult->getEcoleDoctorale();
+            return ["%s.code" => $code];
         } elseif ($this->parserResult instanceof ListeDiffusionAddressParserResult) {
             return null;
         } else {

@@ -2,13 +2,18 @@
 
 namespace Application\Service\ListeDiffusion;
 
-use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandler;
+use Application\Service\ListeDiffusion\Url\UrlService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 
 class ListeDiffusionServiceFactory
 {
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): ListeDiffusionService
     {
         $service = new ListeDiffusionService();
 
@@ -23,6 +28,12 @@ class ListeDiffusionServiceFactory
         $service->setAvailableHandlers([
             $container->get(ListeDiffusionHandler::class),
         ]);
+
+        /**
+         * @var \Application\Service\ListeDiffusion\Url\UrlService $urlService
+         */
+        $urlService = $container->get(UrlService::class);
+        $service->setUrlService($urlService);
 
         return $service;
     }

@@ -3,19 +3,24 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ListeDiffusionController;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
+use Application\Service\ListeDiffusion\ListeDiffusionService;
+use Application\Service\ListeDiffusion\Url\UrlService;
+use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
-use Application\Service\ListeDiffusion\ListeDiffusionService;
-use Notification\Service\NotifierService;
-use Application\Service\Role\RoleService;
-use Structure\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
+use Notification\Service\NotifierService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
 
 class ListeDiffusionControllerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): ListeDiffusionController
     {
         $controller = new ListeDiffusionController();
 
@@ -66,6 +71,12 @@ class ListeDiffusionControllerFactory
          */
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
+
+        /**
+         * @var \Application\Service\ListeDiffusion\Url\UrlService $urlService
+         */
+        $urlService = $container->get(UrlService::class);
+        $controller->setUrlService($urlService);
 
         return $controller;
     }

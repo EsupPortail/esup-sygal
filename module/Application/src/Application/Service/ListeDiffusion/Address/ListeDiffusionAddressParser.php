@@ -4,12 +4,10 @@ namespace Application\Service\ListeDiffusion\Address;
 
 use Application\Entity\Db\Role;
 use InvalidArgumentException;
+use Webmozart\Assert\Assert;
 
 class ListeDiffusionAddressParser extends ListeDiffusionAbstractAddressParser
 {
-    const REGEXP_ECOLE_DOCTORALE = '/^(ED)[a-zA-Z0-9-]+$/';
-    const REGEXP_UNITE_RECHERCHE = '/^(UR)[a-zA-Z0-9-]+$/';
-
     const CODES_ROLES = [
         Role::CODE_ADMIN_TECH,
         Role::CODE_BDD,
@@ -18,60 +16,58 @@ class ListeDiffusionAddressParser extends ListeDiffusionAbstractAddressParser
 
     /**
      * Adresse complète de la liste de diffusion, ex :
-     *   - ED591NBISE.doctorants.insa@normandie-univ.fr
-     *   - ED591NBISE.doctorants@normandie-univ.fr
-     *   - ED591NBISE.dirtheses@normandie-univ.fr
+     *   - ED591.doctorants.insa@normandie-univ.fr
+     *   - ED591.doctorants@normandie-univ.fr
+     *   - ED591.dirtheses@normandie-univ.fr
      *
      * Où :
-     * - 'ED591NBISE' est le nom de l'école doctorale ;
+     * - 'ED591' est le nom de l'école doctorale ;
      * - 'doctorants' (ou 'dirtheses') est un alias de rôle ;
      * - 'insa' est le code de l'établissement en minuscules.
-     *
-     * @var string
      */
-    protected $address;
+    protected string $address;
 
-    /**
-     * @var string[]
-     */
-    protected $adresseElements;
+    protected ListeDiffusionAddressGenerator $listeDiffusionAddressGenerator;
 
-    /**
-     * @param string $address
-     * @return self
-     */
-    public function setAddress(string $address)
+    public function __construct()
+    {
+        $this->listeDiffusionAddressGenerator = new ListeDiffusionAddressGenerator();
+    }
+
+    public function getEcoleDoctoraleRegexp(): string
+    {
+        return sprintf('/^%s([0-9]+)$/', $this->listeDiffusionAddressGenerator->getEcoleDoctoralePrefix());
+    }
+
+    public function setAddress(string $address): self
     {
         $this->address = $address;
 
         return $this;
     }
 
-    /**
-     * @return ListeDiffusionAddressParserResult
-     */
-    public function parse()
+    public function parse(): ListeDiffusionAddressParserResult
     {
-        $this->adresseElements = explode('@', $this->address)[0]; // ex: 'ED591NBISE.doctorants.insa'
-        $this->adresseElements = explode(ListeDiffusionAddressGenerator::SEPARATOR, $this->adresseElements); // ex: ['ED591NBISE', 'doctorants', 'insa']
+        $adresseElements = explode('@', $this->address)[0]; // ex: 'ED591.doctorants.insa'
+        $this->adressElements = explode($this->listeDiffusionAddressGenerator->getSeparator(), $adresseElements); // ex: ['ED591', 'doctorants', 'insa']
 
-        $listeElements = $this->adresseElements;
-        $nbElements = count($this->adresseElements);
+        $listeElements = $this->adressElements;
+        $nbElements = count($this->adressElements);
 
         //
         // Adresse en 3 parties.
-        // Ex: 'ED591NBISE.doctorants.ucn'
+        // Ex: 'ED591.doctorants.ucn'
         //
         if ($nbElements === 3) {
-            $structure = array_shift($listeElements); // ex: 'ED591NBISE'
+            $structure = array_shift($listeElements); // ex: 'ED591'
             $role = array_shift($listeElements); // ex: 'doctorants', 'dirtheses', 'admin_tech'
             $etablissement = array_shift($listeElements); // ex: 'insa', 'ucn'
 
             if ($this->stringMatchesEcoleDoctorale($structure)) {
+                $code = $this->stringExtractEcoleDoctorale($structure); // ex : '591'
+
                 $result = new ListeDiffusionAddressParserResultWithED();
-                $result->setEcoleDoctorale($structure);
-            } elseif ($this->stringMatchesUniteRecherche($structure)) {
-                throw new InvalidArgumentException("Non implémenté.");
+                $result->setEcoleDoctorale($code);
             } else {
                 throw new InvalidArgumentException("Cas imprévu.");
             }
@@ -79,20 +75,20 @@ class ListeDiffusionAddressParser extends ListeDiffusionAbstractAddressParser
         //
         // Adresse en 2 parties.
         // Ex: 'doctorants.ucn'
-        // ou  'ED591NBISE.doctorants'
+        // ou  'ED591.doctorants'
         //
         elseif ($nbElements === 2) {
             $premierElement = array_shift($listeElements);
             if ($this->stringMatchesEcoleDoctorale($premierElement)) {
-                // Ex: 'ED591NBISE.doctorants'
-                $structure = $premierElement;
+                // Ex: 'ED591'
+                $structure = $this->stringExtractEcoleDoctorale($premierElement); // ex : '591'
                 $role = array_shift($listeElements);
                 $etablissement = null;
 
                 $result = new ListeDiffusionAddressParserResultWithED();
                 $result->setEcoleDoctorale($structure);
             } else {
-                // Ex: 'doctorants.ucn'
+                // Ex: 'doctorants'
                 $structure = null;
                 $role = $premierElement;
                 $etablissement = array_shift($listeElements);
@@ -128,21 +124,25 @@ class ListeDiffusionAddressParser extends ListeDiffusionAbstractAddressParser
         return $result;
     }
 
-    private function stringMatchesEcoleDoctorale(string $s)
+    private function stringMatchesEcoleDoctorale(string $s): bool
     {
-        return preg_match(self::REGEXP_ECOLE_DOCTORALE, $s);
+        return (bool) preg_match($this->getEcoleDoctoraleRegexp(), $s);
     }
 
-    private function stringMatchesUniteRecherche(string $s)
+    private function stringExtractEcoleDoctorale(string $s): string
     {
-        return preg_match(self::REGEXP_UNITE_RECHERCHE, $s);
+        Assert::true($this->stringMatchesEcoleDoctorale($s), "Extraction impossible !");
+
+        preg_match($this->getEcoleDoctoraleRegexp(), $s, $matches);
+
+        return $matches[1];
     }
 
-    private function stringMatchesRole(string $s)
+    private function stringMatchesRole(string $s): bool
     {
         $allCodes = array_merge(
             self::CODES_ROLES,
-            ListeDiffusionAddressGenerator::CODES_ROLES_ALIASES
+            $this->listeDiffusionAddressGenerator->getCodesRolesAliases()
         );
 
         return in_array(

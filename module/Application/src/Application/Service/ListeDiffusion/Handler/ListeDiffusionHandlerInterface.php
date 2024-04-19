@@ -48,23 +48,16 @@ interface ListeDiffusionHandlerInterface
 
     /**
      * Génération du contenu du fichier attendu par Sympa pour obtenir les ABONNÉS d'une liste de diffusion.
-     *
-     * @return string
      */
-    public function createMemberIncludeFileContent();
+    public function createMemberIncludeFileContent(): string;
 
     /**
      * Génération du contenu du fichier attendu par Sympa pour obtenir les PROPRIÉTAIRES d'une liste de diffusion.
-     *
-     * @return string
      */
-    public function createOwnerIncludeFileContent();
+    public function createOwnerIncludeFileContent(): string;
 
     /**
      * Génère un nom pour le fichier attendu par Sympa.
-     *
-     * @param string $prefix
-     * @return string
      */
-    public function generateResultFileName(string $prefix);
+    public function generateResultFileName(string $prefix): string;
 }

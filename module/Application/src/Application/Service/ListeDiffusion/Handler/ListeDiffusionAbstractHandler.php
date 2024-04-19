@@ -2,12 +2,12 @@
 
 namespace Application\Service\ListeDiffusion\Handler;
 
-use Individu\Entity\Db\Individu;
-use Individu\Entity\Db\IndividuAwareInterface;
 use Application\Entity\Db\ListeDiffusion;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParser;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResult;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuAwareInterface;
+use Individu\Service\IndividuServiceAwareTrait;
 use Webmozart\Assert\Assert;
 
 abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInterface
@@ -17,44 +17,35 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * @var string[]
      */
-    protected $config = [];
+    protected array $config = [];
 
-    /**
-     * @var ListeDiffusionAddressParser
-     */
-    protected $parser;
-
-    /**
-     * @var ListeDiffusionAddressParserResult
-     */
-    protected $parserResult;
+    protected ListeDiffusionAddressParser $parser;
+    protected ?ListeDiffusionAddressParserResult $parserResult = null;
 
     /**
      * Liste de diffusion.
      *
      * Le nom de liste peut avoir 3 formes :
-     * 1/ ED591NBISE.doctorants.insa@normandie-univ.fr
-     * 2/ ED591NBISE.doctorants@normandie-univ.fr
-     * 3/ ED591NBISE.dirtheses@normandie-univ.fr
+     * 1/ ED591.doctorants.insa@normandie-univ.fr
+     * 2/ ED591.doctorants@normandie-univ.fr
+     * 3/ ED591.dirtheses@normandie-univ.fr
      *
      * Dans lesquelles :
-     * - 'ED591NBISE' est le nom de l'école doctorale sans espace ;
+     * - 'ED591' est le numéro/code de l'école doctorale avec un préfixe ;
      * - 'doctorants' est la "cible" ;
      * - 'insa' est le source_code unique de l'établissement en minuscules.
-     *
-     * @var ListeDiffusion
      */
-    protected $listeDiffusion;
+    protected ?ListeDiffusion $listeDiffusion = null;
 
     /**
      * @var Individu[]
      */
-    protected $individusAvecAdresse = [];
+    protected array $individusAvecAdresse = [];
 
     /**
      * @var Individu[]
      */
-    protected $individusSansAdresse = [];
+    protected array $individusSansAdresse = [];
 
     /**
      * ListeDiffusionAbstractPlugin constructor.
@@ -67,16 +58,12 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * @param string[] $config
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
 
-    /**
-     * @param ListeDiffusion $listeDiffusion
-     * @return self
-     */
-    public function setListeDiffusion(ListeDiffusion $listeDiffusion)
+    public function setListeDiffusion(ListeDiffusion $listeDiffusion): self
     {
         $this->listeDiffusion = $listeDiffusion;
         $this->parserResult = null;
@@ -87,7 +74,7 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * Parse l'adresse de la liste de diffusion courante.
      */
-    protected function parseAdresse()
+    protected function parseAdresse(): void
     {
         if ($this->parserResult === null) {
             Assert::notNull($this->listeDiffusion, "Aucune liste à parser");
@@ -100,7 +87,7 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * @return string[] [mail => nom individu]
      */
-    public function getIndividusAvecAdresse()
+    public function getIndividusAvecAdresse(): array
     {
         return $this->individusAvecAdresse;
     }
@@ -108,7 +95,7 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * @return string[] [id individu => nom individu]
      */
-    public function getIndividusSansAdresse()
+    public function getIndividusSansAdresse(): array
     {
         return $this->individusSansAdresse;
     }
@@ -116,16 +103,13 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * @return Individu[]|string[]
      */
-    public function fetchProprietaires()
+    public function fetchProprietaires(): array
     {
         //return $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
         return (array) $this->config['proprietaires'] ?? [];
     }
 
-    /**
-     * @return string
-     */
-    protected function createFileContent()
+    protected function createFileContent(): string
     {
         $lines = [];
         foreach ($this->individusAvecAdresse as $adresse => $nom) {
@@ -140,19 +124,15 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
      * Génération du contenu du fichier attendu par Sympa pour obtenir les ABONNÉS d'une liste de diffusion.
      *
      * Le contenu retourné contient une adresse électronique par ligne.
-     *
-     * @return string
      */
-    abstract public function createMemberIncludeFileContent();
+    abstract public function createMemberIncludeFileContent(): string;
 
     /**
      * Génération du contenu du fichier attendu par Sympa pour obtenir les PROPRIÉTAIRES d'une liste de diffusion.
      *
      * Le contenu retourné contient une adresse électronique par ligne.
-     *
-     * @return string
      */
-    public function createOwnerIncludeFileContent()
+    public function createOwnerIncludeFileContent(): string
     {
         $entities = $this->fetchProprietaires();
         $this->extractEmailsFromEntities($entities);
@@ -163,7 +143,7 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
     /**
      * @param IndividuAwareInterface[]|Individu[]|string[] $entities
      */
-    protected function extractEmailsFromEntities(array $entities)
+    protected function extractEmailsFromEntities(array $entities): void
     {
         $adresses = [];
         $individusSansAdresse = [];
@@ -202,9 +182,5 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
         ])));
     }
 
-    /**
-     * @param string $prefix
-     * @return string
-     */
-    abstract public function generateResultFileName(string $prefix);
+    abstract public function generateResultFileName(string $prefix): string;
 }

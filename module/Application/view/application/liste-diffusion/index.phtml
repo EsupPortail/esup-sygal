@@ -28,7 +28,6 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
 
 <h1 class="page-header first">
     <?php echo $this->translate("Listes de diffusion") ?>
-    <span class="badge bg-secondary"><?php //echo count($listes); ?></span>
 </h1>
 
 <p class="lead">
@@ -46,9 +45,8 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
     <?php /** @var Etablissement $etablissement */
     foreach ($dataByEtablissement as $etablissement):
     ?>
-    <li role="presentation"
-        class="nav-item <?php echo $codeEtablissement === ($code = $etablissement->getStructure()->getSourceCode()) ? 'active' : '' ?>">
-        <a class="nav-link"
+    <li role="presentation" class="nav-item">
+        <a class="nav-link <?php echo $codeEtablissement === ($code = $etablissement->getStructure()->getSourceCode()) ? 'active' : '' ?>"
            href="<?php echo $this->url('liste-diffusion', [], ['query' => ['etablissement' => $code]]) ?>"
            role="tab"><h2><?php echo $code ?></h2></a>
     </li>
@@ -145,7 +143,7 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
                 </ul>
             <?php endforeach; ?>
 
-            <input type="hidden" name="etablissement" value="<?php echo $etablissement ? $etablissement->getSourceCode() : 'Tous' ?>">
+            <input type="hidden" name="etablissement" value="<?php echo $etablissement->getSourceCode() ?>">
             <input type="submit" value="Enregistrer" class="btn btn-primary">
 
             </form>

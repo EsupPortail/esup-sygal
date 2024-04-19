@@ -2,93 +2,90 @@
 
 namespace Application\Service\ListeDiffusion\Address;
 
+use Application\Entity\Db\Role;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Role;
 use Structure\Entity\Db\Structure;
 use Webmozart\Assert\Assert;
 
 class ListeDiffusionAddressGenerator
 {
-    const SEPARATOR = '.';
-    const CODES_ROLES_ALIASES = [
+    private const SEPARATOR = '.';
+    private const ECOLE_DOCTORALE_PREFIX = 'ED';
+    private const CODES_ROLES_ALIASES = [
         Role::CODE_DOCTORANT => 'doctorants',
         Role::CODE_DIRECTEUR_THESE => 'dirtheses',
     ];
 
+    protected string $separator = self::SEPARATOR;
+
+    /**
+     * Prefixe utilisé dans le nommage d'une liste faisant référence à une ED.
+     */
+    protected string $ecoleDoctoralePrefix = self::ECOLE_DOCTORALE_PREFIX;
+
+    protected array $codesRolesAliases = self::CODES_ROLES_ALIASES;
+
     /**
      * Domaine de l'adresse, ex: 'normandie-univ.fr'.
-     *
-     * @var string
      */
-    protected $domain;
+    protected string $domain;
 
     /**
      * ED concernée éventuelle.
-     *
-     * @var EcoleDoctorale|null
      */
-    protected $ecoleDoctorale;
+    protected ?EcoleDoctorale $ecoleDoctorale = null;
 
     /**
      * Role concerné.
-     *
-     * @var Role
      */
-    protected $role;
+    protected Role $role;
 
     /**
      * Etablissement concerné éventuel.
-     *
-     * @var Etablissement|null
      */
-    protected $etablissement;
+    protected ?Etablissement $etablissement = null;
 
-    /**
-     * @param string $domain
-     * @return self
-     */
+    public function getSeparator(): string
+    {
+        return $this->separator;
+    }
+
+    public function getEcoleDoctoralePrefix(): string
+    {
+        return $this->ecoleDoctoralePrefix;
+    }
+
+    public function getCodesRolesAliases(): array
+    {
+        return $this->codesRolesAliases;
+    }
+
     public function setDomain(string $domain): self
     {
         $this->domain = $domain;
         return $this;
     }
 
-    /**
-     * @param EcoleDoctorale|null $ecoleDoctorale
-     * @return self
-     */
     public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale = null): self
     {
         $this->ecoleDoctorale = $ecoleDoctorale;
         return $this;
     }
 
-    /**
-     * @param Role $role
-     * @return self
-     */
     public function setRole(Role $role): self
     {
         $this->role = $role;
         return $this;
     }
 
-    /**
-     * @param Etablissement|null $etablissement
-     * @return self
-     */
-    public function setEtablissement(Etablissement $etablissement = null): self
+    public function setEtablissement(?Etablissement $etablissement): self
     {
         $this->etablissement = $etablissement;
         return $this;
     }
 
-    /**
-     * @param Structure|null $structure
-     * @return self
-     */
-    public function setEtablissementAsStructure(Structure $structure = null): self
+    public function setEtablissementAsStructure(?Structure $structure): self
     {
         if ($structure === null) {
             return $this->setEtablissement(null);
@@ -97,13 +94,13 @@ class ListeDiffusionAddressGenerator
         return $this->setEtablissement($structure->getEtablissement());
     }
 
-    private function validateParams()
+    private function validateParams(): void
     {
         Assert::notNull($this->role, "Aucun rôle fourni");
         Assert::notNull($this->domain, "Aucun domaine fourni");
     }
 
-    public function generateName()
+    public function generateName(): string
     {
         $this->validateParams();
 
@@ -113,13 +110,10 @@ class ListeDiffusionAddressGenerator
         $parts[] = $this->generateEtablissementPiece();
         $parts = array_filter($parts);
 
-        return implode(self::SEPARATOR, $parts) . '@' . $this->domain;
+        return implode($this->separator, $parts) . '@' . $this->domain;
     }
 
-    /**
-     * @return string|null
-     */
-    private function generateEcoleDoctoralePiece()
+    private function generateEcoleDoctoralePiece(): ?string
     {
         if ($this->ecoleDoctorale === null) {
             return null;
@@ -128,26 +122,17 @@ class ListeDiffusionAddressGenerator
             return null;
         }
 
-        Assert::notEmpty($this->ecoleDoctorale->getStructure()->getSigle(),
-            "Ecole doctorale n°{$this->ecoleDoctorale->getId()} sans sigle");
-
-        return trim(str_replace(str_split(' -_'), '', $this->ecoleDoctorale->getStructure()->getSigle())); // ex: 'ED590MIIS'
+        return $this->ecoleDoctoralePrefix . trim($this->ecoleDoctorale->getStructure()->getCode()); // ex: 'ED590'
     }
 
-    /**
-     * @return string
-     */
-    private function generateRolePiece()
+    private function generateRolePiece(): string
     {
         $code = $this->role->getCode();
 
-        return self::CODES_ROLES_ALIASES[$code] ?? strtolower(str_replace('_-', '', $code));
+        return $this->codesRolesAliases[$code] ?? strtolower(str_replace('_-', '', $code));
     }
 
-    /**
-     * @return string|null
-     */
-    private function generateEtablissementPiece()
+    private function generateEtablissementPiece(): ?string
     {
         if ($this->etablissement === null) {
             return null;

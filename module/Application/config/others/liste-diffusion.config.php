@@ -9,6 +9,8 @@ use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceFactory;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandler;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerFactory;
+use Application\Service\ListeDiffusion\Url\UrlService;
+use Application\Service\ListeDiffusion\Url\UrlServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -60,8 +62,6 @@ return [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/:adresse',
-                            // exemple: /consulter/ed591.doctorants.ucn@normandie-univ.fr
-                            // exemple: /consulter/ed591.doctorants@normandie-univ.fr
                             'constraints' => [
                                 'adresse' => '[a-zA-Z0-9-_.@]+',
                             ],
@@ -73,9 +73,10 @@ return [
                         'may_terminate' => true,
                         'child_routes' => [
                             'generate-member-include' => [
-                                'type' => Literal::class,
+                                'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/95c66625fe1e45a41e4a51d3f786210ab0a47479/generate-member-include/',
+//                                    'route' => '/95c66625fe1e45a41e4a51d3f786210ab0a47479/generate-member-include/',
+                                    'route' => '/:token/generate-member-include/',
                                     'defaults' => [
                                         /** @see ListeDiffusionController::generateMemberIncludeAction() */
                                         'action' => 'generate-member-include',
@@ -83,9 +84,10 @@ return [
                                 ],
                             ],
                             'generate-owner-include' => [
-                                'type' => Literal::class,
+                                'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/ef35998526851f484a027478ef9b7e936a0366e5/generate-owner-include',
+//                                    'route' => '/ef35998526851f484a027478ef9b7e936a0366e5/generate-owner-include',
+                                    'route' => '/:token/generate-owner-include',
                                     'defaults' => [
                                         /** @see ListeDiffusionController::generateOwnerIncludeAction() */
                                         'action' => 'generate-owner-include',
@@ -131,6 +133,7 @@ return [
         'factories' => [
             ListeDiffusionService::class => ListeDiffusionServiceFactory::class,
             ListeDiffusionHandler::class => ListeDiffusionHandlerFactory::class,
+            UrlService::class => UrlServiceFactory::class,
         ],
     ],
     'controllers' => [

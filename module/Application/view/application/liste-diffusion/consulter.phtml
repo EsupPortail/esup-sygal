@@ -10,6 +10,10 @@ use Application\Entity\Db\ListeDiffusion;
  * @var string[] $memberIndividusSansAdresse
  * @var string[] $ownerIndividusAvecAdresse
  * @var string[] $ownerIndividusSansAdresse
+ * @var string $generateMemberIncludeUrl
+ * @var string $generateOwnerIncludeUrl
+ *
+ * @see \Application\Controller\ListeDiffusionController::consulterAction()
  */
 ?>
 
@@ -52,8 +56,7 @@ use Application\Entity\Db\ListeDiffusion;
     </div>
 </div>
 
-<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-member-include',
-    ['adresse' => $liste->getAdresse()], ['force_canonical' => true]) ?>">
+<a href="<?php echo $generateMemberIncludeUrl ?>">
     URL member_include pour Sympa
 </a>
 
@@ -111,8 +114,7 @@ use Application\Entity\Db\ListeDiffusion;
     </div>
 </div>
 
-<a href="<?php echo $url = $this->url('liste-diffusion/liste/generate-owner-include',
-    ['adresse' => $liste], ['force_canonical' => true]) ?>">
+<a href="<?php echo $generateOwnerIncludeUrl ?>">
     URL owner_include pour Sympa
 </a>
 

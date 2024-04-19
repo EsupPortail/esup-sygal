@@ -2,30 +2,31 @@
 
 namespace Application\Controller;
 
-use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\ListeDiffusion;
 use Application\Entity\Db\Role;
+use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
+use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
+use Application\Service\ListeDiffusion\Url\UrlServiceAwareTrait;
+use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
+use Doctrine\ORM\Exception\ORMException;
+use Fichier\FileUtils;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
+use InvalidArgumentException;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Notification\Service\NotifierServiceAwareTrait;
+use SplObjectStorage;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\FileUtils;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
-use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
-use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
-use Notification\Service\NotifierServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use Doctrine\ORM\ORMException;
-use InvalidArgumentException;
-use SplObjectStorage;
 use UnicaenApp\View\Model\CsvModel;
 use Webmozart\Assert\Assert;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
 
 class ListeDiffusionController extends AbstractController
 {
@@ -38,41 +39,23 @@ class ListeDiffusionController extends AbstractController
     use EtablissementServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use UrlServiceAwareTrait;
 
-    /**
-     * Adresse complète de la liste de diffusion, ex :
-     *   - ed591.doctorants.insa@normandie-univ.fr
-     *   - ed591.doctorants@normandie-univ.fr
-     *   - ed591.dirtheses@normandie-univ.fr
-     *
-     * Où :
-     * - '591' est le numéro national de l'école doctorale ;
-     * - 'doctorants' (ou 'dirtheses') est la "cible" ;
-     * - 'insa' est le source_code unique de l'établissement en minuscules.
-     *
-     * @var ListeDiffusion
-     */
-    private $liste;
+    private ListeDiffusion $liste;
 
-    /**
-     * @var SplObjectStorage
-     */
-    private $dataByEtablissement;
+    private SplObjectStorage $dataByEtablissement;
 
     /**
      * @var ListeDiffusion[] Format : 'adresse' => ListeDiffusion
      */
-    private $listesDiffusionActives = [];
+    private array $listesDiffusionActives = [];
 
     /**
      * @var string[] Format : 'adresse' => 'adresse'
      */
-    private $adressesGenerees = [];
+    private array $adressesGenerees = [];
 
-    /**
-     * @return array|Response|ViewModel
-     */
-    public function indexAction()
+    public function indexAction(): Response|ViewModel
     {
         $etablissement = $this->params()->fromQuery('etablissement');
 
@@ -86,20 +69,17 @@ class ListeDiffusionController extends AbstractController
         $codesRolesAvecTemoinsED = [
             Role::CODE_DOCTORANT => true,
             Role::CODE_DIRECTEUR_THESE => true,
-            Role::CODE_BU => false,
-            Role::CODE_BDD => false,
-            Role::CODE_ADMIN_TECH => false, // NB: pas de structure liée
+//            Role::CODE_BU => false,
+//            Role::CODE_BDD => false,
+//            Role::CODE_ADMIN_TECH => false, // NB: pas de structure liée
         ];
         $roles = $this->roleService->getRepository()->findByCodes(array_keys($codesRolesAvecTemoinsED));
 
-        $etablissementsAsStructures = array_map(function(Etablissement $e) {
-            return $e->getStructure();
-        }, $etablissements);
-        $roles = array_filter($roles, function(Role $role) use ($etablissementsAsStructures) {
-            return
-                $role->getStructure() === null || // ex: Admin tech
-                in_array($role->getStructure(), $etablissementsAsStructures);
-        });
+        $etablissementsAsStructures = array_map(fn(Etablissement $e) => $e->getStructure(), $etablissements);
+        $roles = array_filter($roles, fn(Role $role) =>
+            $role->getStructure() === null || // ex: Admin tech
+            in_array($role->getStructure(), $etablissementsAsStructures)
+        );
         $this->prepareDataForView($etablissements, $ecolesDoctorales, $roles, $codesRolesAvecTemoinsED);
         $this->loadListesDiffusionActives();
 
@@ -119,7 +99,7 @@ class ListeDiffusionController extends AbstractController
      * Fetche en bdd les listes de diffusion actives.
      * NB: pour l'instant le table LISTE_DIFF ne contient que les listes activées.
      */
-    private function loadListesDiffusionActives()
+    private function loadListesDiffusionActives(): void
     {
         $this->listesDiffusionActives = [];
         $listesDiffusionActives = $this->listeDiffusionService->fetchListesDiffusionActives();
@@ -128,10 +108,7 @@ class ListeDiffusionController extends AbstractController
         }
     }
 
-    /**
-     * @return Response
-     */
-    private function modifierListes()
+    private function modifierListes(): Response
     {
         $post = $this->params()->fromPost();
         $etablissement = $post['etablissement'] ?? 'Tous';
@@ -143,21 +120,23 @@ class ListeDiffusionController extends AbstractController
             error_log($e->getMessage() . PHP_EOL . $e->getTraceAsString());
         }
 
-
         return $this->redirect()->toRoute(null, [], ['query' => ['etablissement' => $etablissement]], true);
     }
 
     /**
      * @param string[] $adresses
      * @param string $etablissement
-     * @throws ORMException
+     * @throws \Doctrine\ORM\Exception\ORMException
      */
-    private function enregistrer(array $adresses, string $etablissement)
+    private function enregistrer(array $adresses, string $etablissement): void
     {
         $adressesToDelete = array_filter($adresses, function (string $checked) { return $checked === '0'; });
         $adressesToInsert = array_filter($adresses, function (string $checked) { return $checked === '1'; });
 
-        $this->listeDiffusionService->deleteListesDiffusions(array_keys($adressesToDelete));
+        if ($adressesToDelete) {
+            $this->listeDiffusionService->deleteListesDiffusions(array_keys($adressesToDelete));
+        }
+
         $listes = [];
         foreach (array_keys($adressesToInsert) as $adresse) {
             $liste = $this->listeDiffusionService->findListeDiffusionByAdresse($adresse);
@@ -186,7 +165,7 @@ class ListeDiffusionController extends AbstractController
      * @param Role[] $roles
      * @param array $codesRolesAvecTemoinsED
      */
-    private function prepareDataForView(array $etablissements, array $ecolesDoctorales, array $roles, array $codesRolesAvecTemoinsED)
+    private function prepareDataForView(array $etablissements, array $ecolesDoctorales, array $roles, array $codesRolesAvecTemoinsED): void
     {
         $this->adressesGenerees = [];
 
@@ -260,11 +239,7 @@ class ListeDiffusionController extends AbstractController
         $this->dataByEtablissement = $dataByEtablissement;
     }
 
-    /**
-     * @param ListeDiffusionAddressGenerator $namer
-     * @return array
-     */
-    private function prepareListeDataForView(ListeDiffusionAddressGenerator $namer)
+    private function prepareListeDataForView(ListeDiffusionAddressGenerator $namer): array
     {
         $domain = $this->listeDiffusionService->getEmailDomain();
         $namer->setDomain($domain);
@@ -289,10 +264,7 @@ class ListeDiffusionController extends AbstractController
         ];
     }
 
-    /**
-     * @return ViewModel
-     */
-    public function consulterAction()
+    public function consulterAction(): ViewModel
     {
         $this->loadRequestParams();
 
@@ -313,6 +285,8 @@ class ListeDiffusionController extends AbstractController
             'memberIndividusSansAdresse' => $memberIndividusSansAdresse,
             'ownerIndividusAvecAdresse' => $ownerIndividusAvecAdresse,
             'ownerIndividusSansAdresse' => $ownerIndividusSansAdresse,
+            'generateMemberIncludeUrl' => $this->urlService->generateMemberIncludeUrl($this->liste),
+            'generateOwnerIncludeUrl' => $this->urlService->generateOwnerIncludeUrl($this->liste),
         ]);
     }
 
@@ -322,7 +296,7 @@ class ListeDiffusionController extends AbstractController
      * Les paramètres de routage acceptés sont les suivants :
      *   - `liste` (OBLIGATOIRE) : cf. {@see $liste}.
      */
-    private function loadRequestParams()
+    private function loadRequestParams(): void
     {
         $this->liste = $this->getRequestedListe(); // ex: 'ed591.doctorants.insa@normandie-univ.fr'
     }
@@ -332,7 +306,7 @@ class ListeDiffusionController extends AbstractController
      *
      * Le fichier retourné contient une adresse électronique par ligne.
      */
-    public function generateMemberIncludeAction()
+    public function generateMemberIncludeAction(): void
     {
         $this->loadRequestParams();
 
@@ -351,7 +325,7 @@ class ListeDiffusionController extends AbstractController
      *
      * Le fichier retourné contient une adresse électronique par ligne.
      */
-    public function generateOwnerIncludeAction()
+    public function generateOwnerIncludeAction(): void
     {
         $this->loadRequestParams();
 
@@ -364,10 +338,7 @@ class ListeDiffusionController extends AbstractController
         FileUtils::downloadFileFromContent($content, $filename);
     }
 
-    /**
-     * @return CsvModel
-     */
-    public function exporterTableauAction()
+    public function exporterTableauAction(): CsvModel
     {
         $data = $this->listeDiffusionService->createDataForCsvExport($this->url());
         $header = current($data);
@@ -386,7 +357,7 @@ class ListeDiffusionController extends AbstractController
     /**
      * Gestion des ABONNÉS sans adresse mail.
      */
-    private function handleMemberIncludeNotFoundEmails()
+    private function handleMemberIncludeNotFoundEmails(): void
     {
         $individusSansAdresse = $this->listeDiffusionService->getIndividusSansAdresse();
         if (empty($individusSansAdresse)) {
@@ -408,15 +379,12 @@ class ListeDiffusionController extends AbstractController
     /**
      * Gestion des PROPRÉTAIRES sans adresse mail.
      */
-    private function handleOwnerIncludeNotFoundEmails()
+    private function handleOwnerIncludeNotFoundEmails(): void
     {
 
     }
 
-    /**
-     * @return ListeDiffusion
-     */
-    private function getRequestedListe()
+    private function getRequestedListe(): ListeDiffusion
     {
         $adresse = $this->params()->fromRoute('adresse');
         Assert::notNull($adresse, "Aucune adresse spécifiée.");
@@ -431,7 +399,7 @@ class ListeDiffusionController extends AbstractController
     /**
      * @return string[]
      */
-    private function fetchAdminTechEmails()
+    private function fetchAdminTechEmails(): array
     {
         $individus = $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
 

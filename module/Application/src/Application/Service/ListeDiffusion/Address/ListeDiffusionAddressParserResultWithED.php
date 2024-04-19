@@ -5,14 +5,12 @@ namespace Application\Service\ListeDiffusion\Address;
 class ListeDiffusionAddressParserResultWithED extends ListeDiffusionAddressParserResult
 {
     /**
-     * Sigle de l'ED concernée, sans espace.
-     *
-     * @var string
+     * Numéro/code de l'ED concernée, sans espace.
      */
-    protected $ecoleDoctorale;
+    protected string $ecoleDoctorale;
 
     /**
-     * @return string
+     * Retourne le Numéro/code de l'ED concernée, sans espace.
      */
     public function getEcoleDoctorale(): string
     {
@@ -20,10 +18,9 @@ class ListeDiffusionAddressParserResultWithED extends ListeDiffusionAddressParse
     }
 
     /**
-     * @param string $ecoleDoctorale
-     * @return ListeDiffusionAddressParserResultWithED
+     * Spécifie le Numéro/code de l'ED concernée, sans espace.
      */
-    public function setEcoleDoctorale(string $ecoleDoctorale): ListeDiffusionAddressParserResultWithED
+    public function setEcoleDoctorale(string $ecoleDoctorale): self
     {
         $this->ecoleDoctorale = $ecoleDoctorale;
         return $this;

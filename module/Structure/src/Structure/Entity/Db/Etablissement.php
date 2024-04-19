@@ -323,10 +323,8 @@ class Etablissement implements
 
     /**
      * Teste si cet établissement est le pseudo-établissement "Tout établissement confondu".
-     *
-     * @return bool
      */
-    public function estToutEtablissementConfondu()
+    public function estToutEtablissementConfondu(): bool
     {
         return $this->structure->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }

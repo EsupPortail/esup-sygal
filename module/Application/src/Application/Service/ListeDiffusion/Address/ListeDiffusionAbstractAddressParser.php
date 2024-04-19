@@ -6,30 +6,25 @@ abstract class ListeDiffusionAbstractAddressParser implements ListeDiffusionAddr
 {
     /**
      * Adresse complète de la liste de diffusion,
-     * ex : "ED591NBISE.doctorants.insa@normandie-univ.fr"
-     *
-     * @var string
+     * ex : "ED591.doctorants.insa@normandie-univ.fr"
      */
-    protected $address;
+    protected string $address;
 
     /**
      * @var string[]
      */
-    protected $adresseElements;
+    protected array $adressElements;
 
     /**
      * @param string $address
      * @return self
      */
-    public function setAddress(string $address)
+    public function setAddress(string $address): self
     {
         $this->address = $address;
 
         return $this;
     }
 
-    /**
-     * @return ListeDiffusionAddressParserResult
-     */
-    abstract public function parse();
+    abstract public function parse(): ListeDiffusionAddressParserResult;
 }
