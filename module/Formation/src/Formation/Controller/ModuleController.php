@@ -145,7 +145,7 @@ class ModuleController extends AbstractController
 
         return new ViewModel([
             'modules' => $modules,
-            'anneeUniversitaire' => $anneeUniv
+            'anneeUniversitaire' => $annee
         ]);
     }
 }
