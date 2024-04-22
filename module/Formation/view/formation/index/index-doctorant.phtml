@@ -157,7 +157,7 @@ $now = new DateTime();
                             <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?>
                             <br/>
                         <?php endif; ?>
-                        <?php echo $this->seances($session); ?>
+                        <?php echo $this->seances($session, 'DESC'); ?>
                     </td>
                     <td> <?php echo $this->modalite($session); ?></td>
                     <td> <?php echo $this->type($session); ?></td>

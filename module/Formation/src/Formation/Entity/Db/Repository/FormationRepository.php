@@ -107,4 +107,20 @@ class FormationRepository extends DefaultEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function fetchDistinctAnneesUnivFormation(string $ordre='ASC', bool $keep_histo = false) : array
+    {
+        $qb = $this->createQueryBuilder('formation')
+            ->leftJoin('formation.sessions', 'session')->addSelect('session')
+            ->leftJoin('session.seances', 'seance')->addSelect('seance')
+            ->distinct()
+            ->select("YEAR(seance.debut) as annee")
+            ->orderBy("annee", $ordre);
+
+        if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
+
+        return array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Formation\Service\Formation\Search;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Formation\Entity\Db\Formation;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -27,6 +28,10 @@ class FormationSearchServiceFactory implements FactoryInterface
         /** @var \Structure\Service\Etablissement\EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
         $service->setEtablissementService($etablissementService);
+
+        /** @var AnneeUnivService $anneeUnivService */
+        $anneeUnivService = $container->get(AnneeUnivService::class);
+        $service->setAnneeUnivService($anneeUnivService);
 
         return $service;
     }

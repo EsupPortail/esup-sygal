@@ -86,16 +86,15 @@ class SessionSearchService extends SearchService
             $this->createEtatSorter(),
             $this->createModaliteSorter(),
         ]);
+
+        //tri descendant par les dates des séances (lorsqu'aucun sorter n'est sélectionné)
+        $this->addInvisibleSort('CASE WHEN seance.fin IS NULL THEN 1 ELSE 0 END', 'ASC');
+        $this->addInvisibleSort('seance.debut', 'DESC');
     }
 
     public function createQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->sessionRepository->createQueryBuilder('s');
-
-        $queryBuilder->select('s');
-        $queryBuilder->addOrderBy('CASE WHEN seance.fin IS NULL THEN 1 ELSE 0 END', 'ASC');
-        $queryBuilder->addOrderBy('seance.debut', 'DESC');
-        return $queryBuilder;
+        return $this->sessionRepository->createQueryBuilder('s');
     }
 
     /********************************** FILTERS ****************************************/
@@ -163,19 +162,11 @@ class SessionSearchService extends SearchService
             $annee = $filterValue === 'NULL' ? $this->anneeUnivService->courante() : AnneeUniv::fromPremiereAnnee((int)$filterValue);
             $debut = $this->anneeUnivService->computeDateDebut($annee);
             $fin = $this->anneeUnivService->computeDateFin($annee);
-            if ($filterValue === 'NULL') {
-                if ($debut !== null && $fin !== null) {
-                    $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
-                        ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
-                }
-            } else {
-                if ($debut !== null && $fin !== null) {
-                    $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
-                        ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
-                }
+            if ($debut !== null && $fin !== null) {
+                $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                    ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
             }
         });
-
 
         return $filter;
     }

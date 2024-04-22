@@ -6,6 +6,7 @@ use Formation\Entity\Db\Session;
 /**
  * @see \Formation\View\Helper\EtatViewHelper
  * @var Session $session
+ * @var string $ordre
  * @var array $options
  */
 
@@ -13,7 +14,11 @@ use Formation\Entity\Db\Session;
 /** @var Seance[] $seances */
 $seances = $session->getSeances()->toArray();
 $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
-usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+if($ordre === 'ASC'){
+    usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+}else{
+    usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() <= $b->getDebut();});
+}
 $nbSeances = count($seances);
 
 ?>

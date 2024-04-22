@@ -84,6 +84,7 @@ class SessionRepository extends DefaultEntityRepository
             ->setParameter('structures', array_unique($structures))
             ->setParameter('ouverte', Etat::CODE_OUVERTE)
             ->setParameter('preparation', Etat::CODE_PREPARATION)
+            ->orderBy("seance.debut", "DESC");
         ;
 
         /** TODO SOMETHING WITH IT*/
@@ -96,7 +97,6 @@ class SessionRepository extends DefaultEntityRepository
         }
 
         $result =  $qb->getQuery()->getResult();
-        usort($result, function (Session $a, Session $b) { return $a->getDateDebut() > $b->getDateDebut();});
         return $result;
     }
 

@@ -106,7 +106,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php echo $formation->getLibelle(); ?>
                         <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
                             <span class="icon icon-info"
-                                  title="<?php echo $formation->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                  title="<?php echo htmlspecialchars($formation->getDescription()); ?>" data-bs-toggle="tooltip" data-bs-html="true"
                             ></span>
                         <?php endif; ?>
                         <br>

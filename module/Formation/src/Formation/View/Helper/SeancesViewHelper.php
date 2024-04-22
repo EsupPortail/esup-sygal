@@ -19,12 +19,12 @@ class SeancesViewHelper extends AbstractHelper
      * @param array $options
      * @return string|Partial
      */
-    public function __invoke(?Session $object, array $options = [])
+    public function __invoke(?Session $object, string $ordre = 'ASC',  array $options = [])
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
         $view->resolver()->attach(new TemplatePathStack(['script_paths' => [__DIR__ . "/partial"]]));
 
-        return $view->partial('seances', ['session' => $object, 'options' => $options]);
+        return $view->partial('seances', ['session' => $object, 'ordre' => $ordre, 'options' => $options]);
     }
 }
