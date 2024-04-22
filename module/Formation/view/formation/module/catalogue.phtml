@@ -68,7 +68,7 @@ $this->headTitle("Catalogue des formations");
                         <?php // tri en focntion de la premiere date de seance ?>
                         <?php foreach ($sessions as $session) : ?>
                         <li class="<?php echo $session->getAnneeScolaire(); ?>">
-                            <strong>Site :</strong> <?php echo $this->site($session,[ 'long' => true]); ?>
+                            <strong>Établissement :</strong> <?php echo $this->site($session,[ 'long' => true]); ?>
                             <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
                             <br/>
                             <?php if ($session->getDateClotureInscription()) : ?>

@@ -82,23 +82,6 @@ class FormationController extends AbstractController
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                // Envoi d'un mail lors de la création d'une formation spécifique à la liste de diffusion du site déclaré
-                // seulement si le site et la structure ont été renseignés
-                // et des informations ont été modifiées
-                if ($formation->getType() === Formation::TYPE_CODE_SPECIFIQUE && ($formation->getSite() && $formation->getTypeStructure()) && ($formation->getSite() !== $oldSite || $formation->getTypeStructure() !== $oldStructure)) {
-                    try {
-                        $notif = $this->formationNotificationFactory->createNotificationFormationSpecifiqueAjoutee($formation);
-                        $this->notifierService->trigger($notif);
-                        $destinataires = implode(', ', array_reduce(array_keys($notif->getTo()), function(array $accu, string $key) use ($notif) {
-                            $accu[] = sprintf('%s', $notif->getTo()[$key]);
-                            return $accu;
-                        }, []));
-                        $this->flashMessenger()->addInfoMessage("Le site organisateur et/ou la structure associée ont été modifiés. <br> Une notification par mail a donc été envoyée aux doctorants appartenant à la liste de diffusion suivante : ".$destinataires);
-                    } catch (RuntimeException $e) {
-                        $ed = $formation->getTypeStructure()->getEcoleDoctorale();
-                        $this->flashMessenger()->addErrorMessage("La session a bien été modifiée, cependant aucune liste de diffusion trouvée pour l'ED {$ed} (afin de notifier les doctorants).");
-                    }
-                }
                 $this->getFormationService()->update($formation);
             }
         }
