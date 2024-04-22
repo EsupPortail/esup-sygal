@@ -51,7 +51,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
             <th>
                 Sessions
             </th>
-            <th>
+            <th style="max-width: 6rem;">
                 <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_site) ?>"
                    title="<?php echo $this->translate("Établissement organisateur") ?> ">
                     <?php echo $this->translate("Établissement organisateur") ?>*
@@ -78,7 +78,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <?php echo $this->translate("État") ?>
                 </a> <?php echo $s->icon() ?>
             </th>
-            <th>Séances</th>
+            <th style="min-width: 14rem;">Séances</th>
             <th style="min-width: 9rem;">Inscriptions</th>
             <th style="min-width: 4rem;">Action</th>
         </tr>
@@ -122,26 +122,20 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                 <td> <?php echo $this->modalite($session); ?> </td>
                 <td> <?php echo $this->type($session); ?> </td>
                 <td> <?php echo $this->etat($session); ?> </td>
-                <td> <!-- Seances ----------------------------------------------------------------------------------------->
+                <td style="min-width: 17rem;"> <!-- Seances ----------------------------------------------------------------------------------------->
                     <?php echo count($session->getSeances()); ?>
                     séance<?php if (count($session->getSeances())>1) echo "s"; ?>
                     (<?php echo $session->getDuree(); ?> h.)
+                    <br>
+                    <strong>Période :</strong>
                     <ul>
-                        <?php
-                            /** @var Seance[] $seances */
-                            $seances = $session->getSeances()->toArray();
-                            usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
-                        ?>
-                        <?php foreach ($seances as $seance) : ?>
-                            <li>
-                                <?php echo $seance->getDebut()->format('d/m/Y'); ?>
-                                <?php echo $seance->getDebut()->format('H:i') ; ?>
-                                &rightarrow;
-                                <?php echo $seance->getFin()->format('H:i') ; ?>
-                                -
-                                <?php echo $seance->getLieu() ; ?>
-                            </li>
-                        <?php endforeach; ?>
+                        <li>
+                            <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
+                                <?php echo $session->getDateDebut()->format('d/m/Y à H:i'); ?> &rightarrow; <?php echo $session->getDateFin()->format('d/m/Y à H:i'); ?>
+                            <?php else : ?>
+                                À déterminer
+                            <?php endif; ?>
+                        </li>
                     </ul>
                 </td>
                 <td> <!-- Inscriptions ------------------------------------------------------------------------------------>

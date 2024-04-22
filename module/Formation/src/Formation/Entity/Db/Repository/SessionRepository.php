@@ -6,6 +6,7 @@ use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
+use Doctrine\ORM\Query\Expr\Join;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
@@ -205,5 +206,19 @@ class SessionRepository extends DefaultEntityRepository
         if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function fetchDistinctAnneesUnivSessions(string $champ='id', string $ordre='ASC', bool $keep_histo = false) : array
+    {
+        $qb = $this->createQueryBuilder('session')
+            ->distinct()
+            ->select("YEAR(seance.debut) as annee")
+            ->orderBy("annee", $ordre);
+
+        if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
+
+        return array_map(function($value) {
+            return current($value);
+        }, $qb->getQuery()->getScalarResult());
     }
 }
