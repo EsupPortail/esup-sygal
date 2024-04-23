@@ -63,12 +63,23 @@ from PROFIL_TO_ROLE p2r
 where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;
 
+--Ajout d'une macro pour afficher la dénomination du doctorant (civilité+nom Patronymique+prénom)
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('Doctorant#DenominationPatronymique',
+        '<p>Retourne la dénomination du doctorant (civilité+nom Patronymique+prénom)</p>',
+        'doctorant', 'getDenominationPatronymique')
+    ON CONFLICT DO NOTHING;
+
+--Changement en conséquence du template
+UPDATE public.unicaen_renderer_template SET document_corps = '<h1 style="text-align: center;">Attestation de suivi de formation</h1><p></p><p>Bonjour ,</p><p>Je, sousigné·e, certifie que <strong>VAR[Doctorant#DenominationPatronymique]</strong> a participé à la formation <strong>VAR[Formation#Libelle]</strong> qui s''est déroulée sur la période du VAR[Session#Periode] (Durée : VAR[Session#Duree] heures).</p><p>VAR[Doctorant#DenominationPatronymique] a suivi VAR[Inscription#DureeSuivie] heure·s de formation.</p><p style="text-align: right;">Le·la responsable du module<br />VAR[Session#Responsable]<br /><br /></p><p style="text-align: right;">VAR[Signature#EtablissementFormation]</p>'
+where code = 'FORMATION_ATTESTATION';
+
 -- Template mail lors de la création d'une formation spécifique à destination des doctorants de l'ED
 INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
                                               document_css, namespace)
 VALUES ('FORMATION_FORMATION_SPECIFIQUE_OUVERTE',
-        '<p>Mail envoyé au doctorant·e lorsqu''une formation spécifique est ouverte au sein de leur ED</p>', 'mail',
+        '<p>Mail envoyé au doctorant·e appartenant aux structures valides déclarées lorsqu''une formation spécifique passe à l''état Inscription ouverte</p>', 'mail',
         'Nouvelle formation spécifique ouverte dans votre ED', e'<p>Bonjour,</p>
-<p>La formation spécifique <strong>VAR[Formation#Libelle]</strong> vient d\'ouvrir. Si vous voulez plus d\'informations, rendez-vous dans l\'application ESUP-SyGAL, onglet <em>\'mes formations\'.</em></p>
-<p>En vous souhaitant une bonne journée,<br />VAR[Formation#Responsable]</p>',
-        null, 'Formation\Provider\Template');
+<p>La formation spécifique <strong>VAR[Formation#Libelle]</strong> vient d''ouvrir. Si vous voulez plus d''informations, rendez-vous dans l''application ESUP-SyGAL, onglet <em>''mes formations''.</em></p>
+<p>En vous souhaitant une bonne journée,<br/>VAR[Formation#Responsable]</p>',
+        null, 'Formation\Provider\Template') ON CONFLICT DO NOTHING;

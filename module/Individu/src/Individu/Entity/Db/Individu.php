@@ -555,18 +555,20 @@ class Individu implements
      * Get nomUsuel
      *
      * @param bool $avecCivilite
-     * @param bool $avecNomPatro
+     * @param bool $avecNomUsuelEtPatro
      * @param bool $prenoms
      * @param bool $prenomfirst
+     * @param bool $avecNomPatroSeul
      * @return string
      */
     public function getNomComplet(
         bool $avecCivilite = false,
-        bool $avecNomPatro = false,
+        bool $avecNomUsuelEtPatro = false,
         bool $prenoms = false,
-        bool $prenomfirst = false): string
+        bool $prenomfirst = false,
+        bool $avecNomPatroSeul = false): string
     {
-        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomPatro, $prenomfirst, $prenoms);
+        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomUsuelEtPatro, $prenomfirst, $prenoms, $avecNomPatroSeul);
 
         return $f->filter($this);
     }
