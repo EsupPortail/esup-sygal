@@ -51,6 +51,7 @@ return [
                     'controller' => SeanceController::class,
                     'action' => [
                         'modifier',
+                        'dupliquer'
                     ],
                     'privileges' => [
                         SeancePrivileges::SEANCE_MODIFIER,
@@ -132,6 +133,17 @@ return [
                                     'defaults' => [
                                         'controller' => SeanceController::class,
                                         'action'     => 'modifier',
+                                    ],
+                                ],
+                            ],
+                            'dupliquer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/dupliquer/:seance',
+                                    'defaults' => [
+                                        'controller' => SeanceController::class,
+                                        'action'     => 'dupliquer',
                                     ],
                                 ],
                             ],

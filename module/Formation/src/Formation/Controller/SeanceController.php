@@ -95,6 +95,32 @@ class SeanceController extends AbstractController
         return $vm;
     }
 
+    public function dupliquerAction() : ViewModel
+    {
+        $seance = clone $this->getSeanceService()->getRepository()->getRequestedSeance($this);
+        $seance->setDebut($seance->getDebut()->setDate(0,0,0  ));
+
+        $form = $this->getSeanceForm();
+        $form->setAttribute('action', $this->url()->fromRoute('formation/seance/dupliquer', ['seance' => $seance->getId()], [], true));
+        $form->bind($seance);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getSeanceService()->create($seance);
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Ajout d'une séance pour la seance de formation",
+            'form' => $form,
+        ]);
+        $vm->setTemplate('formation/default/default-form');
+        return $vm;
+    }
+
     public function historiserAction() : Response
     {
         $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
