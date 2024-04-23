@@ -4,8 +4,22 @@ Journal des modifications
 8.2.0
 -----
 - Page des privilèges accordés aux profils : cosmétiques + ancres de navigation sur les catégories et privilèges.
+- Module Formations : Filtre sur l'année universitaire en cours pour le catalogue des formations
+- Module Formations : ajout d'une contrainte pour se désinscrire d'une formation, jusqu'à 3 jours avant le début de celle-ci (paramètre modifiable directement dans l'application)
+- Module Formations : lieu d'une séance visible seulement pour les inscrits à la session (Assertion)
+- Module Formations : ajout d'un message dans le formulaire d'ajout/modification d'un rapport activité pour indiquer au doctorant qu'il peut sauvegarder régulierement pour éviter de tout perdre
+- Refonte de la page soutenances à venir (présente sur la page d'accueil):
+  - Changement du titre : Soutenance actuelles
+  - Affichage des ED non fermées seulement
+  - Affichage des soutenances jusqu'à 1 an après leur passage
+- Module Formations : envoi d'un mail aux doctorants (appartenant aux structures valides déclarées d'une session) lors du passage à "Inscription ouverte" d'une session (<b>d'une formation transversale</b>)
+- Module Formations : refonte des écrans Formations/Sessions :
+  - Ajout des filtres année universitaire, et type (seulement pour sessions)
+  - tri par défaut en fonction de la date des séances (de la plus récente à la plus ancienne)
+- Module Formations : Affichage du nom patronymique sur l'attestation et la fiche d'émargement d'une formation
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
+- [FIX] ré-attribution du privilège d'accès à l'index des formations pour les formateurs
 
 8.1.0
 -----
