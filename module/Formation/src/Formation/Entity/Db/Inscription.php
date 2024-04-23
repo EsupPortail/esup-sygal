@@ -5,11 +5,18 @@ namespace Formation\Entity\Db;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\Collection;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Inscription implements HistoriqueAwareInterface {
+class Inscription implements HistoriqueAwareInterface, ResourceInterface {
     use HistoriqueAwareTrait;
+
+    public function getResourceId(): string
+    {
+        return 'Inscription';
+    }
+
 
     const LISTE_PRINCIPALE = 'P';
     const LISTE_COMPLEMENTAIRE = 'C';

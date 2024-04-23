@@ -13,4 +13,6 @@ class SessionPrivileges extends Privileges {
     const SESSION_HISTORISER = 'formation_session-historiser';
     const SESSION_SUPPRIMER  = 'formation_session-supprimer';
     const SESSION_INSCRIPTION  = 'formation_session-gerer_inscription';
+    const SESSION_VOIR_LIEU    = 'formation_session-voir_lieu';
+
 }

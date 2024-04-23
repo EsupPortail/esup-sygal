@@ -13,7 +13,7 @@ use Formation\Entity\Db\Seance;
 $session = $seance->getSession();
 $annee = $session->getAnneeScolaire();
 $inscriptions = $session->getListePrincipale();
-usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
+usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet(false, false, false, false, true) > $b->getDoctorant()->getIndividu()->getNomComplet(false, false, false, false, true);});
 
 $libelle = $session->getFormation()->getLibelle();
 /** @var Formateur[] $formateurs */
@@ -42,7 +42,7 @@ $formateurs = $session->getFormateurs();
             <ul>
                 <?php foreach ($formateurs as $formateur) : ?>
                     <li>
-                        <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+                        <?php echo $formateur->getIndividu()->getNomComplet(false, false, false, false, true); ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -76,7 +76,7 @@ $formateurs = $session->getFormateurs();
         ?>
         <tr>
             <td>
-                <strong> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </strong>
+                <strong> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(false, false, false, false, true); ?> </strong>
                 <br/>
                 D<?php echo implode(", ",$anneets); ?>
                 -

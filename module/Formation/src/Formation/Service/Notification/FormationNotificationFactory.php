@@ -2,13 +2,19 @@
 
 namespace Formation\Service\Notification;
 
+use Application\Entity\Db\Role;
+use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionStructureValide;
 use Formation\Provider\Template\MailTemplates;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
+use Structure\Entity\Db\Structure;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /**
@@ -19,6 +25,8 @@ use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 class FormationNotificationFactory extends NotificationFactory
 {
     use RenduServiceAwareTrait;
+    use ListeDiffusionServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     /** INSCRIPTION ***************************************************************************************************/
 
@@ -236,6 +244,41 @@ class FormationNotificationFactory extends NotificationFactory
 
         if (!$mail) {
             throw new RuntimeException("Aucune adresse mail trouvée pour le doctorant {$inscription->getDoctorant()}.");
+        }
+
+        $notif = new Notification();
+        $notif
+            ->setTo($mail)
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps());
+
+        return $notif;
+    }
+
+    /** FORMATIONS ******************************************************************************************************/
+    public function createNotificationFormationSpecifiqueAjoutee(Formation $formation, SessionStructureValide $structureValide): Notification
+    {
+        $ed = $structureValide->getStructure()->getEcoleDoctorale();
+        $role = $this->roleService->getRepository()->findOneBy(["code" => Role::CODE_DOCTORANT]);
+        $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, null);
+        $domain = $this->listeDiffusionService->getEmailDomain();
+        $ng->setDomain($domain);
+
+        $vars = [
+            'formation' => $formation,
+        ];
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::FORMATION_SPECIFIQUE_AJOUTEE, $vars);
+        $mail = $ng->generateName();
+
+        $listesDiffusionActives = $this->listeDiffusionService->fetchListesDiffusionActives();
+        foreach ($listesDiffusionActives as $listeDiffusion) {
+            $listesDiffusionActivess[$listeDiffusion->getAdresse()] = $listeDiffusion;
+        }
+        $adressesListesActives = array_keys($listesDiffusionActivess);
+
+        //si une liste a été récupérée et qu'elle n'est pas active
+        if(!$mail || !in_array($mail, $adressesListesActives)){
+            throw new RuntimeException($ed);
         }
 
         $notif = new Notification();

@@ -39,6 +39,7 @@ $canIndexSession        = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 $canModifierSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_MODIFIER));
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+$canVoirLieuSession = $this->isAllowed($session, SessionPrivileges::SESSION_VOIR_LIEU);
 
 $canResultatEnquete    = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_RESULTAT));
 
@@ -145,7 +146,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
         <dt class="col-md-3"> État </dt>
         <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
-        <dt class="col-md-3"> Site organisateur </dt>
+        <dt class="col-md-3"> Établissement organisateur </dt>
         <dd class="col-md-9"> <?php echo $this->site($session); ?> </dd>
         <dt class="col-md-3"> Responsable </dt>
         <dd class="col-md-9">
@@ -311,7 +312,9 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <table class="table table-sm table-hover">
     <thead>
     <tr>
-        <th> Lieu </th>
+        <?php if($canVoirLieuSession) : ?>
+            <th> Lieu </th>
+        <?php endif; ?>
         <th> Jour </th>
         <th> Début </th>
         <th> Fin </th>
@@ -322,26 +325,28 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <tbody>
     <?php foreach ($seances as $seance) : ?>
         <tr>
-            <td>
-                <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
-                    <?php $first = true; ?>
-                    <?php if (!$first) echo "<br>"; ?>
-                    <?php if ($seance->getLieu()) { echo $seance->getLieu(); $first = false; } ?>
-                    <?php if (!$first) echo "<br>"; ?>
-                    <?php if ($seance->getLien()) : ?>
-                        <a href="<?php echo $seance->getLien(); ?>"><?php echo $seance->getLien(); ?></a>
-                        <?php
-                        if ($seance->getMotDePasse()) echo " (Mot de passe:".$seance->getMotDePasse().")";
-                        $first = false; ?>
-                    <?php endif; ?>
-                    <?php if (!$first) echo "<br>"; ?>
-                    <?php if ($seance->getDescription() !== null) : ?>
-                        <span class="icon icon-information"
-                              title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span>
-                    <?php endif; ?>
-                </span>
-            </td>
+            <?php if($canVoirLieuSession) : ?>
+                <td>
+                    <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
+                        <?php $first = true; ?>
+                        <?php if (!$first) echo "<br>"; ?>
+                            <?php if ($seance->getLieu()) { echo $seance->getLieu(); $first = false; } ?>
+                            <?php if (!$first) echo "<br>"; ?>
+                            <?php if ($seance->getLien()) : ?>
+                                <a href="<?php echo $seance->getLien(); ?>"><?php echo $seance->getLien(); ?></a>
+                                <?php
+                                if ($seance->getMotDePasse()) echo " (Mot de passe:".$seance->getMotDePasse().")";
+                                $first = false; ?>
+                            <?php endif; ?>
+                            <?php if (!$first) echo "<br>"; ?>
+                            <?php if ($seance->getDescription() !== null) : ?>
+                                <span class="icon icon-information"
+                                      title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                ></span>
+                            <?php endif; ?>
+                    </span>
+                </td>
+            <?php endif; ?>
             <td> <?php echo $seance->getDebut()->format('d/m/Y'); ?> </td>
             <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
             <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>

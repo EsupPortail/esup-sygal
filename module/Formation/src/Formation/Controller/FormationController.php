@@ -4,8 +4,11 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Formation\Service\Module\ModuleServiceAwareTrait;
+use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use Laminas\Http\Response;
+use Notification\Exception\RuntimeException;
+use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Formation;
 use Formation\Form\Formation\FormationFormAwareTrait;
@@ -20,6 +23,8 @@ class FormationController extends AbstractController
     use ModuleServiceAwareTrait;
     use SessionServiceAwareTrait;
     use FormationFormAwareTrait;
+    use NotifierServiceAwareTrait;
+    use FormationNotificationFactoryAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -70,6 +75,8 @@ class FormationController extends AbstractController
         $form->setAttribute('action', $this->url()->fromRoute('formation/formation/modifier', [], [], true));
         $form->bind($formation);
 
+        $oldSite = $formation->getSite();
+        $oldStructure = $formation->getTypeStructure();
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();

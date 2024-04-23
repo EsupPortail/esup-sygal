@@ -27,7 +27,9 @@ echo $this->form()->openTag($form);
 <?php echo $this->formControlGroup($form->get('modalite')); ?>
 <?php echo $this->formControlGroup($form->get('type')); ?>
 <div id="type_structure">
-<?php echo $this->formControlGroup($form->get('type_structure')); ?></div>
+    <?php echo $this->formControlGroup($form->get('type_structure')); ?>
+</div>
+
 <?php echo $this->formControlGroup($form->get('taille_liste_principale')); ?>
 <?php echo $this->formControlGroup($form->get('taille_liste_complementaire')); ?>
 

@@ -15,6 +15,10 @@ usort($etats, function (Etat $a, Etat $b) { return $a->getOrdre() > $b->getOrdre
 ?>
 
 <form method="post" action="<?php echo $this->url("formation/session/changer-etat",['session' => $session->getId()],[], true); ?>">
+    <div class="alert alert-warning">
+        <span class="icon icon-attention"></span>
+        Lorsque vous modifierez l'état de la session à <b>"Inscription ouverte"</b> pour une formation spécifique, un mail sera envoyé aux doctorants (des structures valides déclarées) afin de les notifier de l'ouverture de celle-ci.
+    </div>
     <label for="etat"> Sélectionner le nouvel état </label>
     <select id="etat" name="etat" class="selectpicker">
         <option>Selectionner un état</option>

@@ -2,43 +2,43 @@
 
 /**
  * @see \Formation\Controller\ModuleController::catalogueAction()
- * @var array $catalogue [moduleId => ["module" => Module, "formations" => Formation[]]
+ * @var Module[] $modules
+ * @var string $anneeUniversitaire
  */
 
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\Module;
 use Formation\Provider\Privilege\FormationPrivileges;
 
 
 $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
-
+$this->headTitle("Catalogue des formations");
 ?>
 
 <h1 class="page-header">
-    Catalogue des formations
+    Catalogue des formations <?= $anneeUniversitaire ?>
 </h1>
 
-<?php foreach ($catalogue as $key => $element) : ?>
-    <?php if (!empty($element['formations'])) : ?>
-        <table class="table table-sm">
-        <thead>
-        <tr>
-            <th class="formation-module" colspan="4">
-                <?php if ($element["module"] !== null) : ?>
-                    <?php echo $element["module"]->getLibelle(); ?>
-                <?php else : ?>
-                    Formations non liées à un module
-                <?php endif; ?>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php /** @var Formation $formation */ ?>
-        <?php foreach ($element['formations'] as $formation) : ?>
+
+
+<?php foreach ($modules as $module) : ?>
+    <?php $formations = $module->getFormations(); ?>
+    <table class="table table-sm">
+    <thead>
+    <tr>
+        <th class="formation-module" colspan="4">
+            <?php echo $module->getLibelle(); ?>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($formations as $formation) : ?>
             <tr style="border-top:none;">
                 <td class="formation-libelle">
                     <?php if ($canFormationAfficher) : ?>
                         <a
+                                <?php /** @see \Formation\Controller\FormationController::afficherAction() */ ?>
                                 href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
                                 title="Accéder à la formation [<strong><?php echo $formation->getLibelle(); ?></strong>]"
                                 data-bs-toggle="tooltip" data-bs-html="true"
@@ -64,33 +64,42 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
                 <td></td>
                 <td colspan="2" >
                     <ul>
-                        <?php /** @var Session $session */ ?>
-                        <?php foreach ($formation->getSessions() as $session) : ?>
-                            <li>
-                                <strong>Site :</strong> <?php echo $this->site($session,[ 'long' => true]); ?>
-                                <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
+                        <?php $sessions = $formation->getSessions(); ?>
+                        <?php // tri en focntion de la premiere date de seance ?>
+                        <?php foreach ($sessions as $session) : ?>
+                        <li class="<?php echo $session->getAnneeScolaire(); ?>">
+                            <strong>Établissement :</strong> <?php echo $this->site($session,[ 'long' => true]); ?>
+                            <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
+                            <br/>
+                            <?php if ($session->getDateClotureInscription()) : ?>
+                                <strong>Date de fermeture des inscriptions :</strong>
+                                <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?>
                                 <br/>
-                                <?php if ($session->getDateClotureInscription()) : ?>
-                                    <strong>Date de fermeture des inscriptions :</strong>
-                                    <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?>
-                                    <br/>
-                                <?php endif; ?>
-                                <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
-                                    <strong>Durée :</strong> <?php echo $session->getDuree(); ?> h.
-                                <?php endif; ?>
-                                <strong>Période :</strong>
-                                <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
-                                    <?php echo $session->getDateDebut()->format('d/m/Y à H:i'); ?> &rightarrow; <?php echo $session->getDateFin()->format('d/m/Y à H:i'); ?>
-                                <?php else : ?>
-                                    À déterminer
-                                <?php endif; ?>
-                            </li>
+                            <?php endif; ?>
+                            <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
+                                <strong>Durée :</strong> <?php echo $session->getDuree(); ?> h.
+                            <?php endif; ?>
+                            <strong>Période :</strong>
+                            <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
+                                <?php echo $session->getDateDebut()->format('d/m/Y à H:i'); ?> &rightarrow; <?php echo $session->getDateFin()->format('d/m/Y à H:i'); ?>
+                            <?php else : ?>
+                                À déterminer
+                            <?php endif; ?>
+                        </li>
                         <?php endforeach; ?>
+
+<!--                    ><?php ///** @var Session $session */
+//                            if(isset($element['sessions'][$formation->getId()])) : ?>
+<!--                                --><?php //foreach ($element['sessions'][$formation->getId()] as $session) : ?>
+<!--
+<!--                                --><?php //endforeach; ?>
+<!--                            --><?php //else :?>
+<!--                                <i>Aucune session de prévue actuellement</i>-->
+<!--                            --><?php //endif; ?>
                     </ul>
                 </td>
             </tr>
         <?php endforeach; ?>
-    <?php endif; ?>
     </tbody>
     </table>
 <?php endforeach; ?>

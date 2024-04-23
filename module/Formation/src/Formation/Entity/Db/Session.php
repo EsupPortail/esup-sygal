@@ -14,11 +14,12 @@ use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
 use JetBrains\PhpStorm\Pure;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
 class Session implements HistoriqueAwareInterface,
-    HasSiteInterface, HasModaliteInterface, HasTypeInterface {
+    HasSiteInterface, HasModaliteInterface, HasTypeInterface, ResourceInterface {
     use HistoriqueAwareTrait;
     use HasSiteTrait;
     use HasModaliteTrait;
@@ -370,5 +371,10 @@ class Session implements HistoriqueAwareInterface,
     {
         $responsable = $this->getResponsable();
         return $responsable?$responsable->getNomComplet():"Aucun responsable de désigner pour cette session";
+    }
+
+    public function getResourceId()
+    {
+        return 'Session';
     }
 }

@@ -116,7 +116,7 @@ class FormationForm extends Form {
             'type' => Select::class,
             'name' => 'site',
             'options' => [
-                'label' => "Site organisateur :",
+                'label' => "Établissement organisateur :",
                 'empty_option' => "Aucun établissement",
                 'value_options' => $this->getEtablissementService()->getEtablissementInscriptionAsOption(),
             ],

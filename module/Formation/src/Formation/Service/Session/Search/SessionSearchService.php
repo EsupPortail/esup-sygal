@@ -2,6 +2,7 @@
 
 namespace Formation\Service\Session\Search;
 
+use Application\Entity\AnneeUniv;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
@@ -9,9 +10,11 @@ use Application\Search\Filter\StrReducedTextSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Repository\EtatRepositoryAwareTrait;
 use Formation\Entity\Db\Repository\FormationRepositoryAwareTrait;
 use Formation\Entity\Db\Repository\SessionRepositoryAwareTrait;
@@ -23,6 +26,7 @@ class SessionSearchService extends SearchService
     use FormationRepositoryAwareTrait;
     use EtatRepositoryAwareTrait;
     use SessionRepositoryAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -32,6 +36,9 @@ class SessionSearchService extends SearchService
     const NAME_responsable = 'responsable';
     const NAME_site = 'site';
     const NAME_structure = 'structure';
+    const NAME_anneeUniv = 'anneeUniv';
+    const NAME_type = 'type';
+
 
     public function init()
     {
@@ -41,6 +48,8 @@ class SessionSearchService extends SearchService
         $libelleFilter = $this->createLibelleFilter()->setWhereField('formation.libelle');
         $responsableFilter = $this->createResponsableFilter();
         $modaliteFilter = $this->createModaliteFilter();
+        $anneeUnivFilter = $this->createAnneeUnivFilter();
+        $typeFilter = $this->createTypeFilter();
 
         $siteFilter->setDataProvider(fn() => $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true));
         $structureFilter->setDataProvider(fn() => $this->formationRepository->fetchListeStructures());
@@ -50,6 +59,13 @@ class SessionSearchService extends SearchService
             array_map(fn(Etat $e) => $e->getCode(), $etats = $this->etatRepository->findBy([], ['ordre' => 'asc'])),
             $etats
         ));
+        $anneeUnivFilter->setDataProvider(function(SelectSearchFilter $filter) {
+            return $this->fetchAnneesUniv($filter);
+        });
+        $typeFilter->setData(HasTypeInterface::TYPES);
+
+        $annee = $this->anneeUnivService->courante();
+        $debut = $this->anneeUnivService->computeDateDebut($annee);
 
         $this->addFilters([
             $siteFilter,
@@ -58,21 +74,26 @@ class SessionSearchService extends SearchService
             $libelleFilter,
             $etatFilter,
             $modaliteFilter,
+            $anneeUnivFilter->setDefaultValue($debut->format('Y'))->setAllowsEmptyOption(false),
+            $typeFilter
         ]);
 
         $this->addSorters([
-            $this->createLibelleSorter()->setOrderByField('formation.libelle')->setIsDefault(),
+            $this->createLibelleSorter(),
             $this->createSiteSorter(),
             $this->createStructureSorter(),
             $this->createResponsableSorter(),
             $this->createEtatSorter(),
             $this->createModaliteSorter(),
         ]);
+
+        //tri descendant par les dates des séances (lorsqu'aucun sorter n'est sélectionné)
+        $this->addInvisibleSort('CASE WHEN seance.fin IS NULL THEN 1 ELSE 0 END', 'ASC');
+        $this->addInvisibleSort('seance.debut', 'DESC');
     }
 
     public function createQueryBuilder(): QueryBuilder
     {
-        // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         return $this->sessionRepository->createQueryBuilder('s');
     }
 
@@ -127,6 +148,29 @@ class SessionSearchService extends SearchService
         return $filter;
     }
 
+    /**
+     * @return SelectSearchFilter
+     */
+    private function createAnneeUnivFilter(): SelectSearchFilter
+    {
+        $filter = new SelectSearchFilter(
+            "An. univ.",
+            self::NAME_anneeUniv
+        );
+        $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'session') {
+            $filterValue = $filter->getValue();
+            $annee = $filterValue === 'NULL' ? $this->anneeUnivService->courante() : AnneeUniv::fromPremiereAnnee((int)$filterValue);
+            $debut = $this->anneeUnivService->computeDateDebut($annee);
+            $fin = $this->anneeUnivService->computeDateFin($annee);
+            if ($debut !== null && $fin !== null) {
+                $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                    ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+            }
+        });
+
+        return $filter;
+    }
+
     private function createLibelleFilter(): TextSearchFilter
     {
         $filter = new StrReducedTextSearchFilter("Libellé", self::NAME_libelle);
@@ -135,6 +179,40 @@ class SessionSearchService extends SearchService
         return $filter;
     }
 
+    private function createTypeFilter(): SelectSearchFilter
+    {
+        $filter = new SelectSearchFilter("Type", self::NAME_type);
+        $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+            $qb
+                ->andWhere("s.type = :type")
+                ->setParameter('type', $filter->getValue());
+        });
+
+        return $filter;
+    }
+
+    /********************************** FILTERS ****************************************/
+
+    private function fetchAnneesUniv(SelectSearchFilter $filter): array
+    {
+        $anneeUnivCourante = $this->anneeUnivService->courante();
+        $anneeCourante = new \DateTime();
+        $anneeCourante = $anneeCourante->format('Y');
+        $annees = $this->sessionRepository->fetchDistinctAnneesUnivSessions();
+
+        $anneesUniv = [];
+        foreach($annees as $annee){
+            if (! is_numeric($annee))  continue;
+
+            if($anneeCourante === $annee){
+                if(!in_array($anneeUnivCourante, $anneesUniv)) $anneesUniv[] =  $anneeUnivCourante;
+                continue;
+            }
+            $anneesUniv[$annee] = AnneeUniv::fromPremiereAnnee($annee);
+        }
+
+        return $anneesUniv;
+    }
 
     /********************************** SORTERS ****************************************/
 

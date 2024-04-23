@@ -54,7 +54,7 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
         <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("module·s trouvé·s.") ?>
     </p>
 
-    <table class="table table-sm table-hover">
+    <table class="table table-sm table-hover table-index-modules">
         <thead>
         <tr>
             <th>
@@ -93,6 +93,7 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
                         <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"
                            title="afficher le module de formation #<?php echo $module->getId(); ?>"
+                           class="afficher-module-btn"
                            data-bs-toggle="tooltip" data-bs-html="true">
                             <span class="icon icon-voir"></span>
                         </a>
@@ -102,7 +103,10 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
                             <?php /** @see \Formation\Controller\ModuleController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/module/historiser', ['module' => $module->getId()], [], true); ?>"
                                title="Historiser le module de  formation #<?php echo $module->getId(); ?>"
-                               data-bs-toggle="tooltip" data-bs-html="true">
+                               class="historiser-module-btn"
+                               data-bs-toggle="tooltip" data-bs-html="true"
+                               data-toggle="confirmationx"
+                               data-message="Êtes-vous sûr de vouloir historiser ce module ?">
                                 <span class="icon icon-historiser"></span>
                             </a>
                         <?php else : ?>
@@ -118,9 +122,11 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
                     <?php if ($canSupprimerModule and $module->estHistorise()) : ?>
                         <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/supprimer', ['module' => $module->getId()], [], true); ?>"
-                           class="ajax-modal" data-event="modification"
+                           class="ajax-modal supprimer-module-btn" data-event="modification"
                            title="Suppression du module de formation #<?php echo $module->getId(); ?>"
-                           data-bs-toggle="tooltip" data-bs-html="true">
+                           data-bs-toggle="tooltip" data-bs-html="true"
+                           data-toggle="confirmationx"
+                           data-message="Êtes-vous sûr de vouloir supprimer ce module ?">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>

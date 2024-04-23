@@ -2,6 +2,7 @@
 
 namespace Formation\Service\Session\Search;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
@@ -37,6 +38,10 @@ class SessionSearchServiceFactory implements FactoryInterface
         /** @var \Structure\Service\Etablissement\EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
         $service->setEtablissementService($etablissementService);
+
+        /** @var AnneeUnivService $anneeUnivService */
+        $anneeUnivService = $container->get(AnneeUnivService::class);
+        $service->setAnneeUnivService($anneeUnivService);
 
         return $service;
     }
