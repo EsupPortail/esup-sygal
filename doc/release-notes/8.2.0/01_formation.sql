@@ -3,7 +3,7 @@
 --Ajout d'un paramètre pour spécifier le délai pour une annulation d'inscription
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur,
                                                 ordre)
-VALUES (20, 2, 'DELAI_ANNULATION_INSCRIPTION', 'Delai annulation', null, 'Number', '21', 20) ON CONFLICT DO NOTHING;
+VALUES (20, 2, 'DELAI_ANNULATION_INSCRIPTION', 'Delai annulation', null, 'Number', '3', 20) ON CONFLICT DO NOTHING;
 
 
 --Ajout d'un privilège pour voir le lieu des séances d'une session
