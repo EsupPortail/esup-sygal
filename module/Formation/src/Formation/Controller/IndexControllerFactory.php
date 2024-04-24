@@ -2,6 +2,7 @@
 
 namespace Formation\Controller;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
@@ -23,15 +24,19 @@ class IndexControllerFactory {
          * @var EntityManager $entityManager
          * @var DoctorantService $doctorantService
          * @var ParametreService $parametreService
-         */
+         * @var AnneeUnivService $anneeUnivService
+        */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $doctorantService = $container->get(DoctorantService::class);
         $parametreService = $container->get(ParametreService::class);
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         $controller = new IndexController();
         $controller->setEntityManager($entityManager);
         $controller->setDoctorantService($doctorantService);
         $controller->setParametreService($parametreService);
+        $controller->setAnneeUnivService($anneeUnivService);
+
         return $controller;
     }
 

@@ -57,7 +57,7 @@ class FormationSearchService extends SearchService
             $structureFilter,
             $libelleFilter,
             $modaliteFilter,
-            $anneeUnivFilter->setDefaultValue($debut->format('Y'))->setAllowsEmptyOption(false),
+            $anneeUnivFilter->setAllowsNoneOption()->setAllowsEmptyOption(false)->setDefaultValue($debut->format('Y')),
         ]);
 
         $this->addSorters([
@@ -158,10 +158,11 @@ class FormationSearchService extends SearchService
             $annee = $filterValue === 'NULL' ? $this->anneeUnivService->courante() : AnneeUniv::fromPremiereAnnee((int)$filterValue);
             $debut = $this->anneeUnivService->computeDateDebut($annee);
             $fin = $this->anneeUnivService->computeDateFin($annee);
-
-            if ($debut !== null && $fin !== null) {
-                $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
-                    ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+            if($filterValue !== 'NULL'){
+                if ($debut !== null && $fin !== null) {
+                    $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                        ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+                }
             }
         });
 
