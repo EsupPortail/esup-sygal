@@ -2,6 +2,7 @@
 
 namespace Formation\Controller;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
@@ -29,12 +30,14 @@ class SeanceControllerFactory {
          * @var \Fichier\Service\Fichier\FichierStorageService $fichierStorageService
          * @var SeanceService $seanceService
          * @var SessionService $sessionService
+         * @var AnneeUnivService $anneeUnivService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
         $seanceService = $container->get(SeanceService::class);
         $sessionService = $container->get(SessionService::class);
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         /**
          * @var SeanceForm $seanceForm
@@ -51,6 +54,7 @@ class SeanceControllerFactory {
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setSeanceService($seanceService);
         $controller->setSessionService($sessionService);
+        $controller->setAnneeUnivService($anneeUnivService);
         /** forms *****************************************************************************************************/
         $controller->setSeanceForm($seanceForm);
         /** autre *****************************************************************************************************/

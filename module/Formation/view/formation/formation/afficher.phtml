@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\AnneeUniv;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -11,6 +12,8 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @see \Formation\Controller\FormationController::afficherAction()
  * @var Formation $formation
  * @var Session[] $sessions
+ * @var array $anneesUniv
+ * @var AnneeUniv $anneeUnivCourante
  */
 
 $pageTitle = '' . $formation->getLibelle();
@@ -142,26 +145,14 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             </a>
         <?php endif; ?>
 
-        <?php
-            $mois = (new DateTime())->format('m');
-            $anneeCourante = (new DateTime())->format('Y');
-            if ($mois < 9) $anneeCourante--;
-            $anneeMin = null;
-            foreach ($sessions as $session) {
-                $anneeMin = ($anneeMin === null || $anneeMin > $session->getAnneeScolaire())?$session->getAnneeScolaire():$anneeMin;
-            }
-        ?>
-
         <div class="float-end">
-        <label for="annee"> Filtre sur l'année :</label>
-        <select id="annee" name="annee">
-            <?php for($annee=$anneeMin; $annee<=$anneeCourante; $annee++) : ?>
-                <option value="<?php echo $annee; ?>" <?php if ($annee == $anneeCourante) echo " selected "; ?> ><?php echo $annee; ?>/<?php echo ($annee+1); ?></option>
-            <?php endfor; ?>
-        </select>
+            <label for="annee"> Filtre sur l'année :</label>
+            <select id="annee" name="annee">
+                <?php foreach($anneesUniv as $annee => $anneeUniv) : ?>
+                    <option value="<?php echo $annee; ?>" <?php if ($annee === $anneeUnivCourante->getPremiereAnnee()) echo " selected "; ?> ><?php echo $anneeUniv; ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
-
-
     </div>
 </div>
 
@@ -184,32 +175,32 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     </thead>
     <tbody>
     <?php foreach ($sessions as $session) : ?>
-        <tr class="<?php echo $session->getAnneeScolaire(); ?>">
+        <tr class="<?php echo $session["anneeUniv"]; ?>">
             <td>
-                <span class=" <?php if ($session->estHistorise()) echo "historise text-danger"; ?> ">
-                <?php echo $session->getIndex(); ?>
+                <span class=" <?php if ($session["session"]->estHistorise()) echo "historise text-danger"; ?> ">
+                <?php echo $session["session"]->getIndex(); ?>
                 </span>
             </td>
-            <td> <?php echo $this->site($session); ?> </td>
+            <td> <?php echo $this->site($session["session"]); ?> </td>
             <td>
-                <?php if ($session->getResponsable()) : ?>
-                    <?php echo $session->getResponsable()->getNomComplet(); ?>
+                <?php if ($session["session"]->getResponsable()) : ?>
+                    <?php echo $session["session"]->getResponsable()->getNomComplet(); ?>
                 <?php else : ?>
                     Aucun responsable
                 <?php endif; ?>
             </td>
-            <td> <?php echo $this->modalite($session); ?> </td>
-            <td> <?php echo $this->type($session); ?> </td>
-            <td> <?php echo $this->etat($session); ?></td>
+            <td> <?php echo $this->modalite($session["session"]); ?> </td>
+            <td> <?php echo $this->type($session["session"]); ?> </td>
+            <td> <?php echo $this->etat($session["session"]); ?></td>
             <td>
-                <?php echo count($session->getSeances()); ?>
-                séance<?php if (count($session->getSeances())>1) echo "s"; ?>
+                <?php echo count($session["session"]->getSeances()); ?>
+                séance<?php if (count($session["session"]->getSeances())>1) echo "s"; ?>
                 -
-                <?php echo $session->getDuree(); ?> h.
+                <?php echo $session["session"]->getDuree(); ?> h.
                 <ul>
                 <?php
                 /** @var Seance[] $seances */
-                $seances = $session->getSeances()->toArray();
+                $seances = $session["session"]->getSeances()->toArray();
                 usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
                 ?>
                 <?php foreach ($seances as $seance) : ?>
@@ -226,28 +217,28 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             <td>
                 <?php if ($canAfficherSession) : ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
-                    <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                    <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session["session"]->getId()], [], true); ?>">
                         <span class="icon icon-voir"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserSession) : ?>
-                    <?php if ($session->estNonHistorise()) : ?>
+                    <?php if ($session["session"]->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
-                        <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
+                        <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session["session"]->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
                         >
                             <span class="icon icon-historiser"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
-                        <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
+                        <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session["session"]->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
                         >
                             <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
-                <?php if ($canSupprimerSession AND $session->estHistorise()) : ?>
+                <?php if ($canSupprimerSession AND $session["session"]->estHistorise()) : ?>
                     <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
-                    <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
+                    <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session["session"]->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        title="supprimer une session"
                        data-bs-toggle="tooltip" data-bs-html="true">

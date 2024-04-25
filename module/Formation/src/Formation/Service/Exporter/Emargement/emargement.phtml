@@ -2,6 +2,7 @@
 
 /**
  * @var Seance $seance
+ * @var int $annee
  */
 
 use Application\Entity\AnneeUniv;
@@ -11,7 +12,6 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 
 $session = $seance->getSession();
-$annee = $session->getAnneeScolaire();
 $inscriptions = $session->getListePrincipale();
 usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet(false, false, false, false, true) > $b->getDoctorant()->getIndividu()->getNomComplet(false, false, false, false, true);});
 

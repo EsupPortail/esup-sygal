@@ -2,6 +2,7 @@
 
 namespace Formation\Service\Formation;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -21,9 +22,12 @@ class FormationServiceFactory {
          * @var EntityManager $entitymanager
          */
         $entitymanager = $container->get('doctrine.entitymanager.orm_default');
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         $service = new FormationService();
         $service->setEntityManager($entitymanager);
+        $service->setAnneeUnivService($anneeUnivService);
+
         return $service;
     }
 }

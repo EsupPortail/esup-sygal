@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Seance;
@@ -25,6 +26,7 @@ class SeanceController extends AbstractController
     use SeanceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use SeanceFormAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -170,6 +172,9 @@ class SeanceController extends AbstractController
         $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
         $session = $seance->getSession();
 
+        $annee = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut())->getPremiereAnnee() :
+            $this->anneeUnivService->courante()->getPremiereAnnee();
+
         $logos = [];
         try {
             $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite()->getStructure());
@@ -189,6 +194,7 @@ class SeanceController extends AbstractController
         $export->setVars([
             'seance' => $seance,
             'logos' => $logos,
+            'annee' => $annee
         ]);
         $export->export('SYGAL_emargement_' . $session->getId() . "_" . $seance->getId() . ".pdf");
     }

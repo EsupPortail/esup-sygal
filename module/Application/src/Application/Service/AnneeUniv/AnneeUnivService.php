@@ -74,7 +74,8 @@ class AnneeUnivService
      */
     protected function computePremiereAnneeFromDate(DateTime $date): int
     {
-        return (int)$date->modify($this->specDateBascule)->format('Y');
+        $modifiedDate = clone $date;
+        return (int)$modifiedDate->modify($this->specDateBascule)->format('Y');
     }
 
     public function computeDateDebut(AnneeUniv $anneeUniv): DateTime

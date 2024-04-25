@@ -210,12 +210,14 @@ class SessionRepository extends DefaultEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function fetchDistinctAnneesUnivSessions(string $champ='id', string $ordre='ASC', bool $keep_histo = false) : array
+    public function fetchDistinctAnneesUnivSessions(Formation $formation = null, string $ordre='ASC', bool $keep_histo = false) : array
     {
         $qb = $this->createQueryBuilder('session')
             ->distinct()
             ->select("YEAR(seance.debut) as annee")
             ->orderBy("annee", $ordre);
+
+        if ($formation !== null)  $qb = $qb->andWhere('session.formation = :formation')->setParameter('formation', $formation);
 
         if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
 

@@ -21,7 +21,8 @@ $canAccorderSursis = $this->isAllowed(InscriptionPrivileges::getResourceId(Inscr
 
 $doctorant = $inscription->getDoctorant();
 $session = $inscription->getSession();
-$annee = $session->getAnneeScolaire();
+/** @var AnneeUniv $annee */
+$annee = $options['anneeUniv'];
 //todo trouver solution pour récupèrer la bonne thèse dans le cas des thèses multiples
 
 /** @var These $these */
@@ -44,14 +45,14 @@ $these = current($doctorant->getTheses());
             echo " - ";
             echo $this->site($these->getUniteRecherche());
             echo " - ";
-            echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee));
+            echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee->getPremiereAnnee()));
         }
         $missions = $doctorant->getMissionsEnseignements();
         if (!empty($missions)) {
             echo " - ";
             foreach ($missions as $mission) {
                 echo "<span style='font-weight:bold; font-family: monospace; color:";
-                echo ($mission->getAnneeUniversitaire() === $session->getAnneeScolaire())?"darkgreen":"darkorange";
+                echo ($mission->getAnneeUniversitaire() === $annee->getPremiereAnnee())?"darkgreen":"darkorange";
                 echo "'>";
                 echo "ME".$mission->getAnneeUniversitaire(). " ";
                 echo "</span>";
