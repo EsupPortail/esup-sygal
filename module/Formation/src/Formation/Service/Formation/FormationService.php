@@ -117,6 +117,10 @@ class FormationService {
         //Année universitaire courante par défaut présente dans les options
         $anneeUnivCourante = $this->anneeUnivService->courante();
         $anneesUniv[$anneeUnivCourante->getPremiereAnnee()] = $anneeUnivCourante->getAnneeUnivToString();
+
+        uksort($anneesUniv, function($a, $b) {
+            return $a <=> $b;
+        });
         return $anneesUniv;
     }
 }

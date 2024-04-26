@@ -183,6 +183,10 @@ class FormationSearchService extends SearchService
             }
         }
 
+        uksort($anneesUniv, function($a, $b) {
+            return $a <=> $b;
+        });
+
         return $anneesUniv;
     }
 
