@@ -204,6 +204,10 @@ class SessionSearchService extends SearchService
             if(!isset($anneesUniv[$anneeUniv->getPremiereAnnee()])) $anneesUniv[$anneeUniv->getPremiereAnnee()] = $anneeUniv->getAnneeUnivToString();
         }
 
+        uksort($anneesUniv, function($a, $b) {
+            return $a <=> $b;
+        });
+
         return $anneesUniv;
     }
 
