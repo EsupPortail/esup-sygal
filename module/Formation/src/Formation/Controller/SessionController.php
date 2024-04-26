@@ -246,7 +246,7 @@ class SessionController extends AbstractController
                     case Etat::CODE_OUVERTE :
                         //Envoi d'un mail lors de la création d'une formation spécifique à la liste de diffusion de l'ED déclarée
                         $formation = $session->getFormation();
-                        $formationSpecifique = $formation->getType() === Formation::TYPE_CODE_SPECIFIQUE;
+                        $formationSpecifique = $formation->getType() === Formation::TYPE_CODE_SPECIFIQUE || $session->getType() === Formation::TYPE_CODE_SPECIFIQUE;
                         $structuresValides = $session->getStructuresValides();
 
                         if ($formationSpecifique) {
