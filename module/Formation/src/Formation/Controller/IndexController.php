@@ -3,8 +3,10 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Provider\Parametre\FormationParametres;
@@ -18,6 +20,7 @@ class IndexController extends AbstractController
     use EntityManagerAwareTrait;
     use DoctorantServiceAwareTrait;
     use ParametreServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
@@ -36,12 +39,11 @@ class IndexController extends AbstractController
         }
 
         if($doctorant) {
-            $anneeScolaire = Session::getAnneeScolaireCourante();
-            /** @var Session[] $session */
-            $sessions = $this->getEntityManager()->getRepository(Session::class)->findSessionsDisponiblesByDoctorant($doctorant);
-            $sessions = array_filter($sessions, function (Session $s) use ($anneeScolaire) { return $s->getAnneeScolaire() === $anneeScolaire;});
-            $ouvertes = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_INSCRIPTION;});
-            $preparations = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_PREPARATION;});
+            $anneeScolaire = $this->anneeUnivService->courante();
+            $debut = $this->anneeUnivService->computeDateDebut($anneeScolaire);
+            $fin = $this->anneeUnivService->computeDateFin($anneeScolaire);
+            $ouvertes = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_OUVERTE, $debut, $fin);
+            $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION);
             /** @var Inscription[] $inscription */
             $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
         } else {

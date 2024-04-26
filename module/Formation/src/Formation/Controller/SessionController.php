@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\PersistentCollection;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Notification\Exception\ExceptionInterface;
@@ -44,6 +45,7 @@ class SessionController extends AbstractController
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use SessionStructureValideServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     use SessionFormAwareTrait;
 
@@ -67,9 +69,12 @@ class SessionController extends AbstractController
             $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
         }
 
+        $anneeUniv = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut()) : $this->anneeUnivService->courante();
+
         return new ViewModel([
             'session' => $session,
             'presences' => $dictionnaire,
+            'anneeUniv' => $anneeUniv,
         ]);
     }
 
@@ -220,7 +225,7 @@ class SessionController extends AbstractController
             if ($etat !== null) {
                 $session->setEtat($etat);
                 $this->sessionService->addHeurodatage($session, $etat);
-//                $this->getSessionService()->update($session);
+                $this->getSessionService()->update($session);
 
                 switch ($session->getEtat()->getCode()) {
                     case Etat::CODE_FERME :
@@ -241,7 +246,7 @@ class SessionController extends AbstractController
                     case Etat::CODE_OUVERTE :
                         //Envoi d'un mail lors de la création d'une formation spécifique à la liste de diffusion de l'ED déclarée
                         $formation = $session->getFormation();
-                        $formationSpecifique = $formation->getType() === Formation::TYPE_CODE_SPECIFIQUE;
+                        $formationSpecifique = $formation->getType() === Formation::TYPE_CODE_SPECIFIQUE || $session->getType() === Formation::TYPE_CODE_SPECIFIQUE;
                         $structuresValides = $session->getStructuresValides();
 
                         if ($formationSpecifique) {
@@ -483,7 +488,9 @@ class SessionController extends AbstractController
     public function genererExportAction() : CsvModel
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
-        $annee = $session->getAnneeScolaire();
+        $annee = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut())->getPremiereAnnee() :
+            $this->anneeUnivService->courante()->getPremiereAnnee();
+
 
         $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Année de thèse', 'Établissement', 'École doctorale', 'Unité de recherche', 'Desinscription', 'Motif de desinscription'];
 
@@ -526,6 +533,8 @@ class SessionController extends AbstractController
     public function genererEmargementsAction()
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        $annee = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut())->getPremiereAnnee() :
+            $this->anneeUnivService->courante()->getPremiereAnnee();
         $seances = $session->getSeances()->toArray();
         $seances = array_filter($seances, function ($a) { return $a->estNonHistorise();});
         usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
@@ -550,6 +559,7 @@ class SessionController extends AbstractController
         $export->setVars([
             'seance' => $seances[0],
             'logos' => $logos,
+            'annee' => $annee
         ]);
         $export->exportAll($seances, 'SYGAL_emargement_' . $session->getId() . ".pdf");
     }

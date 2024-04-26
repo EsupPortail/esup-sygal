@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\AnneeUniv;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
@@ -16,6 +17,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @see \Formation\Controller\SessionController::afficherAction()
  * @var Session $session
  * @var array $presences
+ * @var AnneeUniv $anneeUniv
  */
 
 $formation = $session->getFormation();
@@ -360,6 +362,13 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     >
                         <span class="icon icon-modifier"></span>
                     </a>
+                    <?php /** @see \Formation\Controller\SeanceController::dupliquerAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/dupliquer', ['seance' => $seance->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Duplication de la séance" data-bs-toggle="tooltip" data-bs-html="true"
+                    >
+                        <span class="icon icon-refresh"></span>
+                    </a>
                 <?php endif; ?>
                 <?php if ($canEmargementSeance) : ?>
                     <?php /** @see \Formation\Controller\SeanceController::genererEmargementAction() */ ?>
@@ -454,6 +463,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
                     'action-historiser' => $canModifierInscription,
                     'action-supprimer' => $canModifierInscription,
+                    'anneeUniv' => $anneeUniv
             ]); ?>
             <?php endforeach; ?>
         </ul>
@@ -472,7 +482,8 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
                     'action-historiser' => $canModifierInscription,
                     'action-supprimer' => $canModifierInscription,
-                ]); ?>
+                    'anneeUniv' => $anneeUniv
+            ]); ?>
         <?php endforeach; ?>
         </ul>
     </div>
@@ -491,6 +502,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                         'action-liste-complementaire' => false,
                         'action-historiser' => $canModifierInscription,
                         'action-supprimer' => $canModifierInscription,
+                        'anneeUniv' => $anneeUniv
                 ]); ?>
             <?php endforeach; ?>
         </ul>

@@ -2,6 +2,7 @@
 
 namespace Formation\Controller;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Formation\Service\Module\ModuleService;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Session\SessionService;
@@ -39,6 +40,7 @@ class FormationControllerFactory {
         $notificationService = $container->get(NotifierService::class);
         /** @var FormationNotificationFactory $formationNotificationFactory */
         $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         /**
          * @var FormationForm $formationForm
@@ -54,6 +56,7 @@ class FormationControllerFactory {
         $controller->setFormationForm($formationForm);
         $controller->setNotifierService($notificationService);
         $controller->setFormationNotificationFactory($formationNotificationFactory);
+        $controller->setAnneeUnivService($anneeUnivService);
 
         return $controller;
     }

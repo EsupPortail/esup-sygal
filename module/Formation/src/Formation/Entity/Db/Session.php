@@ -2,6 +2,7 @@
 
 namespace Formation\Entity\Db;
 
+use Application\Entity\AnneeUniv;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use DateInterval;
@@ -281,16 +282,6 @@ class Session implements HistoriqueAwareInterface,
     {
         $debut = $this->getDateDebut();
         if ($debut === null) $debut = new DateTime();
-
-        $mois = ((int) $debut->format('m'));
-        $annee =  ((int) $debut->format('Y'));
-        if ($mois < 9) $annee -= 1;
-        return $annee;
-    }
-
-    static public function getAnneeScolaireCourante() : int
-    {
-        $debut = new DateTime();
 
         $mois = ((int) $debut->format('m'));
         $annee =  ((int) $debut->format('Y'));

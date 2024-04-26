@@ -56,9 +56,12 @@ class SessionRepository extends DefaultEntityRepository
 
     /**
      * @param Doctorant $doctorant
+     * @param string $etat
+     * @param DateTime|null $debut
+     * @param DateTime|null $fin
      * @return Session[]
      */
-    public function findSessionsDisponiblesByDoctorant(Doctorant $doctorant) : array
+    public function findSessionsByDoctorant(Doctorant $doctorant, string $etat, DateTime $debut = null, DateTime $fin = null) : array
     {
         $structures = [];
         foreach ($doctorant->getTheses() as $these) {
@@ -80,20 +83,19 @@ class SessionRepository extends DefaultEntityRepository
 
         $qb = $this->createQueryBuilder('session')
             ->andWhere('complement.structure in (:structures)')
-            ->andWhere('etat.code = :ouverte OR etat.code = :preparation')
+            ->andWhere('etat.code = :etat')
             ->setParameter('structures', array_unique($structures))
-            ->setParameter('ouverte', Etat::CODE_OUVERTE)
-            ->setParameter('preparation', Etat::CODE_PREPARATION)
+            ->setParameter('etat', $etat)
             ->orderBy("seance.debut", "DESC");
-        ;
 
-        /** TODO SOMETHING WITH IT*/
-        $now = new DateTime();
-        $mois = ((int) $now->format('m'));
-        $annee =  ((int) $now->format('Y'));
-        if ($mois < 9) $annee -= 1;
-        if (! $doctorant->hasMissionEnseignementFor($annee)) {
-            $qb = $qb->andWhere('module.requireMissionEnseignement = :false')->setParameter('false', false);
+        if ($debut !== null && $fin !== null) {
+            $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+
+            $annee = $debut->format('Y');
+            if (! $doctorant->hasMissionEnseignementFor($annee)) {
+                $qb = $qb->andWhere('module.requireMissionEnseignement = :false')->setParameter('false', false);
+            }
         }
 
         $result =  $qb->getQuery()->getResult();
@@ -208,12 +210,14 @@ class SessionRepository extends DefaultEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function fetchDistinctAnneesUnivSessions(string $champ='id', string $ordre='ASC', bool $keep_histo = false) : array
+    public function fetchDistinctAnneesUnivSessions(Formation $formation = null, string $ordre='ASC', bool $keep_histo = false) : array
     {
         $qb = $this->createQueryBuilder('session')
             ->distinct()
             ->select("YEAR(seance.debut) as annee")
             ->orderBy("annee", $ordre);
+
+        if ($formation !== null)  $qb = $qb->andWhere('session.formation = :formation')->setParameter('formation', $formation);
 
         if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
 

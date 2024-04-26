@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Seance;
@@ -25,6 +26,7 @@ class SeanceController extends AbstractController
     use SeanceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use SeanceFormAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -95,6 +97,32 @@ class SeanceController extends AbstractController
         return $vm;
     }
 
+    public function dupliquerAction() : ViewModel
+    {
+        $seance = clone $this->getSeanceService()->getRepository()->getRequestedSeance($this);
+        $seance->setDebut($seance->getDebut()->setDate(0,0,0  ));
+
+        $form = $this->getSeanceForm();
+        $form->setAttribute('action', $this->url()->fromRoute('formation/seance/dupliquer', ['seance' => $seance->getId()], [], true));
+        $form->bind($seance);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getSeanceService()->create($seance);
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Ajout d'une séance pour la seance de formation",
+            'form' => $form,
+        ]);
+        $vm->setTemplate('formation/default/default-form');
+        return $vm;
+    }
+
     public function historiserAction() : Response
     {
         $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
@@ -144,6 +172,9 @@ class SeanceController extends AbstractController
         $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
         $session = $seance->getSession();
 
+        $annee = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut())->getPremiereAnnee() :
+            $this->anneeUnivService->courante()->getPremiereAnnee();
+
         $logos = [];
         try {
             $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite()->getStructure());
@@ -163,6 +194,7 @@ class SeanceController extends AbstractController
         $export->setVars([
             'seance' => $seance,
             'logos' => $logos,
+            'annee' => $annee
         ]);
         $export->export('SYGAL_emargement_' . $session->getId() . "_" . $seance->getId() . ".pdf");
     }

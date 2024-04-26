@@ -2,6 +2,7 @@
 
 namespace Formation\Controller;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Formation\FormationService;
 use Formation\Service\Notification\FormationNotificationFactory;
@@ -48,6 +49,7 @@ class SessionControllerFactory {
         $presenceService = $container->get(PresenceService::class);
         $sessionService = $container->get(SessionService::class);
         $sessionStructureComplementaireService = $container->get(SessionStructureValideService::class);
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         /**
          * @var SessionForm $sessionForm
@@ -68,6 +70,7 @@ class SessionControllerFactory {
         $controller->setPresenceService($presenceService);
         $controller->setSessionService($sessionService);
         $controller->setSessionStructureValideService($sessionStructureComplementaireService);
+        $controller->setAnneeUnivService($anneeUnivService);
         /** Form ******************************************************************************************************/
         $controller->setSessionForm($sessionForm);
         /** Autre *****************************************************************************************************/

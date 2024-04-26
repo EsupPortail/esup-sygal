@@ -19,7 +19,7 @@
     <tr><td style="width: 50%;">
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="oui">
-    <?php if ($justificationOui === true) : ?>
+    <?php if (isset($justificationOui) && $justificationOui === true) : ?>
         <label for="justification-oui"> Justification </label>
         <textarea id="justification-oui" name="justification-oui" style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
     <?php endif; ?>
@@ -28,7 +28,7 @@
         </td><td style="width: 50%;">
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="non">
-    <?php if ($justificationNon === true) : ?>
+    <?php if (isset($justificationNon) && $justificationNon === true) : ?>
         <label for="justification-non"> Justification </label>
         <textarea id="justification-non" name="justification-non"  style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
     <?php endif; ?>

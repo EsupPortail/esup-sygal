@@ -3,6 +3,10 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Entity\AnneeUniv;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
@@ -25,6 +29,7 @@ class FormationController extends AbstractController
     use FormationFormAwareTrait;
     use NotifierServiceAwareTrait;
     use FormationNotificationFactoryAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -32,10 +37,24 @@ class FormationController extends AbstractController
     {
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
         $sessions = $this->getSessionService()->getRepository()->fetchSessionsByFormation($formation, 'id', 'asc', true);
+        $anneeUnivCourante = $this->anneeUnivService->courante();
+
+        $sessionsAvecAnneeUniv = [];
+        /** @var Session $session */
+        foreach($sessions as $session){
+            $premiereAnnee = null;
+            if($session->getDateDebut()){
+                $anneeUniv = $this->anneeUnivService->fromDate($session->getDateDebut());
+                $premiereAnnee = $anneeUniv->getPremiereAnnee();
+            }
+            $sessionsAvecAnneeUniv[] = array("session" => $session, "anneeUniv" => $premiereAnnee ?? $anneeUnivCourante->getPremiereAnnee());
+        }
 
         return new ViewModel([
             'formation' => $formation,
-            'sessions' => $sessions,
+            'sessions' => $sessionsAvecAnneeUniv,
+            'anneeUnivCourante' => $anneeUnivCourante,
+            'anneesUniv' => $this->formationService->getAnneesUnivAsOptions($sessions)
         ]);
     }
 

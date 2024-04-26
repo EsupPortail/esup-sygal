@@ -57,7 +57,7 @@ class FormationSearchService extends SearchService
             $structureFilter,
             $libelleFilter,
             $modaliteFilter,
-            $anneeUnivFilter->setDefaultValue($debut->format('Y'))->setAllowsEmptyOption(false),
+            $anneeUnivFilter->setAllowsNoneOption()->setAllowsEmptyOption(false)->setDefaultValue($debut->format('Y')),
         ]);
 
         $this->addSorters([
@@ -158,10 +158,11 @@ class FormationSearchService extends SearchService
             $annee = $filterValue === 'NULL' ? $this->anneeUnivService->courante() : AnneeUniv::fromPremiereAnnee((int)$filterValue);
             $debut = $this->anneeUnivService->computeDateDebut($annee);
             $fin = $this->anneeUnivService->computeDateFin($annee);
-
-            if ($debut !== null && $fin !== null) {
-                $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
-                    ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+            if($filterValue !== 'NULL'){
+                if ($debut !== null && $fin !== null) {
+                    $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
+                        ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+                }
             }
         });
 
@@ -172,20 +173,14 @@ class FormationSearchService extends SearchService
 
     private function fetchAnneesUniv(SelectSearchFilter $filter): array
     {
-        $anneeUnivCourante = $this->anneeUnivService->courante();
-        $anneeCourante = new \DateTime();
-        $anneeCourante = $anneeCourante->format('Y');
-        $annees = $this->formationRepository->fetchDistinctAnneesUnivFormation();
-
+        $formations = $this->formationRepository->findAll();
         $anneesUniv = [];
-        foreach($annees as $annee){
-            if (! is_numeric($annee))  continue;
-
-            if($anneeCourante === $annee){
-                if(!in_array($anneeUnivCourante, $anneesUniv)) $anneesUniv[] =  $anneeUnivCourante;
-                continue;
+        foreach ($formations as $formation) {
+            $sessions = $formation->getSessions()->toArray();
+            foreach ($sessions as $session) {
+                $anneeUniv = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut()) : $this->anneeUnivService->courante();
+                if(!isset($anneesUniv[$anneeUniv->getPremiereAnnee()])) $anneesUniv[$anneeUniv->getPremiereAnnee()] = $anneeUniv->getAnneeUnivToString();
             }
-            $anneesUniv[$annee] = AnneeUniv::fromPremiereAnnee($annee);
         }
 
         return $anneesUniv;

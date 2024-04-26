@@ -2,14 +2,17 @@
 
 namespace Formation\Service\Formation;
 
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Repository\FormationRepository;
+use Formation\Entity\Db\Seance;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class FormationService {
     use EntityManagerAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     /**
      * @return FormationRepository
@@ -99,4 +102,21 @@ class FormationService {
 
     /** FACADE ********************************************************************************************************/
 
+    public function getAnneesUnivAsOptions(array $sessions): array
+    {
+        $anneesUniv = [];
+
+        /** @var Seance $seance */
+        foreach($sessions as $session){
+            /** @var Seance $sessionSeance */
+            foreach($session->getSeances() as $sessionSeance){
+                $anneeUniv = $this->anneeUnivService->fromDate($sessionSeance->getDebut());
+                $anneesUniv[$anneeUniv->getPremiereAnnee()] = $anneeUniv->getAnneeUnivToString();
+            }
+        }
+        //Année universitaire courante par défaut présente dans les options
+        $anneeUnivCourante = $this->anneeUnivService->courante();
+        $anneesUniv[$anneeUnivCourante->getPremiereAnnee()] = $anneeUnivCourante->getAnneeUnivToString();
+        return $anneesUniv;
+    }
 }
