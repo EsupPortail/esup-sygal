@@ -197,20 +197,11 @@ class SessionSearchService extends SearchService
 
     private function fetchAnneesUniv(SelectSearchFilter $filter): array
     {
-        $anneeUnivCourante = $this->anneeUnivService->courante();
-        $anneeCourante = new \DateTime();
-        $anneeCourante = $anneeCourante->format('Y');
-        $annees = $this->sessionRepository->fetchDistinctAnneesUnivSessions();
-
+        $sessions = $this->sessionRepository->findAll();
         $anneesUniv = [];
-        foreach($annees as $annee){
-            if (! is_numeric($annee))  continue;
-
-            if($anneeCourante === $annee){
-                if(!in_array($anneeUnivCourante, $anneesUniv)) $anneesUniv[] =  $anneeUnivCourante;
-                continue;
-            }
-            $anneesUniv[$annee] = AnneeUniv::fromPremiereAnnee($annee);
+        foreach ($sessions as $session) {
+            $anneeUniv = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut()) : $this->anneeUnivService->courante();
+            if(!isset($anneesUniv[$anneeUniv->getPremiereAnnee()])) $anneesUniv[$anneeUniv->getPremiereAnnee()] = $anneeUniv->getAnneeUnivToString();
         }
 
         return $anneesUniv;
