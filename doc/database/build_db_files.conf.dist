@@ -1,29 +1,78 @@
-#============================================#
-# Config pour la préparation des scripts SQL
-#       de création d'une BDD pour SyGAL
-#============================================#
+#======================================================================================================================#
+#                               Config pour la préparation des scripts SQL
+#                                     de création d'une BDD pour SyGAL
+#======================================================================================================================#
 
-#=============== Établissement =============#
-ETAB_CODE='UCN'                             # Code unique identifiant l'établissement (ex : 'UCN')
-ETAB_SIGLE='Unicaen'                        # Sigle ou surnom de l'établissement (ex : 'Unicaen')
-ETAB_LIBELLE='Université de Caen Normandie' # Libellé complet de l'établissement (ex : 'Université de Caen Normandie')
-ETAB_DOMAINE='unicaen.fr'                   # Domaine de l'établissement (ex : 'unicaen.fr')
-EMAIL_ASSISTANCE='sygal-assistance@univ.fr' # Adresse électronique d'assistance
-EMAIL_BIBLIOTHEQUE='sygal-scd@univ.fr'      # Adresse électronique par les aspects Bibliothèque
-EMAIL_DOCTORAT='sygal-doctorat@univ.fr'     # Adresse électronique par les aspects Doctorat
+#----------------------------------- Établissement -----------------------------------#
 
-#============= COMUE éventuelle ============#
-ETAB_COMUE=0                                # Une COMUE doit-elle être créée ? 0=Non 1=Oui
-#ETAB_COMUE_SIGLE='NU'                       # Sigle ou surnom de la COMUE (ex : 'NU')
-#ETAB_COMUE_LIBELLE='Normandie Université'   # Libellé complet de la COMUE (ex : 'Normandie Université')
-#ETAB_COMUE_DOMAINE='normandie-univ.fr'      # Domaine de la COMUE (ex : 'normandie-univ.fr')
+# Code unique identifiant l'établissement (ex : 'UCN')
+ETAB_CODE='UCN'
 
-#============================= CED =========================#
-ETAB_CED=0                                                  # Un CED doit-il être créé ? 0=Non 1=Oui
-#ETAB_CED_SIGLE='CED'                                        # Sigle du CED (ex : 'CED')
-#ETAB_CED_LIBELLE='Collège des écoles doctorales normandes'  # Libellé complet du CED (ex : 'Collège des écoles doctorales normandes')
+# Sigle ou surnom de l'établissement (ex : 'Unicaen')
+ETAB_SIGLE='Unicaen'
 
-#============= Sources d'import ============#
-SOURCE_APOGEE=1                             # Apogée   est-elle une source de données à importer ? 0=Non 1=Oui
-SOURCE_PHYSALIS=0                           # Physalis est-elle une source de données à importer ? 0=Non 1=Oui
+# Libellé complet de l'établissement (ex : 'Université de Caen Normandie')
+ETAB_LIBELLE='Université de Caen Normandie'
 
+# Domaine de l'établissement (ex : 'unicaen.fr')
+ETAB_DOMAINE='unicaen.fr'
+
+# Adresse électronique d'assistance
+EMAIL_ASSISTANCE='sygal-assistance@univ.fr'
+
+# Adresse électronique par les aspects Bibliothèque
+EMAIL_BIBLIOTHEQUE='sygal-scd@univ.fr'
+
+# Adresse électronique par les aspects Doctorat
+EMAIL_DOCTORAT='sygal-doctorat@univ.fr'
+
+
+#----------------------------------- COMUE éventuelle -----------------------------------#
+
+# Une COMUE doit-elle être créée ? 0=Non 1=Oui
+ETAB_COMUE=0
+
+# Sigle ou surnom de la COMUE (ex : 'NU')
+#ETAB_COMUE_SIGLE='NU'
+
+# Libellé complet de la COMUE (ex : 'Normandie Université')
+#ETAB_COMUE_LIBELLE='Normandie Université'
+
+# Domaine de la COMUE (ex : 'normandie-univ.fr')
+#ETAB_COMUE_DOMAINE='normandie-univ.fr'
+
+
+#----------------------------------- CED éventuel -----------------------------------#
+
+# Un CED doit-il être créé ? 0=Non 1=Oui
+ETAB_CED=0
+
+# Sigle du CED (ex : 'CED')
+#ETAB_CED_SIGLE='CED'
+
+# Libellé complet du CED (ex : 'Collège des écoles doctorales normandes')
+#ETAB_CED_LIBELLE='Collège des écoles doctorales normandes'
+
+
+#----------------------------------- Compte utilisateur de test -----------------------------------#
+
+# Nom patronymique de l'utilisateur de test
+TEST_USER_NOM_PATRONYMIQUE=Premier
+
+# Son prénom
+TEST_USER_PRENOM=François
+
+# Son adresse électronique
+TEST_USER_EMAIL=francois.premier@univ.fr
+
+# Token permettant de réinitialiser son mot de passe
+TEST_USER_PASSWORD_RESET_TOKEN='uCdWwSvPBWnlCtHWIgb8GLH3iGkKwrKSHoGqDjHTa6T9a8MeeYSD8aUdvcUvPjYu'
+
+
+#----------------------------------- Sources d'import -----------------------------------#
+
+# Apogée est-elle une source de données à importer ? 0=Non 1=Oui
+SOURCE_APOGEE=1
+
+# Physalis est-elle une source de données à importer ? 0=Non 1=Oui
+SOURCE_PHYSALIS=0

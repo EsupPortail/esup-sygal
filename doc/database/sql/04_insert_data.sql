@@ -1261,7 +1261,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (579, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (580, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (581, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (582, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (583, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (584, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (585, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 6);
@@ -1759,8 +1758,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (762, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (703, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (762, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 65);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 4);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (585, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (584, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 64);
@@ -1975,6 +1972,9 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1222, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (781, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (782, 5);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (583, 6);
 
 
 --
@@ -2080,14 +2080,6 @@ INSERT INTO public.type_validation (id, code, libelle) VALUES (22, 'DOCTORANT_RE
 INSERT INTO public.type_validation (id, code, libelle) VALUES (7, 'RAPPORT_ACTIVITE_AUTO', 'Validation finale du rapport d''activité non dématérialisé (ancien module)');
 INSERT INTO public.type_validation (id, code, libelle) VALUES (41, 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation électronique du rapport d''activité par le doctorant');
 INSERT INTO public.type_validation (id, code, libelle) VALUES (42, 'RAPPORT_ACTIVITE', 'Validation finale du rapport d''activité non dématérialisé (ancien module)');
-
-
---
--- Data for Name: unicaen_alerte_alerte; Type: TABLE DATA; Schema: public; Owner: :dbuser
---
-
-INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (3, 'ALERTE_FERMETURE_ESTIVALE', 'DEMANDE DE SOUTENANCE', '<p>En raison de la période estivale le délai de traitement de 2 mois est repoussé pendant la période de fermeture des services de l’établissement soit du 22/07 au 27/08/2023.</p>', 'danger', 0, true);
-INSERT INTO public.unicaen_alerte_alerte (id, code, title, text, severity, duration, dismissible) VALUES (4, 'ALERTE_MAINTENANCE', 'Maintenance à venir', '<p>L''application ESUP-SyGAL sera en maintenance donc indisponible <strong>jeudi 11 avril de 9h à 11h</strong>.</p>', 'danger', 0, true);
 
 
 --
@@ -2370,9 +2362,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p>La soutenance de VAR[Doctorant#Denomination] est imminente.<br />Vous retrouverez ci-dessous les liens pour télécharger les documents utiles pour la soutenance.</p>
 <p>Document pour la soutenance :<br />- Serment du docteur : VAR[Url#Serment]<br />- Procès verbal : VAR[Url#ProcesVerbal]<br />- Rapport de soutenance : VAR[Url#RapportSoutenance]<br />- Rapport technique (en cas de viso-conférence) : VAR[Url#RapportTechnique]<br /><br />Bonne journée,<br />L''équipe SyGAL</p>
 <p> </p>', NULL, 'Soutenance\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (10, 'FORMATION_INSCRIPTION_CLOSE', '<p>Courrier envoyé à la clôture des inscriptions pour les étudiants non classés</p>', 'mail', 'Les inscriptions à la formation VAR[Formation#Libelle] sont maintenant closes.', '<p>Bonjour,</p>
-<p>Les inscriptions à la formation VAR[Formation#Libelle] sont maintenant closes.<br />Vous recevrez prochainement un courrier électronique vous informant de votre classement (sur la liste principale ou complémentaire).<br /><br /></p>
-<p>En vous souhaitant une bonne journée,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (20, 'FORMATION_ATTESTATION', NULL, 'pdf', 'Attestation de suivie de la formation VAR[Formation#Libelle]', '<h1 style="text-align: center;">Attestation de suivi de formation</h1><p></p><p>Bonjour ,</p><p>Je, sousigné·e, certifie que <strong>VAR[Doctorant#Denomination]</strong> a participé à la formation <strong>VAR[Formation#Libelle]</strong> qui s''est déroulée sur la période du VAR[Session#Periode] (Durée : VAR[Session#Duree] heures).</p><p>VAR[Doctorant#Denomination] a suivi VAR[Inscription#DureeSuivie] heure·s de formation.</p><p style="text-align: right;">Le·la responsable du module<br />VAR[Session#Responsable]<br /><br /></p><p style="text-align: right;">VAR[Signature#EtablissementFormation]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (21, 'FORMATION_CONVOCATION', NULL, 'pdf', 'Convocation à la formation VAR[Formation#Libelle] du VAR[Session#Periode]', '<h1 style="text-align: center;">Convocation à la session de formation VAR[Formation#Libelle]</h1><p><br /><br />Bonjour VAR[Doctorant#Denomination],</p><p>Nous avons le plaisir de vous informer que la formation, VAR[Formation#Libelle], à laquelle vous êtes inscrit·e se déroulera selon le calendrier ci-dessous :<br />VAR[Session#SeancesTable]<br /><br />En cas d''impossibilité d''assister à tout ou partie de ce stage, merci de bien vouloir informer le ou la responsable du module de formation (VAR[Session#Responsable]) dans les meilleurs délais afin de permettre de contacter un·e doctorant·e actuellement sur liste d''attente.</p><p>Nous vous souhaitons un stage fructueux.</p><p style="text-align: right;">L''application SyGAL,<br />VAR[Signature#EtablissementFormation]</p><p><br /><span style="text-decoration: underline;">P.S.:</span> Cette convocation vaut ordre de mission<br /><br /><br /></p>', 'table { width:100%; } th { text-align:left; }', 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (5, 'FORMATION_SESSION_IMMINENTE', NULL, 'mail', 'La session de formation VAR[Formation#Libelle] va bientôt débutée', '<p>Bonjour VAR[Doctorant#Denomination],</p>
@@ -2802,6 +2791,9 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL</p>
 <p>Votre proposition de soutenance vient d''être <strong>supprimée.</strong></p>
 <p>Veuillez vous rapprocher de la/le gestionnaire de votre école doctorale afin d''avoir plus d''informations à ce sujet.</p>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (10, 'FORMATION_INSCRIPTION_CLOSE', '<p>Courrier envoyé à la clôture des inscriptions pour les étudiants non classés</p>', 'mail', 'Les inscriptions à la formation VAR[Formation#Libelle] sont maintenant closes.', '<p>Bonjour,</p>
+<p>Les inscriptions à la formation VAR[Formation#Libelle] sont maintenant closes.<br />Si à j-5 vous ne recevez pas un mail vous indiquant que votre demande est prise est compte, nous sommes au regret de vous informer que nous ne pourrons donner suite à votre demande.<br /><br /></p>
+<p>En vous souhaitant une bonne journée,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 
 
 --

@@ -32,15 +32,6 @@ insert into role (id, code, libelle, source_code, source_id, role_id, these_dep,
   values (2 /*241*/, 'OBSERV', 'Observateur', 'OBSERV', 1, 'Observateur', false, 1, 1)
 ;
 
--- drop sequence INDIVIDU_ID_SEQ;
--- drop sequence UTILISATEUR_ID_SEQ;
--- drop sequence STRUCTURE_ID_SEQ;
--- drop sequence ETABLISSEMENT_ID_SEQ;
--- CREATE SEQUENCE  "INDIVIDU_ID_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 NOORDER  NOCYCLE ;
--- CREATE SEQUENCE  "UTILISATEUR_ID_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 NOORDER  NOCYCLE ;
--- CREATE SEQUENCE  "STRUCTURE_ID_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 NOORDER  NOCYCLE ;
--- CREATE SEQUENCE  "ETABLISSEMENT_ID_SEQ"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 NOORDER  NOCYCLE ;
-
 --
 -- L'établissement inconnu.
 --
@@ -64,29 +55,3 @@ select nextval('etablissement_id_seq'),
        1, -- source sygal
        'ETAB_INCONNU' -- source code unique, idem structure
 ;
-
--- --
--- -- Avance de sequences.
--- --
--- declare
---   maxid integer;
---   seqnextval integer;
--- begin
---   select max(id) into maxid from UTILISATEUR;
---   LOOP
---     select nextval('UTILISATEUR_ID_SEQ') into seqnextval from dual;
---     EXIT WHEN seqnextval >= maxid;
---   END LOOP;
--- end;
---
--- declare
---   maxid integer;
---   seqnextval integer;
--- begin
---   select max(id) into maxid from ROLE;
---   LOOP
---     select nextval('ROLE_ID_SEQ') into seqnextval from dual;
---     EXIT WHEN seqnextval >= maxid;
---   END LOOP;
--- end;
-

@@ -5,6 +5,10 @@
 
 namespace Application;
 
+use Fichier\Command\Pdf\AjoutPdcShellCommandGs;
+use Fichier\Command\Pdf\AjoutPdcShellCommandQpdf;
+use Laminas\Log\Logger;
+
 return [
     'sygal' => [
         'page_de_couverture' => [
@@ -58,6 +62,21 @@ return [
         ],
     ],
 
+    'psr_log' => [
+        'inscription_resource_logger' => [
+            'writers' => [
+                'stream' => [
+                    'name' => 'stream',
+                    'priority' => 1,
+                    'options' => [
+                        'stream' => '/var/log/sygal.inscription_resource_logger.log',
+                        'filters' => Logger::DEBUG,
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'doctrine' => [
         // cf. secret.local.php
     ],
@@ -70,7 +89,22 @@ return [
         'cache_enabled' => false,
     ],
 
+    'unicaen-shell' => [
+        'commands' => [
+            AjoutPdcShellCommandGs::class => [
+                'executable' => '/usr/bin/gs',
+            ],
+            AjoutPdcShellCommandQpdf::class => [
+                'executable' => '/usr/bin/qpdf',
+            ],
+        ],
+    ],
+
     'unicaen-app' => [
+        'app_infos' => [
+            'mentionsLegales'        => "http://www.unicaen.fr/acces-direct/mentions-legales/",
+            'informatiqueEtLibertes' => "http://www.unicaen.fr/acces-direct/informatique-et-libertes/",
+        ],
         'mail' => [
             // cf. secret.local.php
             'do_not_send' => false,
@@ -105,12 +139,24 @@ return [
                 // cf. secret.local.php
             ],
             'logout_url' => '/Shibboleth.sso/Logout?return=', // NB: '?return=' semble obligatoire!
+            /**
+             * Configuration de la stratégie d'extraction (parmi les données d'authentification shibboleth)
+             * de l'identifiant à utiliser pour rechercher l'Individu correspondant à l'utilisateur qui vient de
+             * s'authentifier.
+             */
+            'shib_user_id_extractor' => [
+                'default' => [
+                    ['name' => 'supannEtuId'],
+                    ['name' => 'supannEmpId'],
+                ],
+            ],
         ],
         'local' => [
             'order' => 2,
-            'description' => "Utilisez ce formulaire si vous possédez un compte local dédié à l'application.",
+            'description' => "Utilisez ce formulaire si vous possédez un compte LDAP établissement ou un compte local dédié à l'application.",
             'ldap' => [
                 'enabled' => true,
+                'log_failures' => true, // activation ou non des logs (via error_log par défaut) à propos des échecs d'authentification LDAP.
             ],
             'db' => [
                 'enabled' => true, // doit être activé pour que l'usurpation fonctionne (cf. Authentication/Storage/Db::read()) :-/ todo: faire mieux
@@ -138,12 +184,11 @@ return [
                         'title' => _("Page d'accueil du site de Normandie Université"),
                         'uri'   => 'http://www.normandie-univ.fr',
                         'class' => 'logo-etablissement',
-                        // NB: Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
-                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer le cas échéant).
+                        // NB: Spécifier la classe 'logo-etablissement' sur la page de navigation provoque le "remplacement"
+                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer).
                     ],
                 ],
             ],
         ],
     ],
-
 ];

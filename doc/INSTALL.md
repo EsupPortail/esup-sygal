@@ -1,4 +1,4 @@
-# Installation de ESUP-SyGAL
+**# Installation de ESUP-SyGAL
 
 
 
@@ -8,22 +8,22 @@ Reportez-vous au [README consacré à la création de la base de données](datab
 
 
 
-## Installation sur un serveur
+## Installation du serveur Debian Bullseye
 
 Pour ce qui est de l'installation du serveur d'application, n'ayant pas à Caen les compétences 
-en déploiement Docker autres que pour le développement, nous documenterons une installation à l'ancienne sur 
+en déploiement Docker (autres que pour le développement), nous documenterons une installation manuelle sur 
 un serveur *entièrement dédié à l'application*.
 Si vous voulez déployer l'application avec Docker, faites-le à partir du `Dockerfile` présent et n'hésitez pas à 
-proposer votre contribution pour améliorer cette doc d'install !
+contribuer en améliorant cette doc d'install !
+
+**NB :** La procédure proposée ici part d'un serveur *Debian Bullseye* tout nu. Elle couvre normalement l'installation
+de tous les packages requis, mais si ce n'était pas le cas merci de contribuer en le signalant.
 
 
-### Obtention des sources de l'application
+### Case départ : obtention des sources de l'application
 
-*NB : la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
-requis.* Si ce n'était pas le cas, merci de contribuer en le signalant.
-
-En `root` sur votre serveur, pour obtenir les sources de SyGAL, lancez l'une des commandes suivantes en fonction 
-du site sur lequel vous lisez la présente page :
+En `root` sur votre serveur, obtenez les sources d'ESUP-SyGAL en lançant l'une des commandes suivantes en fonction 
+du site sur lequel vous lisez la présente doc :
 ```bash
 # Si vous êtes sur git.unicaen.fr :
 git clone https://git.unicaen.fr/open-source/sygal.git /app
@@ -33,48 +33,28 @@ git clone https://github.com/EsupPortail/sygal.git /app
 ```
 
 *NB : merci de respecter dans un premier temps le choix de `/app` comme répertoire d'installation. 
-Libre à vous une fois que tout fonctionne de changer d'emplacement et de modifier en conséquence les configs
-nécessaires.*
+Si vous êtes à l'aise, libre à vous une fois que tout fonctionne de changer d'emplacement et de modifier en conséquence 
+les configs nécessaires sur le serveur.*
 
 
 ### Configuration du serveur
 
 #### Packages, etc.
 
-- Récupérez quelque part sur le serveur l'image Docker "Unicaen" puis placez-vous dans le répertoire créé :
-```bash
-UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image
-git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_IMAGE_TMP_DIR}
-cd ${UNICAEN_IMAGE_TMP_DIR}
-```
+- Vous trouverez dans le répertoire des sources d'ESUP-SyGAL récupérées à l'instant un script `Dockerfile.sh`, 
+  sorte de version sh du Dockerfile, contenant de quoi mettre à niveau et/ou installer les packages nécessaires.
 
-- Lancez-y le script `Dockerfile-8.x.sh` conçu pour la version 8.0 de PHP. 
-```bash
-PHP_VERSION=8.0
-bash Dockerfile-8.x.sh ${PHP_VERSION}
-```
+- Plutôt que de le lancer d'un seul bloc, ouvrez-le dans un autre terminal pour le visualiser, ce qui vous permettra 
+  de copier-coller-lancer les commandes qu'il contient par petits groupes.
 
-- Ensuite, quelque part sur le serveur, récupérez cette fois l'image Docker `sygal-image` puis placez-vous dans 
-le répertoire créé :
-```bash
-SYGAL_IMAGE_TMP_DIR=/tmp/sygal-image
-git clone https://git.unicaen.fr:open-source/docker/sygal-image.git ${SYGAL_IMAGE_TMP_DIR}
-cd ${SYGAL_IMAGE_TMP_DIR}
-```
-
-- Lancez-y le script `Dockerfile.sh` avec en argument la version de PHP choisie précédemment :
-```bash
-bash Dockerfile.sh ${PHP_VERSION}
-```
-
-Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
-créés ou modifiés par le script `Dockerfile.sh` :
-- ${APACHE_CONF_DIR}/ports.conf
-- ${APACHE_CONF_DIR}/sites-available/app.conf
-- ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
-- ${PHP_CONF_DIR}/fpm/pool.d/www.conf
-- ${PHP_CONF_DIR}/fpm/conf.d/99-sygal.ini
-- ${PHP_CONF_DIR}/cli/conf.d/99-sygal.ini
+- Ensuite, si vous maîtrisez les impacts, vérifiez et ajustez éventuellement sur votre serveur les fichiers 
+  de configs suivants (créés/modifiés par le script) :
+  - ${APACHE_CONF_DIR}/ports.conf
+  - ${APACHE_CONF_DIR}/sites-available/app.conf
+  - ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+  - ${PHP_CONF_DIR}/fpm/pool.d/www.conf
+  - ${PHP_CONF_DIR}/fpm/conf.d/99-sygal.ini
+  - ${PHP_CONF_DIR}/cli/conf.d/99-sygal.ini
 
 NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
 `APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/${PHP_VERSION}`.
@@ -83,32 +63,26 @@ NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais norm
 
 La variable `APPLICATION_ENV` déclarée dans la config Apache `${APACHE_CONF_DIR}/sites-available/app-ssl.conf` permet
 de spécifier à l'application PHP dans quel "environnement de fonctionnement" elle tourne.
-Notamment, lorsque sa valeur est `development`, cela active l'affichage détaillé des erreurs rencontrées par SyGAL :
+Les valeurs possibles sont `development`, `testing` et `production`.
 ```apacheconf
 <VirtualHost *:443>
      # ...
-     SetEnv APPLICATION_ENV "development"
+     SetEnv APPLICATION_ENV "testing"
 # ...
 ```
 
 #### Logs d'erreur PHP-FPM
 
-- Prenez connaissance du chemin spécifié par le paramètre `error_log` du fichier de config `/etc/php/${PHP_VERSION}/fpm/php-fpm.conf`, 
-exemple :
+- Prenez connaissance du chemin spécifié par le paramètre `error_log` dans le fichier de config 
+`/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf`, exemple :
 ```conf
-error_log = /var/log/php8.0-fpm.log
-```
-
-- Créez le fichier de log avec le propriétaire qui va bien, exemple :
-```bash
-FPM_PHP_LOG_FILE=/var/log/php8.0-fpm.log
-touch ${FPM_PHP_LOG_FILE} && chown www-data:www-data ${FPM_PHP_LOG_FILE}
+error_log = /var/log/php-fpm.log
 ```
 
 
 ### Installation d'une version précise de l'application
 
-Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `4.0.0`
+Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `8.1.0`
 par exemple.
 
 Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
@@ -117,17 +91,18 @@ versions officielles (taguées) :
 git fetch && git fetch --tags && git tag
 ```
 
-Si la version la plus récente est par exemple la `4.0.0`, utilisez les commandes suivantes pour "installer" cette version 
+Si la version la plus récente est par exemple la `8.1.0`, utilisez les commandes suivantes pour "installer" cette version 
 sur votre serveur :
 ```bash
-git checkout --force 4.0.0
+git checkout --force 8.1.0
 ```
 
 
 ### Mode développement vs. production
 
-Pour commencer, placez l'application en mode "développement" afin d'activer l'affichage détaillé des futures erreurs 
-rencontrées. Pour cela, placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
+Pour commencer, placez l'application en mode "développement" afin d'activer l'affichage détaillé des futures erreurs
+rencontrées par l'application. 
+Pour cela, placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
 ```bash
 vendor/bin/laminas-development-mode enable
 ```
@@ -138,25 +113,30 @@ vendor/bin/laminas-development-mode disable
 ```
 
 
-### Configuration du moteur PHP pour SyGAL
+### Configuration du moteur PHP
 
 Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/${PHP_VERSION}/fpm/conf.d/90-app.ini` :
+`/etc/php/${PHP_VERSION}/fpm/conf.d/99-sygal.ini` :
 ```
+    display_errors = Off
+    display_startup_errors = Off
     display_errors = Off
     #...
     opcache.enable = 1
     #...
-    xdebug.remote_enable = 0
+    xdebug.mode = off
 ```
 
 
-### Fichiers de config de l'application
+### Configuration de l'application
 
 Placez-vous dans le répertoire de l'application puis descendez dans le répertoire `config/autoload/`.
 
-Supprimez l'extension `.dist` des fichiers `local.php.dist` et `secret.local.php.dist`, et préfixez-les pour bien
-signifier l'environnement de fonctionnement concerné (version de production, de test, de developement). 
+Supprimez l'extension `.dist` des fichiers suivants, et préfixez-les pour bien
+signifier l'environnement de fonctionnement concerné (version de production, de test, de developement) :
+  - [`local.php.dist`](../config/autoload/local.php.dist)
+  - [`secret.local.php.dist`](../config/autoload/secret.local.php.dist)
+
 Exemple :
 ```bash
 APPLICATION_ENV="production"
@@ -164,22 +144,20 @@ cp -n local.php.dist        ${APPLICATION_ENV}.local.php
 cp -n secret.local.php.dist ${APPLICATION_ENV}.secret.local.php
 ```
 
-Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
+Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
 
 
-#### Fichier `unicaen-app.global.php`
+#### Fichier `${APPLICATION_ENV}.local.php`
 
 - Adaptez les URL des pages "Mentions légales" et "Informatique et liberté" pour votre établissement :
 
 ```php
     'unicaen-app' => [
+        //...
         'app_infos' => [
-            //...
             'mentionsLegales'        => "http://www.unicaen.fr/acces-direct/mentions-legales/",
             'informatiqueEtLibertes' => "http://www.unicaen.fr/acces-direct/informatique-et-libertes/",
 ```
-
-#### Fichier `${APPLICATION_ENV}.local.php`
 
 - Adaptez le `'label'`, `'title'` et `'uri'` du lien mentionnant votre établissement dans le pied de page de 
   l'application :
@@ -194,8 +172,8 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
                         'title' => _("Page d'accueil du site de Normandie Université"),
                         'uri'   => 'http://www.normandie-univ.fr',
                         'class' => 'logo-etablissement',
-                        // NB : Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
-                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer le cas échéant).
+                        // NB : Spécifier la classe 'logo-etablissement' sur la page de navigation provoque le "remplacement"
+                        //     du label du lien par l'image 'public/logo-etablissement.png' (à créer).
 ```
 *NB : ensuite créez le fichier `public/logo-etablissement.png` correspondant au logo de votre établissement.*
 
@@ -212,7 +190,7 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
         ],
     ],
 ```
-*NB : ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*
+*NB : ce répertoire doit être autorisé en écriture à l'utilisateur `www-data`.*
 
 #### Fichier `${APPLICATION_ENV}.secret.local.php`
 
@@ -226,30 +204,10 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
                     'host'     => 'host.domain.fr',
                     'dbname'   => 'sygal',
                     'port'     => '5432',
-                    'user'     => $user = 'ad_sygal',
+                    'user'     => 'ad_sygal',
                     'password' => 'xxxxxxxxxxx',
                 ],
 ```
-
-- Les lignes de config suivantes permettent de simuler l'authentification Shibboleth d'un premier utilisateur
-  'premierf@xxxxx.fr' créé en base de données avec le rôle "Administrateur technique" (par le script
-  [`09_create_fixture.sql`](database/sql/09_create_fixture.sql)).
-  Cela permet d'avoir un accès quasi omnipotent à l'application, notamment aux pages de gestion des droits d'accès.
-
-```php
-    'unicaen-auth' => [
-        'shib' => [
-            'simulate' => [
-                'HTTP_EPPN'           => $eppn = 'premierf@domaine.fr',
-                'HTTP_SUPANNEMPID'    => '00012345',
-                'HTTP_DISPLAYNAME'    => $eppn,
-                'HTTP_MAIL'           => $eppn,
-                'HTTP_GIVENNAME'      => 'François',
-                'HTTP_SN'             => 'Premier',
-                'HTTP_SUPANNCIVILITE' => 'M.',
-```
-
-- Théoriquement, à ce stade l'application SyGAL devrait être accessible.
 
 - Ajustez si besoin la config concernant l'envoi de mails et dans un premier temps activez la "redirection" de tous 
   les mails envoyés par l'application vers une ou plusieurs adresses existantes, exemple :
@@ -270,8 +228,7 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 ```
 
 
-
-## Script d'install et d'init des dépendances
+## Script d'install des dépendances et d'init de l'application
 
 Lancez le script suivant :
 
@@ -280,34 +237,55 @@ bash install.sh
 ```
 
 
+## Test
 
-## Dans l'application SyGAL elle-même
+Théoriquement, à ce stade l'application ESUP-SyGAL devrait être accessible.
+
+
+## Authentification
+
+L'un des scripts de création de la base de données a créé un compte utilisateur de test local possédant le rôle
+"Administrateur technique".
+
+- Reprenez le fichier de config dans lequel vous avez renseigné certains paramètres de ce compte local de test,
+  retrouvez la valeur choisie pour le token `TEST_USER_PASSWORD_RESET_TOKEN` puis ouvrez ESUP-SyGAL
+  à l'adresse `https://<server>/utilisateur/init-compte/<token>` (en remplaçant `<server>` par l'adresse de votre
+  serveur et `<token>` par le token en question. Vous serez invité·e à choisir le mot de passe du compte local de test.
+
+- Une fois le mot de passe choisi, vous pourrez vous authentifier avec ce compte en cliquant sur "Connexion" en haut
+  à droite de la page d'accueil de l'appli puis en choisissant la connexion "Avec un compte local".
+
+- Attention, le rôle "Administrateur technique" permet d'avoir un accès quasi omnipotent à l'application, notamment
+  aux pages de gestion des droits d'accès et de création de comptes utilisateurs locaux.
+
+Pour d'autres modes d'authentification, reportez-vous à la [documentation consacrée à l'authentification](authentification/auth.md).**
+
+
+## Dans l'application ESUP-SyGAL elle-même
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
-la page d'accueil de SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)).
+la page d'accueil de ESUP-SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
+François Premier, administrateur technique de test créé en base de données.
 
 
 ### Droits d'accès
 
-Dans l'application SyGAL, allez dans menu "Administration" > "Droits d'accès" > "Gestion des profils de rôle".
+Dans l'application ESUP-SyGAL, allez dans menu "Administration" > "Droits d'accès" > "Gestion des profils de rôle".
 
 Appliquez, svp : 
-- le profil `ADMIN_TECH` au rôle *Administrateur technique*
 - le profil `OBSERV` au rôle *Observateur*
 - le profil `DOCTORANT` au rôle *Doctorant UCN*
 - le profil `ADMIN` au rôle *Administrateur UCN*
 - le profil `BU` au rôle *Bibliothèque universitaire UCN*
 - le profil `BDD` au rôle *Bureau des doctorats UCN*
 
-Par exemple, pour appliquer le profil `ADMIN_TECH` au rôle *Administrateur technique*, il faut :
-- cliquer sur l'icône bleu en forme de maillon de chaîne tout au bout de la ligne "ADMIN_TECH" du tableau "Liste des profils" ;
-- dans la page qui s'ouvre, sélectionner "Administrateur technique" dans la liste déroulante de droite ;
-- appuyer sur le bouton "Ajouter un rôle".
-
 NB : "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) 
+de la création de votre établissement par le script d'init de la base de données (cf. scripts de création de la bdd).
 
+Par exemple, pour appliquer le profil `DOCTORANT` au rôle *Doctorant*, il faut :
+- cliquer sur l'icône bleu en forme de maillon de chaîne tout au bout de la ligne "DOCTORANT" du tableau "Liste des profils" ;
+- dans la page qui s'ouvre, sélectionner "Doctorant" dans la liste déroulante de droite ;
+- appuyer sur le bouton "Ajouter un rôle".
 
 
 ## Import des données depuis le SI Scolarité de votre établissement 
@@ -327,7 +305,7 @@ sur [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws)
 Dans le fichier de config `${APPLICATION_ENV}.secret.local.php` :
 
 - Dans la config de connexion au WS, `UCN` doit être remplacé par le code établissement choisi lors
-  de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) :
+  de la création de votre établissement par le script d'init de la base de données (cf. scripts de création de la bdd) :
 
 ```php
     'import' => [
@@ -398,7 +376,7 @@ Pour cela, créez le fichier `/etc/cron.d/sygal` et adaptez le contenu suivant �
 
 ```cron
 #
-# Application SyGAL.
+# Application ESUP-SyGAL.
 #
 
 APP_DIR=/app

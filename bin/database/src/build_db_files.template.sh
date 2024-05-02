@@ -63,6 +63,10 @@ function injectEtabParamsInScript() {
   sed -i -e "s|{ETAB_CED_LIBELLE}|${ETAB_CED_LIBELLE}|g" $FILE
   sed -i -e "s|{SOURCE_APOGEE}|${SOURCE_APOGEE}|g" $FILE
   sed -i -e "s|{SOURCE_PHYSALIS}|${SOURCE_PHYSALIS}|g" $FILE
+  sed -i -e "s|{TEST_USER_NOM_PATRONYMIQUE}|${TEST_USER_NOM_PATRONYMIQUE}|g" $FILE
+  sed -i -e "s|{TEST_USER_PRENOM}|${TEST_USER_PRENOM}|g" $FILE
+  sed -i -e "s|{TEST_USER_EMAIL}|${TEST_USER_EMAIL}|g" $FILE
+  sed -i -e "s|{TEST_USER_PASSWORD_RESET_TOKEN}|${TEST_USER_PASSWORD_RESET_TOKEN}|g" $FILE
 }
 
 echo "Préparation des scripts SQL situés dans $INPUT_DIR..."

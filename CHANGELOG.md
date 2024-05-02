@@ -17,6 +17,7 @@ Journal des modifications
   - Ajout des filtres année universitaire, et type (seulement pour sessions)
   - tri par défaut en fonction de la date des séances (de la plus récente à la plus ancienne)
 - Module Formations : Affichage du nom patronymique sur l'attestation et la fiche d'émargement d'une formation
+- Correction et mise à jour de la doc d'installation.
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
 - [FIX] ré-attribution du privilège d'accès à l'index des formations pour les formateurs
