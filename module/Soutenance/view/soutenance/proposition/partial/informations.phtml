@@ -16,8 +16,10 @@
  */
 
 use Individu\Entity\Db\IndividuRole;
+use Individu\Provider\Privilege\IndividuPrivileges;
 use Soutenance\Entity\Proposition;
 use These\Entity\Db\Acteur;
+use These\Provider\Privilege\ActeurPrivileges;
 
 $these = $proposition->getThese();
 
@@ -48,21 +50,49 @@ $etablissement = $these->getEtablissement();
                 <ul>
                     <?php foreach ($directeurs as $acteur) : ?>
                         <li>
-                            <?php echo $acteur->getIndividu()->getNomComplet(); ?>
-                            (<?php echo ($acteur->getIndividu()->getEmailPro())?:'<span class="text-danger">Adresse électronique manquante</span>'; ?>)
-                            <br/>
-                            Établissement :
-                            <?php echo $acteur->getEtablissementForce() ?: $acteur->getEtablissement() ?: $these->getEtablissement() ?: '<span class="text-danger">Établissement manquant</span>'; ?>
-                            <br/>
-                            Unité de recherche :
-                            <?php echo $acteur->getUniteRecherche() ?: $these->getUniteRecherche() ?: '<span class="text-danger">Unité de recherche manquante</span>'; ?>
-                            <br/>
-                            <?php if ($canModifier) : ?>
-                                <?php /** @see \Individu\Controller\IndividuComplController::gererAction() */ ?>
-                                <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $acteur->getIndividu()->getId()], [], true); ?>" class="btn btn-primary btn-sm ajax-modal" data-event="modification">
-                                    <span class="icon icon-editer"></span> Compléter les informations
-                                </a>
+                            <strong><?php echo $acteur->getIndividu()->getNomComplet(); ?></strong>
+                            <br>
+                            <?php if ($email = $acteur->getIndividu()->getEmailProComplement()) : ?>
+                                <em title="Valeur forcée issue du complément d'individu"><a href="mailto:<?php echo $email ?>"><?php echo $email ?></a></em>
+                            <?php elseif ($email = $acteur->getIndividu()->getEmailPro()): ?>
+                                <a href="mailto:<?php echo $email ?>"><?php echo $email ?></a>
+                            <?php else: ?>
+                                <span class="text-danger">Adresse électronique manquante</span>
                             <?php endif; ?>
+                            <?php if ($canModifier): ?>
+                                <?php if ($compl = $acteur->getIndividu()->getComplement()): ?>
+                                    <a href="<?php echo $this->url("individu-compl/modifier", ['individu-compl' => $compl->getId()], [], true); ?>"
+                                       class="ajax-modal" data-event="modification" title="Modifier ou supprimer un complément d'individu">
+                                        <span class="icon icon-edit"></span>
+                                    </a>
+                                <?php else: ?>
+                                    <a href="<?php echo $this->url("individu-compl/ajouter", ['individu' => $acteur->getIndividu()->getId()], [], true); ?>"
+                                       class="ajax-modal" data-event="modification" title="Créer un complément d'individu">
+                                        <span class="icon icon-plus"></span>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <p>
+                                Établ. :
+                                <span class="text-structure etablissement">
+                                    <?php echo $acteur->getEtablissementForce() ?: $acteur->getEtablissement() ?: $these->getEtablissement() ?: '<span class="text-danger">Établissement manquant</span>'; ?>
+                                </span>
+                                <br/>
+                                UR :
+                                <span class="text-structure ur">
+                                    <?php echo $acteur->getUniteRecherche() ?: $these->getUniteRecherche() ?: '<span class="text-danger">Unité de recherche manquante</span>'; ?>
+                                </span>
+                                <?php
+                                $canEditActeur =
+                                    $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES) ||
+                                    $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_SES_THESES);
+                                ?>
+                                <?php if ($canEditActeur): ?>
+                                    <a href="<?php echo $this->url('these/acteur/modifier', ['acteur' => $acteur->getId()], [], true) ?>"
+                                       class="ajax-modal" data-event="modification">
+                                        <span class='icon icon-edit iconly' title='Modifier cet acteur'></span></a>
+                                <?php endif ?>
+                            </p>
                         </li>
                     <?php endforeach; ?>
                 </ul>

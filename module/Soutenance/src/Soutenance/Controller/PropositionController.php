@@ -150,6 +150,7 @@ class PropositionController extends AbstractController
         $emailsAspectDoctorats = $notif->getTo();
         $informationsOk = true;
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        usort($directeurs, Acteur::getComparisonFunction());
         foreach ($directeurs as $directeur) {
             if ($directeur->getIndividu()->getEmailPro() === null and $directeur->getIndividu()->getComplement() === null) {
                 $informationsOk = false;
