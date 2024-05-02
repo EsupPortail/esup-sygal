@@ -469,8 +469,10 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    public function createNotificationFeuVertSoutenance(These $these): Notification
+    public function createNotificationFeuVertSoutenance(Proposition $proposition): Notification
     {
+        $these = $proposition->getThese();
+
         $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
@@ -480,7 +482,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_FEU_VERT . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
+        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $these->getDoctorant()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 

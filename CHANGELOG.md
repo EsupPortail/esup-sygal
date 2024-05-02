@@ -20,6 +20,7 @@ Journal des modifications
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
 - [FIX] ré-attribution du privilège d'accès à l'index des formations pour les formateurs
+- [FIX] Le template de notification SOUTENANCE_FEU_VERT avait besoin de la variable 'soutenance' (proposition).
 
 8.1.0
 -----

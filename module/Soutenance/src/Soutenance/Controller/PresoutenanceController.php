@@ -379,7 +379,7 @@ class PresoutenanceController extends AbstractController
         $this->getPropositionService()->update($proposition);
 
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($these);
+            $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($proposition);
             $this->notifierService->trigger($notif);
         } catch (\Notification\Exception\RuntimeException $e) {
             // aucun destinataire, todo : cas à gérer !
