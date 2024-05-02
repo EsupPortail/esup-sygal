@@ -142,7 +142,7 @@ $config = [
                 'order' => 160,
                 'source' => [
                     'name' => 'HAL',
-                    'connection' => 'sygal-import-ws-hal',
+                    'connection' => 'api-archives-ouvertes',
                     'select' => '/domain/?q=*:*&wt=json&fl=*&rows=500',
                     'code' => 'HAL',
                     'columns' => [
@@ -174,7 +174,6 @@ $config = [
                     'id_sequence' => null,
                 ],
             ]
-            // <==== la config des imports sera injectée ici
         ],
 
         //

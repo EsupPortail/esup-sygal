@@ -22,6 +22,7 @@ Journal des modifications
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
 - [FIX] ré-attribution du privilège d'accès à l'index des formations pour les formateurs
 - [FIX] Le template de notification SOUTENANCE_FEU_VERT avait besoin de la variable 'soutenance' (proposition).
+- [FIX] Import des domaines HAL : renommage du nom de la connexion dans la config et ajout de celle-ci dans local.php.dist.
 
 8.1.0
 -----

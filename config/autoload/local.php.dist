@@ -59,6 +59,10 @@ return [
     'import' => [
         'connections' => [
             'default' => 'doctrine.connection.orm_default',
+            'api-archives-ouvertes' => [
+                'url' => 'https://api.archives-ouvertes.fr/ref',
+                'connect_timeout' => 10,
+            ],
         ],
     ],
 
