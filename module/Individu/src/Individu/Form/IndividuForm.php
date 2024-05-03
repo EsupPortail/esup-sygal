@@ -140,7 +140,7 @@ class IndividuForm extends Form implements InputFilterProviderInterface
         /** @var \Individu\Entity\Db\Individu $individu */
         $individu = $this->getObject();
 
-        $estModifiable = ! $individu->getSource()->getImportable();
+        $estModifiable = $individu->getSource() === null || ! $individu->getSource()->getImportable();
 
         $emailValidators = [];
         $emailValidators[] = [

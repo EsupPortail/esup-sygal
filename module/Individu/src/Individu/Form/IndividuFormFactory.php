@@ -3,6 +3,7 @@
 namespace Individu\Form;
 
 use Application\Service\Pays\PaysService;
+use Individu\Entity\Db\Individu;
 use Individu\Hydrator\IndividuHydrator;
 use Psr\Container\ContainerInterface;
 
@@ -18,6 +19,7 @@ class IndividuFormFactory
         $hydrator = $container->get('HydratorManager')->get(IndividuHydrator::class);
 
         $form = new IndividuForm();
+        $form->setObject(new Individu());
         $form->setPays($this->fetchPaysNationalites($container));
         $form->setHydrator($hydrator);
 
