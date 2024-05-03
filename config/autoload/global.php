@@ -244,42 +244,6 @@ $config = [
  */
 const CONFIG_IMPORTS = [
     [
-        'name' => 'composante-enseignement-%s',
-        'order' => 10,
-        'source' => [
-            'name' => '%s',
-            'connection' => 'sygal-import-octopus-composante-ens',
-            'select' => '/structure-light?type=2',
-            'code' => 'UCN::octopus',
-            'page_size' => 0,
-            'columns' => [
-                'sigle',
-                'libelleLong',
-                'code',
-            ],
-            'column_name_filter' => [
-                'sigle' => 'sigle',
-                'libelleLong' => 'libelle_long',
-                'code' => 'source_code',
-            ],
-            'source_code_column' => 'source_code',
-            'column_value_filter' => [
-                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['code']]],
-            ],
-            'extra' => [
-                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
-            ],
-        ],
-        'destination' => [
-            'name' => 'application',
-            'table' => 'tmp_composante_ens',
-            'connection' => 'default',
-            'source_code_column' => 'source_code',
-            'id_strategy' => null,
-            'id_sequence' => null,
-        ],
-    ],
-    [
         'name' => 'structure-%s',
         'order' => 10,
         'source' => [
@@ -414,9 +378,7 @@ const CONFIG_IMPORTS = [
 //            'name' => '%s',
 //            'connection' => 'sygal-import-octopus-composante-ens',
 //            'select' => '/structure-light?type=2',
-//            'source_code_column' => 'SOURCE_CODE',
 //            'code' => 'UCN::octopus',
-//            'column_value_filter' => \Admission\Filter\PrefixEtabColumnValueFilter::class,
 //            'page_size' => 0,
 //            'columns' => [
 //                'sigle',
@@ -424,59 +386,27 @@ const CONFIG_IMPORTS = [
 //                'code',
 //            ],
 //            'column_name_filter' => [
-//                'sigle' => 'SIGLE',
-//                'libelleLong' => 'LIBELLE_LONG',
-//                'code' => 'SOURCE_CODE',
+//                'sigle' => 'sigle',
+//                'libelleLong' => 'libelle_long',
+//                'code' => 'source_code',
+//            ],
+//            'source_code_column' => 'source_code',
+//            'column_value_filter' => [
+//                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['code']]],
 //            ],
 //            'extra' => [
 //                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
 //            ],
 //        ],
 //        'destination' => [
-//            'name' => 'Application',
+//            'name' => 'application',
 //            'table' => 'tmp_composante_ens',
 //            'connection' => 'default',
-//            'source_code_column' => 'SOURCE_CODE',
+//            'source_code_column' => 'source_code',
 //            'id_strategy' => null,
 //            'id_sequence' => null,
 //        ],
 //    ],
-    [
-        'name' => 'composante-enseignement-%s',
-        'order' => 50,
-        'source' => [
-            'name' => '%s',
-            'connection' => 'sygal-import-octopus-composante-ens',
-            'select' => '/structure-light?type=2',
-            'code' => 'UCN::octopus',
-            'page_size' => 0,
-            'columns' => [
-                'sigle',
-                'libelleLong',
-                'code',
-            ],
-            'column_name_filter' => [
-                'sigle' => 'sigle',
-                'libelleLong' => 'libelle_long',
-                'code' => 'source_code',
-            ],
-            'source_code_column' => 'source_code',
-            'column_value_filter' => [
-                ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['columns' => ['code']]],
-            ],
-            'extra' => [
-                /** cf. injection dans {@see \Application\generateConfigImportsForEtabs()} */
-            ],
-        ],
-        'destination' => [
-            'name' => 'application',
-            'table' => 'tmp_composante_ens',
-            'connection' => 'default',
-            'source_code_column' => 'source_code',
-            'id_strategy' => null,
-            'id_sequence' => null,
-        ],
-    ],
     [
         'name' => 'individu-%s',
         'order' => 60,
@@ -951,25 +881,25 @@ const CONFIG_SYNCHROS = [
             'update_on_deleted_enabled_column' => 'synchro_update_on_deleted_enabled', // pour activer la màj des substitués (historisés)
         ],
     ],
-    [
-        'name' => 'composante-enseignement-%s',
-        'order' => 50,
-        'source' => [
-            'name' => 'sygal',
-            'code' => 'app',
-            'table' => 'src_composante_ens',
-            'connection' => 'default',
-            'source_code_column' => 'source_code',
-        ],
-        'destination' => [
-            'name' => 'application',
-            'table' => 'composante_ens',
-            'connection' => 'default',
-            'source_code_column' => 'source_code',
-            'id_strategy' => 'SEQUENCE',
-            'id_sequence' => null,
-        ],
-    ],
+//    [
+//        'name' => 'composante-enseignement-%s',
+//        'order' => 50,
+//        'source' => [
+//            'name' => 'sygal',
+//            'code' => 'app',
+//            'table' => 'src_composante_ens',
+//            'connection' => 'default',
+//            'source_code_column' => 'source_code',
+//        ],
+//        'destination' => [
+//            'name' => 'application',
+//            'table' => 'composante_ens',
+//            'connection' => 'default',
+//            'source_code_column' => 'source_code',
+//            'id_strategy' => 'SEQUENCE',
+//            'id_sequence' => null,
+//        ],
+//    ],
     ////////////////////////////////////////////// INDIVIDU //////////////////////////////////////////////
     [
         ////// INDIVIDU : sans doublons non historisés.
