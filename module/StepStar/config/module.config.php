@@ -46,8 +46,6 @@ use StepStar\Service\Xml\XmlService;
 use StepStar\Service\Xml\XmlServiceFactory;
 use StepStar\Service\Xsl\XslService;
 use StepStar\Service\Xsl\XslServiceFactory;
-use StepStar\Service\Xslt\XsltService;
-use StepStar\Service\Xslt\XsltServiceFactory;
 use StepStar\Service\Zip\ZipService;
 use StepStar\Service\Zip\ZipServiceFactory;
 use Unicaen\Console\Router\Simple;
@@ -565,7 +563,6 @@ return [
 
             XmlService::class => XmlServiceFactory::class,
             XslService::class => XslServiceFactory::class,
-            XsltService::class => XsltServiceFactory::class,
             TefService::class => TefServiceFactory::class,
             ApiService::class => ApiServiceFactory::class,
             SoapClient::class => SoapClientFactory::class,

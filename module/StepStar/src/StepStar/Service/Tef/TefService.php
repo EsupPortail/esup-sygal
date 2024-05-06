@@ -5,15 +5,10 @@ namespace StepStar\Service\Tef;
 use Application\Command\ShellCommandRunner;
 use StepStar\Command\TransformShellCommand;
 use StepStar\Exception\TefServiceException;
-use StepStar\Service\Xml\XmlServiceAwareTrait;
-use StepStar\Service\Xslt\XsltServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 class TefService
 {
-    use XmlServiceAwareTrait;
-    use XsltServiceAwareTrait;
-
     /**
      * @var string
      */
