@@ -25,6 +25,7 @@ Journal des modifications
 - [FIX] Le template de notification SOUTENANCE_FEU_VERT avait besoin de la variable 'soutenance' (proposition).
 - [FIX] Import des domaines HAL : renommage du nom de la connexion dans la config et ajout de celle-ci dans local.php.dist.
 - [FIX] Création d'individu : correction de l'erreur 'Call to a member function getSource() on null' lorsqu'on enregistre.
+- [FIX] Authentification LDAP : message d'erreur sibyllin 'UnicaenApp\\Entity\\Ldap\\People'.
 
 8.1.0
 -----
