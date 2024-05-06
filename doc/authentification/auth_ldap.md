@@ -24,7 +24,7 @@ Exemple de configuration dans `config/autoload/xxxx.local.php` :
              * Mode d'authentification à l'aide d'un compte LDAP.
              */
             'ldap' => [
-                'enabled' => false,
+                'enabled' => true,
             ],
             
             //...
