@@ -392,11 +392,12 @@ class XmlService
         $date1ereInscr = $these['datePremiereInscription']; //'2020-01-01',
 
         $dataReelleSoutenance = $these['dateSoutenance'];
-        $dataPrevisSoutenance = $these['datePrevisionSoutenance'];
-        if ($dataPrevisSoutenance === null && $date1ereInscr !== null) {
-            $dataPrevisSoutenance = clone $date1ereInscr;
-            $dataPrevisSoutenance->add(new DateInterval('P3Y')); // + 3 ans
-        }
+//        $dataPrevisSoutenance = $these['datePrevisionSoutenance'];
+//        if ($dataPrevisSoutenance === null && $date1ereInscr !== null) {
+//            $dataPrevisSoutenance = clone $date1ereInscr;
+//            $dataPrevisSoutenance->add(new DateInterval('P3Y')); // + 3 ans
+//        }
+        $dataPrevisSoutenance = null;
 
         $domaine = $this->extractDomaineFromThese($these);
         $contratDoctoral = $this->extractContratDoctoralFromThese($these) ? 'oui' : 'non';
