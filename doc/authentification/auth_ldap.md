@@ -69,6 +69,7 @@ sous la clé `'unicaen-app'`, exemple :
             ],
             'filters' => [
                 'LOGIN_FILTER'                          => '(supannAliasLogin=%s)',
+                //'LOGIN_FILTER'                          => '(uid=%s)',
 //                'UTILISATEUR_STD_FILTER'                => '(|(uid=p*)(&(uid=e*)(eduPersonAffiliation=student)))',
 //                'CN_FILTER'                             => '(cn=%s)',
 //                'NAME_FILTER'                           => '(cn=%s*)',
@@ -87,9 +88,28 @@ sous la clé `'unicaen-app'`, exemple :
 //                'FILTER_STRUCTURE_CODE_ENTITE_PARENT'   => '(supannCodeEntiteParent=%s)',
             ],
         ],
+        
+        //...
+    ],
 ```
 
-Adaptations à faire selon votre contexte :
+Toujours dans `config/autoload/xxxx.secret.local.php`, mais cette fois sous la clé `'unicaen-auth'`, vous devez spécifier 
+l'attribut LDAP à utiliser pour extraire l'identifiant de connexion (login) d'un utilisateur, exemple :
+
+```php
+    'unicaen-auth' => [
+        /**
+         * Attribut LDAP utilisé pour extraire le username/login d'un utilisateur, *en minuscules*.
+         */
+        'ldap_username' => 'supannaliaslogin',
+        //'ldap_username' => 'uid',
+        
+        //...
+    ],
+```
+
+Adaptations à faire selon votre contexte
+----------------------------------------
 
 - Infos de connexion à l'annuaire LDAP **avec un compte admin** pouvant accéder à tous les attributs LDAP : 
   - `'host'`
@@ -102,7 +122,7 @@ Adaptations à faire selon votre contexte :
   - `'accountFilterFormat'` : corriger par exemple en `'(&(objectClass=posixAccount)(uid=%s))'` si l'identifiant de 
     connexion de vos utilisateurs est un "uid".
 
-- Paramètres et filtres de recherche LDAP :       
+- Paramètres et filtres de recherche LDAP :
   - `'UTILISATEURS_BASE_DN'` : adaptez à votre annuaire, c'est sans doute pareil au `'baseDn'`ci-dessus.
   - `'UTILISATEURS_DESACTIVES_BASE_DN'` : mettez la même valeur que pour `'UTILISATEURS_BASE_DN'`.
   - `'LOGIN_FILTER'` : corriger par exemple en `'(uid=%s)'` si l'identifiant de 
