@@ -28,18 +28,12 @@ class Module
         );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getConsoleBanner(): ?string
+    public function getConsoleBanner(): string
     {
-        return "StepStar Module";
+        return "Module Fichier";
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getConsoleUsage()
+    public function getConsoleUsage(): array
     {
         return [
             /**
