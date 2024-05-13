@@ -221,8 +221,8 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
             }
 
             /** GESTION DES ETABLISSEMENTS ****************************************************************************/
-            if ($acteur->getEtablissement()) {
-                $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+            if ($etab = ($acteur->getEtablissementForce() ?: $acteur->getEtablissement())) {
+                $acteurData->setEtablissement((string) $etab);
             } else {
                 foreach ($acteursLies as $acteurLie) {
                     $membre = $this->getMembreService()->getMembreByActeur($acteurLie);

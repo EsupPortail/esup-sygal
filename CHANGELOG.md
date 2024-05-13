@@ -24,6 +24,7 @@ Journal des modifications
 - Step-Star > Génération TEF : mention de l'application 'SYGAL' dans l'attribut 'CONTENTIDS' de la balise 'mets:div' (à la demande de l'ABES).
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
+- [FIX] Page de couverture de thèse : l'établissement forcé de l'acteur n'était pas pris en compte dans le tableau.
 - [FIX] ré-attribution du privilège d'accès à l'index des formations pour les formateurs
 - [FIX] Le template de notification SOUTENANCE_FEU_VERT avait besoin de la variable 'soutenance' (proposition).
 - [FIX] Import des domaines HAL : renommage du nom de la connexion dans la config et ajout de celle-ci dans local.php.dist.
