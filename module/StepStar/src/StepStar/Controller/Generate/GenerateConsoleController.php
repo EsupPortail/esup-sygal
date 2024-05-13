@@ -20,11 +20,13 @@ class GenerateConsoleController extends AbstractConsoleController
 
         $these = $this->params()->fromRoute('these'); // ex : '12345' ou '12345,12346'
         $etat = $this->params()->fromRoute('etat'); // ex : 'E' ou 'E,S'
-        $dateSoutenanceMin = $this->params()->fromRoute('date-soutenance-min'); // ex : '2022-03-11' ou '6m'
+        $dateSoutenanceNull = (bool) $this->params()->fromRoute('date-soutenance-null');
+        $dateSoutenanceMin = $this->params()->fromRoute('date-soutenance-min'); // ex : '2022-03-11' ou 'P6M'
+        $dateSoutenanceMax = $this->params()->fromRoute('date-soutenance-max'); // ex : '2022-03-11' ou 'P6M'
         $etablissement = $this->params()->fromRoute('etablissement'); // ex : 'UCN' ou 'UCN,URN'
         $tag = $this->params()->fromRoute('tag');
 
-        $criteria = array_filter(compact('these', 'etat', 'dateSoutenanceMin', 'etablissement'));
+        $criteria = array_filter(compact('these', 'etat', 'dateSoutenanceNull', 'dateSoutenanceMin', 'dateSoutenanceMax', 'etablissement'));
 
         $theses = $this->fetchService->fetchThesesByCriteria($criteria);
         if (empty($theses)) {

@@ -55,7 +55,9 @@ class FetchService
 
         $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
         $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
+        $dateSoutenanceNull = $criteria['dateSoutenanceNull'] ?? false;
         $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou 'P6M'
+        $dateSoutenanceMax = $criteria['dateSoutenanceMax'] ?? null; // ex : '2022-03-11' ou 'P6M'
         $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
 
         $qb = $this->createQueryBuilder();
@@ -68,19 +70,19 @@ class FetchService
                 $etats = array_map('trim', explode(',', $etat));
                 $qb->andWhereEtatIn($etats);
             }
-            if ($dateSoutenanceMin !== null) {
-                // la contrainte sur la date de soutenance peut commencer par 'P', auquel cas on construit un DateInterval avec,
-                // ex : 'P6M' est traduit en "date de soutenance passée de 6 mois maxi"
-                if (stripos($dateSoutenanceMin, 'P') === 0) {
-                    try {
-                        $period = new DateInterval($dateSoutenanceMin);
-                    } catch (Exception $e) {
-                        throw new InvalidArgumentException(
-                            "La valeur '$dateSoutenanceMin' ne permet pas de construire un DateInterval", null, $e);
-                    }
-                    $dateSoutenanceMin = (new DateTime('today'))->sub($period)->format('Y-m-d');
+            if ($dateSoutenanceNull) {
+                $qb->andWhere('t.dateSoutenance is null');
+            } else {
+                if ($dateSoutenanceMin !== null) {
+                    $qb
+                        ->andWhere('t.dateSoutenance >= :dateSoutMin')
+                        ->setParameter('dateSoutMin', $this->dateFromSpec($dateSoutenanceMin));
                 }
-                $qb->andWhere('t.dateSoutenance >= :dateSoutMin')->setParameter('dateSoutMin', $dateSoutenanceMin);
+                if ($dateSoutenanceMax !== null) {
+                    $qb
+                        ->andWhere('t.dateSoutenance <= :dateSoutMax')
+                        ->setParameter('dateSoutMax', $this->dateFromSpec($dateSoutenanceMax));
+                }
             }
             if ($etablissement !== null) {
                 $codesEtabs = array_map('trim', explode(',', $etablissement));
@@ -89,6 +91,37 @@ class FetchService
         }
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    private function dateFromSpec(string $dateSpec): string
+    {
+        // La contrainte de date peut commencer par 'P', '+P' ou '-P' auquel cas on construira un DateInterval.
+        // ex : '+P6M' ou 'P6M' est traduit en "date du jour + 6 mois"
+        // ex : '-P6M' est traduit en "date du jour - 6 mois"
+
+        $isInterval = str_starts_with($dateSpec, 'P') || str_starts_with($dateSpec, '+P') || str_starts_with($dateSpec, '-P');
+
+        if (!$isInterval) {
+            return $dateSpec;
+        }
+
+        if (str_starts_with($dateSpec, 'P')) {
+            $method = 'add';
+        } elseif (str_starts_with($dateSpec, '+P')) {
+            $dateSpec = substr($dateSpec, 1);
+            $method = 'add';
+        } else {
+            $dateSpec = substr($dateSpec, 1);
+            $method = 'sub';
+        }
+
+        try {
+            $period = new DateInterval($dateSpec);
+        } catch (Exception $e) {
+            throw new InvalidArgumentException("La valeur '$dateSpec' ne permet pas de construire un DateInterval", null, $e);
+        }
+
+        return (new DateTime('today'))->$method($period)->format('Y-m-d');
     }
 
     /**

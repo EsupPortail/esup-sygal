@@ -386,7 +386,7 @@ return [
                 'generer-theses' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__GENERER_THESES . ' [--these=] [--etat=] [--date-soutenance-min=] [--etablissement=]',
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__GENERER_THESES . ' [--these=] [--etat=] [--etablissement=] [--date-soutenance-null] [--date-soutenance-min=] [--date-soutenance-max=]',
                         'defaults' => [
                             /**
                              * @see GenerateConsoleController::genererThesesAction()
@@ -399,7 +399,7 @@ return [
                 'envoyer-fichiers' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_FICHIERS . ' --dir=',
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_FICHIERS . ' --dir= [--tag=]',
                         'defaults' => [
                             /**
                              * @see EnvoiConsoleController::envoyerFichiersAction()
@@ -412,7 +412,7 @@ return [
                 'envoyer-theses' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=] [--etat=] [--date-soutenance-min=] [--etablissement=] [--tag=] [--force]',
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=] [--etat=] [--etablissement=] [--date-soutenance-null] [--date-soutenance-min=] [--date-soutenance-max=] [--tag=] [--force]',
                         'defaults' => [
                             /**
                              * @see EnvoiConsoleController::envoyerThesesAction()
