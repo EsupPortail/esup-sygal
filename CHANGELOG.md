@@ -21,6 +21,7 @@ Journal des modifications
 - Correction et mise à jour de la doc d'installation.
 - Step-Star : envoi systématique d'une date de soutenance prévisionnelle null.
 - Step-Star > Ligne de commande : nouveaux filtres de sélection des thèses 'date de soutenance nulle' et 'date de soutenance max' (+ amélioration de la syntaxe avec interval de temps).
+- Step-Star > Génération TEF : mention de l'application 'SYGAL' dans l'attribut 'CONTENTIDS' de la balise 'mets:div' (à la demande de l'ABES).
 - [FIX] Step-Star : requête de sélection des thèses à envoyer (colonne erronée pour le filtre établissement).
 - [FIX] Page de couverture de thèse : l'établissement affiché pour le codir était l'établissement du dernier membre du jury affiché.
 - [FIX] ré-attribution du privilège d'accès à l'index des formations pour les formateurs
