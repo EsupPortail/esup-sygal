@@ -12,7 +12,7 @@ Journal des modifications
   - Changement du titre : Soutenance actuelles
   - Affichage des ED non fermées seulement
   - Affichage des soutenances jusqu'à 1 an après leur passage
-- Module Formations : envoi d'un mail aux doctorants (appartenant aux structures valides déclarées d'une session) lors du passage à "Inscription ouverte" d'une session (<b>d'une formation transversale</b>)
+- Module Formations : envoi d'un mail aux doctorants (appartenant aux structures valides déclarées d'une session) lors du passage à "Inscription ouverte" d'une session (<b>d'une formation spécifique</b>)
 - Module Formations : refonte des écrans Formations/Sessions :
   - Ajout des filtres année universitaire, et type (seulement pour sessions)
   - tri par défaut en fonction de la date des séances (de la plus récente à la plus ancienne)
