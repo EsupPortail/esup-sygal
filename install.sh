@@ -17,19 +17,19 @@ mkdir -p upload && \
   chown -R www-data:root upload && \
   chmod -R 770 upload
 
-# Composer install
+# Installation des dépendances PHP
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Création ou vidange des répertoires de cache
-mkdir -p data/cache && chmod 777 data/cache && rm -rf data/cache/*
-mkdir -p data/DoctrineModule/cache && chmod 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*
+# Cache Laminas
+mkdir -p data/cache && chmod 777 data/cache
+rm -rf data/cache/*
+
+# Cache Doctrine
+mkdir -p data/DoctrineModule/cache && chmod 777 data/DoctrineModule/cache #&& rm -rf data/DoctrineModule/cache/*
 mkdir -p data/DoctrineORMModule/Proxy && chmod 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*
-
-vendor/bin/laminas-development-mode enable
-
+vendor/bin/laminas-development-mode enable  # nécessaire !
 vendor/bin/doctrine-module orm:generate-proxies
 vendor/bin/doctrine-module orm:clear-cache:query
 vendor/bin/doctrine-module orm:clear-cache:metadata
-vendor/bin/doctrine-module orm:clear-cache:result
-
+#vendor/bin/doctrine-module orm:clear-cache:result  ### tentative de ne plus vider le cache de résultat
 vendor/bin/laminas-development-mode disable
