@@ -11373,11 +11373,11 @@
         },
         {
             "name": "unicaen/console",
-            "version": "6.1.0",
+            "version": "6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/console.git",
-                "reference": "4965a684af224ebbeed682c47ed837c83410d230"
+                "reference": "745acb5724a7273ce70a4cd91af5b39492862b75"
             },
             "require": {
                 "laminas/laminas-stdlib": "^3.2",
@@ -11417,7 +11417,7 @@
                 ]
             },
             "description": "Build console applications using getopt syntax or routing, complete with prompts",
-            "time": "2023-11-13T15:50:39+00:00"
+            "time": "2024-05-14T08:48:10+00:00"
         },
         {
             "name": "unicaen/db-anonym",
