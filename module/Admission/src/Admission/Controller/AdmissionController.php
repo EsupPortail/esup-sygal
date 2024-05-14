@@ -49,6 +49,7 @@ use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class AdmissionController extends AdmissionAbstractController {
@@ -221,6 +222,8 @@ class AdmissionController extends AdmissionAbstractController {
         if(!empty($admission)){
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
+            $this->admissionForm->setNavigationFieldsetPrototype($this->createNavigationForDocument($admission));
+
             $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
             if(!$canModifierAdmission){
                 /** @var DocumentFieldset $document */
@@ -692,6 +695,38 @@ class AdmissionController extends AdmissionAbstractController {
                 }
             }
         }
+    }
+    protected function createNavigationForDocument(Admission $admission)
+    {
+        $navigationElement = MultipageFormNavFieldset::create();
+        $navigationElement->setCancelEnabled(false);
+        $nextButton = $navigationElement->getNextButton();
+        $prevButton = $navigationElement->getPreviousButton();
+        $submitButton = $navigationElement->getSubmitButton();
+        $confirmButton = $navigationElement->getConfirmButton();
+        $cancelButton = $navigationElement->getCancelButton();
+
+        // ajouts de classes CSS
+        $nextButton->setAttribute('class', $nextButton->getAttribute('class') . ' btn btn-primary');
+        $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
+        $cancelButton->setAttribute('class', $confirmButton->getAttribute('class') . ' visually-hidden');
+
+        $role = $this->userContextService->getSelectedIdentityRole();
+        $etatAdmission = $admission->getEtat()->getCode();
+        $canModifierAdmission = [Role::CODE_ADMISSION_CANDIDAT, Role::CODE_ADMISSION_DIRECTEUR_THESE, Role::CODE_DIRECTEUR_THESE, Role::CODE_ADMIN_TECH];
+        //si le dossier est validé, rejeté, en cours de validation ou abandonné et que l'utilisateur connecté n'a pas le droit de modifier le dossier
+        if(in_array($etatAdmission, [Etat::CODE_REJETE, Etat::CODE_VALIDE, Etat::CODE_EN_COURS_VALIDATION, Etat::CODE_ABANDONNE]) ||
+            !in_array($role->getCode(), $canModifierAdmission)){
+            $submitButton->setValue("Revenir à l'accueil");
+            $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-primary');
+            $submitButton->setAttribute('title', "Revenir à la page d'accueil du module");
+            //si le dossier est en cours de saisie et que l'utilisateur connecté a le droit de modifier le dossier
+        }else if ($etatAdmission === Etat::CODE_EN_COURS_SAISIE && in_array($role->getCode(), $canModifierAdmission)){
+            $submitButton->setValue("Enregistrer");
+            $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
+            $submitButton->setAttribute('title', "Enregistrer les possibles modifications faîtes sur le dossier");
+        }
+        return $navigationElement;
     }
 
     /** TEMPLATES RENDERER *******************************************************************************/
