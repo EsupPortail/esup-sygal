@@ -23,13 +23,16 @@ values (1, 'sygal-app', 'Application ESUP-SyGAL', 'ldap')
 --
 -- Rôles multi-établissements.
 --
-delete from role where source_code in ('ADMIN_TECH', 'OBSERV')
+delete from role where source_code in ('user', 'ADMIN_TECH', 'OBSERV')
 ;
-insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id, histo_modificateur_id)
-  values (1, 'ADMIN_TECH', 'Administrateur technique', 'ADMIN_TECH', 1, 'Administrateur technique', false, 1, 1)
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id)
+values (nextval('role_id_seq'), 'user', 'Authentifié·e', 'user', 1, 'user', false, 1)
 ;
-insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id, histo_modificateur_id)
-  values (2 /*241*/, 'OBSERV', 'Observateur', 'OBSERV', 1, 'Observateur', false, 1, 1)
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id)
+values (nextval('role_id_seq'), 'ADMIN_TECH', 'Administrateur technique', 'ADMIN_TECH', 1, 'Administrateur technique', false, 1)
+;
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id)
+values (nextval('role_id_seq'), 'OBSERV', 'Observateur', 'OBSERV', 1, 'Observateur', false, 1)
 ;
 
 --
