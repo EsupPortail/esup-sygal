@@ -22,7 +22,7 @@ de tous les packages requis, mais si ce n'était pas le cas merci de contribuer 
 
 ### Case départ : obtention des sources de l'application
 
-En `root` sur votre serveur, obtenez les sources d'ESUP-SyGAL en lançant l'une des commandes suivantes en fonction 
+En `root` sur votre serveur, obtenez les sources d'ESUP-SyGAL en lançant l'une des commandes suivantes en fonction
 du site sur lequel vous lisez la présente doc :
 ```bash
 # Si vous êtes sur git.unicaen.fr :
@@ -32,9 +32,24 @@ git clone https://git.unicaen.fr/open-source/sygal.git /app
 git clone https://github.com/EsupPortail/sygal.git /app
 ```
 
-*NB : merci de respecter dans un premier temps le choix de `/app` comme répertoire d'installation. 
-Si vous êtes à l'aise, libre à vous une fois que tout fonctionne de changer d'emplacement et de modifier en conséquence 
+*NB : merci de respecter dans un premier temps le choix de `/app` comme répertoire d'installation.
+Si vous êtes à l'aise, libre à vous une fois que tout fonctionne de changer d'emplacement et de modifier en conséquence
 les configs nécessaires sur le serveur.*
+
+Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `8.2.0`
+par exemple.
+
+Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
+versions officielles (taguées) :
+```bash
+git fetch && git fetch --tags && git tag
+```
+
+Si la version la plus récente est par exemple la `8.2.0`, utilisez les commandes suivantes pour "installer" cette version
+sur votre serveur :
+```bash
+git checkout --force 8.2.0
+```
 
 
 ### Configuration du serveur
@@ -44,8 +59,11 @@ les configs nécessaires sur le serveur.*
 - Vous trouverez dans le répertoire des sources d'ESUP-SyGAL récupérées à l'instant un script `Dockerfile.sh`, 
   sorte de version sh du Dockerfile, contenant de quoi mettre à niveau et/ou installer les packages nécessaires.
 
-- Plutôt que de le lancer d'un seul bloc, ouvrez-le dans un autre terminal pour le visualiser, ce qui vous permettra 
-  de copier-coller-lancer les commandes qu'il contient par petits groupes.
+- Vous ne devez pas le lancer d'un seul bloc, ouvrez-le dans un autre terminal pour l'avoir sous la main.
+
+- Lisez et appliquez les pré-requis mentionnés dans les commentaires en entête du script.
+
+- Copiez-collez-lancez les commandes qu'il contient par petits groupes.
 
 - Ensuite, si vous maîtrisez les impacts, vérifiez et ajustez éventuellement sur votre serveur les fichiers 
   de configs suivants (créés/modifiés par le script) :
@@ -77,24 +95,6 @@ Les valeurs possibles sont `development`, `testing` et `production`.
 `/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf`, exemple :
 ```conf
 error_log = /var/log/php-fpm.log
-```
-
-
-### Installation d'une version précise de l'application
-
-Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `8.1.0`
-par exemple.
-
-Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
-versions officielles (taguées) :
-```bash
-git fetch && git fetch --tags && git tag
-```
-
-Si la version la plus récente est par exemple la `8.1.0`, utilisez les commandes suivantes pour "installer" cette version 
-sur votre serveur :
-```bash
-git checkout --force 8.1.0
 ```
 
 
