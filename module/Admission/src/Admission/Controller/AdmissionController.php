@@ -758,7 +758,7 @@ class AdmissionController extends AdmissionAbstractController {
             $notif = $this->notificationFactory->createNotificationDossierIncomplet($admission);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::NOTIFICATION_DOSSIER_COMPLET."]",0,$e);
+            throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::NOTIFICATION_DOSSIER_INCOMPLET."]",0,$e);
         }
 
         $this->flashMessenger()->addSuccessMessage("$individu a bien été informé que son dossier d'admission est incomplet");
