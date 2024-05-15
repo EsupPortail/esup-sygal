@@ -175,7 +175,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -224,7 +224,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -234,6 +234,16 @@ class NotificationFactory extends NF
                 return $accu;
             }, []))
         );
+
+        if ($notif->getCc()) {
+            $successMessage .= sprintf(
+                " et en copie à %s",
+                implode(', ', array_reduce(array_keys($notif->getCc()), function(array $accu, string $key) use ($notif) {
+                    $accu[] = sprintf('%s (%s)', $notif->getCc()[$key], $key);
+                    return $accu;
+                }, [])),
+            );
+        }
 
         $notif->addSuccessMessage($successMessage);
 
@@ -271,7 +281,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -328,7 +338,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -381,7 +391,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -436,7 +446,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
