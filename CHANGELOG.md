@@ -6,6 +6,7 @@ Journal des modifications
 - Module Step-Star > Ligne de commande : améliorations des logs (affichage des critères appliqués, notamment) ; factorisation.
 - Module Step-Star : suppression du paramètre de config 'clean_after_work', remplacé par un paramètre de ligne de commande ou de formulaire.
 - Documentation : amélioration de la doc d'installation.
+- [FIX] Génération de la PDC : suppression de la mention 'Co-encadrant' ou 'Co-encadrante' en trop dans le tableau du jury.
 
 8.2.0
 -----

@@ -199,14 +199,6 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
                 $acteurData->setRole(Role::LIBELLE_PRESIDENT);
             }
 
-            foreach ($acteursLies as $acteurLie) {
-                if ($acteurLie->estCoEncadrant()) {
-                    if ($acteur->getIndividu()->estUneFemme()) $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrante");
-                    else $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrant");
-                    break;
-                }
-            }
-
             /** GESTION DES QUALITES **********************************************************************************/
             if ($acteur->getQualite() && trim($acteur->getQualite()) !== '') {
                 $acteurData->setQualite($acteur->getQualite());
