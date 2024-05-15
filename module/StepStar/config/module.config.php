@@ -412,7 +412,7 @@ return [
                 'envoyer-theses' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=] [--etat=] [--etablissement=] [--date-soutenance-null] [--date-soutenance-min=] [--date-soutenance-max=] [--tag=] [--force]',
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=] [--etat=] [--etablissement=] [--date-soutenance-null] [--date-soutenance-min=] [--date-soutenance-max=] [--tag=] [--force] [--clean]',
                         'defaults' => [
                             /**
                              * @see EnvoiConsoleController::envoyerThesesAction()

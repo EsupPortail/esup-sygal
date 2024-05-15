@@ -16,7 +16,6 @@ class EnvoiFacadeFactory
     public function __invoke(ContainerInterface $container): EnvoiFacade
     {
         $facade = new EnvoiFacade();
-        $facade->setCleanAfterWork(false);
 
         /** @var \StepStar\Facade\Generate\GenerateFacade $generateFacade */
         $generateFacade = $container->get(GenerateFacade::class);
@@ -29,11 +28,6 @@ class EnvoiFacadeFactory
         /** @var \StepStar\Service\Log\LogService $logService */
         $logService = $container->get(LogService::class);
         $facade->setLogService($logService);
-
-        /** @var array $config */
-        $config = $container->get('Config');
-        $cleanAfterWork = $config['step_star']['tef']['clean_after_work'] ?? true;
-        $facade->setCleanAfterWork($cleanAfterWork);
 
         return $facade;
     }

@@ -14,6 +14,7 @@ trait CriteriaAwareControllerTrait
     private ?string $etablissement;
     private ?bool $force;
     private ?string $tag;
+    private ?bool $clean;
 
     protected function loadCriteriaFromControllerParams(AbstractActionController $controller): void
     {
@@ -25,6 +26,7 @@ trait CriteriaAwareControllerTrait
         $this->etablissement = $controller->params()->fromRoute('etablissement'); // ex : 'UCN' ou 'UCN,URN'
         $this->force = (bool) $this->params()->fromRoute('force');
         $this->tag = $controller->params()->fromRoute('tag');
+        $this->clean = (bool) $this->params()->fromRoute('clean');
     }
 
     protected function getCriteriaAsArray(): array
@@ -38,6 +40,7 @@ trait CriteriaAwareControllerTrait
             'etablissement' => $this->etablissement,
             'force' => $this->force,
             'tag' => $this->tag,
+            'clean' => $this->clean,
         ]);
     }
 }

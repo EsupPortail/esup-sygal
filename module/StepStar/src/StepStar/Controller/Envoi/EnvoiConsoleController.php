@@ -53,6 +53,7 @@ class EnvoiConsoleController extends AbstractConsoleController
         $this->console->writeLine("Nombre de theses trouvees : " . count($theses));
 
         $this->envoiFacade->setSaveLogs(true);
+        $this->envoiFacade->setCleanAfterWork($this->clean);
         $logs = $this->envoiFacade->envoyerTheses($theses, $this->force, $command, $this->tag);
 
         /** @var \StepStar\Entity\Db\Log $log */

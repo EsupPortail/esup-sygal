@@ -23,6 +23,10 @@ class EnvoiThesesForm extends AbstractEnvoiForm
         $this->add((new Text('tag'))
             ->setLabel("Tag éventuel (pour retrouver facilement un ensemble de logs) :")
         );
+
+        $this->add((new Checkbox('clean'))
+            ->setLabel("Une fois l'envoi effectué, supprimer les fichiers XML temporaires générés")
+        );
     }
 
     /**
@@ -40,6 +44,10 @@ class EnvoiThesesForm extends AbstractEnvoiForm
             ],
             'force' => [
                 'name' => 'force',
+                'required' => false,
+            ],
+            'clean' => [
+                'name' => 'clean',
                 'required' => false,
             ],
         ]);

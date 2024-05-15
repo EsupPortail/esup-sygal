@@ -94,7 +94,8 @@ class Module
     [--date-soutenance-min <date-soutenance-min>] 
     [--date-soutenance-max <date-soutenance-max>] 
     [--tag <tag>] 
-    [--force]' => "Envoie vers STEP/STAR les thèses spécifiées l'une après l'autre (uniquement si leur TEF a changé depuis le dernier envoi).",
+    [--force]
+    [--clean]' => "Envoie vers STEP/STAR les thèses spécifiées l'une après l'autre (uniquement si leur TEF a changé depuis le dernier envoi).",
             [ '--these <id>', "Ids des thèses concernées, séparées par une virgule. Facultatif"],
             [ '--etat <etat>', "États des thèses, séparés par une virgule, ex : 'E,S'. Facultatif"],
             [ '--etablissement <etablissement>', "Codes des établissements d'inscription, séparés par une virgule, ex : 'UCN,URN'. Facultatif"],
@@ -111,6 +112,7 @@ class Module
                 "Facultatif"],
             [ '--tag <tag>', "Tag éventuel permettant de retrouver facilement un ensemble de logs, ex : 'cron-2022-03-11'. Facultatif"],
             [ '--force', "Réalise l'envoi même si le contenu du fichier TEF est le même qu'au dernier envoi. Facultatif"],
+            [ '--clean', "Une fois l'envoi effectué, supprimer les fichiers XML temporaires générés. Facultatif"],
         ];
     }
 }

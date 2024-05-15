@@ -82,6 +82,7 @@ class EnvoiController extends AbstractController
                 $these = $this->envoiThesesForm->getData()['these']; // ex : '12345' ou '12345,12346'
                 $force = (bool) $this->envoiThesesForm->getData()['force'];
                 $tag = $this->envoiThesesForm->getData()['tag'] ?? null;
+                $clean = $this->envoiThesesForm->getData()['clean'] ?? false;
 
                 $criteria = array_filter(compact('these'));
 
@@ -91,6 +92,7 @@ class EnvoiController extends AbstractController
                 }
 
                 $this->envoiFacade->setSaveLogs(true);
+                $this->envoiFacade->setCleanAfterWork($clean);
                 $logs = $this->envoiFacade->envoyerTheses($theses, $force, $command, $tag);
 
                 /** @var \StepStar\Entity\Db\Log $log */

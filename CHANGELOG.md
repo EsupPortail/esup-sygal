@@ -3,7 +3,8 @@ Journal des modifications
 
 8.3.0
 -----
-- Module Step-Star > Ligne de commande : améliorations des logs (affichage des critères appliqués, notamment) ; factorisation. 
+- Module Step-Star > Ligne de commande : améliorations des logs (affichage des critères appliqués, notamment) ; factorisation.
+- Module Step-Star : suppression du paramètre de config 'clean_after_work', remplacé par un paramètre de ligne de commande ou de formulaire.
 
 8.2.0
 -----
