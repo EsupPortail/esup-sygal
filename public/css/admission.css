@@ -388,13 +388,14 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .multipage-nav.cancel {
   clear: both; }
 
-.access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required {
+.access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required, .access-notification-dossier-incomplet-btn.required {
   background-color: #F1732D;
   color: #fff;
   font-weight: bold; }
 
-.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover {
-  background-color: #824012; }
+.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover{
+  background-color: #824012;
+}
 
 .dossier-incomplet-validation-impossible {
   position: relative;

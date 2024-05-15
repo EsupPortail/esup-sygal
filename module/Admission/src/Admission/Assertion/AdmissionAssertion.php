@@ -164,6 +164,10 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                     $this->assertCanGestionnaireGererAdmission($this->admission->getAdmissionValidations());
             }
 
+            if ($privilege == AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET) {
+                $this->assertCanNotifierDossierIncomplet($this->admission->getAdmissionValidations());
+            }
+
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION:
                 case AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION_DANS_LISTE:
@@ -283,6 +287,27 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                                  n'a pas encore été effectuée"
             );
         }
+    }
+
+    protected function assertCanNotifierDossierIncomplet(Collection $admissionValidations): void
+    {
+        $attestationHonneurEffectuee = false;
+        $validationGestionnairePasEffectuee = true;
+        foreach ($admissionValidations as $admissionValidation) {
+            if (TypeValidation::CODE_ATTESTATION_HONNEUR === $admissionValidation->getTypeValidation()->getCode()) {
+                $attestationHonneurEffectuee = true;
+            }
+
+            if (TypeValidation::CODE_VALIDATION_GESTIONNAIRE === $admissionValidation->getTypeValidation()->getCode()) {
+                $validationGestionnairePasEffectuee = false;
+            }
+        }
+
+        $this->assertTrue(
+            $attestationHonneurEffectuee && $validationGestionnairePasEffectuee,
+            "La génération du récapitulatif n'est possible que lorsque la validation des gestionnaires
+                     n'a pas encore été effectuée et que l'attestation sur l'honneur a été faîte de la part de l'étudiant"
+        );
     }
 
     protected function assertCanGenererAndTeleverserRecapitulatif(Collection $admissionValidations): void
