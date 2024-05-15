@@ -107,7 +107,6 @@ return array(
                             AdmissionPrivileges::ADMISSION_HISTORISER,
                             AdmissionPrivileges::ADMISSION_VERIFIER,
                             AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES,
-                            AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
                             AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET,
                             AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF,
                             AdmissionPrivileges::ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER,
@@ -162,16 +161,6 @@ return array(
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION,
                         AdmissionPrivileges::ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION,
-                    ],
-                    'assertion' => AdmissionAssertion::class,
-                ],
-                [
-                    'controller' => AdmissionController::class,
-                    'action' => [
-                        'notifier-commentaires-ajoutes',
-                    ],
-                    'privileges' => [
-                        AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES,
                     ],
                     'assertion' => AdmissionAssertion::class,
                 ],
@@ -242,20 +231,6 @@ return array(
                                  * @see AdmissionController::supprimerAction()
                                  */
                                 'controller' => AdmissionController::class,
-                            ],
-                        ],
-                    ],
-                    'notifier-commentaires-ajoutes' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/notifier-commentaires-ajoutes/:admission',
-                            'constraints' => [
-                                'admission' => '[0-9]*'
-                            ],
-                            'defaults' => [
-                                'controller' => AdmissionController::class,
-                                'action' => 'notifier-commentaires-ajoutes',
-                                /* @see AdmissionController::notifierCommentairesAjoutesAction() */
                             ],
                         ],
                     ],

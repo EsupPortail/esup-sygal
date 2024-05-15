@@ -730,25 +730,6 @@ class AdmissionController extends AdmissionAbstractController {
     }
 
     /** TEMPLATES RENDERER *******************************************************************************/
-    //Mail à l'initiative du gestionnaire, afin de notifier l'étudiant que des commentaires ont été ajoutés à son dossier d'admission
-    public function notifierCommentairesAjoutesAction()
-    {
-        $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
-        $individu = $admission->getIndividu();
-        try {
-            $notif = $this->notificationFactory->createNotificationCommentairesAjoutes($admission);
-            $this->notifierService->trigger($notif);
-        } catch (RuntimeException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::COMMENTAIRES_AJOUTES."]",0,$e);
-        }
-
-        $this->flashMessenger()->addSuccessMessage("$individu a bien été informé des commentaires ajoutés à son dossier d'admission");
-        $redirectUrl = $this->params()->fromQuery('redirect');
-        if ($redirectUrl !== null) {
-            return $this->redirect()->toUrl($redirectUrl);
-        }
-    }
-
     //Mail à l'initiative du gestionnaire, afin de notifier l'étudiant que son dossier d'admission est incomplet
     public function notifierDossierIncompletAction()
     {

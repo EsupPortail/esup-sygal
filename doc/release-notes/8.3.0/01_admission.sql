@@ -32,3 +32,14 @@ UPDATE public.unicaen_renderer_template SET document_sujet = 'Validation supprim
 --Suppression de certains templates (associés au module Admission)
 DELETE FROM public.unicaen_renderer_template where code = 'ADMISSION_NOTIFICATION_DOSSIER_COMPLET';
 DELETE FROM public.unicaen_renderer_template where code = 'ADMISSION_NOTIFICATION_GESTIONNAIRE';
+
+--Suppression du privilège ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES (associés au module Admission)
+DELETE
+from profil_privilege
+where privilege_id in (select id from privilege where code LIKE 'admission-commentaires-ajoutes');
+DELETE
+from role_privilege
+where privilege_id in (select id from privilege where code LIKE 'admission-commentaires-ajoutes');
+DELETE
+from privilege
+where code LIKE 'admission-commentaires-ajoutes';

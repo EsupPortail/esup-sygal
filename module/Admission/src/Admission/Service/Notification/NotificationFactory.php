@@ -30,29 +30,6 @@ class NotificationFactory extends NF
     use RoleServiceAwareTrait;
     use UrlServiceAwareTrait;
 
-    public function createNotificationCommentairesAjoutes(Admission $admission): Notification
-    {
-        $notif = new Notification();
-        $individu = $admission->getIndividu();
-        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
-        if (!$email) {
-            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour l'étudiant {$individu}");
-        }
-
-        //Création du lien vers le dossier d'admission
-        $vars = ['admission' => $admission];
-        $url = $this->urlService->setVariables($vars);
-        $vars['Url'] = $url;
-
-        $vars['individu'] = $individu;
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::COMMENTAIRES_AJOUTES, $vars);
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
-            ->setSubject($rendu->getSujet())
-            ->setBody($rendu->getCorps());
-
-        return $notif;
-    }
-
     public function createNotificationDossierIncomplet(Admission $admission): Notification
     {
         $notif = new Notification();

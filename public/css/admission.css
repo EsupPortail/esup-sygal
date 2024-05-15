@@ -153,11 +153,11 @@ div.header-admission .introduction {
   margin-top: 30px; }
 
 /** Fin Section des commentaires visibles à chaque étape du form **/
-.notifier-commentaires-ajoutes {
+.notifier-dossier-incomplet {
   display: flex;
   justify-content: flex-end; }
 
-.notifier-commentaires-ajoutes > a {
+.notifier-dossier-incomplet > a {
   width: auto; }
 
 /** INDEX Admission **/
@@ -393,9 +393,8 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   color: #fff;
   font-weight: bold; }
 
-.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover{
-  background-color: #824012;
-}
+.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover {
+  background-color: #824012; }
 
 .dossier-incomplet-validation-impossible {
   position: relative;

@@ -27,7 +27,6 @@ use Application\View\Renderer\PhpRenderer;
 $form->prepare();
 
 $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
-$canNotifierCommentairesAjoutesAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES);
 $canNotifierDossierIncomplet  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET);
 $canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
 $canAccederRecapitulatifSigne  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER);
@@ -188,7 +187,7 @@ if($canAccederCommentaires) {
 }
 ?>
 
-<div class="row notifier-commentaires-ajoutes">
+<div class="row notifier-dossier-incomplet">
     <?php
     if($canNotifierDossierIncomplet && !$admission->isDossierComplet()){
         //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>

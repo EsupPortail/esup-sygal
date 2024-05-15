@@ -79,7 +79,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case 'telecharger-document':
                 case 'enregistrer-document':
                 case 'supprimer-document':
-                case 'notifier-commentaires-ajoutes':
                 case 'notifier-gestionnaire':
                 case 'notifier-dossier-complet':
                 case 'generer-recapitulatif':
@@ -114,7 +113,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
             }
 
             switch ($action) {
-                case 'notifier-commentaires-ajoutes':
                 case 'notifier-gestionnaire':
                 case 'notifier-dossier-complet':
                 case 'notifier-dossier-incomplet':
@@ -158,7 +156,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
 
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES:
-                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
                 case AdmissionPrivileges::ADMISSION_VERIFIER:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
                     $this->assertCanGestionnaireGererAdmission($this->admission->getAdmissionValidations());
@@ -176,7 +173,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT:
-                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
                 case AdmissionPrivileges::ADMISSION_VERIFIER:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
                     $this->assertAppartenanceAdmission($this->admission);
