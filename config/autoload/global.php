@@ -220,7 +220,6 @@ $config = [
                 'result_cache'     => 'filesystem',
                 'hydration_cache'  => 'filesystem',
                 'generate_proxies' => false,
-                'proxy_dir'        => 'data/DoctrineORMModule/Proxy',
             ],
         ],
     ],
