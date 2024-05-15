@@ -2,6 +2,7 @@
 
 namespace StepStar\Controller\Envoi;
 
+use StepStar\Controller\CriteriaAwareControllerTrait;
 use StepStar\Facade\Envoi\EnvoiFacadeAwareTrait;
 use StepStar\Service\Fetch\FetchServiceAwareTrait;
 use Unicaen\Console\Controller\AbstractConsoleController;
@@ -9,8 +10,8 @@ use Unicaen\Console\Controller\AbstractConsoleController;
 class EnvoiConsoleController extends AbstractConsoleController
 {
     use EnvoiFacadeAwareTrait;
-
     use FetchServiceAwareTrait;
+    use CriteriaAwareControllerTrait;
 
     /**
      * Action pour envoyer des fichiers TEF vers STEP/STAR.
@@ -35,29 +36,28 @@ class EnvoiConsoleController extends AbstractConsoleController
     {
         $command = implode(' ', $this->getRequest()->getContent());
 
-        $these = $this->params()->fromRoute('these'); // ex : '12345' ou '12345,12346'
-        $etat = $this->params()->fromRoute('etat'); // ex : 'E' ou 'E,S'
-        $dateSoutenanceNull = (bool) $this->params()->fromRoute('date-soutenance-null');
-        $dateSoutenanceMin = $this->params()->fromRoute('date-soutenance-min'); // ex : '2022-03-11' ou 'P6M'
-        $dateSoutenanceMax = $this->params()->fromRoute('date-soutenance-max'); // ex : '2022-03-11' ou 'P6M'
-        $etablissement = $this->params()->fromRoute('etablissement'); // ex : 'UCN' ou 'UCN,URN'
-        $force = (bool) $this->params()->fromRoute('force');
-        $tag = $this->params()->fromRoute('tag');
-
-        $criteria = array_filter(compact('these', 'etat', 'dateSoutenanceNull', 'dateSoutenanceMin', 'dateSoutenanceMax', 'etablissement'));
+        $this->loadCriteriaFromControllerParams($this);
+        $criteria = $this->getCriteriaAsArray();
 
         $theses = $this->fetchService->fetchThesesByCriteria($criteria);
+        $criteriaToStrings = $this->fetchService->getCriteriaToStrings();
+
+        $this->console->writeLine("Criteres de recherche specifies :");
+        foreach ($criteriaToStrings as $str) {
+            $this->console->writeLine("  - " . $str);
+        }
         if (empty($theses)) {
-            $this->console->write("Aucune these trouvee avec les criteres specifies.");
+            $this->console->writeLine("Aucune these trouvee avec les criteres specifies.");
             exit(0);
         }
+        $this->console->writeLine("Nombre de theses trouvees : " . count($theses));
 
         $this->envoiFacade->setSaveLogs(true);
-        $logs = $this->envoiFacade->envoyerTheses($theses, $force, $command, $tag);
+        $logs = $this->envoiFacade->envoyerTheses($theses, $this->force, $command, $this->tag);
 
         /** @var \StepStar\Entity\Db\Log $log */
         foreach ($logs as $log) {
-            $this->console->write($log->getLog());
+            $this->console->writeLine($log->getLog());
         }
     }
 }

@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
@@ -16,6 +17,19 @@ use These\Service\These\TheseServiceAwareTrait;
 class FetchService
 {
     use TheseServiceAwareTrait;
+
+    /**
+     * @var string[]
+     */
+    private array $criteriaToStrings;
+
+    /**
+     * @return string[]
+     */
+    public function getCriteriaToStrings(): array
+    {
+        return $this->criteriaToStrings;
+    }
 
     /**
      * Fetch et hydrate au format array une thèse spécifiée par son id,
@@ -53,42 +67,8 @@ class FetchService
             throw new InvalidArgumentException("Une liste de critères vide n'est pas acceptée");
         }
 
-        $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
-        $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
-        $dateSoutenanceNull = $criteria['dateSoutenanceNull'] ?? false;
-        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou 'P6M'
-        $dateSoutenanceMax = $criteria['dateSoutenanceMax'] ?? null; // ex : '2022-03-11' ou 'P6M'
-        $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
-
         $qb = $this->createQueryBuilder();
-
-        if ($these !== null) {
-            $thesesIds = array_map('trim', explode(',', $these));
-            $qb->where($qb->expr()->in('t.id', $thesesIds));
-        } else {
-            if ($etat !== null) {
-                $etats = array_map('trim', explode(',', $etat));
-                $qb->andWhereEtatIn($etats);
-            }
-            if ($dateSoutenanceNull) {
-                $qb->andWhere('t.dateSoutenance is null');
-            } else {
-                if ($dateSoutenanceMin !== null) {
-                    $qb
-                        ->andWhere('t.dateSoutenance >= :dateSoutMin')
-                        ->setParameter('dateSoutMin', $this->dateFromSpec($dateSoutenanceMin));
-                }
-                if ($dateSoutenanceMax !== null) {
-                    $qb
-                        ->andWhere('t.dateSoutenance <= :dateSoutMax')
-                        ->setParameter('dateSoutMax', $this->dateFromSpec($dateSoutenanceMax));
-                }
-            }
-            if ($etablissement !== null) {
-                $codesEtabs = array_map('trim', explode(',', $etablissement));
-                $qb->andWhere($qb->expr()->in('es.sourceCode', $codesEtabs));
-            }
-        }
+        $this->applyCriteriaToQb($criteria, $qb);
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -162,5 +142,51 @@ class FetchService
         }
 
         return $qb;
+    }
+
+    private function applyCriteriaToQb(array $criteria, QueryBuilder $qb): void
+    {
+        $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
+        $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
+        $dateSoutenanceNull = $criteria['dateSoutenanceNull'] ?? false;
+        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou 'P6M'
+        $dateSoutenanceMax = $criteria['dateSoutenanceMax'] ?? null; // ex : '2022-03-11' ou 'P6M'
+        $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
+
+        $this->criteriaToStrings = [];
+
+        if ($these !== null) {
+            $thesesIds = array_map('trim', explode(',', $these));
+            $qb->where($qb->expr()->in('t.id', $thesesIds));
+            $this->criteriaToStrings[] = 'Ids thèses : ' . $these;
+        } else {
+            if ($etat !== null) {
+                $etats = array_map('trim', explode(',', $etat));
+                $qb->andWhereEtatIn($etats);
+                $this->criteriaToStrings[] = 'Etats thèses : ' . $etat;
+            }
+            if ($dateSoutenanceNull) {
+                $qb->andWhere('t.dateSoutenance is null');
+                $this->criteriaToStrings[] = 'Date de soutenance : null';
+            } else {
+                if ($dateSoutenanceMin !== null) {
+                    $qb
+                        ->andWhere('t.dateSoutenance >= :dateSoutMin')
+                        ->setParameter('dateSoutMin', $dateSoutMin = $this->dateFromSpec($dateSoutenanceMin));
+                    $this->criteriaToStrings[] = 'Date de soutenance >= ' . $dateSoutMin;
+                }
+                if ($dateSoutenanceMax !== null) {
+                    $qb
+                        ->andWhere('t.dateSoutenance <= :dateSoutMax')
+                        ->setParameter('dateSoutMax', $dateSoutMax = $this->dateFromSpec($dateSoutenanceMax));
+                    $this->criteriaToStrings[] = 'Date de soutenance <= ' . $dateSoutMax;
+                }
+            }
+            if ($etablissement !== null) {
+                $codesEtabs = array_map('trim', explode(',', $etablissement));
+                $qb->andWhere($qb->expr()->in('es.sourceCode', $codesEtabs));
+                $this->criteriaToStrings[] = 'Etablissements : ' . $etablissement;
+            }
+        }
     }
 }

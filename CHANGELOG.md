@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.3.0
+-----
+- Module Step-Star > Ligne de commande : améliorations des logs (affichage des critères appliqués, notamment) ; factorisation. 
+
 8.2.0
 -----
 - Page des privilèges accordés aux profils : cosmétiques + ancres de navigation sur les catégories et privilèges.
