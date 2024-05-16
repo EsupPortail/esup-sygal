@@ -15,6 +15,7 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION     = 'admission-admission-modifier-son-dossier-admission';
     const ADMISSION_SUPPRIMER_TOUS_DOSSIERS_ADMISSION  = 'admission-admission-supprimer-tous-dossiers-admission';
     const ADMISSION_SUPPRIMER_SON_DOSSIER_ADMISSION     = 'admission-admission-supprimer-son-dossier-admission';
+    const ADMISSION_GENERER_EXPORT_ADMISSIONS  = 'admission-admission-generer-export-admissions';
     const ADMISSION_GENERER_RECAPITULATIF     = 'admission-admission-generer-recapitulatif';
 
     //validation

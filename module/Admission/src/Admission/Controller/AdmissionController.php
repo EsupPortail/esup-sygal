@@ -18,6 +18,7 @@ use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
+use Admission\Service\Admission\AdmissionRechercheServiceAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
@@ -50,6 +51,7 @@ use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenApp\View\Model\CsvModel;
 
 class AdmissionController extends AdmissionAbstractController {
 
@@ -80,6 +82,7 @@ class AdmissionController extends AdmissionAbstractController {
     use ConventionFormationDoctoraleServiceAwareTrait;
     use RoleServiceAwareTrait;
     use QualiteServiceAwareTrait;
+    use AdmissionRechercheServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -692,6 +695,74 @@ class AdmissionController extends AdmissionAbstractController {
                 }
             }
         }
+    }
+
+    public function genererExportCsvAction(): Response|CsvModel
+    {
+        $queryParams = $this->params()->fromQuery();
+
+        $ecoleDoctoraleSourceCode = $this->params()->fromQuery("ecoleDoctorale");
+        $role = $this->userContextService->getSelectedRoleEcoleDoctorale();
+        $ecoleDoctorale = $role->getStructure()?->getEcoleDoctorale();
+        if(($ecoleDoctoraleSourceCode && $role && $ecoleDoctorale) && $ecoleDoctoraleSourceCode !== $ecoleDoctorale->getSourceCode()){
+            $this->flashMessenger()->addErrorMessage("Vous n'avez pas les droits nécessaires pour générer ces dossiers d'admission");
+            return $this->redirect()->toRoute('admission');
+        }
+
+        $this->admissionRechercheService->init();
+        $this->admissionRechercheService->processQueryParams($queryParams);
+        $qb = $this->admissionRechercheService->getQueryBuilder();
+        $qb
+            ->andWhere($qb->expr()->orX('admission.etat = :etat'))
+            ->setParameter('etat', Etat::CODE_VALIDE);
+        $listing = $qb->getQuery()->getResult();
+
+        //export
+        $headers = ['numero_candidat', 'sexe', 'nom_famille', 'nom_usuel', 'prenom', 'prenom2', 'prenom3',	'date_naissance', 'code_commune_naissance',
+            'libellé_commune_naissance', 'code_pays_naissance',	'code_nationalite',	'ine', 'adresse_code_pays',	'adresse_ligne1_etage',
+            'adresse_ligne2_batiment',	'adresse_ligne3_voie',	'adresse_ligne4_complement', 'adresse_code_postal',	'adresse_code_commune',
+            'adresse_cp_ville_etranger', 'numero_telephone1', 'numero_telephone2', 'courriel'
+        ];
+        $records = [];
+        /** @var Admission $admission */
+        foreach ($listing as $admission) {
+            $entry = [];
+            /** @var Etudiant $etudiant */
+            $etudiant = $admission->getEtudiant()->first();
+            $entry['numero_candidat'] = "";
+            $entry['sexe'] = $etudiant->getCivilite();
+            $entry['nom_famille'] = $etudiant->getNomFamille();
+            $entry['nom_usuel'] = $etudiant->getNomUsuel();
+            $entry['prenom'] = $etudiant->getPrenom();
+            $entry['prenom2'] = $etudiant->getPrenom2();
+            $entry['prenom3'] = $etudiant->getPrenom3();
+            $entry['date_naissance'] = $etudiant->getDateNaissance();
+            $entry['code_commune_naissance'] = "";
+            $entry['libellé_commune_naissance'] = $etudiant->getVilleNaissance();
+            $entry['code_pays_naissance'] = $etudiant->getPaysNaissance();
+            $entry['code_nationalite'] = $etudiant->getNationalite();
+            $entry['ine'] = $etudiant->getIne();
+            $entry['adresse_code_pays'] = $etudiant->getAdresseCodePays();
+            $entry['adresse_ligne1_etage'] = $etudiant->getAdresseLigne1Etage();
+            $entry['adresse_ligne2_batiment'] = $etudiant->getAdresseLigne3Batiment();
+            $entry['adresse_ligne3_voie'] = $etudiant->getAdresseLigne3Bvoie();
+            $entry['adresse_ligne4_complement'] = $etudiant->getAdresseLigne4Complement();
+            $entry['adresse_code_postal'] = $etudiant->getAdresseCodePostal();
+            $entry['adresse_code_commune'] = $etudiant->getAdresseCodeCommune();
+            $entry['adresse_cp_ville_etranger'] = $etudiant->getAdresseCpVilleEtrangere();
+            $entry['numero_telephone1'] = $etudiant->getNumeroTelephone1();
+            $entry['courriel'] = $etudiant->getCourriel();
+            $records[] = $entry;
+        }
+        $filename = (new \DateTime())->format('Ymd') . '_admissions.csv';
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader($headers);
+        $CSV->setData($records);
+        $CSV->setFilename($filename);
+
+        return $CSV;
     }
 
     /** TEMPLATES RENDERER *******************************************************************************/
