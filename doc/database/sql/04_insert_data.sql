@@ -851,6 +851,7 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (12
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1221, 5160, 'modifier-acteur-de-ses-theses', 'Modifier les acteurs des thèses qui me concernent', 2010);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1222, 3, 'modification-domaines-hal-these', 'Modifier les domaines HAL de sa thèse', 3100);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1240, 101, 'proposition-supprimer', 'Supprimer l''ensemble des informations d''une proposition', 34);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (1260, 5003, 'voir_lieu', 'Voir le lieu de la session', 8);
 
 
 --
@@ -1551,12 +1552,10 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (743, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (743, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (742, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (742, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (742, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (742, 9);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (742, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (744, 4);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (744, 6);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (744, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (744, 9);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (744, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (741, 4);
@@ -1975,6 +1974,12 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1240, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (781, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (782, 5);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (583, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 7);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 2);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 81);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (802, 81);
 
 
 --
@@ -2233,7 +2238,8 @@ INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle,
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (15, 3, 'CAMPAGNE_DEPOT_DEBUT', 'Jour et mois de début de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 01/04/N+1.', NULL, 'String', '04/05/N+1', 100);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (16, 3, 'CAMPAGNE_DEPOT_FIN', 'Jour et mois de fin de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 15/06/N+1.', NULL, 'String', '31/06/N+1', 200);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (10, 1, 'DOC_CONFIDENTIALITE', 'Formulaire de demande de confidentialité', NULL, 'String', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE', 2500);
-INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '40', 10);
+INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (20, 2, 'DELAI_ANNULATION_INSCRIPTION', 'Délai avant le blocage de l''annulation d''une inscription (en jours)', NULL, 'Number', '3', 20);
+INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '30', 10);
 
 
 --
@@ -2348,6 +2354,7 @@ INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name,
 INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (123, 'AdmissionConventionFormationDoctorale#MotivationDemandeConfidentialite', '<p>Retourne les informations concernant le calendrier prévisionnel de la convention de collaboration du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getMotivationDemandeConfidentialite');
 INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (124, 'AdmissionConventionFormationDoctorale#ProjetProDoctorant', '<p>Retourne les informations concernant le projet professionnel du doctorant de la convention de collaboration du dossier d''admission de l''étudiant</p>', 'conventionFormationDoctorale', 'getProjetProDoctorant');
 INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (125, 'AdmissionConventionFormationDoctorale#Operations', '<p>Retourne les opérations liées  à la convention de formations doctorale accordées au dossier d''admission de l''étudiant</p>', 'admissionConventionFormationDoctoraleData', 'getOperationstoHtmlArray');
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (126, 'Doctorant#DenominationPatronymique', '<p>Retourne la dénomination du doctorant (civilité+nom Patronymique+prénom)</p>', 'doctorant', 'getDenominationPatronymique');
 
 
 --
@@ -2362,7 +2369,6 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p>La soutenance de VAR[Doctorant#Denomination] est imminente.<br />Vous retrouverez ci-dessous les liens pour télécharger les documents utiles pour la soutenance.</p>
 <p>Document pour la soutenance :<br />- Serment du docteur : VAR[Url#Serment]<br />- Procès verbal : VAR[Url#ProcesVerbal]<br />- Rapport de soutenance : VAR[Url#RapportSoutenance]<br />- Rapport technique (en cas de viso-conférence) : VAR[Url#RapportTechnique]<br /><br />Bonne journée,<br />L''équipe SyGAL</p>
 <p> </p>', NULL, 'Soutenance\Provider\Template');
-INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (20, 'FORMATION_ATTESTATION', NULL, 'pdf', 'Attestation de suivie de la formation VAR[Formation#Libelle]', '<h1 style="text-align: center;">Attestation de suivi de formation</h1><p></p><p>Bonjour ,</p><p>Je, sousigné·e, certifie que <strong>VAR[Doctorant#Denomination]</strong> a participé à la formation <strong>VAR[Formation#Libelle]</strong> qui s''est déroulée sur la période du VAR[Session#Periode] (Durée : VAR[Session#Duree] heures).</p><p>VAR[Doctorant#Denomination] a suivi VAR[Inscription#DureeSuivie] heure·s de formation.</p><p style="text-align: right;">Le·la responsable du module<br />VAR[Session#Responsable]<br /><br /></p><p style="text-align: right;">VAR[Signature#EtablissementFormation]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (21, 'FORMATION_CONVOCATION', NULL, 'pdf', 'Convocation à la formation VAR[Formation#Libelle] du VAR[Session#Periode]', '<h1 style="text-align: center;">Convocation à la session de formation VAR[Formation#Libelle]</h1><p><br /><br />Bonjour VAR[Doctorant#Denomination],</p><p>Nous avons le plaisir de vous informer que la formation, VAR[Formation#Libelle], à laquelle vous êtes inscrit·e se déroulera selon le calendrier ci-dessous :<br />VAR[Session#SeancesTable]<br /><br />En cas d''impossibilité d''assister à tout ou partie de ce stage, merci de bien vouloir informer le ou la responsable du module de formation (VAR[Session#Responsable]) dans les meilleurs délais afin de permettre de contacter un·e doctorant·e actuellement sur liste d''attente.</p><p>Nous vous souhaitons un stage fructueux.</p><p style="text-align: right;">L''application SyGAL,<br />VAR[Signature#EtablissementFormation]</p><p><br /><span style="text-decoration: underline;">P.S.:</span> Cette convocation vaut ordre de mission<br /><br /><br /></p>', 'table { width:100%; } th { text-align:left; }', 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (5, 'FORMATION_SESSION_IMMINENTE', NULL, 'mail', 'La session de formation VAR[Formation#Libelle] va bientôt débutée', '<p>Bonjour VAR[Doctorant#Denomination],</p>
 <p><br />Nous vous rappelons que la formation VAR[Formation#Libelle]  à laquelle vous êtes inscrit·e va bientôt débuter.</p>
@@ -2370,6 +2376,7 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 <p><br />Cordialement,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (22, 'DEMANDE_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique notifiant un·e futur·e rapporteur·e pour la signature de l''engagement d''impartialité.<br />Envoyé lors de l''appariement membre/acteur</p>', 'mail', 'Demande de signature de l''engagement d''impartialité de la thèse de VAR[Doctorant#Denomination]', '<p>-- Version française ---------------------------------------------------------------</p><p>Bonjour,</p><p>Afin de pouvoir devenir rapporteur de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong>, il est nécessaire de signer électroniquement l''engagement d''impartialité dans l''application <em>ESUP-SyGAL</em> :<strong> VAR[Url#RapporteurDashboard]</strong>.<br /><br />Vous accéderez ainsi à une page "index de la soutenance" listant les membres du jury.<br />Cliquez ensuite sur "accès à l’engagement d’impartialité".<br />Puis après avoir pris connaissance des conditions relatives à cet engagement, vous pourrez signer ou non cet engagement d’impartialité.<br />Si vous signez, vous pourrez alors télécharger le PDF du manuscrit de thèse.</p><p>Cordialement<br /><br />-- English version ------------------------------------------------------------------<br /><br />Dear Mrs/Mr,</p><p>Before being officially registered as an external referee for the PhD thesis presented by <strong>VAR[Doctorant#Denomination]</strong> entitled <strong>VAR[These#Titre]</strong>, you have to sign the "impartiality commitment" available in your dashborad : <strong>VAR[Url#RapporteurDashboard]</strong>.<br /><br />You will then be connected to a web page entitled "index of the PhD defense" listing the PhD jury members.<br />Click then on "access to the impartiality commitment".<br />Then, after reading the requirements regarding the impartiality commitment of an external referee, you sign it or not.<br />If you sign it, you will be able to download the PDF version of the PhD manuscript.</p><p>Best regards,</p><p>-- Justification ----------------------------------------------------------------------<br /><br />Vous avez reçu ce mail car :</p><ul><li>vous avez été désigné rapporteur pour la thèse de VAR[Doctorant#Denomination]</li><li>la signature a été annulée<br /><br /></li></ul>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (24, 'REFUS_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique envoyé lors du refus de l''engagement d''impartialité</p>', 'mail', 'Refus de l''engagement d''impartialité de la thèse de VAR[Doctorant#Denomination] par VAR[Membre#Denomination]', '<p>Bonjour,</p><p><strong>VAR[Membre#Denomination]</strong> vient de refuser l''engagement d''impartialité de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong>.</p><p>-- Justification ----------------------------------------------------------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>le rapporteur VAR[Membre#Denomination] vient de refuser de signer l''engagement d''impartialité;</li><li>vous êtes :<ul><li>soit un des acteurs directs de la thèse de VAR[Doctorant#Denomination],</li><li>soit un gestionnaire de la maison du doctorat de l''établissement d''inscription du doctorant.<br />            <br /><br /></li></ul></li></ul>', NULL, 'Soutenance\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (20, 'FORMATION_ATTESTATION', NULL, 'pdf', 'Attestation de suivie de la formation VAR[Formation#Libelle]', '<h1 style="text-align: center;">Attestation de suivi de formation</h1><p></p><p>Bonjour ,</p><p>Je, sousigné·e, certifie que <strong>VAR[Doctorant#DenominationPatronymique]</strong> a participé à la formation <strong>VAR[Formation#Libelle]</strong> qui s''est déroulée sur la période du VAR[Session#Periode] (Durée : VAR[Session#Duree] heures).</p><p>VAR[Doctorant#DenominationPatronymique] a suivi VAR[Inscription#DureeSuivie] heure·s de formation.</p><p style="text-align: right;">Le·la responsable du module<br />VAR[Session#Responsable]<br /><br /></p><p style="text-align: right;">VAR[Signature#EtablissementFormation]</p>', NULL, 'Formation\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (25, 'ANNULATION_ENGAGEMENT_IMPARTIALITE', '<p>Courrier électronique envoyé lors de l''annulation d''un engagement d''impartialité</p>', 'mail', 'Annulation de la signature de l''engagement d''impartialité de VAR[Membre#Denomination] pour la thèse de VAR[Doctorant#Denomination]', '<p>Bonjour,</p><p><br />Votre signature de l''engagement d''impartialité de la thèse de <strong>VAR[Doctorant#Denomination]</strong> intitulée <strong>VAR[These#Titre]</strong> vient d''être annulée.</p> <p>-- Justification ----------------------------------------------------------------------</p> <p>Vous avez reçu ce mail car :</p><ul><li>vous avez signé l''engagement d''impartialité pour la thèse de VAR[Doctorant#Denomination];  </li><li>la signature a été annulée. </li></ul>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (26, 'SOUTENANCE_VALIDATION_ANNULEE', '<p>Annulation de la validation</p>', 'mail', 'Votre validation de la proposition de soutenance de VAR[Doctorant#Denomination] a été annulée', '<p>Bonjour,</p><p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL</p><p>Suite à la modification de la proposition de soutenance, votre validation (faite le VAR[Validation#Date]) a été annulée. Si la nouvelle proposition vous convient, veuillez valider la proposition de soutenance à nouveau.<br /><br />Pour consulter, les modifications faites connectez-vous à  ESUP SyGAL et visualisez la proposition de soutenance en utilisant le lien suivant : VAR[Url#SoutenanceProposition].</p><p><span style="text-decoration: underline;">NB :</span> La proposition de soutenance sera envoyée automatiquement à votre unité de recherche puis à votre école doctorale, une fois que tous les intervenants directs auront validé celle-ci (c.-à-d. doctorant, directeur et co-directeur(s)).<br /><br />-- Justification ----------------------------------------------------------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>vous avez validé la proposition de soutenance de VAR[Doctorant#Denomination] ;</li><li>une modification de la proposition a été faite ou demandée.</li></ul>', NULL, 'Soutenance\Provider\Template');
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (27, 'SOUTENANCE_VALIDATION_ACTEUR_DIRECT', '<p>Mail de validation d''une proposition par un des acteurs directs</p>', 'mail', 'Une validation de votre proposition de soutenance vient d''être faite', '<p>Bonjour,</p><p>Ceci est un mail envoyé automatiquement par l''application ESUP SyGAL.</p><p>VAR[Validation#Auteur] vient de valider la proposition de soutenance de thèse.</p><p><br />Pour consulter cette proposition, connectez-vous à ESUP SyGAL et visualisez la proposition de soutenance en utilisant le lien suivant : VAR[Url#SoutenanceProposition].</p><p><span style="text-decoration: underline;">NB :</span> La proposition de soutenance sera envoyée automatiquement à votre unité de recherche puis à votre école doctorale, une fois que tous les intervenants directs auront validé celle-ci (c.-à-d. doctorant, directeur et co-directeur(s)).</p><p>-- Justification ----------------------------------------------------------------------</p><p>Vous avez reçu ce mail car :</p><ul><li>un des acteurs directs de la thèse de VAR[Doctorant#Denomination] vient de valider la proposition de soutenance  ;</li><li>vous êtes un des acteurs directs de la thèse de VAR[Doctorant#Denomination].</li></ul>', NULL, 'Soutenance\Provider\Template');
@@ -2794,6 +2801,14 @@ INSERT INTO public.unicaen_renderer_template (id, code, description, document_ty
 INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (10, 'FORMATION_INSCRIPTION_CLOSE', '<p>Courrier envoyé à la clôture des inscriptions pour les étudiants non classés</p>', 'mail', 'Les inscriptions à la formation VAR[Formation#Libelle] sont maintenant closes.', '<p>Bonjour,</p>
 <p>Les inscriptions à la formation VAR[Formation#Libelle] sont maintenant closes.<br />Si à j-5 vous ne recevez pas un mail vous indiquant que votre demande est prise est compte, nous sommes au regret de vous informer que nous ne pourrons donner suite à votre demande.<br /><br /></p>
 <p>En vous souhaitant une bonne journée,<br />VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (72, 'FORMATION_FORMATION_SPECIFIQUE_OUVERTE', '<p>Mail envoyé au doctorant·e appartenant aux structures valides déclarées lorsqu''une formation spécifique passe à l''état Inscription ouverte</p>', 'mail', 'Nouvelle formation spécifique ouverte dans votre ED', '<p>Bonjour,</p>
+<p>La formation spécifique <strong>VAR[Formation#Libelle]</strong> vient d''ouvrir. Si vous voulez plus d''informations, rendez-vous dans l''application ESUP-SyGAL, onglet <em>''mes formations''.</em></p>
+<p>En vous souhaitant une bonne journée,<br/>VAR[Formation#Responsable]</p>', NULL, 'Formation\Provider\Template');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES (74, 'DEMANDE_ADRESSE_EXACTE', '<p>Courrier électronique envoyé au doctorant ainsi qu''aux encadrants de la thèse afin de leur demander qu''ils renseignent l''adresse exacte de la soutenance</p>', 'mail', 'Renseignement de l''adresse exacte de la soutenance ', '<p>Bonjour,</p>
+<p><em>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</em></p>
+<p>Merci de bien vouloir renseigner l''adresse exacte de la soutenance</p>
+<p>Vous pouvez dès à présent le faire à partir de la page de gestion de la soutenance : VAR[Url#SoutenanceProposition]</p>
+<p> </p>', NULL, 'Soutenance\Provider\Template');
 
 
 --
@@ -2875,7 +2890,7 @@ SELECT pg_catalog.setval('public.formation_enquete_question_id_seq', 15, true);
 -- Name: privilege_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.privilege_id_seq', 1259, true);
+SELECT pg_catalog.setval('public.privilege_id_seq', 1279, true);
 
 
 --
@@ -2910,14 +2925,14 @@ SELECT pg_catalog.setval('public.unicaen_parametre_parametre_id_seq', 19, true);
 -- Name: unicaen_renderer_macro_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.unicaen_renderer_macro_id_seq', 125, true);
+SELECT pg_catalog.setval('public.unicaen_renderer_macro_id_seq', 127, true);
 
 
 --
 -- Name: unicaen_renderer_template_id_seq; Type: SEQUENCE SET; Schema: public; Owner: :dbuser
 --
 
-SELECT pg_catalog.setval('public.unicaen_renderer_template_id_seq', 71, true);
+SELECT pg_catalog.setval('public.unicaen_renderer_template_id_seq', 74, true);
 
 
 --

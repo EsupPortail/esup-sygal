@@ -132,16 +132,16 @@ Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier d
 
 Placez-vous dans le répertoire de l'application puis descendez dans le répertoire `config/autoload/`.
 
-Supprimez l'extension `.dist` des fichiers suivants, et préfixez-les pour bien
-signifier l'environnement de fonctionnement concerné (version de production, de test, de developement) :
+Supprimez l'extension `.dist` des fichiers suivants, et préfixez-les par `prod.`, `test.` ou `dev.` pour bien signifier 
+l'environnement de fonctionnement effectif :
   - [`local.php.dist`](../config/autoload/local.php.dist)
   - [`secret.local.php.dist`](../config/autoload/secret.local.php.dist)
 
 Exemple :
 ```bash
-APPLICATION_ENV="production"
-cp -n local.php.dist        ${APPLICATION_ENV}.local.php 
-cp -n secret.local.php.dist ${APPLICATION_ENV}.secret.local.php
+APPLICATION_ENV="prod"
+cp local.php.dist        ${APPLICATION_ENV}.local.php
+cp secret.local.php.dist ${APPLICATION_ENV}.secret.local.php
 ```
 
 Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
@@ -177,6 +177,9 @@ Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
 ```
 *NB : ensuite créez le fichier `public/logo-etablissement.png` correspondant au logo de votre établissement.*
 
+
+#### Fichier `${APPLICATION_ENV}.secret.local.php`
+
 - Adaptez le chemin du répertoire où seront stockés les fichiers uploadés par les utilisateurs de l'application :
 
 ```php
@@ -191,8 +194,6 @@ Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
     ],
 ```
 *NB : ce répertoire doit être autorisé en écriture à l'utilisateur `www-data`.*
-
-#### Fichier `${APPLICATION_ENV}.secret.local.php`
 
 - Renseignez les infos de connexion à la base de données de l'application :
 
@@ -225,6 +226,25 @@ Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
                 'votre.email@domaine.fr',
             ],
             // ...
+```
+
+
+### Accès à l'API exposée par l'application
+
+ESUP-SyGAL expose une API permettant d'obtenir de Pégase les inscriptions en 3e cycle.
+Un fichier `users.htpasswd` contient les comptes utilisateurs / mots de passe autorisés à interroger cette API
+au regard de l'authentification HTTP Basic.
+
+Placez-vous dans le répertoire [`config`](config) des sources et lancez la
+commande suivante pour créer le fichier `users.htpasswd` contenant un utilisateur `sygal-app` dont le mot de passe
+vous sera demandé :
+```bash
+htpasswd -c users.htpasswd sygal-app
+```
+
+Si vous manquez d'idée pour le mot de passe, utilsez la commande suivante :
+```bash
+pwgen 16 1 --symbols --secure
 ```
 
 
