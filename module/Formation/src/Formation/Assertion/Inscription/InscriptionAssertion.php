@@ -68,8 +68,9 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
             return false;
         }
 
-        $sessionId = (($this->getMvcEvent()->getRouteMatch()->getParam('isncription')));
-        $inscription = $this->getInscriptionService()->getRepository()->find($sessionId);
+        $inscription = null;
+        $sessionId = (($this->getMvcEvent()->getRouteMatch()->getParam('inscription')));
+        if($sessionId) $inscription = $this->getInscriptionService()->getRepository()->find($sessionId);
 
         switch($action) {
             case 'desinscription' :
@@ -103,13 +104,15 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
         $etatSession = $session->getEtat();
         if (in_array($etatSession->getCode(), [Session::ETAT_IMMINENTE, Session::ETAT_EN_COURS, Session::ETAT_CLOS_FINAL])) return false;
 
-        $dateMax = DateTime::createFromFormat('d/m/Y H:m', $session->getDateDebut()->format('d/m/Y H:m'));
-        try {
-            $dateMax->sub(new DateInterval('P' . $this->getDelaiDescinscription() . 'D'));
-        } catch (Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la manipulation de la date bloquante", 0, $e);
+        if($session->getDateDebut()){
+            $dateMax = DateTime::createFromFormat('d/m/Y H:m', $session->getDateDebut()->format('d/m/Y H:m'));
+            try {
+                $dateMax->sub(new DateInterval('P' . $this->getDelaiDescinscription() . 'D'));
+            } catch (Exception $e) {
+                throw new RuntimeException("Un problème est survenu lors de la manipulation de la date bloquante", 0, $e);
+            }
+            if ($dateMax < (new DateTime())) return false;
         }
-        if ($dateMax < (new DateTime())) return false;
 
         return true;
     }
