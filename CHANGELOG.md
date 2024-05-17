@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Filtre de recherche textuelle utilisant l'opérateur LIKE : amélioration pour qu'il soit insensible à la casse.
 - [FIX] Utilisation du bon code structure pour les établissements (source_code).
+- [FIX] : Ajout de conditions pour éviter que InscriptionAssertion retourne une erreur lors de l'accès à un écran présentant des formations (ayant des sessions sans séances) ou d'une désinscription
 
 8.3.0
 -----
