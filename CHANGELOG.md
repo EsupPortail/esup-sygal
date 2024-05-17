@@ -4,6 +4,7 @@ Journal des modifications
 8.4.0
 -----
 - Filtre de recherche textuelle utilisant l'opérateur LIKE : amélioration pour qu'il soit insensible à la casse.
+- [FIX] Utilisation du bon code structure pour les établissements (source_code).
 
 8.3.0
 -----

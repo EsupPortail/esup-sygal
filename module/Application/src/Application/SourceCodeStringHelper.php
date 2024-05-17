@@ -79,12 +79,12 @@ class SourceCodeStringHelper
      */
     public function addEtablissementPrefixTo(string $value, Etablissement $etablissement): string
     {
-        if (! $etablissement->getStructure()->getCode()) {
+        if (! $etablissement->getStructure()->getSourceCode()) {
             throw new InvalidArgumentException(
                 "Impossible de préfixer car l'établissement dont l'id est {$etablissement->getId()} n'a pas de code");
         }
 
-        return $this->addPrefixTo($value, $etablissement->getStructure()->getCode());
+        return $this->addPrefixTo($value, $etablissement->getStructure()->getSourceCode());
     }
 
     /**
