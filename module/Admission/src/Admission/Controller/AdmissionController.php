@@ -31,9 +31,11 @@ use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Constants;
 use Application\Controller\PaysController;
+use Application\Entity\Db\Pays;
 use Application\Entity\Db\Role;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait as ApplicationFinancementServiceAwareTrait;
+use Application\Service\Pays\PaysServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Exception;
@@ -83,6 +85,7 @@ class AdmissionController extends AdmissionAbstractController {
     use RoleServiceAwareTrait;
     use QualiteServiceAwareTrait;
     use AdmissionRechercheServiceAwareTrait;
+    use PaysServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -97,6 +100,15 @@ class AdmissionController extends AdmissionAbstractController {
         $response = $this->processMultipageForm($this->admissionForm);
         if ($response instanceof Response) {
             return $response;
+        }
+
+        $etudiant = $this->admissionForm->get('etudiant');
+        if($etudiant instanceof EtudiantFieldset){
+            $pays = $this->paysService->getPaysAsOptions();
+            $etudiant->setPays($pays);
+
+            $nationalites = $this->paysService->getNationalitesAsOptions();
+            $etudiant->setNationalites($nationalites);
         }
 
         //Récupération de l'objet Admission en BDD
@@ -703,7 +715,7 @@ class AdmissionController extends AdmissionAbstractController {
 
         $ecoleDoctoraleSourceCode = $this->params()->fromQuery("ecoleDoctorale");
         $role = $this->userContextService->getSelectedRoleEcoleDoctorale();
-        $ecoleDoctorale = $role->getStructure()?->getEcoleDoctorale();
+        $ecoleDoctorale = ($role && $role->getStructure()) ? $role->getStructure()->getEcoleDoctorale() : null;
         if(($ecoleDoctoraleSourceCode && $role && $ecoleDoctorale) && $ecoleDoctoraleSourceCode !== $ecoleDoctorale->getSourceCode()){
             $this->flashMessenger()->addErrorMessage("Vous n'avez pas les droits nécessaires pour générer ces dossiers d'admission");
             return $this->redirect()->toRoute('admission');
@@ -730,7 +742,7 @@ class AdmissionController extends AdmissionAbstractController {
             /** @var Etudiant $etudiant */
             $etudiant = $admission->getEtudiant()->first();
             $entry['numero_candidat'] = "";
-            $entry['sexe'] = $etudiant->getCivilite();
+            $entry['sexe'] = rtrim($etudiant->getSexe(), '.');
             $entry['nom_famille'] = $etudiant->getNomFamille();
             $entry['nom_usuel'] = $etudiant->getNomUsuel();
             $entry['prenom'] = $etudiant->getPrenom();
@@ -739,13 +751,13 @@ class AdmissionController extends AdmissionAbstractController {
             $entry['date_naissance'] = $etudiant->getDateNaissance();
             $entry['code_commune_naissance'] = "";
             $entry['libellé_commune_naissance'] = $etudiant->getVilleNaissance();
-            $entry['code_pays_naissance'] = $etudiant->getPaysNaissance();
-            $entry['code_nationalite'] = $etudiant->getNationalite();
+            $entry['code_pays_naissance'] = $etudiant->getPaysNaissance() ? $etudiant->getPaysNaissance()->getCodePaysApogee() : null;
+            $entry['code_nationalite'] = $etudiant->getNationalite() ? $etudiant->getNationalite()->getCodePaysApogee() : null;
             $entry['ine'] = $etudiant->getIne();
-            $entry['adresse_code_pays'] = $etudiant->getAdresseCodePays();
+            $entry['adresse_code_pays'] = $etudiant->getAdresseCodePays() ? $etudiant->getAdresseCodePays()->getCodePaysApogee() : null;
             $entry['adresse_ligne1_etage'] = $etudiant->getAdresseLigne1Etage();
-            $entry['adresse_ligne2_batiment'] = $etudiant->getAdresseLigne3Batiment();
-            $entry['adresse_ligne3_voie'] = $etudiant->getAdresseLigne3Bvoie();
+            $entry['adresse_ligne2_batiment'] = $etudiant->getAdresseLigne2Batiment();
+            $entry['adresse_ligne3_voie'] = $etudiant->getAdresseLigne3voie();
             $entry['adresse_ligne4_complement'] = $etudiant->getAdresseLigne4Complement();
             $entry['adresse_code_postal'] = $etudiant->getAdresseCodePostal();
             $entry['adresse_code_commune'] = $etudiant->getAdresseCodeCommune();

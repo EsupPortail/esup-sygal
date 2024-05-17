@@ -3,6 +3,7 @@
 namespace Admission\Hydrator\Etudiant;
 
 use Admission\Entity\Db\Etudiant;
+use Application\Entity\Db\Pays;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Service\IndividuServiceAwareTrait;
 
@@ -11,12 +12,22 @@ use Individu\Service\IndividuServiceAwareTrait;
  */
 class EtudiantHydrator extends DoctrineObject
 {
-
-    use IndividuServiceAwareTrait;
     public function extract(object $object): array
     {
         /** @var Etudiant $object */
         $data = parent::extract($object);
+
+        if (array_key_exists($key = 'paysNaissance', $data) && $data[$key] instanceof Pays) {
+            $data["paysNaissance"] = $data["paysNaissance"]->getId();
+        }
+
+        if (array_key_exists($key = 'adresseCodePays', $data) && $data[$key] instanceof Pays) {
+            $data["adresseCodePays"] = $data["adresseCodePays"]->getId();
+        }
+
+        if (array_key_exists($key = 'nationalite', $data) && $data[$key] instanceof Pays) {
+            $data["nationalite"] = $data["nationalite"]->getId();
+        }
 
         $data['verificationEtudiant'] = $object->getVerificationEtudiant()->first();
 
@@ -25,8 +36,9 @@ class EtudiantHydrator extends DoctrineObject
 
     public function hydrate(array $data, object $object): object
     {
-        $data["paysNaissance"] = !empty($data["paysNaissanceId"]) ? $data["paysNaissanceId"] : null;
-        $data["nationalite"] = !empty($data["nationaliteId"]) ? $data["nationaliteId"] : null;
+        $data["adresseCodePays"] = !empty($data["adresseCodePays"]) ? $data["adresseCodePays"] : null;
+        $data["paysNaissance"] = !empty($data["paysNaissance"]) ? $data["paysNaissance"] : null;
+        $data["nationalite"] = !empty($data["nationalite"]) ? $data["nationalite"] : null;
         $data["adresseCodePostal"] = empty($data["adresseCodePostal"]) ? null : $data["adresseCodePostal"];
 
         //Si la case niveauEtude n'est pas le diplôme national, on met à null les valeurs des champs reliés

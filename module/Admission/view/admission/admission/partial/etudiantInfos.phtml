@@ -6,7 +6,6 @@ use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
-use Laminas\Form\Element\Select;
 
 /**
  * @var EtudiantFieldset $fieldset
@@ -36,14 +35,11 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             </div>
 
         </div>
-        <div class="col-md-6">
-            <?php echo $this->formControlGroup($fieldset->get('numeroEtudiant')) ?>
-        </div>
     </div>
     <div class="row subfield">
         <div class="col-lg-3 col-sm-12">
             <div class="admission-form-checkboxes">
-                <?php echo $this->formControlGroup($fieldset->get('civilite')->setValue($individu->getCivilite())) ?>
+                <?php echo $this->formControlGroup($fieldset->get('sexe')->setValue($individu->getCivilite())) ?>
             </div>
         </div>
         <div class="col-lg-3">
@@ -67,23 +63,35 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             <?php echo $this->formControlGroup($fieldset->get('villeNaissance')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $this->formControlGroup($fieldset->get('paysNaissanceId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
-            <?php echo $this->formControlGroup($fieldset->get('paysNaissance')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelle() : null)) ?>
+            <?php echo $this->formControlGroup($fieldset->get('paysNaissance')) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $this->formControlGroup($fieldset->get('nationaliteId')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getId() : null)) ?>
-            <?php echo $this->formControlGroup($fieldset->get('nationalite')->setValue(!empty($individu->getPaysNationalite()) ? $individu->getPaysNationalite()->getLibelleNationalite() : null)) ?>
+            <?php echo $this->formControlGroup($fieldset->get('nationalite')) ?>
         </div>
     </div>
     <div class="row subfield">
         <div class="col-md-3">
-            <?php echo $this->formControlGroup($fieldset->get('adresseLigne3Bvoie')) ?>
+            <?php echo $this->formControlGroup($fieldset->get('adresseLigne1Etage')) ?>
         </div>
+        <div class="col-md-3">
+            <?php echo $this->formControlGroup($fieldset->get('adresseLigne2Batiment')) ?>
+        </div>
+        <div class="col-md-3">
+            <?php echo $this->formControlGroup($fieldset->get('adresseLigne3Voie')) ?>
+        </div>
+        <div class="col-md-3">
+            <?php echo $this->formControlGroup($fieldset->get('adresseLigne4Complement')) ?>
+        </div>
+    </div>
+    <div class="row subfield">
         <div class="col-md-2">
             <?php echo $this->formControlGroup($fieldset->get('adresseCodePostal')) ?>
         </div>
-        <div class="col-lg-2 col-sm-12">
+        <div class="col-lg-3 col-sm-12">
             <?php echo $this->formControlGroup($fieldset->get('adresseCodeCommune')) ?>
+        </div>
+        <div class="col-lg-2 col-sm-12">
+            <?php echo $this->formControlGroup($fieldset->get('adresseCodePays')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
             <?php echo $this->formControlGroup($fieldset->get('numeroTelephone1')) ?>

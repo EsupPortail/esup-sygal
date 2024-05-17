@@ -20,9 +20,29 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\GreaterThan;
 use Laminas\Validator\Regex;
 use Laminas\Validator\StringLength;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
+    private ?array $pays = null;
+    private ?array $nationalites = null;
+
+    public function setPays(array $paysAsOptions): void
+    {
+        $this->pays = $paysAsOptions;
+        $this->get('paysNaissance')->setEmptyOption('Sélectionnez une option');
+        $this->get('paysNaissance')->setValueOptions($this->pays);
+
+        $this->get('adresseCodePays')->setEmptyOption('Sélectionnez une option');
+        $this->get('adresseCodePays')->setValueOptions($this->pays);
+    }
+
+    public function setNationalites(array $nationalitesAsOptions): void
+    {
+        $this->nationalites = $nationalitesAsOptions;
+        $this->get('nationalite')->setEmptyOption('Sélectionnez une option');
+        $this->get('nationalite')->setValueOptions($this->nationalites);
+    }
 
     // Méthode pour générer les options d'année
     protected function generateYearOptions() : array
@@ -42,7 +62,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Radio('civilite'))
+            (new Radio('sexe'))
                 ->setValueOptions([
                     Individu::CIVILITE_M => Individu::CIVILITE_M,
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
@@ -93,12 +113,6 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Text('numeroEtudiant'))
-                ->setLabel("Numéro Etudiant (pour les étudiants déjà inscrits à UNICAEN)")
-                ->setLabelAttributes(['data-after' => " / Student number (for students already registered at UNICAEN)"])
-        );
-
-        $this->add(
             (new Email('courriel'))
                 ->setLabel("Mail")
                 ->setAttributes(['readonly' => true])
@@ -112,73 +126,61 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Hidden('paysNaissanceId'))
-        );
-
-        $this->add(
-            (new Text('paysNaissance'))
+            (new Select("paysNaissance"))
                 ->setLabel("Pays de naissance")
-                ->setLabelAttributes(['data-after' => " / Country of origin"])
-                ->setAttributes(['readonly' => true])
+                ->setLabelAttributes(['data-after' => " /   Country of origin"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "paysNaissance"
+                ])
         );
 
         $this->add(
             (new Text('villeNaissance'))
                 ->setLabel("Ville de naissance")
                 ->setLabelAttributes(['data-after' => " / City of birth"])
-                ->setAttributes(['readonly' => true])
         );
 
         $this->add(
-            (new Text('codePaysNaissance'))
+            (new Select("nationalite"))
                 ->setLabel("Nationalité")
-                ->setLabelAttributes(['data-after' => " / Nationality"])
+                ->setLabelAttributes(['data-after' => " /   Nationality"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "nationalite"
+                ])
         );
 
         $this->add(
-            (new Hidden('nationaliteId'))
-        );
-
-        $this->add(
-            (new Text('nationalite'))
-                ->setLabel("Nationalité")
-                ->setLabelAttributes(['data-after' => " / Nationality"])
-                ->setAttributes(['readonly' => true])
-        );
-
-        $this->add(
-            (new Hidden('codePaysNaissance'))
-        );
-
-        $this->add(
-            (new Hidden('codeNationalite'))
-        );
-
-        $this->add(
-            (new Text('adresseCodePays'))
-                ->setLabel("Adresse")
+            (new Select("adresseCodePays"))
+                ->setLabel("Pays")
+                ->setLabelAttributes(['data-after' => " /   Country"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "adresseCodePays"
+                ])
         );
 
         $this->add(
             (new Text('adresseLigne1Etage'))
-                ->setLabel("Adresse")
+                ->setLabel("Adresse (étage)")
                 ->setLabelAttributes(['data-after' => " / Address"])
         );
 
         $this->add(
-            (new Text('adresseLigne2Etage'))
-                ->setLabel("Adresse")
-        );
-
-        $this->add(
-            (new Text('adresseLigne3Batiment'))
+            (new Text('adresseLigne2Batiment'))
                 ->setLabel("Adresse (Bâtiment)")
         );
 
         $this->add(
-            (new Text('adresseLigne3Bvoie'))
-                ->setLabel("Adresse")
-                ->setLabelAttributes(['data-after' => " / Address"])
+            (new Text('adresseLigne3Voie'))
+                ->setLabel("Adresse (Voie)")
         );
 
         $this->add(
@@ -292,8 +294,8 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
     {
         return [
             //Informations étudiant
-            'civilite' => [
-                'name' => 'civilite',
+            'sexe' => [
+                'name' => 'sexe',
                 'required' => false,
             ],
             'nomUsuel' => [
@@ -383,6 +385,10 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                     ['name' => StringTrim::class],
                 ],
             ],
+            'nationalite' => [
+                'name' => 'nationalite',
+                'required' => false,
+            ],
             'adresseLigne1Etage' => [
                 'name' => 'adresseLigne1Etage',
                 'required' => false,
@@ -444,6 +450,15 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 'name' => 'adresseCodeCommune',
                 'required' => false,
                 'filters' => [
+                    ['name' => StripTags::class],
+                    ['name' => StringTrim::class],
+                ],
+            ],
+            'adresseCodePays' => [
+                'name' => 'adresseCodePays',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
                     ['name' => StripTags::class],
                     ['name' => StringTrim::class],
                 ],

@@ -23,10 +23,8 @@ class EtudiantHydratorFactory implements FactoryInterface
          * @var EntityManager $entityManager
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
-        $individuService = $container->get(IndividuService::class);
 
         $etudiantHydrator = new EtudiantHydrator($entityManager);
-        $etudiantHydrator->setIndividuService($individuService);
 
         return $etudiantHydrator;
     }

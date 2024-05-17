@@ -8,28 +8,28 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="civilite" column="CIVILITE" nullable="true"/>
+        <field name="sexe" column="SEXE" length="1" nullable="true"/>
         <field name="nomUsuel" type="string" column="NOM_USUEL" length="60" nullable="true"/>
         <field name="nomFamille" type="string" column="NOM_FAMILLE" length="60" nullable="true"/>
-        <field name="prenom" type="string" column="PRENOM" length="60" nullable="true"/>
-        <field name="prenom2" type="string" column="PRENOM2" length="60" nullable="true"/>
-        <field name="prenom3" type="string" column="PRENOM3" length="60" nullable="true"/>
+        <field name="prenom" type="string" column="PRENOM" length="40" nullable="true"/>
+        <field name="prenom2" type="string" column="PRENOM2" length="40" nullable="true"/>
+        <field name="prenom3" type="string" column="PRENOM3" length="40" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="true"/>
         <field name="villeNaissance" type="string" column="VILLE_NAISSANCE" length="60" nullable="true"/>
-        <field name="codeNationalite" type="string" column="CODE_NATIONALITE" length="5" nullable="true"/>
         <field name="ine" type="string" column="INE" length="11" nullable="true"/>
-        <field name="adresseCodePays" type="string" column="ADRESSE_CODE_PAYS" length="5" nullable="true"/>
-        <field name="adresseLigne1Etage" type="string" column="ADRESSE_LIGNE1_ETAGE" length="45" nullable="true"/>
-        <field name="adresseLigne2Etage" type="string" column="ADRESSE_LIGNE2_ETAGE" length="60" nullable="true"/>
-        <field name="adresseLigne3Batiment" type="string" column="ADRESSE_LIGNE3_BATIMENT" length="45" nullable="true"/>
-        <field name="adresseLigne3Bvoie" type="string" column="ADRESSE_LIGNE3_BVOIE" length="45" nullable="true"/>
-        <field name="adresseLigne4Complement" type="string" column="ADRESSE_LIGNE4_COMPLEMENT" length="45" nullable="true"/>
-        <field name="adresseCodePostal" type="bigint" column="ADRESSE_CODE_POSTAL" nullable="true"/>
-        <field name="adresseCodeCommune" type="string" column="ADRESSE_CODE_COMMUNE" length="45" nullable="true"/>
-        <field name="adresseCpVilleEtrangere" type="string" column="ADRESSE_CP_VILLE_ETRANGERE" length="10" nullable="true"/>
+        <field name="numeroCandidat" type="string" column="NUMERO_CANDIDAT" length="10" nullable="true"/>
+        <field name="adresseLigne1Etage" type="string" column="ADRESSE_LIGNE1_ETAGE" length="38" nullable="true"/>
+        <field name="adresseLigne2Batiment" type="string" column="ADRESSE_LIGNE2_BATIMENT" length="38" nullable="true"/>
+        <field name="adresseLigne3voie" type="string" column="ADRESSE_LIGNE3_VOIE" length="38" nullable="true"/>
+        <field name="adresseLigne4Complement" type="string" column="ADRESSE_LIGNE4_COMPLEMENT" length="38" nullable="true"/>
+        <field name="adresseCodePostal" type="bigint" column="ADRESSE_CODE_POSTAL" length="5" nullable="true"/>
+        <field name="adresseCodeCommune" type="string" column="ADRESSE_CODE_COMMUNE" length="5" nullable="true"/>
+        <field name="codeCommuneNaissance" type="string" column="CODE_COMMUNE_NAISSANCE" length="5" nullable="true"/>
+        <field name="libelleCommuneNaissance" type="string" column="LIBELLE_COMMUNE_NAISSANCE" length="50" nullable="true"/>
+        <field name="adresseCpVilleEtrangere" type="string" column="ADRESSE_CP_VILLE_ETRANGERE" length="38" nullable="true"/>
         <field name="numeroTelephone1" type="string" column="NUMERO_TELEPHONE1" length="20" nullable="true"/>
         <field name="numeroTelephone2" type="string" column="NUMERO_TELEPHONE2" length="20" nullable="true"/>
-        <field name="courriel" type="string" column="COURRIEL" length="255" nullable="true"/>
+        <field name="courriel" type="string" column="COURRIEL" length="254" nullable="true"/>
         <field name="situationHandicap" type="boolean" column="SITUATION_HANDICAP" nullable="true"/>
         <field name="niveauEtude" type="integer" column="NIVEAU_ETUDE" nullable="true"/>
         <field name="intituleDuDiplomeNational" type="string" column="INTITULE_DU_DIPLOME_NATIONAL" length="128" nullable="true"/>
@@ -59,6 +59,12 @@
         <many-to-one field="paysNaissance" target-entity="Application\Entity\Db\Pays">
             <join-columns>
                 <join-column name="PAYS_NAISSANCE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="adresseCodePays" target-entity="Application\Entity\Db\Pays">
+            <join-columns>
+                <join-column name="ADRESSE_CODE_PAYS" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

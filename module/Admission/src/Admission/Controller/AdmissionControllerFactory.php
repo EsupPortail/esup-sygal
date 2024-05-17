@@ -16,6 +16,7 @@ use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Operation\AdmissionOperationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
+use Application\Service\Pays\PaysService;
 use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
@@ -66,6 +67,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $roleService = $container->get(RoleService::class);
         $qualiteService = $container->get(QualiteService::class);
         $admissionRechercheService = $container->get(AdmissionRechercheService::class);
+        $paysService = $container->get(PaysService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -100,6 +102,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setRoleService($roleService);
         $controller->setQualiteService($qualiteService);
         $controller->setAdmissionRechercheService($admissionRechercheService);
+        $controller->setPaysService($paysService);
 
         return $controller;
     }

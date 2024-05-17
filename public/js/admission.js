@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
-        $('input:radio[name="etudiant[civilite]"]:not(:checked)').attr('disabled', true);
+        $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
 
         const btn_infos_ine = document.querySelector('.info-ine-btn');
         if (btn_infos_ine) {
@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 $(document).ready(function () {
-    if (currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
+    if (currentUrl.indexOf("/etudiant") !== -1 ||currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
         $('select').selectpicker();
     }
 
