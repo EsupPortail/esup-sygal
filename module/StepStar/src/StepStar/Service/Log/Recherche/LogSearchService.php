@@ -3,6 +3,7 @@
 namespace StepStar\Service\Log\Recherche;
 
 use Application\Search\Filter\SelectSearchFilter;
+use Application\Search\Filter\StrReducedTextSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\SearchService;
 use Doctorant\Search\DoctorantSearchFilter;
@@ -19,10 +20,7 @@ class LogSearchService extends SearchService
     use LogServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
-    /**
-     * @inheritDoc
-     */
-    public function init()
+    public function init(): void
     {
         $this->addFilter(
             (new TextSearchFilter("Id Thèse", 'these'))
@@ -60,13 +58,13 @@ class LogSearchService extends SearchService
                 ])
         );
         $this->addFilter(
-            (new TextSearchFilter("Log", 'log'))
-                ->setUseLikeOperator()
+            (new StrReducedTextSearchFilter("Log", 'log'))
+                ->useLikeOperator()
                 ->setWhereField('log.log')
         );
         $this->addFilter(
-            (new TextSearchFilter("Tag", 'tag'))
-                ->setUseLikeOperator()
+            (new StrReducedTextSearchFilter("Tag", 'tag'))
+                ->useLikeOperator()
                 ->setWhereField('log.tag')
         );
     }

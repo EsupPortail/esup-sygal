@@ -134,7 +134,7 @@ class EnqueteReponseSearchService extends SearchService
     private function createLibelleFilter(): TextSearchFilter
     {
         $filter = new StrReducedTextSearchFilter("Libellé formation", self::NAME_libelle);
-        $filter->setUseLikeOperator()->setWhereField('form.libelle');
+        $filter->useLikeOperator()->setWhereField('form.libelle');
 
         return $filter;
     }

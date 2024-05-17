@@ -4,33 +4,13 @@ namespace Application\Search\Filter;
 
 use Doctrine\ORM\QueryBuilder;
 
-/**
- *
- *
- * @author Unicaen
- */
 class TextSearchFilter extends SearchFilter
 {
     protected bool $useLikeOperator = false;
-    protected string $likeOperator = 'LIKE';
 
-    /**
-     * @param bool $useLikeOperator
-     * @return self
-     */
-    public function setUseLikeOperator(?bool $useLikeOperator = true): self
+    public function useLikeOperator(bool $useLikeOperator = true): self
     {
         $this->useLikeOperator = $useLikeOperator;
-        return $this;
-    }
-
-    /**
-     * @param string $likeOperator
-     * @return self
-     */
-    public function setLikeOperator(string $likeOperator): self
-    {
-        $this->likeOperator = $likeOperator;
         return $this;
     }
 
@@ -38,27 +18,37 @@ class TextSearchFilter extends SearchFilter
     {
         $filterValue = trim($this->getValue());
 
-        return $filterValue !== null && strlen($filterValue) > 1;
+        return strlen($filterValue) > 1;
     }
 
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb): void
     {
+        $template = $this->createTemplate("%s");
+        $paramName = uniqid('p');
         $qb
-            ->andWhere(sprintf("%s %s :%s", $this->whereField, $this->getOperator(), $paramName = uniqid('p')))
+            ->andWhere(sprintf($template, $this->whereField, $paramName))
             ->setParameter($paramName, $this->getComparisonValue());
     }
 
-    protected function applyToQueryBuilderByDefault(QueryBuilder $qb)
+    protected function applyToQueryBuilderByDefault(QueryBuilder $qb): void
     {
         $alias = current($qb->getRootAliases());
+        $template = $this->createTemplate("%s.%s");
+        $paramName = uniqid('p');
         $qb
-            ->andWhere(sprintf("%s.%s %s :%s", $alias, $this->getName(), $this->getOperator(), $paramName = uniqid('p')))
+            ->andWhere(sprintf($template, $alias, $this->getName(), $paramName))
             ->setParameter($paramName, $this->getComparisonValue());
     }
 
-    protected function getOperator(): string
+    protected function createTemplate(string $expr): string
     {
-        return $this->useLikeOperator ? $this->likeOperator : '=';
+        if ($this->useLikeOperator) {
+            $template = "lower($expr) like lower(:%s)";
+        } else {
+            $template = "$expr = :%s";
+        }
+
+        return $template;
     }
 
     public function getComparisonValue(): string

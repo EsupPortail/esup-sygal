@@ -38,7 +38,7 @@ class ModuleSearchService extends SearchService
     {
         $filter = new StrReducedTextSearchFilter("Libellé", self::NAME_libelle);
         $filter
-            ->setUseLikeOperator()
+            ->useLikeOperator()
             ->setWhereField('m.libelle');
 
         return $filter;

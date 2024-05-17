@@ -58,7 +58,7 @@ class InscriptionSearchService extends SearchService
         $filter = new StrReducedTextSearchFilter("Nom doctorant", self::NAME_doctorant);
         $filter
             ->setWhereField('ind.nomUsuel')
-            ->setUseLikeOperator();
+            ->useLikeOperator();
 
         return $filter;
     }
@@ -78,7 +78,7 @@ class InscriptionSearchService extends SearchService
     {
         $filter = new StrReducedTextSearchFilter("Libellé", self::NAME_libelle);
         $filter
-            ->setUseLikeOperator()
+            ->useLikeOperator()
             ->setWhereField('form.libelle');
 
         return $filter;

@@ -176,7 +176,7 @@ class SessionSearchService extends SearchService
     private function createLibelleFilter(): TextSearchFilter
     {
         $filter = new StrReducedTextSearchFilter("Libellé", self::NAME_libelle);
-        $filter->setUseLikeOperator();
+        $filter->useLikeOperator();
 
         return $filter;
     }

@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.4.0
+-----
+- Filtre de recherche textuelle utilisant l'opérateur LIKE : amélioration pour qu'il soit insensible à la casse.
+
 8.3.0
 -----
 - Module Step-Star > Ligne de commande : améliorations des logs (affichage des critères appliqués, notamment) ; factorisation.
