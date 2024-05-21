@@ -419,6 +419,11 @@ class AdmissionController extends AdmissionAbstractController {
             if($etudiant instanceof Etudiant){
                 /** @var Verification $verification */
                 $verification = $this->verificationService->getRepository()->findOneByEtudiant($etudiant);
+                if(isset($data['etudiant']['verificationEtudiant'])){
+                    /** @var EtudiantFieldset $etudiantFieldset */
+                    $etudiantFieldset = $this->admissionForm->get('etudiant');
+                    $etudiantFieldset->get('verificationEtudiant')->bindValues($data['etudiant']['verificationEtudiant']);
+                }
                 if ($verification === null) {
                     /** @var EtudiantFieldset $etudiantFieldset */
                     $etudiantFieldset = $this->admissionForm->get('etudiant');
