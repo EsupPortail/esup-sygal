@@ -163,7 +163,8 @@ document.addEventListener("DOMContentLoaded", function() {
                         data: {
                             nom: request.term,
                             fields: 'nom,code,codesPostaux',
-                            limit: 5
+                            limit: 5,
+                            boost: 'population'
                         },
                         success: function(data) {
                             var suggestions = [];
@@ -279,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 throw new Error("Erreur de chargement");
                             }
                             response.blob().then(function(myBlob) {
-                                   load(myBlob)
+                                load(myBlob)
                             });
                             if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
                                 $('.charte-doctorale-operations').show();

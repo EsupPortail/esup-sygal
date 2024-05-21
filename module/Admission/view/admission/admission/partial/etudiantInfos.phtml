@@ -93,9 +93,6 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="col-lg-5 col-sm-12 adresse-cp-ville-etrangere">
             <?php echo $this->formControlGroup($fieldset->get('adresseCpVilleEtrangere')) ?>
         </div>
-        <div class="col-md-2 adresse-code-postal">
-            <?php echo $this->formControlGroup($fieldset->get('adresseCodePostal')) ?>
-        </div>
         <div class="col-lg-3 col-sm-12 adresse-nom-commune">
             <label class="form-label" for="etudiant[adresseNomCommune]">Ville</label><label class="label_en">&nbsp; / City</label>
 
@@ -105,6 +102,9 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                 </span>
             </span>
             <?php echo $this->formControlGroup($fieldset->get('adresseNomCommune')) ?>
+        </div>
+        <div class="col-md-2 adresse-code-postal">
+            <?php echo $this->formControlGroup($fieldset->get('adresseCodePostal')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
             <?php echo $this->formControlGroup($fieldset->get('adresseCodePays')) ?>

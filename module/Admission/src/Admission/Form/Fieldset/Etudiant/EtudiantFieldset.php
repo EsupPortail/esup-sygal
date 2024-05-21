@@ -108,7 +108,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
             (new Text('ine'))
                 ->setLabel("Numéro I.N.E (Numéro inscrit sur un relevé de notes de l'enseignement supérieur français)")
                 ->setLabelAttributes(['data-after' => " / I.N.E number (number appearing on a French higher education transcript)"
-                    ])
+                ])
                 ->setAttributes( ['class' => 'form-control'])
         );
 
@@ -206,7 +206,8 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 ->setLabel("Code postal")
                 ->setLabelAttributes(['data-after' => " / Postal code"])
                 ->setAttributes([
-                    'id' => "adresseCodePostal"
+                    'id' => "adresseCodePostal",
+                    'readonly' => true
                 ])
         );
 
