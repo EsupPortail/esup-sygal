@@ -189,15 +189,10 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        $(document).ready(function () {
-            setupAutocomplete('#adresseNomCommune', '#adresseCodeCommune', '#adresseCodePostal');
-            setupAutocomplete('#libelleCommuneNaissance', '#codeCommuneNaissance', '');
-        })
-
         function toggleCountryVisibility() {
             const selectedCountry = $('[data-id="adresseCodePays"] .filter-option-inner-inner').text().trim();
             //Si le pays sélectionné est France, on affiche le champ Code postal/Ville
-            if (selectedCountry === 'France') {
+            if (selectedCountry === 'France' || selectedCountry === 'Sélectionnez une option') {
                 $('.adresse-cp-ville-etrangere').hide();
                 $('.adresse-nom-commune').show();
                 $('.adresse-code-postal').show();
@@ -209,6 +204,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         $(document).ready(function() {
+            setupAutocomplete('#adresseNomCommune', '#adresseCodeCommune', '#adresseCodePostal');
+            setupAutocomplete('#libelleCommuneNaissance', '#codeCommuneNaissance', '');
             toggleCountryVisibility();
 
             const targetNode = document.querySelector('[data-id="adresseCodePays"]');

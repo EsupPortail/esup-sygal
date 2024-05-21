@@ -403,12 +403,11 @@ class AdmissionController extends AdmissionAbstractController {
             //si le dossier d'admission existe, on met à jour l'entité Etudiant
             try {
                 $this->admissionForm->bind($admission);
-                //Lier les valeurs des données en session avec le formulaire
-                $this->admissionForm->get('etudiant')->bindValues($data['etudiant']);
-                $etudiant = $this->admissionForm->get('etudiant')->getObject();
                 if ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
                     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
-                    $this->etudiantService->update($etudiant);
+                    //Lier les valeurs des données en session avec le formulaire
+                    $this->admissionForm->get('etudiant')->bindValues($data['etudiant']);
+                    $this->etudiantService->update($this->admissionForm->get('etudiant')->getObject());
                 }
             } catch (Exception $e) {
                 $this->flashMessenger()->addErrorMessage("Échec de la modification des informations : ".$e->getMessage());
@@ -416,6 +415,7 @@ class AdmissionController extends AdmissionAbstractController {
         }
         //Ajout de l'objet Vérification
         if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_VERIFIER) ) {
+            $etudiant = $this->admissionForm->get('etudiant')->getObject();
             if($etudiant instanceof Etudiant){
                 /** @var Verification $verification */
                 $verification = $this->verificationService->getRepository()->findOneByEtudiant($etudiant);

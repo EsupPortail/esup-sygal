@@ -55,12 +55,12 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             if($inscriptionExist &&
                 ($admission->getInscription()->first()->getNomDirecteurThese() &&
                 empty($admission->getInscription()->first()->getDirecteur()))){ ?>
-                <label class="form-label individu-non-enregistre-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en individu-non-enregistre-label">&nbsp; / Lastname of thesis supervisor</label>
+                <label class="form-label individu-non-enregistre-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis supervisor</label>
                 <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
                     <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                 </span>
             <?php }else{ ?>
-                    <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis supervisor</label>
+                    <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis supervisor</label>
                         <?php if($inscriptionExist &&
                               $admission->getInscription()->first()->getDirecteur()){ ?>
                     <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
@@ -84,7 +84,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
     </div>
     <div class="row subfield">
         <div class="col-lg-12 these-titre-container">
-            <label class="form-label" for="inscription[titreThese]">Titre provisoire de la thèse</label><label class="titre_label_champ_form_en">&nbsp; / Provisional title of thesis</label>
+            <label class="form-label" for="inscription[titreThese]">Titre provisoire de la thèse</label><label class="label_en">&nbsp; / Provisional title of thesis</label>
             <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                 <span class="tooltip-text">Le titre saisi dans ce champ est provisoire et pourra être modifié ultérieurement durant votre parcours doctoral</span>
             </span>
@@ -159,12 +159,12 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                             <?php if($inscriptionExist &&
                                     $admission->getInscription()->first()->getNomCodirecteurThese() &&
                                     empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
-                                    <label class="form-label individu-non-enregistre-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en individu-non-enregistre-label">&nbsp; / Lastname of thesis co-supervisor</label>
+                                    <label class="form-label individu-non-enregistre-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis co-supervisor</label>
                                     <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
                                         <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
                                     </span>
                             <?php }else{ ?>
-                                <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="titre_label_champ_form_en">&nbsp; / Lastname of thesis co-supervisor</label>
+                                <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
                                 <?php if($inscriptionExist &&
                                         $admission->getInscription()->first()->getCoDirecteur()){ ?>
                                         <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">

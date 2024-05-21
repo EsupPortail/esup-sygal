@@ -41,12 +41,12 @@ class EtudiantHydrator extends DoctrineObject
     {
         $data["adresseCodePays"] = !empty($data["adresseCodePays"]) ? $data["adresseCodePays"] : null;
         /** @var Pays $pays */
-        $pays = $this->paysService->getRepository()->find($data["adresseCodePays"]);
+        $pays = $data["adresseCodePays"] ? $this->paysService->getRepository()->find($data["adresseCodePays"]) : null;
         //si le pays sélectionné est la France
         if($pays && $pays->getLibelle() === "France"){
             //on met à vide la ville étrangère potentielle
             $data["adresseCpVilleEtrangere"] = null;
-        }else{
+        }else if($pays && $pays->getLibelle() !== "France") {
             $data["adresseCodePostal"] = null;
             $data["adresseCodeCommune"] = null;
             $data["adresseNomCommune"] = null;
