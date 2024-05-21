@@ -15,7 +15,6 @@
         <field name="prenom2" type="string" column="PRENOM2" length="40" nullable="true"/>
         <field name="prenom3" type="string" column="PRENOM3" length="40" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="DATE_NAISSANCE" nullable="true"/>
-        <field name="villeNaissance" type="string" column="VILLE_NAISSANCE" length="60" nullable="true"/>
         <field name="ine" type="string" column="INE" length="11" nullable="true"/>
         <field name="numeroCandidat" type="string" column="NUMERO_CANDIDAT" length="10" nullable="true"/>
         <field name="adresseLigne1Etage" type="string" column="ADRESSE_LIGNE1_ETAGE" length="38" nullable="true"/>
@@ -23,7 +22,8 @@
         <field name="adresseLigne3voie" type="string" column="ADRESSE_LIGNE3_VOIE" length="38" nullable="true"/>
         <field name="adresseLigne4Complement" type="string" column="ADRESSE_LIGNE4_COMPLEMENT" length="38" nullable="true"/>
         <field name="adresseCodePostal" type="bigint" column="ADRESSE_CODE_POSTAL" length="5" nullable="true"/>
-        <field name="adresseCodeCommune" type="string" column="ADRESSE_CODE_COMMUNE" length="5" nullable="true"/>
+        <field name="adresseNomCommune" type="string" column="ADRESSE_NOM_COMMUNE" length="60" nullable="true"/>
+        <field name="adresseCodeCommune" type="smallint" column="ADRESSE_CODE_COMMUNE" length="5" nullable="true"/>
         <field name="codeCommuneNaissance" type="string" column="CODE_COMMUNE_NAISSANCE" length="5" nullable="true"/>
         <field name="libelleCommuneNaissance" type="string" column="LIBELLE_COMMUNE_NAISSANCE" length="50" nullable="true"/>
         <field name="adresseCpVilleEtrangere" type="string" column="ADRESSE_CP_VILLE_ETRANGERE" length="38" nullable="true"/>
@@ -49,12 +49,6 @@
                 <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-
-<!--        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">-->
-<!--            <join-columns>-->
-<!--                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>-->
-<!--            </join-columns>-->
-<!--        </many-to-one>-->
 
         <many-to-one field="paysNaissance" target-entity="Application\Entity\Db\Pays">
             <join-columns>

@@ -4,6 +4,7 @@ namespace Admission\Hydrator\Etudiant;
 
 use Admission\Entity\Db\Etudiant;
 use Application\Entity\Db\Pays;
+use Application\Service\Pays\PaysServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Service\IndividuServiceAwareTrait;
 
@@ -12,6 +13,8 @@ use Individu\Service\IndividuServiceAwareTrait;
  */
 class EtudiantHydrator extends DoctrineObject
 {
+    use PaysServiceAwareTrait;
+
     public function extract(object $object): array
     {
         /** @var Etudiant $object */
@@ -37,9 +40,29 @@ class EtudiantHydrator extends DoctrineObject
     public function hydrate(array $data, object $object): object
     {
         $data["adresseCodePays"] = !empty($data["adresseCodePays"]) ? $data["adresseCodePays"] : null;
+        /** @var Pays $pays */
+        $pays = $this->paysService->getRepository()->find($data["adresseCodePays"]);
+        //si le pays sélectionné est la France
+        if($pays && $pays->getLibelle() === "France"){
+            //on met à vide la ville étrangère potentielle
+            $data["adresseCpVilleEtrangere"] = null;
+        }else{
+            $data["adresseCodePostal"] = null;
+            $data["adresseCodeCommune"] = null;
+            $data["adresseNomCommune"] = null;
+        }
+        //Si aucune ville française de naissance n'est renseignée, on met à vide le code INSEE précédemment renseigné
+        if(empty($data["libelleCommuneNaissance"])){
+            $data["codeCommuneNaissance"] = null;
+        }
+        //Si aucune ville française n'est renseignée, on met à vide le code postal et le code INSEE précédemment renseigné
+        if(empty($data["adresseNomCommune"])){
+            $data["adresseCodePostal"] = null;
+            $data["adresseCodeCommune"] = null;
+        }
+
         $data["paysNaissance"] = !empty($data["paysNaissance"]) ? $data["paysNaissance"] : null;
         $data["nationalite"] = !empty($data["nationalite"]) ? $data["nationalite"] : null;
-        $data["adresseCodePostal"] = empty($data["adresseCodePostal"]) ? null : $data["adresseCodePostal"];
 
         //Si la case niveauEtude n'est pas le diplôme national, on met à null les valeurs des champs reliés
         if(isset($data["niveauEtude"]) && $data["niveauEtude"] != 1){

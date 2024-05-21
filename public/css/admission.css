@@ -1,5 +1,5 @@
 @charset "UTF-8";
-label:not(:empty):not(:has(*))::after, .label_en::after, .admission-section-title-en {
+label:not(:empty):not(:has(*))::after, .label_en, .admission-section-title-en {
   content: attr(data-after);
   font-style: italic;
   font-weight: bold; }

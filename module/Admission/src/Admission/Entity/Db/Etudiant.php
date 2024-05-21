@@ -46,11 +46,6 @@ class Etudiant implements HistoriqueAwareInterface{
     private $dateNaissance;
 
     /**
-     * @var string|null
-     */
-    private $villeNaissance;
-
-    /**
      * @var Pays|null
      */
     private $nationalite;
@@ -106,9 +101,14 @@ class Etudiant implements HistoriqueAwareInterface{
     private $adresseCodePostal;
 
     /**
-     * @var string|null
+     * @var int|null
      */
     private $adresseCodeCommune;
+
+    /**
+     * @var string|null
+     */
+    private $adresseNomCommune;
 
     /**
      * @var string|null
@@ -372,30 +372,6 @@ class Etudiant implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set villeNaissance.
-     *
-     * @param string|null $villeNaissance
-     *
-     * @return Etudiant
-     */
-    public function setVilleNaissance($villeNaissance = null)
-    {
-        $this->villeNaissance = $villeNaissance;
-
-        return $this;
-    }
-
-    /**
-     * Get villeNaissance.
-     *
-     * @return string|null
-     */
-    public function getVilleNaissance()
-    {
-        return $this->villeNaissance;
-    }
-
-    /**
      * Set nationalite.
      *
      * @param Pays|null $nationalite
@@ -614,7 +590,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Set adresseCodeCommune.
      *
-     * @param string|null $adresseCodeCommune
+     * @param int|null $adresseCodeCommune
      *
      * @return Etudiant
      */
@@ -628,11 +604,35 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Get adresseCodeCommune.
      *
-     * @return string|null
+     * @return int|null
      */
     public function getAdresseCodeCommune()
     {
         return $this->adresseCodeCommune;
+    }
+
+    /**
+     * Set adresseNomCommune.
+     *
+     * @param int|null $adresseNomCommune
+     *
+     * @return Etudiant
+     */
+    public function setAdresseNomCommune($adresseNomCommune = null)
+    {
+        $this->adresseNomCommune = $adresseNomCommune;
+
+        return $this;
+    }
+
+    /**
+     * Get adresseNomCommune.
+     *
+     * @return string|null
+     */
+    public function getAdresseNomCommune()
+    {
+        return $this->adresseNomCommune;
     }
 
     /**

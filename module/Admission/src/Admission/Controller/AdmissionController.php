@@ -749,8 +749,8 @@ class AdmissionController extends AdmissionAbstractController {
             $entry['prenom2'] = $etudiant->getPrenom2();
             $entry['prenom3'] = $etudiant->getPrenom3();
             $entry['date_naissance'] = $etudiant->getDateNaissance();
-            $entry['code_commune_naissance'] = "";
-            $entry['libellé_commune_naissance'] = $etudiant->getVilleNaissance();
+            $entry['code_commune_naissance'] = $etudiant->getCodeCommuneNaissance();
+            $entry['libellé_commune_naissance'] = $etudiant->getLibelleCommuneNaissance();
             $entry['code_pays_naissance'] = $etudiant->getPaysNaissance() ? $etudiant->getPaysNaissance()->getCodePaysApogee() : null;
             $entry['code_nationalite'] = $etudiant->getNationalite() ? $etudiant->getNationalite()->getCodePaysApogee() : null;
             $entry['ine'] = $etudiant->getIne();

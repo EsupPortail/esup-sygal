@@ -138,9 +138,19 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Text('villeNaissance'))
-                ->setLabel("Ville de naissance")
-                ->setLabelAttributes(['data-after' => " / City of birth"])
+            (new Text('libelleCommuneNaissance'))
+                ->setAttributes([
+                    'id' => "libelleCommuneNaissance",
+                    'placeholder' => "Entrez les deux premières lettres...",
+                    'class' => 'selectpicker show-tick',
+                ])
+        );
+
+        $this->add(
+            (new Hidden('codeCommuneNaissance'))
+                ->setAttributes([
+                    'id' => "codeCommuneNaissance"
+                ])
         );
 
         $this->add(
@@ -169,41 +179,56 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
 
         $this->add(
             (new Text('adresseLigne1Etage'))
-                ->setLabel("Adresse (étage)")
-                ->setLabelAttributes(['data-after' => " / Address"])
+                ->setLabel("Adresse (Étage)")
+                ->setLabelAttributes(['data-after' => " / Address (Floor)"])
         );
 
         $this->add(
             (new Text('adresseLigne2Batiment'))
-                ->setLabel("Adresse (Bâtiment)")
+                ->setLabel("Adresse (Entrée/Bâtiment/Immeuble)")
+                ->setLabelAttributes(['data-after' => " / Address (Entrance/Building/Block)"])
         );
 
         $this->add(
             (new Text('adresseLigne3Voie'))
-                ->setLabel("Adresse (Voie)")
+                ->setLabel("Adresse (Numéro – Libellé de la voie)")
+                ->setLabelAttributes(['data-after' => " / Number - Street name"])
         );
 
         $this->add(
             (new Text('adresseLigne4Complement'))
-                ->setLabel("Adresse (complément)")
+                ->setLabel("Adresse (Complément)")
+                ->setLabelAttributes(['data-after' => " / Address (Complement)"])
         );
 
         $this->add(
             (new Number('adresseCodePostal'))
                 ->setLabel("Code postal")
                 ->setLabelAttributes(['data-after' => " / Postal code"])
+                ->setAttributes([
+                    'id' => "adresseCodePostal"
+                ])
         );
 
         $this->add(
-            (new Text('adresseCodeCommune'))
-                ->setLabel("Ville")
-                ->setLabelAttributes(['data-after' => " / City"])
+            (new Text('adresseNomCommune'))
+                ->setAttributes([
+                    'id' => "adresseNomCommune",
+                    'placeholder' => "Entrez les deux premières lettres...",
+                ])
         );
 
         $this->add(
-            (new Number('adresseCpVilleEtrangere'))
-                ->setLabel("Code postal")
-                ->setLabelAttributes(['data-after' => " / Postal code"])
+            (new Hidden('adresseCodeCommune'))
+                ->setAttributes([
+                    'id' => "adresseCodeCommune"
+                ])
+        );
+
+        $this->add(
+            (new Text('adresseCpVilleEtrangere'))
+                ->setLabel("Ville étrangère (avec code postal)")
+                ->setLabelAttributes(['data-after' => " / Foreign city (with postal code)"])
         );
 
         $this->add(
