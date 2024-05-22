@@ -4,6 +4,12 @@ Journal des modifications
 8.4.0
 -----
 - Filtre de recherche textuelle utilisant l'opérateur LIKE : amélioration pour qu'il soit insensible à la casse.
+- Module Admissions : Export CSV des dossiers d'admissions validés (au format attendu pour l'export vers Pégase)
+- Module Admissions : Appel API Insee afin de récupérer les codes/libellés des communes françaises nécessaires à l'export vers Pégase
+- Module Admissions : Suppression du privilège/notification pour notifier lors de commentaires ajoutés (notifier-commentaires-ajoutes)
+- Module Admissions : Suppression de la notification lors de la dévalidation de la lecture de la convention de formation doctorale
+- Module Admissions : Modification des sujets/corps de certains templates
+- Module Admissions : Changement du libellé du bouton à la dernière étape en fonction de l'état du dossier et de l'utilisateur connecté
 - [FIX] Utilisation du bon code structure pour les établissements (source_code).
 - [FIX] : Ajout de conditions pour éviter que InscriptionAssertion retourne une erreur lors de l'accès à un écran présentant des formations (ayant des sessions sans séances) ou d'une désinscription
 
