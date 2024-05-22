@@ -46,7 +46,7 @@ mkdir -p $OUTPUT_DIR
 [[ -z $PGPORT ]] && echo "Vous devez faire un 'export PGPORT=xxxx'." && exit 1
 [[ -z $PGDATABASE ]] && echo "Vous devez faire un 'export PGDATABASE=xxxx'." && exit 1
 [[ -z $PGUSER ]] && echo "Vous devez faire un 'export PGUSER=xxxx'." && exit 1
-[[ -z $PGPASSWORD ]] && echo "Vous devez faire un 'export PGPASSWORD=xxxx'." && exit 1
+[[ -z $PGPASSWORD ]] && echo "Entrez la valeur de PGPASSWORD, svp. " && read -s PGPASSWORD && export PGPASSWORD
 
 # Chargement des variables de config :
 #   DBNAME
@@ -149,7 +149,7 @@ echo "> $OUTPUT_FILE"
 # schema objects
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/02_$NAME_CREATE_SCHEMA.sql
-pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' --exclude-table '*_SAV' >$OUTPUT_FILE
+pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' --exclude-table '*_SAV' --exclude-table 'SAV_*' --exclude-table 'Z_*' >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 #prepareScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -223,7 +223,7 @@ echo "> $OUTPUT_FILE"
 # constraints
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/07_$NAME_CREATE_CONSTRAINTS.sql
-pg_dump --section=post-data --schema-only --exclude-table="mv_indicateur_*" >$OUTPUT_FILE
+pg_dump --section=post-data --schema-only --exclude-table="mv_indicateur_*" --exclude-table '*_SAV' --exclude-table 'SAV_*' --exclude-table 'Z_*' >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 

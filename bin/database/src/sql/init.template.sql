@@ -46,16 +46,14 @@ where s.source_code = '{ETAB_CODE}'
 --
 -- Création des sources de données importables, ex: Apogée.
 --
-delete from source where code <> 'SYGAL::sygal'
-;
 insert into source (id, code, libelle, importable, etablissement_id)
-select 2, source_code||'::apogee', 'Apogée '||source_code, true, id
+select nextval('source_id_seq'), source_code||'::apogee', 'Apogée '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
   and '{SOURCE_APOGEE}' = '1'
 ;
 insert into source (id, code, libelle, importable, etablissement_id)
-select 3, source_code||'::physalis', 'Physalis '||source_code, true, id
+select nextval('source_id_seq'), source_code||'::physalis', 'Physalis '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
   and '{SOURCE_PHYSALIS}' = '1'

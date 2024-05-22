@@ -179,14 +179,6 @@ ALTER TABLE ONLY public.discipline_sise
 
 
 --
--- Name: z_doctorant_compl doctorant_compl_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.z_doctorant_compl
-    ADD CONSTRAINT doctorant_compl_pkey PRIMARY KEY (id);
-
-
---
 -- Name: doctorant_mission_enseignement doctorant_mission_enseignement_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -1365,48 +1357,6 @@ CREATE INDEX diffusion_these_idx ON public.diffusion USING btree (these_id);
 --
 
 CREATE UNIQUE INDEX discipline_sise_un ON public.discipline_sise USING btree (code);
-
-
---
--- Name: doctorant_compl_doctorant_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX doctorant_compl_doctorant_idx ON public.z_doctorant_compl USING btree (doctorant_id);
-
-
---
--- Name: doctorant_compl_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX doctorant_compl_hc_idx ON public.z_doctorant_compl USING btree (histo_createur_id);
-
-
---
--- Name: doctorant_compl_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX doctorant_compl_hd_idx ON public.z_doctorant_compl USING btree (histo_destructeur_id);
-
-
---
--- Name: doctorant_compl_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX doctorant_compl_hm_idx ON public.z_doctorant_compl USING btree (histo_modificateur_id);
-
-
---
--- Name: doctorant_compl_un_1; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX doctorant_compl_un_1 ON public.z_doctorant_compl USING btree (persopass, histo_destruction) WHERE (histo_destruction IS NOT NULL);
-
-
---
--- Name: doctorant_compl_un_2; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX doctorant_compl_un_2 ON public.z_doctorant_compl USING btree (persopass) WHERE (histo_destruction IS NULL);
 
 
 --
@@ -3948,14 +3898,6 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: z_doctorant_compl doctorant_compl_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.z_doctorant_compl
-    ADD CONSTRAINT doctorant_compl_doctorant_fk FOREIGN KEY (doctorant_id) REFERENCES public.doctorant(id);
-
-
---
 -- Name: doctorant doctorant_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -5921,30 +5863,6 @@ ALTER TABLE ONLY public.privilege
 
 ALTER TABLE ONLY public.individu_compl
     ADD CONSTRAINT table_name_individu_id_fk FOREIGN KEY (individu_id) REFERENCES public.individu(id) ON DELETE CASCADE;
-
-
---
--- Name: z_doctorant_compl thesard_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.z_doctorant_compl
-    ADD CONSTRAINT thesard_compl_hcfk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
-
-
---
--- Name: z_doctorant_compl thesard_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.z_doctorant_compl
-    ADD CONSTRAINT thesard_compl_hdfk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
-
-
---
--- Name: z_doctorant_compl thesard_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.z_doctorant_compl
-    ADD CONSTRAINT thesard_compl_hmfk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
 
 
 --

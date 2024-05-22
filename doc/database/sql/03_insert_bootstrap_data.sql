@@ -3,13 +3,13 @@
 --
 
 --
--- Sources de données ESUP-SyGAL.
+-- Sources de données.
 --
-delete from source where code = 'SYGAL::sygal'
-;
-insert into source (id, code, libelle, importable)
-values (1, 'SYGAL::sygal', 'ESUP-SyGAL', false)
-;
+delete from source where code = 'SYGAL::sygal';
+delete from source where code = 'HAL';
+insert into source (id, code, libelle, importable) values (1, 'SYGAL::sygal', 'ESUP-SyGAL', false);
+insert into source (id, code, libelle, importable) values (2, 'HAL', 'HAL', true);
+alter sequence source_id_seq restart with 3;
 
 --
 -- Pseudo-utilisateur 'sygal-app'.
