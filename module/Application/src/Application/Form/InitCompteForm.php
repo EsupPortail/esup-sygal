@@ -2,6 +2,8 @@
 
 namespace Application\Form;
 
+use Laminas\Filter\StringTrim;
+use Laminas\Filter\StripTags;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Text;
@@ -13,7 +15,6 @@ use Laminas\Validator\Regex;
 
 class InitCompteForm extends Form
 {
-
     /** @var string */
     private $username;
 
@@ -81,6 +82,10 @@ class InitCompteForm extends Form
         $this->setInputFilter((new Factory())->createInputFilter([
             'username' => [
                 'required' => true,
+                'filters' => [
+                    ['name' => StringTrim::class],
+                    ['name' => StripTags::class],
+                ],
                 'validators' => [[
                     'name' => Callback::class,
                     'options' => [
@@ -96,6 +101,9 @@ class InitCompteForm extends Form
             ],
             'password1' => [
                 'required' => true,
+                'filters' => [
+                    ['name' => StringTrim::class],
+                ],
                 'validators' => [
                     [
                         'name' => Regex::class,
@@ -109,6 +117,9 @@ class InitCompteForm extends Form
             ],
             'password2' => [
                 'required' => true,
+                'filters' => [
+                    ['name' => StringTrim::class],
+                ],
                 'validators' => [
                     new Identical('password1'),
                 ],

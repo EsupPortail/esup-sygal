@@ -470,18 +470,16 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             ]);
         }
 
-        /** @var InitCompteForm $form */
-        $form = $this->getInitCompteForm();
-        $form->setUsername($utilisateur->getUsername());
-        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], [], true));
-        $form->bind(new Utilisateur());
+        $this->initCompteForm->setUsername($utilisateur->getUsername());
+        $this->initCompteForm->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], [], true));
+        $this->initCompteForm->bind(new Utilisateur());
 
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $form->setData($data);
-            if ($form->isValid()) {
+            $this->initCompteForm->setData($data);
+            if ($this->initCompteForm->isValid()) {
                 $this->utilisateurService->changePassword($utilisateur, $data['password1']);
                 $this->flashMessenger()->addSuccessMessage('Mot de passe initialisé avec succés.');
                 return $this->redirect()->toRoute('home');
@@ -489,7 +487,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         return new ViewModel([
-            'form' => $form,
+            'form' => $this->initCompteForm,
             'utilisateur' => $utilisateur,
         ]);
     }
