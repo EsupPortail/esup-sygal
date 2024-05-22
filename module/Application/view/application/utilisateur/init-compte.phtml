@@ -4,7 +4,7 @@
  * @see \Application\Controller\UtilisateurController::initCompteAction()
  *
  * @var InitCompteForm $form
- * @var Utilisateur $utilisateur
+ * @var ?Utilisateur $utilisateur
  */
 
 
@@ -21,65 +21,64 @@ $this->headTitle("Initialisation du compte utilisateur");
 <?php if ($utilisateur !== null) : ?>
 
     <?php echo $this->form()->openTag($form); ?>
-
-    <div class="alert alert-info">
-        <span class="fas fa-info-circle"></span>
-        Le nom d’utilisateur vous a été transmis dans le mail électronique
-        <br/>
-        <br/>
-        <span class="fas fa-info-circle"></span>
-        Your username was indicated in the e-mail
-    </div>
-
-    <?php echo $this->formControlGroup($form->get('username')); ?>
-
-    <?php echo $this->formControlGroup($form->get('password1')); ?>
-
-    <div class="alert alert-info">
-        <div class="row">
-            <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-3">
+            <?php echo $this->formControlGroup($form->get('username')); ?>
+        </div>
+        <div class="col-md-5">
+            <div class="alert alert-info">
                 <span class="fas fa-info-circle"></span>
-                Le mot de passe doit :
-                <ul>
-                    <li> être d'une longueur minimale de 8 caractères ; </li>
-                    <li> posséder des caractères en majuscule et en minuscule ; </li>
-                    <li> posséder au moins un chiffre ; </li>
-                    <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
-                </ul>
-            </div>
-            <div class="col-md-6">
-                <span class="fas fa-info-circle"></span>
-                The password should contain :
-                <ul>
-                    <li> at least 8 characters ; </li>
-                    <li> at least one lowercase character and at least one uppercase character ; </li>
-                    <li> at least one digit  ; </li>
-                    <li> at least one special character (among '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
-                </ul>
+                Le nom d’utilisateur vous a été transmis dans le mail électronique / Your username was indicated in the e-mail.
             </div>
         </div>
     </div>
-
-    <?php echo $this->formControlGroup($form->get('password2')); ?>
-
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('password1')); ?>
+            <?php echo $this->formControlGroup($form->get('password2')); ?>
+        </div>
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                <div class="row">
+                    <div class="col-md-6">
+                        <span class="fas fa-info-circle"></span>
+                        Le mot de passe doit :
+                        <ul>
+                            <li> être d'une longueur minimale de 8 caractères ; </li>
+                            <li> posséder des caractères en majuscule et en minuscule ; </li>
+                            <li> posséder au moins un chiffre ; </li>
+                            <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="fas fa-info-circle"></span>
+                        The password should contain :
+                        <ul>
+                            <li> at least 8 characters ; </li>
+                            <li> at least one lowercase character and at least one uppercase character ; </li>
+                            <li> at least one digit  ; </li>
+                            <li> at least one special character (among '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php echo $this->formControlGroup($form->get('bouton')); ?>
-
-
     <?php echo $this->form()->closeTag(); ?>
+
 <?php else : ?>
 
 <div class="alert alert-danger">
-    <p class="lead">
+    <p>
         <span class="icon icon-attention"></span> Aucun compte utilisateur ne correspond à ce jeton d'identification.
     </p>
-
-    <p>
     Ceci peut se produire si :
-        <ul>
-            <li> le jeton est incorrecte, </li>
-            <li> le compte est déjà initialisé, </li>
-            <li> le compte a été effacé.</li>
-        </ul>
-    </p>
+    <ul>
+        <li> le jeton est incorrect, </li>
+        <li> le compte est déjà initialisé, </li>
+        <li> le compte a été effacé.</li>
+    </ul>
 </div>
+
 <?php endif; ?>

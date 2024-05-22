@@ -57,7 +57,7 @@ class InitCompteForm extends Form
             'type' => Password::class,
             'name' => 'password2',
             'options' => [
-                'label' => "Vérification du mot de passe / Password confirmation * :",
+                'label' => "Confirmation du mot de passe / Password confirmation * :",
             ],
             'attributes' => [
                 'id' => 'password2',

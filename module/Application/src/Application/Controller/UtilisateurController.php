@@ -461,12 +461,13 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
     }
 
-    public function initCompteAction()
+    public function initCompteAction(): Response|ViewModel
     {
         $token = $this->params()->fromRoute('token');
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
         if ($utilisateur === null) {
             return new ViewModel([
+                'utilisateur' => null,
             ]);
         }
 
