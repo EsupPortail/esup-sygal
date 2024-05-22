@@ -49,7 +49,6 @@ class AdmissionForm extends MultipageForm
         $nextButton = $navigationElement->getNextButton();
         $prevButton = $navigationElement->getPreviousButton();
         $submitButton = $navigationElement->getSubmitButton();
-        $confirmButton = $navigationElement->getConfirmButton();
         $cancelButton = $navigationElement->getCancelButton();
 
         // ajouts de classes CSS
@@ -58,8 +57,7 @@ class AdmissionForm extends MultipageForm
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
         $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
         $submitButton->setValue('Enregistrer');
-        $confirmButton->setAttribute('class', $confirmButton->getAttribute('class') . ' btn btn-success');
-        $cancelButton->setAttribute('class', $confirmButton->getAttribute('class') . ' visually-hidden');
+        $cancelButton->setAttribute('class', $cancelButton->getAttribute('class') . ' visually-hidden');
 
         return $navigationElement;
     }

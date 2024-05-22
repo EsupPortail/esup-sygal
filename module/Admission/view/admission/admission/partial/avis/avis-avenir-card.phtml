@@ -25,7 +25,7 @@ $canAjouterOperation =
 <div class="row subfield">
     <div class="col etape-signature-infos-container">
         <?php if ($showRangOperation) {
-            if ($operationEnAttente && $operationEnAttente->getTypeToString() == $operation->getTypeToString()) { ?>
+            if ($operationEnAttente && $operationEnAttente->getTypeToString() === $operation->getTypeToString()) { ?>
                 <div class="col-lg-2 circle-etape etape-signature-infos-container">
                     <span class="icon icon-hourglass operation-waiting"></span>
                 </div>

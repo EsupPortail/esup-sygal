@@ -10,11 +10,9 @@ use Admission\Entity\Db\TypeValidation;
 use Admission\Notification\AdmissionOperationAttenduNotification;
 use Admission\Provider\Template\MailTemplates;
 use Admission\Service\Url\UrlServiceAwareTrait;
-use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Individu\Entity\Db\Individu;
-use Individu\Entity\Db\IndividuRole;
 use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
@@ -31,29 +29,6 @@ class NotificationFactory extends NF
     use UserContextServiceAwareTrait;
     use RoleServiceAwareTrait;
     use UrlServiceAwareTrait;
-
-    public function createNotificationCommentairesAjoutes(Admission $admission): Notification
-    {
-        $notif = new Notification();
-        $individu = $admission->getIndividu();
-        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
-        if (!$email) {
-            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour l'étudiant {$individu}");
-        }
-
-        //Création du lien vers le dossier d'admission
-        $vars = ['admission' => $admission];
-        $url = $this->urlService->setVariables($vars);
-        $vars['Url'] = $url;
-
-        $vars['individu'] = $individu;
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::COMMENTAIRES_AJOUTES, $vars);
-        $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
-            ->setSubject($rendu->getSujet())
-            ->setBody($rendu->getCorps());
-
-        return $notif;
-    }
 
     public function createNotificationDossierIncomplet(Admission $admission): Notification
     {
@@ -72,48 +47,6 @@ class NotificationFactory extends NF
         $vars['individu'] = $individu;
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::NOTIFICATION_DOSSIER_INCOMPLET, $vars);
         $notif->setTo([$email => $admission->getIndividu()->getNomComplet()])
-            ->setSubject($rendu->getSujet())
-            ->setBody($rendu->getCorps());
-
-        return $notif;
-    }
-
-    public function createNotificationGestionnaire(Admission $admission): Notification
-    {
-        $notif = new Notification();
-
-        $structureConcrete = $admission->getInscription()->first()->getEcoleDoctorale();
-        // Recherche des individus ayant le rôle attendu.
-        $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), Role::CODE_GEST_ED, $admission->getInscription()->first()->getComposanteDoctorat()) : null;
-        if (empty($individusRoles)) {
-            // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-            $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), Role::CODE_GEST_ED);
-        }
-        $emails = [];
-        if (!empty($individusRoles) && count($individusRoles)) {
-            foreach($individusRoles as $individuRole){
-                $individu = ($individuRole instanceof IndividuRole) ? $individuRole->getIndividu() : $individuRole;
-                $email = $individu->getEmailContact() ? $individu->getEmailContact() : $individu->getEmailPro();
-                if ($email) {
-                    $emails[] = $email;
-                }
-            }
-        }
-
-        if (!$emails) {
-            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour les gestionnaires de ce dossier d'admission");
-        }
-
-        //Création du lien vers le dossier d'admission
-        $vars = ['admission' => $admission];
-        $url = $this->urlService->setVariables($vars);
-        $vars['Url'] = $url;
-
-        $individu = $admission->getIndividu();
-        $vars['individu'] = $individu;
-
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::NOTIFICATION_GESTIONNAIRE, $vars);
-        $notif->setTo($emails)
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
@@ -160,6 +93,9 @@ class NotificationFactory extends NF
             'individu' => $individu
         ];
 
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
+
         if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_SIGNATURE_PRESIDENT){
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
         }else{
@@ -175,7 +111,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -213,6 +149,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionValidation->getTypeValidation()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SUPPRIMEE, $vars);
 
         $notif = new Notification();
@@ -224,7 +162,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -234,6 +172,16 @@ class NotificationFactory extends NF
                 return $accu;
             }, []))
         );
+
+        if ($notif->getCc()) {
+            $successMessage .= sprintf(
+                " et en copie à %s",
+                implode(', ', array_reduce(array_keys($notif->getCc()), function(array $accu, string $key) use ($notif) {
+                    $accu[] = sprintf('%s (%s)', $notif->getCc()[$key], $key);
+                    return $accu;
+                }, [])),
+            );
+        }
 
         $notif->addSuccessMessage($successMessage);
 
@@ -255,6 +203,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionAvis->getAvis()->getAvisType()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         if($admissionAvis->getAvis()->getAvisType()->getCode() == AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_POSITIF){
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
@@ -271,7 +221,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -312,6 +262,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionAvis->getAvis()->getAvisType()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         if($admissionAvis->getAvis()->getAvisType()->getCode() == AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_POSITIF){
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
@@ -328,7 +280,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -369,6 +321,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionAvis->getAvis()->getAvisType()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::AVIS_SUPPRIME, $vars);
 
@@ -381,7 +335,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -436,7 +390,7 @@ class NotificationFactory extends NF
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
             $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
-            $notif->setCc($emailDirecteur);
+            $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
         $successMessage = sprintf(
@@ -461,5 +415,4 @@ class NotificationFactory extends NF
 
         return $notif;
     }
-
 }

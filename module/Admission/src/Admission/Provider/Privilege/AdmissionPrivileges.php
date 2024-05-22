@@ -45,7 +45,6 @@ class AdmissionPrivileges extends Privileges {
     const ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER = 'admission-admission-acceder-recapitulatif-signe-dossier';
 
     //notification
-    const ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES  = 'admission-admission-commentaires-ajoutes';
     const ADMISSION_NOTIFIER_DOSSIER_INCOMPLET  = 'admission-admission-notifier-dossier-incomplet';
 
     //convention de formation doctorale

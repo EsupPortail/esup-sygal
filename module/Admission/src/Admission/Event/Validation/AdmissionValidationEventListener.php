@@ -9,7 +9,6 @@ use Admission\Event\Operation\AdmissionOperationAbstractEventListener;
 use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationService;
 use Laminas\EventManager\EventManagerInterface;
-use Notification\Notification;
 use Webmozart\Assert\Assert;
 
 /**
@@ -54,8 +53,9 @@ class AdmissionValidationEventListener extends AdmissionOperationAbstractEventLi
     public function onValidationSupprimee(AdmissionValidationEvent $event)
     {
         $this->initFromEvent($event);
-
-        $this->handleNotificationValidationSupprimee();
+        if (!in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE)){
+            $this->handleNotificationValidationSupprimee();
+        }
     }
 
     private function handleNotificationValidationAjoutee()

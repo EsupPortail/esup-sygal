@@ -79,7 +79,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case 'telecharger-document':
                 case 'enregistrer-document':
                 case 'supprimer-document':
-                case 'notifier-commentaires-ajoutes':
                 case 'notifier-gestionnaire':
                 case 'notifier-dossier-complet':
                 case 'generer-recapitulatif':
@@ -114,7 +113,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
             }
 
             switch ($action) {
-                case 'notifier-commentaires-ajoutes':
                 case 'notifier-gestionnaire':
                 case 'notifier-dossier-complet':
                 case 'notifier-dossier-incomplet':
@@ -158,10 +156,13 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
 
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES:
-                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
                 case AdmissionPrivileges::ADMISSION_VERIFIER:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
                     $this->assertCanGestionnaireGererAdmission($this->admission->getAdmissionValidations());
+            }
+
+            if ($privilege == AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET) {
+                $this->assertCanNotifierDossierIncomplet($this->admission->getAdmissionValidations());
             }
 
             switch ($privilege) {
@@ -172,7 +173,6 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case AdmissionPrivileges::ADMISSION_TELEVERSER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_SUPPRIMER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT:
-                case AdmissionPrivileges::ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES:
                 case AdmissionPrivileges::ADMISSION_VERIFIER:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
                     $this->assertAppartenanceAdmission($this->admission);
@@ -283,6 +283,27 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                                  n'a pas encore été effectuée"
             );
         }
+    }
+
+    protected function assertCanNotifierDossierIncomplet(Collection $admissionValidations): void
+    {
+        $attestationHonneurEffectuee = false;
+        $validationGestionnairePasEffectuee = true;
+        foreach ($admissionValidations as $admissionValidation) {
+            if (TypeValidation::CODE_ATTESTATION_HONNEUR === $admissionValidation->getTypeValidation()->getCode()) {
+                $attestationHonneurEffectuee = true;
+            }
+
+            if (TypeValidation::CODE_VALIDATION_GESTIONNAIRE === $admissionValidation->getTypeValidation()->getCode()) {
+                $validationGestionnairePasEffectuee = false;
+            }
+        }
+
+        $this->assertTrue(
+            $attestationHonneurEffectuee && $validationGestionnairePasEffectuee,
+            "La génération du récapitulatif n'est possible que lorsque la validation des gestionnaires
+                     n'a pas encore été effectuée et que l'attestation sur l'honneur a été faîte de la part de l'étudiant"
+        );
     }
 
     protected function assertCanGenererAndTeleverserRecapitulatif(Collection $admissionValidations): void

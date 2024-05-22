@@ -353,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        const buttons = document.querySelectorAll('.access_validation_operation, .access_devalidation_operation, .access-suppression-operation-btn, .access_notification_dossier_incomplet');
+        const buttons = document.querySelectorAll('.access_validation_operation, .access_devalidation_operation, .access-suppression-operation-btn, .access-notification-dossier-incomplet-btn');
         buttons.forEach(function(button) {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
