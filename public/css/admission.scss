@@ -1,6 +1,6 @@
 $title_module_color: #004980;
 
-label:not(:empty):not(:has(*))::after, .label_en::after, .admission-section-title-en {
+label:not(:empty):not(:has(*))::after, .label_en, .admission-section-title-en {
   content: attr(data-after);
   font-style: italic;
   font-weight: bold;

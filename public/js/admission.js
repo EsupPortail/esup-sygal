@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
-        $('input:radio[name="etudiant[civilite]"]:not(:checked)').attr('disabled', true);
+        $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
 
         const btn_infos_ine = document.querySelector('.info-ine-btn');
         if (btn_infos_ine) {
@@ -151,6 +151,75 @@ document.addEventListener("DOMContentLoaded", function() {
                     additionalFieldsDiplome.style.display = 'none';
                     additionalFieldsAutre.style.display = 'block';
                 }
+            });
+        });
+
+        // -------------------GESTION VILLES FORM----------------------------
+        function setupAutocomplete(inputId, codeId, postalId) {
+            $(inputId).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: 'https://geo.api.gouv.fr/communes',
+                        data: {
+                            nom: request.term,
+                            fields: 'nom,code,codesPostaux',
+                            limit: 5,
+                            boost: 'population'
+                        },
+                        success: function(data) {
+                            var suggestions = [];
+                            data.forEach(function(ville) {
+                                suggestions.push({
+                                    label: ville.nom,
+                                    code: ville.code,
+                                    codePostal: ville.codesPostaux[0]
+                                });
+                            });
+                            response(suggestions);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    $(inputId).val(ui.item.label);
+                    $(codeId).val(ui.item.code);
+                    $(postalId).val(ui.item.codePostal);
+                    return false;
+                }
+            });
+        }
+
+        function toggleCountryVisibility() {
+            const selectedCountry = $('[data-id="adresseCodePays"] .filter-option-inner-inner').text().trim();
+            //Si le pays sélectionné est France, on affiche le champ Code postal/Ville
+            if (selectedCountry === 'France' || selectedCountry === 'Sélectionnez une option') {
+                $('.adresse-cp-ville-etrangere').hide();
+                $('.adresse-nom-commune').show();
+                $('.adresse-code-postal').show();
+            } else {
+                $('.adresse-cp-ville-etrangere').show();
+                $('.adresse-nom-commune').hide();
+                $('.adresse-code-postal').hide();
+            }
+        }
+
+        $(document).ready(function() {
+            setupAutocomplete('#adresseNomCommune', '#adresseCodeCommune', '#adresseCodePostal');
+            setupAutocomplete('#libelleCommuneNaissance', '#codeCommuneNaissance', '');
+            toggleCountryVisibility();
+
+            const targetNode = document.querySelector('[data-id="adresseCodePays"]');
+            const observer = new MutationObserver(toggleCountryVisibility);
+
+            const config = { attributes: true, attributeFilter: ['title'] };
+            observer.observe(targetNode, config);
+
+            $('#libelleCommuneNaissance').on('input', function() {
+                $('#codeCommuneNaissance').val('');
+            });
+
+            $('#adresseNomCommune').on('input', function() {
+                $('#adresseCodeCommune').val('');
             });
         });
     }
@@ -216,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 throw new Error("Erreur de chargement");
                             }
                             response.blob().then(function(myBlob) {
-                                   load(myBlob)
+                                load(myBlob)
                             });
                             if(inputId === "ADMISSION_CHARTE_DOCTORAT") {
                                 $('.charte-doctorale-operations').show();
@@ -422,7 +491,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 $(document).ready(function () {
-    if (currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
+    if (currentUrl.indexOf("/etudiant") !== -1 ||currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
         $('select').selectpicker();
     }
 

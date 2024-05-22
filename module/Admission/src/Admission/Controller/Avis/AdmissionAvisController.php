@@ -2,6 +2,9 @@
 
 namespace Admission\Controller\Avis;
 
+use Admission\Entity\Db\Etat;
+use Admission\Entity\Db\Etudiant;
+use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
@@ -28,6 +31,7 @@ class AdmissionAvisController extends AbstractController
     use ValidationServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use AvisServiceAwareTrait;
+    use EtudiantServiceAwareTrait;
 
     use IdifyFilterAwareTrait;
     use EventRouterReplacerAwareTrait;
@@ -72,6 +76,14 @@ class AdmissionAvisController extends AbstractController
                 $event = $this->admissionAvisService->triggerEventAvisAjoute($admissionAvis);
                 $this->admissionService->changeEtatAdmission($admissionAvis, "aviser");
 
+                if($admission->getEtat()->getCode() === Etat::CODE_VALIDE){
+                    //Génération du numéro de candidat
+                    /** @var Etudiant $etudiant */
+                    $etudiant = $admission->getEtudiant()->first();
+                    $etudiant->setNumeroCandidat($this->etudiantService->generateUniqueNumeroCandidat($admission));
+                    $this->etudiantService->update($etudiant);
+                }
+
                 $this->flashMessenger()->addSuccessMessage("Avis enregistré avec succès.");
                 $this->flashMessengerAddMessagesFromEvent($event);
 
@@ -111,7 +123,15 @@ class AdmissionAvisController extends AbstractController
             if ($this->form->isValid()) {
                 $this->admissionAvisService->updateAdmissionAvis($admissionAvis);
                 $event = $this->admissionAvisService->triggerEventAvisModifie($admissionAvis);
-                $this->admissionService->changeEtatAdmission($admissionAvis, "modifier");
+                $admission = $this->admissionService->changeEtatAdmission($admissionAvis, "modifier");
+
+                if($admission->getEtat()->getCode() === Etat::CODE_VALIDE){
+                    //Génération du numéro de candidat
+                    /** @var Etudiant $etudiant */
+                    $etudiant = $admission->getEtudiant()->first();
+                    $etudiant->setNumeroCandidat($this->etudiantService->generateUniqueNumeroCandidat($admission));
+                    $this->etudiantService->update($etudiant);
+                }
 
                 $this->flashMessenger()->addSuccessMessage("Avis modifié avec succès.");
                 $this->flashMessengerAddMessagesFromEvent($event);

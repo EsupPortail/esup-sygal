@@ -2,6 +2,7 @@
 
 namespace Admission\Hydrator\Etudiant;
 
+use Application\Service\Pays\PaysService;
 use Doctrine\ORM\EntityManager;
 use Individu\Service\IndividuService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -23,11 +24,10 @@ class EtudiantHydratorFactory implements FactoryInterface
          * @var EntityManager $entityManager
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
-        $individuService = $container->get(IndividuService::class);
+        $paysService = $container->get(PaysService::class);
 
         $etudiantHydrator = new EtudiantHydrator($entityManager);
-        $etudiantHydrator->setIndividuService($individuService);
-
+        $etudiantHydrator->setPaysService($paysService);
         return $etudiantHydrator;
     }
 }

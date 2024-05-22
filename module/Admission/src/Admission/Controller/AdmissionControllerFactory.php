@@ -4,6 +4,7 @@ namespace Admission\Controller;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm;
 use Admission\Rule\Operation\AdmissionOperationRule;
+use Admission\Service\Admission\AdmissionRechercheService;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
 use Admission\Service\Document\DocumentService;
@@ -15,6 +16,7 @@ use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Operation\AdmissionOperationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Discipline\DisciplineService;
+use Application\Service\Pays\PaysService;
 use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
@@ -64,6 +66,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
         $roleService = $container->get(RoleService::class);
         $qualiteService = $container->get(QualiteService::class);
+        $admissionRechercheService = $container->get(AdmissionRechercheService::class);
+        $paysService = $container->get(PaysService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -97,6 +101,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
         $controller->setRoleService($roleService);
         $controller->setQualiteService($qualiteService);
+        $controller->setAdmissionRechercheService($admissionRechercheService);
+        $controller->setPaysService($paysService);
 
         return $controller;
     }

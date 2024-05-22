@@ -27,6 +27,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
 $canRechercherDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_RECHERCHER_DOSSIERS_ADMISSION));
 $canListerDossiersAdmission  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_LISTER_MES_DOSSIERS_ADMISSION));
+$canExportAdmissions = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_GENERER_EXPORT_ADMISSIONS));
 
 $queryParams = $this->queryParams();
 
@@ -234,6 +235,15 @@ echo $this->partial('admission/admission/partial/header', []); ?>
     <div class="row acces-admission-btn-container">
         <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces-admission-btn">Accéder à votre dossier d'admission</a>
     </div>
+<?php } ?>
+
+<?php if ($canExportAdmissions) { ?>
+    <a href="<?php echo $this->url('admission/generer-export-csv', [], ['query' => $this->queryParams()], true); ?>"
+       class="btn btn-primary"
+    >
+        <span class="icon icon-export"></span>
+        Générer l'export CSV des dossiers d'admissions validés
+    </a>
 <?php } ?>
 
 <script>

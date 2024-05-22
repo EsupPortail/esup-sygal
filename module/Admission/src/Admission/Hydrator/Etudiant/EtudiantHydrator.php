@@ -3,6 +3,8 @@
 namespace Admission\Hydrator\Etudiant;
 
 use Admission\Entity\Db\Etudiant;
+use Application\Entity\Db\Pays;
+use Application\Service\Pays\PaysServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Service\IndividuServiceAwareTrait;
 
@@ -11,12 +13,24 @@ use Individu\Service\IndividuServiceAwareTrait;
  */
 class EtudiantHydrator extends DoctrineObject
 {
+    use PaysServiceAwareTrait;
 
-    use IndividuServiceAwareTrait;
     public function extract(object $object): array
     {
         /** @var Etudiant $object */
         $data = parent::extract($object);
+
+        if (array_key_exists($key = 'paysNaissance', $data) && $data[$key] instanceof Pays) {
+            $data["paysNaissance"] = $data["paysNaissance"]->getId();
+        }
+
+        if (array_key_exists($key = 'adresseCodePays', $data) && $data[$key] instanceof Pays) {
+            $data["adresseCodePays"] = $data["adresseCodePays"]->getId();
+        }
+
+        if (array_key_exists($key = 'nationalite', $data) && $data[$key] instanceof Pays) {
+            $data["nationalite"] = $data["nationalite"]->getId();
+        }
 
         $data['verificationEtudiant'] = $object->getVerificationEtudiant()->first();
 
@@ -25,9 +39,30 @@ class EtudiantHydrator extends DoctrineObject
 
     public function hydrate(array $data, object $object): object
     {
-        $data["paysNaissance"] = !empty($data["paysNaissanceId"]) ? $data["paysNaissanceId"] : null;
-        $data["nationalite"] = !empty($data["nationaliteId"]) ? $data["nationaliteId"] : null;
-        $data["adresseCodePostal"] = empty($data["adresseCodePostal"]) ? null : $data["adresseCodePostal"];
+        $data["adresseCodePays"] = !empty($data["adresseCodePays"]) ? $data["adresseCodePays"] : null;
+        /** @var Pays $pays */
+        $pays = $data["adresseCodePays"] ? $this->paysService->getRepository()->find($data["adresseCodePays"]) : null;
+        //si le pays sélectionné est la France
+        if($pays && $pays->getLibelle() === "France"){
+            //on met à vide la ville étrangère potentielle
+            $data["adresseCpVilleEtrangere"] = null;
+        }else if($pays && $pays->getLibelle() !== "France") {
+            $data["adresseCodePostal"] = null;
+            $data["adresseCodeCommune"] = null;
+            $data["adresseNomCommune"] = null;
+        }
+        //Si aucune ville française de naissance n'est renseignée, on met à vide le code INSEE précédemment renseigné
+        if(empty($data["libelleCommuneNaissance"])){
+            $data["codeCommuneNaissance"] = null;
+        }
+        //Si aucune ville française n'est renseignée, on met à vide le code postal et le code INSEE précédemment renseigné
+        if(empty($data["adresseNomCommune"])){
+            $data["adresseCodePostal"] = null;
+            $data["adresseCodeCommune"] = null;
+        }
+
+        $data["paysNaissance"] = !empty($data["paysNaissance"]) ? $data["paysNaissance"] : null;
+        $data["nationalite"] = !empty($data["nationalite"]) ? $data["nationalite"] : null;
 
         //Si la case niveauEtude n'est pas le diplôme national, on met à null les valeurs des champs reliés
         if(isset($data["niveauEtude"]) && $data["niveauEtude"] != 1){

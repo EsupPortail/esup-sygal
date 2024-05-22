@@ -20,9 +20,29 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\GreaterThan;
 use Laminas\Validator\Regex;
 use Laminas\Validator\StringLength;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
+    private ?array $pays = null;
+    private ?array $nationalites = null;
+
+    public function setPays(array $paysAsOptions): void
+    {
+        $this->pays = $paysAsOptions;
+        $this->get('paysNaissance')->setEmptyOption('Sélectionnez une option');
+        $this->get('paysNaissance')->setValueOptions($this->pays);
+
+        $this->get('adresseCodePays')->setEmptyOption('Sélectionnez une option');
+        $this->get('adresseCodePays')->setValueOptions($this->pays);
+    }
+
+    public function setNationalites(array $nationalitesAsOptions): void
+    {
+        $this->nationalites = $nationalitesAsOptions;
+        $this->get('nationalite')->setEmptyOption('Sélectionnez une option');
+        $this->get('nationalite')->setValueOptions($this->nationalites);
+    }
 
     // Méthode pour générer les options d'année
     protected function generateYearOptions() : array
@@ -42,7 +62,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Radio('civilite'))
+            (new Radio('sexe'))
                 ->setValueOptions([
                     Individu::CIVILITE_M => Individu::CIVILITE_M,
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
@@ -88,14 +108,8 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
             (new Text('ine'))
                 ->setLabel("Numéro I.N.E (Numéro inscrit sur un relevé de notes de l'enseignement supérieur français)")
                 ->setLabelAttributes(['data-after' => " / I.N.E number (number appearing on a French higher education transcript)"
-                    ])
+                ])
                 ->setAttributes( ['class' => 'form-control'])
-        );
-
-        $this->add(
-            (new Text('numeroEtudiant'))
-                ->setLabel("Numéro Etudiant (pour les étudiants déjà inscrits à UNICAEN)")
-                ->setLabelAttributes(['data-after' => " / Student number (for students already registered at UNICAEN)"])
         );
 
         $this->add(
@@ -112,96 +126,110 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Hidden('paysNaissanceId'))
-        );
-
-        $this->add(
-            (new Text('paysNaissance'))
+            (new Select("paysNaissance"))
                 ->setLabel("Pays de naissance")
-                ->setLabelAttributes(['data-after' => " / Country of origin"])
-                ->setAttributes(['readonly' => true])
+                ->setLabelAttributes(['data-after' => " /   Country of origin"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "paysNaissance"
+                ])
         );
 
         $this->add(
-            (new Text('villeNaissance'))
-                ->setLabel("Ville de naissance")
-                ->setLabelAttributes(['data-after' => " / City of birth"])
-                ->setAttributes(['readonly' => true])
+            (new Text('libelleCommuneNaissance'))
+                ->setAttributes([
+                    'id' => "libelleCommuneNaissance",
+                    'placeholder' => "Entrez les deux premières lettres...",
+                    'class' => 'selectpicker show-tick',
+                ])
         );
 
         $this->add(
-            (new Text('codePaysNaissance'))
+            (new Hidden('codeCommuneNaissance'))
+                ->setAttributes([
+                    'id' => "codeCommuneNaissance"
+                ])
+        );
+
+        $this->add(
+            (new Select("nationalite"))
                 ->setLabel("Nationalité")
-                ->setLabelAttributes(['data-after' => " / Nationality"])
+                ->setLabelAttributes(['data-after' => " /   Nationality"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "nationalite"
+                ])
         );
 
         $this->add(
-            (new Hidden('nationaliteId'))
-        );
-
-        $this->add(
-            (new Text('nationalite'))
-                ->setLabel("Nationalité")
-                ->setLabelAttributes(['data-after' => " / Nationality"])
-                ->setAttributes(['readonly' => true])
-        );
-
-        $this->add(
-            (new Hidden('codePaysNaissance'))
-        );
-
-        $this->add(
-            (new Hidden('codeNationalite'))
-        );
-
-        $this->add(
-            (new Text('adresseCodePays'))
-                ->setLabel("Adresse")
+            (new Select("adresseCodePays"))
+                ->setLabel("Pays")
+                ->setLabelAttributes(['data-after' => " /   Country"])
+                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setAttributes([
+                    'class' => 'bootstrap-selectpicker show-tick',
+                    'data-live-search' => 'true',
+                    'id' => "adresseCodePays"
+                ])
         );
 
         $this->add(
             (new Text('adresseLigne1Etage'))
-                ->setLabel("Adresse")
-                ->setLabelAttributes(['data-after' => " / Address"])
+                ->setLabel("Adresse (Étage)")
+                ->setLabelAttributes(['data-after' => " / Address (Floor)"])
         );
 
         $this->add(
-            (new Text('adresseLigne2Etage'))
-                ->setLabel("Adresse")
+            (new Text('adresseLigne2Batiment'))
+                ->setLabel("Adresse (Entrée/Bâtiment/Immeuble)")
+                ->setLabelAttributes(['data-after' => " / Address (Entrance/Building/Block)"])
         );
 
         $this->add(
-            (new Text('adresseLigne3Batiment'))
-                ->setLabel("Adresse (Bâtiment)")
-        );
-
-        $this->add(
-            (new Text('adresseLigne3Bvoie'))
-                ->setLabel("Adresse")
-                ->setLabelAttributes(['data-after' => " / Address"])
+            (new Text('adresseLigne3Voie'))
+                ->setLabel("Adresse (Numéro – Libellé de la voie)")
+                ->setLabelAttributes(['data-after' => " / Number - Street name"])
         );
 
         $this->add(
             (new Text('adresseLigne4Complement'))
-                ->setLabel("Adresse (complément)")
+                ->setLabel("Adresse (Complément)")
+                ->setLabelAttributes(['data-after' => " / Address (Complement)"])
         );
 
         $this->add(
             (new Number('adresseCodePostal'))
                 ->setLabel("Code postal")
                 ->setLabelAttributes(['data-after' => " / Postal code"])
+                ->setAttributes([
+                    'id' => "adresseCodePostal",
+                    'readonly' => true
+                ])
         );
 
         $this->add(
-            (new Text('adresseCodeCommune'))
-                ->setLabel("Ville")
-                ->setLabelAttributes(['data-after' => " / City"])
+            (new Text('adresseNomCommune'))
+                ->setAttributes([
+                    'id' => "adresseNomCommune",
+                    'placeholder' => "Entrez les deux premières lettres...",
+                ])
         );
 
         $this->add(
-            (new Number('adresseCpVilleEtrangere'))
-                ->setLabel("Code postal")
-                ->setLabelAttributes(['data-after' => " / Postal code"])
+            (new Hidden('adresseCodeCommune'))
+                ->setAttributes([
+                    'id' => "adresseCodeCommune"
+                ])
+        );
+
+        $this->add(
+            (new Text('adresseCpVilleEtrangere'))
+                ->setLabel("Ville étrangère (avec code postal)")
+                ->setLabelAttributes(['data-after' => " / Foreign city (with postal code)"])
         );
 
         $this->add(
@@ -292,8 +320,8 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
     {
         return [
             //Informations étudiant
-            'civilite' => [
-                'name' => 'civilite',
+            'sexe' => [
+                'name' => 'sexe',
                 'required' => false,
             ],
             'nomUsuel' => [
@@ -383,6 +411,10 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                     ['name' => StringTrim::class],
                 ],
             ],
+            'nationalite' => [
+                'name' => 'nationalite',
+                'required' => false,
+            ],
             'adresseLigne1Etage' => [
                 'name' => 'adresseLigne1Etage',
                 'required' => false,
@@ -444,6 +476,15 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 'name' => 'adresseCodeCommune',
                 'required' => false,
                 'filters' => [
+                    ['name' => StripTags::class],
+                    ['name' => StringTrim::class],
+                ],
+            ],
+            'adresseCodePays' => [
+                'name' => 'adresseCodePays',
+                'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
                     ['name' => StripTags::class],
                     ['name' => StringTrim::class],
                 ],

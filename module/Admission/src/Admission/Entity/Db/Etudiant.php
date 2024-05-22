@@ -13,7 +13,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * @var string|null
      */
-    private $civilite;
+    private $sexe;
 
     /**
      * @var string|null
@@ -46,14 +46,9 @@ class Etudiant implements HistoriqueAwareInterface{
     private $dateNaissance;
 
     /**
-     * @var string|null
+     * @var Pays|null
      */
-    private $villeNaissance;
-
-    /**
-     * @var string|null
-     */
-    private $codeNationalite;
+    private $nationalite;
 
     /**
      * @var string|null
@@ -62,6 +57,11 @@ class Etudiant implements HistoriqueAwareInterface{
 
     /**
      * @var string|null
+     */
+    private $numeroCandidat;
+
+    /**
+     * @var Pays
      */
     private $adresseCodePays;
 
@@ -73,17 +73,12 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * @var string|null
      */
-    private $adresseLigne2Etage;
+    private $adresseLigne2Batiment;
 
     /**
      * @var string|null
      */
-    private $adresseLigne3Batiment;
-
-    /**
-     * @var string|null
-     */
-    private $adresseLigne3Bvoie;
+    private $adresseLigne3voie;
 
     /**
      * @var string|null
@@ -91,14 +86,29 @@ class Etudiant implements HistoriqueAwareInterface{
     private $adresseLigne4Complement;
 
     /**
+     * @var string|null
+     */
+    private $codeCommuneNaissance;
+
+    /**
+     * @var string|null
+     */
+    private $libelleCommuneNaissance;
+
+    /**
      * @var int|null
      */
     private $adresseCodePostal;
 
     /**
-     * @var string|null
+     * @var int|null
      */
     private $adresseCodeCommune;
+
+    /**
+     * @var string|null
+     */
+    private $adresseNomCommune;
 
     /**
      * @var string|null
@@ -181,11 +191,6 @@ class Etudiant implements HistoriqueAwareInterface{
     private $paysNaissance;
 
     /**
-     * @var Pays
-     */
-    private $nationalite;
-
-    /**
      * @var Collection
      */
     private $verificationEtudiant;
@@ -198,29 +203,28 @@ class Etudiant implements HistoriqueAwareInterface{
         $this->verificationEtudiant = new ArrayCollection();
     }
 
-
     /**
-     * Set civilite.
+     * Set sexe.
      *
-     * @param string|null $civilite
+     * @param string|null $sexe
      *
      * @return Etudiant
      */
-    public function setCivilite($civilite = null)
+    public function setSexe($sexe = null)
     {
-        $this->civilite = $civilite;
+        $this->sexe = $sexe;
 
         return $this;
     }
 
     /**
-     * Get civilite.
+     * Get sexe.
      *
      * @return string|null
      */
-    public function getCivilite()
+    public function getSexe()
     {
-        return $this->civilite;
+        return $this->sexe;
     }
 
     /**
@@ -368,51 +372,27 @@ class Etudiant implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set villeNaissance.
+     * Set nationalite.
      *
-     * @param string|null $villeNaissance
+     * @param Pays|null $nationalite
      *
      * @return Etudiant
      */
-    public function setVilleNaissance($villeNaissance = null)
+    public function setNationalite($nationalite = null)
     {
-        $this->villeNaissance = $villeNaissance;
+        $this->nationalite = $nationalite;
 
         return $this;
     }
 
     /**
-     * Get villeNaissance.
+     * Get nationalite.
      *
-     * @return string|null
+     * @return Pays|null
      */
-    public function getVilleNaissance()
+    public function getNationalite()
     {
-        return $this->villeNaissance;
-    }
-
-    /**
-     * Set codeNationalite.
-     *
-     * @param string|null $codeNationalite
-     *
-     * @return Etudiant
-     */
-    public function setCodeNationalite($codeNationalite = null)
-    {
-        $this->codeNationalite = $codeNationalite;
-
-        return $this;
-    }
-
-    /**
-     * Get codeNationalite.
-     *
-     * @return string|null
-     */
-    public function getCodeNationalite()
-    {
-        return $this->codeNationalite;
+        return $this->nationalite;
     }
 
     /**
@@ -440,9 +420,33 @@ class Etudiant implements HistoriqueAwareInterface{
     }
 
     /**
+     * Set numeroCandidat.
+     *
+     * @param string|null $numeroCandidat
+     *
+     * @return Etudiant
+     */
+    public function setNumeroCandidat($numeroCandidat = null)
+    {
+        $this->numeroCandidat = $numeroCandidat;
+
+        return $this;
+    }
+
+    /**
+     * Get numeroCandidat.
+     *
+     * @return string|null
+     */
+    public function getNumeroCandidat()
+    {
+        return $this->numeroCandidat;
+    }
+
+    /**
      * Set adresseCodePays.
      *
-     * @param string|null $adresseCodePays
+     * @param Pays $adresseCodePays
      *
      * @return Etudiant
      */
@@ -456,7 +460,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Get adresseCodePays.
      *
-     * @return string|null
+     * @return Pays|null
      */
     public function getAdresseCodePays()
     {
@@ -488,75 +492,51 @@ class Etudiant implements HistoriqueAwareInterface{
     }
 
     /**
-     * Set adresseLigne2Etage.
+     * Set adresseLigne2Batiment.
      *
-     * @param string|null $adresseLigne2Etage
+     * @param string|null $adresseLigne2Batiment
      *
      * @return Etudiant
      */
-    public function setAdresseLigne2Etage($adresseLigne2Etage = null)
+    public function setAdresseLigne2Batiment($adresseLigne2Batiment = null)
     {
-        $this->adresseLigne2Etage = $adresseLigne2Etage;
+        $this->adresseLigne2Batiment = $adresseLigne2Batiment;
 
         return $this;
     }
 
     /**
-     * Get adresseLigne2Etage.
+     * Get adresseLigne2Batiment.
      *
      * @return string|null
      */
-    public function getAdresseLigne2Etage()
+    public function getAdresseLigne2Batiment()
     {
-        return $this->adresseLigne2Etage;
+        return $this->adresseLigne2Batiment;
     }
 
     /**
-     * Set adresseLigne3Batiment.
+     * Set adresseLigne3voie.
      *
-     * @param string|null $adresseLigne3Batiment
+     * @param string|null $adresseLigne3voie
      *
      * @return Etudiant
      */
-    public function setAdresseLigne3Batiment($adresseLigne3Batiment = null)
+    public function setAdresseLigne3voie($adresseLigne3voie = null)
     {
-        $this->adresseLigne3Batiment = $adresseLigne3Batiment;
+        $this->adresseLigne3voie = $adresseLigne3voie;
 
         return $this;
     }
 
     /**
-     * Get adresseLigne3Batiment.
+     * Get adresseLigne3voie.
      *
      * @return string|null
      */
-    public function getAdresseLigne3Batiment()
+    public function getAdresseLigne3voie()
     {
-        return $this->adresseLigne3Batiment;
-    }
-
-    /**
-     * Set adresseLigne3Bvoie.
-     *
-     * @param string|null $adresseLigne3Bvoie
-     *
-     * @return Etudiant
-     */
-    public function setAdresseLigne3Bvoie($adresseLigne3Bvoie = null)
-    {
-        $this->adresseLigne3Bvoie = $adresseLigne3Bvoie;
-
-        return $this;
-    }
-
-    /**
-     * Get adresseLigne3Bvoie.
-     *
-     * @return string|null
-     */
-    public function getAdresseLigne3Bvoie()
-    {
-        return $this->adresseLigne3Bvoie;
+        return $this->adresseLigne3voie;
     }
 
     /**
@@ -610,7 +590,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Set adresseCodeCommune.
      *
-     * @param string|null $adresseCodeCommune
+     * @param int|null $adresseCodeCommune
      *
      * @return Etudiant
      */
@@ -624,11 +604,35 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * Get adresseCodeCommune.
      *
-     * @return string|null
+     * @return int|null
      */
     public function getAdresseCodeCommune()
     {
         return $this->adresseCodeCommune;
+    }
+
+    /**
+     * Set adresseNomCommune.
+     *
+     * @param int|null $adresseNomCommune
+     *
+     * @return Etudiant
+     */
+    public function setAdresseNomCommune($adresseNomCommune = null)
+    {
+        $this->adresseNomCommune = $adresseNomCommune;
+
+        return $this;
+    }
+
+    /**
+     * Get adresseNomCommune.
+     *
+     * @return string|null
+     */
+    public function getAdresseNomCommune()
+    {
+        return $this->adresseNomCommune;
     }
 
     /**
@@ -978,6 +982,54 @@ class Etudiant implements HistoriqueAwareInterface{
     }
 
     /**
+     * Set codeCommuneNaissance.
+     *
+     * @param string|null $codeCommuneNaissance
+     *
+     * @return Etudiant
+     */
+    public function setCodeCommuneNaissance($codeCommuneNaissance = null)
+    {
+        $this->codeCommuneNaissance = $codeCommuneNaissance;
+
+        return $this;
+    }
+
+    /**
+     * Get codeCommuneNaissance.
+     *
+     * @return string|null
+     */
+    public function getCodeCommuneNaissance()
+    {
+        return $this->codeCommuneNaissance;
+    }
+
+    /**
+     * Set libelleCommuneNaissance.
+     *
+     * @param string|null $libelleCommuneNaissance
+     *
+     * @return Etudiant
+     */
+    public function setLibelleCommuneNaissance($libelleCommuneNaissance = null)
+    {
+        $this->libelleCommuneNaissance = $libelleCommuneNaissance;
+
+        return $this;
+    }
+
+    /**
+     * Get libelleCommuneNaissance.
+     *
+     * @return string|null
+     */
+    public function getLibelleCommuneNaissance()
+    {
+        return $this->libelleCommuneNaissance;
+    }
+
+    /**
      * Set paysNaissance.
      *
      * @param Pays|null $paysNaissance
@@ -999,30 +1051,6 @@ class Etudiant implements HistoriqueAwareInterface{
     public function getPaysNaissance()
     {
         return $this->paysNaissance;
-    }
-
-    /**
-     * Set nationalite.
-     *
-     * @param Pays|null $nationalite
-     *
-     * @return Etudiant
-     */
-    public function setNationalite(Pays $nationalite = null)
-    {
-        $this->nationalite = $nationalite;
-
-        return $this;
-    }
-
-    /**
-     * Get nationalite.
-     *
-     * @return Pays|null
-     */
-    public function getNationalite()
-    {
-        return $this->nationalite;
     }
 
     /**
@@ -1067,7 +1095,42 @@ class Etudiant implements HistoriqueAwareInterface{
      */
     public function getDenominationEtudiant() : string
     {
-        return $this->getCivilite()." ".$this->getNomUsuel()." ".$this->getPrenom();
+        return $this->getSexe()." ".$this->getNomUsuel()." ".$this->getPrenom();
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getAdresse() : string
+    {
+        $adresseParts = [];
+
+        if ($etage = $this->getAdresseLigne1Etage()) {
+            $adresseParts[] = $etage;
+        }
+
+        if ($batiment = $this->getAdresseLigne2Batiment()) {
+            $adresseParts[] = $batiment;
+        }
+
+        if ($voie = $this->getAdresseLigne3voie()) {
+            $adresseParts[] = $voie;
+        }
+
+        if ($complement = $this->getAdresseLigne4Complement()) {
+            $adresseParts[] = $complement;
+        }
+
+        // Joindre les parties de l'adresse avec une virgule et un espace
+        return implode(', ', $adresseParts);
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getVille() : string
+    {
+        return $this->getAdresseNomCommune() ?: $this->getAdresseCpVilleEtrangere();
     }
 
     /**

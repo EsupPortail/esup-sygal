@@ -124,7 +124,7 @@ return array(
                     'controller' => AdmissionController::class,
                     'action' => [
                         'index',
-                        'rechercher-individu'
+                        'rechercher-individu',
                     ],
                     'privileges' => [
                         AdmissionPrivileges::ADMISSION_AFFICHER_SON_DOSSIER_ADMISSION,
@@ -196,6 +196,15 @@ return array(
                         AdmissionPrivileges::ADMISSION_INITIALISER_ADMISSION
                     ],
                     'assertion' => AdmissionAssertion::class,
+                ],
+                [
+                    'controller' => AdmissionController::class,
+                    'action'     => [
+                        'generer-export-csv',
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_GENERER_EXPORT_ADMISSIONS,
+                    ],
                 ],
             ]
         ],
@@ -280,6 +289,17 @@ return array(
                                 'action' => 'rechercher-individu',
                                 'controller' => AdmissionController::class,
                                 /* @see AdmissionController::rechercherIndividuAction() */
+                            ],
+                        ],
+                    ],
+                    'generer-export-csv' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/generer-export-csv',
+                            'defaults' => [
+                                /** @see AdmissionController::genererExportCsvAction() */
+                                'controller'    => AdmissionController::class,
+                                'action'        => 'generer-export-csv',
                             ],
                         ],
                     ],
