@@ -5,6 +5,8 @@
 /data/DoctrineORMModule/
 /vendor
 
+/upload
+
 /tmp/
 /migration/
 
