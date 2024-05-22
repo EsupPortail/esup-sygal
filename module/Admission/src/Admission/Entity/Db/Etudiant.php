@@ -1095,7 +1095,42 @@ class Etudiant implements HistoriqueAwareInterface{
      */
     public function getDenominationEtudiant() : string
     {
-        return $this->getCivilite()." ".$this->getNomUsuel()." ".$this->getPrenom();
+        return $this->getSexe()." ".$this->getNomUsuel()." ".$this->getPrenom();
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getAdresse() : string
+    {
+        $adresseParts = [];
+
+        if ($etage = $this->getAdresseLigne1Etage()) {
+            $adresseParts[] = $etage;
+        }
+
+        if ($batiment = $this->getAdresseLigne2Batiment()) {
+            $adresseParts[] = $batiment;
+        }
+
+        if ($voie = $this->getAdresseLigne3voie()) {
+            $adresseParts[] = $voie;
+        }
+
+        if ($complement = $this->getAdresseLigne4Complement()) {
+            $adresseParts[] = $complement;
+        }
+
+        // Joindre les parties de l'adresse avec une virgule et un espace
+        return implode(', ', $adresseParts);
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getVille() : string
+    {
+        return $this->getAdresseNomCommune() ?: $this->getAdresseCpVilleEtrangere();
     }
 
     /**

@@ -159,6 +159,8 @@ class NotificationFactory extends NF
             'admissionValidation' => $admissionValidation,
             'individu' => $individu
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_SIGNATURE_PRESIDENT){
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
@@ -213,6 +215,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionValidation->getTypeValidation()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SUPPRIMEE, $vars);
 
         $notif = new Notification();
