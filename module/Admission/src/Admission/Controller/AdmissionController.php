@@ -746,7 +746,7 @@ class AdmissionController extends AdmissionAbstractController {
             $entry = [];
             /** @var Etudiant $etudiant */
             $etudiant = $admission->getEtudiant()->first();
-            $entry['numero_candidat'] = "";
+            $entry['numero_candidat'] = $etudiant->getNumeroCandidat();
             $entry['sexe'] = rtrim($etudiant->getSexe(), '.');
             $entry['nom_famille'] = $etudiant->getNomFamille();
             $entry['nom_usuel'] = $etudiant->getNomUsuel();

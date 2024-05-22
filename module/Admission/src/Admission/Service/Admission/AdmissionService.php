@@ -173,7 +173,7 @@ class AdmissionService extends BaseService
         }
     }
 
-    public function changeEtatAdmission(AdmissionOperationInterface $operation, string $typeAction): void
+    public function changeEtatAdmission(AdmissionOperationInterface $operation, string $typeAction): Admission
     {
         switch (true) {
             case $operation instanceof AdmissionValidation:
@@ -226,6 +226,7 @@ class AdmissionService extends BaseService
             default:
                 break;
         }
+        return $admission;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Admission\Controller\Avis;
 
+use Admission\Service\Etudiant\EtudiantService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use Admission\Service\Avis\AdmissionAvisService;
@@ -23,12 +24,14 @@ class AdmissionAvisControllerFactory
         $avisForm = $container->get('FormElementManager')->get(AvisForm::class);
         $admissionValidationService = $container->get(AdmissionValidationService::class);
         $validationService = $container->get(ValidationService::class);
+        $etudiantService = $container->get(EtudiantService::class);
 
         $controller = new AdmissionAvisController();
         $controller->setAdmissionService($admissionService);
         $controller->setAdmissionAvisService($admissionAvisService);
         $controller->setAdmissionValidationService($admissionValidationService);
         $controller->setValidationService($validationService);
+        $controller->setEtudiantService($etudiantService);
 
         $controller->setForm($avisForm);
 

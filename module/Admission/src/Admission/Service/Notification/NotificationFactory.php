@@ -259,6 +259,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionAvis->getAvis()->getAvisType()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         if($admissionAvis->getAvis()->getAvisType()->getCode() == AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_POSITIF){
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
@@ -316,6 +318,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionAvis->getAvis()->getAvisType()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         if($admissionAvis->getAvis()->getAvisType()->getCode() == AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_POSITIF){
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DERNIERE_VALIDATION_AJOUTEE, $vars);
@@ -373,6 +377,8 @@ class NotificationFactory extends NF
             'individu' => $individu,
             'typeValidation' => $admissionAvis->getAvis()->getAvisType()
         ];
+        $url = $this->urlService->setVariables($vars);
+        $vars['Url'] = $url;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::AVIS_SUPPRIME, $vars);
 
