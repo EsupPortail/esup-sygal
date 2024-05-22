@@ -213,6 +213,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const config = { attributes: true, attributeFilter: ['title'] };
             observer.observe(targetNode, config);
+
+            $('#libelleCommuneNaissance').on('input', function() {
+                $('#codeCommuneNaissance').val('');
+            });
+
+            $('#adresseNomCommune').on('input', function() {
+                $('#adresseCodeCommune').val('');
+            });
         });
     }
 
