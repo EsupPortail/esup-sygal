@@ -9,8 +9,6 @@ use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
 use Admission\Controller\AdmissionRechercheController;
 use Admission\Controller\AdmissionRechercheControllerFactory;
-use Admission\Event\AdmissionEventListener;
-use Admission\Event\AdmissionEventListenerFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
@@ -415,8 +413,6 @@ return array(
             DocumentService::class => DocumentServiceFactory::class,
             VerificationService::class => VerificationServiceFactory::class,
             AdmissionRechercheService::class => AdmissionRechercheServiceFactory::class,
-
-            AdmissionEventListener::class => AdmissionEventListenerFactory::class,
 
             AdmissionAssertion::class => AdmissionAssertionFactory::class,
 

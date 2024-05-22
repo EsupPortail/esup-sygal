@@ -40,6 +40,9 @@ class AdmissionService extends BaseService
     use ConventionFormationDoctoraleServiceAwareTrait;
     use VerificationServiceAwareTrait;
 
+    const ADMISSION__AJOUTE__EVENT = 'ADMISSION__AJOUTE__EVENT';
+    const ADMISSION__SUPPRIME__EVENT = 'ADMISSION__SUPPRIME__EVENT';
+
     /**
      * @return AdmissionRepository
      * @throws NotSupported
