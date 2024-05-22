@@ -24,7 +24,7 @@ use Application\Entity\Db\Variable;
 use Application\Service\BaseService;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\Exception\NotSupported;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 use InvalidArgumentException;
 

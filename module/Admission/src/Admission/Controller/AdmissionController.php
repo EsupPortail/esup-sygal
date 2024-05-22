@@ -31,13 +31,14 @@ use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Constants;
 use Application\Controller\PaysController;
-use Application\Entity\Db\Pays;
 use Application\Entity\Db\Role;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait as ApplicationFinancementServiceAwareTrait;
 use Application\Service\Pays\PaysServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use DateTime;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -46,6 +47,7 @@ use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use Mpdf\MpdfException;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
@@ -304,6 +306,9 @@ class AdmissionController extends AdmissionAbstractController {
         return $this->redirect()->toRoute('admission');
     }
 
+    /**
+     * @throws ORMException
+     */
     public function supprimerAction(): Response
     {
         $admission = $this->getAdmission();
@@ -320,8 +325,8 @@ class AdmissionController extends AdmissionAbstractController {
             $this->gererRoleIndividu($individu, Role::ROLE_ID_ADMISSION_CANDIDAT);
             $this->gererRoleIndividu($directeur, Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE);
             $this->gererRoleIndividu($coDirecteur, Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE);
-        }catch (RuntimeException $e) {
-            throw new RuntimeException("Un problème est survenu lors de la suppression du dossier d'admission",$e);
+        }catch (ORMException $e) {
+            throw new ORMException("Un problème est survenu lors de la suppression du dossier d'admission",$e);
         }
 
         $this->multipageForm($this->admissionForm)->clearSession();
@@ -367,7 +372,6 @@ class AdmissionController extends AdmissionAbstractController {
 
     public function enregistrerEtudiant(array $data, Admission|null $admission): void
     {
-        $etudiant = null;
         //Si l'etudiant ne possède pas de dossier d'admission, on lui crée puis associe un fieldset etudiant
         if ($admission === null) {
             try {
@@ -716,7 +720,7 @@ class AdmissionController extends AdmissionAbstractController {
             }
         }
     }
-    protected function createNavigationForDocument(Admission $admission)
+    protected function createNavigationForDocument(Admission $admission): MultipageFormNavFieldset
     {
         $navigationElement = MultipageFormNavFieldset::create();
         $navigationElement->setCancelEnabled(false);
@@ -726,25 +730,29 @@ class AdmissionController extends AdmissionAbstractController {
         $confirmButton = $navigationElement->getConfirmButton();
         $cancelButton = $navigationElement->getCancelButton();
 
-        // ajouts de classes CSS
         $nextButton->setAttribute('class', $nextButton->getAttribute('class') . ' btn btn-primary');
         $prevButton->setAttribute('class', $prevButton->getAttribute('class') . ' btn btn-primary');
         $cancelButton->setAttribute('class', $confirmButton->getAttribute('class') . ' visually-hidden');
 
-        $role = $this->userContextService->getSelectedIdentityRole();
-        $etatAdmission = $admission->getEtat()->getCode();
-        $canModifierAdmission = [Role::CODE_ADMISSION_CANDIDAT, Role::CODE_ADMISSION_DIRECTEUR_THESE, Role::CODE_DIRECTEUR_THESE, Role::CODE_ADMIN_TECH];
+        $canModifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
+                                $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION);
+        $canVerifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
         //si le dossier est validé, rejeté, en cours de validation ou abandonné et que l'utilisateur connecté n'a pas le droit de modifier le dossier
-        if(in_array($etatAdmission, [Etat::CODE_REJETE, Etat::CODE_VALIDE, Etat::CODE_EN_COURS_VALIDATION, Etat::CODE_ABANDONNE]) ||
-            !in_array($role->getCode(), $canModifierAdmission)){
+        if(!$canModifierAdmission){
             $submitButton->setValue("Revenir à l'accueil");
             $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-primary');
             $submitButton->setAttribute('title', "Revenir à la page d'accueil du module");
             //si le dossier est en cours de saisie et que l'utilisateur connecté a le droit de modifier le dossier
-        }else if ($etatAdmission === Etat::CODE_EN_COURS_SAISIE && in_array($role->getCode(), $canModifierAdmission)){
+        }else{
             $submitButton->setValue("Enregistrer");
             $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
-            $submitButton->setAttribute('title', "Enregistrer les possibles modifications faîtes sur le dossier");
+            $submitButton->setAttribute('title', "Enregistrer les possibles modifications faites sur le dossier");
+        }
+        //si l'utilisateur connecté a le droit de vérifier le dossier
+        if($canVerifierAdmission){
+            $submitButton->setValue("Enregistrer");
+            $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
+            $submitButton->setAttribute('title', "Enregistrer les possibles modifications faites sur le dossier");
         }
         return $navigationElement;
     }
@@ -803,10 +811,11 @@ class AdmissionController extends AdmissionAbstractController {
             $entry['adresse_code_commune'] = $etudiant->getAdresseCodeCommune();
             $entry['adresse_cp_ville_etranger'] = $etudiant->getAdresseCpVilleEtrangere();
             $entry['numero_telephone1'] = $etudiant->getNumeroTelephone1();
+            $entry['numero_telephone2'] = $etudiant->getNumeroTelephone2();
             $entry['courriel'] = $etudiant->getCourriel();
             $records[] = $entry;
         }
-        $filename = (new \DateTime())->format('Ymd') . '_admissions.csv';
+        $filename = (new DateTime())->format('Ymd') . '_admissions.csv';
         $CSV = new CsvModel();
         $CSV->setDelimiter(';');
         $CSV->setEnclosure('"');
@@ -886,6 +895,10 @@ class AdmissionController extends AdmissionAbstractController {
             'logos' => $logos,
             'operations' => $operations
         ]);
-        $export->export('SYGAL_admission_recapitulatif_' . $admission->getId() . ".pdf");
+        try {
+            $export->export('SYGAL_admission_recapitulatif_' . $admission->getId() . ".pdf");
+        } catch (MpdfException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la génération du pdf",0,$e);
+        }
     }
 }
