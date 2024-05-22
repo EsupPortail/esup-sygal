@@ -89,7 +89,7 @@ class IndividuService extends BaseService
         return $this->newIndividuFromData([
             'civilite' => null,
             'nomUsuel' => $nom,
-            'nomPatronymique' => null,
+            'nomPatronymique' => $nom,
             'prenom' => $prenom,
             'email' => $utilisateur->getEmail(),
             'sourceCode' => $this->sourceCodeStringHelper->addDefaultPrefixTo($utilisateur->getUsername()),
