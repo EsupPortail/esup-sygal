@@ -119,7 +119,7 @@ apt-get -qq update && \
         php${PHP_VERSION}-opcache \
         php${PHP_VERSION}-pgsql \
         php${PHP_VERSION}-soap \
-        php${PHP_VERSION}-xdebug \
+#        php${PHP_VERSION}-xdebug \ --> cf. install à part ci-après
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-cli \
@@ -129,6 +129,11 @@ apt-get -qq update && \
 
 # Forçage de la version de PHP CLI
 update-alternatives --set php /usr/bin/php${PHP_VERSION}
+
+# Installation manuelle de xdebug 3.2.2, car les 3.3.0/1/2 provoquent une "Segmentation fault" au 22/05/2024 (à cause de PHP 8.0 ?)
+pecl install xdebug-3.2.2 && \
+    echo "zend_extension=xdebug" > ${PHP_CONF_DIR}/fpm/conf.d/20-xdebug.ini && \
+    echo "zend_extension=xdebug" > ${PHP_CONF_DIR}/cli/conf.d/20-xdebug.ini
 
 # Composer
 #COPY --from=get-composer /usr/bin/composer /usr/local/bin/composer
@@ -183,10 +188,10 @@ a2disconf security.conf && \
 #RUN ln -sf /dev/stderr /var/log/apache2/error.log
 
 # Configuration Apache.
-cp ${APACHE_CONF_LOCAL_DIR}/apache-ports.conf     ${APACHE_CONF_DIR}/ports.conf
-cp ${APACHE_CONF_LOCAL_DIR}/apache-site.conf      ${APACHE_CONF_DIR}/sites-available/app.conf
-cp ${APACHE_CONF_LOCAL_DIR}/apache-site-ssl.conf  ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
-a2ensite app app-ssl
+cp ${APACHE_CONF_LOCAL_DIR}/ports.conf     ${APACHE_CONF_DIR}/ports.conf
+cp ${APACHE_CONF_LOCAL_DIR}/sygal.conf     ${APACHE_CONF_DIR}/sites-available/sygal.conf
+cp ${APACHE_CONF_LOCAL_DIR}/sygal-ssl.conf ${APACHE_CONF_DIR}/sites-available/sygal-ssl.conf
+a2ensite sygal sygal-ssl
 
 
 ###########################################################################################

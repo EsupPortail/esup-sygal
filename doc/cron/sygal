@@ -1,0 +1,15 @@
+#
+# Application ESUP-SyGAL.
+#
+
+APP_DIR=/app
+ETAB='UCN'
+
+##### Import des données des établissements #####
+0,30 7-19 * * 1-5 root ETAB=$ETAB $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws.log  2>&1
+
+##### Traitements en fonction des résultats de l'import #####
+25,55 7-19 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --etablissement=$ETAB >>/tmp/sygal-process-observed-import-results.log 2>&1
+
+##### Ménage dans /tmp #####
+0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/sygal_purge_temp_files.sh.log 2>&1

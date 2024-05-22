@@ -10,6 +10,7 @@ Journal des modifications
 - Module Admissions : Suppression de la notification lors de la dévalidation de la lecture de la convention de formation doctorale
 - Module Admissions : Modification des sujets/corps de certains templates
 - Module Admissions : Changement du libellé du bouton à la dernière étape en fonction de l'état du dossier et de l'utilisateur connecté
+- Améliorations des doc et scripts d'install.
 - [FIX] Utilisation du bon code structure pour les établissements (source_code).
 - [FIX] : Ajout de conditions pour éviter que InscriptionAssertion retourne une erreur lors de l'accès à un écran présentant des formations (ayant des sessions sans séances) ou d'une désinscription
 - [FIX] : Initialisation de compte : ajout du filtre 'StringTrim' sur les champs du formulaire.

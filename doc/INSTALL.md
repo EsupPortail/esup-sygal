@@ -1,14 +1,16 @@
-# Installation de ESUP-SyGAL
+Installation de ESUP-SyGAL
+==========================
 
 
-
-## Création de la base de données
+Création de la base de données
+------------------------------
 
 Reportez-vous au [README consacré à la création de la base de données](database/README.md).
 
 
 
-## Installation du serveur Debian Bullseye
+Installation du serveur d'application
+-------------------------------------
 
 Pour ce qui est de l'installation du serveur d'application, n'ayant pas à Caen les compétences 
 en déploiement Docker (autres que pour le développement), nous documenterons une installation manuelle sur 
@@ -52,9 +54,7 @@ git checkout --force 8.2.0
 ```
 
 
-### Configuration du serveur
-
-#### Packages, etc.
+### Script `Dockerfile.sh`
 
 - Vous trouverez dans le répertoire des sources d'ESUP-SyGAL récupérées à l'instant un script `Dockerfile.sh`, 
   sorte de version sh du Dockerfile, contenant de quoi mettre à niveau et/ou installer les packages nécessaires.
@@ -65,23 +65,23 @@ git checkout --force 8.2.0
 
 - Copiez-collez-lancez les commandes qu'il contient par petits groupes.
 
-- Ensuite, si vous maîtrisez les impacts, vérifiez et ajustez éventuellement sur votre serveur les fichiers 
-  de configs suivants (créés/modifiés par le script) :
+
+
+Configuration du serveur
+------------------------
+
+### Apache
+
+- Vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
+  créés par le script `Dockerfile.sh` (vérifiez dans le script mais normalement
+  `APACHE_CONF_DIR=/etc/apache2`) :
   - ${APACHE_CONF_DIR}/ports.conf
   - ${APACHE_CONF_DIR}/sites-available/app.conf
   - ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
-  - ${PHP_CONF_DIR}/fpm/pool.d/www.conf
-  - ${PHP_CONF_DIR}/fpm/conf.d/99-sygal.ini
-  - ${PHP_CONF_DIR}/cli/conf.d/99-sygal.ini
 
-NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
-`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/${PHP_VERSION}`.
-
-#### Environnement de fonctionnement
-
-La variable `APPLICATION_ENV` déclarée dans la config Apache `${APACHE_CONF_DIR}/sites-available/app-ssl.conf` permet
-de spécifier à l'application PHP dans quel "environnement de fonctionnement" elle tourne.
-Les valeurs possibles sont `development`, `testing` et `production`.
+- La variable `APPLICATION_ENV` doit être déclarée dans la config Apache `${APACHE_CONF_DIR}/sites-available/app-ssl.conf` 
+  pour spécifier à l'application PHP dans quel "environnement de fonctionnement" elle tourne. 
+  Les valeurs possibles sont `development`, `testing` et `production`.
 ```apacheconf
 <VirtualHost *:443>
      # ...
@@ -89,20 +89,47 @@ Les valeurs possibles sont `development`, `testing` et `production`.
 # ...
 ```
 
-#### Logs d'erreur PHP-FPM
+### PHP
 
-- Prenez connaissance du chemin spécifié par le paramètre `error_log` dans le fichier de config 
-`/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf`, exemple :
-```conf
-error_log = /var/log/php-fpm.log
+- Vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
+  créés par le script `Dockerfile.sh` (vérifiez dans le script mais normalement
+  `PHP_CONF_DIR=/etc/php/${PHP_VERSION}`) :
+  - ${PHP_CONF_DIR}/fpm/pool.d/99-sygal.conf
+  - ${PHP_CONF_DIR}/fpm/conf.d/99-sygal.ini
+
+- Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP
+  `/etc/php/${PHP_VERSION}/fpm/conf.d/99-sygal.ini` :
+```
+display_errors = Off
+display_startup_errors = Off
+display_errors = Off
+#...
+opcache.enable = 1
+#...
+xdebug.mode = off
 ```
 
+- Ajoutez ceci à la fin du fichier de config `/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf` et
+  adaptez les valeurs selon que vous souhaitez activer les logs PHP-FPM ou non :
+```conf
+catch_workers_output = yes
+php_flag[display_errors] = on
+php_admin_value[error_log] = /var/log/php-fpm.log
+php_admin_flag[log_errors] = on
+```
+
+
+
+Configuration de l'application
+------------------------------
+
+Placez-vous dans le répertoire des sources de l'application.
 
 ### Mode développement vs. production
 
 Pour commencer, placez l'application en mode "développement" afin d'activer l'affichage détaillé des futures erreurs
-rencontrées par l'application. 
-Pour cela, placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
+rencontrées par l'application. Pour cela, placez-vous dans le répertoire des sources de l'application puis lancez 
+la commande suivante :
 ```bash
 vendor/bin/laminas-development-mode enable
 ```
@@ -112,44 +139,16 @@ Lorsque l'application sera sur un serveur de production, il faudra penser à dé
 vendor/bin/laminas-development-mode disable
 ```
 
+### Fichier `config/autoload/{dev|test|prod}.local.php`
 
-### Configuration du moteur PHP
-
-Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/${PHP_VERSION}/fpm/conf.d/99-sygal.ini` :
-```
-    display_errors = Off
-    display_startup_errors = Off
-    display_errors = Off
-    #...
-    opcache.enable = 1
-    #...
-    xdebug.mode = off
-```
-
-
-### Configuration de l'application
-
-Placez-vous dans le répertoire de l'application puis descendez dans le répertoire `config/autoload/`.
-
-Supprimez l'extension `.dist` des fichiers suivants, et préfixez-les par `prod.`, `test.` ou `dev.` pour bien signifier 
-l'environnement de fonctionnement effectif :
-  - [`local.php.dist`](../config/autoload/local.php.dist)
-  - [`secret.local.php.dist`](../config/autoload/secret.local.php.dist)
-
-Exemple :
+- Supprimez l'extension `.dist` du fichier [`config/autoload/local.php.dist`](../config/autoload/local.php.dist), 
+  et préfixez-le par `prod.`, `test.` ou `dev.` pour bien signifier l'environnement de fonctionnement
+  (*n'utilisez pas le préfixe `development.` qui est réservé*), exemple :
 ```bash
-APPLICATION_ENV="prod"
-cp local.php.dist        ${APPLICATION_ENV}.local.php
-cp secret.local.php.dist ${APPLICATION_ENV}.secret.local.php
+cp local.php.dist prod.local.php
 ```
 
-Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
-
-
-#### Fichier `${APPLICATION_ENV}.local.php`
-
-- Adaptez les URL des pages "Mentions légales" et "Informatique et liberté" pour votre établissement :
+- Dans ce fichier, adaptez les URL des pages "Mentions légales" et "Informatique et liberté" pour votre établissement :
 
 ```php
     'unicaen-app' => [
@@ -178,9 +177,17 @@ Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
 *NB : ensuite créez le fichier `public/logo-etablissement.png` correspondant au logo de votre établissement.*
 
 
-#### Fichier `${APPLICATION_ENV}.secret.local.php`
+### Fichier `config/autoload/{dev|test|prod}.secret.local.php`
 
-- Adaptez le chemin du répertoire où seront stockés les fichiers uploadés par les utilisateurs de l'application :
+- Supprimez l'extension `.dist` du fichier [`config/autoload/secret.local.php.dist`](../config/autoload/secret.local.php.dist),
+  et préfixez-le par `prod.`, `test.` ou `dev.` pour bien signifier l'environnement de fonctionnement
+  (*n'utilisez pas le préfixe `development.` qui est réservé*), exemple :
+```bash
+cp secret.local.php.dist prod.secret.local.php
+```
+
+- Dans ce fichier, adaptez le chemin du répertoire où seront stockés les fichiers uploadés par les utilisateurs
+  de l'application :
 
 ```php
     'fichier' => [
@@ -229,7 +236,7 @@ Dans la suite, vous allez adapter le contenu de ces fichiers à votre situation.
 ```
 
 
-### Accès à l'API exposée par l'application
+### Fichier `config/users.htpasswd`
 
 ESUP-SyGAL expose une API permettant d'obtenir de Pégase les inscriptions en 3e cycle.
 Un fichier `users.htpasswd` contient les comptes utilisateurs / mots de passe autorisés à interroger cette API
@@ -248,21 +255,29 @@ pwgen 16 1 --symbols --secure
 ```
 
 
-## Script d'install des dépendances et d'init de l'application
 
-Lancez le script suivant :
+Script `install.sh`
+-------------------
+
+Le script `install.sh` situé à la racine des sources du web service doit être lancé à chaque fois
+qu'une nouvelle version de l'application est téléchargée/installée :
 
 ```bash
-bash install.sh
+bash ./install.sh
 ```
 
 
-## Test
-
-Théoriquement, à ce stade l'application ESUP-SyGAL devrait être accessible.
 
 
-## Authentification
+Test
+----
+
+Théoriquement, à ce stade la page d'accueil de l'application devrait être accessible dans un navigateur web.
+
+
+
+Authentification
+----------------
 
 L'un des scripts de création de la base de données a créé un compte utilisateur de test local possédant le rôle
 "Administrateur technique".
@@ -281,37 +296,12 @@ L'un des scripts de création de la base de données a créé un compte utilisat
 Pour d'autres modes d'authentification, reportez-vous à la [documentation consacrée à l'authentification](authentification/auth.md).**
 
 
-## Dans l'application ESUP-SyGAL elle-même
 
-Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
-la page d'accueil de ESUP-SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données.
-
-
-### Droits d'accès
-
-Dans l'application ESUP-SyGAL, allez dans menu "Administration" > "Droits d'accès" > "Gestion des profils de rôle".
-
-Appliquez, svp : 
-- le profil `OBSERV` au rôle *Observateur*
-- le profil `DOCTORANT` au rôle *Doctorant UCN*
-- le profil `ADMIN` au rôle *Administrateur UCN*
-- le profil `BU` au rôle *Bibliothèque universitaire UCN*
-- le profil `BDD` au rôle *Bureau des doctorats UCN*
-
-NB : "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement par le script d'init de la base de données (cf. scripts de création de la bdd).
-
-Par exemple, pour appliquer le profil `DOCTORANT` au rôle *Doctorant*, il faut :
-- cliquer sur l'icône bleu en forme de maillon de chaîne tout au bout de la ligne "DOCTORANT" du tableau "Liste des profils" ;
-- dans la page qui s'ouvre, sélectionner "Doctorant" dans la liste déroulante de droite ;
-- appuyer sur le bouton "Ajouter un rôle".
-
-
-## Import des données depuis le SI Scolarité de votre établissement 
+Import des données depuis le SI Scolarité de votre établissement
+----------------------------------------------------------------
 
 ESUP-Sygal doit pouvoir importer les thèses, acteurs des thèses, etc. depuis le SI Scolarité de votre établissement 
-(soit Apogée, soit Physalis). Pour cela ESUP-SyGAL fournit un web service (API REST) que vous devez installer.
+(soit Apogée, soit Physalis). Pour cela ESUP-SyGAL s'accompagne d'un web service (API REST) que vous devez installer.
 
 
 ### Installation du web service
@@ -322,7 +312,7 @@ sur [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws)
 
 ### Configuration d'accès au web service
 
-Dans le fichier de config `${APPLICATION_ENV}.secret.local.php` :
+Dans le fichier de config `{dev|test|prod}.secret.local.php` :
 
 - Dans la config de connexion au WS, `UCN` doit être remplacé par le code établissement choisi lors
   de la création de votre établissement par le script d'init de la base de données (cf. scripts de création de la bdd) :
@@ -360,7 +350,9 @@ Dans le fichier de config `${APPLICATION_ENV}.secret.local.php` :
 ```
 
 
-### Lancement de l'import seul
+### Ligne de commande
+
+#### Lancement de l'import seul
 
 Il s'agit de l'interrogation du web service pour remplir les tables temporaires TMP_*.
 
@@ -389,26 +381,19 @@ Pour lancer l'interrogation du web service *puis* la synchronisation des tables 
 *NB : `UCN` doit être remplacé par le code établissement choisi lors de la création de votre établissement.*
 
 
-### Programmation des tâches périodiques
 
-Un certains nombres de tâches périodiques doivent être programmées sur le serveur. 
-Pour cela, créez le fichier `/etc/cron.d/sygal` et adaptez le contenu suivant à votre contexte :
+Programmation des tâches périodiques
+------------------------------------
 
-```cron
-#
-# Application ESUP-SyGAL.
-#
+Un certains nombres de tâches périodiques doivent être programmées sur le serveur d'application. 
 
-APP_DIR=/app
+- Créez sur le serveur d'application le fichier de config CRON `/etc/cron.d/sygal`
+  identique au fichier [doc/cron/sygal](cron/sygal) fourni.
 
-##### Import des données des établissements #####
-0,30 7-19 * * 1-5 root ETAB=UCN $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws.log  2>&1
+- Adaptez obligatoirement les éléments suivants :
+  - variable `APP_DIR` : chemin vers le répertoire d'installation de l'application.
+  - variable `ETAB` : code établissement choisi lors de la création de la bdd, ex 'UCN'.
 
-##### Traitements en fonction des résultats de l'import #####
-25,55 7-19 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --etablissement=UCN >>/tmp/sygal-process-observed-import-results.log 2>&1
-
-##### Ménage dans /tmp #####
-0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/sygal_purge_temp_files.sh.log 2>&1
-```
-
-*NB : `UCN` doit être remplacé par le code établissement choisi lors de la création de votre établissement.*
+- Adaptez éventuellement :
+  - les chemins vers les différents fichiers de log (cf. redirections).
+  - les périodicités d'exécution.
