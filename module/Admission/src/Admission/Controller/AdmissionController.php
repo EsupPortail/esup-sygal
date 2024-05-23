@@ -121,8 +121,6 @@ class AdmissionController extends AdmissionAbstractController {
             $this->admissionForm->bind($admission);
             $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
             if(!$canModifierAdmission){
-                /** @var EtudiantFieldset $etudiant */
-                $etudiant = $this->admissionForm->get('etudiant');
                 $etudiant->disableModificationFieldset();
             }
             if($data['_fieldset'] == "inscription"){
@@ -261,6 +259,7 @@ class AdmissionController extends AdmissionAbstractController {
             $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
             //Récupération des documents liés à ce dossier d'admission
             $documents = $this->documentService->getRepository()->findDocumentsByAdmission($admission);
+            $this->documentService->getDocumentsAsArray([]);
             /** @var Document $document */
             foreach($documents as $document){
                 if($document->getFichier() !== null){
@@ -426,24 +425,19 @@ class AdmissionController extends AdmissionAbstractController {
             if($etudiant instanceof Etudiant){
                 /** @var Verification $verification */
                 $verification = $this->verificationService->getRepository()->findOneByEtudiant($etudiant);
+                /** @var EtudiantFieldset $etudiantFieldset */
+                $etudiantFieldset = $this->admissionForm->get('etudiant');
                 if(isset($data['etudiant']['verificationEtudiant'])){
-                    /** @var EtudiantFieldset $etudiantFieldset */
-                    $etudiantFieldset = $this->admissionForm->get('etudiant');
                     $etudiantFieldset->get('verificationEtudiant')->bindValues($data['etudiant']['verificationEtudiant']);
                 }
+
+                /** @var Verification $verificationEtudiant */
+                $verificationEtudiant = $etudiantFieldset->get('verificationEtudiant')->getObject();
                 if ($verification === null) {
-                    /** @var EtudiantFieldset $etudiantFieldset */
-                    $etudiantFieldset = $this->admissionForm->get('etudiant');
-                    /** @var Verification $verification */
-                    $verification = $etudiantFieldset->get('verificationEtudiant')->getObject();
-                    $verification->setEtudiant($etudiant);
-                    $this->verificationService->create($verification);
+                    $verificationEtudiant->setEtudiant($etudiant);
+                    $this->verificationService->create($verificationEtudiant);
                 } else {
-                    /** @var EtudiantFieldset $etudiant */
-                    $etudiant = $this->admissionForm->get('etudiant');
-                    /** @var Verification $updatedVerification */
-                    $updatedVerification = $etudiant->get('verificationEtudiant')->getObject();
-                    $this->verificationService->update($updatedVerification);
+                    $this->verificationService->update($verificationEtudiant);
                 }
             }
         }
@@ -478,7 +472,6 @@ class AdmissionController extends AdmissionAbstractController {
                     //Mise à jour de l'entité
                     /** @var Inscription $inscription */
                     $inscription = $this->admissionForm->get('inscription')->getObject();
-
                     $this->inscriptionService->update($inscription);
                 } catch (Exception $e) {
                     $this->flashMessenger()->addErrorMessage("Échec de la modification des informations : ".$e->getMessage());
@@ -505,25 +498,19 @@ class AdmissionController extends AdmissionAbstractController {
                 //Ajout de l'objet Vérification
                 /** @var Verification $verification */
                 $verification = $this->verificationService->getRepository()->findOneByInscription($inscription);
+                /** @var InscriptionFieldset $inscriptionFieldset */
+                $inscriptionFieldset = $this->admissionForm->get('inscription');
                 if(isset($data['inscription']['verificationInscription'])){
-                    /** @var InscriptionFieldset $inscriptionFieldset */
-                    $inscriptionFieldset = $this->admissionForm->get('inscription');
                     $inscriptionFieldset->get('verificationInscription')->bindValues($data['inscription']['verificationInscription']);
                 }
 
+                /** @var Verification $verificationInscription */
+                $verificationInscription = $inscriptionFieldset->get('verificationInscription')->getObject();
                 if ($verification === null) {
-                    /** @var InscriptionFieldset $inscriptionFieldset */
-                    $inscriptionFieldset = $this->admissionForm->get('inscription');
-                    /** @var Verification $verification */
-                    $verification = $inscriptionFieldset->get('verificationInscription')->getObject();
-                    $verification->setInscription($inscription);
-                    $this->verificationService->create($verification);
+                    $verificationInscription->setInscription($inscription);
+                    $this->verificationService->create($verificationInscription);
                 } else {
-                    /** @var InscriptionFieldset $inscription */
-                    $inscription = $this->admissionForm->get('inscription');
-                    /** @var Verification $updatedVerification */
-                    $updatedVerification = $inscription->get('verificationInscription')->getObject();
-                    $this->verificationService->update($updatedVerification);
+                    $this->verificationService->update($verificationInscription);
                 }
             }
         }
@@ -564,25 +551,19 @@ class AdmissionController extends AdmissionAbstractController {
                 //Ajout de l'objet Vérification
                 /** @var Verification $verification */
                 $verification = $this->verificationService->getRepository()->findOneByFinancement($financement);
+                /** @var FinancementFieldset $financementFieldset */
+                $financementFieldset = $this->admissionForm->get('financement');
                 if(isset($data['financement']['verificationFinancement'])){
-                    /** @var FinancementFieldset $financementFieldset */
-                    $financementFieldset = $this->admissionForm->get('financement');
-                    $financementFieldset->get('verificationFinancement')->bindValues($data['financement']['verificationFinancement']);
+                    $financementFieldset->bindValues($data['financement']);
                 }
 
+                /** @var Verification $verification */
+                $verificationFinancement = $financementFieldset->get('verificationFinancement')->getObject();
                 if ($verification === null) {
-                    /** @var FinancementFieldset $financementFieldset */
-                    $financementFieldset = $this->admissionForm->get('financement');
-                    /** @var Verification $verification */
-                    $verification = $financementFieldset->get('verificationFinancement')->getObject();
-                    $verification->setFinancement($financement);
-                    $this->verificationService->create($verification);
+                    $verificationFinancement->setFinancement($financement);
+                    $this->verificationService->create($verificationFinancement);
                 } else {
-                    /** @var FinancementFieldset $financementFieldset */
-                    $financementFieldset = $this->admissionForm->get('financement');
-                    /** @var Verification $updatedVerification */
-                    $updatedVerification = $financementFieldset->get('verificationFinancement')->getObject();
-                    $this->verificationService->update($updatedVerification);
+                    $this->verificationService->update($verificationFinancement);
                 }
             }
         }
@@ -597,27 +578,15 @@ class AdmissionController extends AdmissionAbstractController {
             $this->admissionForm->get('document')->bindValues($data['document']);
             /** @var Verification $verification */
             $verification = $this->verificationService->getRepository()->findOneByDocument($document);
+            /** @var DocumentFieldset $documentFieldset */
+            $documentFieldset = $this->admissionForm->get('document');
+            /** @var Verification $verificationDocument */
+            $verificationDocument = $documentFieldset->get('verificationDocument')->getObject();
             if ($verification === null) {
-                try {
-                    /** @var DocumentFieldset $documentFieldset */
-                    $documentFieldset = $this->admissionForm->get('document');
-                    /** @var Verification $verification */
-                    $verification = $documentFieldset->get('verificationDocument')->getObject();
-                    $verification->setDocument($document);
-                    $this->verificationService->create($verification);
-                } catch (Exception $e) {
-                    $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations : ".$e->getMessage());
-                }
+                $verificationDocument->setDocument($document);
+                $this->verificationService->create($verificationDocument);
             } else {
-                try {
-                    /** @var DocumentFieldset $documentFieldset */
-                    $documentFieldset = $this->admissionForm->get('document');
-                    /** @var Verification $updatedVerification */
-                    $updatedVerification = $documentFieldset->get('verificationDocument')->getObject();
-                    $this->verificationService->update($updatedVerification);
-                } catch (Exception $e) {
-                    $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations : ".$e->getMessage());
-                }
+                $this->verificationService->update($verificationDocument);
             }
         }
     }
@@ -811,7 +780,6 @@ class AdmissionController extends AdmissionAbstractController {
             $entry['adresse_code_commune'] = $etudiant->getAdresseCodeCommune();
             $entry['adresse_cp_ville_etranger'] = $etudiant->getAdresseCpVilleEtrangere();
             $entry['numero_telephone1'] = $etudiant->getNumeroTelephone1();
-            $entry['numero_telephone2'] = $etudiant->getNumeroTelephone2();
             $entry['courriel'] = $etudiant->getCourriel();
             $records[] = $entry;
         }
@@ -885,7 +853,7 @@ class AdmissionController extends AdmissionAbstractController {
             }
         }
 
-        $operations = $admission ? $this->admissionOperationRule->getOperationsForAdmission($admission) : null;
+        $operations = $this->admissionOperationRule->getOperationsForAdmission($admission);
         //Masquage des actions non voulues dans le circuit de signatures -> celles correspondant à la convention de formation doctorale
         $operations = $this->admissionOperationService->hideOperations($operations, TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE);
         $export = $this->recapitulatifExporter;
