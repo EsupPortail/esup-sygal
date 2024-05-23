@@ -259,7 +259,6 @@ class AdmissionController extends AdmissionAbstractController {
             $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
             //Récupération des documents liés à ce dossier d'admission
             $documents = $this->documentService->getRepository()->findDocumentsByAdmission($admission);
-            $this->documentService->getDocumentsAsArray([]);
             /** @var Document $document */
             foreach($documents as $document){
                 if($document->getFichier() !== null){
@@ -800,27 +799,20 @@ class AdmissionController extends AdmissionAbstractController {
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
         $individu = $admission->getIndividu();
-        try {
-            $notif = $this->notificationFactory->createNotificationDossierIncomplet($admission);
-            $this->notifierService->trigger($notif);
-        } catch (RuntimeException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::NOTIFICATION_DOSSIER_INCOMPLET."]",0,$e);
-        }
-
-        $this->flashMessenger()->addSuccessMessage("$individu a bien été informé que son dossier d'admission est incomplet");
 
         /** @var AdmissionValidation $operationLastCompleted */
         $operationLastCompleted = $this->admissionOperationRule->findLastCompletedOperation($admission);
         if($operationLastCompleted instanceof AdmissionValidation && $operationLastCompleted->getTypeValidation()->getCode() === TypeValidation::CODE_ATTESTATION_HONNEUR){
-            $messages = [
-                'success' => sprintf(
-                    "L'opération suivante a été annulée car le dossier d'admission a été déclaré incomplet le %s par %s : %s.",
-                    ($operationLastCompleted->getHistoModification() ?: $operationLastCompleted->getHistoCreation())->format(Constants::DATETIME_FORMAT),
-                    $operationLastCompleted->getHistoModificateur() ?: $operationLastCompleted->getHistoCreateur(),
-                    lcfirst($operationLastCompleted),
-                ),
-            ];
-            $this->admissionOperationService->throwDeletionOperationEvent($operationLastCompleted, $messages);
+            // historisation
+            $this->admissionOperationService->deleteOperation($operationLastCompleted);
+
+            try {
+                $notif = $this->notificationFactory->createNotificationDossierIncomplet($admission);
+                $this->notifierService->trigger($notif);
+                $this->flashMessenger()->addSuccessMessage("$individu a bien été informé que son dossier d'admission est incomplet");
+            } catch (RuntimeException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'envoi du mail [".MailTemplates::NOTIFICATION_DOSSIER_INCOMPLET."]",0,$e);
+            }
 
             /** @var Etat $enCours */
             $enCours = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
