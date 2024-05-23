@@ -61,6 +61,8 @@ ALTER TABLE admission_etudiant
     ADD COLUMN numero_candidat VARCHAR(10),
     ADD COLUMN code_commune_naissance VARCHAR(5),
     ADD COLUMN libelle_commune_naissance VARCHAR(50);
+ALTER TABLE admission_etudiant
+    ADD COLUMN adresse_nom_commune VARCHAR(60);
 
 --
 -- Modification des macros/templates
