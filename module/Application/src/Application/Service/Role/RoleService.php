@@ -170,7 +170,11 @@ class RoleService extends BaseService
         try {
             return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs IndividuRole ont été trouvés pour [Individu(" . $individu->getId() . "),Role(" . $role->getId() . ")].", $e);
+            throw new RuntimeException(
+                "Plusieurs IndividuRole ont été trouvés pour [Individu(" . $individu->getId() . "),Role(" . $role->getId() . ")].",
+                null,
+                $e
+            );
         }
     }
 
@@ -191,7 +195,7 @@ class RoleService extends BaseService
                 $this->getEntityManager()->persist($ur);
                 $this->getEntityManager()->flush($ur);
             } catch (ORMException $e) {
-                throw new RuntimeException("Un problème est survenu lors de l'enregistrement de l'IndividuRole.", $e);
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement de l'IndividuRole.", null, $e);
             }
             $result = $ur;
         }
@@ -321,14 +325,14 @@ class RoleService extends BaseService
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Un problème est survenu.", $e);
+            throw new RuntimeException("Un problème est survenu.", null, $e);
         }
         if ($result !== null) {
             try {
                 $this->getEntityManager()->remove($result);
                 $this->getEntityManager()->flush($result);
             } catch (ORMException $e) {
-                throw new RuntimeException("Un problème est survenu lors de la suppression de l'IndividuRole.", $e);
+                throw new RuntimeException("Un problème est survenu lors de la suppression de l'IndividuRole.", null, $e);
             }
         }
     }
@@ -350,7 +354,7 @@ class RoleService extends BaseService
             $this->getEntityManager()->persist($ir);
             $this->getEntityManager()->flush($ir);
         } catch (ORMException $e) {
-            throw new RuntimeException("Un problème est survenu lors de la création de l'IndividuRole.", $e);
+            throw new RuntimeException("Un problème est survenu lors de la création de l'IndividuRole.", null, $e);
         }
     }
 
@@ -426,7 +430,7 @@ class RoleService extends BaseService
             try {
                 $this->getEntityManager()->flush($role);
             } catch (ORMException $e) {
-                throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.", $e);
+                throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.", null, $e);
             }
         }
     }
@@ -448,7 +452,11 @@ class RoleService extends BaseService
             try {
                 $this->getEntityManager()->flush($privilege);
             } catch (ORMException $e) {
-                throw new RuntimeException("Un problème est survenu lors de l'application du changement du profil aux rôles associés.", $e);
+                throw new RuntimeException(
+                    "Un problème est survenu lors de l'application du changement du profil aux rôles associés.",
+                    null,
+                    $e
+                );
             }
         }
     }
