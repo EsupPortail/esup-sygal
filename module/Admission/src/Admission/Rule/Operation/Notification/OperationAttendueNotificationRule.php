@@ -95,11 +95,9 @@ class OperationAttendueNotificationRule implements RuleInterface
 
         $followingOperationConfig = $this->admissionOperationRule->getConfigForOperation($this->operationAttendue);
         $to = $this->extractEmailsFromOperationRoles($followingOperationConfig);
-        $cc = [$this->emailAddressExtractor->__invoke($admission->getIndividu())];
 
         $this->notificationRequired = true;
         $this->to = $to;
-        $this->cc = $cc;
 
         $this->subject = sprintf("%s de %s",
             $this->operationAttendue->getAdmission(),
@@ -275,7 +273,6 @@ class OperationAttendueNotificationRule implements RuleInterface
     public function configureNotification(AdmissionOperationAttenduNotification $notif)
     {
         $notif->setTo($this->to);
-        $notif->setCc($this->cc);
         $notif->setSubject($this->subject);
 
         $notif->setOperationAttendue($this->operationAttendue);
