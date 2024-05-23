@@ -309,6 +309,15 @@ class UserWrapper implements UserInterface
                 }
 
             case $this->userData instanceof UnicaenAppPeople:
+                $methodName = 'get' . $this->ldapAttributeNameForUsername;
+                if (!method_exists($this->userData, $methodName)) {
+                    throw new \RuntimeException(
+                        "Impossible d'obtenir la valeur de l'attribut LDAP '$this->ldapAttributeNameForUsername' " .
+                        "en appelant la méthode " . $methodName
+                    );
+                }
+                return $this->userData->$methodName();
+
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getUsername();
