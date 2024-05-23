@@ -2,9 +2,9 @@
 
 namespace Application\Entity;
 
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
-use Exception;
+use Individu\Entity\Db\Individu;
+use Laminas\Ldap\Exception\LdapException;
 use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -30,6 +30,8 @@ class UserWrapper implements UserInterface
      */
     private $userData;
 
+    private string $ldapAttributeNameForUsername;
+
     /**
      * @var Individu
      */
@@ -37,8 +39,6 @@ class UserWrapper implements UserInterface
 
     /**
      * @param Utilisateur|UnicaenAppPeople|ShibUser|UnicaenLdapPeople $userData
-     * @return self
-     * @throws \Exception
      */
     public function setUserData($userData): self
     {
@@ -50,7 +50,7 @@ class UserWrapper implements UserInterface
                 $this->userData = $userData;
                 break;
             default:
-                throw new Exception(
+                throw new LogicException(
                     "Type de données utilisateurs spécifié inattendu : " .
                     (is_object($userData) ? get_class($userData) : gettype($userData))
                 );
@@ -59,6 +59,13 @@ class UserWrapper implements UserInterface
         if ($this->userData instanceof Utilisateur) {
             $this->individu = $this->userData->getIndividu();
         }
+
+        return $this;
+    }
+
+    public function setLdapAttributeNameForUsername(string $ldapAttributeNameForUsername): self
+    {
+        $this->ldapAttributeNameForUsername = $ldapAttributeNameForUsername;
 
         return $this;
     }
@@ -293,7 +300,13 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-                return $this->userData->getSupannAliasLogin();
+                try {
+                    return $this->userData->get($this->ldapAttributeNameForUsername);
+                } catch (LdapException $e) {
+                    throw new \RuntimeException(
+                        "Impossible d'obtenir la valeur de l'attribut LDAP " . $this->ldapAttributeNameForUsername
+                    );
+                }
 
             case $this->userData instanceof UnicaenAppPeople:
             case $this->userData instanceof Utilisateur:

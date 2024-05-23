@@ -18,15 +18,9 @@ use UnicaenAuth\Options\ModuleOptions;
  */
 class UserWrapperFactory
 {
-    /**
-     * @var ModuleOptions
-     */
-    protected $options;
+    protected ModuleOptions $options;
 
-    /**
-     * @param \UnicaenAuth\Options\ModuleOptions $authModuleOptions
-     */
-    public function setModuleOptions(ModuleOptions $authModuleOptions)
+    public function setModuleOptions(ModuleOptions $authModuleOptions): void
     {
         $this->options = $authModuleOptions;
     }
@@ -35,14 +29,11 @@ class UserWrapperFactory
      * Factory method.
      *
      * Instancie à partir des données issues d'un StorageChainEvent, si possible.
-     *
-     * @param StorageChainEvent $event
-     * @return UserWrapper|null
-     * @throws \Exception
      */
-    public function createInstanceFromStorageChainEvent(StorageChainEvent $event)
+    public function createInstanceFromStorageChainEvent(StorageChainEvent $event): ?UserWrapper
     {
         $inst = new UserWrapper();
+        $inst->setLdapAttributeNameForUsername($this->options->getLdapUsername());
 
         try {
             $contents = $event->getContents();

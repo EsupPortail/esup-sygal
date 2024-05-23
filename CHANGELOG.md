@@ -13,6 +13,7 @@ Journal des modifications
 - Améliorations des doc et scripts d'install.
 - Améliorations de la page d'initialisation de compte utilisateur local.
 - Formulaire de création d'un individu à partir d'un utilisateur : initialisation manquante du nom patronymique.
+- [FIX] Authentification LDAP/CAS : la recherche de l'utilisateur en bdd à partir du username n'utilisait pas le paramètre de config 'ldap_username'.
 - [FIX] Utilisation du bon code structure pour les établissements (source_code).
 - [FIX] : Ajout de conditions pour éviter que InscriptionAssertion retourne une erreur lors de l'accès à un écran présentant des formations (ayant des sessions sans séances) ou d'une désinscription
 - [FIX] : Initialisation de compte : ajout du filtre 'StringTrim' sur les champs du formulaire.
