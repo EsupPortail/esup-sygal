@@ -90,6 +90,7 @@ class NotificationFactory extends NF
         $vars = [
             'admission' => $admission,
             'admissionValidation' => $admissionValidation,
+            'typeValidation' => $admissionValidation->getTypeValidation(),
             'individu' => $individu
         ];
         $url = $this->urlService->setVariables($vars);

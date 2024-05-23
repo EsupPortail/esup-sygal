@@ -275,11 +275,11 @@ UPDATE public.unicaen_renderer_template SET document_sujet = 'Dossier d''admissi
 UPDATE public.unicaen_renderer_template SET document_sujet = 'Opération attendue sur le dossier d''admission de VAR[Individu#Denomination]' WHERE code = 'ADMISSION_OPERATION_ATTENDUE';
 UPDATE public.unicaen_renderer_template SET document_sujet = 'Validation ajoutée au dossier d''admission de VAR[Individu#Denomination]', document_corps = '<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
-<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionValidation#Auteur], le VAR[AdmissionValidation#Date]</p>
+<p>Une validation (<strong>VAR[TypeValidation#Libelle]</strong>) a été ajoutée au <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> par VAR[AdmissionValidation#Auteur], le VAR[AdmissionValidation#Date]</p>
 <p>Afin de suivre l''avancée du dossier, connectez-vous sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</p>' WHERE code = 'ADMISSION_VALIDATION_AJOUTEE';
 UPDATE public.unicaen_renderer_template SET document_sujet = 'Validation supprimée au dossier d''admission de VAR[Individu#Denomination]', document_corps = '<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
-<p>La <strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionValidation#Date] a été <strong>annulée </strong>VAR[AdmissionValidation#Destructeur]</p>
+<p>La validation (<strong>VAR[TypeValidation#Libelle]</strong>) du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionValidation#Date] a été <strong>annulée </strong>VAR[AdmissionValidation#Destructeur]</p>
 <p>Afin de suivre l''avancée du dossier, connectez-vous sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</p>' WHERE code = 'ADMISSION_VALIDATION_SUPPRIMEE';
 
 --Suppression de certains templates (associés au module Admission)
