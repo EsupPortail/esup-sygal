@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 #############################################################################################
-#        Script de lancement de l'envoi vers STEP/STAR pour un établissement.
+#        Script de lancement de l'envoi vers STEP/STAR pour un établissement donné,
+#                   ayant vocation à être lancé tous les jours.
 #############################################################################################
 #
 # Variables d'env attendues :
-#   ETAB    : Code de l'établissement à traiter (ex: "UCN"). OBLIGATOIRE.
+#   ETAB : Code de l'établissement à traiter (ex: "UCN"). OBLIGATOIRE.
 #
 
 usage() {
@@ -40,11 +41,15 @@ echo
 
 TAG="cron-${ETAB}-$(date +%Y%m%d_%H%M%S)"
 
-echo "> Envoi des theses ${ETAB} soutenues depuis moins d'un mois..."
-/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etat S --etablissement ${ETAB} --tag ${TAG} --date-soutenance-min P1M
+echo "> Envoi des theses ${ETAB} sans date de soutenance reelle..."
+/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --date-soutenance-null
 echo
 echo
-echo "> Envoi des theses ${ETAB} en cours..."
-/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etat E --etablissement ${ETAB} --tag ${TAG}
+echo "> Envoi des theses ${ETAB} dont la date de soutenance est dans les 3 prochains mois..."
+/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --date-soutenance-min +P1D --date-soutenance-max +P3M
+echo
+echo
+echo "> Envoi forcé des theses ${ETAB} dont la date de soutenance est passee de 7j maximum..."
+/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --date-soutenance-min -P7D --date-soutenance-max -P1D --force
 echo
 
