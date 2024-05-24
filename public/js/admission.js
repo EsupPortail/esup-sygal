@@ -252,6 +252,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
         additionalFieldsInfosDoctorantSalarie.style.display = 'none';
         showOrNotDiv(infosDoctorantSalarieRadios, additionalFieldsInfosDoctorantSalarie)
+
+        $('input[name="financement[contratDoctoral]"]').on('change', function () {
+            if ($(this).val() == '1') {
+                $('input[name="financement[tempsTravail]"][value="1"]').prop('checked', true);
+                $('input[name="financement[estSalarie]"][value="1"]').prop('checked', true);
+
+                $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', true);
+                $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', true);
+            } else {
+                $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', false);
+                $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', false);
+            }
+        });
     }
 
     if (currentUrl.indexOf("/document") !== -1) {
