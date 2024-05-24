@@ -194,6 +194,12 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
         );
 
         $this->add(
+            (new Text('etablissementLaboratoireRecherche'))
+                ->setLabel("Établissement hébergeant l’unité de recherche")
+                ->setLabelAttributes(['data-after' => " / Establishment hosting laboratory"])
+        );
+
+        $this->add(
             (new Select("ecoleDoctorale"))
                 ->setLabel("Ecole doctorale")
                 ->setLabelAttributes(['data-after' => " / Doctoral school"])
@@ -460,6 +466,14 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 'required' => false,
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+            ],
+            'etablissementLaboratoireRecherche' => [
+                'name' => 'etablissementLaboratoireRecherche',
+                'required' => false,
+                'filters' => [
+                    ['name' => StripTags::class],
+                    ['name' => StringTrim::class],
                 ],
             ],
             'etablissementInscription' => [

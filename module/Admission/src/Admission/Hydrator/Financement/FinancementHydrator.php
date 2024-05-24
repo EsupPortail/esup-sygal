@@ -38,7 +38,6 @@ class FinancementHydrator extends DoctrineObject
         //Si la case estSalarie est décochée, on met à null les valeurs des champs reliés
         if (isset($data["estSalarie"]) && !$data["estSalarie"]) {
             $data["statutProfessionnel"] = null;
-            $data["etablissementLaboratoireRecherche"] = null;
         }
 
         if (isset($data['verificationFinancement']) && !is_array($data['verificationFinancement'])) {

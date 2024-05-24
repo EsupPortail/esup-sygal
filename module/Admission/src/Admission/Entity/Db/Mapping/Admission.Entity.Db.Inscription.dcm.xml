@@ -10,6 +10,7 @@
 
         <field name="disciplineDoctorat" type="string" column="discipline_doctorat" length="60" nullable="true"/>
         <field name="composanteDoctoratLibelle" type="string" column="composante_doctorat_libelle" length="255" nullable="true"/>
+        <field name="etablissementLaboratoireRecherche" type="string" column="etablissement_laboratoire_recherche" nullable="true"/>
         <field name="nomDirecteurThese" type="string" column="nom_directeur_these" length="60" nullable="true"/>
         <field name="prenomDirecteurThese" type="string" column="prenom_directeur_these" length="60" nullable="true"/>
         <field name="emailDirecteurThese" type="string" column="mail_directeur_these" length="60" nullable="true"/>

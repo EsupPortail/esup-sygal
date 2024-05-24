@@ -56,11 +56,6 @@ class Financement implements HistoriqueAwareInterface{
     private $estSalarie;
 
     /**
-     * @var string|null
-     */
-    private $etablissementLaboratoireRecherche;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -278,30 +273,6 @@ class Financement implements HistoriqueAwareInterface{
     public function getEstSalarie()
     {
         return $this->estSalarie;
-    }
-
-    /**
-     * Set etablissementLaboratoireRecherche.
-     *
-     * @param string|null $etablissementLaboratoireRecherche
-     *
-     * @return Financement
-     */
-    public function setEtablissementLaboratoireRecherche($etablissementLaboratoireRecherche = null)
-    {
-        $this->etablissementLaboratoireRecherche = $etablissementLaboratoireRecherche;
-
-        return $this;
-    }
-
-    /**
-     * Get etablissementLaboratoireRecherche.
-     *
-     * @return string|null
-     */
-    public function getEtablissementLaboratoireRecherche()
-    {
-        return $this->etablissementLaboratoireRecherche;
     }
 
     /** Pour macro ****************************************************************************************************/

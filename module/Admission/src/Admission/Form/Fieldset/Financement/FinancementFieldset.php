@@ -86,12 +86,6 @@ class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 ->setLabelAttributes(['data-after' => " / Professional status"])
         );
 
-        $this->add(
-            (new Text('etablissementLaboratoireRecherche'))
-                ->setLabel("Établissement hébergeant l’unité de recherche")
-                ->setLabelAttributes(['data-after' => " / Establishment hosting laboratory"])
-        );
-
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);
         $verificationFieldset->setName("verificationFinancement");
         $this->add($verificationFieldset);
@@ -129,14 +123,6 @@ class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterPr
             'estSalarie' => [
                 'name' => 'contratDoctoral',
                 'required' => false,
-            ],
-            'etablissementLaboratoireRecherche' => [
-                'name' => 'etablissementLaboratoireRecherche',
-                'required' => false,
-                'filters' => [
-                    ['name' => StripTags::class],
-                    ['name' => StringTrim::class],
-                ],
             ],
             'statutProfessionnel' => [
                 'name' => 'statutProfessionnel',

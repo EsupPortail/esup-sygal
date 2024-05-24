@@ -85,6 +85,11 @@ UPDATE unicaen_renderer_macro
 SET methode_name = 'getComposanteDoctoratLibelle'
 WHERE code = 'AdmissionInscription#ComposanteRattachement';
 
+UPDATE unicaen_renderer_macro
+SET code          = 'AdmissionInscription#EtablissementLaboratoireRecherche',
+    variable_name = 'admissionInscription'
+WHERE code = 'AdmissionFinancement#EtablissementLaboratoireRecherche';
+
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionEtudiant#VilleEtudiantEtrangere',
         '<p>Retourne la ville étrangère (le cas échéant) de l''étudiant</p>',
@@ -216,6 +221,7 @@ SET document_corps = '<h1 style="text-align: center;">Récapitulatif du dossier 
 <li><strong>Composante de rattachement : </strong>VAR[AdmissionInscription#ComposanteRattachement]</li>
 <li><strong>École Doctorale :</strong> VAR[AdmissionInscription#EcoleDoctorale]</li>
 <li><strong>Unité de recherche :</strong> VAR[AdmissionInscription#UniteRecherche]</li>
+<li><strong>Établissement hébergeant le laboratoire de recherche</strong> :  VAR[AdmissionInscription#EtablissementLaboratoireRecherche]</li>
 <li><strong>Établissement d''inscription</strong> : VAR[AdmissionInscription#EtablissementInscription] </li>
 <li><strong>Directeur(-trice) de thèse :</strong> VAR[AdmissionInscription#DenominationDirecteurThese]
 <ul>
@@ -241,10 +247,8 @@ SET document_corps = '<h1 style="text-align: center;">Récapitulatif du dossier 
 <p><strong>Temps de travail du Doctorat mené à</strong> : VAR[AdmissionFinancement#TempsTravail]</p>
 <p><strong>Êtes-vous salarié ?</strong> VAR[AdmissionFinancement#EstSalarie]</p>
 <ul>
-<li><strong>Si oui, Statut professionnel </strong>: VAR[AdmissionFinancement#StatutProfessionnel]</li>
-<li><strong>Si oui, Établissement hébergeant le laboratoire de recherche</strong> :  VAR[AdmissionFinancement#EtablissementLaboratoireRecherche]</li>
+<li><strong>Si oui, Statut professionnel </strong>: VAR[AdmissionFinancement#StatutProfessionnel] </li>
 </ul>
-<p> </p>
 <h2>Validations et Avis accordés au dossier d''admission</h2>
 <p>VAR[AdmissionRecapitulatif#Operations]</p>
 <h2>Validation par la direction de l''établissement</h2>
@@ -329,3 +333,16 @@ where privilege_id in (select id from privilege where code LIKE 'admission-comme
 DELETE
 from privilege
 where code LIKE 'admission-commentaires-ajoutes';
+
+--
+-- Déplacement du champ ETABLISSEMENT_LABORATOIRE_RECHERCHE vers admission_inscription
+--
+
+ALTER TABLE admission_inscription ADD COLUMN ETABLISSEMENT_LABORATOIRE_RECHERCHE VARCHAR;
+
+UPDATE admission_inscription
+SET ETABLISSEMENT_LABORATOIRE_RECHERCHE = af.ETABLISSEMENT_LABORATOIRE_RECHERCHE
+    FROM admission_financement af
+WHERE admission_inscription.admission_id = af.admission_id;
+
+ALTER TABLE admission_financement DROP COLUMN ETABLISSEMENT_LABORATOIRE_RECHERCHE;

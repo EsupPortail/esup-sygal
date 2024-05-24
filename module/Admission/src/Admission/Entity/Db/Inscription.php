@@ -84,6 +84,10 @@ class Inscription implements HistoriqueAwareInterface{
      */
     private $uniteRecherche;
     /**
+     * @var string|null
+     */
+    private $etablissementLaboratoireRecherche;
+    /**
      * @var Etablissement
      */
     private $etablissementInscription;
@@ -503,6 +507,30 @@ class Inscription implements HistoriqueAwareInterface{
     public function getUniteRecherche()
     {
         return $this->uniteRecherche;
+    }
+
+    /**
+     * Set etablissementLaboratoireRecherche.
+     *
+     * @param string|null $etablissementLaboratoireRecherche
+     *
+     * @return Inscription
+     */
+    public function setEtablissementLaboratoireRecherche($etablissementLaboratoireRecherche = null)
+    {
+        $this->etablissementLaboratoireRecherche = $etablissementLaboratoireRecherche;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementLaboratoireRecherche.
+     *
+     * @return string|null
+     */
+    public function getEtablissementLaboratoireRecherche()
+    {
+        return $this->etablissementLaboratoireRecherche;
     }
 
     /**
