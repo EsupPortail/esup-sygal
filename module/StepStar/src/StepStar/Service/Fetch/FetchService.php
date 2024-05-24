@@ -75,9 +75,11 @@ class FetchService
 
     private function dateFromSpec(string $dateSpec): string
     {
-        // La contrainte de date peut commencer par 'P', '+P' ou '-P' auquel cas on construira un DateInterval.
-        // ex : '+P6M' ou 'P6M' est traduit en "date du jour + 6 mois"
-        // ex : '-P6M' est traduit en "date du jour - 6 mois"
+        // La contrainte de date peut au choix :
+        //   - être de la forme 'AAAA-MM-DD' (rien à faire) ;
+        //   - commencer par 'P', '+P' ou '-P' auquel cas on construira un DateInterval.
+        //     ex : '+P6M' ou 'P6M' est traduit en "date du jour + 6 mois"
+        //     ex : '-P6M' est traduit en "date du jour - 6 mois"
 
         $isInterval = str_starts_with($dateSpec, 'P') || str_starts_with($dateSpec, '+P') || str_starts_with($dateSpec, '-P');
 
@@ -149,8 +151,8 @@ class FetchService
         $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
         $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
         $dateSoutenanceNull = $criteria['dateSoutenanceNull'] ?? false;
-        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou 'P6M'
-        $dateSoutenanceMax = $criteria['dateSoutenanceMax'] ?? null; // ex : '2022-03-11' ou 'P6M'
+        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou '+P6M' ou '-P7D'
+        $dateSoutenanceMax = $criteria['dateSoutenanceMax'] ?? null; // idem
         $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
 
         $this->criteriaToStrings = [];

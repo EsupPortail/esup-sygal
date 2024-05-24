@@ -65,14 +65,16 @@ class Module
             [ '--etablissement <etablissement>', "Codes des établissements d'inscription, séparés par une virgule, ex : 'UCN,URN'. Facultatif"],
             [ '--date-soutenance-null', "Ne retient que les thèses dont la date de soutenance est non renseignée. Facultatif"],
             [ '--date-soutenance-min <date-soutenance-min>',
-                "Date de soutenance minimale. " .
-                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe AVANT cette date seront écartées, ex : '2022-03-11'. " .
-                "Si la valeur commence par 'P' : un DateInterval sera construit et retranché à la date du jour pour déterminer la date de soutenance minimale, ex : 'P6M' <=> '6 mois AVANT la date du jour'. " .
+                $dateSoutenanceMinHelp = "Date de soutenance minimale. " . PHP_EOL .
+                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe AVANT cette date seront écartées, ex : '2022-03-11'. " . PHP_EOL .
+                "Si la valeur commence par '-P' : un DateInterval sera construit et retranché à la date du jour pour déterminer la date de soutenance minimale, ex : '-P6M' <=> '6 mois AVANT la date du jour'. " . PHP_EOL .
+                "Si la valeur commence par '+P' : un DateInterval sera construit et additionné à la date du jour pour déterminer la date de soutenance minimale, ex : '+P7D' <=> '7 jours APRES la date du jour'. " . PHP_EOL .
                 "Facultatif"],
             [ '--date-soutenance-max <date-soutenance-max>',
-                "Date de soutenance maximale. " .
-                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe APRÈS cette date seront écartées, ex : '2022-07-09'. " .
-                "Si la valeur commence par 'P' : un DateInterval sera construit et additionné à la date du jour pour déterminer la date de soutenance maximale, ex : 'P6M' <=> '6 mois APRÈS la date du jour'. " .
+                $dateSoutenanceMaxHelp = "Date de soutenance maximale. " . PHP_EOL .
+                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe APRÈS cette date seront écartées, ex : '2022-07-09'. " . PHP_EOL .
+                "Si la valeur commence par '-P' : un DateInterval sera construit et retranché à la date du jour pour déterminer la date de soutenance maximale, ex : '-P6M' <=> '6 mois AVANT la date du jour'. " . PHP_EOL .
+                "Si la valeur commence par '+P' : un DateInterval sera construit et additionné à la date du jour pour déterminer la date de soutenance maximale, ex : '+P7D' <=> '7 jours APRES la date du jour'. " . PHP_EOL .
                 "Facultatif"],
 
             /**
@@ -100,16 +102,8 @@ class Module
             [ '--etat <etat>', "États des thèses, séparés par une virgule, ex : 'E,S'. Facultatif"],
             [ '--etablissement <etablissement>', "Codes des établissements d'inscription, séparés par une virgule, ex : 'UCN,URN'. Facultatif"],
             [ '--date-soutenance-null', "Ne retient que les thèses dont la date de soutenance est non renseignée. Facultatif"],
-            [ '--date-soutenance-min <date-soutenance-min>',
-                "Date de soutenance minimale. " .
-                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe AVANT cette date seront écartées, ex : '2022-03-11'. " .
-                "Si la valeur commence par 'P' : un DateInterval sera construit et retranché à la date du jour pour déterminer la date de soutenance minimale, ex : 'P6M' <=> '6 mois AVANT la date du jour'. " .
-                "Facultatif"],
-            [ '--date-soutenance-max <date-soutenance-max>',
-                "Date de soutenance maximale. " .
-                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe APRÈS cette date seront écartées, ex : '2022-07-09'. " .
-                "Si la valeur commence par 'P' : un DateInterval sera construit et additionné à la date du jour pour déterminer la date de soutenance maximale, ex : 'P6M' <=> '6 mois APRÈS la date du jour'. " .
-                "Facultatif"],
+            [ '--date-soutenance-min <date-soutenance-min>', $dateSoutenanceMinHelp],
+            [ '--date-soutenance-max <date-soutenance-max>', $dateSoutenanceMaxHelp],
             [ '--tag <tag>', "Tag éventuel permettant de retrouver facilement un ensemble de logs, ex : 'cron-2022-03-11'. Facultatif"],
             [ '--force', "Réalise l'envoi même si le contenu du fichier TEF est le même qu'au dernier envoi. Facultatif"],
             [ '--clean', "Une fois l'envoi effectué, supprimer les fichiers XML temporaires générés. Facultatif"],
