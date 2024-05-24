@@ -41,36 +41,48 @@ INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
         select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id
     ) ;
 
+-- --
+-- -- Affectation de profils à des rôles.
+-- -- NB: penser à créer ensuite les ROLE_PRIVILEGE.
+-- --
+-- insert into PROFIL_TO_ROLE (PROFIL_ID, ROLE_ID)
+--     with data(PROFIL_CODE, ROLE_ROLE_ID) as (
+--         select 'BDD', 'Maison du doctorat UCN' union
+--         select 'BDD', 'Maison du doctorat URN' union
+--         select 'BDD', 'Maison du doctorat ULHN' union
+--         select 'BDD', 'Maison du doctorat INSA'
+--     )
+--     select pr.id, r.id
+--     from data
+--     join PROFIL pr on pr.ROLE_ID = data.PROFIL_CODE
+--     join role r on r.ROLE_ID = data.ROLE_ROLE_ID
+--     where not exists (
+--         select * from PROFIL_TO_ROLE where PROFIL_ID = pr.id and ROLE_ID = r.id
+--     ) ;
 --
--- Affectation de profils à des rôles.
+-- --
+-- -- Application du profil 'GEST_ED' aux roles 'GEST_ED'.
+-- -- NB: penser à créer ensuite les ROLE_PRIVILEGE.
+-- --
+-- insert into profil_to_role (profil_id, role_id)
+-- select p.id, r.id
+-- from profil p, role r
+-- where r.code = 'GEST_ED' and p.role_id = 'GEST_ED'
+--   and not exists (
+--         select * from profil_to_role where profil_id = p.id and role_id = r.id
+--     )
+-- ;
+--------> remplaçables par la création automatique se basant sur le 'code' du profil <-------------
+--
+-- Création automatique des 'profil_to_role' manquants.
 -- NB: penser à créer ensuite les ROLE_PRIVILEGE.
 --
-insert into PROFIL_TO_ROLE (PROFIL_ID, ROLE_ID)
-    with data(PROFIL_CODE, ROLE_ROLE_ID) as (
-        select 'BDD', 'Maison du doctorat UCN' union
-        select 'BDD', 'Maison du doctorat URN' union
-        select 'BDD', 'Maison du doctorat ULHN' union
-        select 'BDD', 'Maison du doctorat INSA'
-    )
-    select pr.id, r.id
-    from data
-    join PROFIL pr on pr.ROLE_ID = data.PROFIL_CODE
-    join role r on r.ROLE_ID = data.ROLE_ROLE_ID
-    where not exists (
-        select * from PROFIL_TO_ROLE where PROFIL_ID = pr.id and ROLE_ID = r.id
-    ) ;
-
---
--- Application du profil 'GEST_ED' aux roles 'GEST_ED'.
--- NB: penser à créer ensuite les ROLE_PRIVILEGE.
---
-insert into profil_to_role (profil_id, role_id)
+insert into profil_to_role(profil_id, role_id)
 select p.id, r.id
-from profil p, role r
-where r.code = 'GEST_ED' and p.role_id = 'GEST_ED'
-  and not exists (
-        select * from profil_to_role where profil_id = p.id and role_id = r.id
-    )
+from role r
+     join profil p on p.role_id = r.code
+where not exists (select * from profil_to_role p2r where p2r.role_id = r.id)
+order by code
 ;
 
 --
@@ -78,14 +90,13 @@ where r.code = 'GEST_ED' and p.role_id = 'GEST_ED'
 --   - PROFIL_TO_ROLE (profils appliqués à chaque rôle) et
 --   - PROFIL_PRIVILEGE (privilèges accordés à chaque profil).
 --
-insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
-select p2r.ROLE_ID, pp.PRIVILEGE_ID
-from PROFIL_TO_ROLE p2r
-join profil pr on pr.id = p2r.PROFIL_ID
-join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
-where not exists (
-    select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
-)
+insert into role_privilege (role_id, privilege_id)
+select p2r.role_id, pp.privilege_id
+from profil_to_role p2r
+         join profil pr on pr.id = p2r.profil_id
+         join profil_privilege pp on pp.profil_id = pr.id
+where not exists ( select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
+order by pr.role_id
 ;
 --
 -- Inverse : suppression des attributions de privilèges à des rôles si elles n'existent pas dans :
