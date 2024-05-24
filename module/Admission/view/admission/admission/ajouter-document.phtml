@@ -1,15 +1,17 @@
 <?php
 
+use Admission\Entity\Db\Admission;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
+ * @var Admission $admission
  *
  * @see \Admission\Controller\AdmissionController::validationAction()
  */
 ?>
 
-<?php echo $this->partial('admission/admission/partial/header', []); ?>
+<?php echo $this->partial('admission/admission/partial/header', ['admission' => $admission]); ?>
 
 <?= $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace() ?>
 
