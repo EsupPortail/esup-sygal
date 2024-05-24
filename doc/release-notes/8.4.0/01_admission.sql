@@ -86,6 +86,12 @@ VALUES ('AdmissionEtudiant#VilleEtudiantEtrangere',
         '<p>Retourne la ville étrangère (le cas échéant) de l''étudiant</p>',
         'admissionEtudiant', 'getAdresseCpVilleEtrangere');
 
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionAvisNotification#Anomalies',
+        '<p>Retourne les possibles anomalies rencontrées lors de la création d''une notification Avis ajouté/modifié</p>',
+        'anomalies',
+        'getAnomalies');
+
 -- Templates
 UPDATE public.unicaen_renderer_template
 SET document_corps = '<h1 style="text-align: center;">Convention de formation doctorale</h1>
@@ -264,8 +270,11 @@ UPDATE public.unicaen_renderer_template SET document_sujet = 'Avis supprimé sur
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
 <p>L''<strong>VAR[TypeValidation#Libelle]</strong> du <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> datant du VAR[AdmissionAvis#Date] a été <strong>supprimé </strong>VAR[AdmissionAvis#Destructeur]</p>
 <p>Afin de suivre l''avancée du dossier, connectez-vous sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</p>' WHERE code = 'ADMISSION_AVIS_SUPPRIME';
-UPDATE public.unicaen_renderer_template SET document_sujet = 'Commentaires ajoutés sur le dossier d''admission de VAR[Individu#Denomination]' WHERE code = 'ADMISSION_COMMENTAIRES_AJOUTES';
-UPDATE public.unicaen_renderer_template SET document_sujet = 'Dossier d''admission de VAR[Individu#Denomination] validé' WHERE code = 'ADMISSION_DERNIERE_VALIDATION_AJOUTEE';
+UPDATE public.unicaen_renderer_template SET code = 'ADMISSION_DOSSIER_VALIDE', document_sujet = 'Dossier d''admission de VAR[Individu#Denomination] validé', document_corps = '<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p><em>VAR[AdmissionAvisNotification#Anomalies]</em><em><br /></em></p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>validé</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>
+<p>Le circuit de signature de votre dossier est maintenant terminé. </p>' WHERE code = 'ADMISSION_DERNIERE_VALIDATION_AJOUTEE';
 UPDATE public.unicaen_renderer_template SET document_sujet = 'Dossier d''admission de VAR[Individu#Denomination] incomplet', document_corps = '<p>Bonjour,</p>
 <p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
 <p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été déclaré comme <strong>incomplet</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date].</p>
@@ -286,6 +295,25 @@ UPDATE public.unicaen_renderer_template SET document_sujet = 'Validation supprim
 DELETE FROM public.unicaen_renderer_template where code = 'ADMISSION_NOTIFICATION_DOSSIER_COMPLET';
 DELETE FROM public.unicaen_renderer_template where code = 'ADMISSION_NOTIFICATION_GESTIONNAIRE';
 
+--Ajout d'un template (associés au module Admission)
+INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps,
+                                              document_css, namespace)
+VALUES ('ADMISSION_DOSSIER_REJETE',
+        '<p>Mail pour notifier que le dossier d''admission a été rejeté</p>', 'mail',
+        'Dossier d''admission de VAR[Individu#Denomination] rejeté', e'<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p><em>VAR[AdmissionAvisNotification#Anomalies]</em><em><br /></em></p>
+<p>Le <strong>dossier d''admission</strong> de <strong>VAR[Individu#Denomination]</strong> a été <strong>rejeté</strong> par VAR[AdmissionAvis#Auteur], le VAR[AdmissionAvis#Date]</p>
+<p>Merci de prendre connaissance de la raison en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#Admission]</p>',
+        null, 'Admission\Provider\Template');
+
+
+--
+-- Template/Privilège
+--
+
+--Suppression du template ADMISSION_COMMENTAIRES_AJOUTES
+DELETE FROM public.unicaen_renderer_template WHERE code = 'ADMISSION_COMMENTAIRES_AJOUTES';
 
 --Suppression du privilège ADMISSION_NOTIFIER_COMMENTAIRES_AJOUTES (associés au module Admission)
 DELETE

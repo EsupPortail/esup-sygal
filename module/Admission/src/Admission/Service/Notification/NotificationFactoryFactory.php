@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Notification;
 
+use Admission\Rule\Email\ExtractionEmailRule;
 use Admission\Service\Url\UrlService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
@@ -46,6 +47,10 @@ class NotificationFactoryFactory extends NFF
         /** @var UrlService $urlService */
         $urlService = $container->get(UrlService::class);
         $factory->setUrlService($urlService);
+
+        /** @var ExtractionEmailRule $extractionEmailRule */
+        $extractionEmailRule = $container->get(ExtractionEmailRule::class);
+        $factory->setExtractionEmailRule($extractionEmailRule);
 
         return $factory;
     }

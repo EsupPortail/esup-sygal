@@ -93,13 +93,19 @@ class AdmissionAvisEventListener extends AdmissionOperationAbstractEventListener
 
     private function handleNotificationAvisAjoute()
     {
-        $notif = $this->notificationFactory->createNotificationAvisAjoute($this->operationRealisee);
+        $notif = $this->notificationFactory->createNotificationAvis();
+        $notif->setAdmissionAvis($this->operationRealisee);
+        $notif = $this->notificationFactory->createNotificationAvisAjoute($notif);
+
         $this->triggerNotification($notif);
     }
 
     private function handleNotificationAvisModifie()
     {
-        $notif = $this->notificationFactory->createNotificationAvisModifie($this->operationRealisee);
+        $notif = $this->notificationFactory->createNotificationAvis();
+        $notif->setAdmissionAvis($this->operationRealisee);
+        $notif = $this->notificationFactory->createNotificationAvisModifie($notif);
+
         $this->triggerNotification($notif);
     }
 

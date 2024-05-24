@@ -7,9 +7,18 @@ use Notification\Notification;
 
 class AdmissionAvisNotification extends Notification
 {
-    protected ?string $templatePath = 'rapport-activite/notification/avis';
     private AdmissionAvis $admissionAvis;
-    private array $messagesByAvisValeurBool = [];
+    private array $anomalies = [];
+
+    public function setAnomalies(array $anomalies)
+    {
+        $this->anomalies = $anomalies;
+    }
+
+    public function getAnomalies()
+    {
+        return implode('<br>', $this->anomalies);
+    }
 
     /**
      * @param AdmissionAvis $admissionAvis
@@ -19,12 +28,9 @@ class AdmissionAvisNotification extends Notification
         $this->admissionAvis = $admissionAvis;
     }
 
-    /**
-     * @param array $messagesByAvisValeurBool
-     */
-    public function setMessagesByAvisValeurBool(array $messagesByAvisValeurBool): void
+    public function getAdmissionAvis(): AdmissionAvis
     {
-        $this->messagesByAvisValeurBool = $messagesByAvisValeurBool;
+        return $this->admissionAvis;
     }
 
     /**
@@ -42,7 +48,7 @@ class AdmissionAvisNotification extends Notification
 
         $this->setTemplateVariables([
             'admissionAvis' => $this->admissionAvis,
-            'messagesByAvisValeurBool' => $this->messagesByAvisValeurBool,
+            'anomalies' => $this->anomalies,
         ]);
 
         $this->addSuccessMessage($successMessage);
