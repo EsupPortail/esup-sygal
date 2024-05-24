@@ -316,10 +316,10 @@ class Financement implements HistoriqueAwareInterface{
         }else{
             if($this->getContratDoctoral()){
                 return $this->getFinancement() ?
-                        $this->getFinancement()->getLibelleLong() :
-                        'Aucun employeur choisi';
+                        "Oui - ".$this->getFinancement()->getLibelleLong() :
+                        'Oui - Aucun employeur choisi';
             }else{
-                return "<b>Aucun contrat doctoral prévu</b>";
+                return "Aucun contrat doctoral prévu";
             }
         }
     }

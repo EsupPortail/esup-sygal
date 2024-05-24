@@ -81,6 +81,10 @@ UPDATE unicaen_renderer_macro
 SET methode_name = 'getAdresseNomCommune'
 WHERE code = 'AdmissionEtudiant#VilleEtudiant';
 
+UPDATE unicaen_renderer_macro
+SET methode_name = 'getComposanteDoctoratLibelle'
+WHERE code = 'AdmissionInscription#ComposanteRattachement';
+
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionEtudiant#VilleEtudiantEtrangere',
         '<p>Retourne la ville étrangère (le cas échéant) de l''étudiant</p>',
