@@ -4,20 +4,20 @@
           table="FICHIER_THESE"
           repository-class="Depot\Entity\Db\Repository\FichierTheseRepository">
 
-    <id name="id" type="integer" column="ID">
+    <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="retraitement" column="RETRAITEMENT" nullable="true"/>
-    <field name="estConforme" type="integer" column="EST_CONFORME" nullable="true"/>
-    <field name="estPartiel" type="boolean" column="EST_PARTIEL"/>
+    <field name="retraitement" column="retraitement" nullable="true"/>
+    <field name="estConforme" type="integer" column="est_conforme" nullable="true"/>
+    <field name="estPartiel" type="boolean" column="est_partiel"/>
 
     <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
-      <join-column name="FICHIER_ID" referenced-column-name="ID"/>
+      <join-column name="fichier_id" referenced-column-name="id"/>
     </many-to-one>
 
     <many-to-one field="these" target-entity="These\Entity\Db\These">
-      <join-column name="THESE_ID" referenced-column-name="ID"/>
+      <join-column name="these_id" referenced-column-name="id"/>
     </many-to-one>
 
   </entity>

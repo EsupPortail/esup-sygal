@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="Application\Entity\Db\TypeRapport" table="TYPE_RAPPORT">
-    <id name="id" type="integer" column="ID">
+    <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
-    <field name="code" type="string" column="CODE" length="25" nullable="false"/>
-    <field name="libelleCourt" type="string" column="LIBELLE_COURT" length="64"/>
-    <field name="libelleLong" type="string" column="LIBELLE_LONG" length="128"/>
+    <field name="code" type="string" column="code" length="25" nullable="false"/>
+    <field name="libelleCourt" type="string" column="libelle_court" length="64"/>
+    <field name="libelleLong" type="string" column="libelle_long" length="128"/>
   </entity>
 </doctrine-mapping>

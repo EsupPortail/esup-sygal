@@ -3,73 +3,73 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Soutenance\Entity\Proposition" table="SOUTENANCE_PROPOSITION">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
         <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="these_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="date"                      type="datetime"                         column="DATEPREV"   nullable="true"/>
-        <field name="lieu"                      type="string"        length="256"       column="LIEU"       nullable="true"/>
-        <field name="adresse"                   type="string"        length="2048"      column="ADRESSE_EXACTE"       nullable="true"/>
-        <field name="exterieur"                 type="boolean"                          column="EXTERIEUR"       nullable="true"/>
+        <field name="date"                      type="datetime"                         column="dateprev"   nullable="true"/>
+        <field name="lieu"                      type="string"        length="256"       column="lieu"       nullable="true"/>
+        <field name="adresse"                   type="string"        length="2048"      column="adresse_exacte"       nullable="true"/>
+        <field name="exterieur"                 type="boolean"                          column="exterieur"       nullable="true"/>
 
         <one-to-many field="membres" target-entity="Soutenance\Entity\Membre" mapped-by="proposition"/>
         <one-to-many field="justificatifs" target-entity="Soutenance\Entity\Justificatif" mapped-by="proposition"/>
 
-        <field name="renduRapport"              type="datetime"                         column="RENDU_RAPPORT"        nullable="true"/>
-        <field name="confidentialite"           type="datetime"                         column="CONFIDENTIALITE"      nullable="true"/>
+        <field name="renduRapport"              type="datetime"                         column="rendu_rapport"        nullable="true"/>
+        <field name="confidentialite"           type="datetime"                         column="confidentialite"      nullable="true"/>
 
-        <field name="labelEuropeen"             type="boolean"                           column="LABEL_EUROPEEN"      nullable="false"/>
-        <field name="huitClos"                  type="boolean"                           column="HUIT_CLOS"           nullable="false"/>
-<!--        <field name="manuscritAnglais"          type="boolean"                           column="MANUSCRIT_ANGLAIS"   nullable="false"/>-->
-        <field name="soutenanceAnglais"         type="boolean"                           column="SOUTENANCE_ANGLAIS"  nullable="false"/>
+        <field name="labelEuropeen"             type="boolean"                           column="label_europeen"      nullable="false"/>
+        <field name="huitClos"                  type="boolean"                           column="huit_clos"           nullable="false"/>
+<!--        <field name="manuscritAnglais"          type="boolean"                           column="manuscrit_anglais"   nullable="false"/>-->
+        <field name="soutenanceAnglais"         type="boolean"                           column="soutenance_anglais"  nullable="false"/>
 
-        <field name="nouveauTitre"              type="string"        length="2048"       column="NOUVEAU_TITRE"       nullable="true"/>
+        <field name="nouveauTitre"              type="string"        length="2048"       column="nouveau_titre"       nullable="true"/>
 
         <many-to-one field="etat" target-entity="Soutenance\Entity\Etat">
             <join-columns>
-                <join-column name="ETAT_ID" referenced-column-name="ID"/>
+                <join-column name="etat_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="sursis"              type="string"        length="1"       column="SURSIS"       nullable="true"/>
+        <field name="sursis"              type="string"        length="1"       column="sursis"       nullable="true"/>
 
         <one-to-many field="avis" target-entity="Soutenance\Entity\Avis" mapped-by="proposition"/>
         <one-to-many field="adresses" target-entity="Soutenance\Entity\Adresse" mapped-by="proposition"/>
 
         <many-to-many field="horodatages" target-entity="Horodatage\Entity\Db\Horodatage">
-            <join-table name="SOUTENANCE_HORODATAGE">
+            <join-table name="soutenance_horodatage">
                 <join-columns>
-                    <join-column name="PROPOSITION_ID" referenced-column-name="ID" />
+                    <join-column name="proposition_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="HORODATAGE_ID" referenced-column-name="ID" />
+                    <join-column name="horodatage_id" referenced-column-name="id" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

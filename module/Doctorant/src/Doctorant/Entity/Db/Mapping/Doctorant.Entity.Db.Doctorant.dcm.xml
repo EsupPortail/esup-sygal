@@ -4,29 +4,29 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Doctorant\Entity\Db\Doctorant" table="DOCTORANT"
             repository-class="Doctorant\Entity\Db\Repository\DoctorantRepository">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
-        <field name="codeApprenantInSource" type="string" column="CODE_APPRENANT_IN_SOURCE" length="64" nullable="true"/>
+        <field name="sourceCode" type="string" column="source_code" length="100" nullable="true"/>
+        <field name="codeApprenantInSource" type="string" column="code_apprenant_in_source" length="64" nullable="true"/>
 
         <field name="npdForce" type="string" column="npd_force"/>
         <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
 
         <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
-                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+                <join-column name="individu_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
-                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+                <join-column name="etablissement_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
@@ -35,37 +35,37 @@
         <many-to-many field="substitues" target-entity="Doctorant\Entity\Db\Doctorant">
             <join-table name="doctorant_substit">
                 <join-columns>
-                    <join-column name="to_id" referenced-column-name="ID" />
+                    <join-column name="to_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="from_id" referenced-column-name="ID" />
+                    <join-column name="from_id" referenced-column-name="id" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
-                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+                <join-column name="source_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="ine" column="INE"/>
+        <field name="ine" column="ine"/>
 
         <one-to-many field="missionsEnseignements" target-entity="Doctorant\Entity\Db\MissionEnseignement" mapped-by="doctorant"/>
     </entity>

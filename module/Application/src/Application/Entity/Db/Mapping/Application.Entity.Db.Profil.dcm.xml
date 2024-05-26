@@ -4,39 +4,39 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Application\Entity\Db\Profil" table="PROFIL">
             <!--repository-class="Application\Entity\Db\Repository\RoleRepository">-->
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="libelle" type="string" column="LIBELLE" length="100" nullable="false"/>
-        <field name="roleCode" type="string" column="ROLE_ID" length="64" nullable="false"/>
-        <field name="description" type="string" column="DESCRIPTION" length="1024" nullable="true"/>
-        <field name="ordre" type="integer" column="ORDRE" nullable="true"/>
+        <field name="libelle" type="string" column="libelle" length="100" nullable="false"/>
+        <field name="roleCode" type="string" column="role_id" length="64" nullable="false"/>
+        <field name="description" type="string" column="description" length="1024" nullable="true"/>
+        <field name="ordre" type="integer" column="ordre" nullable="true"/>
 
         <many-to-one field="structureType" target-entity="Structure\Entity\Db\TypeStructure">
             <join-columns>
-                <join-column name="STRUCTURE_TYPE" referenced-column-name="ID"/>
+                <join-column name="structure_type" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-many target-entity="Application\Entity\Db\Privilege" field="privileges">
-            <join-table name="PROFIL_PRIVILEGE">
+            <join-table name="profil_privilege">
                 <join-columns>
-                    <join-column name="PROFIL_ID" referenced-column-name="ID" />
+                    <join-column name="profil_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="PRIVILEGE_ID" referenced-column-name="ID" />
+                    <join-column name="privilege_id" referenced-column-name="id" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
 
         <many-to-many target-entity="Application\Entity\Db\Role" field="roles">
-            <join-table name="PROFIL_TO_ROLE">
+            <join-table name="profil_to_role">
                 <join-columns>
-                    <join-column name="PROFIL_ID" referenced-column-name="ID" />
+                    <join-column name="profil_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="ROLE_ID" referenced-column-name="ID" />
+                    <join-column name="role_id" referenced-column-name="id" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

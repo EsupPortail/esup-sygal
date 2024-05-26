@@ -5,38 +5,38 @@
 
     <entity name="Application\Entity\Db\Privilege" table="PRIVILEGE">
 
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="code" type="string" column="CODE" length="150" nullable="false"/>
-        <field name="libelle" type="string" column="LIBELLE" length="200" nullable="false"/>
-        <field name="ordre" type="integer" column="ORDRE" nullable="true"/>
+        <field name="code" type="string" column="code" length="150" nullable="false"/>
+        <field name="libelle" type="string" column="libelle" length="200" nullable="false"/>
+        <field name="ordre" type="integer" column="ordre" nullable="true"/>
 
         <many-to-one field="categorie" target-entity="UnicaenAuth\Entity\Db\CategoriePrivilege">
             <join-columns>
-                <join-column name="CATEGORIE_ID" referenced-column-name="id"/>
+                <join-column name="categorie_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-many target-entity="Application\Entity\Db\Role" field="role">
             <join-table name="role_privilege">
                 <join-columns>
-                    <join-column name="PRIVILEGE_ID" referenced-column-name="ID"/>
+                    <join-column name="privilege_id" referenced-column-name="id"/>
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="ROLE_ID" referenced-column-name="ID"/>
+                    <join-column name="role_id" referenced-column-name="id"/>
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
 
         <many-to-many target-entity="Application\Entity\Db\Profil" field="profils">
-            <join-table name="PROFIL_PRIVILEGE">
+            <join-table name="profil_privilege">
                 <join-columns>
-                    <join-column name="PRIVILEGE_ID" referenced-column-name="ID"/>
+                    <join-column name="privilege_id" referenced-column-name="id"/>
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="PROFIL_ID" referenced-column-name="ID"/>
+                    <join-column name="profil_id" referenced-column-name="id"/>
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

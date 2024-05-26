@@ -5,33 +5,33 @@
             repository-class="Formation\Entity\Db\Repository\ModuleRepository"
     >
 
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
-        <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
-        <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
-        <field name="lien"                type="string"       length="9999"       column="LIEN"             nullable="true"/>
+        <field name="libelle"             type="string"       length="1024"       column="libelle"          nullable="false"/>
+        <field name="description"         type="string"       length="9999"       column="description"      nullable="true"/>
+        <field name="lien"                type="string"       length="9999"       column="lien"             nullable="true"/>
         <field name="requireMissionEnseignement"                type="boolean"       column="require_missionenseignement"/>
 
         <one-to-many field="formations" target-entity="Formation\Entity\Db\Formation" mapped-by="module"/>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
     </entity>

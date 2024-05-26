@@ -2,28 +2,28 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="Application\Entity\Db\Utilisateur" table="UTILISATEUR"
           repository-class="Application\Entity\Db\Repository\UtilisateurRepository">
-    <id name="id" type="integer" column="ID">
+    <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="username" column="USERNAME"/>
-    <field name="password" column="PASSWORD"/>
-    <field name="nom" column="NOM" nullable="true"/>
-    <field name="prenom" column="PRENOM" nullable="true"/>
-    <field name="displayName" column="DISPLAY_NAME"/>
-    <field name="email" column="EMAIL" nullable="true"/>
-    <field name="state" type="integer" column="STATE"/>
-    <field name="passwordResetToken" column="PASSWORD_RESET_TOKEN" nullable="true"/>
+    <field name="username" column="username"/>
+    <field name="password" column="password"/>
+    <field name="nom" column="nom" nullable="true"/>
+    <field name="prenom" column="prenom" nullable="true"/>
+    <field name="displayName" column="display_name"/>
+    <field name="email" column="email" nullable="true"/>
+    <field name="state" type="integer" column="state"/>
+    <field name="passwordResetToken" column="password_reset_token" nullable="true"/>
 
     <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
       <join-columns>
-        <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+        <join-column name="individu_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
 
     <many-to-one field="lastRole" target-entity="Application\Entity\Db\Role">
       <join-columns>
-        <join-column name="LAST_ROLE_ID" referenced-column-name="ID"/>
+        <join-column name="last_role_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
 

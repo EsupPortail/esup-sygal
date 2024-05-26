@@ -7,17 +7,17 @@
             table="IMPORT_OBSERV_RESULT"
             repository-class="Import\Model\Repository\ImportObservResultRepository">
 
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="integer" column="id"/>
 
         <many-to-one field="importObserv" target-entity="Import\Model\ImportObserv">
             <join-columns>
-                <join-column name="IMPORT_OBSERV_ID" referenced-column-name="ID"/>
+                <join-column name="import_observ_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
-                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+                <join-column name="source_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

@@ -3,56 +3,56 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Soutenance\Entity\Membre" table="SOUTENANCE_MEMBRE">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
         <many-to-one field="proposition" target-entity="Soutenance\Entity\Proposition">
             <join-columns>
-                <join-column name="PROPOSITION_ID" referenced-column-name="ID"/>
+                <join-column name="proposition_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="genre"             type="string"       length="1"          column="GENRE"          nullable="false"/>
-        <field name="prenom"            type="string"       length="256"        column="PRENOM"         nullable="false"/>
-        <field name="nom"               type="string"       length="256"        column="NOM"            nullable="false"/>
-        <field name="email"             type="string"       length="256"        column="EMAIL"          nullable="false"/>
+        <field name="genre"             type="string"       length="1"          column="genre"          nullable="false"/>
+        <field name="prenom"            type="string"       length="256"        column="prenom"         nullable="false"/>
+        <field name="nom"               type="string"       length="256"        column="nom"            nullable="false"/>
+        <field name="email"             type="string"       length="256"        column="email"          nullable="false"/>
 
         <many-to-one field="qualite" target-entity="Soutenance\Entity\Qualite">
             <join-columns>
-                <join-column name="QUALITE" referenced-column-name="ID"/>
+                <join-column name="qualite" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="etablissement"     type="string"       length="128"        column="ETABLISSEMENT"  nullable="false"/>
-        <field name="adresse"           type="string"       length="4096"       column="ADRESSE"        nullable="false"/>
-        <field name="exterieur"         type="string"       length="3"          column="EXTERIEUR"      nullable="false"/>
-        <field name="role"              type="string"       length="64"         column="ROLE_ID"        nullable="false"/>
-        <field name="visio"             type="boolean"                          column="VISIO"          nullable="false"/>
+        <field name="etablissement"     type="string"       length="128"        column="etablissement"  nullable="false"/>
+        <field name="adresse"           type="string"       length="4096"       column="adresse"        nullable="false"/>
+        <field name="exterieur"         type="string"       length="3"          column="exterieur"      nullable="false"/>
+        <field name="role"              type="string"       length="64"         column="role_id"        nullable="false"/>
+        <field name="visio"             type="boolean"                          column="visio"          nullable="false"/>
 
         <many-to-one field="acteur" target-entity="These\Entity\Db\Acteur">
             <join-columns>
-                <join-column name="ACTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="acteur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

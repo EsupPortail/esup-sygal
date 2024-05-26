@@ -3,16 +3,16 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Application\Entity\Db\Anomalie" table="V_TMP_ANOMALIE">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="etablissementId"   type="string" length="1000" column="ETABLISSEMENT_ID"   nullable="true"/>
-        <field name="tableName"         type="string" length="1000" column="TABLE_NAME"         nullable="true"/>
-        <field name="sourceCode"        type="string" length="1000" column="SOURCE_CODE"        nullable="false"/>
-        <field name="tableColumn"       type="string" length="1000" column="TABLE_COLUMN"       nullable="true"/>
-        <field name="columnValue"       type="string" length="1000" column="COLUMN_VALUE"       nullable="true"/>
-        <field name="description"       type="string" length="1000" column="DESCRIPTION"        nullable="true"/>
+        <field name="etablissementId"   type="string" length="1000" column="etablissement_id"   nullable="true"/>
+        <field name="tableName"         type="string" length="1000" column="table_name"         nullable="true"/>
+        <field name="sourceCode"        type="string" length="1000" column="source_code"        nullable="false"/>
+        <field name="tableColumn"       type="string" length="1000" column="table_column"       nullable="true"/>
+        <field name="columnValue"       type="string" length="1000" column="column_value"       nullable="true"/>
+        <field name="description"       type="string" length="1000" column="description"        nullable="true"/>
 
     </entity>
 </doctrine-mapping>

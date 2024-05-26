@@ -3,42 +3,42 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Admission\Entity\Db\ConventionFormationDoctorale" table="ADMISSION_CONVENTION_FORMATION_DOCTORALE">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="calendrierProjetRecherche" type="string" column="CALENDRIER_PROJET_RECHERCHE" length="9999" nullable="true"/>
-        <field name="modalitesEncadrSuiviAvancmtRech" type="string" column="MODALITES_ENCADR_SUIVI_AVANCMT_RECH" length="9999" nullable="true"/>
-        <field name="conditionsRealisationProjRech" type="string" column="CONDITIONS_REALISATION_PROJ_RECH" length="9999" nullable="true"/>
-            <field name="modalitesIntegrationUr" type="string" column="MODALITES_INTEGRATION_UR" length="9999" nullable="true"/>
-        <field name="partenariatsProjThese" type="string" column="PARTENARIATS_PROJ_THESE" length="9999" nullable="true"/>
-        <field name="motivationDemandeConfidentialite" type="string" column="MOTIVATION_DEMANDE_CONFIDENTIALITE" length="9999" nullable="true"/>
-        <field name="projetProDoctorant" type="string" column="PROJET_PRO_DOCTORANT" length="9999" nullable="true"/>
+        <field name="calendrierProjetRecherche" type="string" column="calendrier_projet_recherche" length="9999" nullable="true"/>
+        <field name="modalitesEncadrSuiviAvancmtRech" type="string" column="modalites_encadr_suivi_avancmt_rech" length="9999" nullable="true"/>
+        <field name="conditionsRealisationProjRech" type="string" column="conditions_realisation_proj_rech" length="9999" nullable="true"/>
+            <field name="modalitesIntegrationUr" type="string" column="modalites_integration_ur" length="9999" nullable="true"/>
+        <field name="partenariatsProjThese" type="string" column="partenariats_proj_these" length="9999" nullable="true"/>
+        <field name="motivationDemandeConfidentialite" type="string" column="motivation_demande_confidentialite" length="9999" nullable="true"/>
+        <field name="projetProDoctorant" type="string" column="projet_pro_doctorant" length="9999" nullable="true"/>
 
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
 
         <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">
             <join-columns>
-                <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
+                <join-column name="admission_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
     </entity>

@@ -5,11 +5,11 @@
 
     <entity name="Application\Entity\Db\Source" table="SOURCE">
 
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="integer" column="id"/>
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
-                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+                <join-column name="etablissement_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

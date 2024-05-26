@@ -4,14 +4,14 @@
             table="FORMATION_ETAT"
             repository-class="Formation\Entity\Db\Repository\EtatRepository">
 
-        <id name="code" type="string" length="1" column="CODE">
+        <id name="code" type="string" length="1" column="code">
         </id>
 
-        <field name="libelle"              type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
-        <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
-        <field name="icone"                type="string"       length="1024"       column="ICONE"            nullable="true"/>
-        <field name="couleur"              type="string"       length="1024"       column="COULEUR"          nullable="true"/>
-        <field name="ordre"                type="integer"                          column="ORDRE"            nullable="true"/>
+        <field name="libelle"              type="string"       length="1024"       column="libelle"          nullable="false"/>
+        <field name="description"          type="string"       length="9999"       column="description"      nullable="true"/>
+        <field name="icone"                type="string"       length="1024"       column="icone"            nullable="true"/>
+        <field name="couleur"              type="string"       length="1024"       column="couleur"          nullable="true"/>
+        <field name="ordre"                type="integer"                          column="ordre"            nullable="true"/>
 
     </entity>
 </doctrine-mapping>

@@ -4,18 +4,18 @@
             table="HORODATAGE_HORODATAGE">
             <!--repository-class="Horodatage\Entity\Db\Repository\HorodatageRepository">-->
 
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
         <many-to-one field="utilisateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="USER_ID" referenced-column-name="ID"/>
+                <join-column name="user_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
-        <field name="date" type="datetime" column="DATE" nullable="false"/>
+        <field name="date" type="datetime" column="date" nullable="false"/>
 
-        <field name="type"             type="string"       length="1024"       column="TYPE"          nullable="false"/>
-        <field name="complement"       type="string"       length="9999"       column="COMPLEMENT"    nullable="false"/>
+        <field name="type"             type="string"       length="1024"       column="type"          nullable="false"/>
+        <field name="complement"       type="string"       length="9999"       column="complement"    nullable="false"/>
     </entity>
 </doctrine-mapping>

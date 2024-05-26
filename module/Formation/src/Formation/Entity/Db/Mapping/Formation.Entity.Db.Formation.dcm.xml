@@ -5,62 +5,62 @@
             repository-class="Formation\Entity\Db\Repository\FormationRepository"
     >
 
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
-        <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
-        <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
-        <field name="lien"                type="string"       length="9999"       column="LIEN"             nullable="true"/>
+        <field name="libelle"             type="string"       length="1024"       column="libelle"          nullable="false"/>
+        <field name="description"         type="string"       length="9999"       column="description"      nullable="true"/>
+        <field name="lien"                type="string"       length="9999"       column="lien"             nullable="true"/>
 
         <one-to-many field="sessions" target-entity="Formation\Entity\Db\Session" mapped-by="formation"/>
 
         <!-- VALEUR PAR DEFAUT DES SESSIONS ASSOCIEES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <many-to-one field="site" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
-                <join-column name="SITE_ID" referenced-column-name="ID"/>
+                <join-column name="site_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="responsable" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
-                <join-column name="RESPONSABLE_ID" referenced-column-name="ID"/>
+                <join-column name="responsable_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
-        <field name="modalite"            type="string"       length="1"          column="MODALITE"         nullable="true"/>
-        <field name="type"                type="string"       length="1"          column="TYPE"             nullable="true"/>
+        <field name="modalite"            type="string"       length="1"          column="modalite"         nullable="true"/>
+        <field name="type"                type="string"       length="1"          column="type"             nullable="true"/>
         <many-to-one field="typeStructure" target-entity="Structure\Entity\Db\Structure">
             <join-columns>
-                <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
+                <join-column name="type_structure_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
-        <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>
-        <field name="tailleListeComplementaire" type="integer"                     column="TAILLE_LISTE_COMPLEMENTAIRE"  nullable="true"/>
-        <field name="objectif" type="string" length="9999"                         column="OBJECTIF"  nullable="true"/>
-        <field name="programme" type="string" length="9999"                        column="PROGRAMME"  nullable="true"/>
+        <field name="tailleListePrincipale"     type="integer"                     column="taille_liste_principale"      nullable="true"/>
+        <field name="tailleListeComplementaire" type="integer"                     column="taille_liste_complementaire"  nullable="true"/>
+        <field name="objectif" type="string" length="9999"                         column="objectif"  nullable="true"/>
+        <field name="programme" type="string" length="9999"                        column="programme"  nullable="true"/>
 
         <!-- MODULE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <many-to-one field="module" target-entity="Formation\Entity\Db\Module">
             <join-columns>
-                <join-column name="MODULE_ID" referenced-column-name="ID"/>
+                <join-column name="module_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
     </entity>

@@ -3,19 +3,19 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Application\Entity\Db\DomaineScientifique" table="DOMAINE_SCIENTIFIQUE">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="libelle" type="string" column="LIBELLE" length="128" nullable="false"/>
+        <field name="libelle" type="string" column="libelle" length="128" nullable="false"/>
 
         <many-to-many field="unites" target-entity="Structure\Entity\Db\UniteRecherche" inversed-by="domaines" fetch="LAZY">
-            <join-table name="UNITE_DOMAINE_LINKER">
+            <join-table name="unite_domaine_linker">
                 <join-columns>
-                    <join-column name="DOMAINE_ID" referenced-column-name="ID"/>
+                    <join-column name="domaine_id" referenced-column-name="id"/>
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="UNITE_ID" referenced-column-name="ID"/>
+                    <join-column name="unite_id" referenced-column-name="id"/>
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

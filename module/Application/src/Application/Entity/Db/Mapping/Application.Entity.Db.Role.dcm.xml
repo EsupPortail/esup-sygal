@@ -4,65 +4,65 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Application\Entity\Db\Role" table="ROLE"
             repository-class="Application\Entity\Db\Repository\RoleRepository">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="code" type="string" column="CODE" length="64" nullable="false"/>
-        <field name="libelle" type="string" column="LIBELLE" length="128" nullable="false"/>
-        <field name="roleId" type="string" column="ROLE_ID" length="64" nullable="false"/>
-        <field name="isDefault" type="boolean" column="IS_DEFAULT" nullable="false"/>
-        <field name="ldapFilter" type="string" column="LDAP_FILTER" length="255" nullable="true"/>
-        <field name="attributionAutomatique" type="boolean" column="ATTRIB_AUTO" nullable="false"/>
-        <field name="theseDependant" type="boolean" column="THESE_DEP" nullable="false"/>
-        <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
-        <field name="ordreAffichage" type="string" column="ORDRE_AFFICHAGE" length="32" nullable="false"/>
+        <field name="code" type="string" column="code" length="64" nullable="false"/>
+        <field name="libelle" type="string" column="libelle" length="128" nullable="false"/>
+        <field name="roleId" type="string" column="role_id" length="64" nullable="false"/>
+        <field name="isDefault" type="boolean" column="is_default" nullable="false"/>
+        <field name="ldapFilter" type="string" column="ldap_filter" length="255" nullable="true"/>
+        <field name="attributionAutomatique" type="boolean" column="attrib_auto" nullable="false"/>
+        <field name="theseDependant" type="boolean" column="these_dep" nullable="false"/>
+        <field name="sourceCode" type="string" column="source_code" length="100" nullable="true"/>
+        <field name="ordreAffichage" type="string" column="ordre_affichage" length="32" nullable="false"/>
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
 
         <many-to-one field="typeStructureDependant" target-entity="Structure\Entity\Db\TypeStructure">
             <join-columns>
-                <join-column name="TYPE_STRUCTURE_DEPENDANT_ID" referenced-column-name="ID"/>
+                <join-column name="type_structure_dependant_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="structure" target-entity="Structure\Entity\Db\Structure" fetch="LAZY">
             <join-columns>
-                <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
+                <join-column name="structure_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
-                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+                <join-column name="source_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-many target-entity="Application\Entity\Db\Profil" field="profils">
-            <join-table name="PROFIL_TO_ROLE">
+            <join-table name="profil_to_role">
                 <join-columns>
-                    <join-column name="ROLE_ID" referenced-column-name="ID" />
+                    <join-column name="role_id" referenced-column-name="id" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="PROFIL_ID" referenced-column-name="ID" />
+                    <join-column name="profil_id" referenced-column-name="id" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

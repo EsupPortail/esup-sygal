@@ -3,46 +3,46 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Depot\Entity\Db\Diffusion" table="DIFFUSION">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="versionCorrigee" type="boolean" column="VERSION_CORRIGEE"/>
-        <field name="confidentielle" type="boolean" column="CONFIDENT" nullable="false"/>
-        <field name="dateFinConfidentialite" type="datetime" column="CONFIDENT_DATE_FIN" nullable="true"/>
-        <field name="droitAuteurOk" type="boolean" column="DROIT_AUTEUR_OK" nullable="false"/>
-        <field name="certifCharteDiff" type="boolean" column="CERTIF_CHARTE_DIFF" nullable="false"/>
-        <field name="autorisMel" type="integer" column="AUTORIS_MEL" nullable="false"/>
-        <field name="autorisEmbargoDuree" type="string" column="AUTORIS_EMBARGO_DUREE" length="20" nullable="true"/>
-        <field name="autorisMotif" type="string" column="AUTORIS_MOTIF" length="2000" nullable="true"/>
-        <field name="orcid" type="string" column="ORCID" length="200" nullable="true"/>
-        <field name="halId" type="string" column="HAL_ID" length="100" nullable="true"/>
-        <field name="nnt" type="string" column="NNT" length="200" nullable="true"/>
-        <field name="creationAuto" type="boolean" column="CREATION_AUTO"/>
+        <field name="versionCorrigee" type="boolean" column="version_corrigee"/>
+        <field name="confidentielle" type="boolean" column="confident" nullable="false"/>
+        <field name="dateFinConfidentialite" type="datetime" column="confident_date_fin" nullable="true"/>
+        <field name="droitAuteurOk" type="boolean" column="droit_auteur_ok" nullable="false"/>
+        <field name="certifCharteDiff" type="boolean" column="certif_charte_diff" nullable="false"/>
+        <field name="autorisMel" type="integer" column="autoris_mel" nullable="false"/>
+        <field name="autorisEmbargoDuree" type="string" column="autoris_embargo_duree" length="20" nullable="true"/>
+        <field name="autorisMotif" type="string" column="autoris_motif" length="2000" nullable="true"/>
+        <field name="orcid" type="string" column="orcid" length="200" nullable="true"/>
+        <field name="halId" type="string" column="hal_id" length="100" nullable="true"/>
+        <field name="nnt" type="string" column="nnt" length="200" nullable="true"/>
+        <field name="creationAuto" type="boolean" column="creation_auto"/>
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
 
         <many-to-one field="these" target-entity="These\Entity\Db\These" fetch="LAZY">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="these_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
     </entity>

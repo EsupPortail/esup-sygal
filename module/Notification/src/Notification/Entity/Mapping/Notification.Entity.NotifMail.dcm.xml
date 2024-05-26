@@ -4,15 +4,15 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="Notification\Entity\NotifMail" table="NOTIF_MAIL">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="subject" column="SUBJECT"/>
-        <field name="to" column="MAIL_TO"/>
-        <field name="from" column="MAIL_FROM"/>
-        <field name="body" column="BODY_TEXT"/>
-        <field name="sentOn" type="datetime" column="SENT_ON"/>
+        <field name="subject" column="subject"/>
+        <field name="to" column="mail_to"/>
+        <field name="from" column="mail_from"/>
+        <field name="body" column="body_text"/>
+        <field name="sentOn" type="datetime" column="sent_on"/>
 
     </entity>
 </doctrine-mapping>

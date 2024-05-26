@@ -5,24 +5,24 @@
 
     <entity name="StepStar\Entity\Db\Log" table="STEP_STAR_LOG">
 
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="operation" column="OPERATION"/>
-        <field name="startedOn" type="datetime" column="STARTED_ON"/>
-        <field name="endedOn" type="datetime" column="ENDED_ON"/>
-        <field name="success" type="boolean" column="SUCCESS"/>
-        <field name="log" column="LOG"/>
-        <field name="command" column="COMMAND"/>
-        <field name="tefFileContentHash" column="TEF_FILE_CONTENT_HASH"/>
-        <field name="tefFileContent" column="TEF_FILE_CONTENT"/>
-        <field name="hasProblems" type="boolean" column="HAS_PROBLEMS"/>
-        <field name="tag" column="TAG"/>
+        <field name="operation" column="operation"/>
+        <field name="startedOn" type="datetime" column="started_on"/>
+        <field name="endedOn" type="datetime" column="ended_on"/>
+        <field name="success" type="boolean" column="success"/>
+        <field name="log" column="log"/>
+        <field name="command" column="command"/>
+        <field name="tefFileContentHash" column="tef_file_content_hash"/>
+        <field name="tefFileContent" column="tef_file_content"/>
+        <field name="hasProblems" type="boolean" column="has_problems"/>
+        <field name="tag" column="tag"/>
 
         <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="these_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

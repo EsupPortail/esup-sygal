@@ -4,30 +4,30 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Admission\Entity\Db\Financement" table="ADMISSION_FINANCEMENT"
             repository-class="Admission\Entity\Db\Repository\FinancementRepository">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="contratDoctoral" type="boolean" column="CONTRAT_DOCTORAL" nullable="true"/>
-        <field name="detailContratDoctoral" type="string" column="DETAIL_CONTRAT_DOCTORAL" length="1024" nullable="true"/>
-        <field name="tempsTravail" type="integer" column="TEMPS_TRAVAIL" nullable="true"/>
-        <field name="estSalarie" type="boolean" column="EST_SALARIE" nullable="true"/>
-        <field name="statutProfessionnel" type="string" column="STATUT_PROFESSIONNEL" nullable="true"/>
-        <field name="etablissementLaboratoireRecherche" type="string" column="ETABLISSEMENT_LABORATOIRE_RECHERCHE" nullable="true"/>
+        <field name="contratDoctoral" type="boolean" column="contrat_doctoral" nullable="true"/>
+        <field name="detailContratDoctoral" type="string" column="detail_contrat_doctoral" length="1024" nullable="true"/>
+        <field name="tempsTravail" type="integer" column="temps_travail" nullable="true"/>
+        <field name="estSalarie" type="boolean" column="est_salarie" nullable="true"/>
+        <field name="statutProfessionnel" type="string" column="statut_professionnel" nullable="true"/>
+        <field name="etablissementLaboratoireRecherche" type="string" column="etablissement_laboratoire_recherche" nullable="true"/>
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
 
         <many-to-one field="admission" target-entity="Admission\Entity\Db\Admission">
             <join-columns>
-                <join-column name="ADMISSION_ID" referenced-column-name="ID"/>
+                <join-column name="admission_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="financement" target-entity="Application\Entity\Db\OrigineFinancement">
             <join-columns>
-                <join-column name="FINANCEMENT_ID" referenced-column-name="ID"/>
+                <join-column name="financement_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
@@ -35,17 +35,17 @@
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
     </entity>

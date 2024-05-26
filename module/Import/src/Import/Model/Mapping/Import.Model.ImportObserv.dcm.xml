@@ -5,7 +5,7 @@
 
     <entity name="Import\Model\ImportObserv" table="IMPORT_OBSERV">
 
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="integer" column="id"/>
 
     </entity>
 </doctrine-mapping>

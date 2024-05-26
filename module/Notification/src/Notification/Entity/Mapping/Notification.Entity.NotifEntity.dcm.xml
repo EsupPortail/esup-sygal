@@ -4,12 +4,12 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="Notification\Entity\NotifEntity" table="NOTIF" repository-class="Notification\Entity\Repository\NotifEntityRepository">
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="integer" column="id"/>
 
-        <field name="code" column="CODE" length="100"/>
-        <field name="description" column="DESCRIPTION" length="255"/>
-        <field name="recipients" column="RECIPIENTS" length="500"/>
-        <field name="template" column="TEMPLATE"/>
-        <field name="enabled" type="boolean" column="ENABLED"/>
+        <field name="code" column="code" length="100"/>
+        <field name="description" column="description" length="255"/>
+        <field name="recipients" column="recipients" length="500"/>
+        <field name="template" column="template"/>
+        <field name="enabled" type="boolean" column="enabled"/>
     </entity>
 </doctrine-mapping>

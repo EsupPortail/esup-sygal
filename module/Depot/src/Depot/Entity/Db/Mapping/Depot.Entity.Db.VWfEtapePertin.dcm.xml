@@ -3,18 +3,18 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Depot\Entity\Db\VWfEtapePertin" table="V_WF_ETAPE_PERTIN">
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="integer" column="id"/>
 
-        <field name="ordre" type="integer" column="ORDRE" nullable="false" />
+        <field name="ordre" type="integer" column="ordre" nullable="false" />
 
         <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="these_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="etape" target-entity="Depot\Entity\Db\WfEtape">
             <join-columns>
-                <join-column name="ETAPE_ID" referenced-column-name="ID"/>
+                <join-column name="etape_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

@@ -3,45 +3,45 @@
   <entity name="Application\Entity\Db\Rapport"
           table="RAPPORT">
 
-    <id name="id" type="integer" column="ID">
+    <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="anneeUniv" type="integer" column="ANNEE_UNIV"/>
-    <field name="estFinal" type="boolean" column="EST_FINAL"/>
+    <field name="anneeUniv" type="integer" column="annee_univ"/>
+    <field name="estFinal" type="boolean" column="est_final"/>
 
     <many-to-one field="typeRapport" target-entity="Application\Entity\Db\TypeRapport">
-      <join-column name="TYPE_RAPPORT_ID" referenced-column-name="ID"/>
+      <join-column name="type_rapport_id" referenced-column-name="id"/>
     </many-to-one>
 
     <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
-      <join-column name="FICHIER_ID" referenced-column-name="ID"/>
+      <join-column name="fichier_id" referenced-column-name="id"/>
     </many-to-one>
 
     <many-to-one field="these" target-entity="These\Entity\Db\These">
-      <join-column name="THESE_ID" referenced-column-name="ID"/>
+      <join-column name="these_id" referenced-column-name="id"/>
     </many-to-one>
 
     <one-to-many field="rapportValidations" target-entity="Application\Entity\Db\RapportValidation" mapped-by="rapport"/>
     <one-to-many field="rapportAvis" target-entity="Application\Entity\Db\RapportAvis" mapped-by="rapport"/>
 
-    <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
-    <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-    <field name="histoModification" type="datetime" column="HISTO_MODIFICATION"/>
+    <field name="histoCreation" type="datetime" column="histo_creation"/>
+    <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+    <field name="histoModification" type="datetime" column="histo_modification"/>
 
     <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
-        <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+        <join-column name="histo_modificateur_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
-        <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+        <join-column name="histo_destructeur_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
-        <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+        <join-column name="histo_createur_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
 

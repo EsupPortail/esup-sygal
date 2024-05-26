@@ -3,54 +3,54 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Soutenance\Entity\Avis" table="SOUTENANCE_AVIS">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
         <many-to-one field="proposition" target-entity="Soutenance\Entity\Proposition">
             <join-columns>
-                <join-column name="PROPOSITION_ID" referenced-column-name="ID"/>
+                <join-column name="proposition_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="membre" target-entity="Soutenance\Entity\Membre">
             <join-columns>
-                <join-column name="MEMBRE_ID" referenced-column-name="ID"/>
+                <join-column name="membre_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="avis"              type="string"       length="64"         column="AVIS"           nullable="false"/>
-        <field name="motif"             type="string"       length="1024"       column="MOTIF"          nullable="false"/>
+        <field name="avis"              type="string"       length="64"         column="avis"           nullable="false"/>
+        <field name="motif"             type="string"       length="1024"       column="motif"          nullable="false"/>
 
         <many-to-one field="validation" target-entity="Application\Entity\Db\Validation">
             <join-columns>
-                <join-column name="VALIDATION_ID" referenced-column-name="ID"/>
+                <join-column name="validation_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="fichierThese" target-entity="Depot\Entity\Db\FichierThese">
             <join-columns>
-                <join-column name="FICHIERTHESE_ID" referenced-column-name="ID"/>
+                <join-column name="fichierthese_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

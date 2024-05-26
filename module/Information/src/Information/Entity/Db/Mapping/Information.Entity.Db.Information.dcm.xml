@@ -3,37 +3,37 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Information\Entity\Db\Information" table="INFORMATION">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="titre"     column="TITRE"          type="string"   length="256"    nullable="false"/>
-        <field name="contenu"   column="CONTENU"        type="string"   length="10000"  nullable="false"/>
-        <field name="priorite"  column="PRIORITE"       type="integer"                  nullable="false"/>
-        <field name="visible"   column="EST_VISIBLE"    type="boolean"                  nullable="false"/>
+        <field name="titre"     column="titre"          type="string"   length="256"    nullable="false"/>
+        <field name="contenu"   column="contenu"        type="string"   length="10000"  nullable="false"/>
+        <field name="priorite"  column="priorite"       type="integer"                  nullable="false"/>
+        <field name="visible"   column="est_visible"    type="boolean"                  nullable="false"/>
 
         <many-to-one field="langue" target-entity="Information\Entity\Db\InformationLangue">
             <join-columns>
-                <join-column name="LANGUE_ID" referenced-column-name="ID"/>
+                <join-column name="langue_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

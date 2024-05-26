@@ -3,23 +3,23 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Depot\Entity\Db\VWorkflow" table="V_WORKFLOW">
-        <id name="id" type="integer" column="ID"/>
+        <id name="id" type="integer" column="id"/>
 
-        <field name="ordre" type="integer" column="ORDRE" nullable="false" />
-        <field name="franchie" type="boolean" column="FRANCHIE" nullable="false" />
-        <field name="atteignable" type="boolean" column="ATTEIGNABLE" nullable="false" />
-        <field name="courante" type="boolean" column="COURANTE" nullable="false" />
-        <field name="resultat" type="integer" column="RESULTAT" nullable="false" />
-        <field name="objectif" type="integer" column="OBJECTIF" nullable="false" />
+        <field name="ordre" type="integer" column="ordre" nullable="false" />
+        <field name="franchie" type="boolean" column="franchie" nullable="false" />
+        <field name="atteignable" type="boolean" column="atteignable" nullable="false" />
+        <field name="courante" type="boolean" column="courante" nullable="false" />
+        <field name="resultat" type="integer" column="resultat" nullable="false" />
+        <field name="objectif" type="integer" column="objectif" nullable="false" />
 
         <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="these_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="etape" target-entity="Depot\Entity\Db\WfEtape">
             <join-columns>
-                <join-column name="ETAPE_ID" referenced-column-name="ID"/>
+                <join-column name="etape_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

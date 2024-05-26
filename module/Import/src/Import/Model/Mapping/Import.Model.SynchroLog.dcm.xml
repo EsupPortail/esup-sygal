@@ -3,14 +3,14 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Import\Model\SynchroLog" table="SYNCHRO_LOG">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
-        <field name="logDate" column="LOG_DATE" type="datetime"/>
-        <field name="startDate" column="START_DATE" type="datetime"/>
-        <field name="finishDate" column="FINISH_DATE" type="datetime"/>
-        <field name="status" column="STATUS"/>
-        <field name="sql" column="SQL"/>
-        <field name="message" column="MESSAGE"/>
+        <field name="logDate" column="log_date" type="datetime"/>
+        <field name="startDate" column="start_date" type="datetime"/>
+        <field name="finishDate" column="finish_date" type="datetime"/>
+        <field name="status" column="status"/>
+        <field name="sql" column="sql"/>
+        <field name="message" column="message"/>
     </entity>
 </doctrine-mapping>

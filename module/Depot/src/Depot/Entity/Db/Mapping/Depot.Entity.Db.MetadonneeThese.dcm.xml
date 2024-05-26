@@ -3,41 +3,41 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Depot\Entity\Db\MetadonneeThese" table="METADONNEE_THESE">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="langue" type="string" column="LANGUE" length="64" nullable="false">
+        <field name="langue" type="string" column="langue" length="64" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="motsClesLibresFrancais" type="string" column="MOTS_CLES_LIBRES_FR" length="1024" nullable="false">
+        <field name="motsClesLibresFrancais" type="string" column="mots_cles_libres_fr" length="1024" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="motsClesLibresAnglais" type="string" column="MOTS_CLES_LIBRES_ANG" length="1024" nullable="false">
+        <field name="motsClesLibresAnglais" type="string" column="mots_cles_libres_ang" length="1024" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="resume" type="text" column="RESUME" nullable="false">
+        <field name="resume" type="text" column="resume" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="resumeAnglais" type="text" column="RESUME_ANGLAIS" nullable="false">
+        <field name="resumeAnglais" type="text" column="resume_anglais" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="titre" type="string" column="TITRE" length="256" nullable="false">
+        <field name="titre" type="string" column="titre" length="256" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="titreAutreLangue" type="string" column="TITRE_AUTRE_LANGUE" length="256" nullable="false">
+        <field name="titreAutreLangue" type="string" column="titre_autre_langue" length="256" nullable="false">
             <options>
                 <option name="fixed"/>
             </options>
@@ -45,7 +45,7 @@
 
         <many-to-one field="these" target-entity="These\Entity\Db\These" fetch="LAZY">
             <join-columns>
-                <join-column name="THESE_ID" referenced-column-name="ID"/>
+                <join-column name="these_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

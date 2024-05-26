@@ -5,11 +5,11 @@
     <entity name="Information\Entity\Db\InformationLangue" table="INFORMATION_LANGUE">
 
 
-        <id name="id" type="string" length="64" column="ID">
+        <id name="id" type="string" length="64" column="id">
         </id>
 
-        <field name="libelle"     column="LIBELLE"          type="string"   length="256"       nullable="false"/>
-        <field name="drapeau"     column="DRAPEAU"          type="string"   length="1000000"   nullable="false"/>
+        <field name="libelle"     column="libelle"          type="string"   length="256"       nullable="false"/>
+        <field name="drapeau"     column="drapeau"          type="string"   length="1000000"   nullable="false"/>
 
     </entity>
 </doctrine-mapping>

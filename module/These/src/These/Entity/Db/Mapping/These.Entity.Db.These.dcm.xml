@@ -4,35 +4,35 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="These\Entity\Db\These" table="THESE"
             repository-class="These\Entity\Db\Repository\TheseRepository">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="titre" type="string" column="TITRE" length="512" nullable="false"/>
-        <field name="etatThese" type="string" column="ETAT_THESE" length="20" nullable="false"/>
-        <field name="resultat" type="integer" column="RESULTAT" nullable="true"/>
-        <field name="datePremiereInscription" type="datetime" column="DATE_PREM_INSC" nullable="true"/>
-        <field name="codeSiseDiscipline" type="string" column="CODE_SISE_DISC" length="32" nullable="true"/>
-        <field name="libelleDiscipline" type="string" column="LIB_DISC" length="200" nullable="true"/>
-        <field name="datePrevisionSoutenance" type="datetime" column="DATE_PREV_SOUTENANCE" nullable="true"/>
-        <field name="dateSoutenance" type="datetime" column="DATE_SOUTENANCE" nullable="true"/>
-        <field name="dateFinConfidentialite" type="datetime" column="DATE_FIN_CONFID" nullable="true"/>
-        <field name="dateAbandon" type="datetime" column="DATE_ABANDON" nullable="true"/>
-        <field name="dateTransfert" type="datetime" column="DATE_TRANSFERT" nullable="true"/>
-        <field name="codeUniteRecherche" type="string" column="COD_UNIT_RECH" length="50" nullable="true"/>
-        <field name="libelleUniteRecherche" type="string" column="LIB_UNIT_RECH" length="200" nullable="true"/>
-        <field name="correctionAutorisee" type="string" column="CORREC_AUTORISEE" nullable="true"/>
-        <field name="correctionAutoriseeForcee" type="string" column="CORREC_AUTORISEE_FORCEE" nullable="true"/>
+        <field name="titre" type="string" column="titre" length="512" nullable="false"/>
+        <field name="etatThese" type="string" column="etat_these" length="20" nullable="false"/>
+        <field name="resultat" type="integer" column="resultat" nullable="true"/>
+        <field name="datePremiereInscription" type="datetime" column="date_prem_insc" nullable="true"/>
+        <field name="codeSiseDiscipline" type="string" column="code_sise_disc" length="32" nullable="true"/>
+        <field name="libelleDiscipline" type="string" column="lib_disc" length="200" nullable="true"/>
+        <field name="datePrevisionSoutenance" type="datetime" column="date_prev_soutenance" nullable="true"/>
+        <field name="dateSoutenance" type="datetime" column="date_soutenance" nullable="true"/>
+        <field name="dateFinConfidentialite" type="datetime" column="date_fin_confid" nullable="true"/>
+        <field name="dateAbandon" type="datetime" column="date_abandon" nullable="true"/>
+        <field name="dateTransfert" type="datetime" column="date_transfert" nullable="true"/>
+        <field name="codeUniteRecherche" type="string" column="cod_unit_rech" length="50" nullable="true"/>
+        <field name="libelleUniteRecherche" type="string" column="lib_unit_rech" length="200" nullable="true"/>
+        <field name="correctionAutorisee" type="string" column="correc_autorisee" nullable="true"/>
+        <field name="correctionAutoriseeForcee" type="string" column="correc_autorisee_forcee" nullable="true"/>
         <field name="dateButoirDepotVersionCorrigeeAvecSursis" type="datetime" column="correc_date_butoir_avec_sursis" nullable="true"/>
-        <field name="correctionEffectuee" type="string" column="CORREC_EFFECTUEE" nullable="true"/>
-        <field name="libelleEtabCotutelle" type="string" column="LIB_ETAB_COTUT" nullable="true"/>
-        <field name="libellePaysCotutelle" type="string" column="LIB_PAYS_COTUT" nullable="true"/>
-        <field name="soutenanceAutorisee" type="string" column="SOUTENANCE_AUTORIS" nullable="false"/>
-        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <field name="correctionEffectuee" type="string" column="correc_effectuee" nullable="true"/>
+        <field name="libelleEtabCotutelle" type="string" column="lib_etab_cotut" nullable="true"/>
+        <field name="libellePaysCotutelle" type="string" column="lib_pays_cotut" nullable="true"/>
+        <field name="soutenanceAutorisee" type="string" column="soutenance_autoris" nullable="false"/>
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
 
-        <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
+        <field name="sourceCode" type="string" column="source_code" length="64" nullable="true"/>
 
         <one-to-many field="fichierTheses" target-entity="Depot\Entity\Db\FichierThese" mapped-by="these" />
         <one-to-many field="attestations" target-entity="Depot\Entity\Db\Attestation" mapped-by="these" >
@@ -56,57 +56,57 @@
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
-                <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
+                <join-column name="etablissement_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
             <join-columns>
-                <join-column name="DOCTORANT_ID" referenced-column-name="ID"/>
+                <join-column name="doctorant_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
             <join-columns>
-                <join-column name="ECOLE_DOCT_ID" referenced-column-name="ID"/>
+                <join-column name="ecole_doct_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
             <join-columns>
-                <join-column name="UNITE_RECH_ID" referenced-column-name="ID"/>
+                <join-column name="unite_rech_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-many field="domainesHal" target-entity="Application\Entity\Db\DomaineHal" inversed-by="theses" fetch="LAZY">
-            <join-table name="DOMAINE_HAL_THESE">
+            <join-table name="domaine_hal_these">
                 <join-columns>
-                    <join-column name="THESE_ID" referenced-column-name="ID"/>
+                    <join-column name="these_id" referenced-column-name="id"/>
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="DOMAINE_ID" referenced-column-name="ID"/>
+                    <join-column name="domaine_id" referenced-column-name="id"/>
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
-                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+                <join-column name="source_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
             <join-columns>
-                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

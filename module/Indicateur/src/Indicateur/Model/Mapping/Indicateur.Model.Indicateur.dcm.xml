@@ -3,16 +3,16 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Indicateur\Model\Indicateur" table="INDICATEUR">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="libelle"                   type="string"   column="LIBELLE"                    length="128"    nullable="false"/>
-        <field name="description"               type="string"   column="DESCRIPTION"                length="1024"   nullable="true"/>
-        <field name="requete"                   type="string"   column="REQUETE"                    length="1024"   nullable="true"/>
-        <field name="actif"                     type="integer"  column="ACTIF"                                      nullable="false"/>
-        <field name="displayAs"                 type="string"   column="DISPLAY_AS"                 length="128"    nullable="true"/>
-        <field name="class"                     type="string"   column="CLASS"                      length="128"    nullable="true"/>
+        <field name="libelle"                   type="string"   column="libelle"                    length="128"    nullable="false"/>
+        <field name="description"               type="string"   column="description"                length="1024"   nullable="true"/>
+        <field name="requete"                   type="string"   column="requete"                    length="1024"   nullable="true"/>
+        <field name="actif"                     type="integer"  column="actif"                                      nullable="false"/>
+        <field name="displayAs"                 type="string"   column="display_as"                 length="128"    nullable="true"/>
+        <field name="class"                     type="string"   column="class"                      length="128"    nullable="true"/>
 
     </entity>
 </doctrine-mapping>

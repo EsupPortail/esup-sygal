@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="Application\Entity\Db\ValiditeFichier" table="VALIDITE_FICHIER">
-    <id name="id" type="integer" column="ID">
+    <id name="id" type="integer" column="id">
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="estValide" type="boolean" column="EST_VALIDE" nullable="true"/>
-    <field name="message" type="string" column="MESSAGE" length="2000" nullable="true"/>
-    <field name="log" type="string" column="LOG" nullable="true"/>
+    <field name="estValide" type="boolean" column="est_valide" nullable="true"/>
+    <field name="message" type="string" column="message" length="2000" nullable="true"/>
+    <field name="log" type="string" column="log" nullable="true"/>
 
-    <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false">
+    <field name="histoCreation" type="datetime" column="histo_creation" nullable="false">
       <options>
         <option name="default">SYSDATE</option>
       </options>
     </field>
-    <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-    <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false">
+    <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+    <field name="histoModification" type="datetime" column="histo_modification" nullable="false">
       <options>
         <option name="default">SYSDATE</option>
       </options>
@@ -23,23 +23,23 @@
 
     <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier" fetch="LAZY">
       <join-columns>
-        <join-column name="FICHIER_ID" referenced-column-name="ID"/>
+        <join-column name="fichier_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
 
     <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur" fetch="LAZY">
       <join-columns>
-        <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+        <join-column name="histo_modificateur_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur" fetch="LAZY">
       <join-columns>
-        <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+        <join-column name="histo_destructeur_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur" fetch="LAZY">
       <join-columns>
-        <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+        <join-column name="histo_createur_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>
