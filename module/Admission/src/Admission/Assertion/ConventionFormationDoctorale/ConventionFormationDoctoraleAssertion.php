@@ -18,6 +18,8 @@ class ConventionFormationDoctoraleAssertion extends AdmissionAbstractAssertion
     use ThrowsFailedAssertionExceptionTrait;
     use ConventionFormationDoctoraleServiceAwareTrait;
 
+    private Admission $admission;
+
     /**
      * @param string $controller
      * @param string $action
@@ -83,8 +85,6 @@ class ConventionFormationDoctoraleAssertion extends AdmissionAbstractAssertion
             return false;
         }
 
-        /** @var ConventionFormationDoctorale $conventionFormationDoctorale */
-        $conventionFormationDoctorale = $entity;
         $this->admission = $this->getRequestedAdmission();
         try {
 
@@ -105,23 +105,23 @@ class ConventionFormationDoctoraleAssertion extends AdmissionAbstractAssertion
         return true;
     }
 
-    protected function assertCanAjouterConventionFormationAdmission($conventionAlreadyInBdd, $admission)
+    protected function assertCanAjouterConventionFormationAdmission($conventionAlreadyInBdd, $admission): void
     {
         $this->assertTrue(
-            empty($conventionAlreadyInBdd) && in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE]),
+            empty($conventionAlreadyInBdd) && $admission->getEtat()->getCode() == Admission::ETAT_EN_COURS_SAISIE,
             "Une convention de formation doctorale a déjà été ajoutée"
         );
     }
 
-    protected function assertCanModifierConventionFormationAdmission($conventionAlreadyInBdd, $admission)
+    protected function assertCanModifierConventionFormationAdmission($conventionAlreadyInBdd, $admission): void
     {
         $this->assertTrue(
-            !empty($conventionAlreadyInBdd) && in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE]),
+            !empty($conventionAlreadyInBdd) && $admission->getEtat()->getCode() == Admission::ETAT_EN_COURS_SAISIE,
             "Aucune convention de formation doctorale n'a été ajoutée"
         );
     }
 
-    protected function assertCanGenererConventionFormationAdmission($conventionAlreadyInBdd)
+    protected function assertCanGenererConventionFormationAdmission($conventionAlreadyInBdd): void
     {
         $this->assertTrue(
             $conventionAlreadyInBdd,

@@ -2,8 +2,7 @@
 
 namespace Admission\Assertion;
 
-use Admission\Entity\Db\AdmissionValidation;
-use Admission\Entity\Db\TypeValidation;
+use Admission\Entity\Db\Inscription;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Assertion\AbstractAssertion;
@@ -43,23 +42,11 @@ class AdmissionAbstractAssertion extends AbstractAssertion
         return true;
     }
 
-    protected function assertEtatAdmission(Admission $admission)
+    protected function assertEtatAdmission(Admission $admission): void
     {
         $this->assertTrue(
             in_array($admission->getEtat()->getCode(), [Admission::ETAT_EN_COURS_SAISIE, Admission::ETAT_EN_COURS_VALIDATION]),
             "Le dossier d'admission doit être en cours"
-        );
-    }
-
-    protected function assertDossierCompletAdmission(AdmissionValidation $admissionValidation)
-    {
-        //cette condition ne concerne pas la première validation du dossier
-        if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
-            return;
-        }
-        $this->assertTrue(
-            $admissionValidation->getAdmission()->isDossierComplet() === true,
-            "Le dossier d'admission doit être en complet"
         );
     }
 
@@ -71,6 +58,8 @@ class AdmissionAbstractAssertion extends AbstractAssertion
         }
 
         $individu = $this->userContextService->getIdentityIndividu();
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
         //Si le rôle connecté est Candidat
         if ($role->getRoleId() == Role::ROLE_ID_ADMISSION_CANDIDAT) {
             //Si l'étudiant attaché au dossier n'est pas celui de l'individu connecté
@@ -79,28 +68,28 @@ class AdmissionAbstractAssertion extends AbstractAssertion
             }
         } elseif($role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE){
             $message = "Le dossier d'admission n'est pas dirigé par " . $individu;
-            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getDirecteur()) {
+            if ($inscription && $inscription->getDirecteur()) {
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getDirecteur()->getId() === $individu->getId(),
+                    $inscription->getDirecteur()->getId() === $individu->getId(),
                     $message
                 );
-            } else if (empty($admission->getInscription()->first()) || ($admission->getInscription()->first() && empty($admission->getInscription()->first()->getDirecteur()))) {
+            } else if (empty($inscription) || empty($inscription->getDirecteur())) {
                 return true;
             } else {
                 throw new FailedAssertionException($message);
             }
         } elseif($role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE){
-            if($admission->getInscription()->first()){
+            if($inscription){
                 //Si le co-directeur attaché au dossier n'est pas celui de l'individu connecté
-                if (!$admission->getInscription()->first()->getCoDirecteur() || $admission->getInscription()->first()->getCoDirecteur() && $individu->getId() !== $admission->getInscription()->first()->getCoDirecteur()->getId()) {
+                if (!$inscription->getCoDirecteur() || $inscription->getCoDirecteur() && $individu->getId() !== $inscription->getCoDirecteur()->getId()) {
                     throw new FailedAssertionException("Le dossier d'admission n'est pas co-dirigé par " . $individu);
                 }
             }
         } elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
             $message = "Le dossier d'admission n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode();
-            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getEcoleDoctorale()) {
+            if ($inscription && $inscription->getEcoleDoctorale()) {
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
+                    $inscription->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
                     $message
                 );
             } else {
@@ -108,9 +97,9 @@ class AdmissionAbstractAssertion extends AbstractAssertion
             }
         } elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
             $message = "Le dossier d'admission n'est pas rattaché à l'UR " . $roleUniteRech->getStructure()->getCode();
-            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getUniteRecherche()) {
+            if ($inscription && $inscription->getUniteRecherche()) {
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
+                    $inscription->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
                     $message
                 );
             } else {
@@ -123,12 +112,12 @@ class AdmissionAbstractAssertion extends AbstractAssertion
         } elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $message = "Le dossier d'admission n'est pas dirigé par " . $individuUtilisateur;
-            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getDirecteur()) {
+            if ($inscription && $inscription->getDirecteur()) {
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getDirecteur()->getId() === $individuUtilisateur->getId(),
+                    $inscription->getDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
-            } else if (empty($admission->getInscription()->first()) || ($admission->getInscription()->first() && empty($admission->getInscription()->first()->getDirecteur()))) {
+            } else if (empty($inscription) || empty($inscription->getDirecteur())) {
                 return true;
             } else {
                 throw new FailedAssertionException($message);
@@ -136,9 +125,9 @@ class AdmissionAbstractAssertion extends AbstractAssertion
         } elseif ($this->userContextService->getSelectedRoleCodirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $message = "Le dossier d'admission n'est pas codirigé par " . $individuUtilisateur;
-            if ($admission->getInscription()->first() && $admission->getInscription()->first()->getCoDirecteur()) {
+            if ($inscription && $inscription->getCoDirecteur()) {
                 $this->assertTrue(
-                    $admission->getInscription()->first()->getCoDirecteur()->getId() === $individuUtilisateur->getId(),
+                    $inscription->getCoDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
             } else {
@@ -165,7 +154,7 @@ class AdmissionAbstractAssertion extends AbstractAssertion
     }
     protected function getRouteMatch(): ?RouteMatch
     {
-        /** @var \Application\RouteMatch $rm */
+        /** @var RouteMatch $rm */
         $rm = $this->getMvcEvent()->getRouteMatch();
         return $rm;
     }
