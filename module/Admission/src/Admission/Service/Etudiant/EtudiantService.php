@@ -114,6 +114,7 @@ class EtudiantService extends BaseService
     {
         $currentYear = (new \DateTime())->format('Y');
         $id = $admission->getId();
-        return $currentYear.$id;
+        $formattedId = str_pad($id, 2, '0', STR_PAD_LEFT);
+        return $currentYear.$formattedId;
     }
 }
