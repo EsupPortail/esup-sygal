@@ -908,13 +908,11 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (408, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (421, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (422, 1);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (502, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (506, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (510, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (513, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 1);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (523, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 2);
@@ -1758,8 +1756,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (703, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (762, 10);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 65);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (584, 1);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 1);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 64);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (562, 1);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (562, 64);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (573, 64);
@@ -1980,6 +1976,10 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 2);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (1260, 81);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (802, 81);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (502, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (523, 1);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 1);
 
 
 --
@@ -2239,7 +2239,7 @@ INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle,
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (16, 3, 'CAMPAGNE_DEPOT_FIN', 'Jour et mois de fin de la campagne de dépôt des rapports d''activité pour l''année universitaire N/N+1 en cours. Exemple : 15/06/N+1.', NULL, 'String', '31/06/N+1', 200);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (10, 1, 'DOC_CONFIDENTIALITE', 'Formulaire de demande de confidentialité', NULL, 'String', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE', 2500);
 INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (20, 2, 'DELAI_ANNULATION_INSCRIPTION', 'Délai avant le blocage de l''annulation d''une inscription (en jours)', NULL, 'Number', '3', 20);
-INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '15', 10);
+INSERT INTO public.unicaen_parametre_parametre (id, categorie_id, code, libelle, description, valeurs_possibles, valeur, ordre) VALUES (14, 2, 'DELAI_ENQUETE', ' Délai pour la saisie de l''enquête (en jours) ', NULL, 'Number', '120', 10);
 
 
 --

@@ -19,7 +19,7 @@ select nextval('individu_id_seq'),
 insert into utilisateur (id, individu_id, username, email, display_name, password, password_reset_token, nom, prenom)
 select nextval('utilisateur_id_seq'),
        i.id,
-       '{TEST_USER_EMAIL}', -- EPPN (si shibboleth), ou supannAliasLogin (si LDAP) ou email (si local)
+       '{TEST_USER_EMAIL}', -- un EPPN (si Shibboleth), ou un supannAliasLogin/uid (si LDAP) ou un email (si DB locale)
        '{TEST_USER_EMAIL}',
        $${TEST_USER_PRENOM} {TEST_USER_NOM_PATRONYMIQUE}$$,
        '????', -- 'shib' (si authentification shibboleth), ou 'ldap' (si auth LDAP), ou mdp bcrypté (si local)

@@ -8731,6 +8731,20 @@ ALTER SEQUENCE public.unicaen_avis_valeur_ordre_seq OWNED BY public.unicaen_avis
 
 
 --
+-- Name: unicaen_db_anonym; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_db_anonym (
+    key character varying(64) NOT NULL,
+    value text,
+    extra text,
+    description character varying(128)
+);
+
+
+ALTER TABLE public.unicaen_db_anonym OWNER TO :dbuser;
+
+--
 -- Name: unicaen_parametre_categorie; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -10882,50 +10896,6 @@ CREATE VIEW public.v_individu_doublon AS
 
 
 ALTER VIEW public.v_individu_doublon OWNER TO :dbuser;
-
---
--- Name: v_individu_insa_double; Type: VIEW; Schema: public; Owner: :dbuser
---
-
-CREATE VIEW public.v_individu_insa_double AS
- WITH comptes(supann_id, nb) AS (
-         SELECT individu.supann_id,
-            count(*) AS count
-           FROM public.individu
-          WHERE ((individu.source_id = 2) AND ((individu.type)::text = 'doctorant'::text))
-          GROUP BY individu.supann_id
-         HAVING (count(*) > 1)
-        )
- SELECT comptes.nb,
-    i.id,
-    i.type,
-    i.civilite,
-    i.nom_usuel,
-    i.nom_patronymique,
-    i.prenom1,
-    i.prenom2,
-    i.prenom3,
-    i.email,
-    i.date_naissance,
-    i.nationalite,
-    i.source_code,
-    i.source_id,
-    i.histo_createur_id,
-    i.histo_creation,
-    i.histo_modificateur_id,
-    i.histo_modification,
-    i.histo_destructeur_id,
-    i.histo_destruction,
-    i.supann_id,
-    i.z_etablissement_id AS etablissement_id,
-    i.pays_id_nationalite,
-    i.id_ref
-   FROM comptes,
-    public.individu i
-  WHERE (((i.supann_id)::text = (comptes.supann_id)::text) AND (i.source_id = 2));
-
-
-ALTER VIEW public.v_individu_insa_double OWNER TO :dbuser;
 
 --
 -- Name: validite_fichier; Type: TABLE; Schema: public; Owner: :dbuser
