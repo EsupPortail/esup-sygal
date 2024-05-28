@@ -1162,10 +1162,12 @@ class Etudiant implements HistoriqueAwareInterface{
      */
     public function getSituationHandicapLibelle()
     {
-        if(empty($this->getSituationHandicap())){
-            return "<b>Non renseigné</b>";
+        if($this->getSituationHandicap()){
+            return "Oui";
+        }else if($this->getSituationHandicap() === false){
+            return "Non";
         }else{
-            return $this->getSituationHandicap() ? "Oui" : "Non";
+            return "<b>Non renseigné</b>";
         }
     }
 
@@ -1173,9 +1175,9 @@ class Etudiant implements HistoriqueAwareInterface{
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
     public function getNiveauEtudeInformations(){
-        if($this->niveauEtude == 1){
+        if($this->niveauEtude === 1){
             return "Diplôme national tel que le master";
-        }else if($this->niveauEtude == 2){
+        }else if($this->niveauEtude === 2){
             return "Diplôme autre qu'un diplôme national - à titre dérogatoire";
         }else{
             return "<b>Non renseigné</b>";

@@ -29,7 +29,6 @@ use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
-use Application\Constants;
 use Application\Controller\PaysController;
 use Application\Entity\Db\Role;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
@@ -594,6 +593,12 @@ class AdmissionController extends AdmissionAbstractController {
 
     private function isUserDifferentFromUserInSession(): Response|bool
     {
+        //si le paramètre refresh est présent dans l'url, on vide les données en session
+        $refresh = $this->params()->fromQuery("refresh");
+        if($refresh){
+            $this->multipageForm($this->admissionForm)->clearSession();
+        }
+
         /** @var Individu $individu */
         $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
 

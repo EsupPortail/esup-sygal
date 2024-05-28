@@ -202,7 +202,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                         <?php endif ?>
                     </td>
                     <td>
-                        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], [], true) ?>"
+                        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $admission->getIndividu()->getId()], ['query' => ['refresh' => 'true']], true) ?>"
                            title="Accéder au dossier d'admission #<?php echo $admission->getId(); ?>"
                            data-bs-toggle="tooltip" data-bs-html="true">
                             <span class="icon icon-voir"></span>
@@ -235,7 +235,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
     <?php endif ?>
 <?php }else{ ?>
     <div class="row acces-admission-btn-container">
-        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], [], true) ?>" class="btn btn-primary acces-admission-btn">Accéder à votre dossier d'admission</a>
+        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], ['query' => ['refresh' => 'true']], true) ?>" class="btn btn-primary acces-admission-btn">Accéder à votre dossier d'admission</a>
     </div>
 <?php } ?>
 

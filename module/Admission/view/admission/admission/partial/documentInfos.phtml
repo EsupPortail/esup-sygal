@@ -39,6 +39,7 @@ $etudiant = $admission ? $admission->getEtudiant()->first() : null;
 /** @var Inscription $inscription */
 $inscription = $admission ?$admission->getInscription()->first() : null;
 $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' => $individu]);
+var_dump(empty($etudiant->getSituationHandicap()));
 ?>
 
 <script>
