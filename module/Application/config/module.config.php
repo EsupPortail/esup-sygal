@@ -49,8 +49,8 @@ return array(
                 // la page Contact requiert une authentification car l'adresse d'assistance dépend de l'utilisateur
                 ['controller' => 'UnicaenApp\Controller\Application', 'action' => 'contact', 'roles' => ['user']],
                 ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
-                ['controller' => ConsoleController::class, 'action' => 'runSQLScript', 'roles' => []],
-                ['controller' => ConsoleController::class, 'action' => 'runSQLQuery', 'roles' => []],
+//                ['controller' => ConsoleController::class, 'action' => '', 'roles' => []],
+//                ['controller' => ConsoleController::class, 'action' => '', 'roles' => []],
             ],
             \UnicaenAuth\Guard\PrivilegeController::class => [
                 [
@@ -204,26 +204,7 @@ return array(
     'console'         => [
         'router'       => [
             'routes' => [
-                'run-sql-script' => [
-                    'type'    => Simple::class,
-                    'options' => [
-                        'route'    => 'run-sql-script --path= [--logfile=] [--connection=]',
-                        'defaults' => [
-                            'controller' => ConsoleController::class,
-                            'action'     => 'runSQLScript',
-                        ],
-                    ],
-                ],
-                'run-sql-query'  => [
-                    'type'    => Simple::class,
-                    'options' => [
-                        'route'    => 'run-sql-query --sql= [--logfile=] [--connection=]',
-                        'defaults' => [
-                            'controller' => ConsoleController::class,
-                            'action'     => 'runSQLQuery',
-                        ],
-                    ],
-                ],
+
             ],
         ],
         'view_manager' => [

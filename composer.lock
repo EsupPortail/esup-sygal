@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc8bd7417a71152059a994f5dbc92476",
+    "content-hash": "381297b652aa923c2f5b20b6325d52d1",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11189,11 +11189,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "6.0.16",
+            "version": "6.1.5",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "69ae3b1e28bb3d4b447d369c92b89d8b3da4bc4c"
+                "reference": "40c9087ba276119f3431a9d79235216cb04ace78"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -11204,7 +11204,6 @@
                 "ext-ldap": "*",
                 "friendsofphp/proxy-manager-lts": "^1.0",
                 "laminas/laminas-config": "^3.9",
-                "laminas/laminas-dependency-plugin": "^2.2",
                 "laminas/laminas-eventmanager": "^3.10",
                 "laminas/laminas-form": "^3.9",
                 "laminas/laminas-http": "^2.18",
@@ -11246,7 +11245,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2024-03-21T10:39:16+00:00"
+            "time": "2024-05-28T14:17:20+00:00"
         },
         {
             "name": "unicaen/auth",
@@ -11783,6 +11782,40 @@
             },
             "description": "Création et lancement de commandes shell",
             "time": "2023-05-05T14:16:30+00:00"
+        },
+        {
+            "name": "unicaen/sql",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/sql.git",
+                "reference": "b7e795c58767cc0c36d0032ce0f40fedcc0467e3"
+            },
+            "require": {
+                "doctrine/dbal": "^3.0",
+                "laminas/laminas-config": "^3.9",
+                "laminas/laminas-log": "^2.10",
+                "laminas/laminas-servicemanager": "^3.0",
+                "laminas/laminas-stdlib": "^3.10",
+                "php": "^8.0",
+                "unicaen/console": "^6.0",
+                "webmozart/assert": "^1.10"
+            },
+            "require-dev": {
+                "laminas/laminas-test": "^3.2",
+                "phpunit/phpunit": "^5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenSql": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module Unicaen avec des trucs pour SQL dedans !",
+            "time": "2024-05-28T15:12:28+00:00"
         },
         {
             "name": "unicaen/sygal-api",
@@ -12458,7 +12491,8 @@
         "laminas-api-tools/api-tools-doctrine": 20,
         "laminas-api-tools/api-tools-doctrine-querybuilder": 20,
         "unicaen/idref": 20,
-        "unicaen/sygal-api": 20
+        "unicaen/sygal-api": 20,
+        "unicaen/sql": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

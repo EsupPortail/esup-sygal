@@ -111,18 +111,6 @@ class Module implements BootstrapListenerInterface, AutoloaderProviderInterface,
                 "Transférer toutes les données saisies sur une thèse *historisée* vers une autre thèse",
             ['--source-id',       "Id de la thèse historisée source"],
             ['--destination-id',  "Id de la thèse destination"],
-
-            'run-sql-script --path= [--logfile=] [--connection=]' =>
-                "Exécuter un script SQL",
-            ['--path',       "Requis. Chemin vers le script SQL à exécuter."],
-            ['--logfile',    "Facultatif. Chemin du fichier des logs d'exécution du script. Par défaut, il est généré."],
-            ['--connection', "Facultatif. Identifiant de la connexion Doctrine. Par défaut : 'orm_default'."],
-
-            'run-sql-query --sql= [--logfile=] [--connection=]' =>
-                "Exécuter une requête SQL",
-            ['--sql',        "Requis. Requête SQL à exécuter. Ex: \"begin DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE'); end;\"."],
-            ['--logfile',    "Facultatif. Chemin du fichier des logs d'exécution. Par défaut, il est généré."],
-            ['--connection', "Facultatif. Identifiant de la connexion Doctrine. Par défaut : 'orm_default'."],
         ];
     }
 }
