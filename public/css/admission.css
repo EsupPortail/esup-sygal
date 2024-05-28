@@ -472,7 +472,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease; }
 
-.dossier-incomplet-card {
+.dossier-incomplet-card, .commentaires-ajoutes-card {
   border: 3px solid #E69B18;
   border-radius: 11px;
   max-width: fit-content; }
@@ -482,12 +482,18 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   border-radius: 11px;
   max-width: fit-content; }
 
-.dossier-complet-card > div > p, .dossier-incomplet-card > div > p, .dossier-refuse-card > div > p {
+.dossier-complet-card > div > p, .dossier-incomplet-card > div > p, .commentaires-ajoutes-card > div > p, .dossier-refuse-card > div > p {
   color: #707070;
   font-size: 15px; }
 
-.dossier-complet-card > div > i, .dossier-incomplet-card > div > i, .dossier-refuse-card > div > i {
+.dossier-complet-card > div > i, .dossier-incomplet-card > div > i, .commentaires-ajoutes-card > div > i, .dossier-refuse-card > div > i {
   font-style: unset; }
+
+.access-commentaires-admission-btn {
+  font-size: 10px;
+  color: #F1732D;
+  text-decoration: underline;
+  font-weight: bold; }
 
 .card-body.text-success i.icon, .card-body.text-warning i.icon, .card-body.text-danger i.icon {
   display: inline-block;

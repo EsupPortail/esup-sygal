@@ -5,6 +5,7 @@ namespace Admission\Entity;
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\Financement;
 use Admission\Filter\AdmissionFinancementFormatter;
 use Admission\Filter\AdmissionInscriptionFormatter;
 use Admission\Filter\AdmissionOperationsFormatter;
@@ -70,12 +71,14 @@ class ConventionFormationDoctoraleDataTemplate
         return $admissionInscriptionFormatter->htmlifyCoTutelleInformations($this->admission->getInscription()->first());
     }
 
-    public function getConventionCollaborationInformationstoHtml()
+    public function getConventionCollaborationInformationstoHtml(): ?string
     {
-        $admissionFinancementFormatter = new AdmissionFinancementFormatter();
-        $inscription = $this->admission->getInscription()->first();
-        $etablissementInscription = $inscription->getEtablissementInscription() ? $inscription->getEtablissementInscription()->getStructure() : null;
-        return $admissionFinancementFormatter->htmlifyConventionCollaborationInformations($this->admission->getFinancement()->first(), $etablissementInscription);
+        $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
+        $inscription = $this->admission->getInscription()->first() ? $this->admission->getInscription()->first() : null;
+        /** @var Financement $financement */
+        $financement = $this->admission->getFinancement()->first() ? $this->admission->getFinancement()->first() : null;
+        $estSalarie = $financement && $financement->getEstSalarie() ? $financement->getEstSalarie() : false;
+        return $inscription ? $admissionInscriptionFormatter->htmlifyConventionCollaborationInformations($inscription, $estSalarie) : "";
     }
 
     public function getResponsablesURDirecteurtoHtml()

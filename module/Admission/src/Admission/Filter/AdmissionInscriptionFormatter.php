@@ -69,4 +69,23 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
         }
         return $str;
     }
+
+    public function htmlifyConventionCollaborationInformations(Inscription $inscription, bool $estSalarie)
+    {
+        if ($estSalarie) {
+            $etablissementLaboratoireUR = $inscription->getEtablissementLaboratoireRecherche();
+            $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
+            $str = "- Vu la convention de collaboration entre l’employeur <b>[dénomination de l’établissement partenaire, ville,
+            pays]</b>, le salarié doctorant, l’établissement d’inscription <b>".$etablissementInscription."</b>
+            (Normandie)";
+
+            if ($inscription->getEtablissementLaboratoireRecherche()) {
+                $str .= " et, l’établissement hébergeant le laboratoire de recherche
+                d’accueil du salarié doctorant <b>" . $etablissementLaboratoireUR . "</b>.";
+            }else{
+                $str .= ".";
+            }
+            return $str;
+        }
+    }
 }

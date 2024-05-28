@@ -22,6 +22,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var array $conventionFormationDoctoraleOperations
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
  * @var boolean $isOperationAllowedByRole
+ * @var array $commentaires
  * @see \Admission\Controller\AdmissionController::documentAction()
  */
 $form->prepare();
@@ -230,7 +231,8 @@ if($canAccederCommentaires) {
         'operationEnAttente' => $operationEnAttente,
         'admission' => $admission,
         'showActionButtons' => true,
-        'isOperationAllowedByRole' => $isOperationAllowedByRole
+        'isOperationAllowedByRole' => $isOperationAllowedByRole,
+        'commentaires' => $commentaires
     ]);
 
     if ($canGenererRecapitulatif) { ?>

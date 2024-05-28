@@ -400,6 +400,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
                 'id' => 'paysCoTutelle',
+                'placeholder' => "Entrez les deux premières lettres...",
             ]);
         $this->add($paysCoTutelle);
 

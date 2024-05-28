@@ -7,6 +7,7 @@
  * @var Admission $admission
  * @var boolean $showActionButtons
  * @var boolean $isOperationAllowedByRole
+ * @var array $commentaires
  */
 
 use Admission\Entity\Db\Admission;
@@ -90,10 +91,38 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php }
 
         if (isset($admission) && $admission->hasComments()) { ?>
-            <div class="card mb-3 dossier-incomplet-card">
+            <div class="card mb-3 commentaires-ajoutes-card">
                 <div class="card-body text-warning">
                     <i class="icon icon-information"></i>
-                    <p class="card-title">Des commentaires ont été ajoutés au dossier</p>
+                    <p class="card-title">Des commentaires ont été ajoutés au dossier
+                        <a class="btn access-commentaires-admission-btn required" data-operation="CommentairesAdmission">+ de détails</a>
+                    </p>
+                </div>
+            </div>
+            <div class="modal fade" id="modalShowCommentairesAdmission" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Commentaires associés à ce dossier d'admission</h4>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                <?php
+                                if($commentaires && is_array($commentaires)){
+                                    foreach ($commentaires as $commentaire) { ?>
+                                        <li>
+                                            <?php
+                                            echo $commentaire['etape']. " : ". $commentaire['commentaire'];
+                                            ?>
+                                        </li>
+                                    <?php }
+                                } ?>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         <?php } ?>

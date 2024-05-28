@@ -270,6 +270,7 @@ class AdmissionController extends AdmissionAbstractController {
                 }
             }
             $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
+            $commentaires = $this->admissionService->getCommentaires($admission);
         }
 
         $response->setVariable('admission', $admission);
@@ -279,6 +280,7 @@ class AdmissionController extends AdmissionAbstractController {
         $response->setVariable('conventionFormationDoctorale', $conventionFormationDoctorale ?? null);
         $response->setVariable('conventionFormationDoctoraleOperations', $conventionFormationDoctoraleOperations ?? null);
         $response->setVariable('isOperationAllowedByRole', $isOperationAllowedByRole ?? null);
+        $response->setVariable('commentaires', $commentaires ?? null);
         $response->setTemplate('admission/ajouter-document');
         return $response;
     }
@@ -656,13 +658,15 @@ class AdmissionController extends AdmissionAbstractController {
         $operationEnAttente = $admission ? $this->admissionOperationRule->getOperationEnAttente($admission) : null;
         $role = $this->userContextService->getSelectedIdentityRole();
         $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
+        $commentaires = $admission ? $this->admissionService->getCommentaires($admission) : null;
 
         return new ViewModel([
             'operations' => $operations,
             'admission' => $admission,
             'operationEnAttente' => $operationEnAttente,
             'showActionButtons' => false,
-            'isOperationAllowedByRole' => $isOperationAllowedByRole
+            'isOperationAllowedByRole' => $isOperationAllowedByRole,
+            'commentaires' => $commentaires
         ]);
     }
 
@@ -779,6 +783,7 @@ class AdmissionController extends AdmissionAbstractController {
             $entry['adresse_code_commune'] = $etudiant->getAdresseCodeCommune();
             $entry['adresse_cp_ville_etranger'] = $etudiant->getAdresseCpVilleEtrangere();
             $entry['numero_telephone1'] = $etudiant->getNumeroTelephone1();
+            $entry['numero_telephone2'] = $etudiant->getNumeroTelephone2();
             $entry['courriel'] = $etudiant->getCourriel();
             $records[] = $entry;
         }

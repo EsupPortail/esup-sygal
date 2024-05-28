@@ -21,6 +21,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  * @var SearchAndSelect $inputIndividu
  * @var AdmissionOperationInterface $operationEnAttente
  * @var boolean $isOperationAllowedByRole
+ * @var array $commentaires
  *
  * @see \Admission\Controller\AdmissionController::indexAction()
  */
@@ -62,7 +63,8 @@ echo $this->partial('admission/admission/partial/header', []); ?>
         'admission' => $admission,
         'operationEnAttente' => $operationEnAttente,
         'showActionButtons' => false,
-        'isOperationAllowedByRole' => $isOperationAllowedByRole
+        'isOperationAllowedByRole' => $isOperationAllowedByRole,
+        'commentaires' => $commentaires
     ]);
 } ?>
 

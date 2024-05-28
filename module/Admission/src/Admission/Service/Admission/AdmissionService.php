@@ -12,6 +12,7 @@ use Admission\Entity\Db\Financement;
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\AdmissionRepository;
 use Admission\Entity\Db\TypeValidation;
+use Admission\Entity\Db\Verification;
 use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
@@ -174,6 +175,50 @@ class AdmissionService extends BaseService
             $this->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * @param Admission $admission
+     * @return array Un tableau associatif des commentaires triées par ordre d'étape du formulaire.
+     *  [
+     *      1 => [
+     *          "etape" => 'Étape 1',
+     *          "commentaire" => 'Commentaire pour l'étape 1'
+     *      ],
+     *      2 => [
+     *          "etape" => 'Étape 2',
+     *          "commentaire" => 'Commentaire pour l'étape 2'
+     *      ],
+     *      ....
+     *  ]
+     */
+    public function getCommentaires(Admission $admission): array
+    {
+        $verifs = $this->verificationService->getAllVerificationFromAdmission($admission);
+        $verifications = [];
+        /** @var Verification $verification */
+        foreach($verifs as $verification){
+            if($verification->getCommentaire()){
+                $sections = [
+                    ["etape" => 'Étape 1', "verification" => $verification->getEtudiant(), "ordre" => 1],
+                    ["etape" => 'Étape 2', "verification" => $verification->getInscription(), "ordre" => 2],
+                    ["etape" => 'Étape 3', "verification" => $verification->getFinancement(), "ordre" => 3],
+                    ["etape" => 'Étape 4', "verification" => $verification->getDocument(), "ordre" => 4]
+                ];
+
+                foreach ($sections as $section) {
+                    if ($section['verification']) {
+                        $verifications[$section["ordre"]] = [
+                            "etape" => $section["etape"],
+                            "commentaire" => $verification->getCommentaire()
+                        ];
+                        break;
+                    }
+                }
+            }
+            ksort($verifications);
+        }
+        return $verifications;
     }
 
     public function changeEtatAdmission(AdmissionOperationInterface $operation, string $typeAction): Admission
