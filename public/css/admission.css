@@ -55,6 +55,12 @@ div.header-admission .introduction {
   display: inline-block;
   padding-right: 15px; }
 
+.icon-warning.admission-info-bulle::before, .icon-success.admission-info-bulle::before {
+  margin-left: 4px; }
+
+.icon-success.admission-info-bulle::before {
+  color: darkgreen; }
+
 /** Fin Global **/
 /** Section des commentaires visibles à chaque étape du form **/
 .bouton-gestionnaire {
@@ -241,8 +247,12 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   display: inline;
   float: left; }
 
-.individu-non-enregistre-label {
+.individu-non-enregistre-label, .icon-warning.admission-info-bulle::before {
   color: darkred; }
+
+.directeur-non-enregistre-label ~ div input#nomDirecteurThese-autocomplete, .codirecteur-non-enregistre-label ~ div input#nomCodirecteurThese-autocomplete {
+  border: 2px solid darkred;
+  background-color: #ffcccc; }
 
 /** Fin Partie Inscription **/
 /** Partie pièces justificatives **/

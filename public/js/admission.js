@@ -113,13 +113,61 @@ function handleDirectionAutocompleteSelect(nomAutocomplete, prenomAutocomplete, 
     setTimeout(function() {
         nomAutocomplete.val(data.item.extras.nom);
         nomField.val(data.item.id);
+        $(nomField).prop("value", data.item.id);
     }, 50);
     setTimeout(function() {
         prenomAutocomplete.val(data.item.extras.prenoms);
-        prenomField.val(data.item.id);
+        $(prenomField).prop("value", data.item.id);
     }, 50);
     prenomAutocomplete.val(data.item.extras.prenoms);
     emailField.val(data.item.extras.email);
+}
+
+function updateDirectionInfosLabels(idNom, idPrenom, nomInput, prenomInput, labelInput, labelIndividuNonEnregistre) {
+    setTimeout(function() {
+        var $labelInput = $(labelInput);
+        var $labelEn = $labelInput.next('.label_en');
+        var $icon = $labelEn.next('.icon');
+
+        if ((idNom.val() === '' || idPrenom.val() === '') && (nomInput.val() !== '' || prenomInput.val() !== '')) {
+            $labelEn.addClass('individu-non-enregistre-label');
+            $labelInput.addClass('individu-non-enregistre-label '+labelIndividuNonEnregistre);
+            if ($icon.length) {
+                $icon.removeClass('icon-success').addClass('icon-warning');
+                const $spanElement = $icon.find('span.tooltip-text');
+                if ($spanElement.length) {
+                    $spanElement.html("Veillez à bien <b>sélectionner un individu dans la liste proposée</b> <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché");
+                }
+            }
+        } else {
+            $labelEn.removeClass('individu-non-enregistre-label');
+            $labelInput.removeClass('individu-non-enregistre-label '+labelIndividuNonEnregistre);
+            if ($icon.length) {
+                if(nomInput.val() === '' && prenomInput.val() === ''){
+                    $icon.removeClass('icon-warning');
+                }else{
+                    $icon.removeClass('icon-warning').addClass('icon-success');
+                }
+                const $spanElement = $icon.find('span');
+                if ($spanElement.length) {
+                    $spanElement.html("L'individu choisi sera associé au dossier lorsque vous passerez à l'étape précédente ou suivante");
+                }
+            }
+        }
+    }, 50);
+}
+
+function updateFinancementOptions() {
+    if ($('input[name="financement[contratDoctoral]"]:checked').val() === '1') {
+        $('input[name="financement[tempsTravail]"][value="1"]').prop('checked', true);
+        $('input[name="financement[estSalarie]"][value="1"]').prop('checked', true);
+
+        $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', true);
+        $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', true);
+    } else {
+        $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', false);
+        $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', false);
+    }
 }
 
 const currentUrl = window.location.href;
@@ -156,7 +204,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //Gestion des commentaires du gestionnaire -> afin de pouvoir passer ou non à une autre étape
     const boutonGestionnaireIncomplet = document.querySelector('.bouton-gestionnaire.incomplet');
     const boutonGestionnaireComplet = document.querySelector('.bouton-gestionnaire.complet');
-
 
     //Activation de tinyMCE pour le champ commentaires des gestionnaires
     tinymce.remove();
@@ -197,6 +244,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    /**
+     * Partie ETUDIANT
+     */
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
         $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
@@ -275,6 +325,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    /**
+     * Partie INSCRIPTION
+     */
     if (currentUrl.indexOf("/inscription") !== -1) {
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
         const cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
@@ -291,6 +344,9 @@ document.addEventListener("DOMContentLoaded", function() {
         showOrNotDiv(codirectionRadios, additionalFieldsCodirection)
     }
 
+    /**
+     * Partie FINANCEMENT
+     */
     if (currentUrl.indexOf("/financement") !== -1) {
         const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
         const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
@@ -306,18 +362,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         //Si contratDoctoral est à oui, on sélectionne automatiquement temps complet (oui), et estSalarie (oui),
         //et grise les autres possibilités
-        $('input[name="financement[contratDoctoral]"]').on('change', function () {
-            if ($(this).val() === '1') {
-                $('input[name="financement[tempsTravail]"][value="1"]').prop('checked', true);
-                $('input[name="financement[estSalarie]"][value="1"]').prop('checked', true);
+        $('input[name="financement[contratDoctoral]"]').on('change', updateFinancementOptions);
 
-                $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', true);
-                $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', true);
-            } else {
-                $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', false);
-                $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', false);
-            }
-        });
+        updateFinancementOptions();
     }
 
     if (currentUrl.indexOf("/document") !== -1) {
@@ -575,50 +622,62 @@ $(document).ready(function () {
     $(function() {
         const nomDirecteurAutocomplete = $("#nomDirecteurThese-autocomplete");
         const prenomDirecteurAutocomplete = $("#prenomDirecteurThese-autocomplete");
-        const nomDirecteur = $("#nomDirecteurThese");
-        const prenomDirecteur = $("#prenomDirecteurThese");
+        const idNomDirecteur = $("#nomDirecteurThese");
+        const idPrenomDirecteur = $("#prenomDirecteurThese");
         const emailDirecteur = $("#emailDirecteurThese");
+        var labelInputDirecteur = $('label[for="inscription[nomDirecteurThese]"]');
+        const labelDirecteurNonEnregistre = "directeur-non-enregistre-label";
 
         nomDirecteurAutocomplete.on('autocompleteselect', function(event, data) {
-            handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, nomDirecteur, prenomDirecteur, emailDirecteur, data);
+            handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, idNomDirecteur, idPrenomDirecteur, emailDirecteur, data);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
         });
 
         prenomDirecteurAutocomplete.on('autocompleteselect', function(event, data) {
-            handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, nomDirecteur, prenomDirecteur, emailDirecteur, data);
+            handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, idNomDirecteur, idPrenomDirecteur, emailDirecteur, data);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
         });
 
         nomDirecteurAutocomplete.on('input', function() {
-            nomDirecteur.val(null);
-            prenomDirecteur.val(null);
+            idNomDirecteur.val(null);
+            idPrenomDirecteur.val(null);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
         });
 
         prenomDirecteurAutocomplete.on('input', function() {
-            nomDirecteur.val(null);
-            prenomDirecteur.val(null);
+            idNomDirecteur.val(null);
+            idPrenomDirecteur.val(null);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
         });
 
         const nomCodirecteurAutocomplete = $("#nomCodirecteurThese-autocomplete");
         const prenomCodirecteurAutocomplete = $("#prenomCodirecteurThese-autocomplete");
-        const nomCodirecteur = $("#nomCodirecteurThese");
-        const prenomCodirecteur = $("#prenomCodirecteurThese");
+        const idNomCodirecteur = $("#nomCodirecteurThese");
+        const idPrenomCodirecteur = $("#prenomCodirecteurThese");
         const emailCodirecteur = $("#emailCodirecteurThese");
+        const labelInputCoDirecteur = $('label[for="inscription[nomCoDirecteurThese]"]');
+        const labelCoDirecteurNonEnregistre = "codirecteur-non-enregistre-label";
 
         nomCodirecteurAutocomplete.on('autocompleteselect', function(event, data) {
-            handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, nomCodirecteur, prenomCodirecteur, emailCodirecteur, data);
+            handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, idNomCodirecteur, idPrenomCodirecteur, emailCodirecteur, data);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
         });
 
         prenomCodirecteurAutocomplete.on('autocompleteselect', function(event, data) {
-            handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, nomCodirecteur, prenomCodirecteur, emailCodirecteur, data);
+            handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, idNomCodirecteur, idPrenomCodirecteur, emailCodirecteur, data);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
         });
 
         nomCodirecteurAutocomplete.on('input', function() {
-            nomCodirecteur.val(null);
-            prenomCodirecteur.val(null);
+            idNomCodirecteur.val(null);
+            idPrenomCodirecteur.val(null);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
         });
 
         prenomCodirecteurAutocomplete.on('input', function() {
-            nomCodirecteur.val(null);
-            prenomCodirecteur.val(null);
+            idNomCodirecteur.val(null);
+            idPrenomCodirecteur.val(null);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
         });
     })
 });

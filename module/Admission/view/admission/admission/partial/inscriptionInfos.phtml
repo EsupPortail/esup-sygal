@@ -58,16 +58,16 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             if($inscriptionExist &&
                 ($admission->getInscription()->first()->getNomDirecteurThese() &&
                 empty($admission->getInscription()->first()->getDirecteur()))){ ?>
-                <label class="form-label individu-non-enregistre-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis supervisor</label>
+                <label class="form-label individu-non-enregistre-label directeur-non-enregistre-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis supervisor</label>
                 <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
-                    <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                    <span class="tooltip-text">Le dossier n'a pas pu être associé au directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br> Veillez à bien sélectionner un individu dans la liste proposée <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché</span>
                 </span>
             <?php }else{ ?>
                     <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis supervisor</label>
                         <?php if($inscriptionExist &&
                               $admission->getInscription()->first()->getDirecteur()){ ?>
-                    <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
-                        <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
+                    <span class="icon icon-success admission-info-bulle" data-toggle="tooltip">
+                        <span class="tooltip-text">Le dossier a bien été associé au directeur de thèse désigné</span>
                     </span>
                 <?php } ?>
             <?php } ?>
@@ -162,16 +162,16 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                             <?php if($inscriptionExist &&
                                     $admission->getInscription()->first()->getNomCodirecteurThese() &&
                                     empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
-                                    <label class="form-label individu-non-enregistre-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis co-supervisor</label>
+                                    <label class="form-label individu-non-enregistre-label codirecteur-non-enregistre-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis co-supervisor</label>
                                     <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
-                                        <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                                        <span class="tooltip-text">Le dossier n'a pas pu être associé au co-directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br> Veillez à bien sélectionner un individu dans la liste proposée <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché</span>
                                     </span>
                             <?php }else{ ?>
                                 <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
                                 <?php if($inscriptionExist &&
                                         $admission->getInscription()->first()->getCoDirecteur()){ ?>
-                                        <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
-                                            <span class="tooltip-text">L'individu renseigné est enregistré en base de données</span>
+                                        <span class="icon icon-success admission-info-bulle" data-toggle="tooltip">
+                                            <span class="tooltip-text">Le dossier a bien été associé au co-directeur de thèse désigné</span>
                                         </span>
                                 <?php } ?>
                             <?php } ?>
