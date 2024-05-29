@@ -55,6 +55,7 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
 
         /** @var Admission $admission */
         $admission = $this->vars['admission'];
+
         $conventionFormationDoctoraleDataTemplate->setAdmission($admission);
 
         $operations = $this->vars['conventionFormationDoctoraleOperations'];
@@ -84,14 +85,9 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
             'conventionFormationDoctorale' => $conventionFormationDoctorale,
             'admissionConventionFormationDoctoraleData' => $conventionFormationDoctoraleDataTemplate
         ];
-
-        $comue = $this->etablissementService->fetchEtablissementComue();
-        $ced = $this->etablissementService->fetchEtablissementCed();
-        $etab = $admission->getInscription()->first()->getComposanteDoctorat();
         $logos = [
-            "COMUE" => $comue?$this->fichierStorageService->getFileForLogoStructure($comue->getStructure()):null,
-            "CED" =>  $ced?$this->fichierStorageService->getFileForLogoStructure($ced->getStructure()):null,
-            "ETAB" => $etab?$this->fichierStorageService->getFileForLogoStructure($etab->getStructure()):null,
+            "COMUE" => $this->vars['logos']["comue"],
+            "ETAB" => $this->vars['logos']["site"],
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::ADMISSION_CONVENTION_FORMATION_DOCTORALE, $vars);
         $this->getMpdf()->SetMargins(0,0,60);

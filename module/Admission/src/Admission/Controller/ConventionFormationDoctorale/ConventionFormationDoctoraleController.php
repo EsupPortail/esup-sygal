@@ -3,6 +3,7 @@
 namespace Admission\Controller\ConventionFormationDoctorale;
 
 use Admission\Entity\Db\ConventionFormationDoctorale;
+use Admission\Entity\Db\Inscription;
 use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleFormAwareTrait;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
@@ -106,10 +107,12 @@ class ConventionFormationDoctoraleController extends AbstractActionController
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
         $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
 
         $logos = [];
         try {
-            $site = $admission->getInscription()->first()->getEtablissementInscription() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure() : null;
+            $site = $inscription && $inscription->getEtablissementInscription() ? $inscription->getEtablissementInscription()->getStructure() : null;
             $logos['site'] = $site ? $this->fichierStorageService->getFileForLogoStructure($site) : null;
         } catch (StorageAdapterException) {
             $logos['site'] = null;

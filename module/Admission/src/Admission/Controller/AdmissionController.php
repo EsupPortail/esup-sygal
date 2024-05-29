@@ -851,10 +851,11 @@ class AdmissionController extends AdmissionAbstractController {
     public function genererRecapitulatifAction(): void
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
-
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
         $logos = [];
         try {
-            $site = $admission->getInscription()->first()->getComposanteDoctorat() ? $admission->getInscription()->first()->getComposanteDoctorat()->getStructure() : null;
+            $site = $inscription && $inscription->getEtablissementInscription() ? $inscription->getEtablissementInscription()->getStructure() : null;
             $logos['site'] = $site ? $this->fichierStorageService->getFileForLogoStructure($site) : null;
         } catch (StorageAdapterException) {
             $logos['site'] = null;

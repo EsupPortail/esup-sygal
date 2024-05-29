@@ -1128,7 +1128,7 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
-    public function getVille() : string
+    public function getVille() : string|null
     {
         return $this->getAdresseNomCommune() ?: $this->getAdresseCpVilleEtrangere();
     }

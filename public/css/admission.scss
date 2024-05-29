@@ -73,7 +73,7 @@ div.header-admission {
   padding-right: 15px;
 }
 
-.icon-warning.admission-info-bulle::before, .icon-success.admission-info-bulle::before {
+.icon-warning.admission-info-bulle::before, .icon-success.admission-info-bulle::before, .icon-information.admission-info-bulle::before {
   margin-left: 4px;
 }
 
@@ -524,7 +524,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   font-weight: bold;
 }
 
-.aucune-charte-doctorale-associee-btn > .icon-warning {
+.aucune-charte-doctorale-associee-btn > .icon-warning, .admission-info-bulle {
   vertical-align: middle ;
 }
 

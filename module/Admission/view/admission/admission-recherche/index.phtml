@@ -176,7 +176,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                                 if(!empty($admission->getInscription()->first()->getDenominationDirecteurThese())){
                                     echo $admission->getInscription()->first()->getDenominationDirecteurThese();?>
                                     <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
-                                        <span class="tooltip-text">Merci d'enregistrer l'individu en base de données</span>
+                                        <span class="tooltip-text">Le dossier n'a pas pu être associé au directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br><br> Veillez à bien sélectionner un individu dans la liste proposée ou enregistrer ce dernier dans l'application</span>
                                     </span>
                                 <?php }
                             }

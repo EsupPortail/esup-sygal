@@ -66,13 +66,9 @@ class RecapitulatifExporter extends PdfExporter
             'admissionRecapitulatif' => $admissionRecapitulatif,
         ];
 
-        $comue = $this->etablissementService->fetchEtablissementComue();
-        $ced = $this->etablissementService->fetchEtablissementCed();
-        $etab = $admission->getInscription()->first()->getComposanteDoctorat();
         $logos = [
-            "COMUE" => $comue?$this->fichierStorageService->getFileForLogoStructure($comue->getStructure()):null,
-            "CED" =>  $ced?$this->fichierStorageService->getFileForLogoStructure($ced->getStructure()):null,
-            "ETAB" => $etab?$this->fichierStorageService->getFileForLogoStructure($etab->getStructure()):null,
+            "COMUE" => $this->vars['logos']["comue"],
+            "ETAB" => $this->vars['logos']["site"],
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::ADMISSION_RECAPITULATIF, $vars);
         $this->getMpdf()->SetMargins(0,0,60);

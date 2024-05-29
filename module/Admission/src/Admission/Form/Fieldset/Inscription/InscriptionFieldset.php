@@ -170,9 +170,11 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
                 ->setLabelAttributes(['data-after' => " / Discipline code"])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption("Indisponible")
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
+                    'disabled' => 'true'
                 ])
         );
 

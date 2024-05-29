@@ -568,26 +568,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        //Ajout de TinyMCE pour la convention de formation doctorale
-        if (currentUrl.includes('convention-formation/modifier/') || currentUrl.includes('convention-formation/ajouter/')) {
-            tinymce.remove();
-            tinymce.init({
-                selector: 'textarea',
-                toolbar: 'undo redo | bold italic | bullist numlist | table link',
-                plugins: 'lists link table',
-                table_toolbar: "tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
-                statusbar: true,
-                resize: true,
-                browser_spellcheck: true,
-                branding: false,
-                language: 'fr_FR',
-                menu: {},
-
-                body_id: 'contenu',
-                link_context_toolbar: true,
-            });
-        }
-
         //GESTION DU RÉCAPITULATIF DU DOSSIER
         const lienRecapitulatif = document.querySelector('.access-recap-signe-btn');
         const divRecapitulatif = document.getElementById('file-recap-signe-container');
@@ -604,11 +584,31 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
+
+    //Ajout de TinyMCE pour la convention de formation doctorale
+    if (currentUrl.includes('convention-formation/modifier/') || currentUrl.includes('convention-formation/ajouter/')) {
+        tinymce.remove();
+        tinymce.init({
+            selector: 'textarea',
+            toolbar: 'undo redo | bold italic | bullist numlist | table link',
+            plugins: 'lists link table',
+            table_toolbar: "tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
+            statusbar: true,
+            resize: true,
+            browser_spellcheck: true,
+            branding: false,
+            language: 'fr_FR',
+            menu: {},
+
+            body_id: 'contenu',
+            link_context_toolbar: true,
+        });
+    }
 })
 
 $(document).ready(function () {
     if (currentUrl.indexOf("/etudiant") !== -1 ||currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
-        $('select').not('select[name="etudiant[anneeDobtentionDiplomeNational]"]').selectpicker();
+        $('select').not('select[name="etudiant[anneeDobtentionDiplomeNational]"], select[name="etudiant[anneeDobtentionDiplomeAutre]"]').selectpicker();
     }
 
     $('[data-toggle="tooltip"]').tooltip({

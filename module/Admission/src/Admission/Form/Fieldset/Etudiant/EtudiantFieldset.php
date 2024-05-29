@@ -68,6 +68,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
                 ->setLabel("Civilité")
+                ->setLabelAttributes(['data-after' => " / Civility"])
                 ->setAttributes(['readonly' => true])
         );
 
