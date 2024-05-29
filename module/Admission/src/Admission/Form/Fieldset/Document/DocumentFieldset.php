@@ -3,6 +3,7 @@ namespace Admission\Form\Fieldset\Document;
 
 use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
+use Fichier\Entity\Db\NatureFichier;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
@@ -50,7 +51,7 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         $this->add(
             (new File('exemplairesCharteDoctorat'))
                 ->setLabel("Charte du doctorat")
-                ->setAttributes(["id" => "ADMISSION_CHARTE_DOCTORAT"])
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])
                 ->setLabelAttributes(['data-after' => " / PhD Charter"])
         );
 

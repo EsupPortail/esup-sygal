@@ -518,6 +518,21 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   background-color: #824012;
 }
 
+.aucune-charte-doctorale-associee-btn{
+  background-color: #d23544;
+  color: #fff;
+  font-weight: bold;
+}
+
+.aucune-charte-doctorale-associee-btn > .icon-warning {
+  vertical-align: middle ;
+}
+
+.aucune-charte-doctorale-associee-btn:hover {
+  color: #fff;
+  cursor: default;
+}
+
 .dossier-incomplet-validation-impossible {
   position: relative;
   display: inline-block;

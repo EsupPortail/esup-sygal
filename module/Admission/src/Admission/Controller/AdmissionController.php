@@ -39,6 +39,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
+use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
@@ -395,9 +396,6 @@ class AdmissionController extends AdmissionAbstractController {
                 //afin de relier une Vérification à celui-ci -> fait maintenant pour ensuite ajouter la charte sinon conflit
                 $this->documentService->createDocumentWithoutFichier($admission);
 
-                //On relie une charte du doctorat au dossier d'admission
-                $this->documentService->addCharteDoctoraleToAdmission($admission);
-
                 //Ajout du rôle Candidat à la personne reliée au dossier d'admission
                 $this->gererRoleIndividu($individu, Role::ROLE_ID_ADMISSION_CANDIDAT);
 
@@ -449,6 +447,7 @@ class AdmissionController extends AdmissionAbstractController {
         $inscription = $this->inscriptionService->getRepository()->findOneByAdmission($admission);
         $directeurBeforeUpdate = $inscription?->getDirecteur();
         $coDirecteurBeforeUpdate = $inscription?->getCoDirecteur();
+        $etablissementInscriptionBeforeUpdate = $inscription?->getEtablissementInscription();
 
         //Lier les valeurs des données en session avec le formulaire
         if ($this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
@@ -463,6 +462,9 @@ class AdmissionController extends AdmissionAbstractController {
                     $inscription->setAdmission($admission);
                     $this->inscriptionService->create($inscription);
 
+                    //On relie une charte du doctorat au dossier d'admission
+                    $this->documentService->addCharteDoctoraleToAdmission($inscription);
+
                     $this->flashMessenger()->addSuccessMessage("Les informations concernant l'étape précédente ont été ajoutées avec succès.");
                 } catch (Exception $e) {
                     $this->flashMessenger()->addErrorMessage("Échec de l'enregistrement des informations : ".$e->getMessage());
@@ -473,6 +475,16 @@ class AdmissionController extends AdmissionAbstractController {
                     /** @var Inscription $inscription */
                     $inscription = $this->admissionForm->get('inscription')->getObject();
                     $this->inscriptionService->update($inscription);
+
+                    //Si on l'établissement d'inscription est modifié, on supprime l'ancienne charte doctorale, puis on ajoute la nouvelle
+                    if($etablissementInscriptionBeforeUpdate !== $inscription->getEtablissementInscription()){
+                        $charteDoctorat = $this->documentService->getRepository()->findByAdmissionAndNature($admission, NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT);
+                        if($charteDoctorat){
+                            $this->documentService->delete($charteDoctorat);
+                        }
+                        //On relie une charte du doctorat au dossier d'admission
+                        $this->documentService->addCharteDoctoraleToAdmission($inscription);
+                    }
                 } catch (Exception $e) {
                     $this->flashMessenger()->addErrorMessage("Échec de la modification des informations : ".$e->getMessage());
                 }

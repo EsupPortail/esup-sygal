@@ -17,14 +17,19 @@ use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Entity\Db\Etat;
+use Admission\Entity\Db\Inscription;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Fichier\Entity\Db\NatureFichier;
 
 $ajaxModalEvent = 'EVENT_AVIS_SAISI';
 
 $canTelechargerDocument =
     $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_TOUT_DOCUMENT)) ||
     $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT));
+
+/** @var Inscription $inscription */
+$inscription = isset($admission) && $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
 ?>
 
 <div class="row subfield">
@@ -35,10 +40,15 @@ $canTelechargerDocument =
         <div class="row detail-file-container">
             <?php
             $key = $fieldset->getAttribute('id');
-            if($key=="ADMISSION_CHARTE_DOCTORAT"){ ?>
+            if($key === NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT){ ?>
                 <div class="col-lg-12 upload-file">
-                   <?php if($validation_charte_doctorat->getId() == null){ ?>
-                        <a class="btn access-charte-doctorat-btn required">Lire et valider la charte du doctorat</a>
+                   <?php if($inscription && $inscription->getEtablissementInscription() === null){ ?>
+                       <a class="btn aucune-charte-doctorale-associee-btn" data-toggle="tooltip" title="Veuillez renseigner un établissement d'inscription (à l'étape 2 du formulaire)">
+                           <span class="icon icon-warning"></span>
+                           Aucune charte doctorale associée au dossier
+                       </a>
+                   <?php }else if($validation_charte_doctorat->getId() === null){ ?>
+                       <a class="btn access-charte-doctorat-btn required">Lire et valider la charte du doctorat</a>
                     <?php }else{?>
                        <a class="btn btn-primary access-charte-doctorat-btn">Lire la charte du doctorat</a>
                     <?php }?>
@@ -49,7 +59,15 @@ $canTelechargerDocument =
                                     <h4 class="modal-title">Charte du doctorat</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <?php if($validation_charte_doctorat->getId() == null){ ?>
+                                    <?php if($inscription && $inscription->getEtablissementInscription() !== null && !isset($documents[NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])){ ?>
+                                        <div class="precisions-action-container">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            <p>
+                                                Aucune charte doctorale n'était associée à votre établissement (lors du choix de l'établissement d'inscription, à l'étape 2 du formulaire).<br>
+                                                Veuillez vous rapprocher de votre gestionnaire afin de résoudre cette situation.
+                                            </p>
+                                        </div>
+                                    <?php }else if($validation_charte_doctorat->getId() === null){ ?>
                                         <div class="precisions-action-container">
                                             <i class="fas fa-exclamation-circle"></i>
                                             <p>
@@ -85,7 +103,7 @@ $canTelechargerDocument =
                         </div>
                     </div>
                 </div>
-            <?php } else if ($key == "ADMISSION_CONVENTION") {
+            <?php } else if ($key === "ADMISSION_CONVENTION") {
                 $canAccederConventionFormationDoctorale = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_MODIFIER));
                 $canGenererConventionFormationDoctorale =
                     $this->isAllowed($conventionFormationDoctorale, AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER); ?>

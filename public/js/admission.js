@@ -148,7 +148,7 @@ function updateDirectionInfosLabels(idNom, idPrenom, nomInput, prenomInput, labe
                 }else{
                     $icon.removeClass('icon-warning').addClass('icon-success');
                 }
-                const $spanElement = $icon.find('span');
+                const $spanElement = $icon.find('span.tooltip-text');
                 if ($spanElement.length) {
                     $spanElement.html("L'individu choisi sera associé au dossier lorsque vous passerez à l'étape précédente ou suivante");
                 }
@@ -503,6 +503,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     fileCharteDoctoratDiv.style.display = 'block';
                 });
             }
+
+            $('.aucune-charte-doctorale-associee-btn').on('click', function(event) {
+                event.preventDefault();
+            });
 
             //GESTION DE LA CONVENTION DE FORMATION DOCTORALE
             const conventionFormationDoctorale = document.getElementById("conventionFormationDoctoraleObject");

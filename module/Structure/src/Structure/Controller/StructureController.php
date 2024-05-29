@@ -129,6 +129,7 @@ class StructureController extends AbstractController
             NatureFichier::CODE_SIGNATURE_CONVOCATION,
             NatureFichierFormation::CODE_SIGNATURE_FORMATION,
             NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
+            NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT
         ]);
         $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
 

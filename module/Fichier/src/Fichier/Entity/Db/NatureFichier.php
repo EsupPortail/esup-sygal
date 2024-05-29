@@ -67,6 +67,8 @@ class NatureFichier
     const LABEL_DEMANDE_CONFIDENT = "Formulaire de demande de confidentialité";
     const LABEL_AUTRES_JUSTIFICATIFS = "Autres justificatifs concernant la soutenance";
 
+    const CODE_ADMISSION_CHARTE_DOCTORAT = "ADMISSION_CHARTE_DOCTORAT";
+
     /**
      * @var string
      */
