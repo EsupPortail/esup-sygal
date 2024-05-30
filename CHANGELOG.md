@@ -15,6 +15,8 @@ Journal des modifications
 - Formulaire de création d'un individu à partir d'un utilisateur : initialisation manquante du nom patronymique.
 - Module StepStar : mise à jour du script bash d'envoi quotidien des thèses vers STEP/STAR.
 - Suppression du menu 'Administration > Compléments d'individu' devenu inutile.
+- Amélioration visuelle des pages de création/modification de structure (Etab/ED/UR).
+- [FIX] Warning PHP sur la page de création/modification d'ED/UR.
 - [FIX] Authentification LDAP/CAS : la recherche de l'utilisateur en bdd à partir du username n'utilisait pas le paramètre de config 'ldap_username'.
 - [FIX] Authentification LDAP/CAS : les données d'identité de type \UnicaenApp\Entity\Ldap\People n'étaient pas bien traitées.
 - [FIX] Utilisation du bon code structure pour les établissements (source_code).

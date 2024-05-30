@@ -5,30 +5,32 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Form\EcoleDoctoraleForm;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenIdref\Domain\Index1;
-use UnicaenIdref\ParamsFactory;
 
 /**
  * @var PhpRenderer        $this
  * @var string             $title
  * @var EcoleDoctoraleForm $form
- * @var string             $logoContent
+ * @var string|null        $logoContent
  *
  * @method string formControlGroup()
  *
  * @see EcoleDoctoraleController::modifierAction()
 */
 
+$logoContent = $logoContent ?? null;
+
 /** @var EcoleDoctorale $ecole */
 $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
-$estModifiable = !($ecole->getSource() !== null AND $ecole->getSource()->getImportable());
+$estImportee = $ecole->getSource()?->getImportable() ?? false;
 $fcg = $this->formControlGroup();
-$this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
-$editable = $isNew || $estModifiable;
+$editable = $isNew || !$estImportee;
 $form->get('libelle')->setAttribute('readonly', !$editable);
 $form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
+
+$this->headTitle("Modification de l'ED ".$ecole->getStructure()->getCode());
 ?>
 
 <h1 class="page-header">
@@ -41,21 +43,16 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if (!$editable) : ?>
-<div class="alert alert-warning">
-        <p>
-            <?php if (!$estModifiable) : ?>
-                <span class="icon icon-attention"></span>
-                <strong>La source (<?php echo $ecole->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
-                <br/>
-            <?php endif; ?>
-        </p>
-
-    <p>
+<?php if ($estImportee) : ?>
+    <p class="alert alert-warning">
+        <span class="icon icon-attention"></span>
+        <strong>La source (<?php echo $ecole->getSource()->getLibelle(); ?>) ne permet pas la modification de certains attributs.</strong>
+        <br/>
         Par conséquent, vous ne pouvez pas modifier les champs : libellé, sigle et code.
     </p>
-</div>
 <?php endif; ?>
+
+<!-- BLOC DES INFORMATIONS GENERALES ---------------------------------------------------------------------------------->
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'ecole-doctorale')) ?>
 
@@ -88,10 +85,13 @@ $form->get('code')->setAttribute('readonly', !$editable);
     </div>
 
     <div class="col-md-6">
-        <label class="form-label col-form-label">Étiquettes associées :</label>
-        <?php echo $fcg($form->get('estFerme')) ?>
+        <fieldset>
+            <legend><h2>Étiquettes associées</h2></legend>
+            <?php echo $fcg($form->get('estFerme')) ?>
+        </fieldset>
 
-        <div id="logo-div">
+        <fieldset id="logo-div">
+            <legend><h2>Logo</h2></legend>
             <?php
             /** @var \Laminas\Form\Element\File $logoFile */
             $logoFile = $form->get('cheminLogo');
@@ -107,11 +107,15 @@ $form->get('code')->setAttribute('readonly', !$editable);
             <table>
                 <tr>
                     <td>
+                        <?php if ($logoContent): ?>
                         <img
                                 id="logo"
                                 style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
                                 src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
                         />
+                        <?php else: ?>
+                            <strong>Aucun logo défini.</strong>
+                        <?php endif; ?>
                     </td>
                     <td style="padding:20px;">
                         <?php
@@ -140,7 +144,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                     </ul>
                 </small>
             </div>
-        </div>
+        </fieldset>
     </div>
 
 </div>
