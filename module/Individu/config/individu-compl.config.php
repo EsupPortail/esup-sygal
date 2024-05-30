@@ -2,8 +2,8 @@
 
 namespace Individu;
 
-use Individu\Controller\IndividuComplControllerFactory;
 use Individu\Controller\IndividuComplController;
+use Individu\Controller\IndividuComplControllerFactory;
 use Individu\Form\IndividuCompl\IndividuComplForm;
 use Individu\Form\IndividuCompl\IndividuComplFormFactory;
 use Individu\Form\IndividuCompl\IndividuComplHydrator;
@@ -63,27 +63,6 @@ return [
         ],
     ],
 
-    'navigation' => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'admin' => [
-                        'pages' => [
-                            'individu-compl' => [
-                                'label' => "Compl. d'individu",
-                                'title' => "Compléments d'individu",
-                                'route' => 'individu-compl',
-                                'resource' => PrivilegeController::getResourceId(IndividuComplController::class, 'index'),
-                                'icon' => "fas fa-user-edit",
-                                'order' => 65,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'router' => [
         'routes' => [
             'individu-compl' => [
@@ -92,10 +71,9 @@ return [
                     'route' => '/individu-compl',
                     'defaults' => [
                         'controller' => IndividuComplController::class,
-                        'action' => 'index',
                     ],
                 ],
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'child_routes' => [
                     'afficher' => [
                         'type' => Segment::class,

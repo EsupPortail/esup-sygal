@@ -17,15 +17,6 @@ class IndividuComplController extends AbstractController
 
     use IndividuComplFormAwareTrait;
 
-    public function indexAction() : ViewModel
-    {
-        $complements = $this->individuComplService->findComplements();
-
-        return new ViewModel([
-            'complements' => $complements,
-        ]);
-    }
-
     public function afficherAction() : ViewModel
     {
         $individuCompl = $this->individuComplService->findRequestedIndividuCompl($this);
