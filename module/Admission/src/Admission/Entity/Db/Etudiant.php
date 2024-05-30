@@ -1160,6 +1160,14 @@ class Etudiant implements HistoriqueAwareInterface{
     /**
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
+    public function getPaysLibelle()
+    {
+        return $this->getAdresseCodePays() ? $this->getAdresseCodePays()->getLibelle() : null;
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
     public function getSituationHandicapLibelle()
     {
         if($this->getSituationHandicap()){

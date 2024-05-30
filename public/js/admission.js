@@ -51,6 +51,10 @@ function updateButtonsState(isButtonDisabled) {
                 button.classList.remove('disabled');
                 button.removeAttribute('title');
             }
+            const registerCommentsButton = document.querySelector('.admission-enregistrer-verification-container');
+            if(registerCommentsButton){
+                registerCommentsButton.style.display = 'block';
+            }
         }
     });
 }
@@ -231,7 +235,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             // Réagir lors du changement de contenu
             editor.on('input', handleEditorChange)
-            editor.on('NodeChange', handleEditorChange)
         }
     });
 
@@ -583,6 +586,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         }
+
+        $('input[name="document[enregistrerVerification]"]').val("")
+        //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
+        $('.enregistrer-verification-btn').on('click', function() {
+            $('input[name="document[enregistrerVerification]"]').val("enregistrerVerification");
+        });
     }
 
     //Ajout de TinyMCE pour la convention de formation doctorale

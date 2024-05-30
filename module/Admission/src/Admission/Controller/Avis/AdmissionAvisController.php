@@ -101,7 +101,7 @@ class AdmissionAvisController extends AbstractController
         return [
             'admission' => $admission,
             'form' => $this->form,
-            'title' => "Nouvel avis à propos du dossier d'admission de ".$admission->getIndividu()->getNomComplet(),
+            'title' => "Nouvel avis à propos du dossier d'admission de ".$admission->getIndividu()->getNomComplet(false, false, false, true),
         ];
     }
 
@@ -141,7 +141,7 @@ class AdmissionAvisController extends AbstractController
                         return $this->redirect()->toUrl($redirectUrl);
                     }
 
-                    return $this->redirect()->toRoute('admission/document', ['individu' => $individu->getId()]);
+                    return $this->redirect()->toRoute('admission/ajouter', ['action' => 'document', 'individu' => $individu->getId()]);
                 }
             }
         }
@@ -170,7 +170,7 @@ class AdmissionAvisController extends AbstractController
             return $this->redirect()->toUrl($redirectUrl);
         }
 
-        return $this->redirect()->toRoute('admission/document', ['individu' => $individu->getId()]);
+        return $this->redirect()->toRoute('admission/ajouter', ['action' => 'document', 'individu' => $individu->getId()]);
     }
 
     /**

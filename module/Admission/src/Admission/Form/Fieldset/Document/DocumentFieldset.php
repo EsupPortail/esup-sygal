@@ -5,6 +5,7 @@ use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Fichier\Entity\Db\NatureFichier;
 use Laminas\Form\Element\File;
+use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -106,6 +107,10 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
             (new File('recapitulatifDossierSigne'))
                 ->setLabel("Récapitulatif du dossier d'admission signé par la direction de l'établissement")
                 ->setAttributes(["id" => "ADMISSION_RECAPITULATIF_DOSSIER_SIGNE"])
+        );
+
+        $this->add(
+            (new Hidden('enregistrerVerification'))
         );
 
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);

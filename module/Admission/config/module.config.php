@@ -40,7 +40,6 @@ use Admission\Hydrator\Verification\VerificationHydratorFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Rule\Email\ExtractionEmailRule;
 use Admission\Rule\Email\ExtractionEmailRuleFactory;
-use Admission\Rule\Email\ExtractionRuleFactory;
 use Admission\Service\Admission\AdmissionRechercheService;
 use Admission\Service\Admission\AdmissionRechercheServiceFactory;
 use Admission\Service\Admission\AdmissionService;

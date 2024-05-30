@@ -90,6 +90,10 @@ SET code          = 'AdmissionInscription#EtablissementLaboratoireRecherche',
     variable_name = 'admissionInscription'
 WHERE code = 'AdmissionFinancement#EtablissementLaboratoireRecherche';
 
+UPDATE unicaen_renderer_macro
+SET description          = '<p>Retourne la ville française / étrangère (le cas échéant) de l''étudiant</p>'
+WHERE code = 'AdmissionEtudiant#VilleEtudiant';
+
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionEtudiant#VilleEtudiantEtrangere',
         '<p>Retourne la ville étrangère (le cas échéant) de l''étudiant</p>',
@@ -101,12 +105,18 @@ VALUES ('AdmissionAvisNotification#Anomalies',
         'anomalies',
         'getAnomalies');
 
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionEtudiant#PaysEtudiant',
+        '<p>Retourne le pays actuel de l''étudiant</p>',
+        'admissionEtudiant', 'getPaysLibelle');
+
 -- Templates
 UPDATE public.unicaen_renderer_template
 SET document_corps = '<h1 style="text-align: center;">Convention de formation doctorale</h1>
 <h1 style="text-align: center;">de VAR[Individu#Denomination]</h1>
 <p> </p>
-<p><strong>Entre</strong> VAR[AdmissionEtudiant#DenominationEtudiant]<br /><strong>né le</strong> VAR[AdmissionEtudiant#DateNaissance]<br /><strong>à</strong> VAR[AdmissionEtudiant#VilleNaissance], VAR[AdmissionEtudiant#PaysNaissance] (VAR[AdmissionEtudiant#Nationalite])<br /><strong>ayant pour adresse</strong> VAR[AdmissionEtudiant#Adresse], VAR[AdmissionEtudiant#CodePostal] VAR[AdmissionEtudiant#VilleEtudiant] VAR[AdmissionEtudiant#VilleEtudiantEtrangere]<br /><strong>Mail</strong> : VAR[AdmissionEtudiant#MailEtudiant]</p>
+<p><strong>Entre</strong> VAR[AdmissionEtudiant#DenominationEtudiant]<br /><strong>né le</strong> VAR[AdmissionEtudiant#DateNaissance]<br /><strong>à</strong> VAR[AdmissionEtudiant#VilleNaissance], VAR[AdmissionEtudiant#PaysNaissance] (VAR[AdmissionEtudiant#Nationalite])<br /><strong>ayant pour adresse</strong> VAR[AdmissionEtudiant#Adresse], VAR[AdmissionEtudiant#CodePostal] VAR[AdmissionEtudiant#VilleEtudiant], VAR[AdmissionEtudiant#PaysEtudiant]  </p>
+<p><strong>Mail</strong> : VAR[AdmissionEtudiant#MailEtudiant]</p>
 <p><strong>ci-après dénommé le Doctorant</strong></p>
 <p><strong>Et</strong> VAR[AdmissionInscription#DenominationDirecteurThese], directeur(-trice) de thèse<br /><strong>Fonction</strong> : VAR[AdmissionInscription#FonctionDirecteurThese]<br /><strong>Unité de recherche </strong>: VAR[AdmissionInscription#UniteRecherche]<br /><strong>Établissement de rattachement</strong> : VAR[AdmissionInscription#EtablissementInscription]<br /><strong>Mail</strong> : VAR[AdmissionInscription#MailDirecteurThese]</p>
 <p>VAR[AdmissionConventionFormationDoctorale#InfosCoDirecteur]</p>

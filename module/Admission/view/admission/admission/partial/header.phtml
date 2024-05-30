@@ -15,7 +15,7 @@ use Individu\Entity\Db\Individu;
 <div class="header-admission">
     <?php
         $individu = isset($individu) ? " de ".$individu->getNomComplet() : null;
-        $individu = isset($admission) ? " de ".$admission->getIndividu()->getNomComplet() : $individu;
+        $individu = isset($admission) ? " de ".$admission->getIndividu()->getNomComplet(false, false, false, true) : $individu;
         $this->headTitle($this->translate($title = "Admission".$individu))
     ?>
 

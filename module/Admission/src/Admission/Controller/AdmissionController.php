@@ -302,8 +302,14 @@ class AdmissionController extends AdmissionAbstractController {
             $this->enregistrerDocument($data, $admission);
         }
 
-        $this->multipageForm($this->admissionForm)->clearSession();
-        return $this->redirect()->toRoute('admission');
+        //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
+        if(isset($data["document"]["enregistrerVerification"]) && $data["document"]["enregistrerVerification"] === "enregistrerVerification"){
+            $individu=$this->individuService->getRepository()->findRequestedIndividu($this);
+            return $this->redirect()->toRoute('admission/ajouter', ['action' => 'document', 'individu' => $individu->getId()]);
+        }else{
+            $this->multipageForm($this->admissionForm)->clearSession();
+            return $this->redirect()->toRoute('admission');
+        }
     }
 
     /**
@@ -733,12 +739,6 @@ class AdmissionController extends AdmissionAbstractController {
             $submitButton->setAttribute('title', "Revenir à la page d'accueil du module");
             //si le dossier est en cours de saisie et que l'utilisateur connecté a le droit de modifier le dossier
         }else{
-            $submitButton->setValue("Enregistrer");
-            $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
-            $submitButton->setAttribute('title', "Enregistrer les possibles modifications faites sur le dossier");
-        }
-        //si l'utilisateur connecté a le droit de vérifier le dossier
-        if($canVerifierAdmission){
             $submitButton->setValue("Enregistrer");
             $submitButton->setAttribute('class', $submitButton->getAttribute('class') . ' btn btn-success');
             $submitButton->setAttribute('title', "Enregistrer les possibles modifications faites sur le dossier");

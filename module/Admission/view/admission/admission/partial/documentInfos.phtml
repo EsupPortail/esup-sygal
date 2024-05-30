@@ -32,6 +32,7 @@ $canNotifierDossierIncomplet  = $this->isAllowed($admission, AdmissionPrivileges
 $canGenererRecapitulatif  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF);
 $canAccederRecapitulatifSigne  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER);
 $canGererRecapitulatifSigne  = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_GERER_RECAPITULATIF_DOSSIER));
+$canVerifierAdmission  = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
 
 $individu = $admission ?$admission->getIndividu()->getId() : null;
 /** @var Etudiant $etudiant */
@@ -49,6 +50,12 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
 <div class="admission-section-form">
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Pièces justificatives<label class="admission-section-title-en">&nbsp; /  Supporting documents</label></h2>
+    </div>
+    <div class="admission-informations-container">
+        <i class="fas fa-info-circle"></i>
+        <p>
+            Chaque pièce justificative ajoutée ci-dessous est automatiquement enregistrée
+        </p>
     </div>
     <div class="row subfield">
         <div class="col infos-pieces-justificatives-container">
@@ -186,7 +193,15 @@ if($canAccederCommentaires) {
         'elementVerification' => !empty($admission) && !empty($admission->getDocument()->first()) ? $admission->getDocument()->first()->getVerificationDocument() : null,
     ]);
 }
-?>
+
+//Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
+if ($canVerifierAdmission) { ?>
+    <div class="admission-enregistrer-verification-container" style="display:none;">
+        <input type="submit" name="document[_nav][_submit]"
+               class="multipage-nav submit btn btn-success enregistrer-verification-btn" value="Enregistrer les modifications">
+        <?php echo $this->formControlGroup($fieldset->get('enregistrerVerification')); ?>
+    </div>
+<?php } ?>
 
 <div class="row notifier-dossier-incomplet">
     <?php
