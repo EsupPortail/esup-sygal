@@ -14,6 +14,7 @@ Journal des modifications
 - Améliorations de la page d'initialisation de compte utilisateur local.
 - Formulaire de création d'un individu à partir d'un utilisateur : initialisation manquante du nom patronymique.
 - Module StepStar : mise à jour du script bash d'envoi quotidien des thèses vers STEP/STAR.
+- Module StepStar : plus d'envoi de la date d'abandon (recommandation de l'ABES).
 - Suppression du menu 'Administration > Compléments d'individu' devenu inutile.
 - Amélioration visuelle des pages de création/modification de structure (Etab/ED/UR).
 - [FIX] Warning PHP sur la page de création/modification d'ED/UR.

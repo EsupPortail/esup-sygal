@@ -290,12 +290,12 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                             </suj:soutenancePrevue>
                                         </xsl:if>
 
-                                        <!-- Abandon -->
-                                        <xsl:if test="DATE_ABANDON != ''">
-                                            <suj:dateAbandon>
-                                                <xsl:value-of select="DATE_ABANDON"/>
-                                            </suj:dateAbandon>
-                                        </xsl:if>
+                                        <!-- Abandon : ne pas envoyer (dixit l'ABES) -->
+                                        <!--<xsl:if test="DATE_ABANDON != ''">-->
+                                        <!--    <suj:dateAbandon>-->
+                                        <!--        <xsl:value-of select="DATE_ABANDON"/>-->
+                                        <!--    </suj:dateAbandon>-->
+                                        <!--</xsl:if>-->
                                     </suj:vie>
 
                                     <tef:theseSurTravaux>
