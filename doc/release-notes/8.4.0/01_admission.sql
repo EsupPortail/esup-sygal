@@ -358,3 +358,10 @@ SET ETABLISSEMENT_LABORATOIRE_RECHERCHE = af.ETABLISSEMENT_LABORATOIRE_RECHERCHE
 WHERE admission_inscription.admission_id = af.admission_id;
 
 ALTER TABLE admission_financement DROP COLUMN ETABLISSEMENT_LABORATOIRE_RECHERCHE;
+
+--
+-- Changement du libellé de l'avis de la présidence de l'établissement d'inscription dans le circuit de signatures
+--
+UPDATE unicaen_avis_type
+SET libelle = 'Autorisation d''inscription par la présidence de l''étab. d''inscription'
+WHERE code LIKE 'AVIS_ADMISSION_PRESIDENCE';

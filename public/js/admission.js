@@ -31,15 +31,9 @@ function updateButtonsState(isButtonDisabled) {
     const nextButton = document.querySelector('.multipage-nav.next');
     const submitButton = document.querySelector('.multipage-nav.submit');
 
-    if(previousButton){
-        previousButton.disabled = isButtonDisabled;
-    }
-    if(nextButton){
-        nextButton.disabled = isButtonDisabled;
-    }
-    if(submitButton){
-        submitButton.disabled = isButtonDisabled;
-    }
+    if(previousButton) previousButton.disabled = isButtonDisabled;
+    if(nextButton) nextButton.disabled = isButtonDisabled;
+    if(submitButton) submitButton.disabled = isButtonDisabled;
 
     // Mettez à jour les classes et les infobulles
     [previousButton, nextButton, submitButton].forEach(button => {
@@ -51,9 +45,12 @@ function updateButtonsState(isButtonDisabled) {
                 button.classList.remove('disabled');
                 button.removeAttribute('title');
             }
+            //Présent à la dernière étape du formulaire
             const registerCommentsButton = document.querySelector('.admission-enregistrer-verification-container');
             if(registerCommentsButton){
                 registerCommentsButton.style.display = 'block';
+                const notifierDossierIncompletButton = document.querySelector('.access-notification-dossier-incomplet-btn');
+                if(notifierDossierIncompletButton) notifierDossierIncompletButton.style.display = 'none';
             }
         }
     });
@@ -104,9 +101,7 @@ function detectModalStatutAdmissionAppears() {
 
             //si la div existe déjà, on la supprime
             const existingDiv = document.querySelector("body > #" + divId);
-            if (existingDiv) {
-                existingDiv.remove();
-            }
+            if (existingDiv) existingDiv.remove();
             document.body.appendChild(commentairesDiv);
             $('#modalShowCommentairesAdmission').modal('show');
         });
@@ -172,6 +167,9 @@ function updateFinancementOptions() {
         $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', false);
         $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', false);
     }
+    const infosDoctorantSalarieRadios = document.querySelectorAll('input[name="financement[estSalarie]"]');
+    const additionalFieldsInfosDoctorantSalarie = document.getElementById('additional_fields_infos_salaries');
+    showOrNotDiv(infosDoctorantSalarieRadios, additionalFieldsInfosDoctorantSalarie)
 }
 
 const currentUrl = window.location.href;
@@ -591,6 +589,17 @@ document.addEventListener("DOMContentLoaded", function() {
         //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
         $('.enregistrer-verification-btn').on('click', function() {
             $('input[name="document[enregistrerVerification]"]').val("enregistrerVerification");
+        });
+
+        $('.bouton-gestionnaire.incomplet').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('.admission-informations-container').show();
+            }
+        });
+        $('.bouton-gestionnaire.complet').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('.admission-informations-container').hide();
+            }
         });
     }
 

@@ -3,6 +3,7 @@
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\ConventionFormationDoctorale;
+use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\TypeValidation;
@@ -51,12 +52,14 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Pièces justificatives<label class="admission-section-title-en">&nbsp; /  Supporting documents</label></h2>
     </div>
-    <div class="admission-informations-container">
-        <i class="fas fa-info-circle"></i>
-        <p>
-            Chaque pièce justificative ajoutée ci-dessous est automatiquement enregistrée
-        </p>
-    </div>
+    <?php if($admission && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE){ ?>
+        <div class="admission-informations-container">
+            <i class="fas fa-info-circle"></i>
+            <p>
+                Chaque pièce justificative ajoutée ci-dessous est automatiquement enregistrée
+            </p>
+        </div>
+    <?php } ?>
     <div class="row subfield">
         <div class="col infos-pieces-justificatives-container">
             <p>Obligatoires<label class="admission-section-doctype-title-en">&nbsp; / Required</label></p>
@@ -197,6 +200,12 @@ if($canAccederCommentaires) {
 //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
 if ($canVerifierAdmission) { ?>
     <div class="admission-enregistrer-verification-container" style="display:none;">
+        <div class="admission-informations-container">
+            <i class="fas fa-info-circle"></i>
+            <p>
+                Afin de notifier l'étudiant que son dossier est incomplet, veuillez tout d'abord enregistrer les modifications effectuées.
+            </p>
+        </div>
         <input type="submit" name="document[_nav][_submit]"
                class="multipage-nav submit btn btn-success enregistrer-verification-btn" value="Enregistrer les modifications">
         <?php echo $this->formControlGroup($fieldset->get('enregistrerVerification')); ?>

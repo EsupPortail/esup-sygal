@@ -565,6 +565,9 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   width: fit-content;
   margin: 15px; }
 
+.admission-enregistrer-verification-container > .admission-informations-container {
+  margin-left: auto; }
+
 .precisions-action-container p, .precisions-convention-intro-container p, .admission-informations-container p {
   margin: 0;
   font-weight: bold;

@@ -67,11 +67,11 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
         $uniteRechercheDirecteur = $inscription?->getUniteRecherche();
         $uniteRechercheCoDirecteur = $inscription?->getUniteRechercheCoDirecteur();
 
-        $individuResponsablesUniteRechercheDirecteur = $uniteRechercheDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheDirecteur->getStructure()) : null;
+        $individuResponsablesUniteRechercheDirecteur = $uniteRechercheDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheDirecteur->getStructure(), Role::CODE_RESP_UR) : null;
         if(is_array($individuResponsablesUniteRechercheDirecteur)){
             $conventionFormationDoctoraleDataTemplate->setIndividuResponsablesUniteRechercheDirecteur($individuResponsablesUniteRechercheDirecteur);
         }
-        $individuResponsablesUniteRechercheCoDirecteur = $uniteRechercheCoDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheCoDirecteur->getStructure()) : null;
+        $individuResponsablesUniteRechercheCoDirecteur = $uniteRechercheCoDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheCoDirecteur->getStructure(), Role::CODE_RESP_UR) : null;
         if(is_array($individuResponsablesUniteRechercheCoDirecteur)){
             $conventionFormationDoctoraleDataTemplate->setIndividuResponsablesUniteRechercheCoDirecteur($individuResponsablesUniteRechercheCoDirecteur);
         }
