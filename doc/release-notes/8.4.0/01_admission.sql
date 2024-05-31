@@ -122,7 +122,7 @@ SET document_corps = '<h1 style="text-align: center;">Convention de formation do
 <p>VAR[AdmissionConventionFormationDoctorale#InfosCoDirecteur]</p>
 <p>- Vu l’article L612-7 du Code de l’éducation, Vu les articles L412-1 et L412-2 du Code de la recherche,</p>
 <p>- Vu l’arrêté du 25 mai 2016 fixant le cadre national de la formation et les modalités conduisant à la délivrance du diplôme national de doctorat, modifié par l’arrêté du 26 août 2022,</p>
-<p>- Vu la charte du doctorat dans le cadre de la délivrance conjointe du doctorat entre la ComUE Normandie Université et les établissements d’inscription co-accrédités en date du 1er septembre 2023, </p>
+<p>- Vu la charte du doctorat dans le cadre de la délivrance conjointe du doctorat entre la ComUE Normandie Université et les établissements d’inscription co-accrédités en date du 14 mai 2024, </p>
 <p>VAR[AdmissionConventionFormationDoctorale#InfosCoTutelle]</p>
 <p>VAR[AdmissionConventionFormationDoctorale#InfosConventionCollaboration]</p>
 <p>Il est établi la convention de formation doctorale suivante. Cette convention peut être modifiée par avenant autant de fois que nécessaire pendant le doctorat.</p>
@@ -365,3 +365,9 @@ ALTER TABLE admission_financement DROP COLUMN ETABLISSEMENT_LABORATOIRE_RECHERCH
 UPDATE unicaen_avis_type
 SET libelle = 'Autorisation d''inscription par la présidence de l''étab. d''inscription'
 WHERE code LIKE 'AVIS_ADMISSION_PRESIDENCE';
+
+--
+-- Ajout d'un champ afin de renseigner l'établissement partenaire dans le cadre d'une convention de collaboration
+--
+ALTER TABLE admission_financement
+    ADD COLUMN etablissement_partenaire VARCHAR(100);

@@ -13,6 +13,7 @@
         <field name="tempsTravail" type="integer" column="TEMPS_TRAVAIL" nullable="true"/>
         <field name="estSalarie" type="boolean" column="EST_SALARIE" nullable="true"/>
         <field name="statutProfessionnel" type="string" column="STATUT_PROFESSIONNEL" nullable="true"/>
+        <field name="etablissementPartenaire" type="string" column="etablissement_partenaire" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>

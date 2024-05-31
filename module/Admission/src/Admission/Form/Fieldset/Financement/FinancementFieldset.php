@@ -61,6 +61,10 @@ class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterPr
         );
 
         $this->add(
+            (new Text('etablissementPartenaire'))
+        );
+
+        $this->add(
             (new Radio('tempsTravail'))
                 ->setValueOptions([
                     1 => "Temps complet",
@@ -99,6 +103,10 @@ class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterPr
         return [
             'contratDoctoral' => [
                 'name' => 'contratDoctoral',
+                'required' => false,
+            ],
+            'etablissementPartenaire' => [
+                'name' => 'etablissementPartenaire',
                 'required' => false,
             ],
             'financement' => [

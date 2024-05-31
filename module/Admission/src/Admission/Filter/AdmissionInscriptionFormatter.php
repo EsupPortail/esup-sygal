@@ -70,13 +70,12 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
         return $str;
     }
 
-    public function htmlifyConventionCollaborationInformations(Inscription $inscription, bool $estSalarie)
+    public function htmlifyConventionCollaborationInformations(Inscription $inscription, bool $estSalarie, string $etablissementPartenaire)
     {
         if ($estSalarie) {
             $etablissementLaboratoireUR = $inscription->getEtablissementLaboratoireRecherche();
             $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
-            $str = "- Vu la convention de collaboration entre l’employeur <b>[dénomination de l’établissement partenaire, ville,
-            pays]</b>, le salarié doctorant, l’établissement d’inscription <b>".$etablissementInscription."</b>
+            $str = "- Vu la convention de collaboration entre l’employeur <b>".$etablissementPartenaire."</b>, le salarié doctorant, l’établissement d’inscription <b>".$etablissementInscription."</b>
             (Normandie)";
 
             if ($inscription->getEtablissementLaboratoireRecherche()) {

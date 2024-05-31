@@ -51,6 +51,11 @@ class Financement implements HistoriqueAwareInterface{
     private $statutProfessionnel;
 
     /**
+     * @var string|null
+     */
+    private $etablissementPartenaire;
+
+    /**
      * @var bool|null
      */
     private $estSalarie;
@@ -249,6 +254,30 @@ class Financement implements HistoriqueAwareInterface{
     public function getStatutProfessionnel()
     {
         return $this->statutProfessionnel;
+    }
+
+    /**
+     * Set etablissementPartenaire.
+     *
+     * @param string|null $etablissementPartenaire
+     *
+     * @return Financement
+     */
+    public function setEtablissementPartenaire($etablissementPartenaire = null)
+    {
+        $this->etablissementPartenaire = $etablissementPartenaire;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementPartenaire.
+     *
+     * @return string|null
+     */
+    public function getEtablissementPartenaire()
+    {
+        return $this->etablissementPartenaire;
     }
 
     /**
