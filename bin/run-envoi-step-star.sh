@@ -42,11 +42,11 @@ echo
 TAG="cron-${ETAB}-$(date +%Y%m%d_%H%M%S)"
 
 echo "> Envoi des theses ${ETAB} sans date de soutenance reelle..."
-/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --etat E,S --date-soutenance-null
+/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --etat E --date-soutenance-null
 echo
 echo
 echo "> Envoi des theses ${ETAB} dont la date de soutenance est dans les 3 prochains mois..."
-/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --etat E,S --date-soutenance-min +P1D --date-soutenance-max +P3M
+/usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etablissement ${ETAB} --tag ${TAG} --etat E --date-soutenance-min +P1D --date-soutenance-max +P3M
 echo
 echo
 echo "> Envoi forcé des theses ${ETAB} dont la date de soutenance est passee de 7j maximum..."
