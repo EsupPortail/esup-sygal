@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "381297b652aa923c2f5b20b6325d52d1",
+    "content-hash": "8296e6fa0df6bef1e14476dd40fca392",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11420,16 +11420,17 @@
         },
         {
             "name": "unicaen/db-anonym",
-            "version": "3.0.0",
+            "version": "dev-release_3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-anonym.git",
-                "reference": "57cf78c2942bc2f57261c79803d4f6e82eac0983"
+                "reference": "956814d3ceb56cb67e2d56e85bbd4ac24f452d04"
             },
             "require": {
+                "doctrine/orm": "^2.19",
                 "fakerphp/faker": "^1.20",
                 "php": "^8.0",
-                "unicaen/app": "^6.0",
+                "unicaen/console": "^6.0",
                 "webmozart/assert": "^1.11"
             },
             "require-dev": {
@@ -11446,7 +11447,7 @@
                 ]
             },
             "description": "Module pour anonymiser les données d'une bdd",
-            "time": "2023-01-26T16:25:32+00:00"
+            "time": "2024-05-29T07:50:28+00:00"
         },
         {
             "name": "unicaen/db-import",
@@ -12490,6 +12491,7 @@
     "stability-flags": {
         "laminas-api-tools/api-tools-doctrine": 20,
         "laminas-api-tools/api-tools-doctrine-querybuilder": 20,
+        "unicaen/db-anonym": 20,
         "unicaen/idref": 20,
         "unicaen/sygal-api": 20,
         "unicaen/sql": 20

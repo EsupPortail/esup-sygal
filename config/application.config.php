@@ -53,7 +53,7 @@ return [
         'UnicaenAuthToken',
         'UnicaenAvis',
         'UnicaenLdap',
-//        'UnicaenDbAnonym',
+        'UnicaenDbAnonym',
         'UnicaenDbImport',
         'UnicaenFaq',
         'UnicaenIdref',

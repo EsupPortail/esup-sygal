@@ -63,7 +63,7 @@
         "unicaen/auth": "^6.0",
         "unicaen/auth-token": "^6.0",
         "unicaen/console": "^6.0",
-        "unicaen/db-anonym": "^3.0",
+        "unicaen/db-anonym": "dev-release_3.1.0",
         "unicaen/db-import": "^6.1",
         "unicaen/faq": "^6.0",
         "unicaen/idref": "dev-master",
