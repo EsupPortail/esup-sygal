@@ -122,20 +122,10 @@ return [
         'shib' => [
             'order' => 1,
             'enabled' => true,
-            'description' =>
-                "<p><span class='glyphicon glyphicon-info-sign'></span> Cliquez sur le bouton ci-dessous pour accéder à l'authentification via la fédération d'identité.</p>" .
-                "<p><strong>Attention !</strong> Si vous possédez à la fois un compte Étudiant et un compte Personnel, vous devrez utiliser " .
-                "votre compte <em>Étudiant</em> pour vous authentifier...</p>",
-            'simulate' => [
-                // cf. secret.local.php
-            ],
-            'aliases' => [
-                // cf. secret.local.php
-            ],
-            'required_attributes' => [
-                // cf. secret.local.php
-            ],
-            'logout_url' => '/Shibboleth.sso/Logout?return=', // NB: '?return=' semble obligatoire!
+            'description' => '',         //
+            'simulate' => [],            // cf. secret.local.php
+            'aliases' => [],             //
+            'required_attributes' => [], //
             /**
              * Configuration de la stratégie d'extraction (parmi les données d'authentification shibboleth)
              * de l'identifiant à utiliser pour rechercher l'Individu correspondant à l'utilisateur qui vient de
