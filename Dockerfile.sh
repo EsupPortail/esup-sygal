@@ -38,6 +38,7 @@ apt-get -qq update && \
         ghostscript-x \
         gcc \
         git \
+        host \
         imagemagick \
         ldap-utils \
         libaio1 \
@@ -55,10 +56,12 @@ apt-get -qq update && \
         memcached \
         nano \
         netcat-openbsd \
+        net-tools \
         postgresql-client \
         qpdf \
         ssh \
         ssl-cert \
+        telnet \
         unzip \
         vim \
         wget \
@@ -228,4 +231,20 @@ service apache2 restart
 #
 #WORKDIR /app
 
-#RUN composer install
+# Répertoire pour l'upload de fichiers
+mkdir -p upload && \
+  chown -R www-data:root upload && \
+  chmod -R 770 upload
+
+# Installation des dépendances PHP
+composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# Cache Laminas
+mkdir -p data/cache && chmod 777 data/cache
+rm -rf data/cache/*
+
+# Cache Doctrine
+mkdir -p data/DoctrineModule/cache && chmod 777 data/DoctrineModule/cache #&& rm -rf data/DoctrineModule/cache/*
+mkdir -p data/DoctrineORMModule/Proxy && chmod 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*
+
+vendor/bin/laminas-development-mode enable  # nécessaire !

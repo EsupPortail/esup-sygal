@@ -30,6 +30,7 @@ RUN apt-get -qq update && \
         ghostscript-x \
         gcc \
         git \
+        host \
         imagemagick \
         ldap-utils \
         libaio1 \
@@ -47,10 +48,12 @@ RUN apt-get -qq update && \
         memcached \
         nano \
         netcat-openbsd \
+        net-tools \
         postgresql-client \
         qpdf \
         ssh \
         ssl-cert \
+        telnet \
         unzip \
         vim \
         wget \
@@ -197,9 +200,25 @@ RUN chmod 755 /sbin/entrypoint.sh
 CMD ["/sbin/entrypoint.sh"]
 
 
-
 COPY . /app
 
 WORKDIR /app
 
-#RUN composer install
+# Répertoire pour l'upload de fichiers
+RUN mkdir -p upload && \
+  chown -R www-data:root upload && \
+  chmod -R 770 upload
+
+# Installation des dépendances PHP
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# Cache Laminas
+RUN mkdir -p data/cache && chmod 777 data/cache
+RUN rm -rf data/cache/*
+
+# Cache Doctrine
+RUN mkdir -p data/DoctrineModule/cache && chmod 777 data/DoctrineModule/cache #&& rm -rf data/DoctrineModule/cache/*
+RUN mkdir -p data/DoctrineORMModule/Proxy && chmod 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*
+
+RUN vendor/bin/laminas-development-mode enable  # nécessaire !
+
