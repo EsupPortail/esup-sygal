@@ -11424,7 +11424,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-anonym.git",
-                "reference": "956814d3ceb56cb67e2d56e85bbd4ac24f452d04"
+                "reference": "853555a8358ab8e9bee413261de7c929f566c43a"
             },
             "require": {
                 "doctrine/orm": "^2.19",
@@ -11447,7 +11447,7 @@
                 ]
             },
             "description": "Module pour anonymiser les données d'une bdd",
-            "time": "2024-05-29T07:50:28+00:00"
+            "time": "2024-06-05T14:34:00+00:00"
         },
         {
             "name": "unicaen/db-import",
