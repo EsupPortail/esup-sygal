@@ -199,18 +199,19 @@ ADD docker/entrypoint.sh /sbin/entrypoint.sh
 RUN chmod 755 /sbin/entrypoint.sh
 CMD ["/sbin/entrypoint.sh"]
 
-
-COPY . /app
-
 WORKDIR /app
+
+# Dépendances PHP puis sources puis autoloading (favorise la mise en cache Docker)
+COPY composer.json ./
+COPY composer.lock ./
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+COPY . /app
+RUN composer dump-autoload --optimize
 
 # Répertoire pour l'upload de fichiers
 RUN mkdir -p upload && \
   chown -R www-data:root upload && \
   chmod -R 770 upload
-
-# Installation des dépendances PHP
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Cache Laminas
 RUN mkdir -p data/cache && chmod 777 data/cache

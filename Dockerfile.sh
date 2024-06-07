@@ -226,18 +226,19 @@ a2enmod proxy_wstunnel
 service php${PHP_VERSION}-fpm start
 service apache2 restart
 
-
-#COPY . /app
-#
 #WORKDIR /app
+
+# Dépendances PHP puis sources puis autoloading (favorise la mise en cache Docker)
+#COPY composer.json ./
+#COPY composer.lock ./
+RUN composer install --no-interaction --no-autoloader --prefer-dist --no-scripts
+#COPY . /app
+RUN composer dump-autoload --optimize
 
 # Répertoire pour l'upload de fichiers
 mkdir -p upload && \
   chown -R www-data:root upload && \
   chmod -R 770 upload
-
-# Installation des dépendances PHP
-composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Cache Laminas
 mkdir -p data/cache && chmod 777 data/cache
