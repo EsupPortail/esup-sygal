@@ -201,12 +201,13 @@ CMD ["/sbin/entrypoint.sh"]
 
 WORKDIR /app
 
-# Dépendances PHP puis sources puis autoloading (favorise la mise en cache Docker)
+# Dépendances PHP puis sources puis autoloading puis scripts (favorise la mise en cache Docker)
 COPY composer.json ./
 COPY composer.lock ./
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 COPY . /app
 RUN composer dump-autoload --optimize
+RUN composer run-script post-install-cmd
 
 # Répertoire pour l'upload de fichiers
 RUN mkdir -p upload && \

@@ -228,12 +228,13 @@ service apache2 restart
 
 #WORKDIR /app
 
-# Dépendances PHP puis sources puis autoloading (favorise la mise en cache Docker)
+# Dépendances PHP puis sources puis autoloading puis scripts (favorise la mise en cache Docker)
 #COPY composer.json ./
 #COPY composer.lock ./
-RUN composer install --no-interaction --no-autoloader --prefer-dist --no-scripts
+composer install --no-interaction --no-autoloader --prefer-dist --no-scripts
 #COPY . /app
-RUN composer dump-autoload --optimize
+composer dump-autoload --optimize
+composer run-script post-install-cmd
 
 # Répertoire pour l'upload de fichiers
 mkdir -p upload && \
