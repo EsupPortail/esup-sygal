@@ -51,3 +51,12 @@ alter table substit_doctorant drop column npd_sav;
 --
 
 drop table if exists z_doctorant_compl;
+
+
+--
+-- Création d'une PK correcte dans soutenance_horodatage
+--
+
+alter table soutenance_horodatage add id bigserial not null ;
+alter table soutenance_horodatage drop constraint soutenance_horodatage_pk;
+alter table soutenance_horodatage add constraint soutenance_horodatage_pk primary key (id);

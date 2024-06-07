@@ -251,3 +251,6 @@ SET document_corps = '<h1 style="text-align: center;">Récapitulatif du dossier 
 <p>Fait à ____________________, le ________________,</p>
 <p>Signature de VAR[String#ToString]</p>'
 WHERE code = 'ADMISSION_RECAPITULATIF';
+
+alter table admission_inscription
+    alter column titre_these type varchar(1024);
