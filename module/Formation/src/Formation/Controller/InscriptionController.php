@@ -3,16 +3,22 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Entity\AnneeUniv;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
+use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
 use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Provider\Parametre\FormationParametres;
 use Formation\Service\Exporter\Attestation\AttestationExporterAwareTrait;
 use Formation\Service\Exporter\Convocation\ConvocationExporterAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
+use Formation\Service\Inscription\Search\InscriptionSearchServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
@@ -25,8 +31,10 @@ use Laminas\View\Renderer\PhpRenderer;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenApp\View\Model\CsvModel;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class InscriptionController extends AbstractController
@@ -45,6 +53,7 @@ class InscriptionController extends AbstractController
     use AttestationExporterAwareTrait;
     use ConvocationExporterAwareTrait;
     use ParametreServiceAwareTrait;
+    use InscriptionSearchServiceAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(?PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -368,6 +377,96 @@ class InscriptionController extends AbstractController
         return $vm;
 
 
+    }
+
+    public function genererExportCsvAction(): Response|CsvModel
+    {
+        $queryParams = $this->params()->fromQuery();
+
+        $this->inscriptionSearchService->init();
+        $this->inscriptionSearchService->processQueryParams($queryParams);
+        $qb = $this->inscriptionSearchService->getQueryBuilder();
+        $listing = $qb->getQuery()->getResult();
+
+        //export
+        $headers = ['Civilité', 'Nom', 'Prénom', 'Email', 'Année de thèse', 'Établissement', 'École doctorale',	'Unité de recherche', 'Type de formation',
+            'Intitulé', 'Date(s) de formation',	'État de la formation',	"Nombre d'heure(s)", 'Statut de suivi de la formation'
+        ];
+        $records = [];
+        /** @var Inscription $inscription */
+        foreach ($listing as $inscription) {
+            $session = $inscription->getSession();
+            $doctorant = $inscription->getDoctorant() ? $inscription->getDoctorant() : null;
+            $individu = $doctorant ? $doctorant->getIndividu() : null;
+            $theses = array_filter($doctorant->getTheses(), function (These $t) { return ($t->getEtatThese() === These::ETAT_EN_COURS AND $t->estNonHistorise());});
+            $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
+            $eds = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
+            $urs = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
+
+            /** @var Seance[] $seances */
+            $seances = $session->getSeances()->toArray();
+            usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+            $seanceStrings = array_map(function($seance) {
+                return $seance->getDebut()->format('d/m/Y');
+            }, $seances);
+
+            if ($session->getEtat()->getCode() !== Etat::CODE_IMMINENT and $session->getEtat()->getCode() !== Etat::CODE_FERME and $session->getEtat()->getCode() !== Etat::CODE_CLOTURER) {
+                $presences = "Les présences ne peuvent pas encore être renseignées.";
+            } else {
+                $presences = $this->getPresenceService()->getRepository()->findPresencesBySession($session);
+                $dictionnaire = [];
+                foreach ($presences as $presence) {
+                    $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
+                }
+                $presences = $dictionnaire;
+                $presencesStrings = array_map(function ($seance) use ($presences, $inscription, $session) {
+                    $seanceDate = $seance->getDebut()->format('d/m/Y');
+                    $seanceId = $seance->getId();
+                    $inscriptionId = $inscription->getId();
+
+                    if (isset($presences[$seanceId][$inscriptionId]) && $presences[$seanceId][$inscriptionId]->isPresent()) {
+                        $presenceStatus = "Présent";
+                    } else {
+                        $motif = $inscription->getDescription() ? " : ".$inscription->getDescription() : null;
+                        if($inscription->estHistorise()){
+                            $presenceStatus = "Désistement" . $motif;
+                        }else{
+                            $presenceStatus = "Absent" . $motif;
+                        }
+                    }
+
+                    return $seanceDate . ' (' . $presenceStatus . ')';
+
+                }, $seances);
+                $presences = $presencesStrings ? implode(' ; ', $presencesStrings) : null;
+            }
+
+            $entry = [];
+            $entry['Civilité'] = $individu ? $individu->getCivilite() : null;
+            $entry['Nom'] = $individu ? $individu->getNomComplet() : null;
+            $entry['Prénom'] = $individu ? $individu->getPrenom() : null;
+            $entry['Adresse électronique'] = $individu ? $individu->getEmailPro() : null;
+            $entry['Année de thèse'] = $annee_doctorat ?? null;
+            $entry['Établissement'] = implode("/",$etablissements);
+            $entry['École doctorale'] = implode("/",$eds);
+            $entry['Unité de recherche'] = implode("/",$urs);
+            $entry['Type de formation'] = $session->getFormation()->getType();
+            $entry['Intitulé'] = $session->getFormation()->getLibelle();
+            $entry['Date(s) de formation'] = implode(' ; ', $seanceStrings);
+            $entry['État de la formation'] = $session->getEtat()->getCode();
+            $entry["Nombre d'heure(s)"] = $session->getDuree();
+            $entry['Statut de suivi de la formation'] = $presences;
+            $records[] = $entry;
+        }
+        $filename = (new DateTime())->format('Ymd') . '_inscriptions.csv';
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader($headers);
+        $CSV->setData($records);
+        $CSV->setFilename($filename);
+
+        return $CSV;
     }
 
 }
