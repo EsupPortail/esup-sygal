@@ -58,6 +58,15 @@ return [
                 [
                     'controller' => InscriptionController::class,
                     'action' => [
+                        'generer-export-csv'
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
                         'ajouter',
                         'desinscription',
                     ],
@@ -288,6 +297,17 @@ return [
                                     'defaults' => [
                                         'controller' => InscriptionController::class,
                                         'action'     => 'accorder-sursis',
+                                    ],
+                                ],
+                            ],
+                            'generer-export-csv' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'    => '/generer-export-csv',
+                                    'defaults' => [
+                                        /** @see InscriptionController::genererExportCsvAction() */
+                                        'controller'    => InscriptionController::class,
+                                        'action'        => 'generer-export-csv',
                                     ],
                                 ],
                             ],
