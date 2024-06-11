@@ -9,8 +9,6 @@ use Admission\Controller\AdmissionController;
 use Admission\Controller\AdmissionControllerFactory;
 use Admission\Controller\AdmissionRechercheController;
 use Admission\Controller\AdmissionRechercheControllerFactory;
-use Admission\Event\AdmissionEventListener;
-use Admission\Event\AdmissionEventListenerFactory;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Admission\AdmissionFormFactory;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
@@ -40,6 +38,8 @@ use Admission\Hydrator\Validation\AdmissionValidationHydratorFactory;
 use Admission\Hydrator\Verification\VerificationHydrator;
 use Admission\Hydrator\Verification\VerificationHydratorFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+use Admission\Rule\Email\ExtractionEmailRule;
+use Admission\Rule\Email\ExtractionEmailRuleFactory;
 use Admission\Service\Admission\AdmissionRechercheService;
 use Admission\Service\Admission\AdmissionRechercheServiceFactory;
 use Admission\Service\Admission\AdmissionService;
@@ -416,13 +416,13 @@ return array(
             VerificationService::class => VerificationServiceFactory::class,
             AdmissionRechercheService::class => AdmissionRechercheServiceFactory::class,
 
-            AdmissionEventListener::class => AdmissionEventListenerFactory::class,
-
             AdmissionAssertion::class => AdmissionAssertionFactory::class,
 
             UrlService::class => UrlServiceFactory::class,
 
-            RecapitulatifExporter::class => RecapitulatifExporterFactory::class
+            RecapitulatifExporter::class => RecapitulatifExporterFactory::class,
+
+            ExtractionEmailRule::class => ExtractionEmailRuleFactory::class
         ],
     ],
 

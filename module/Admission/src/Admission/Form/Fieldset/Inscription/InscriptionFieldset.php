@@ -170,9 +170,11 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
                 ->setLabelAttributes(['data-after' => " / Discipline code"])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption("Indisponible")
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
+                    'disabled' => 'true'
                 ])
         );
 
@@ -191,6 +193,12 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Text('composanteDoctoratLibelle'))
                 ->setLabel("Composante de rattachement (U.F.R., instituts…)")
                 ->setLabelAttributes(['data-after' => " / Component of attachment"])
+        );
+
+        $this->add(
+            (new Text('etablissementLaboratoireRecherche'))
+                ->setLabel("Établissement hébergeant l’unité de recherche")
+                ->setLabelAttributes(['data-after' => " / Establishment hosting laboratory"])
         );
 
         $this->add(
@@ -394,6 +402,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
                 'id' => 'paysCoTutelle',
+                'placeholder' => "Entrez les deux premières lettres...",
             ]);
         $this->add($paysCoTutelle);
 
@@ -460,6 +469,14 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 'required' => false,
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+            ],
+            'etablissementLaboratoireRecherche' => [
+                'name' => 'etablissementLaboratoireRecherche',
+                'required' => false,
+                'filters' => [
+                    ['name' => StripTags::class],
+                    ['name' => StringTrim::class],
                 ],
             ],
             'etablissementInscription' => [

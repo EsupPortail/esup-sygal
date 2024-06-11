@@ -3,7 +3,9 @@ namespace Admission\Form\Fieldset\Document;
 
 use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
+use Fichier\Entity\Db\NatureFichier;
 use Laminas\Form\Element\File;
+use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -50,7 +52,7 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         $this->add(
             (new File('exemplairesCharteDoctorat'))
                 ->setLabel("Charte du doctorat")
-                ->setAttributes(["id" => "ADMISSION_CHARTE_DOCTORAT"])
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])
                 ->setLabelAttributes(['data-after' => " / PhD Charter"])
         );
 
@@ -105,6 +107,10 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
             (new File('recapitulatifDossierSigne'))
                 ->setLabel("Récapitulatif du dossier d'admission signé par la direction de l'établissement")
                 ->setAttributes(["id" => "ADMISSION_RECAPITULATIF_DOSSIER_SIGNE"])
+        );
+
+        $this->add(
+            (new Hidden('enregistrerVerification'))
         );
 
         $verificationFieldset = $this->getFormFactory()->getFormElementManager()->get(VerificationFieldset::class);

@@ -68,6 +68,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
                 ->setLabel("Civilité")
+                ->setLabelAttributes(['data-after' => " / Civility"])
                 ->setAttributes(['readonly' => true])
         );
 
@@ -190,7 +191,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         );
 
         $this->add(
-            (new Text('adresseLigne3Voie'))
+            (new Text('adresseLigne3voie'))
                 ->setLabel("Adresse (Numéro – Libellé de la voie)")
                 ->setLabelAttributes(['data-after' => " / Number - Street name"])
         );
@@ -439,8 +440,8 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                     ['name' => StringTrim::class],
                 ],
             ],
-            'adresseLigne3Bvoie' => [
-                'name' => 'adresseLigne3Bvoie',
+            'adresseLigne3voie' => [
+                'name' => 'adresseLigne3voie',
                 'required' => false,
                 'filters' => [
                     ['name' => StripTags::class],

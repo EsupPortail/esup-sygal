@@ -4,6 +4,7 @@ namespace Admission\Service\Document;
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Document;
+use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\DocumentRepository;
 use Admission\Entity\Db\Verification;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
@@ -12,10 +13,12 @@ use Application\Service\BaseService;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\ORMException;
 use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 class DocumentService extends BaseService
@@ -25,6 +28,7 @@ class DocumentService extends BaseService
     use FichierServiceAwareTrait;
     use DateTimeAwareTrait;
     use VerificationServiceAwareTrait;
+    use StructureDocumentServiceAwareTrait;
 
     /**
      * @return DocumentRepository
@@ -222,14 +226,21 @@ class DocumentService extends BaseService
         }
     }
 
-    public function addCharteDoctoraleToAdmission(Admission $admission)
+    public function addCharteDoctoraleToAdmission(Inscription $inscription)
     {
         try {
+            /** @var Admission $admission */
+            $admission = $inscription->getAdmission();
+            $etablissement = $inscription?->getEtablissementInscription();
+
             /** @var Fichier $charteDoctorat */
-            $charteDoctorat = $this->fichierService->getRepository()->findOneBy(["idPermanent" => "CHARTE_DOCTORAT"]);
+            $charteDoctorat = $etablissement ? $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+                $etablissement->getStructure(),
+                NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT,
+                $etablissement) : null;
 
             if ($charteDoctorat) {
-                $nature = $this->getRepository()->fetchNatureFichier("ADMISSION_CHARTE_DOCTORAT");
+                $nature = $this->getRepository()->fetchNatureFichier(NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT);
                 $charteDoctoratPath = $this->getPathFile($charteDoctorat);
                 $extension = $this->getExtensionDocument($charteDoctorat);
 
@@ -240,7 +251,7 @@ class DocumentService extends BaseService
                 $newCharteDoctorat->setTaille($charteDoctorat->getTaille());
                 $newCharteDoctorat->setNature($nature);
                 $newCharteDoctorat->setVersion($charteDoctorat->getVersion());
-                $newCharteDoctorat->setNom($charteDoctorat->getIdPermanent() . "-" . $newCharteDoctorat->getShortUuid() . "." . $extension);
+                $newCharteDoctorat->setNom(NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT . "-" . $newCharteDoctorat->getShortUuid() . "." . $extension);
 
                 $this->createDocumentFromUpload($admission, [$newCharteDoctorat]);
             }

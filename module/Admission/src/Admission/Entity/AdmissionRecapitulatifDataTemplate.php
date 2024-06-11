@@ -46,6 +46,7 @@ class AdmissionRecapitulatifDataTemplate
                 $libelleOperation = $operation->getTypeValidation()->getLibelle();
                 $valeur = "/";
             }elseif ($operation instanceof AdmissionAvis) {
+                if($operation->getAvis()->getAvisType()->getCode() === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE) continue;
                 $libelleOperation = $operation->getTypeToString();
                 /** @var AdmissionAvis $operation */
                 $valeur = $operation->getId() !== null ? $operation->getAvis()->getAvisValeur()->getValeur() : null;

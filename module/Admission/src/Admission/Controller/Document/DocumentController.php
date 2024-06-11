@@ -107,13 +107,15 @@ class DocumentController extends AbstractActionController
             $admission = $this->admissionService->getRepository()->findOneByIndividu($individu);
             /** @var Document $document */
             $document = $this->documentService->getRepository()->findByAdmissionAndNature($admission, $nature);
-            try {
-                $fichierContenu = $this->documentService->recupererDocumentContenu($document);
-            } catch (FichierServiceException $e) {
-                throw new RuntimeException("Une erreur est survenue empêchant la création ", null, $e);
+            if($document){
+                try {
+                    $fichierContenu = $this->documentService->recupererDocumentContenu($document);
+                } catch (FichierServiceException $e) {
+                    throw new RuntimeException("Une erreur est survenue empêchant la création ", null, $e);
+                }
+                $this->fichierService->telechargerFichier($fichierContenu);
+                return new JsonModel(['success' => 'Document téléchargé avec succès']);
             }
-            $this->fichierService->telechargerFichier($fichierContenu);
-            return new JsonModel(['success' => 'Document téléchargé avec succès']);
         } catch (Exception $die) {
             return $this->createErrorResponse(500, $die->getMessage());
         }

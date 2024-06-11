@@ -108,7 +108,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
 
             if ($action == 'generer-recapitulatif') {
                 if ($this->admission !== null) {
-                    $this->assertCanGenererAndTeleverserRecapitulatif($this->admission->getAdmissionValidations());
+                    $this->assertCanGenererAndAccederRecapitulatif($this->admission->getAdmissionValidations());
                 }
             }
 
@@ -181,7 +181,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
             switch ($privilege) {
                 case AdmissionPrivileges::ADMISSION_GENERER_RECAPITULATIF:
                 case AdmissionPrivileges::ADMISSION_ACCEDER_RECAPITULATIF_DOSSIER:
-                $this->assertCanGenererAndTeleverserRecapitulatif($this->admission->getAdmissionValidations());
+                $this->assertCanGenererAndAccederRecapitulatif($this->admission->getAdmissionValidations());
             }
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -306,7 +306,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
         );
     }
 
-    protected function assertCanGenererAndTeleverserRecapitulatif(Collection $admissionValidations): void
+    protected function assertCanGenererAndAccederRecapitulatif(Collection $admissionValidations): void
     {
         $canGenerate = false;
         foreach ($admissionValidations as $admissionValidation) {

@@ -1,7 +1,9 @@
 <?php
 namespace Admission\Entity\Db\Repository;
 
+use Admission\Entity\Db\Admission;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Fichier\Entity\Db\NatureFichier;
 use Doctrine\ORM\Query\Expr;
 
@@ -13,7 +15,10 @@ class DocumentRepository extends DefaultEntityRepository{
         return $this->findBy(['admission' => $id]);
     }
 
-    public function findByAdmissionAndNature($admission, $nature)
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByAdmissionAndNature(Admission $admission, NatureFichier|string $nature)
     {
         $queryBuilder = $this->createQueryBuilder('d')
             ->join('d.fichier', 'f') // Supposons que la relation vers Fichier s'appelle "fichier"
@@ -29,7 +34,7 @@ class DocumentRepository extends DefaultEntityRepository{
             $queryBuilder->setParameter("nature", $nature);
         }
 
-        return $queryBuilder->getQuery()->getSingleResult();
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
     public function findOneWhereNoFichierByAdmission($admission)

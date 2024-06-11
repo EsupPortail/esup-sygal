@@ -10,6 +10,7 @@ use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Application\Assertion\Exception\FailedAssertionException;
+use Doctrine\ORM\Exception\NotSupported;
 use InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
@@ -25,6 +26,7 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
      * @param string $action
      * @param string $privilege
      * @return boolean
+     * @throws NotSupported
      */
     protected function assertController($controller, $action = null, $privilege = null): bool
     {

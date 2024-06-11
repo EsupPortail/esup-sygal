@@ -51,14 +51,14 @@ class Financement implements HistoriqueAwareInterface{
     private $statutProfessionnel;
 
     /**
+     * @var string|null
+     */
+    private $etablissementPartenaire;
+
+    /**
      * @var bool|null
      */
     private $estSalarie;
-
-    /**
-     * @var string|null
-     */
-    private $etablissementLaboratoireRecherche;
 
     /**
      * Constructor
@@ -257,6 +257,30 @@ class Financement implements HistoriqueAwareInterface{
     }
 
     /**
+     * Set etablissementPartenaire.
+     *
+     * @param string|null $etablissementPartenaire
+     *
+     * @return Financement
+     */
+    public function setEtablissementPartenaire($etablissementPartenaire = null)
+    {
+        $this->etablissementPartenaire = $etablissementPartenaire;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementPartenaire.
+     *
+     * @return string|null
+     */
+    public function getEtablissementPartenaire()
+    {
+        return $this->etablissementPartenaire;
+    }
+
+    /**
      * Set estSalarie.
      *
      * @param bool|null $estSalarie
@@ -280,30 +304,6 @@ class Financement implements HistoriqueAwareInterface{
         return $this->estSalarie;
     }
 
-    /**
-     * Set etablissementLaboratoireRecherche.
-     *
-     * @param string|null $etablissementLaboratoireRecherche
-     *
-     * @return Financement
-     */
-    public function setEtablissementLaboratoireRecherche($etablissementLaboratoireRecherche = null)
-    {
-        $this->etablissementLaboratoireRecherche = $etablissementLaboratoireRecherche;
-
-        return $this;
-    }
-
-    /**
-     * Get etablissementLaboratoireRecherche.
-     *
-     * @return string|null
-     */
-    public function getEtablissementLaboratoireRecherche()
-    {
-        return $this->etablissementLaboratoireRecherche;
-    }
-
     /** Pour macro ****************************************************************************************************/
 
     /**
@@ -316,10 +316,10 @@ class Financement implements HistoriqueAwareInterface{
         }else{
             if($this->getContratDoctoral()){
                 return $this->getFinancement() ?
-                        $this->getFinancement()->getLibelleLong() :
-                        'Aucun employeur choisi';
+                        "Oui - ".$this->getFinancement()->getLibelleLong() :
+                        'Oui - Aucun employeur choisi';
             }else{
-                return "<b>Aucun contrat doctoral prévu</b>";
+                return "Aucun contrat doctoral prévu";
             }
         }
     }

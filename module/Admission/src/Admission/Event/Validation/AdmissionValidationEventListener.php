@@ -43,7 +43,8 @@ class AdmissionValidationEventListener extends AdmissionOperationAbstractEventLi
     public function onValidationAjoutee(AdmissionValidationEvent $event)
     {
         $this->initFromEvent($event);
-        if (!in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE)){
+        if (!in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE)
+            && !in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_DOCTORANTS)){
             $this->handleNotificationValidationAjoutee();
         }
         $this->handleSuppressionOperationsExistantes();
@@ -53,7 +54,8 @@ class AdmissionValidationEventListener extends AdmissionOperationAbstractEventLi
     public function onValidationSupprimee(AdmissionValidationEvent $event)
     {
         $this->initFromEvent($event);
-        if (!in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE)){
+        if (!in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_CONVENTION_FORMATION_DOCTORALE)
+            && !in_array($this->operationRealisee->getTypeValidation()->getCode(), TypeValidation::CODE_VALIDATIONS_DOCTORANTS)){
             $this->handleNotificationValidationSupprimee();
         }
     }

@@ -1,3 +1,14 @@
+/* global FilePond, FilePondPluginFileValidateType, FilePondPluginPdfPreview */
+/**
+ * @typedef {Object} FilePond
+ * @property {function} registerPlugin
+ * @property {function} create
+ * @property {function} addFiles
+ */
+
+/** @type {FilePond} */
+var FilePond;
+
 //fonction affichant ou non les div en fonction de boutons radios
 function showOrNotDiv(radiobutton, additionnalFields) {
     radiobutton.forEach(function (radio) {
@@ -15,24 +26,14 @@ function showOrNotDiv(radiobutton, additionnalFields) {
     });
 }
 
-function showModal(modalId) {
-    $(modalId).modal('show');
-}
-
 function updateButtonsState(isButtonDisabled) {
     const previousButton = document.querySelector('.multipage-nav.previous');
     const nextButton = document.querySelector('.multipage-nav.next');
     const submitButton = document.querySelector('.multipage-nav.submit');
 
-    if(previousButton){
-        previousButton.disabled = isButtonDisabled;
-    }
-    if(nextButton){
-        nextButton.disabled = isButtonDisabled;
-    }
-    if(submitButton){
-        submitButton.disabled = isButtonDisabled;
-    }
+    if(previousButton) previousButton.disabled = isButtonDisabled;
+    if(nextButton) nextButton.disabled = isButtonDisabled;
+    if(submitButton) submitButton.disabled = isButtonDisabled;
 
     // Mettez à jour les classes et les infobulles
     [previousButton, nextButton, submitButton].forEach(button => {
@@ -44,8 +45,131 @@ function updateButtonsState(isButtonDisabled) {
                 button.classList.remove('disabled');
                 button.removeAttribute('title');
             }
+            //Présent à la dernière étape du formulaire
+            const registerCommentsButton = document.querySelector('.admission-enregistrer-verification-container');
+            if(registerCommentsButton){
+                registerCommentsButton.style.display = 'block';
+                const notifierDossierIncompletButton = document.querySelector('.access-notification-dossier-incomplet-btn');
+                if(notifierDossierIncompletButton) notifierDossierIncompletButton.style.display = 'none';
+            }
         }
     });
+}
+
+function setupAutocompleteVillesFrancaises(inputId, codeId, postalId) {
+    $(inputId).autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: 'https://geo.api.gouv.fr/communes',
+                data: {
+                    nom: request.term,
+                    fields: 'nom,code,codesPostaux',
+                    limit: 5,
+                    boost: 'population'
+                },
+                success: function(data) {
+                    const suggestions = [];
+                    data.forEach(function(ville) {
+                        suggestions.push({
+                            label: ville.nom,
+                            code: ville.code,
+                            codePostal: ville.codesPostaux[0]
+                        });
+                    });
+                    response(suggestions);
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            $(inputId).val(ui.item.label);
+            $(codeId).val(ui.item.code);
+            $(postalId).val(ui.item.codePostal);
+            return false;
+        }
+    });
+}
+
+function detectModalStatutAdmissionAppears() {
+    const accessButtonCommentairesAdmission = document.querySelector('.commentaires-ajoutes-card');
+    if(accessButtonCommentairesAdmission){
+        accessButtonCommentairesAdmission.addEventListener('click', function(event) {
+            event.preventDefault();
+            $('.modal').modal('hide');
+            const divId = "modalShowCommentairesAdmission";
+            const commentairesDiv = document.getElementById(divId);
+
+            //si la div existe déjà, on la supprime
+            const existingDiv = document.querySelector("body > #" + divId);
+            if (existingDiv) existingDiv.remove();
+            document.body.appendChild(commentairesDiv);
+            $('#modalShowCommentairesAdmission').modal('show');
+        });
+    }
+}
+
+function handleDirectionAutocompleteSelect(nomAutocomplete, prenomAutocomplete, nomField, prenomField, emailField, data) {
+    setTimeout(function() {
+        nomAutocomplete.val(data.item.extras.nom);
+        nomField.val(data.item.id);
+        $(nomField).prop("value", data.item.id);
+    }, 50);
+    setTimeout(function() {
+        prenomAutocomplete.val(data.item.extras.prenoms);
+        $(prenomField).prop("value", data.item.id);
+    }, 50);
+    prenomAutocomplete.val(data.item.extras.prenoms);
+    emailField.val(data.item.extras.email);
+}
+
+function updateDirectionInfosLabels(idNom, idPrenom, nomInput, prenomInput, labelInput, labelIndividuNonEnregistre) {
+    setTimeout(function() {
+        var $labelInput = $(labelInput);
+        var $labelEn = $labelInput.next('.label_en');
+        var $icon = $labelEn.next('.icon');
+
+        if ((idNom.val() === '' || idPrenom.val() === '') && (nomInput.val() !== '' || prenomInput.val() !== '')) {
+            $labelEn.addClass('individu-non-enregistre-label');
+            $labelInput.addClass('individu-non-enregistre-label '+labelIndividuNonEnregistre);
+            if ($icon.length) {
+                $icon.removeClass('icon-success').addClass('icon-warning');
+                const $spanElement = $icon.find('span.tooltip-text');
+                if ($spanElement.length) {
+                    $spanElement.html("Veillez à bien <b>sélectionner un individu dans la liste proposée</b> <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché");
+                }
+            }
+        } else {
+            $labelEn.removeClass('individu-non-enregistre-label');
+            $labelInput.removeClass('individu-non-enregistre-label '+labelIndividuNonEnregistre);
+            if ($icon.length) {
+                if(nomInput.val() === '' && prenomInput.val() === ''){
+                    $icon.removeClass('icon-warning');
+                }else{
+                    $icon.removeClass('icon-warning').addClass('icon-success');
+                }
+                const $spanElement = $icon.find('span.tooltip-text');
+                if ($spanElement.length) {
+                    $spanElement.html("L'individu choisi sera associé au dossier lorsque vous passerez à l'étape précédente ou suivante");
+                }
+            }
+        }
+    }, 50);
+}
+
+function updateFinancementOptions() {
+    if ($('input[name="financement[contratDoctoral]"]:checked').val() === '1') {
+        $('input[name="financement[tempsTravail]"][value="1"]').prop('checked', true);
+        $('input[name="financement[estSalarie]"][value="1"]').prop('checked', true);
+
+        $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', true);
+        $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', true);
+    } else {
+        $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', false);
+        $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', false);
+    }
+    const infosDoctorantSalarieRadios = document.querySelectorAll('input[name="financement[estSalarie]"]');
+    const additionalFieldsInfosDoctorantSalarie = document.getElementById('additional_fields_infos_salaries');
+    showOrNotDiv(infosDoctorantSalarieRadios, additionalFieldsInfosDoctorantSalarie)
 }
 
 const currentUrl = window.location.href;
@@ -83,6 +207,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const boutonGestionnaireIncomplet = document.querySelector('.bouton-gestionnaire.incomplet');
     const boutonGestionnaireComplet = document.querySelector('.bouton-gestionnaire.complet');
 
+    //Activation de tinyMCE pour le champ commentaires des gestionnaires
     tinymce.remove();
     tinymce.init({
         selector: '.description_commentaires_gestionnaire',
@@ -108,10 +233,21 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             // Réagir lors du changement de contenu
             editor.on('input', handleEditorChange)
-            editor.on('NodeChange', handleEditorChange)
         }
     });
 
+    //Affichage du récapitulatif des commentaires du dossier d'admission
+    const accessButtonCommentairesAdmission = document.querySelector('.commentaires-ajoutes-card');
+    if(accessButtonCommentairesAdmission){
+        accessButtonCommentairesAdmission.addEventListener('click', function(event) {
+            event.preventDefault();
+            $('#modalShowCommentairesAdmission').modal('show');
+        });
+    }
+
+    /**
+     * Partie ETUDIANT
+     */
     if (currentUrl.indexOf("/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
         $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
@@ -155,40 +291,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // -------------------GESTION VILLES FORM----------------------------
-        function setupAutocomplete(inputId, codeId, postalId) {
-            $(inputId).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: 'https://geo.api.gouv.fr/communes',
-                        data: {
-                            nom: request.term,
-                            fields: 'nom,code,codesPostaux',
-                            limit: 5,
-                            boost: 'population'
-                        },
-                        success: function(data) {
-                            var suggestions = [];
-                            data.forEach(function(ville) {
-                                suggestions.push({
-                                    label: ville.nom,
-                                    code: ville.code,
-                                    codePostal: ville.codesPostaux[0]
-                                });
-                            });
-                            response(suggestions);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function(event, ui) {
-                    $(inputId).val(ui.item.label);
-                    $(codeId).val(ui.item.code);
-                    $(postalId).val(ui.item.codePostal);
-                    return false;
-                }
-            });
-        }
-
         function toggleCountryVisibility() {
             const selectedCountry = $('[data-id="adresseCodePays"] .filter-option-inner-inner').text().trim();
             //Si le pays sélectionné est France, on affiche le champ Code postal/Ville
@@ -204,8 +306,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         $(document).ready(function() {
-            setupAutocomplete('#adresseNomCommune', '#adresseCodeCommune', '#adresseCodePostal');
-            setupAutocomplete('#libelleCommuneNaissance', '#codeCommuneNaissance', '');
+            setupAutocompleteVillesFrancaises('#adresseNomCommune', '#adresseCodeCommune', '#adresseCodePostal');
+            setupAutocompleteVillesFrancaises('#libelleCommuneNaissance', '#codeCommuneNaissance', '');
             toggleCountryVisibility();
 
             const targetNode = document.querySelector('[data-id="adresseCodePays"]');
@@ -224,6 +326,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    /**
+     * Partie INSCRIPTION
+     */
     if (currentUrl.indexOf("/inscription") !== -1) {
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
         const cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
@@ -240,6 +345,9 @@ document.addEventListener("DOMContentLoaded", function() {
         showOrNotDiv(codirectionRadios, additionalFieldsCodirection)
     }
 
+    /**
+     * Partie FINANCEMENT
+     */
     if (currentUrl.indexOf("/financement") !== -1) {
         const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
         const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
@@ -252,6 +360,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         additionalFieldsInfosDoctorantSalarie.style.display = 'none';
         showOrNotDiv(infosDoctorantSalarieRadios, additionalFieldsInfosDoctorantSalarie)
+
+        //Si contratDoctoral est à oui, on sélectionne automatiquement temps complet (oui), et estSalarie (oui),
+        //et grise les autres possibilités
+        $('input[name="financement[contratDoctoral]"]').on('change', updateFinancementOptions);
+
+        updateFinancementOptions();
     }
 
     if (currentUrl.indexOf("/document") !== -1) {
@@ -320,16 +434,16 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
                     }
                 },
-                beforeRemoveFile: function () {
+                "beforeRemoveFile": function () {
                     return confirm("Êtes-vous sûr de vouloir supprimer ce fichier ?");
                 },
-                labelFileProcessingError: () => {
+                "labelFileProcessingError": () => {
                     return serverResponse.errors;
                 },
-                labelFileProcessingRevertError: () => {
+                "labelFileProcessingRevertError": () => {
                     return serverResponse.errors;
                 },
-                labelFileRemoveError: () => {
+                "labelFileRemoveError": () => {
                     return serverResponse.errors;
                 },
                 labelFileLoadError: "Erreur durant le chargement",
@@ -356,7 +470,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
             if (documents.hasOwnProperty(inputId)) {
-                // Construire l'objet de fichier
                 var fichier = {
                     source: documents[inputId].libelle,
                     options: {
@@ -374,8 +487,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             //GESTION DE LA CHARTE DOCTORALE
-            var accessButtonCharteDoctorale = document.querySelector('.access-charte-doctorat-btn');
-            var fileCharteDoctoratDiv = document.querySelector('.file-charte-doctorat');
+            const accessButtonCharteDoctorale = document.querySelector('.access-charte-doctorat-btn');
+            const fileCharteDoctoratDiv = document.querySelector('.file-charte-doctorat');
 
             if(accessButtonCharteDoctorale){
                 accessButtonCharteDoctorale.addEventListener('click', function(event) {
@@ -392,8 +505,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
 
+            $('.aucune-charte-doctorale-associee-btn').on('click', function(event) {
+                event.preventDefault();
+            });
+
             //GESTION DE LA CONVENTION DE FORMATION DOCTORALE
-            var conventionFormationDoctorale = document.getElementById("conventionFormationDoctoraleObject");
+            const conventionFormationDoctorale = document.getElementById("conventionFormationDoctoraleObject");
+            const fileConventionFormationDoctoraleDiv = document.querySelector('.file-convention-formation-doctorale');
+            const loadingIndicator = document.getElementById("loading-indicator");
             if(conventionFormationDoctorale){
                 conventionFormationDoctorale.setAttribute("height", "0px");
                 conventionFormationDoctorale.addEventListener("load", function () {
@@ -403,14 +522,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     conventionFormationDoctorale.setAttribute("height", "4000px");
                 });
             }
-            var loadingIndicator = document.getElementById("loading-indicator");
             if(loadingIndicator){
                 loadingIndicator.style.display = "block";
             }
 
-            var fileConventionFormationDoctoraleDiv = document.querySelector('.file-convention-formation-doctorale');
-            var accessButtonConventionFormationDoctorale = document.querySelectorAll('.access-conv-form-doct-btn');
-
+            const accessButtonConventionFormationDoctorale = document.querySelectorAll('.access-conv-form-doct-btn');
             if(accessButtonConventionFormationDoctorale){
                 accessButtonConventionFormationDoctorale.forEach(function(button) {
                     button.addEventListener('click', function(event) {
@@ -429,8 +545,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 const modalId = '#modalShowConfirmation' + button.dataset.operation;
 
                 //Gestion des modals lorsqu'il y a deux modals superposés (convention de formation doctorale et les opérations)
-                var targetElement = document.querySelector('.access-conv-form-doct-btn') || document.querySelector('.access-charte-doctorat-btn');
-                var modal = document.getElementById('modalShowConfirmation' + button.dataset.operation);
+                const targetElement = document.querySelector('.access-conv-form-doct-btn') || document.querySelector('.access-charte-doctorat-btn');
+                const modal = document.getElementById('modalShowConfirmation' + button.dataset.operation);
                 if(modal){
                     if(targetElement){
                         targetElement.insertAdjacentElement('afterend', modal);
@@ -438,14 +554,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     $('#modalShowConventionFormationDoctorale').modal('hide');
                     $('#modalShowCharteDoctorale').modal('hide');
                 }
-                showModal(modalId);
+                $(modalId).modal('show');
             });
         });
 
         const validations_action_operation = document.querySelectorAll('.validation-operation-btn');
         if(validations_action_operation){
             validations_action_operation.forEach(function(validationOperationBtn) {
-                validationOperationBtn.addEventListener('click', function (event) {
+                validationOperationBtn.addEventListener('click', function () {
                     validationOperationBtn.classList.add('loading-file');
                     document.body.style.pointerEvents = 'none';
                     document.body.style.cursor = 'wait';
@@ -453,14 +569,14 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        var lienRecapitulatif = document.querySelector('.access-recap-signe-btn');
-        var divRecapitulatif = document.getElementById('file-recap-signe-container');
+        //GESTION DU RÉCAPITULATIF DU DOSSIER
+        const lienRecapitulatif = document.querySelector('.access-recap-signe-btn');
+        const divRecapitulatif = document.getElementById('file-recap-signe-container');
 
         if(lienRecapitulatif){
             lienRecapitulatif.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                // Toggle de la visibilité de la div
                 if (divRecapitulatif.style.display === 'none' || divRecapitulatif.style.display === '') {
                     divRecapitulatif.style.display = 'block';
                 } else {
@@ -468,8 +584,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         }
+
+        $('input[name="document[enregistrerVerification]"]').val("")
+        //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
+        $('.enregistrer-verification-btn').on('click', function() {
+            $('input[name="document[enregistrerVerification]"]').val("enregistrerVerification");
+        });
+
+        $('.bouton-gestionnaire.incomplet').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('.admission-informations-container').show();
+            }
+        });
+        $('.bouton-gestionnaire.complet').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('.admission-informations-container').hide();
+            }
+        });
     }
 
+    //Ajout de TinyMCE pour la convention de formation doctorale
     if (currentUrl.includes('convention-formation/modifier/') || currentUrl.includes('convention-formation/ajouter/')) {
         tinymce.remove();
         tinymce.init({
@@ -492,47 +626,80 @@ document.addEventListener("DOMContentLoaded", function() {
 
 $(document).ready(function () {
     if (currentUrl.indexOf("/etudiant") !== -1 ||currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
-        $('select').selectpicker();
+        $('select').not('select[name="etudiant[anneeDobtentionDiplomeNational]"], select[name="etudiant[anneeDobtentionDiplomeAutre]"]').selectpicker();
     }
 
     $('[data-toggle="tooltip"]').tooltip({
         placement: 'top',
     });
 
-    //permet de split la paire nom/prénom dans chaque input correspondant
-    $(function() {
-        $("#nomDirecteurThese-autocomplete, #prenomDirecteurThese-autocomplete").on('input', function(){
-            $("#nomDirecteurThese").val(null)
-            $("#prenomDirecteurThese").val(null)
-        });
-        $("#nomDirecteurThese-autocomplete, #prenomDirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
-            setTimeout(function() {
-                $("#nomDirecteurThese-autocomplete").val(data.item.extras.nom);
-                $("#nomDirecteurThese").val(data.item.id);
-            }, 50);
-            setTimeout(function() {
-                $("#prenomDirecteurThese-autocomplete").val(data.item.extras.prenoms);
-                $("#prenomDirecteurThese").val(data.item.id);
-            }, 50);
-            $("#prenomDirecteurThese-autocomplete").val(data.item.extras.prenoms);
-            $("#emailDirecteurThese").val(data.item.extras.email);
-        })
+    var urlWithoutParams = currentUrl.split('?')[0];
+    var segments = urlWithoutParams.split('/');
+    if(segments[segments.length - 1] === 'admission'){
+        // pour afficher la modal des commentaires d'un dossier qui est déjà dans une modale
+        setInterval(detectModalStatutAdmissionAppears, 1500);
+    }
 
-        $("#nomCodirecteurThese-autocomplete, #prenomCodirecteurThese-autocomplete").on('input', function(){
-            $("#nomCodirecteurThese").val(null)
-            $("#prenomCodirecteurThese").val(null)
+    //permet de split la paire nom/prénom dans chaque input correspondant des directeurs/co-directeurs à l'étape inscription
+    $(function() {
+        const nomDirecteurAutocomplete = $("#nomDirecteurThese-autocomplete");
+        const prenomDirecteurAutocomplete = $("#prenomDirecteurThese-autocomplete");
+        const idNomDirecteur = $("#nomDirecteurThese");
+        const idPrenomDirecteur = $("#prenomDirecteurThese");
+        const emailDirecteur = $("#emailDirecteurThese");
+        var labelInputDirecteur = $('label[for="inscription[nomDirecteurThese]"]');
+        const labelDirecteurNonEnregistre = "directeur-non-enregistre-label";
+
+        nomDirecteurAutocomplete.on('autocompleteselect', function(event, data) {
+            handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, idNomDirecteur, idPrenomDirecteur, emailDirecteur, data);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
         });
-        $("#nomCodirecteurThese-autocomplete, #prenomCodirecteurThese-autocomplete").on('autocompleteselect', function(event, data) {
-            setTimeout(function() {
-                $("#nomCodirecteurThese-autocomplete").val(data.item.extras.nom);
-                $("#nomCodirecteurThese").val(data.item.id);
-            }, 50);
-            setTimeout(function() {
-                $("#prenomCodirecteurThese-autocomplete").val(data.item.extras.prenoms);
-                $("#prenomCodirecteurThese").val(data.item.id);
-            }, 50);
-            $("#prenomCodirecteurThese-autocomplete").val(data.item.extras.prenoms);
-            $("#emailCodirecteurThese").val(data.item.extras.email);
-        })
+
+        prenomDirecteurAutocomplete.on('autocompleteselect', function(event, data) {
+            handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, idNomDirecteur, idPrenomDirecteur, emailDirecteur, data);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
+        });
+
+        nomDirecteurAutocomplete.on('input', function() {
+            idNomDirecteur.val(null);
+            idPrenomDirecteur.val(null);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
+        });
+
+        prenomDirecteurAutocomplete.on('input', function() {
+            idNomDirecteur.val(null);
+            idPrenomDirecteur.val(null);
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
+        });
+
+        const nomCodirecteurAutocomplete = $("#nomCodirecteurThese-autocomplete");
+        const prenomCodirecteurAutocomplete = $("#prenomCodirecteurThese-autocomplete");
+        const idNomCodirecteur = $("#nomCodirecteurThese");
+        const idPrenomCodirecteur = $("#prenomCodirecteurThese");
+        const emailCodirecteur = $("#emailCodirecteurThese");
+        const labelInputCoDirecteur = $('label[for="inscription[nomCoDirecteurThese]"]');
+        const labelCoDirecteurNonEnregistre = "codirecteur-non-enregistre-label";
+
+        nomCodirecteurAutocomplete.on('autocompleteselect', function(event, data) {
+            handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, idNomCodirecteur, idPrenomCodirecteur, emailCodirecteur, data);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
+        });
+
+        prenomCodirecteurAutocomplete.on('autocompleteselect', function(event, data) {
+            handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, idNomCodirecteur, idPrenomCodirecteur, emailCodirecteur, data);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
+        });
+
+        nomCodirecteurAutocomplete.on('input', function() {
+            idNomCodirecteur.val(null);
+            idPrenomCodirecteur.val(null);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
+        });
+
+        prenomCodirecteurAutocomplete.on('input', function() {
+            idNomCodirecteur.val(null);
+            idPrenomCodirecteur.val(null);
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
+        });
     })
 });

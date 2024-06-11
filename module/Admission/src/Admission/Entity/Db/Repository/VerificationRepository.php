@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db\Repository;
 
+use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Document;
 use Admission\Entity\Db\Etudiant;
 use Admission\Entity\Db\Financement;
@@ -53,5 +54,17 @@ class VerificationRepository extends DefaultEntityRepository{
         return $this->findOneBy(['document' => $document]);
     }
 
+    public function findAllByAdmission(Admission $admission) {
+        $qb = $this->createQueryBuilder('verif');
 
+        return $qb
+            ->leftJoin('verif.etudiant', 'e')
+            ->leftJoin('verif.inscription', 'i')
+            ->leftJoin('verif.financement', 'f')
+            ->leftJoin('verif.document', 'd')
+            ->where('e.admission = :admissionId OR i.admission = :admissionId OR f.admission = :admissionId OR d.admission = :admissionId')
+            ->setParameter('admissionId', $admission)
+            ->getQuery()
+            ->getResult();
+    }
 }

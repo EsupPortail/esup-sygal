@@ -8,12 +8,12 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="contratDoctoral" type="boolean" column="contrat_doctoral" nullable="true"/>
-        <field name="detailContratDoctoral" type="string" column="detail_contrat_doctoral" length="1024" nullable="true"/>
-        <field name="tempsTravail" type="integer" column="temps_travail" nullable="true"/>
-        <field name="estSalarie" type="boolean" column="est_salarie" nullable="true"/>
-        <field name="statutProfessionnel" type="string" column="statut_professionnel" nullable="true"/>
-        <field name="etablissementLaboratoireRecherche" type="string" column="etablissement_laboratoire_recherche" nullable="true"/>
+        <field name="contratDoctoral" type="boolean" column="CONTRAT_DOCTORAL" nullable="true"/>
+        <field name="detailContratDoctoral" type="string" column="DETAIL_CONTRAT_DOCTORAL" length="1024" nullable="true"/>
+        <field name="tempsTravail" type="integer" column="TEMPS_TRAVAIL" nullable="true"/>
+        <field name="estSalarie" type="boolean" column="EST_SALARIE" nullable="true"/>
+        <field name="statutProfessionnel" type="string" column="STATUT_PROFESSIONNEL" nullable="true"/>
+        <field name="etablissementPartenaire" type="string" column="etablissement_partenaire" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>

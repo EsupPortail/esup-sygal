@@ -46,7 +46,7 @@ class UrlService {
     public function getAdmission() : string
     {
         $admission = $this->variables['admission'];
-        $link = $this->renderer->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $admission->getIndividu()->getId()], ['force_canonical' => true], true);
+        $link = $this->renderer->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $admission->getIndividu()->getId()], ['force_canonical' => true, 'query' => ['refresh' => 'true']], true);
         $url = "<a href='" . $link . "'>lien</a>";
 
         return $url;

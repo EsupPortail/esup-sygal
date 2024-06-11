@@ -64,8 +64,9 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                     <div class="col-lg-6 col-sm-12">
                         <?php echo $this->formControlGroup($fieldset->get('statutProfessionnel')) ?>
                     </div>
-                    <div class="col-lg-6 col-sm-12">
-                        <?php echo $this->formControlGroup($fieldset->get('etablissementLaboratoireRecherche')) ?>
+                    <div class="col-lg-12 col-sm-12">
+                        <p class="admission-field-information">Dans le cas d'une convention de collaboration, merci de préciser la dénomination, adresse (ville, pays) de l'établissement partenaire</p>
+                        <?php echo $this->formControlGroup($fieldset->get('etablissementPartenaire')) ?>
                     </div>
                 </div>
             </div>

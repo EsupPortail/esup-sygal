@@ -1,5 +1,23 @@
+<?php
+/**
+* @var PhpRenderer $this
+* @var Admission $admission
+* @var Individu $individu
+*
+* @see \Admission\Controller\AdmissionController::etudiantAction()
+*/
+
+use Admission\Entity\Db\Admission;
+use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
+
+?>
 <div class="header-admission">
-    <?php $this->headTitle($this->translate($title = "Admission")) ?>
+    <?php
+        $individu = isset($individu) ? " de ".$individu->getNomComplet() : null;
+        $individu = isset($admission) ? " de ".$admission->getIndividu()->getNomComplet(false, false, false, true) : $individu;
+        $this->headTitle($this->translate($title = "Admission".$individu))
+    ?>
 
     <h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
 

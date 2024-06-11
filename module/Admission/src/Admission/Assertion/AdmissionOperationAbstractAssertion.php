@@ -3,11 +3,9 @@
 namespace Admission\Assertion;
 
 use Admission\Entity\Db\AdmissionOperationInterface;
-use Admission\Entity\Db\AdmissionValidation;
-use Admission\Entity\Db\TypeValidation;
+use Admission\Entity\Db\Inscription;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
-use Application\Assertion\AbstractAssertion;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
 use Application\Service\UserContextServiceAwareInterface;
@@ -42,21 +40,7 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         return true;
     }
 
-    protected function assertDossierCompletAdmission(AdmissionValidation $admissionValidation)
-    {
-        //cette condition ne concerne pas la première validation du dossier
-        if($admissionValidation->getTypeValidation()->getCode() == TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE){
-            return;
-        }
-        $this->assertTrue(
-            $admissionValidation->getAdmission()->isDossierComplet() === true,
-            "Le dossier d'admission doit être en complet"
-        );
-    }
-    /**
-     * todo :
-     */
-    protected function assertAppartenanceAdmission(Admission $admission)
+    protected function assertAppartenanceAdmission(Admission $admission): void
     {
         $role = $this->userContextService->getSelectedIdentityRole();
 
@@ -69,14 +53,16 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
             );
         }
 
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
         // rôles structure-dépendants : ED, UR
         $role = $this->userContextService->getSelectedIdentityRole();
         if ($role->isStructureDependant()) {
             $structure = null;
             if ($role->getTypeStructureDependant()->isEcoleDoctorale()) {
-                $structure = $admission->getInscription()->first()->getEcoleDoctorale()->getStructure();
+                $structure = $inscription && $inscription->getEcoleDoctorale() ? $inscription->getEcoleDoctorale()->getStructure() : null;
             } elseif ($role->getTypeStructureDependant()->isUniteRecherche()) {
-                $structure = $admission->getInscription()->first()->getUniteRecherche()->getStructure();
+                $structure = $inscription && $inscription->getUniteRecherche() ? $inscription->getUniteRecherche()->getStructure() : null;
             }
             if ($structure !== null) {
                 $this->assertTrue(
@@ -89,8 +75,9 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         // rôle directeur de thèse
         if ($this->userContextService->getSelectedRoleDirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            $directeur = $inscription && $inscription->getDirecteur() ? $inscription->getDirecteur()->getId() : null;
             $this->assertTrue(
-                $individuUtilisateur->getId() == $admission->getInscription()->first()->getDirecteur()->getId(),
+                $individuUtilisateur->getId() === $directeur,
                 "Le dossier d'admission n'est pas dirigé par " . $individuUtilisateur
             );
         }
@@ -98,8 +85,9 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         // rôle codirecteur de thèse
         if ($this->userContextService->getSelectedRoleCodirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            $coDirecteur = $inscription && $inscription->getCoDirecteur() ? $inscription->getCoDirecteur()->getId() : null;
             $this->assertTrue(
-                $individuUtilisateur->getId() == $admission->getInscription()->first()->getCoDirecteur()->getId(),
+                $individuUtilisateur->getId() === $coDirecteur,
                 "Le dossier d'admission n'est pas co-dirigé par " . $individuUtilisateur
             );
         }
@@ -115,7 +103,7 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         return $this->admissionOperationRule->findNextExpectedOperation($admission);
     }
 
-    protected function assertOperationsMatch(AdmissionOperationInterface $operation, ?AdmissionOperationInterface $expectedOperation = null)
+    protected function assertOperationsMatch(AdmissionOperationInterface $operation, ?AdmissionOperationInterface $expectedOperation = null): void
     {
         $this->assertTrue(
             $expectedOperation !== null && $operation->matches($expectedOperation),
@@ -123,7 +111,7 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         );
     }
 
-    protected function assertOperationIsAllowed(AdmissionOperationInterface $operation)
+    protected function assertOperationIsAllowed(AdmissionOperationInterface $operation): void
     {
         $role = $this->userContextService->getSelectedIdentityRole();
 
@@ -137,7 +125,7 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         );
     }
 
-    protected function assertFollowingOperationCompatible(AdmissionOperationInterface $operation)
+    protected function assertFollowingOperationCompatible(AdmissionOperationInterface $operation): void
     {
         $this->assertTrue(
             $this->admissionOperationRule->isFollowingOperationValueCompatible($operation),
@@ -145,7 +133,7 @@ class AdmissionOperationAbstractAssertion extends AdmissionAbstractAssertion
         );
     }
 
-    protected function assertPrecedingOperationValueCompatible(AdmissionOperationInterface $operation)
+    protected function assertPrecedingOperationValueCompatible(AdmissionOperationInterface $operation): void
     {
         $this->assertTrue(
             $this->admissionOperationRule->isPrecedingOperationValueCompatible($operation),

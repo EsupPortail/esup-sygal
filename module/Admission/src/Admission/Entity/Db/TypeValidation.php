@@ -21,6 +21,10 @@ class TypeValidation{
         self::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_UR,
         self::CODE_VALIDATION_CONVENTION_FORMATION_DOCTORALE_DIR_ED,
     );
+    const CODE_VALIDATIONS_DOCTORANTS = array(
+        self::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE,
+        self::CODE_ATTESTATION_HONNEUR
+    );
 
     /**
      * @var string|null

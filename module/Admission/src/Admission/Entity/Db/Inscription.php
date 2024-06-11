@@ -84,6 +84,10 @@ class Inscription implements HistoriqueAwareInterface{
      */
     private $uniteRecherche;
     /**
+     * @var string|null
+     */
+    private $etablissementLaboratoireRecherche;
+    /**
      * @var Etablissement
      */
     private $etablissementInscription;
@@ -506,6 +510,30 @@ class Inscription implements HistoriqueAwareInterface{
     }
 
     /**
+     * Set etablissementLaboratoireRecherche.
+     *
+     * @param string|null $etablissementLaboratoireRecherche
+     *
+     * @return Inscription
+     */
+    public function setEtablissementLaboratoireRecherche($etablissementLaboratoireRecherche = null)
+    {
+        $this->etablissementLaboratoireRecherche = $etablissementLaboratoireRecherche;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementLaboratoireRecherche.
+     *
+     * @return string|null
+     */
+    public function getEtablissementLaboratoireRecherche()
+    {
+        return $this->etablissementLaboratoireRecherche;
+    }
+
+    /**
      * Set etablissementInscription.
      *
      * @param Etablissement|null $etablissementInscription
@@ -869,7 +897,7 @@ class Inscription implements HistoriqueAwareInterface{
 
     public function getUniteRechercheLibelle(): ?string
     {
-        return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : null;
+        return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : "<b>Non renseigné</b>";
     }
 
     public function getEtablissementInscriptionLibelle(): ?string

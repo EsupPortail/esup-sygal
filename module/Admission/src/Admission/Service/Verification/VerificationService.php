@@ -137,4 +137,12 @@ class VerificationService extends BaseService
             throw new RuntimeException("Un problème est survenue lors de la suppression en base d' Verification");
         }
     }
+
+    /**
+     * @param Admission $admission
+     */
+    public function getAllVerificationFromAdmission(Admission $admission)
+    {
+        return $this->getRepository()->findAllByAdmission($admission);
+    }
 }

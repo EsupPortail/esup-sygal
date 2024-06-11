@@ -95,6 +95,7 @@ class AdmissionRechercheController extends AbstractController implements SearchC
         $operationEnAttente = $admission ? $this->admissionOperationRule->getOperationEnAttente($admission) : null;
         $role = $this->userContextService->getSelectedIdentityRole();
         $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
+        $commentaires = $admission ? $this->admissionService->getCommentaires($admission) : null;
 
         //---------------------------Récupération des dossiers d'admissions correspondant aux filtres spécifiés--------------
         $this->restrictFilters();
@@ -118,7 +119,8 @@ class AdmissionRechercheController extends AbstractController implements SearchC
             'admission' => $admission,
             'inputIndividu' => $inputIndividu,
             'operationEnAttente' => $operationEnAttente,
-            'isOperationAllowedByRole' => $isOperationAllowedByRole
+            'isOperationAllowedByRole' => $isOperationAllowedByRole,
+            'commentaires' => $commentaires
         ]);
         $model->setTemplate($this->indexActionTemplate);
         return $model;

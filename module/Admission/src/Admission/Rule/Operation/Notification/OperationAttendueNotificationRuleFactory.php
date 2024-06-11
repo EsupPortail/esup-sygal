@@ -2,6 +2,7 @@
 
 namespace Admission\Rule\Operation\Notification;
 
+use Admission\Rule\Email\ExtractionEmailRule;
 use Admission\Rule\Operation\AdmissionOperationRule;
 use Application\Service\Role\RoleService;
 use Psr\Container\ContainerExceptionInterface;
@@ -21,6 +22,9 @@ class OperationAttendueNotificationRuleFactory
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
         $rule->setAdmissionOperationRule($admissionOperationRule);
+
+        $extractionEmailRule = $container->get(ExtractionEmailRule::class);
+        $rule->setExtractionEmailRule($extractionEmailRule);
 
         /** @var RoleService $roleService */
         $roleService = $container->get(RoleService::class);
