@@ -422,24 +422,25 @@ class InscriptionController extends AbstractController
                     $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
                 }
                 $presences = $dictionnaire;
+
                 $presencesStrings = array_map(function ($seance) use ($presences, $inscription, $session) {
+                    $presenceStatus = "";
                     $seanceDate = $seance->getDebut()->format('d/m/Y');
                     $seanceId = $seance->getId();
                     $inscriptionId = $inscription->getId();
 
+                    $motif = $inscription->getDescription() ? " : ".$inscription->getDescription() : null;
                     if (isset($presences[$seanceId][$inscriptionId]) && $presences[$seanceId][$inscriptionId]->isPresent()) {
                         $presenceStatus = "Présent";
-                    } else {
-                        $motif = $inscription->getDescription() ? " : ".$inscription->getDescription() : null;
-                        if($inscription->estHistorise()){
-                            $presenceStatus = "Désistement" . $motif;
-                        }else{
+                    }else{
+                        if(!$inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
                             $presenceStatus = "Absent" . $motif;
+                        }else if($inscription->estHistorise() && !in_array($inscription, $session->getListePrincipale()) ||
+                            $inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
+                            $presenceStatus = "Désistement" . $motif;
                         }
                     }
-
-                    return $seanceDate . ' (' . $presenceStatus . ')';
-
+                    return $presenceStatus ? $seanceDate . ' (' . $presenceStatus . ')' : null;
                 }, $seances);
                 $presences = $presencesStrings ? implode(' ; ', $presencesStrings) : null;
             }
