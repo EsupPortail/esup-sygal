@@ -10,6 +10,9 @@ Journal des modifications
 - Module Admissions : Suppression de la notification lors de la dévalidation de la lecture de la convention de formation doctorale
 - Module Admissions : Modification des sujets/corps de certains templates
 - Module Admissions : Changement du libellé du bouton à la dernière étape en fonction de l'état du dossier et de l'utilisateur connecté
+- Module Admissions : Récupération de la charte doctorale à partir du fichier déposé sur la fiche de l'établissement
+- Module Admissions : Ajout d'un récapitulatif des commentaires ajoutés sur la page d'accueil du module, ainsi qu'à la dernière page
+- Module Admissions : Amélioration de l'UI lorsque la (co)direction de thèse est mal renseignée dans le formulaire
 - Améliorations des doc et scripts d'install.
 - Améliorations de la page d'initialisation de compte utilisateur local.
 - Formulaire de création d'un individu à partir d'un utilisateur : initialisation manquante du nom patronymique.
