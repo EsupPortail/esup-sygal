@@ -399,6 +399,9 @@ class InscriptionController extends AbstractController
             $doctorant = $inscription->getDoctorant() ? $inscription->getDoctorant() : null;
             $individu = $doctorant ? $doctorant->getIndividu() : null;
             $theses = array_filter($doctorant->getTheses(), function (These $t) { return ($t->getEtatThese() === These::ETAT_EN_COURS AND $t->estNonHistorise());});
+            /** @var These $these */
+            $these = (!empty($theses))?current($theses):null;
+            $anneeThese = ($these)?$these->getNbInscription():null;
             $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
             $eds = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
             $urs = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
@@ -446,7 +449,7 @@ class InscriptionController extends AbstractController
             $entry['Nom'] = $individu ? $individu->getNomComplet() : null;
             $entry['Prénom'] = $individu ? $individu->getPrenom() : null;
             $entry['Adresse électronique'] = $individu ? $individu->getEmailPro() : null;
-            $entry['Année de thèse'] = $annee_doctorat ?? null;
+            $entry['Année de thèse'] = $anneeThese;
             $entry['Établissement'] = implode("/",$etablissements);
             $entry['École doctorale'] = implode("/",$eds);
             $entry['Unité de recherche'] = implode("/",$urs);
@@ -468,5 +471,4 @@ class InscriptionController extends AbstractController
 
         return $CSV;
     }
-
 }

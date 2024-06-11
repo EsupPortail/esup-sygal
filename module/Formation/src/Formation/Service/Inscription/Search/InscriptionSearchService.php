@@ -8,28 +8,41 @@ use Application\Search\Filter\TextSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Repository\EtatRepositoryAwareTrait;
 use Formation\Entity\Db\Repository\InscriptionRepositoryAwareTrait;
 
 class InscriptionSearchService extends SearchService
 {
     use InscriptionRepositoryAwareTrait;
+    use EtatRepositoryAwareTrait;
 
     const NAME_libelle = 'libelle';
-    const NAME_doctorant = 'doctorant';
+    const NAME_nom_doctorant = 'nomDoctorant';
+    const NAME_prenom_doctorant = 'prenomDoctorant';
     const NAME_liste = 'liste';
+    const NAME_etat = 'etat';
 
     public function init()
     {
         $libelleFilter = $this->createLibelleFilter();
-        $doctorantFilter = $this->createDoctorantFilter();
+        $nomDoctorantFilter = $this->createNomDoctorantFilter();
+        $prenomDoctorantFilter = $this->createPrenomDoctorantFilter();
         $listeFilter = $this->createListeFilter();
+        $etatFilter = $this->createEtatFilter();//->setWhereField('s.etat');
+        $etatFilter->setDataProvider(fn() => array_combine(
+            array_map(fn(Etat $e) => $e->getCode(), $etats = $this->etatRepository->findBy([], ['ordre' => 'asc'])),
+            $etats
+        ));
 
         $listeFilter->setData(Inscription::LISTES);
 
         $this->addFilters([
             $libelleFilter,
-            $doctorantFilter,
+            $nomDoctorantFilter,
+            $prenomDoctorantFilter,
+            $etatFilter,
             $listeFilter,
         ]);
 
@@ -53,12 +66,30 @@ class InscriptionSearchService extends SearchService
 
     /********************************** FILTERS ****************************************/
 
-    private function createDoctorantFilter(): TextSearchFilter
+    private function createNomDoctorantFilter(): TextSearchFilter
     {
-        $filter = new StrReducedTextSearchFilter("Nom doctorant", self::NAME_doctorant);
+        $filter = new StrReducedTextSearchFilter("Nom doctorant", self::NAME_nom_doctorant);
         $filter
             ->setWhereField('ind.nomUsuel')
             ->useLikeOperator();
+
+        return $filter;
+    }
+
+    private function createPrenomDoctorantFilter(): TextSearchFilter
+    {
+        $filter = new StrReducedTextSearchFilter("Prénom doctorant", self::NAME_prenom_doctorant);
+        $filter
+            ->useLikeOperator()
+            ->setWhereField('ind.prenom1');
+
+        return $filter;
+    }
+
+    private function createEtatFilter(): SelectSearchFilter
+    {
+        $filter = new SelectSearchFilter("État", self::NAME_etat);
+        $filter->setWhereField('sess.etat');
 
         return $filter;
     }
