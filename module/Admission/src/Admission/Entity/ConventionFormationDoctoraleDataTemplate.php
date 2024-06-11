@@ -71,6 +71,12 @@ class ConventionFormationDoctoraleDataTemplate
         return $admissionInscriptionFormatter->htmlifyCoTutelleInformations($this->admission->getInscription()->first());
     }
 
+    public function getCoTutelleCoDirectionInformationstoHtml()
+    {
+        $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
+        return $admissionInscriptionFormatter->htmlifyCoTutelleCoDirectionInformations($this->admission->getInscription()->first(), $this->getIndividuResponsablesUniteRechercheCoDirecteur());
+    }
+
     public function getConventionCollaborationInformationstoHtml(): ?string
     {
         $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
@@ -85,7 +91,8 @@ class ConventionFormationDoctoraleDataTemplate
     public function getResponsablesURDirecteurtoHtml()
     {
         $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
-        return $admissionInscriptionFormatter->htmlifyResponsablesURDirecteur($this->getIndividuResponsablesUniteRechercheDirecteur());
+        $inscription = $this->admission->getInscription()->first() ? $this->admission->getInscription()->first() : null;
+        return $admissionInscriptionFormatter->htmlifyResponsablesURDirecteur($inscription, $this->getIndividuResponsablesUniteRechercheDirecteur());
 
     }
 

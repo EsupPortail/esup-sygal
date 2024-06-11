@@ -897,7 +897,7 @@ class Inscription implements HistoriqueAwareInterface{
 
     public function getUniteRechercheLibelle(): ?string
     {
-        return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : null;
+        return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : "<b>Non renseigné</b>";
     }
 
     public function getEtablissementInscriptionLibelle(): ?string

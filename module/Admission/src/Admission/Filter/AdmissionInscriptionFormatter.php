@@ -38,11 +38,41 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
         }
     }
 
-    public function htmlifyResponsablesURDirecteur(array $responsables){
-        $str = "<b>Aucune information de renseignée</b>";
-        if($responsables){
+    public function htmlifyCoTutelleCoDirectionInformations(Inscription $inscription, array $responsablesURCoDirection){
+        if ($inscription->getCoTutelle()) {
+            $str = "Et<br>";
+            $pays = $inscription->getPaysCoTutelle() ? $inscription->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
+            $str .= "<ul>Pays <b>";
+            $str .= "<li>";
+            $str .= $pays;
+            $str .= "</li></ul>";
+        }else if($inscription->getCoDirection()){
+            $str = "Et<br>";
+            $uniteRechercheCoDirecteur = $inscription->getUniteRechercheCoDirecteurLibelle() ? $inscription->getUniteRechercheCoDirecteurLibelle() : "<b>Non renseignée</b>";
+            if(!$responsablesURCoDirection && $inscription->getUniteRechercheCoDirecteurLibelle()){
+                $responsablesUniteRechercheCoDirecteur = "<b>Aucune direction n'est désignée dans l'application</b>";
+            }else if(!$responsablesURCoDirection && !$inscription->getUniteRechercheCoDirecteurLibelle()){
+                $responsablesUniteRechercheCoDirecteur = "<b>Non renseigné</b>";
+            }else{
+                $responsablesUniteRechercheCoDirecteur = $this->htmlifyResponsablesURCoDirecteur($responsablesURCoDirection, true);
+            }
+
+            $str .= "<ul>";
+            $str .= "<li> Unité d'accueil : ".$uniteRechercheCoDirecteur."</li>";
+            $str .= "<li> Directeur de l'unité : ".$responsablesUniteRechercheCoDirecteur."</li>";
+            $str .= "</ul>";
+        }
+        return $str ?? "";
+    }
+
+    public function htmlifyResponsablesURDirecteur(Inscription $inscription, array $responsablesURDirection){
+        if(!$responsablesURDirection && $inscription->getUniteRecherche()){
+            $str = "<b>Aucune direction n'est désignée dans l'application</b>";
+        }else if(!$responsablesURDirection && !$inscription->getUniteRecherche()){
+            $str = "<b>Non renseigné</b>";
+        }else{
             $str = "<ul>";
-            foreach($responsables as $responsable){
+            foreach($responsablesURDirection as $responsable){
                 /** @var Individu $individu */
                 $individu = $responsable->getIndividu();
                 $str .= "<li>";
@@ -52,17 +82,22 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
             }
             $str .= "</ul>";
         }
+
         return $str;
     }
 
-    public function htmlifyResponsablesURCoDirecteur(array $responsables){
+    public function htmlifyResponsablesURCoDirecteur(array $responsables, bool $showMoreInformations = false){
         $str = "<b>Aucune information de renseignée</b>";
         if($responsables){
             $str = "<ul>";
                 foreach($responsables as $responsable){
+                    /** @var Individu $individu */
                     $individu = $responsable->getIndividu();
                     $str .= "<li>";
                     $str .= $individu->getNomComplet();
+                    if($showMoreInformations){
+                        $str .= $individu->getEmailPro() ? ", ".$individu->getEmailPro() : null;
+                    }
                     $str .= "</li>";
                 }
             $str .= "</ul>";

@@ -110,6 +110,11 @@ VALUES ('AdmissionEtudiant#PaysEtudiant',
         '<p>Retourne le pays actuel de l''étudiant</p>',
         'admissionEtudiant', 'getPaysLibelle');
 
+INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionConventionFormationDoctorale#InfosCoTutelleCoDirection',
+        '<p>Retourne les informations concernant la possible co-tutelle / co-directtion du dossier d''admission de l''étudiant</p>',
+        'admissionConventionFormationDoctoraleData', 'getCoTutelleCoDirectionInformationstoHtml');
+
 -- Templates
 UPDATE public.unicaen_renderer_template
 SET document_corps = '<h1 style="text-align: center;">Convention de formation doctorale</h1>
@@ -144,14 +149,10 @@ SET document_corps = '<h1 style="text-align: center;">Convention de formation do
 <h3><strong>Article 2 – Laboratoire d’accueil</strong></h3>
 <p>Le doctorant réalise sa thèse au sein de :</p>
 <ul>
-<li style="font-weight: 400; text-align: start;">Unité d''accueil (UMR, U INSERM, UR, Laboratoire privé...) : VAR[AdmissionInscription#UniteRecherche]</li>
-<li style="font-weight: 400; text-align: start;">Directeur de l''unité (Nom, Prénom, coordonnées téléphoniques et courriel) : VAR[AdmissionConventionFormationDoctorale#ResponsablesURDirecteurThese]</li>
+<li style="font-weight: 400; text-align: start;">Unité d''accueil : VAR[AdmissionInscription#UniteRecherche]</li>
+<li style="font-weight: 400; text-align: start;">Directeur de l''unité : VAR[AdmissionConventionFormationDoctorale#ResponsablesURDirecteurThese]</li>
 </ul>
-<p>Et (en cas de co-tutelle ou co-direction de thèse) :</p>
-<ul>
-<li style="font-weight: 400; text-align: start;">Unité d''accueil (EA, UMR, U INSERM, UR, Laboratoire privé …) : VAR[AdmissionInscription#UniteRechercheCoDirection]</li>
-<li style="font-weight: 400; text-align: start;">Directeur de l''unité (Nom, Prénom, coordonnées téléphoniques et courriel) : VAR[AdmissionConventionFormationDoctorale#ResponsablesURCoDirecteurThese]</li>
-</ul>
+<p>VAR[AdmissionConventionFormationDoctorale#InfosCoTutelleCoDirection]</p>
 <h3><strong>Article 3 - Méthodes et Moyens</strong></h3>
 <p><strong>3-1 Calendrier prévisionnel du projet de recherche</strong></p>
 <p>VAR[AdmissionConventionFormationDoctorale#CalendrierPrevisionnel]</p>
