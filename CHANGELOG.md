@@ -13,6 +13,8 @@ Journal des modifications
 - Module Admissions : Récupération de la charte doctorale à partir du fichier déposé sur la fiche de l'établissement
 - Module Admissions : Ajout d'un récapitulatif des commentaires ajoutés sur la page d'accueil du module, ainsi qu'à la dernière page
 - Module Admissions : Amélioration de l'UI lorsque la (co)direction de thèse est mal renseignée dans le formulaire
+- Module Formations : Ajout de filtres sur l'écran Inscription : recherche nom/prenom du doctorant, état de la session
+- Module Formations : Export CSV des inscriptions en fonction de la recherche effectuée
 - Améliorations des doc et scripts d'install.
 - Améliorations de la page d'initialisation de compte utilisateur local.
 - Formulaire de création d'un individu à partir d'un utilisateur : initialisation manquante du nom patronymique.
@@ -20,6 +22,7 @@ Journal des modifications
 - Module StepStar : plus d'envoi de la date d'abandon (recommandation de l'ABES).
 - Suppression du menu 'Administration > Compléments d'individu' devenu inutile.
 - Amélioration visuelle des pages de création/modification de structure (Etab/ED/UR).
+- Affichage des co-encadrants sur l'annuraire des thèses (au survol de la souris sur la direction de thèse)
 - [FIX] Warning PHP sur la page de création/modification d'ED/UR.
 - [FIX] Authentification LDAP/CAS : la recherche de l'utilisateur en bdd à partir du username n'utilisait pas le paramètre de config 'ldap_username'.
 - [FIX] Authentification LDAP/CAS : les données d'identité de type \UnicaenApp\Entity\Ldap\People n'étaient pas bien traitées.

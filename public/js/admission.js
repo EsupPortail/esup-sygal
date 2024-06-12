@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Partie ETUDIANT
      */
-    if (currentUrl.indexOf("/etudiant") !== -1) {
+    if (currentUrl.indexOf("/admission/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
         $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
 
@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Partie INSCRIPTION
      */
-    if (currentUrl.indexOf("/inscription") !== -1) {
+    if (currentUrl.indexOf("/admission/inscription") !== -1) {
         const confidentialiteRadios = document.querySelectorAll('input[name="inscription[confidentialite]"]');
         const cotutelleRadios = document.querySelectorAll('input[name="inscription[coTutelle]"]');
         const codirectionRadios = document.querySelectorAll('input[name="inscription[coDirection]"]');
@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Partie FINANCEMENT
      */
-    if (currentUrl.indexOf("/financement") !== -1) {
+    if (currentUrl.indexOf("/admission/financement") !== -1) {
         const contratDoctoralRadios = document.querySelectorAll('input[name="financement[contratDoctoral]"]');
         const additionalFieldscontratDoctoral = document.getElementById('additional_fields_contrat_doctoral');
 
@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateFinancementOptions();
     }
 
-    if (currentUrl.indexOf("/document") !== -1) {
+    if (currentUrl.indexOf("/admission/document") !== -1) {
         FilePond.registerPlugin(FilePondPluginFileValidateType);
         FilePond.registerPlugin(FilePondPluginPdfPreview);
 
@@ -625,7 +625,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 
 $(document).ready(function () {
-    if (currentUrl.indexOf("/etudiant") !== -1 ||currentUrl.indexOf("/inscription") !== -1 || currentUrl.indexOf("/financement") !== -1) {
+    if (currentUrl.indexOf("/admission/etudiant") !== -1 ||currentUrl.indexOf("/admission/inscription") !== -1 || currentUrl.indexOf("/admission/financement") !== -1) {
         $('select').not('select[name="etudiant[anneeDobtentionDiplomeNational]"], select[name="etudiant[anneeDobtentionDiplomeAutre]"]').selectpicker();
     }
 

@@ -32,6 +32,10 @@ $acteursFormatterCodirecteurs = new ActeursFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
+$acteursFormatterCoencadrents = new ActeursFormatter();
+$acteursFormatterCoencadrents->asSeparated()
+    ->paramDisplay(['role' => true, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_CO_ENCADRANT]));
 ?>
 
 <?php $this->headTitle($this->translate("Thèses")); ?>
@@ -96,8 +100,8 @@ $acteursFormatterCodirecteurs->asSeparated()
                 </a> <?php echo $s->icon() ?>
             </th>
             <th>
-                <span title="<?php echo $this->translate("Liste des directeurs de thèse"); ?>">
-                    <?php echo $this->translate("Dir. de thèse"); ?>
+                <span title="<?php echo $this->translate("Liste des (co)directeurs/co-encadrents de thèse"); ?>">
+                    <?php echo $this->translate("Dir. et coencad. de thèse"); ?>
                 </span>
             </th>
             <th>
@@ -155,15 +159,44 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
                 <td class="acteurs">
                     <?php
-                    $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
-                    foreach ($directeurs as $directeur) {
-                        echo $acteursFormatterDirecteurs->htmlifyActeur($directeur)."<br/>";
-                    }
-                    $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs());
-                    foreach ($codirecteurs as $codirecteur) {
-                        echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur)."<br/>";
-                    }
+                        $acteursFormatterDirecteursAvecRole = clone $acteursFormatterDirecteurs;
+                        $acteursFormatterDirecteursAvecRole = $acteursFormatterDirecteursAvecRole
+                            ->paramDisplay(['role' => true, 'complement' => false, "qualite" => false, "etablissement" => false,]);
+                        $acteursFormatterCodirecteursAvecRole = clone $acteursFormatterCodirecteurs;
+                        $acteursFormatterCodirecteursAvecRole = $acteursFormatterCodirecteursAvecRole
+                            ->paramDisplay(['role' => true, 'complement' => false, "qualite" => false, "etablissement" => false,]);
+
+                        $directeurs = $acteursFormatterDirecteursAvecRole->filter($these->getActeurs());
+                        $directeursAvecRoleStr = "";
+                        foreach ($directeurs as $directeur) {
+                            $directeursAvecRoleStr .= $acteursFormatterDirecteursAvecRole->htmlifyActeur($directeur) . "<br/>";
+                        }
+                        $codirecteurs = $acteursFormatterCodirecteursAvecRole->filter($these->getActeurs());
+                        $coDirecteursAvecRoleStr = "";
+                        foreach ($codirecteurs as $codirecteur) {
+                            $coDirecteursAvecRoleStr .= $acteursFormatterCodirecteursAvecRole->htmlifyActeur($codirecteur) . "<br/>";
+                        }
+                        $coencadrents = $acteursFormatterCoencadrents->filter($these->getActeurs());
+                        $coencadrantsAvecRoleStr = "";
+                        foreach ($coencadrents as $coencadrent) {
+                            $coencadrantsAvecRoleStr .= $acteursFormatterCoencadrents->htmlifyActeur($coencadrent) . "<br/>";
+                        }
+                        $acteursAvecRole = $directeursAvecRoleStr.$coDirecteursAvecRoleStr.$coencadrantsAvecRoleStr;
                     ?>
+                    <abbr title="">
+                        <span class="site" title="<?php echo $acteursAvecRole ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                            <?php
+                                $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
+                                foreach ($directeurs as $directeur) {
+                                    echo $acteursFormatterDirecteurs->htmlifyActeur($directeur) . "<br/>";
+                                }
+                                $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs());
+                                foreach ($codirecteurs as $codirecteur) {
+                                    echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur) . "<br/>";
+                                }
+                            ?>
+                        </span>
+                    </abbr>
                 </td>
                 <td>
                     <?php if($these->getEcoleDoctorale()): ?>

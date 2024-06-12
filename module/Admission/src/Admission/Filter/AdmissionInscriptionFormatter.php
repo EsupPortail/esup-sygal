@@ -40,12 +40,10 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
 
     public function htmlifyCoTutelleCoDirectionInformations(Inscription $inscription, array $responsablesURCoDirection){
         if ($inscription->getCoTutelle()) {
-            $str = "Et<br>";
+            $str = "Et<br><br>";
             $pays = $inscription->getPaysCoTutelle() ? $inscription->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
-            $str .= "<ul>Pays <b>";
-            $str .= "<li>";
+            $str .= "Pays : ";
             $str .= $pays;
-            $str .= "</li></ul>";
         }else if($inscription->getCoDirection()){
             $str = "Et<br>";
             $uniteRechercheCoDirecteur = $inscription->getUniteRechercheCoDirecteurLibelle() ? $inscription->getUniteRechercheCoDirecteurLibelle() : "<b>Non renseignée</b>";
