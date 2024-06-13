@@ -610,7 +610,7 @@ class PropositionService extends BaseService
             ->andWhere('DATE_ADD(these.dateSoutenance, 1, \'YEAR\') > :date')
             ->setParameter('autorise', Etat::VALIDEE)
             ->setParameter('date', new DateTime())
-            ->orderBy('these.dateSoutenance', 'ASC');
+            ->orderBy('these.dateSoutenance', 'DESC');
 
         return $qb->getQuery()->getResult();
     }
