@@ -251,10 +251,12 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   display: inline;
   float: left; }
 
-.individu-non-enregistre-label, .icon-warning.admission-info-bulle::before {
+.individu-non-enregistre-label, .icon-warning.admission-info-bulle::before, .ine-non-valide-label {
   color: darkred; }
 
-.directeur-non-enregistre-label ~ div input#nomDirecteurThese-autocomplete, .codirecteur-non-enregistre-label ~ div input#nomCodirecteurThese-autocomplete {
+.directeur-non-enregistre-label ~ div input#nomDirecteurThese-autocomplete,
+.codirecteur-non-enregistre-label ~ div input#nomCodirecteurThese-autocomplete,
+.ine-non-valide-label ~ div input[name="etudiant[ine]"] {
   border: 2px solid darkred;
   background-color: #ffcccc; }
 

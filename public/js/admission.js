@@ -56,6 +56,17 @@ function updateButtonsState(isButtonDisabled) {
     });
 }
 
+function isValidINE(ine) {
+    // Vérifie que le INE a exactement 11 caractères
+    if (ine.length !== 11) {
+        return false;
+    }
+
+    // Vérifie que le INE contient soit 10 chiffres et 1 lettre, soit 9 chiffres et 2 lettres
+    const regex = /^(?=(?:\D*\d){9,10}(?!\D*\d))(?=(?:\d*\D){1,2}(?!\d*\D))[A-Za-z0-9]{11}$/;
+    return regex.test(ine);
+}
+
 function setupAutocompleteVillesFrancaises(inputId, codeId, postalId) {
     $(inputId).autocomplete({
         source: function(request, response) {
@@ -248,6 +259,7 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Partie ETUDIANT
      */
+    if (currentUrl.indexOf("/etudiant") !== -1) {
     if (currentUrl.indexOf("/admission/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
         $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
@@ -290,6 +302,49 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
+
+        //UI concernant la saisie de l'INE
+        const ineInput = $('input[name="etudiant[ine]"]');
+        const labelInputIne = $('label[for="etudiant[ine]"]');
+        var $labelInput = $(labelInputIne);
+        var $labelEn = $labelInput.next('.label_en');
+        var $icon = $('.info-ine-btn').next('.icon');
+
+        ineInput.on('input', function() {
+            const value = $(this).val();
+            if (isValidINE(value)) {
+                $labelInput.removeClass('ine-non-valide-label');
+                $labelEn.removeClass('ine-non-valide-label');
+                if ($icon.length) {
+                    if (ineInput.val() === '') {
+                        $icon.removeClass('icon-warning');
+                    } else {
+                        $icon.removeClass('icon-warning').addClass('icon-success');
+                        $icon.css("display", "inline-block")
+                    }
+                    const $spanElement = $icon.find('span.tooltip-text');
+                    if ($spanElement.length) {
+                        $spanElement.html("L'INE renseigné est bien au format attendu<br><br>The INE entered is in the expected format");
+                    }
+                }
+            } else {
+                $labelInput.addClass('ine-non-valide-label');
+                $labelEn.addClass('ine-non-valide-label');
+                if ($icon.length) {
+                    $icon.removeClass('icon-success').addClass('icon-warning');
+                    $icon.css("display", "inline-block")
+                    const $spanElement = $icon.find('span.tooltip-text');
+                    if ($spanElement.length) {
+                        $spanElement.html("L'INE renseigné n'est pas au format attendu<br><br><b>Si vous n'avez pas l'information, laissez ce champ vide et renseigner le ultérieurement</b><br><br>The INE entered is not in the expected format<br><br><b>If you don't have the information, leave this field blank and fill it in later</b>.");
+                    }
+                }
+            }
+            if (ineInput.val() === '') {
+                $icon.removeClass('icon-warning');
+                $labelInput.removeClass('ine-non-valide-label');
+                $labelEn.removeClass('ine-non-valide-label');
+            }
+        });
         // -------------------GESTION VILLES FORM----------------------------
         function toggleCountryVisibility() {
             const selectedCountry = $('[data-id="adresseCodePays"] .filter-option-inner-inner').text().trim();

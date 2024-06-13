@@ -161,7 +161,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                         echo "<abbr title='";
                         echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getLibelle() : null;
                         echo "'>";
-                        echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getCode() : null;
+                        echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getSourceCode() : null;
                         echo "</abbr>";
                     }
                     echo "</td>";
