@@ -25,13 +25,17 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <h2 class="admission-section-title">Étudiant<label class="admission-section-title-en">&nbsp; / Student</label></h2>
     </div>
     <div class="row subfield">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="col-mb-2">
-                <label class='ine-label form-label'
-                       data-after=" / I.N.E number (number appearing on a French higher education transcript)"><?php echo $fieldset->get('ine')->getLabel() ?></label>
-                <button class="icon icon-information info-ine-btn" data-toggle="tooltip"
-                        title="Appuyez pour avoir plus d'informations"></button>
-                <?php echo $this->formInput($fieldset->get('ine')) ?>
+                <label class="form-label" for="etudiant[ine]">Numéro I.N.E (Numéro inscrit sur un relevé de notes de l'enseignement supérieur français)</label><label class="label_en">&nbsp; / I.N.E number (number appearing on a French higher education transcript)</label>
+                <button class="icon icon-information admission-info-bulle info-ine-btn" data-toggle="tooltip"
+                        title="Appuyez pour avoir plus d'informations">
+                </button>
+                <span class="icon icon-success admission-info-bulle" data-toggle="tooltip" data-bs-original-title=""
+                      title="" style="display:none;">
+                    <span class="tooltip-text"></span>
+                </span>
+                <?php echo $this->formControlGroup($fieldset->get('ine')) ?>
             </div>
 
         </div>
@@ -95,7 +99,6 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         </div>
         <div class="col-lg-3 col-sm-12 adresse-nom-commune">
             <label class="form-label" for="etudiant[adresseNomCommune]">Ville</label><label class="label_en">&nbsp; / City</label>
-
             <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                 <span class="tooltip-text">Si votre ville est étrangère, veuillez tout d'abord sélectionner le pays concerné<br>
                 If your city is foreign, please select the relevant country first
@@ -110,6 +113,12 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             <?php echo $this->formControlGroup($fieldset->get('adresseCodePays')) ?>
         </div>
         <div class="col-lg-2 col-sm-12">
+            <label class="form-label" for="etudiant[adresseNomCommune]">Numéro de téléphone</label><label class="label_en">&nbsp; / Phone</label>
+            <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
+                <span class="tooltip-text">Merci d'indiquer votre numéro de téléphone avec l'indicatif de votre pays (ex : 0212456789 devient +33212456789 pour la France)<br><br>
+                    Please enter your telephone number with your country code (e.g. 0212456789 becomes +33212456789 for France).
+                </span>
+            </span>
             <?php echo $this->formControlGroup($fieldset->get('numeroTelephone1')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">

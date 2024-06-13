@@ -69,7 +69,7 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 ])
                 ->setLabel("Civilité")
                 ->setLabelAttributes(['data-after' => " / Civility"])
-                ->setAttributes(['readonly' => true])
+                ->setAttributes(['disabled' => true])
         );
 
         $this->add(
@@ -107,9 +107,6 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
 
         $this->add(
             (new Text('ine'))
-                ->setLabel("Numéro I.N.E (Numéro inscrit sur un relevé de notes de l'enseignement supérieur français)")
-                ->setLabelAttributes(['data-after' => " / I.N.E number (number appearing on a French higher education transcript)"
-                ])
                 ->setAttributes( ['class' => 'form-control'])
         );
 
@@ -235,8 +232,6 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
 
         $this->add(
             (new Tel('numeroTelephone1'))
-                ->setLabel("Numéro de téléphone")
-                ->setLabelAttributes(['data-after' => " / Phone"])
         );
 
         $this->add(
@@ -500,17 +495,6 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
             'numeroTelephone1' => [
                 'name' => 'numeroTelephone1',
                 'required' => false,
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^\d+$/',
-                            'messages' => [
-                                Regex::NOT_MATCH => 'Le numéro de téléphone doit contenir uniquement des chiffres.',
-                            ],
-                        ],
-                    ],
-                ],
             ],
             'numeroTelephone2' => [
                 'name' => 'numeroTelephone2',

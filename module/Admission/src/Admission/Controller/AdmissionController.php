@@ -758,8 +758,14 @@ class AdmissionController extends AdmissionAbstractController {
             return $this->redirect()->toRoute('admission');
         }
 
+        foreach ($queryParams as $key => $value) {
+            if ($key === 'search' || empty($value)) {
+                unset($queryParams[$key]);
+            }
+        }
+
         $this->admissionRechercheService->init();
-        $this->admissionRechercheService->processQueryParams($queryParams);
+        if($queryParams) $this->admissionRechercheService->processQueryParams($queryParams);
         $qb = $this->admissionRechercheService->getQueryBuilder();
         $qb
             ->andWhere($qb->expr()->orX('admission.etat = :etat'))
@@ -799,8 +805,8 @@ class AdmissionController extends AdmissionAbstractController {
             $entry['adresse_code_postal'] = $etudiant->getAdresseCodePostal();
             $entry['adresse_code_commune'] = $etudiant->getAdresseCodeCommune();
             $entry['adresse_cp_ville_etranger'] = $etudiant->getAdresseCpVilleEtrangere();
-            $entry['numero_telephone1'] = $etudiant->getNumeroTelephone1();
-            $entry['numero_telephone2'] = $etudiant->getNumeroTelephone2();
+            $entry['numero_telephone1'] = (string)$etudiant->getNumeroTelephone1();
+            $entry['numero_telephone2'] = (string)$etudiant->getNumeroTelephone2();
             $entry['courriel'] = $etudiant->getCourriel();
             $records[] = $entry;
         }
