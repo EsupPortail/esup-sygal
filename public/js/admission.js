@@ -259,7 +259,6 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Partie ETUDIANT
      */
-    if (currentUrl.indexOf("/etudiant") !== -1) {
     if (currentUrl.indexOf("/admission/etudiant") !== -1) {
         //désactive la possibilité de changer la civilité
         $('input:radio[name="etudiant[sexe]"]:not(:checked)').attr('disabled', true);
