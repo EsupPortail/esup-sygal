@@ -23,6 +23,7 @@ Journal des modifications
 - Suppression du menu 'Administration > Compléments d'individu' devenu inutile.
 - Amélioration visuelle des pages de création/modification de structure (Etab/ED/UR).
 - Affichage des co-encadrants sur l'annuraire des thèses (au survol de la souris sur la direction de thèse)
+- Rapport d'activité : le directeur de thèse doit désormais valider même si c'est lui (ou un gestionnaire) qui a fait la saisie.
 - [FIX] Warning PHP sur la page de création/modification d'ED/UR.
 - [FIX] Authentification LDAP/CAS : la recherche de l'utilisateur en bdd à partir du username n'utilisait pas le paramètre de config 'ldap_username'.
 - [FIX] Authentification LDAP/CAS : les données d'identité de type \UnicaenApp\Entity\Ldap\People n'étaient pas bien traitées.

@@ -86,9 +86,7 @@ class ModuleConfig
                     self::VALIDATION_DOCTORANT => true,
                 ],
                 'enabled' => function(RapportActivite $rapportActivite) {
-                    return
-                        !$rapportActivite->getParDirecteurThese() &&
-                        $rapportActivite->getFichier() === null;
+                    return $rapportActivite->getFichier() === null;
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
                     return
