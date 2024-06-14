@@ -10,7 +10,9 @@
 
         <field name="sourceCode" type="string" column="source_code" length="100" nullable="true"/>
         <field name="libelleRoleComplement" type="string" column="lib_role_compl" length="50" nullable="true"/>
-        <field name="qualite" type="string" column="qualite" length="50" nullable="true"/>
+        <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>
+        <field name="principal" type="boolean" column="PRINCIPAL" nullable="false"/>
+        <field name="exterieur" type="boolean" column="EXTERIEUR" nullable="false"/>
 
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
@@ -40,6 +42,11 @@
         <many-to-one field="etablissementForce" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
                 <join-column name="etablissement_force_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
+            <join-columns>
+                <join-column name="ACTEUR_ECOLEDOCT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
         <!-- Pas besoin d'une UR forcée car l'UR n'est pas importée -->

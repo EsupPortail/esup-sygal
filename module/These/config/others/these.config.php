@@ -18,6 +18,8 @@ use These\Controller\Factory\TheseRechercheControllerFactory;
 use These\Controller\Plugin\Url\UrlThesePluginFactory;
 use These\Controller\TheseController;
 use These\Controller\TheseRechercheController;
+use These\Hydrator\ActeurHydrator;
+use These\Hydrator\ActeurHydratorFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporter;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporterFactory;
@@ -365,6 +367,11 @@ return [
             ServiceAwareInitializer::class,
         ]
     ],
+    'hydrators' => array(
+        'factories' => array(
+            ActeurHydrator::class => ActeurHydratorFactory::class,
+        )
+    ),
     'service_manager' => [
         'factories' => [
             UrlTheseService::class => UrlTheseServiceFactory::class,

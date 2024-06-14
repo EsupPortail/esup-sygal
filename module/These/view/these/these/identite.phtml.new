@@ -67,26 +67,26 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 </div>
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2 class="first">
-            <?php echo $this->translate("Structures"); ?>
+            <?php echo $this->translate("Direction"); ?>
         </h2>
     </div>
     <div class="card-body">
-        <?php if ($canEditStructures = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
-            <a href="<?php echo $this->url('these/modifier/structures', ['these' => $these->getId()], [], true) ?>"
-               data-event="<?php echo $modifierStructuresEvent ?>"
+        <?php if ($canEditEncadrement = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+            <a href="<?php echo $this->url('these/modifier/direction', ['these' => $these->getId()], [], true) ?>"
+               data-event="<?php echo $modifierEncadrementEvent ?>"
                class="btn btn-outline-primary float-end xajax-modal">
                 <span class="icon icon-edit"></span>
-                <?php echo $this->translate("Modifier les structures"); ?>
+                <?php echo $this->translate("Modifier la direction"); ?>
             </a>
         <?php endif ?>
-        <?php echo $this->partial('these/these/partial/structures') ?>
+        <?php echo $this->partial('these/these/partial/direction') ?>
     </div>
 </div>
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2 class="first">
             <?php echo $this->translate("Encadrement"); ?>
         </h2>
@@ -104,9 +104,28 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
     </div>
 </div>
 
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2 class="first">
+            <?php echo $this->translate("Structures"); ?>
+        </h2>
+    </div>
+    <div class="card-body">
+        <?php if ($canEditStructures = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+            <a href="<?php echo $this->url('these/modifier/structures', ['these' => $these->getId()], [], true) ?>"
+               data-event="<?php echo $modifierStructuresEvent ?>"
+               class="btn btn-outline-primary float-end xajax-modal">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier les structures"); ?>
+            </a>
+        <?php endif ?>
+        <?php echo $this->partial('these/these/partial/structures') ?>
+    </div>
+</div>
+
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2 class="first">
             <?php echo $this->translate("Vrac..."); ?>
         </h2>

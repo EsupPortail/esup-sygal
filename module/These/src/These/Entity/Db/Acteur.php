@@ -8,6 +8,7 @@ use Individu\Entity\Db\IndividuAwareInterface;
 use Individu\Entity\Db\IndividuRoleAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Soutenance\Entity\Membre;
+use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -70,12 +71,23 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
 
     private ?string $qualite = null;
 
+    private bool $principal = false;
+    private bool $exterieur = false;
+
     /**
      * Etablissement auquel appartient l'individu.
      */
     private ?Etablissement $etablissement = null;
     private ?Etablissement $etablissementForce = null;
 
+    /**
+     * Ecole Doctorale à laquelle appartient l'individu.
+     */
+    private ?EcoleDoctorale $ecoleDoctorale = null;
+
+    /**
+     * Unité de recherche à laquelle appartient l'individu.
+     */
     private ?UniteRecherche $uniteRecherche = null;
 
     /**
@@ -280,6 +292,42 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     }
 
     /**
+     * @return bool
+     */
+    public function isPrincipal(): bool
+    {
+        return $this->principal;
+    }
+
+    /**
+     * @param bool $principal
+     * @return self
+     */
+    public function setPrincipal(bool $principal = true): self
+    {
+        $this->principal = $principal;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExterieur(): bool
+    {
+        return $this->exterieur;
+    }
+
+    /**
+     * @param bool $exterieur
+     * @return self
+     */
+    public function setExterieur(bool $exterieur = true): self
+    {
+        $this->exterieur = $exterieur;
+        return $this;
+    }
+
+    /**
      * @param Etablissement|null $etablissement
      * @return self
      */
@@ -307,6 +355,25 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     public function getEtablissementForce(): ?Etablissement
     {
         return $this->etablissementForce;
+    }
+
+    /**
+     * @param EcoleDoctorale|null $ecoleDoctorale
+     * @return self
+     */
+    public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale = null): self
+    {
+        $this->ecoleDoctorale = $ecoleDoctorale;
+
+        return $this;
+    }
+
+    /**
+     * Retourne l'éventuelle ED liée.
+     */
+    public function getEcoleDoctorale(): ?EcoleDoctorale
+    {
+        return $this->ecoleDoctorale;
     }
 
     /**

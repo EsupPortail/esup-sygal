@@ -4,16 +4,18 @@
  */
 
 use Application\Entity\Db\Role;
+use Individu\View\Helper\IndividuUsurpationHelper;
 use These\Entity\Db\Acteur;
 use These\Filter\ActeursFormatter;
-use These\Provider\Privilege\CoEncadrantPrivileges;
-
-$canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
-$canCoEncadrantGerer = false && $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_GERER));
 
 $acteursFormatter = new ActeursFormatter();
 $acteursFormatter->paramFilter(["role" => [
-    Role::CODE_CO_ENCADRANT,
+    Role::CODE_DIRECTEUR_THESE,
+    Role::CODE_CODIRECTEUR_THESE,
+    Role::CODE_MEMBRE_JURY,
+    Role::CODE_PRESIDENT_JURY,
+    Role::CODE_RAPPORTEUR_JURY,
+    Role::CODE_RAPPORTEUR_ABSENT,
 ]]);
 $acteursFormatter->paramDisplay(["role" => true, "complement" => true, "qualite" => true, "etablissement" => true]);
 $acteursFormatter->asArray();
@@ -50,47 +52,41 @@ $results = $acteursFormatter->doFormat($acteurs->toArray());
             if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
                 $ligne[] = $result["etablissement"];
             }
+            if ($acteur->estDirecteur() && $aucunSupannIdDansIndividu) {
+                if (empty($utilisateurs[$acteur->getId()])) {
+                    $ligne[] = sprintf('<span class="fas fa-exclamation-triangle text-danger" title="%s"></span>',
+                        $result['alerte-supann-id']);
+                } else {
+                    $ligne[] = sprintf('<span class="fas fa-info-circle text-warning" title="Compte local"></span>');
+                }
+//                    if ($canCreate) {
+//                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
+//                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
+//                    }
+            }
 
             $ligne = implode(" &ndash; ", $ligne);
             echo $ligne;
 
-            echo " &nbsp;";
-
-            if ($canCoEncadrantAfficher) {
-                echo " <a href='" . $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) . "'>";
-                echo "<span class='icon icon-voir' title='Voir historique de co-encadrement'></span></a>";
-            }
-            if ($canCoEncadrantGerer) {
-                echo " <a href='" . $this->url('co-encadrant/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) . "'>";
-                echo "<span class='icon icon-delete iconly' title='Retirer le co-encadrant'></span></a>";
+            if (($acteur->estDirecteur() || $acteur->estCodirecteur() || $acteur->estRapporteur() || $acteur->estRapporteurAbsent()) && !isset($result['alerte-supann-id'])) {
+                // bouton d'usurpation d'identité
+                $individuUsurpationHelper = $this->plugin('individuUsurpation');
+                /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+                $individuUsurpationHelper->setIndividu($acteur->getIndividu());
+                echo $individuUsurpationHelper();
             }
 
             echo "<br/>";
         }
         ?>
     <?php else : ?>
-        <dt class="col-md-3">
-            <?php echo $this->translate("Encadrement") ?>
-        </dt>
+        <dt class="col-md-3">Direction</dt>
         <dd class="col-md-9">
         <span class='text-danger'>
             <span class='fas fa-exclamation-triangle'></span>
-            <?php echo $this->translate("Aucun encadrement renseigné") ?>
+            <?php echo $this->translate("Aucune direction renseignée") ?>
         </span>
         </dd>
     <?php endif ?>
-
-    <?php if ($results && $canCoEncadrantGerer) : ?>
-        <dt class="col-md-3"></dt>
-        <dd class="col-md-9">
-            <a <?php /**  @see CoEncadrantController::ajouterCoEncadrantAction() */ ?>
-                    class="btn btn-primary ajax-modal" data-event="modification"
-                    href="<?php echo $this->url('co-encadrant/ajouter-co-encadrant', ['these' => $these->getId()], [], true); ?>"
-            >
-                <span class="icon icon-plus"></span>
-                <?php echo $this->translate("Ajouter un co-encadrant") ?>
-            </a>
-        </dd>
-    <?php endif; ?>
 
 </dl>

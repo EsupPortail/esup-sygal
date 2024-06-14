@@ -160,6 +160,7 @@ class PropositionService extends BaseService
             ->addSelect('membre')->leftJoin('proposition.membres', 'membre')
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ->addSelect('amembre')->leftJoin('acteur.membre', 'amembre')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
             ->andWhere('proposition.histoDestruction is null')

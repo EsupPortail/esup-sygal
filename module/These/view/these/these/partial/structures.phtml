@@ -7,18 +7,18 @@
 
 <dl class="row">
 
-    <dt class="col-md-4">
+    <dt class="col-md-3">
         <?php echo $this->translate("Unité de recherche"); ?>
     </dt>
-    <dd class="col-md-8">
+    <dd class="col-md-9">
         <?php if ($these->getUniteRecherche()): ?>
             <?php echo $these->getUniteRecherche(); ?>
             <?php if ($rattachements): ?>
                 <br>
-                <?php echo $this->translate("Rattachements :"); ?>
+                <?php echo $this->translate("Rattachée à :"); ?>
                 <ul>
                     <?php foreach ($rattachements as $rattachement): ?>
-                        <li><?php echo $rattachement->getEtablissement()->getLibelle() ?></li>
+                        <li><?php echo $rattachement->getEtablissement()->getStructure()->getLibelle() ?></li>
                     <?php endforeach ?>
                 </ul>
             <?php else: ?>
@@ -34,10 +34,10 @@
         <?php endif ?>
     </dd>
 
-    <dt class="col-md-4">
+    <dt class="col-md-3">
         <?php echo $this->translate("École doctorale"); ?>
     </dt>
-    <dd class="col-md-8">
+    <dd class="col-md-9">
         <?php if ($these->getEcoleDoctorale()): ?>
             <?php echo $these->getEcoleDoctorale(); ?>
         <?php else: ?>

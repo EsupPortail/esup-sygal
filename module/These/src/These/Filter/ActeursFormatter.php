@@ -108,6 +108,8 @@ class ActeursFormatter extends AbstractFilter {
      */
     public function doFormat(array $acteurs): array|string
     {
+        $acteurs = $this->filter($acteurs);
+
         if ($this->asUl) {
             $acteurs = $this->doFormatUnorderedList($acteurs);
             $helper = new HtmlList();
@@ -261,7 +263,7 @@ class ActeursFormatter extends AbstractFilter {
         foreach($acteurs as $acteur) {
             $etab = $acteur->getEtablissementForce() ?: $acteur->getEtablissement();
             $keep = true;
-            if ($keep && $this->contrainteRole != null && $acteur->getRole()->getCode() != $this->contrainteRole) $keep = false;
+            if ($keep && $this->contrainteRole != null && !in_array($acteur->getRole()->getCode(), (array)$this->contrainteRole)) $keep = false;
             if ($keep && $this->contrainteRoleLibelle != null && $acteur->getRole()->getLibelle() != $this->contrainteRoleLibelle) $keep = false;
             if ($keep && $this->contrainteRoleComplement != null && $acteur->getLibelleRoleComplement() != $this->contrainteRoleComplement) $keep = false;
             if ($keep && $this->contrainteQualite != null && $acteur->getQualite() != $this->contrainteQualite) $keep = false;

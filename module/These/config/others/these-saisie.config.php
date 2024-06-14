@@ -9,6 +9,8 @@ use These\Controller\TheseRechercheController;
 use These\Controller\TheseSaisieController;
 use These\Fieldset\Confidentialite\ConfidentialiteHydrator;
 use These\Fieldset\Confidentialite\ConfidentialiteHydratorFactory;
+use These\Fieldset\Direction\DirectionHydrator;
+use These\Fieldset\Direction\DirectionHydratorFactory;
 use These\Fieldset\Encadrement\EncadrementHydrator;
 use These\Fieldset\Encadrement\EncadrementHydratorFactory;
 use These\Fieldset\Generalites\GeneralitesHydrator;
@@ -31,6 +33,8 @@ use These\Form\Generalites\GeneralitesForm;
 use These\Form\Generalites\GeneralitesFormFactory;
 use These\Form\Structures\StructuresForm;
 use These\Form\Structures\StructuresFormFactory;
+use These\Form\TheseFormsManager;
+use These\Form\TheseFormsManagerFactory;
 use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormFactory;
 use These\Form\TheseSaisie\TheseSaisieHydrator;
@@ -48,6 +52,7 @@ return [
                         'ajouter',
                         'supprimer',
                         'generalites',
+                        'direction',
                         'structures',
                         'encadrement',
                     ],
@@ -118,6 +123,16 @@ return [
                                     ],
                                 ],
                             ],
+                            'direction' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route' => '/direction',
+                                    'defaults' => [
+                                        /** @see TheseSaisieController::directionAction() */
+                                        'action' => 'direction',
+                                    ],
+                                ],
+                            ],
                             'structures' => [
                                 'type' => Literal::class,
                                 'options' => [
@@ -167,16 +182,6 @@ return [
     'form_elements' => [
         'factories' => [
             TheseSaisieForm::class => TheseSaisieFormFactory::class,
-
-            ConfidentialiteFieldset::class => ConfidentialiteFieldsetFactory::class,
-            EncadrementFieldset::class => EncadrementFieldsetFactory::class,
-            GeneralitesFieldset::class => GeneralitesFieldsetFactory::class,
-            StructuresFieldset::class => StructuresFieldsetFactory::class,
-
-            ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
-            EncadrementForm::class => EncadrementFormFactory::class,
-            GeneralitesForm::class => GeneralitesFormFactory::class,
-            StructuresForm::class => StructuresFormFactory::class,
         ],
     ],
     'hydrators' => [
@@ -186,11 +191,14 @@ return [
             ConfidentialiteHydrator::class => ConfidentialiteHydratorFactory::class,
             EncadrementHydrator::class => EncadrementHydratorFactory::class,
             GeneralitesHydrator::class => GeneralitesHydratorFactory::class,
+            DirectionHydrator::class => DirectionHydratorFactory::class,
             StructuresHydrator::class => StructuresHydratorFactory::class,
         ],
     ],
     'service_manager' => [
-        'factories' => [],
+        'factories' => [
+            TheseFormsManager::class => TheseFormsManagerFactory::class,
+        ],
     ],
     'view_helpers' => [
         'factories' => [],

@@ -133,6 +133,33 @@ class ActeurService extends BaseService
     }
 
     /**
+     * Retourne une nouvelle instance d'{@see \These\Entity\Db\Acteur}.
+     *
+     * @param \These\Entity\Db\These $these
+     * @param \Individu\Entity\Db\Individu $individu
+     * @param \Application\Entity\Db\Role|string $role
+     * @return \These\Entity\Db\Acteur
+     */
+    public function newActeur(These $these, Individu $individu, $role): Acteur
+    {
+        if (is_string($role)) {
+            $role = $this->roleService->getRepository()->findByCode($role);
+        }
+
+        $acteur = new Acteur();
+        $acteur->setThese($these);
+        $acteur->setIndividu($individu);
+        $acteur->setRole($role);
+        $acteur->setSource($source = $this->sourceService->fetchApplicationSource());
+        $acteur->setSourceCode($this->sourceCodeStringHelper->addPrefixTo(
+            sprintf("ACTEUR_%s_%s_%s_%s", $role->getCode(), $these->getId(), $individu->getId(), uniqid()),
+            $source->getCode()
+        ));
+
+        return $acteur;
+    }
+
+    /**
      * @param Acteur $acteur
      * @return Acteur
      */
@@ -171,6 +198,23 @@ class ActeurService extends BaseService
         }
 
         return $acteur;
+    }
+
+    /**
+     * @param Acteur $acteur
+     */
+    public function save(Acteur $acteur)
+    {
+        $date = new DateTime();
+        $user = $this->userContextService->getIdentityDb();
+        $acteur->setHistoModification($date);
+        $acteur->setHistoModificateur($user);
+        try {
+            $this->getEntityManager()->persist($acteur);
+            $this->getEntityManager()->flush($acteur);
+        } catch(ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
+        }
     }
 
     /**
@@ -229,6 +273,42 @@ class ActeurService extends BaseService
         $id = $controller->params()->fromRoute($param);
         /** @var Acteur $acteur */
         $acteur = $this->getRepository()->find($id);
+        return $acteur;
+    }
+
+    /**
+     * Retourne une nouvelle instance d'{@see \These\Entity\Db\Acteur} ou met à jour l'instance existante
+     *
+     * @param These $these
+     * @param Individu $individu
+     * @param string $roleCode
+     * @param \Soutenance\Entity\Qualite|null $qualite
+     * @param \Structure\Entity\Db\Etablissement|null $etablissement
+     * @return Acteur
+     *
+     * @deprecated Fait trop de choses, ne pas utiliser !
+     */
+    public function newOrModifiedActeur(
+        These $these,
+        Individu $individu,
+        string $roleCode,
+        ?Qualite $qualite,
+        ?Etablissement $etablissement) : Acteur
+    {
+        $acteur = $this->getRepository()->findActeurByIndividuAndThese($individu, $these);
+        $role = $this->roleService->getRepository()->findByCode($roleCode);
+
+        if ($acteur === null) {
+            $acteur = $this->newActeur($these, $individu, $role);
+            $this->save($acteur);
+        }
+
+        $acteur->setRole($role);
+        $acteur->setQualite($qualite);
+        $acteur->setEtablissement($etablissement);
+
+        $this->save($acteur);
+
         return $acteur;
     }
 

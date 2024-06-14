@@ -1,0 +1,76 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+
+use These\Fieldset\Direction\DirectionFieldset;
+
+?>
+
+<fieldset>
+    <legend>Direction</legend>
+
+    <?php
+    $fs = $form->get('Direction');
+    echo $this->formHidden($fs->get('id'));
+    ?>
+
+    <h3>Directeur·trice de thèse <span class="icon icon-information"
+                                        title="Un·e seul·e directeur·trice de thèse"></span></h3>
+    <div class="mb-3">
+        <div class="row directeur">
+            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-individu')); ?></div>
+            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?></div>
+            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?></div>
+            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?></div>
+            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-1 pull-right">
+                <span data-target-id="directeur" class="erase-acteur icon icon-historiser" title="Remise à zéro"></span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Codirecteur·trice de thèse</h3>
+    <div class="mb-3">
+        <?php for ($i = 1; $i <= DirectionFieldset::NBCODIR; $i++)  : ?>
+            <div class="row codirecteur<?php echo $i ?>">
+                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?></div>
+                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?></div>
+                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?></div>
+                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?></div>
+                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?></div>
+                <div class="col-md-1">
+                    <?php if ($fs->has($name = 'codirecteur' . $i . '-principal')): ?>
+                        <?php echo $this->formControlGroup($fs->get($name)); ?>
+                    <?php endif ?>
+                    <?php if ($fs->has($name = 'codirecteur' . $i . '-exterieur')): ?>
+                        <?php echo $this->formControlGroup($fs->get($name)); ?>
+                    <?php endif ?>
+                </div>
+                <div class="col-md-1 pull-right">
+                    <span data-target-id="codirecteur<?php echo $i; ?>" class="erase-acteur icon icon-historiser"
+                          title="Remise à zéro"></span>
+                </div>
+            </div>
+        <?php endfor; ?>
+    </div>
+
+</fieldset>
+
+
+<script>
+    $(function() {
+        $('.erase-acteur').click(function() {
+            let container = $("div." + $(this).data('target-id'));
+            container.find("input").val('');
+            container.find("select.selectpicker").selectpicker('val', '');
+        });
+    });
+</script>
+
+<style>
+    span.erase-acteur {
+        cursor: pointer;
+    }
+</style>

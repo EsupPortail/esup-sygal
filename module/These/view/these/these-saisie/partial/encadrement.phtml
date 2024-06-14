@@ -15,34 +15,6 @@ use These\Fieldset\Encadrement\EncadrementFieldset;
     echo $this->formHidden($fs->get('id'));
     ?>
 
-    <h3>Directeur·trice de thèse <span class="icon icon-information"
-                                        title="Un·e seul·e directeur·trice de thèse"></span></h3>
-    <div class="mb-3">
-        <div class="row directeur">
-            <div class="col-md-4"><?php echo $this->formControlGroup($fs->get('directeur-individu')); ?></div>
-            <div class="col-md-4"><?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?></div>
-            <div class="col-md-3"><?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?></div>
-            <div class="col-md-1 pull-right">
-                <span data-target-id="directeur" class="erase-acteur icon icon-historiser" title="Remise à zéro"></span>
-            </div>
-        </div>
-    </div>
-
-    <h3>Codirecteur·trice de thèse</h3>
-    <div class="mb-3">
-        <?php for ($i = 1; $i <= EncadrementFieldset::NBCODIR; $i++)  : ?>
-            <div class="row codirecteur<?php echo $i ?>">
-                <div class="col-md-4"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?></div>
-                <div class="col-md-4"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?></div>
-                <div class="col-md-3"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?></div>
-                <div class="col-md-1 pull-right">
-                    <span data-target-id="codirecteur<?php echo $i; ?>" class="erase-acteur icon icon-historiser"
-                          title="Remise à zéro"></span>
-                </div>
-            </div>
-        <?php endfor; ?>
-    </div>
-
     <h3>Coencadrant·e de thèse</h3>
     <div class="mb-3">
         <?php for ($i = 1; $i <= EncadrementFieldset::NB_COENCADRANTS_MAXI; $i++)  : ?>

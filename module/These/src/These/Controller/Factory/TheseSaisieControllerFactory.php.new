@@ -1,0 +1,36 @@
+<?php
+
+namespace These\Controller\Factory;
+
+use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use These\Controller\TheseSaisieController;
+use These\Form\TheseFormsManager;
+use These\Service\These\TheseService;
+
+class TheseSaisieControllerFactory
+{
+    /**
+     * @param ContainerInterface $container
+     * @return TheseSaisieController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): TheseSaisieController
+    {
+        $controller = new TheseSaisieController();
+
+        /** @var TheseService $theseService */
+        $theseService = $container->get(TheseService::class);
+        $controller->setTheseService($theseService);
+
+        // Injection d'un 'form manager' plutôt que l'injection de tous les formulaires :
+        // cela permet d'obtenir au sein d'une action le formulaire effectivement nécessaire et évite ainsi
+        // des requêtes Doctrine inutiles (pour listes déroulantes).
+        $theseFormsManager = $container->get(TheseFormsManager::class);
+        $controller->setTheseFormsManager($theseFormsManager);
+
+        return $controller;
+    }
+}

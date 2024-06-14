@@ -98,13 +98,15 @@ $persopassModifiedEvent = 'persopass-modified-event';
     </dd>
 
     <dt class="col-md-3">
-        <?php echo $this->translate("Titre"); ?>
+        <?php echo $this->translate("Titre de la thèse"); ?>
     </dt>
     <dd class="col-md-8">
         <?php echo $these->getTitre() ?>
     </dd>
 
-    <dt class="col-md-3">Discipline</dt>
+    <dt class="col-md-3">
+        <?php echo $this->translate("Discipline SISE"); ?>
+    </dt>
     <dd class="col-md-8"><?php echo $these->getLibelleDiscipline() ?></dd>
 
 </dl>
