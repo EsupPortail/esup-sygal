@@ -4,6 +4,7 @@ namespace Individu\Controller;
 
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Application\Entity\Db\Role;
+use Application\Filter\NomCompletFormatter;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
@@ -268,18 +269,17 @@ class IndividuController extends AbstractActionController implements SearchContr
     {
         if (($term = $this->params()->fromQuery('term'))) {
             $individus = $this->getIndividuService()->getRepository()->findByText($term);
-
+            $f = new NomCompletFormatter(true);
             $result = [];
-            foreach ($individus as $xxx =>  $individu) {
-                $result[] = array(
+            foreach ($individus as $individu) {
+                $result[] = [
                     'id' => $individu['id'],
-                    'label' => $individu['prenom1']. " " . $individu['nom_usuel'],
-                    'extra' => $individu['source_code'],
-                );
+                    'label' => $label = $f->filter($individu),
+                    'text' => $label, // pour Select2.js
+                    'extra' => $individu['email'] ?: $individu['source_code'],
+                ];
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
+            usort($result, fn($a, $b) => $a['label'] <=> $b['label']);
 
             return new JsonModel($result);
         }

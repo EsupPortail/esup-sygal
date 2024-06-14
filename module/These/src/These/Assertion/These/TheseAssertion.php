@@ -73,13 +73,13 @@ class TheseAssertion extends AbstractAssertion
                 if ($role->getCode() === Role::CODE_DOCTORANT) return $these->getDoctorant()->getIndividu() === $individu;
                 // directeur
                 if ($role->getCode() === Role::CODE_DIRECTEUR_THESE) {
-                    $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+                    $directeurs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_DIRECTEUR_THESE);
                     $individus = [];
                     foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
                     return (array_search($individu, $individus) !== false);
                 }
                 if ($role->getCode() === Role::CODE_CODIRECTEUR_THESE) {
-                    $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+                    $directeurs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_CODIRECTEUR_THESE);
                     $individus = [];
                     foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
                     return (array_search($individu, $individus) !== false);

@@ -19,27 +19,59 @@ use These\Fieldset\Direction\DirectionFieldset;
                                         title="Un·e seul·e directeur·trice de thèse"></span></h3>
     <div class="mb-3">
         <div class="row directeur">
-            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-individu')); ?></div>
-            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?></div>
-            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?></div>
-            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?></div>
-            <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?></div>
-            <div class="col-md-1"></div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php echo $this->formControlGroup($fs->get('directeur-individu')); ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?>
+                <?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?>
+                <?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?>
+            </div>
+            <div class="col-md-1">
+
+            </div>
             <div class="col-md-1 pull-right">
-                <span data-target-id="directeur" class="erase-acteur icon icon-historiser" title="Remise à zéro"></span>
+                <span data-target-id="directeur" class="erase-acteur icon icon-historiser"
+                      title="Vider les champs concernant le directeur"></span>
             </div>
         </div>
     </div>
 
-    <h3>Codirecteur·trice de thèse</h3>
     <div class="mb-3">
         <?php for ($i = 1; $i <= DirectionFieldset::NBCODIR; $i++)  : ?>
-            <div class="row codirecteur<?php echo $i ?>">
-                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?></div>
-                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?></div>
-                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?></div>
-                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?></div>
-                <div class="col-md-2"><?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?></div>
+            <hr>
+            <h3>
+                <?php echo $this->formElement($fs->get('codirecteur' . $i . '-enabled')); ?>
+                Codirecteur·trice de thèse n°<?php echo $i ?>
+            </h3>
+
+            <div class="row codirecteur codirecteur<?php echo $i ?>">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?>
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?>
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?>
+                </div>
                 <div class="col-md-1">
                     <?php if ($fs->has($name = 'codirecteur' . $i . '-principal')): ?>
                         <?php echo $this->formControlGroup($fs->get($name)); ?>
@@ -50,7 +82,7 @@ use These\Fieldset\Direction\DirectionFieldset;
                 </div>
                 <div class="col-md-1 pull-right">
                     <span data-target-id="codirecteur<?php echo $i; ?>" class="erase-acteur icon icon-historiser"
-                          title="Remise à zéro"></span>
+                          title="Vider les champs concernant ce codirecteur"></span>
                 </div>
             </div>
         <?php endfor; ?>
@@ -61,10 +93,38 @@ use These\Fieldset\Direction\DirectionFieldset;
 
 <script>
     $(function() {
+        $("select.select2").select2();
+
+        const updateCodirecteurDiv = function($enabler) {
+            const codirId = $enabler.data('codirecteur-id');
+            if ($enabler.is(':checked')) {
+                $("div.codirecteur" + codirId).show();
+                if (codirId === 1) {
+                    // activer le 1er codir redonne la possibilité d'activer le 2nd
+                    $(".codirecteur-enabler").not($enabler).prop('disabled', false);
+                }
+            } else {
+                if (codirId === 1) {
+                    // désactiver le 1er codir désactive et interdit d'activer le 2nd
+                    $("div.codirecteur").hide();
+                    $(".codirecteur-enabler").prop('checked', false);
+                    $(".codirecteur-enabler").not($enabler).prop('disabled', true);
+                } else {
+                    $("div.codirecteur" + codirId).hide();
+                }
+            }
+        };
+        $(".codirecteur-enabler").on('change', function() {
+            updateCodirecteurDiv($(this));
+        });
+        $(".codirecteur-enabler").each(function() {
+            updateCodirecteurDiv($(this));
+        });
+
         $('.erase-acteur').click(function() {
             let container = $("div." + $(this).data('target-id'));
             container.find("input").val('');
-            container.find("select.selectpicker").selectpicker('val', '');
+            container.find("select").val(null).trigger('change');
         });
     });
 </script>

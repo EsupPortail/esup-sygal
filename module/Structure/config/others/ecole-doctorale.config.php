@@ -1,16 +1,18 @@
 <?php
 
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Structure\Controller\EcoleDoctoraleController;
 use Structure\Controller\Factory\EcoleDoctoraleControllerFactory;
 use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use Structure\Form\Factory\EcoleDoctoraleHydratorFactory;
+use Structure\Hydrator\Strategy\EcoleDoctoraleStrategy;
+use Structure\Hydrator\Strategy\EcoleDoctoraleStrategyFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceFactory;
 use Structure\View\Helper\EcoleDoctoraleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -199,6 +201,7 @@ return [
         ],
         'factories' => [
             'EcoleDoctoraleService' => EcoleDoctoraleServiceFactory::class,
+            EcoleDoctoraleStrategy::class => EcoleDoctoraleStrategyFactory::class,
         ],
         'aliases' => [
             EcoleDoctoraleService::class => 'EcoleDoctoraleService',

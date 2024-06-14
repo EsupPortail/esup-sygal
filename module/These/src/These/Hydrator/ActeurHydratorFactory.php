@@ -2,12 +2,12 @@
 
 namespace These\Hydrator;
 
-use Individu\Service\IndividuService;
+use Individu\Hydrator\Strategy\IndividuStrategy;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
+use Structure\Hydrator\Strategy\EcoleDoctoraleStrategy;
+use Structure\Hydrator\Strategy\EtablissementStrategy;
+use Structure\Hydrator\Strategy\UniteRechercheStrategy;
 
 class ActeurHydratorFactory
 {
@@ -19,21 +19,10 @@ class ActeurHydratorFactory
     {
         $hydrator = new ActeurHydrator();
 
-        /** @var \Individu\Service\IndividuService $individuService */
-        $individuService = $container->get(IndividuService::class);
-        $hydrator->setIndividuService($individuService);
-
-        /** @var EtablissementService $etablissementService */
-        $etablissementService = $container->get(EtablissementService::class);
-        $hydrator->setEtablissementService($etablissementService);
-
-        /** @var EcoleDoctoraleService $ecoleDoctoraleService */
-        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
-        $hydrator->setEcoleDoctoraleService($ecoleDoctoraleService);
-
-        /** @var UniteRechercheService $uniteRechercheService */
-        $uniteRechercheService = $container->get(UniteRechercheService::class);
-        $hydrator->setUniteRechercheService($uniteRechercheService);
+        $hydrator->addStrategy('individu', $container->get(IndividuStrategy::class));
+        $hydrator->addStrategy('etablissement', $container->get(EtablissementStrategy::class));
+        $hydrator->addStrategy('ecoleDoctorale', $container->get(EcoleDoctoraleStrategy::class));
+        $hydrator->addStrategy('uniteRecherche', $container->get(UniteRechercheStrategy::class));
 
         /** @var QualiteService $qualiteService */
         $qualiteService = $container->get(QualiteService::class);

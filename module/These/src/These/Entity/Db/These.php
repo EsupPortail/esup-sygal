@@ -44,7 +44,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     use SourceAwareTrait;
 
     use TheseCorrectionAwareTrait;
-    
+
     const RESOURCE_ID = 'These';
 
     const ETAT_EN_COURS   = 'E';
@@ -899,7 +899,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * Retourne les acteurs de cette thèse dont le rôle est parmi ceux spécifiés.
+     * Retourne les acteurs de cette thèse dont le rôle est parmi ceux spécifiés, *y compris les acteurs historisés*.
      *
      * @param string|string[] $code
      * @return Collection
@@ -1335,7 +1335,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$individusSansMail = []): array
     {
         $emails = [];
-        $encadrements = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
+        /** @var Acteur[] $directeurs */
+        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
+        /** @var Acteur[] $codirecteurs */
+        $codirecteurs = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
+        $encadrements = array_merge($directeurs, $codirecteurs);
         $emailExtractor = fn(Individu $i) => $i->getEmailPro() ?: $i->getEmailUtilisateur();
 
         /** @var Acteur $acteur */

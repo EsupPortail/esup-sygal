@@ -453,8 +453,8 @@ class PropositionController extends AbstractController
         $doctorant = $these->getDoctorant();
 
         /** @var Acteur[] $acteurs */
-        $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-        $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        $dirs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $codirs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_CODIRECTEUR_THESE);
         $acteurs = array_merge($dirs->toArray(), $codirs->toArray(), [$doctorant]);
 
         $allValidated = true;

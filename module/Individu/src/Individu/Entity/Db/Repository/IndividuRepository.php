@@ -89,7 +89,6 @@ class IndividuRepository extends DefaultEntityRepository
         $sqlCri = implode(' AND ', $sqlCri);
 
         $sql .= ' AND (' . $sqlCri . ') ';
-
         if ($limit > 0) {
             $sql .= " LIMIT " . $limit;
         }

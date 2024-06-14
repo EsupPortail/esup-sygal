@@ -51,7 +51,7 @@ class TheseController extends AbstractController
         }
 
         $utilisateurs = [];
-        foreach ($these->getActeurs() as $acteur) {
+        foreach ($these->getActeursNonHistorises() as $acteur) {
             $utilisateursTrouves = $this->utilisateurService->getRepository()->findByIndividu($acteur->getIndividu()); // ok
             $utilisateurs[$acteur->getId()] = $utilisateursTrouves;
         }

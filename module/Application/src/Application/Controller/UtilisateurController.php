@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Utilisateur;
+use Application\Filter\NomCompletFormatter;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
@@ -187,21 +188,21 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $rows = $this->individuService->getRepository()->findByText($term, $type);
+            $f = new NomCompletFormatter(true);
             $result = [];
             foreach ($rows as $row) {
-                $prenoms = implode(' ', array_filter([$row['prenom1'], $row['prenom2'], $row['prenom3']]));
+                $prenoms23 = implode(' ', array_filter([$row['prenom2'], $row['prenom3']]));
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = $row['nom_usuel'] . ' ' . $prenoms;
+                $label = trim($f->filter($row) . ' ' . $prenoms23);
                 $extra = $row['email'] ?: $row['source_code'];
                 $result[] = array(
                     'id' => $row['id'], // identifiant unique de l'item
-                    'label' => $label,     // libellé de l'item
-                    'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
+                    'label' => $label, // libellé de l'item
+                    'text' => $label, // pour Select2.js
+                    'extra' => $extra, // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
+            usort($result, fn($a, $b) => $a['label'] <=> $b['label']);
 
             return new JsonModel($result);
         }

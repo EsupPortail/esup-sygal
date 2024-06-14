@@ -3,6 +3,7 @@
 namespace Individu;
 
 use BjyAuthorize\Provider\Resource\Config;
+use Individu\Controller\IndividuComplController;
 use Individu\Assertion\IndividuAssertion;
 use Individu\Assertion\IndividuAssertionFactory;
 use Individu\Controller\IndividuController;
@@ -11,6 +12,8 @@ use Individu\Form\IndividuForm;
 use Individu\Form\IndividuFormFactory;
 use Individu\Hydrator\IndividuHydrator;
 use Individu\Hydrator\IndividuHydratorFactory;
+use Individu\Hydrator\Strategy\IndividuStrategy;
+use Individu\Hydrator\Strategy\IndividuStrategyFactory;
 use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\Service\IndividuService;
 use Individu\Service\IndividuServiceFactory;
@@ -176,6 +179,7 @@ return [
             IndividuService::class => IndividuServiceFactory::class,
             IndividuSearchService::class => IndividuSearchServiceFactory::class,
             IndividuAssertion::class => IndividuAssertionFactory::class,
+            IndividuStrategy::class => IndividuStrategyFactory::class,
         ],
         'aliases' => [
             'IndividuService' => IndividuService::class,

@@ -6,10 +6,11 @@ use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Fieldset;
+use Laminas\InputFilter\Factory;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use UnicaenApp\Form\Element\SearchAndSelect;
+use UnicaenApp\Form\Element\SearchAndSelect2;
 
 class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -49,12 +50,26 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 
         /**  DIRECTION  ***********************************************************************************************/
 
-        $this->_addCommuns('directeur', "Directeur·trice de thèse :");
+        $this->_addCommuns('directeur');
 
         /** CODIRECTION **********************************************************************************************/
 
         for ($i = 1; $i <= self::NBCODIR; $i++) {
-            $this->_addCommuns('codirecteur' . $i, "Co-directeur·trice de thèse :");
+            $this->_addCommuns('codirecteur' . $i);
+
+            $this->add([
+                'type' => Checkbox::class,
+                'name' => $name = 'codirecteur' . $i . '-enabled',
+                'options' => [
+                    'label' => "Inclure ce·tte codirecteur·trice",
+                ],
+                'attributes' => [
+                    'id' => $name,
+                    'class' => 'codirecteur-enabler',
+                    'data-codirecteur-id' => $i,
+                    'title' => "Cochez cette case pour déclarer le·la codirecteur·trice n°$i"
+                ]
+            ]);
 
             $this->add([
                 'type' => Checkbox::class,
@@ -84,9 +99,9 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
         }
     }
 
-    private function _addCommuns(string $prefixe, string $labelDirection)
+    private function _addCommuns(string $prefixe)
     {
-        $individu = new SearchAndSelect($prefixe . '-individu', ['label' => $labelDirection]);
+        $individu = new SearchAndSelect2($prefixe . '-individu', ['label' => "Individu :"]);
         $individu
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
             ->setAttributes([
@@ -95,30 +110,27 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             ]);
         $this->add($individu);
 
-        $etab = new SearchAndSelect($prefixe . '-etablissement', ['label' => "Établissement :"]);
+        $etab = new SearchAndSelect2($prefixe . '-etablissement', ['label' => "Établissement :"]);
         $etab
             ->setAutocompleteSource($this->urlAutocompleteEtablissement)
-            ->setSelectionRequired(true)
             ->setAttributes([
                 'id' => $prefixe . '-etablissement',
                 'placeholder' => "Recherchez l'établissement...",
             ]);
         $this->add($etab);
 
-        $ed = new SearchAndSelect($prefixe . '-ecoleDoctorale', ['label' => "École doctorale :"]);
+        $ed = new SearchAndSelect2($prefixe . '-ecoleDoctorale', ['label' => "École doctorale :"]);
         $ed
             ->setAutocompleteSource($this->urlAutocompleteEcoleDoctorale)
-            ->setSelectionRequired(true)
             ->setAttributes([
                 'id' => $prefixe . '-ecoleDoctorale',
                 'placeholder' => "Recherchez l'école doctorale...",
             ]);
         $this->add($ed);
 
-        $ur = new SearchAndSelect($prefixe . '-uniteRecherche', ['label' => "Unité de recherche :"]);
+        $ur = new SearchAndSelect2($prefixe . '-uniteRecherche', ['label' => "Unité de recherche :"]);
         $ur
             ->setAutocompleteSource($this->urlAutocompleteUniteRecherche)
-            ->setSelectionRequired(true)
             ->setAttributes([
                 'id' => $prefixe . '-uniteRecherche',
                 'placeholder' => "Recherchez l'unité de recherche...",
@@ -130,14 +142,12 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => $prefixe . '-qualite',
             'options' => [
                 'label' => "Qualité :",
-                'value_options' => $this->getQualiteService()->getQualitesAsGroupOptions(),
+                'value_options' => $this->qualiteService->getQualitesAsGroupOptions(),
                 'empty_option' => "Sélectionner une qualité...",
             ],
             'attributes' => [
                 'id' => $prefixe . '-qualite',
-                'class' => 'selectpicker show-menu-arrow',
-                'data-live-search' => 'true',
-                'data-bs-html' => 'true',
+                'class' => 'select2',
             ]
         ]);
     }
@@ -150,44 +160,58 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
         $spec = [
             $name = 'directeur-individu' => [
                 'name' => $name,
-                'required' => false,
+                'required' => true,
             ],
             $name = 'directeur-etablissement' => [
                 'name' => $name,
-                'required' => false,
+                'required' => true,
             ],
             $name = 'directeur-ecoleDoctorale' => [
                 'name' => $name,
-                'required' => false,
+                'required' => true,
             ],
             $name = 'directeur-uniteRecherche' => [
                 'name' => $name,
-                'required' => false,
+                'required' => true,
             ],
             $name = 'directeur-qualite' => [
                 'name' => $name,
-                'required' => false,
+                'required' => true,
             ],
         ];
 
         for ($i = 1; $i <= self::NBCODIR; $i++) {
-            $spec[$name = 'codirecteur' . $i . '-individu'] = [
+            $codirEnabled = (bool) $this->get('codirecteur' . $i . '-enabled')->getValue();
+
+            $spec[$name = 'codirecteur' . $i . '-enable'] = [
                 'name' => $name,
                 'required' => false,
+            ];
+            $spec[$name = 'codirecteur' . $i . '-individu'] = [
+                'name' => $name,
+                'required' => $codirEnabled,
             ];
             $spec[$name = 'codirecteur' . $i . '-etablissement'] = [
                 'name' => $name,
-                'required' => false,
+                'required' => $codirEnabled,
             ];
             $spec[$name = 'codirecteur' . $i . '-ecoleDoctorale'] = [
                 'name' => $name,
-                'required' => false,
+                'required' => $codirEnabled,
             ];
             $spec[$name = 'codirecteur' . $i . '-uniteRecherche'] = [
                 'name' => $name,
-                'required' => false,
+                'required' => $codirEnabled,
             ];
             $spec[$name = 'codirecteur' . $i . '-qualite'] = [
+                'name' => $name,
+                'required' => $codirEnabled,
+            ];
+            $spec[$name = 'codirecteur' . $i . '-principal'] = [
+                'name' => $name,
+                'required' => false,
+            ];
+            $spec[$name = 'codirecteur' . $i . '-exterieur'] = [
                 'name' => $name,
                 'required' => false,
             ];

@@ -27,7 +27,7 @@ class EncadrementHydrator implements HydratorInterface
 
         $coencadrants = $object->getId() !== null ?
             $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) :
-            $object->getActeursByRoleCode(Role::CODE_CO_ENCADRANT);
+            $object->getActeursNonHistorisesByRoleCode(Role::CODE_CO_ENCADRANT);
 
         usort($coencadrants, fn(Acteur $a, Acteur $b) => $a->getIndividu()->getNomComplet() <=> $b->getIndividu()->getNomComplet());
         $i = 1;

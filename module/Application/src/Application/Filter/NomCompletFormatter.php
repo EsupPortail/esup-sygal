@@ -98,15 +98,9 @@ class NomCompletFormatter extends AbstractFilter
             $civilite = $value->civilite;
         }
         elseif (is_array($value)) {
-            /* @var $value array */
-            foreach (['nom_usuel', 'nom_patronymique', 'prenom', 'civilite'] as $prop) {
-                if (!array_key_exists($prop, $value)) {
-                    throw new \LogicException("Le tableau à formatter doit posséder la clé '$prop'.");
-                }
-            }
-            $nomUsuel = $value['nom_usuel'];
-            $nomPatro = $value['nom_patronymique'];
-            $prenom   = $value['prenom'];
+            $nomUsuel = $value['nom_usuel'] ?? $value['nomUsuel'] ?? '?';
+            $nomPatro = $value['nom_patronymique'] ?? $value['nomPatronymique'] ?? '?';
+            $prenom   = $value['prenom1'];
             $civilite = $value['civilite'];
         }
         else {

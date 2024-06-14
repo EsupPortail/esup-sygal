@@ -1,17 +1,19 @@
 <?php
 
+use Application\Service\DomaineScientifiqueService;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Structure\Controller\Factory\UniteRechercheControllerFactory;
 use Structure\Controller\UniteRechercheController;
 use Structure\Form\Factory\UniteRechercheFormFactory;
 use Structure\Form\Factory\UniteRechercheHydratorFactory;
+use Structure\Hydrator\Strategy\UniteRechercheStrategy;
+use Structure\Hydrator\Strategy\UniteRechercheStrategyFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
-use Application\Service\DomaineScientifiqueService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Structure\Service\UniteRecherche\UniteRechercheServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
 use Structure\View\Helper\UniteRechercheHelper;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
+use UnicaenAuth\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [
@@ -259,6 +261,7 @@ return [
         ],
         'factories' => [
             'UniteRechercheService' => UniteRechercheServiceFactory::class,
+            UniteRechercheStrategy::class => UniteRechercheStrategyFactory::class,
         ],
         'aliases' => [
             UniteRechercheService::class => 'UniteRechercheService',

@@ -3,6 +3,7 @@
 namespace These\Entity\Db;
 
 use Application\Entity\Db\Role;
+use Closure;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuAwareInterface;
 use Individu\Entity\Db\IndividuRoleAwareInterface;
@@ -73,6 +74,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
 
     private bool $principal = false;
     private bool $exterieur = false;
+    private int $ordre = 1;
 
     /**
      * Etablissement auquel appartient l'individu.
@@ -96,13 +98,37 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      *
      * @return callable
      */
-    static public function getComparisonFunction()
+    static public function getRoleComparisonFunction()
     {
         return function(Acteur $a1, Acteur $a2) {
             return strcmp(
                 $a1->getRole()->getOrdreAffichage() . $a1->getIndividu()->getNomUsuel() . $a1->getIndividu()->getPrenom(),
                 $a2->getRole()->getOrdreAffichage() . $a2->getIndividu()->getNomUsuel() . $a2->getIndividu()->getPrenom()
             );
+        };
+    }
+
+    /**
+     * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur ordre.
+     * @see usort()
+     *
+     * @return callable
+     */
+    static public function getOrdreComparisonFunction()
+    {
+        return fn(Acteur $a1, Acteur $a2) => $a1->getOrdre() <=> $a2->getOrdre();
+    }
+
+    /**
+     * Retourne la fonction permettent de filtrer une collection d'acteurs selon qu'ils correspondent
+     * au(x) rôle(s) spécifié(s).
+     *
+     * @param string|string[] $code
+     */
+    static public function getRoleFilterFunction($code): Closure
+    {
+        return function(Acteur $a) use ($code) {
+            return in_array($a->getRole()->getCode(), (array) $code);
         };
     }
 
@@ -324,6 +350,24 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     public function setExterieur(bool $exterieur = true): self
     {
         $this->exterieur = $exterieur;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrdre(): int
+    {
+        return $this->ordre;
+    }
+
+    /**
+     * @param int $ordre
+     * @return self
+     */
+    public function setOrdre(int $ordre): self
+    {
+        $this->ordre = $ordre;
         return $this;
     }
 

@@ -13,6 +13,7 @@
         <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>
         <field name="principal" type="boolean" column="PRINCIPAL" nullable="false"/>
         <field name="exterieur" type="boolean" column="EXTERIEUR" nullable="false"/>
+        <field name="ordre" type="integer" column="ORDRE" nullable="false"/>
 
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>

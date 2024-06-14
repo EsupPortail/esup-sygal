@@ -231,6 +231,7 @@ class UniteRechercheController extends StructureConcreteController
                 $result[] = array(
                     'id' => $unite['id'], // identifiant unique de l'item
                     'label' => $label, // libellé de l'item
+                    'text' => $label, // pour Select2.js
                     'extra' => null, // infos complémentaires (facultatives) sur l'item
                 );
             }

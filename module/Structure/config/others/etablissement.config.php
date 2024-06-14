@@ -1,16 +1,18 @@
 <?php
 
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Structure\Controller\EtablissementController;
 use Structure\Controller\Factory\EtablissementControllerFactory;
 use Structure\Form\Factory\EtablissementFormFactory;
 use Structure\Form\Factory\EtablissementHydratorFactory;
+use Structure\Hydrator\Strategy\EtablissementStrategy;
+use Structure\Hydrator\Strategy\EtablissementStrategyFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceFactory;
 use Structure\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -222,6 +224,7 @@ return [
         ],
         'factories' => [
             'EtablissementService' => EtablissementServiceFactory::class,
+            EtablissementStrategy::class => EtablissementStrategyFactory::class,
         ],
         'aliases' => [
             EtablissementService::class => 'EtablissementService',

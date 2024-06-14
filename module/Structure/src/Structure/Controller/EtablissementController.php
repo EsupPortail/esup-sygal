@@ -174,6 +174,7 @@ class EtablissementController extends StructureConcreteController
                     /** Attention à être cohérent avec {@see Etablissement::createSearchFilterValueOption() } */
                     'id' => $etab['id'], // identifiant unique de l'item
                     'label' => $label, // libellé de l'item
+                    'text' => $label, // pour Select2.js
                     'extra' => $etab['structure']['estFermee'] ? 'Fermé' : null, // infos complémentaires (facultatives) sur l'item
                 ];
             }

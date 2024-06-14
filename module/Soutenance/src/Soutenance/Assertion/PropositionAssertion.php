@@ -84,15 +84,15 @@ class PropositionAssertion implements  AssertionInterface {
 
         $doctorant = $these->getDoctorant()->getIndividu();
 
-        $dirs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-        $codirs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        $dirs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $codirs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_CODIRECTEUR_THESE);
         /** @var Acteur[] $acteurs */
         $acteurs = array_merge($dirs->toArray(), $codirs->toArray());
         $directeurs = [];
         foreach ($acteurs as $acteur) $directeurs[] = $acteur->getIndividu();
 
-        $rapporteursJ = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
-        $rapporteursA = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_ABSENT);
+        $rapporteursJ = $these->getActeursNonHistorisesByRoleCode(Role::CODE_RAPPORTEUR_JURY);
+        $rapporteursA = $these->getActeursNonHistorisesByRoleCode(Role::CODE_RAPPORTEUR_ABSENT);
         $acteurs = array_merge($rapporteursJ->toArray(), $rapporteursA->toArray());
         $rapporteurs = [];
         foreach ($acteurs as $acteur) $rapporteurs[] = $acteur->getIndividu();
@@ -173,8 +173,8 @@ class PropositionAssertion implements  AssertionInterface {
                         $validationsArray = [];
                         $validationsArray[$these->getDoctorant()->getIndividu()->getId()] = [];
                         /** @var Acteur $directeur */
-                        foreach ($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE) as $directeur) $validationsArray[$directeur->getIndividu()->getId()] = [];
-                        foreach ($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE) as $directeur) $validationsArray[$directeur->getIndividu()->getId()] = [];
+                        foreach ($these->getActeursNonHistorisesByRoleCode(Role::CODE_DIRECTEUR_THESE) as $directeur) $validationsArray[$directeur->getIndividu()->getId()] = [];
+                        foreach ($these->getActeursNonHistorisesByRoleCode(Role::CODE_CODIRECTEUR_THESE) as $directeur) $validationsArray[$directeur->getIndividu()->getId()] = [];
                         $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
                         foreach ($validations_ACTEUR as $validation) {
                             $validationsArray[$validation->getIndividu()->getId()][] = $validation;

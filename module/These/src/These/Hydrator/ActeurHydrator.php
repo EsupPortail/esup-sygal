@@ -3,31 +3,14 @@
 namespace These\Hydrator;
 
 use Individu\Entity\Db\Individu;
-use Individu\Service\IndividuServiceAwareTrait;
-use Laminas\Hydrator\HydratorInterface;
+use Laminas\Hydrator\AbstractHydrator;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\Acteur;
 
-class ActeurHydrator implements HydratorInterface
+class ActeurHydrator extends AbstractHydrator
 {
-    use IndividuServiceAwareTrait;
-    use EtablissementServiceAwareTrait;
     use QualiteServiceAwareTrait;
-    use EcoleDoctoraleServiceAwareTrait;
-    use UniteRechercheServiceAwareTrait;
-
-    private string $keyPrefix = '';
-
-    public function setKeyPrefix(string $keyPrefix): self
-    {
-        $this->keyPrefix = $keyPrefix;
-
-        return $this;
-    }
 
     /**
      * @param \These\Entity\Db\Acteur|object $object
@@ -35,32 +18,16 @@ class ActeurHydrator implements HydratorInterface
      */
     public function extract(object $object): array
     {
-        $these = $object->getThese();
-        $individu = $object->getIndividu();
-        $etab = $object->getEtablissement() ? $object->getEtablissement() : $these->getEtablissement();
-        $ed = $object->getEcoleDoctorale() ? $object->getEcoleDoctorale() : $these->getEcoleDoctorale();
-        $ur = $object->getUniteRecherche() ? $object->getUniteRecherche() : $these->getUniteRecherche();
-        $qualite = $this->qualiteService->findQualiteByLibelle($object->getQualite());
+        $qualite = $object->getQualite() ? $this->qualiteService->findQualiteByLibelle($object->getQualite()) : null;
 
         $data = [];
-
-        $data[$this->keyPrefix . 'individu'] = [
-            'id' => $individu->getId(),
-            'label' => $individu->getNomComplet()
-        ];
-        $data[$this->keyPrefix . 'etablissement'] = [
-            'id' => $etab->getId(),
-            'label' => (string) $etab->getStructure()
-        ];
-        $data[$this->keyPrefix . 'ecoleDoctorale'] = [
-            'id' => $ed->getId(),
-            'label' => (string) $ed->getStructure()
-        ];
-        $data[$this->keyPrefix . 'uniteRecherche'] = [
-            'id' => $ur->getId(),
-            'label' => (string) $ur->getStructure()
-        ];
-        $data[$this->keyPrefix . 'qualite'] = $qualite ? $qualite->getId() : null;
+        $data['individu'] = $this->extractValue('individu', $object->getIndividu());
+        $data['etablissement'] = $this->extractValue('etablissement', $object->getEtablissement());
+        $data['ecoleDoctorale'] = $this->extractValue('ecoleDoctorale', $object->getEcoleDoctorale());
+        $data['uniteRecherche'] = $this->extractValue('uniteRecherche', $object->getUniteRecherche());
+        $data['qualite'] = $qualite->getId();
+        $data['principal'] = $object->isPrincipal();
+        $data['exterieur'] = $object->isExterieur();
 
         return $data;
     }
@@ -72,22 +39,28 @@ class ActeurHydrator implements HydratorInterface
      */
     public function hydrate(array $data, object $object): Acteur
     {
-        /** @var Individu $individu */
-        $individu = $this->individuService->getRepository()->find($data[$this->keyPrefix . 'individu']['id']);
-        /** @var Etablissement $etablissement */
-        $etablissement = $this->etablissementService->getRepository()->find($data[$this->keyPrefix . 'etablissement']);
-        /** @var \Structure\Entity\Db\EcoleDoctorale $ed */
-        $ed = $this->ecoleDoctoraleService->getRepository()->find($data[$this->keyPrefix . 'ecoleDoctorale']);
-        /** @var \Structure\Entity\Db\UniteRecherche $ur */
-        $ur = $this->uniteRechercheService->getRepository()->find($data[$this->keyPrefix . 'uniteRecherche']);
+        $qualiteLib = $data['qualite'];
+        $principal = $data['principal'] ?? false;
+        $exterieur = $data['exterieur'] ?? false;
 
-        $qualite = $this->qualiteService->getQualite($data[$this->keyPrefix . 'qualite']);
+        /** @var Individu $individu */
+        $individu = $this->hydrateValue('individu', $data['individu']);
+        /** @var Etablissement $etablissement */
+        $etablissement = $this->hydrateValue('etablissement', $data['etablissement']);
+        /** @var \Structure\Entity\Db\EcoleDoctorale $ecoleDoctorale */
+        $ecoleDoctorale = $this->hydrateValue('ecoleDoctorale', $data['ecoleDoctorale']);
+        /** @var \Structure\Entity\Db\UniteRecherche $uniteRecherche */
+        $uniteRecherche = $this->hydrateValue('uniteRecherche', $data['uniteRecherche']);
+
+        $qualite = $this->qualiteService->getQualite($qualiteLib);
 
         $object->setIndividu($individu);
-        $object->setQualite($qualite);
         $object->setEtablissement($etablissement);
-        $object->setEcoleDoctorale($ed);
-        $object->setUniteRecherche($ur);
+        $object->setEcoleDoctorale($ecoleDoctorale);
+        $object->setUniteRecherche($uniteRecherche);
+        $object->setQualite($qualite);
+        $object->setPrincipal($principal);
+        $object->setExterieur($exterieur);
 
         return $object;
     }
