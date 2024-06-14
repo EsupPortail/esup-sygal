@@ -432,11 +432,11 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return "<span style='color:darkorange;'>Aucun lieu de précisé</span>";
     }
 
-    /** @noinspection  PhpUnused */
+    /** @noinspection  PhpUnused Utilisé par la macro Soutenance#Adresse  */
     #[Pure] public function toStringAdresse() : string
     {
-        $lieu = $this->getAdresse();
-        if ($lieu) return $lieu;
+        $lieu = $this->getAdresseActive();
+        if ($lieu) return $lieu->format();
         return "<span style='color:darkorange;'>Aucune adresse de précisée</span>";
     }
 

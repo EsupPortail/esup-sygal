@@ -32,6 +32,7 @@ Journal des modifications
 - [FIX] Utilisation du bon code structure pour les établissements (source_code).
 - [FIX] : Ajout de conditions pour éviter que InscriptionAssertion retourne une erreur lors de l'accès à un écran présentant des formations (ayant des sessions sans séances) ou d'une désinscription
 - [FIX] : Initialisation de compte : ajout du filtre 'StringTrim' sur les champs du formulaire.
+- [FIX] Templates du mail de convocation à la soutenance pour les membres: correction de la méthode associée à la variable Soutenance#Adresse.
 
 8.3.0
 -----
