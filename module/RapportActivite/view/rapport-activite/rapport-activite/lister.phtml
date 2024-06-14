@@ -20,7 +20,7 @@ use These\Entity\Db\These;
  * @var string $returnUrl
  * @var \DateTime[] $campagneDepotDates
  *
- * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
+ * @see \RapportActivite\Controller\RapportActiviteController::listerAction()
  */
 
 $rapportProto = (new RapportActivite())->setThese($these);
@@ -49,7 +49,7 @@ $campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_
 </p>
 <ul class="lead">
     <li>
-        Vous devez rédiger un rapport d'activité annuel qui doit être complété avant le <?php echo $campagneDepotDateFin ?>. Sa complétude conditionne le cas échéant l'autorisation de réinscription en thèse.
+        Vous devez rédiger un rapport d'activité annuel qui doit être validé par votre Ecole Doctorale au plus tard le <?php echo $campagneDepotDateFin ?>. Sa validation conditionne le cas échéant l'autorisation de réinscription en thèse.
     </li>
     <li>
         En fonction de l’état d’avancement de votre thèse, vous devez rédiger un rapport d'activité de fin de contrat 1 mois avant la fin de ce dernier ou au moment de votre soutenance si votre contrat doctoral est toujours en cours. Dans ce cas, les données indiquées doivent couvrir l’ensemble de la thèse.
