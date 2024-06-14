@@ -25,6 +25,7 @@ Journal des modifications
 - Affichage des co-encadrants sur l'annuraire des thèses (au survol de la souris sur la direction de thèse)
 - Rapport d'activité : le directeur de thèse doit désormais valider même si c'est lui (ou un gestionnaire) qui a fait la saisie.
 - Rapport d'activité : modification du message à propos da la date limite, figurant sur la page listant les rapports d'activité.
+- Pointeur vers la doc fonctionnelle dans doc/README.md.
 - [FIX] Warning PHP sur la page de création/modification d'ED/UR.
 - [FIX] Authentification LDAP/CAS : la recherche de l'utilisateur en bdd à partir du username n'utilisait pas le paramètre de config 'ldap_username'.
 - [FIX] Authentification LDAP/CAS : les données d'identité de type \UnicaenApp\Entity\Ldap\People n'étaient pas bien traitées.
