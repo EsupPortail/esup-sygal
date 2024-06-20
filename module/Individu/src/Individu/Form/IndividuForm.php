@@ -194,8 +194,11 @@ class IndividuForm extends Form implements InputFilterProviderInterface
                 'name' => 'supannId',
                 'required' => false,
             ],
-            'id_ref' => [
+            'idRef' => [
                 'required' => false,
+                'filters' => [
+                    ['name' => ToNull::class],
+                ],
             ],
         ];
     }

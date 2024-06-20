@@ -33,6 +33,7 @@ Journal des modifications
 - [FIX] : Ajout de conditions pour éviter que InscriptionAssertion retourne une erreur lors de l'accès à un écran présentant des formations (ayant des sessions sans séances) ou d'une désinscription
 - [FIX] : Initialisation de compte : ajout du filtre 'StringTrim' sur les champs du formulaire.
 - [FIX] Templates du mail de convocation à la soutenance pour les membres: correction de la méthode associée à la variable Soutenance#Adresse.
+- [FIX] Modification d'un Individu : l'idRef est désormais null en cas de chaîne de caractères vide.
 
 8.3.0
 -----

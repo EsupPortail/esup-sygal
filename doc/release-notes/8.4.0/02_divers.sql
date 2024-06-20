@@ -60,3 +60,10 @@ drop table if exists z_doctorant_compl;
 alter table soutenance_horodatage add id bigserial not null ;
 alter table soutenance_horodatage drop constraint soutenance_horodatage_pk;
 alter table soutenance_horodatage add constraint soutenance_horodatage_pk primary key (id);
+
+
+--
+-- Mise à null des id_ref vide.
+--
+
+update individu set id_ref = null where id_ref = '';
