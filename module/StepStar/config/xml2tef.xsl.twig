@@ -193,7 +193,14 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                         <tef:autoriteExterne autoriteSource="INE">
                                             <xsl:value-of select="CODE_INE"/>
                                         </tef:autoriteExterne>
+
+                                        <xsl:if test="PPN_DOCTORANT != ''">
+                                            <tef:autoriteExterne autoriteSource="Sudoc">
+                                                <xsl:value-of select="PPN_DOCTORANT"/>
+                                            </tef:autoriteExterne>
+                                        </xsl:if>
                                     </tef:auteur>
+
                                     <xsl:if test="NNT != ''">
                                         <dc:identifier xsi:type="tef:NNT">
                                             <xsl:value-of select="NNT"/>
@@ -304,29 +311,39 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
 
                                     <tef:avisJury>oui</tef:avisJury>
 
-                                    <!-- Directeur -->
-                                    <xsl:if test="NOM_DIRECTEUR != ''">
+                                    <!-- Directeurs (1 seul théoriquement) -->
+                                    <xsl:for-each select="DIRECTEUR">
                                         <tef:directeurThese>
                                             <tef:nom>
-                                                <xsl:value-of select="NOM_DIRECTEUR"/>
+                                                <xsl:value-of select="attribute::nom"/>
                                             </tef:nom>
                                             <tef:prenom>
-                                                <xsl:value-of select="PRENOM_DIRECTEUR"/>
+                                                <xsl:value-of select="attribute::prenom"/>
                                             </tef:prenom>
+                                            <xsl:if test="attribute::ppn != ''">
+                                                <tef:autoriteExterne autoriteSource="Sudoc">
+                                                    <xsl:value-of select="attribute::ppn"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
                                         </tef:directeurThese>
-                                    </xsl:if>
+                                    </xsl:for-each>
 
-                                    <!-- Co-directeur -->
-                                    <xsl:if test="NOM_CODIRECTEUR != ''">
+                                    <!-- Co-directeurs -->
+                                    <xsl:for-each select="CODIRECTEUR">
                                         <tef:directeurThese>
                                             <tef:nom>
-                                                <xsl:value-of select="NOM_CODIRECTEUR"/>
+                                                <xsl:value-of select="attribute::nom"/>
                                             </tef:nom>
                                             <tef:prenom>
-                                                <xsl:value-of select="PRENOM_CODIRECTEUR"/>
+                                                <xsl:value-of select="attribute::prenom"/>
                                             </tef:prenom>
+                                            <xsl:if test="attribute::ppn != ''">
+                                                <tef:autoriteExterne autoriteSource="Sudoc">
+                                                    <xsl:value-of select="attribute::ppn"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
                                         </tef:directeurThese>
-                                    </xsl:if>
+                                    </xsl:for-each>
 
                                     <!-- Président du jury -->
                                     <xsl:for-each select="PRESIDENT_JURY">
@@ -337,9 +354,9 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                             <tef:prenom>
                                                 <xsl:value-of select="attribute::prenom"/>
                                             </tef:prenom>
-                                            <xsl:if test="attribute::PPN != ''">
+                                            <xsl:if test="attribute::ppn != ''">
                                                 <tef:autoriteExterne autoriteSource="Sudoc">
-                                                    <xsl:value-of select="attribute::PPN"/>
+                                                    <xsl:value-of select="attribute::ppn"/>
                                                 </tef:autoriteExterne>
                                             </xsl:if>
                                         </tef:presidentJury>
@@ -354,9 +371,9 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                             <tef:prenom>
                                                 <xsl:value-of select="attribute::prenom"/>
                                             </tef:prenom>
-                                            <xsl:if test="attribute::PPN != ''">
+                                            <xsl:if test="attribute::ppn != ''">
                                                 <tef:autoriteExterne autoriteSource="Sudoc">
-                                                    <xsl:value-of select="attribute::PPN"/>
+                                                    <xsl:value-of select="attribute::ppn"/>
                                                 </tef:autoriteExterne>
                                             </xsl:if>
                                         </tef:membreJury>
@@ -371,9 +388,9 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                             <tef:prenom>
                                                 <xsl:value-of select="attribute::prenom"/>
                                             </tef:prenom>
-                                            <xsl:if test="attribute::PPN != ''">
+                                            <xsl:if test="attribute::ppn != ''">
                                                 <tef:autoriteExterne autoriteSource="Sudoc">
-                                                    <xsl:value-of select="attribute::PPN"/>
+                                                    <xsl:value-of select="attribute::ppn"/>
                                                 </tef:autoriteExterne>
                                             </xsl:if>
                                         </tef:rapporteur>

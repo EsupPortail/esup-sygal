@@ -2,12 +2,12 @@
 
 namespace StepStar\Service\Xml;
 
-use Depot\Entity\Db\Diffusion;
 use Application\Entity\Db\MailConfirmation;
-use Depot\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\Role;
 use DateInterval;
 use DateTime;
+use Depot\Entity\Db\Diffusion;
+use Depot\Entity\Db\MetadonneeThese;
 use Individu\Entity\Db\Individu;
 use InvalidArgumentException;
 use StepStar\Exception\XmlServiceException;
@@ -19,6 +19,7 @@ class XmlService
     // doctorant
     const CODE_ETUDIANT = 'CODE_ETUDIANT';
     const CODE_INE = 'CODE_INE';
+    const PPN_DOCTORANT = 'PPN_DOCTORANT';
     const NOM_ETUDIANT = 'NOM_ETUDIANT';
     const NOM_ETUDIANT_USUEL = 'NOM_ETUDIANT_USUEL';
     const PRENOM_ETUDIANT = 'PRENOM_ETUDIANT';
@@ -102,10 +103,8 @@ class XmlService
     const CONVENTION_CIFRE_ETAB = 'CONVENTION_CIFRE_ETAB';
 
     // direction
-    const NOM_DIRECTEUR = 'NOM_DIRECTEUR';
-    const PRENOM_DIRECTEUR = 'PRENOM_DIRECTEUR';
-    const NOM_CODIRECTEUR = 'NOM_CODIRECTEUR';
-    const PRENOM_CODIRECTEUR = 'PRENOM_CODIRECTEUR';
+    const DIRECTEUR = 'DIRECTEUR';
+    const CODIRECTEUR = 'CODIRECTEUR';
 
     // jury
     const MEMBRE_JURY = 'MEMBRE_JURY';
@@ -359,23 +358,23 @@ class XmlService
      */
     private function createTheseElementData(array $these): array
     {
-        $directeur = null;
-        $codirecteur = null;
-        $presidentJury = null;
+        $directeurs = [];
+        $codirecteurs = [];
+        $presidentJurys = [];
         $membresJury = [];
         $rapporteurs = [];
         foreach ($these['acteurs'] as $acteur) {
             if ($acteur['role']['code'] === Role::CODE_DIRECTEUR_THESE) {
-                $directeur = $acteur['individu'];
+                $directeurs[] = $acteur['individu'];
             }
             elseif ($acteur['role']['code'] === Role::CODE_CODIRECTEUR_THESE) {
-                $codirecteur = $acteur['individu'];
+                $codirecteurs[] = $acteur['individu'];
             }
             elseif ($acteur['role']['code'] === Role::CODE_MEMBRE_JURY) {
                 $membresJury[] = $acteur['individu'];
             }
             elseif ($acteur['role']['code'] === Role::CODE_PRESIDENT_JURY) {
-                $presidentJury = $acteur['individu'];
+                $presidentJurys[] = $acteur['individu'];
             }
             elseif ($acteur['role']['code'] === Role::CODE_RAPPORTEUR_JURY) {
                 $rapporteurs[] = $acteur['individu'];
@@ -430,6 +429,7 @@ class XmlService
             // doctorant
             self::CODE_ETUDIANT => $these['doctorant']['individu']['supannId'], // todo : ou l'id ?
             self::CODE_INE => $these['doctorant']['ine'],
+            self::PPN_DOCTORANT => $these['doctorant']['individu']['idRef'] ?? null,
             self::NOM_ETUDIANT => $these['doctorant']['individu']['nomPatronymique'] ?: $these['doctorant']['individu']['nomUsuel'],
             self::NOM_ETUDIANT_USUEL => $these['doctorant']['individu']['nomUsuel'],
             self::PRENOM_ETUDIANT => $these['doctorant']['individu']['prenom1'],
@@ -532,50 +532,20 @@ class XmlService
             $data[self::MOTS_CLES_RAMEAU_ . $index] = $mot;
         }
 
-        // direction
-        if ($directeur !== null) {
-            $data[self::NOM_DIRECTEUR] = $directeur['nomUsuel'];
-            $data[self::PRENOM_DIRECTEUR] = $directeur['prenom1'];
-        }
-        if ($codirecteur !== null) {
-            $data[self::NOM_CODIRECTEUR] = $codirecteur['nomUsuel'];
-            $data[self::PRENOM_CODIRECTEUR] = $codirecteur['prenom1'];
-        }
+        // directeurs
+        $data[self::DIRECTEUR] = $this->extractIndividus($directeurs) ?: null;
+
+        // codirecteurs
+        $data[self::CODIRECTEUR] = $this->extractIndividus($codirecteurs) ?: null;
 
         // jury
-        if (!empty($membresJury)) {
-            $jury = [];
-            foreach ($membresJury as $individu) {
-                $jury[] = [
-                    'prenom' => $individu['prenom1'],
-                    'nom' => $individu['nomUsuel'],
-                ];
-            }
-            $data[self::MEMBRE_JURY] = $jury;
-        }
+        $data[self::MEMBRE_JURY] = $this->extractIndividus($membresJury) ?: null;
 
-        // président de jury
-        if ($presidentJury !== null) {
-            $array = [
-                [
-                    'prenom' => $presidentJury['prenom1'],
-                    'nom' => $presidentJury['nomUsuel'],
-                ],
-            ];
-            $data[self::PRESIDENT_JURY] = $array;
-        }
+        // présidents du jury (1 seul théoriquement)
+        $data[self::PRESIDENT_JURY] = $this->extractIndividus($presidentJurys) ?: null;
 
         // rapporteurs
-        if (!empty($rapporteurs)) {
-            $array = [];
-            foreach ($rapporteurs as $individu) {
-                $array[] = [
-                    'prenom' => $individu['prenom1'],
-                    'nom' => $individu['nomUsuel'],
-                ];
-            }
-            $data[self::RAPPORTEUR_JURY] = $array;
-        }
+        $data[self::RAPPORTEUR_JURY] = $this->extractIndividus($rapporteurs) ?: null;
 
         return array_filter($data);
     }
@@ -602,6 +572,18 @@ class XmlService
         }
 
         return array_map('trim', explode(MetadonneeThese::SEPARATEUR_MOTS_CLES, $motsClefs));
+    }
+
+    private function extractIndividus(array $individus): array
+    {
+        return array_map(
+            fn(array $individu) => array_filter([
+                'prenom' => $individu['prenom1'],
+                'nom' => $individu['nomUsuel'],
+                'ppn' => $individu['idRef'] ?? null,
+            ]),
+            $individus
+        );
     }
 
     private function extractDomaineFromThese(array $these)
