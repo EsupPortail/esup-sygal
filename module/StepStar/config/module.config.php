@@ -206,6 +206,19 @@ return [
                                 'action' => 'generer-theses',
                             ],
                         ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'telecharger-tef' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/telecharger-tef',
+                                    'defaults' => [
+                                        'controller' => GenerateController::class,
+                                        'action' => 'telecharger-tef',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'envoi' => [
                         'type' => 'Literal',
@@ -488,10 +501,12 @@ return [
                 [
                     /**
                      * @see \StepStar\Controller\Generate\GenerateController::genererThesesAction()
+                     * @see \StepStar\Controller\Generate\GenerateController::telechargerTefAction()
                      */
                     'controller' => GenerateController::class,
                     'action' => [
                         'generer-theses',
+                        'telecharger-tef',
                     ],
                     'role' => [],
                     'privileges' => StepStarPrivileges::LOG_LISTER,

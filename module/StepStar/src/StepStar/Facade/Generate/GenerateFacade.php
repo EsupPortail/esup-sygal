@@ -9,11 +9,13 @@ use Psr\Log\LoggerAwareTrait;
 use StepStar\Entity\Db\Log;
 use StepStar\Exception\TefServiceException;
 use StepStar\Exception\XmlServiceException;
+use StepStar\Exception\ZipServiceException;
 use StepStar\Facade\TefFileNameParamsAwareTrait;
 use StepStar\Service\Log\LogServiceAwareTrait;
 use StepStar\Service\Tef\TefServiceAwareTrait;
 use StepStar\Service\Xml\XmlServiceAwareTrait;
 use StepStar\Service\Xsl\XslServiceAwareTrait;
+use StepStar\Service\Zip\ZipServiceAwareTrait;
 
 class GenerateFacade
 {
@@ -21,6 +23,7 @@ class GenerateFacade
     use XslServiceAwareTrait;
     use XmlServiceAwareTrait;
     use TefServiceAwareTrait;
+    use ZipServiceAwareTrait;
     use TefFileNameParamsAwareTrait;
     use LoggerAwareTrait;
 
@@ -90,14 +93,14 @@ class GenerateFacade
 
     /**
      * Generation du fichier XML intermediaire (1 pour N theses) & des fichiers TEF (1 par these).
-     * (Un Log unique est créé pour cette opération.)
+     * **Un Log unique est créé pour cette opération.**
      *
      * @param array $theses Thèses concernées
      * @param string $command Commande ayant déclenché la génération
      * @param string|null $tag Eventuel tag commun à l'ensemble des logs qui seront produits
-     * @return \Generator
+     * @return Log
      */
-    public function generateFilesForTheses(array $theses, string $command, ?string $tag = null): Generator
+    public function generateFilesForTheses(array $theses, string $command, ?string $tag = null): Log
     {
         $this->xmlThesesOutputDirPath = $this->generateXmlThesesOutputDirPath();
         $this->tefOutputDirPath = $this->generateTefOutputDirPath();
@@ -113,7 +116,8 @@ class GenerateFacade
             $this->success = false;
         }
         $this->log->setSuccess($this->success);
-        yield $this->log;
+
+        return $this->log;
     }
 
     private function generateXmlThesesOutputDirPath(): string
@@ -210,6 +214,17 @@ class GenerateFacade
         $paths = $this->listTefFilesInDirectory($this->tefOutputDirPath);
         foreach ($paths as $path) {
             $this->appendToLog("> " . realpath($path));
+        }
+
+        if (count($paths) > 1) {
+            try {
+                $zipFilePath = $this->zipService->compresserFichiersForThese($paths);
+                $this->log->setZipFilePath($zipFilePath);
+            } catch (ZipServiceException $e) {
+                throw new Exception("Une erreur est survenue pendant la création du fichier ZIP.", null, $e);
+            }
+        } else {
+            $this->log->setTefFilePath($paths[0]);
         }
     }
 

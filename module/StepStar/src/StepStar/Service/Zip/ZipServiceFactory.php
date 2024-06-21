@@ -2,29 +2,13 @@
 
 namespace StepStar\Service\Zip;
 
-use Fichier\Service\Fichier\FichierService;
-use These\Service\These\TheseService;
-use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
 class ZipServiceFactory implements FactoryInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): ZipService
     {
-        /**
-         * @var TheseService $theseService
-         * @var FichierService $fichierService
-         */
-        $theseService = $container->get(TheseService::class);
-        $fichierService = $container->get(FichierService::class);
-
-        $service = new ZipService();
-        $service->setTheseService($theseService);
-        $service->setFichierService($fichierService);
-
-        return $service;
+        return new ZipService();
     }
 }

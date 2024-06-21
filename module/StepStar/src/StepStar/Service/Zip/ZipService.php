@@ -1,63 +1,40 @@
 <?php
 
-
 namespace StepStar\Service\Zip;
 
-
-use Depot\Entity\Db\FichierThese;
-use These\Entity\Db\These;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use StepStar\Exception\ZipServiceException;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
 class ZipService
 {
-    use TheseServiceAwareTrait;
-    use FichierServiceAwareTrait;
-
     /**
-     * Crée une archive ZIP contenant tous les fichiers associés à une thèse.
+     * Crée une archive ZIP contenant les fichiers spécifiés.
      *
-     * @param These $these Thèse concernée
+     * @param string[] $inputFilePaths Chemins des fichiers à inclure
      * @return string Chemin du fichier .zip créé
      * @throws ZipServiceException
      */
-    public function compresserFichiersForThese(These $these): string
+    public function compresserFichiersForThese(array $inputFilePaths): string
     {
         $tmpDirPath = sys_get_temp_dir();
 
-        /**
-         * Création d'un répertoire temporaire contenant les fichiers à compresser.
-         */
+        // Création d'un répertoire temporaire contenant les fichiers à compresser.
         $dirName = uniqid('sygal_');
         $dirPath = $tmpDirPath . '/' . $dirName;
         if (! mkdir($dirPath)) {
             throw new ZipServiceException("Impossible de créer le répertoire temporaire " . $dirPath);
         }
-        /** @var FichierThese $fichierThese */
-        foreach ($these->getFichierTheses() as $fichierThese) {
-            $fichier = $fichierThese->getFichier();
-            $filename = $fichier->getNom();
-//            $srceFilepath = $this->fichierService->computeFilePathForFichier($fichier);
-            try {
-                $srceFilepath = $this->fileService->createFileCopyForFichier($fichier);
-            } catch (StorageAdapterException $e) {
-                throw new RuntimeException(
-                    "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $fichier, null, $e);
-            }
-            $destFilepath = $dirPath . '/' . $filename;
-            $success = copy($srceFilepath, $destFilepath);
+
+        foreach ($inputFilePaths as $inputFilePath) {
+            $filename = basename($inputFilePath);
+            $destFilePath = $dirPath . '/' . $filename;
+            $success = copy($inputFilePath, $destFilePath);
             if (!$success) {
-                throw new ZipServiceException("Echec de la copie du fichier $srceFilepath vers $destFilepath");
+                throw new ZipServiceException("Echec de la copie du fichier $inputFilePath vers $destFilePath");
             }
         }
 
-        /**
-         * Compression du répertoire.
-         */
+        // Compression du répertoire.
         $zipFileName = $dirName . '.zip';
         $zipFilePath = $tmpDirPath . '/' . $zipFileName;
         Util::zip($dirPath, $zipFilePath);
@@ -69,9 +46,9 @@ class ZipService
      * @param string $zipFilePath
      * @param string|null $attachmentFilename
      */
-    public function sendZipToClient(string $zipFilePath, string $attachmentFilename = null)
+    public function sendZipToClient(string $zipFilePath, string $attachmentFilename = null): void
     {
-        $attachmentFilename = $attachmentFilename ?: 'sygal_theses.zip';
+        $attachmentFilename = $attachmentFilename ?: basename($zipFilePath);
 
         header("Pragma: public");
         header("Expires: 0");

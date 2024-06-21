@@ -36,11 +36,8 @@ class GenerateConsoleController extends AbstractConsoleController
         }
         $this->console->writeLine("Nombre de theses trouvees : " . count($theses));
 
-        $logs = $this->generateFacade->generateFilesForTheses($theses, $command, $this->tag);
+        $log = $this->generateFacade->generateFilesForTheses($theses, $command, $this->tag);
 
-        /** @var \StepStar\Entity\Db\Log $log */
-        foreach ($logs as $log) {
-            $this->console->writeLine($log->getLog());
-        }
+        $this->console->writeLine($log->getLog());
     }
 }

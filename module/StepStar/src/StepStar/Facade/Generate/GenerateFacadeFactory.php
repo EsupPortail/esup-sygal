@@ -7,6 +7,7 @@ use StepStar\Service\Log\LogService;
 use StepStar\Service\Tef\TefService;
 use StepStar\Service\Xml\XmlService;
 use StepStar\Service\Xsl\XslService;
+use StepStar\Service\Zip\ZipService;
 
 class GenerateFacadeFactory
 {
@@ -33,6 +34,10 @@ class GenerateFacadeFactory
         /** @var \StepStar\Service\Log\LogService $logService */
         $logService = $container->get(LogService::class);
         $facade->setLogService($logService);
+
+        /** @var \StepStar\Service\Zip\ZipService $zipService */
+        $zipService = $container->get(ZipService::class);
+        $facade->setZipService($zipService);
 
         /** @var array $config */
         $config = $container->get('Config');

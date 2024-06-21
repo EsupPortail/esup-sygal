@@ -2,6 +2,7 @@
 
 namespace StepStar\Entity\Db;
 
+use Laminas\Router\Http\RouteInterface;
 use These\Entity\Db\These;
 use DateTime;
 use Exception;
@@ -26,6 +27,9 @@ class Log
 
     private ?int $theseId = null;
     private ?These $these = null;
+
+    private ?string $tefFilePath = null; // sans mapping en bdd
+    private ?string $zipFilePath = null; // sans mapping en bdd
 
     /**
      * @return int
@@ -305,5 +309,41 @@ class Log
     public function setThese(These $these): void
     {
         $this->these = $these;
+    }
+
+    /**
+     * Renseigne le chemin absolu du fichier TEF temporaire généré.
+     * **NB : pas de mapping en bdd, c'est juste utilitaire.**
+     */
+    public function setTefFilePath(?string $tefFilePath): void
+    {
+        $this->tefFilePath = $tefFilePath;
+    }
+
+    /**
+     * Retourne le chemin absolu du fichier TEF temporaire généré.
+     * **NB : pas de mapping en bdd, c'est juste utilitaire.**
+     */
+    public function getTefFilePath(): ?string
+    {
+        return $this->tefFilePath;
+    }
+
+    /**
+     * Renseigne le chemin absolu du fichier ZIP généré.
+     * **NB : pas de mapping en bdd, c'est juste utilitaire.**
+     */
+    public function setZipFilePath(?string $zipFilePath): void
+    {
+        $this->zipFilePath = $zipFilePath;
+    }
+
+    /**
+     * Retourne le chemin absolu du fichier ZIP généré, le cas échéant.
+     * **NB : pas de mapping en bdd, c'est juste utilitaire.**
+     */
+    public function getZipFilePath(): ?string
+    {
+        return $this->zipFilePath;
     }
 }

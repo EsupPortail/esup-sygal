@@ -67,6 +67,7 @@ class EnvoiFacade
                 $this->appendToLog("  :-( " . $e->getMessage());
                 $this->log->setTefFileContent(file_get_contents($tefFilePath)); // conservation du TEF envoyé
             }
+            $this->log->setTefFilePath($tefFilePath);
             $this->log->setSuccess($success);
             yield $this->log;
         }
@@ -94,13 +95,10 @@ class EnvoiFacade
         /**
          * Generation du fichier XML intermediaire (1 pour N theses) & des fichiers TEF (1 par these).
          */
-        $logs = $this->generateFacade->generateFilesForTheses($theses, $command, $tag);
-        /** @var \StepStar\Entity\Db\Log $log */
-        foreach ($logs as $log) {
-            $this->log = $log;
-            $this->saveCurrentLog();
-            yield $this->log;
-        }
+        $log = $this->generateFacade->generateFilesForTheses($theses, $command, $tag);
+        $this->log = $log;
+        $this->saveCurrentLog();
+        yield $this->log;
         if (!$this->generateFacade->isSuccess()) {
             return;
         }
@@ -145,6 +143,7 @@ class EnvoiFacade
                 );
                 $this->appendToLog($message);
             }
+            $this->log->setTefFilePath($tefFilePath);
             $this->log->setSuccess($success);
             $this->saveCurrentLog();
             yield $this->log;
