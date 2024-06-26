@@ -13,16 +13,8 @@ class SoapClient extends Client
 {
     const SOAP_VERSION = SOAP_1_1;
 
-    /**
-     *
-     * @var array $params
-     */
     protected array $params;
 
-    /**
-     * SoapClient constructor.
-     * @param array $params
-     */
     public function __construct(array $params = [])
     {
         if (null !== $params) {
@@ -36,7 +28,8 @@ class SoapClient extends Client
 
         $options = [
             'soap_version' => $soapOptions['version'] ?? self::SOAP_VERSION,
-            'cache_wsdl'   => 0,
+            'cache_wsdl'   => $soapOptions['cache_wsdl'] ?? 0,
+            'keep_alive'   => $soapOptions['keep_alive'] ?? false,
             'proxy_host'   => $soapOptions['proxy_host'] ?? null,
             'proxy_port'   => $soapOptions['proxy_port'] ?? null,
         ];
@@ -44,10 +37,6 @@ class SoapClient extends Client
         return parent::__construct($wsdl, $options);
     }
 
-    /**
-     * @param array $params
-     * @return self
-     */
     public function setParams(array $params): self
     {
         $this->params = $params;
@@ -55,9 +44,6 @@ class SoapClient extends Client
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getParams(): array
     {
         return $this->params;

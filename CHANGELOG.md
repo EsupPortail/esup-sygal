@@ -22,6 +22,7 @@ Journal des modifications
 - Module StepStar : plus d'envoi de la date d'abandon (recommandation de l'ABES).
 - Module StepStar : ajout dans le TEF des IdRef de tous les acteurs de la thèse (doctorant, directeur, codirecteur, etc.)
 - Module StepStar : possibilité de télécharger les fichiers TEF générés sur la page 'Génération TEF'.
+- Module StepStar : prise en compte des paramètres SOAP 'cache_wsdl' et 'keep_alive' pour la connexion au WS.
 - Suppression du menu 'Administration > Compléments d'individu' devenu inutile.
 - Amélioration visuelle des pages de création/modification de structure (Etab/ED/UR).
 - Affichage des co-encadrants sur l'annuraire des thèses (au survol de la souris sur la direction de thèse)
