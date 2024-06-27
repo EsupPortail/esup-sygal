@@ -744,6 +744,7 @@ class PresoutenanceController extends AbstractController
                 $individu = new Individu();
                 $individu->setPrenom($membre->getPrenom());
                 $individu->setNomUsuel($membre->getNom());
+                $individu->setNomPatronymique($membre->getNom());
                 $individu->setEmailPro($membre->getEmail());
                 $individu->setSource($sygal);
                 $individu->setSourceCode($source_code_individu);

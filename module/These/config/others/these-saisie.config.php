@@ -7,12 +7,22 @@ use Laminas\Router\Http\Segment;
 use These\Controller\Factory\TheseSaisieControllerFactory;
 use These\Controller\TheseRechercheController;
 use These\Controller\TheseSaisieController;
+use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionFieldset;
+use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionFieldsetFactory;
+use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionHydrator;
+use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionHydratorFactory;
 use These\Fieldset\Confidentialite\ConfidentialiteHydrator;
 use These\Fieldset\Confidentialite\ConfidentialiteHydratorFactory;
+use These\Fieldset\Direction\DirectionFieldset;
+use These\Fieldset\Direction\DirectionFieldsetFactory;
 use These\Fieldset\Direction\DirectionHydrator;
 use These\Fieldset\Direction\DirectionHydratorFactory;
 use These\Fieldset\Encadrement\EncadrementHydrator;
 use These\Fieldset\Encadrement\EncadrementHydratorFactory;
+use These\Fieldset\Financement\FinancementFieldset;
+use These\Fieldset\Financement\FinancementFieldsetFactory;
+use These\Fieldset\Financement\FinancementHydrator;
+use These\Fieldset\Financement\FinancementHydratorFactory;
 use These\Fieldset\Generalites\GeneralitesHydrator;
 use These\Fieldset\Generalites\GeneralitesHydratorFactory;
 use These\Fieldset\Structures\StructuresHydrator;
@@ -25,6 +35,10 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
 use These\Fieldset\Generalites\GeneralitesFieldsetFactory;
 use These\Fieldset\Structures\StructuresFieldset;
 use These\Fieldset\Structures\StructuresFieldsetFactory;
+use These\Fieldset\TitreAcces\TitreAccesFieldset;
+use These\Fieldset\TitreAcces\TitreAccesFieldsetFactory;
+use These\Fieldset\TitreAcces\TitreAccesHydrator;
+use These\Fieldset\TitreAcces\TitreAccesHydratorFactory;
 use These\Form\Confidentialite\ConfidentialiteForm;
 use These\Form\Confidentialite\ConfidentialiteFormFactory;
 use These\Form\Encadrement\EncadrementForm;
@@ -50,6 +64,7 @@ return [
                     'action' => [
                         'saisie', // todo: deprecated
                         'ajouter',
+                        'index',
                         'supprimer',
                         'generalites',
                         'direction',
@@ -106,9 +121,9 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
-                                /** @see TheseSaisieController::generalitesAction() */
+                                /** @see TheseSaisieController::indexAction() */
                                 'controller' => TheseSaisieController::class,
-                                'action' => 'generalites',
+                                'action' => 'index',
                             ],
                         ],
                         'may_terminate' => true,
@@ -182,6 +197,13 @@ return [
     'form_elements' => [
         'factories' => [
             TheseSaisieForm::class => TheseSaisieFormFactory::class,
+            ConfidentialiteFieldset::class => ConfidentialiteFieldsetFactory::class,
+            EncadrementFieldset::class => EncadrementFieldsetFactory::class,
+            GeneralitesFieldset::class => GeneralitesFieldsetFactory::class,
+            DirectionFieldset::class => DirectionFieldsetFactory::class,
+            StructuresFieldset::class => StructuresFieldsetFactory::class,
+            FinancementFieldset::class => FinancementFieldsetFactory::class,
+            TitreAccesFieldset::class => TitreAccesFieldsetFactory::class,
         ],
     ],
     'hydrators' => [
@@ -193,6 +215,8 @@ return [
             GeneralitesHydrator::class => GeneralitesHydratorFactory::class,
             DirectionHydrator::class => DirectionHydratorFactory::class,
             StructuresHydrator::class => StructuresHydratorFactory::class,
+            FinancementHydrator::class => FinancementHydratorFactory::class,
+            TitreAccesHydrator::class => TitreAccesHydratorFactory::class,
         ],
     ],
     'service_manager' => [

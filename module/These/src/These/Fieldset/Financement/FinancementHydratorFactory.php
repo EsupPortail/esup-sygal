@@ -1,47 +1,44 @@
 <?php
 
-namespace These\Fieldset\Generalites;
+namespace These\Fieldset\Financement;
 
-use Application\Service\AnneeUniv\AnneeUnivService;
+use Application\Service\Financement\FinancementService;
 use Application\Service\Source\SourceService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Structure\Service\Etablissement\EtablissementService;
 
-class GeneralitesHydratorFactory
+class FinancementHydratorFactory
 {
     /**
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): GeneralitesHydrator
+    public function __invoke(ContainerInterface $container): FinancementHydrator
     {
         /**
          * @var EntityManager $entityManager
          */
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
-        $hydrator = new GeneralitesHydrator($entityManager);
-
-//        $hydrator = new GeneralitesHydrator();
-
-
+        $hydrator = new FinancementHydrator($entityManager);
+//        $hydrator = new FinancementHydrator();
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
         $hydrator->setEtablissementService($etablissementService);
 
+        /** @var SourceService $sourceService */
+        $sourceService = $container->get(SourceService::class);
+        $hydrator->setSourceService($sourceService);
+
         /** @var DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
         $hydrator->setDoctorantService($doctorantService);
 
-        /** @var AnneeUnivService $anneeUnivService */
-        $anneeUnivService = $container->get(AnneeUnivService::class);
-        $hydrator->setAnneeUnivService($anneeUnivService);
-
-        /** @var SourceService $sourceService */
-        $sourceService = $container->get(SourceService::class);
-        $hydrator->setSourceService($sourceService);
+        /** @var FinancementService $financementService */
+        $financementService = $container->get(FinancementService::class);
+        $hydrator->setFinancementService($financementService);
 
         return $hydrator;
     }

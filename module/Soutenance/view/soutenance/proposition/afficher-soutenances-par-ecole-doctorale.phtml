@@ -36,7 +36,7 @@ $count = count($soutenances);
     <?php foreach ($soutenances as $soutenance) : ?>
 
         <?php
-            $acteurs = $soutenance->getThese()->getActeursNonHistorises()->toArray();
+            $acteurs = $soutenance->getThese()->getActeurs()->toArray();
             $acteurs = array_filter($acteurs, function (Acteur $a) { return $a->estNonHistorise();});
             usort($acteurs, function (Acteur $a, Acteur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
 

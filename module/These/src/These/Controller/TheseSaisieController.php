@@ -3,21 +3,27 @@
 namespace These\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Role;
+use Application\Entity\Db\Financement;
+use Application\Entity\Db\OrigineFinancement;
+use Application\Entity\Db\Source;
 use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
+use Application\Service\Financement\FinancementServiceAwareTrait;
+use Application\Service\Pays\PaysServiceAwareTrait;
+use Application\Service\Source\SourceServiceAwareTrait;
+use Application\SourceCodeStringHelperAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Form\Form;
 use Laminas\View\Model\ViewModel;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
+use These\Fieldset\Financement\FinancementFieldset;
 use These\Form\Direction\DirectionForm;
 use These\Form\Encadrement\EncadrementForm;
 use These\Form\Generalites\GeneralitesForm;
 use These\Form\Structures\StructuresForm;
-use These\Form\TheseSaisie\TheseSaisieForm;
+use These\Form\TheseFormsManagerAwareTrait;
 use These\Form\TheseSaisie\TheseSaisieFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
@@ -34,6 +40,10 @@ class TheseSaisieController extends AbstractController {
     use DomaineHalServiceAwareTrait;
     use TheseServiceAwareTrait;
     use TheseFormsManagerAwareTrait;
+    use FinancementServiceAwareTrait;
+    use SourceServiceAwareTrait;
+    use SourceCodeStringHelperAwareTrait;
+    use PaysServiceAwareTrait;
 
     /** FONCTIONS TEMPORAIRES A DEPLACER PLUS TARD */
     /**
@@ -57,7 +67,14 @@ class TheseSaisieController extends AbstractController {
     {
         $request = $this->getRequest();
         $domaine = 'generalites';
-        $form = $this->getGeneralitesForm();
+//        $form = $this->getGeneralitesForm();
+        $form = $this->getTheseSaisieForm();
+        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
+        $form->get('generalites')->get('domaineHal')->setDomainesHal($domainesHal);
+        $origines = $this->financementService->findOriginesFinancements("libelleLong");
+        $pays = $this->paysService->getPaysAsOptions();
+        $form->get('generalites')->get('titreAcces')->setPays($pays);
+
         $viewModel = new ViewModel([
             'form' => $form,
         ]);
@@ -68,13 +85,16 @@ class TheseSaisieController extends AbstractController {
             return $viewModel;
         }
 
-        $form->setData($request->getPost());
+        $data = $request->getPost();
+        $form->setData($data);
         if (!$form->isValid()) {
             return $viewModel;
         }
 
         /** @var These $these */
         $these = $form->getData();
+        $these->setSource($this->source);
+        $these->setSourceCode(uniqid());
         $this->theseService->saveThese($these, $domaine);
 
         $this->flashMessenger()->addSuccessMessage("Thèse créée avec succès.");
@@ -82,111 +102,49 @@ class TheseSaisieController extends AbstractController {
         return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 
-    public function generalitesAction()
+    public function indexAction()
     {
-        return $this->modifier($this->getGeneralitesForm(), 'generalites');
+        return $this->modifier($this->getTheseSaisieForm(), 'index');
     }
 
-    public function directionAction()
-    {
-        return $this->modifier($this->getDirectionForm(), 'direction');
-    }
+//    public function directionAction()
+//    {
+//        return $this->modifier($this->getDirectionForm(), 'direction');
+//    }
+//
+//    public function structuresAction()
+//    {
+//        return $this->modifier($this->getStructuresForm(), 'structures');
+//    }
+//
+//    public function encadrementAction()
+//    {
+//        return $this->modifier($this->getEncadrementForm(), 'encadrement');
+//    }
 
-    public function structuresAction()
-    {
-        return $this->modifier($this->getStructuresForm(), 'structures');
-    }
-
-    public function encadrementAction()
-    {
-        return $this->modifier($this->getEncadrementForm(), 'encadrement');
-    }
-
-    /**
-     * Conservé pour mémoire suite aux conflits.
-     */
-    public function saisieAction()
-    {
-        $theseId = $this->params()->fromRoute('these');
-        if ($theseId !== null) {
-            $these = $this->requestedThese();
-        } else {
-            $these = new These();
-            $these->setSource($this->source);
-            $these->setSourceCode(uniqid());
-        }
-
-        $form = $this->getTheseSaisieForm();
-        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
-        $form->get('domaineHal')->setDomainesHal($domainesHal);
-
-        $form->bind($these);
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
-            if (!isset($data['domaineHal'])) {
-                $data['domaineHal'] = array("domaineHal" => array(""));
-            }
-            $form->setData($data);
-
-            if ($form->isValid()) {
-                if ($theseId === null) {
-                    $this->getTheseService()->create($these);
-                } else {
-                    $this->getTheseService()->update($these);
-                }
-                //ACTEUR //
-                /** Gestion des acteurs */
-                if ($data['directeur-individu']['id'] and $data['directeur-qualite'] and $data['directeur-etablissement']) {
-                    /** @var Individu $individu */
-                    $individu = $this->getIndividuService()->getRepository()->find($data['directeur-individu']['id']);
-                    $qualite = $this->getQualiteService()->getQualite($data['directeur-qualite']);
-                    /** @var Etablissement $etablissement */
-                    $etablissement = $this->getEtablissementService()->getRepository()->find($data['directeur-etablissement']);
-                    if ($individu and $qualite and $etablissement) {
-                        $this->getActeurService()->creerOrModifierActeur($these, $individu, Role::CODE_DIRECTEUR_THESE, $qualite, $etablissement);
-                    }
-                }
-                $temoins = [];
-                for ($i = 1; $i <= TheseSaisieForm::NBCODIR; $i++) {
-                    if ($data['codirecteur' . $i . '-individu']['id'] and $data['codirecteur' . $i . '-qualite'] and $data['codirecteur' . $i . '-etablissement']) {
-                        /** @var Individu $individu */
-                        $individu = $this->getIndividuService()->getRepository()->find($data['codirecteur' . $i . '-individu']['id']);
-                        $qualite = $this->getQualiteService()->getQualite($data['codirecteur' . $i . '-qualite']);
-                        /** @var Etablissement $etablissement */
-                        $etablissement = $this->getEtablissementService()->getRepository()->find($data['codirecteur' . $i . '-etablissement']);
-                        if ($individu and $qualite and $etablissement) {
-                            $acteur = $this->getActeurService()->creerOrModifierActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE, $qualite, $etablissement);
-                            $temoins[] = $acteur->getId();
-                        }
-                    }
-                }
-                $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
-                foreach ($codirecteurs as $codirecteur) {
-                    if (array_search($codirecteur->getId(), $temoins) === false) $this->getActeurService()->historise($codirecteur);
-                }
-
-
-                return $this->redirect()->toRoute('these/saisie', ['these' => $these->getId()], [], true);
-            }
-        }
-
-        return new ViewModel([
-            'form' => $form,
-        ]);
-    }
-
-    private function modifier(Form $form, string $domaine)
+    public function modifier(Form $form, string $domaine)
     {
         $request = $this->getRequest();
         $these = $this->requestedThese();
+        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
+        $form->get('generalites')->get('domaineHal')->setDomainesHal($domainesHal);
+        $origines = $this->financementService->findOriginesFinancements("libelleLong");
+        $pays = $this->paysService->getPaysAsOptions();
+        $form->get('generalites')->get('titreAcces')->setPays($pays);
+
+        /** @var FinancementFieldset $financement */
+//        $financements = $form->get('financements');
+//        $financements->setOrigineFinancementsPossibles($origines);
+
+//        foreach ($financements as $financement) {
+//            if ($financement instanceof FinancementFieldset) {
+//                $financement->setOrigineFinancementsPossibles($origines);
+//            }
+//        }
 
         $viewModel = new ViewModel([
             'these' => $these,
             'form' => $form,
-            'formPartial' => "these/these-saisie/partial/$domaine",
         ]);
         $viewModel->setTemplate('these/these-saisie/modifier');
 
@@ -196,7 +154,21 @@ class TheseSaisieController extends AbstractController {
             return $viewModel;
         }
 
-        $form->setData($request->getPost());
+        $data = $request->getPost();
+        //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
+        if (!isset($data["generalites"]['domaineHal'])) {
+            $generalites = $data->get('generalites', []);
+            $generalites['domaineHal'] = ['domaineHal' => ['']];
+            $data->set('generalites', $generalites);
+        }
+
+//        if (!isset($data["financements"]['origineFinancement'])) {
+//            $financement = $data->get('financements', []);
+//            $financement['origineFinancement'] = [''];
+//            $data->set('financements', $financements);
+//        }
+
+        $form->setData($data);
         if (!$form->isValid()) {
             return $viewModel;
         }

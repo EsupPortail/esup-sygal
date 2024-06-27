@@ -2,6 +2,7 @@
 
 namespace These\Fieldset\Structures;
 
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Laminas\Hydrator\HydratorInterface;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
@@ -47,12 +48,10 @@ class StructuresHydrator implements HydratorInterface
         /** @var Etablissement $etablissement */
         $etablissement = (isset($data['etablissement']) and trim($data['etablissement']) !== '') ? $this->getEtablissementService()->getRepository()->find(trim($data['etablissement'])) : null;
 
-        $object->setUniteRecherche($uniteRecherche);
-        $object->setEcoleDoctorale($ecoleDoctorale);
-        $object->setEtablissement($etablissement);
+        if($uniteRecherche) $object->setUniteRecherche($uniteRecherche);
+        if($ecoleDoctorale) $object->setEcoleDoctorale($ecoleDoctorale);
+        if($etablissement) $object->setEtablissement($etablissement);
 
         return $object;
     }
-
-
 }

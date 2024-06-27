@@ -3,6 +3,7 @@
 namespace These\Fieldset\Encadrement;
 
 use Application\Service\Role\RoleService;
+use Doctrine\ORM\EntityManager;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use These\Service\Acteur\ActeurService;
@@ -15,6 +16,12 @@ class EncadrementHydratorFactory
      */
     public function __invoke(ContainerInterface $container): EncadrementHydrator
     {
+//        /**
+//         * @var EntityManager $entityManager
+//         */
+//        $entityManager = $container->get('Doctrine\ORM\EntityManager');
+//        $hydrator = new EncadrementHydrator($entityManager);
+
         $hydrator = new EncadrementHydrator();
 
         /** @var \Individu\Service\IndividuService $individuService */

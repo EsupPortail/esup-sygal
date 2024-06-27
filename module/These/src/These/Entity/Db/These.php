@@ -297,7 +297,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function __toString(): string
     {
-        return $this->id;
+        return $this->id ?: "";
     }
 
     /**
@@ -899,7 +899,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * Retourne les acteurs de cette thèse dont le rôle est parmi ceux spécifiés, *y compris les acteurs historisés*.
+     * Retourne les acteurs de cette thèse dont le rôle est parmi ceux spécifiés
      *
      * @param string|string[] $code
      * @return Collection
@@ -1315,7 +1315,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getFinancements()
     {
         // Solution de filtrage temporaire (TODO : Filtrer en amont dans la requête)
-        return $this->financements->filter(fn(Financement $f) => $f->estNonHistorise());
+        if (is_array($this->financements)) {
+            $this->financements = new ArrayCollection($this->financements);
+        }
+        return $this->financements ? $this->financements->filter(fn(Financement $f) => $f->estNonHistorise()) : new ArrayCollection();
     }
 
     /**
@@ -1323,7 +1326,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getTitreAcces()
     {
-        return $this->titreAcces->first() ?: null;
+        return $this->titreAcces ? is_array($this->titreAcces) ? $this->titreAcces[0] : $this->titreAcces->first() : null ;
     }
 
     /**
@@ -1674,11 +1677,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Add anneesUniv1ereInscription.
      *
-     * @param \These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription
+     * @param VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription
      *
      * @return These
      */
-    public function addAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription)
+    public function addAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription)
     {
         $this->anneesUniv1ereInscription[] = $anneesUniv1ereInscription;
 
@@ -1688,11 +1691,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove anneesUniv1ereInscription.
      *
-     * @param \These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription
+     * @param VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst $anneesUniv1ereInscription)
+    public function removeAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription)
     {
         return $this->anneesUniv1ereInscription->removeElement($anneesUniv1ereInscription);
     }

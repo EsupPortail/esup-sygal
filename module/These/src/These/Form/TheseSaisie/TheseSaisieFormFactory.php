@@ -11,9 +11,6 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 
-/**
- * @deprecated
- */
 class TheseSaisieFormFactory {
 
     /**
@@ -49,9 +46,9 @@ class TheseSaisieFormFactory {
         $form->setUniteRechercheService($uniteRechercheService);
 
         $form->setHydrator($hydrator);
-        $form->setUrlDoctorant($renderer->url('recherche-doctorant', [], [], true));
-        //todo route de recherche des directeurs
-        $form->setUrlDirecteur($renderer->url('individu/rechercher', [], [], true));
+//        $form->setUrlDoctorant($renderer->url('recherche-doctorant', [], [], true));
+//        //todo route de recherche des directeurs
+//        $form->setUrlDirecteur($renderer->url('individu/rechercher', [], [], true));
         return $form;
     }
 }

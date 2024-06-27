@@ -15,6 +15,12 @@ class TitreAcces implements HistoriqueAwareInterface
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
+    const CODE_ACCES_INTERNE = "I";
+    const CODE_ACCES_EXTERNE = "E";
+
+    const LIBELLE_ACCES_INTERNE = "Interne";
+    const LIBELLE_ACCES_EXTERNE = "Externe";
+
     /**
      * @var integer
      */
@@ -118,7 +124,17 @@ class TitreAcces implements HistoriqueAwareInterface
      */
     public function getTitreAccesInterneExterne()
     {
-        return ['I' => 'Interne', 'E' => 'Externe'][$this->titreAccesInterneExterne];
+        return $this->titreAccesInterneExterne ?
+            [self::CODE_ACCES_INTERNE => self::LIBELLE_ACCES_INTERNE, self::CODE_ACCES_EXTERNE => self::LIBELLE_ACCES_EXTERNE][$this->titreAccesInterneExterne] :
+            null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeTitreAccesInterneExterne()
+    {
+        return $this->titreAccesInterneExterne;
     }
 
     /**

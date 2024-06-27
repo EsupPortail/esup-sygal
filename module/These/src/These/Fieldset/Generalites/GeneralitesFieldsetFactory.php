@@ -6,6 +6,7 @@ use Application\Service\Discipline\DisciplineService;
 use Application\View\Renderer\PhpRenderer;
 use Interop\Container\ContainerInterface;
 use Structure\Service\Etablissement\EtablissementService;
+use These\Entity\Db\These;
 
 class GeneralitesFieldsetFactory
 {
@@ -32,6 +33,8 @@ class GeneralitesFieldsetFactory
         /** @var PhpRenderer $renderer*/
         $renderer = $container->get('ViewRenderer');
         $fieldset->setUrlDoctorant($renderer->url('recherche-doctorant', [], [], true));
+
+        $fieldset->setObject(new These());
 
         return $fieldset;
     }

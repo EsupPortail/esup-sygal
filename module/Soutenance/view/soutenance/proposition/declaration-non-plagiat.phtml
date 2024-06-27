@@ -21,7 +21,7 @@ $denomination =  $these->getDoctorant()->getIndividu()->getNomComplet(true, fals
 $direction = "direction de thèse non déclarée";
 /** @var Acteur $acteur */
 $acteurs = [];
-foreach ($these->getActeursNonHistorises() as $acteur) {
+foreach ($these->getActeurs() as $acteur) {
     if ($acteur->estNonHistorise() and ($acteur->estDirecteur() or $acteur->estCodirecteur())) {
         $acteurs[] = $acteur;
     }

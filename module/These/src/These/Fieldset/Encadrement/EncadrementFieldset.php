@@ -68,7 +68,7 @@ class EncadrementFieldset extends Fieldset implements InputFilterProviderInterfa
             'name' => 'directeur-etablissement',
             'options' => [
                 'label' => "Établissement :",
-                'value_options' => $this->getEtablissementService()->getEtablissementsAsOptions(),
+                'value_options' => $this->getEtablissementService()->getEtablissementInscriptionAsOption(),
                 'empty_option' => "Sélectionner un établissement",
             ],
             'attributes' => [
@@ -109,7 +109,7 @@ class EncadrementFieldset extends Fieldset implements InputFilterProviderInterfa
                 'name' => 'codirecteur' . $i . '-etablissement',
                 'options' => [
                     'label' => "Établissement :",
-                    'value_options' => $this->getEtablissementService()->getEtablissementsAsOptions(),
+                    'value_options' => $this->getEtablissementService()->getEtablissementInscriptionAsOption(),
                     'empty_option' => "Sélectionner un établissement",
                 ],
                 'attributes' => [

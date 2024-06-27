@@ -28,6 +28,7 @@ use These\Form\Structures\StructuresFormFactory;
 class TheseFormsManager extends FormElementManager
 {
     protected $factories = [
+
         // Forms
         ConfidentialiteForm::class => ConfidentialiteFormFactory::class,
         EncadrementForm::class => EncadrementFormFactory::class,

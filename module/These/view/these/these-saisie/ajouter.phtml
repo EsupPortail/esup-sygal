@@ -16,9 +16,89 @@ $form->prepare();
     <?php echo $title ?>
 </h1>
 
+<div role="tabpanel">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation">
+            <a class="nav-link" href="#informations" aria-controls="informations" role="tab" data-toggle="tabz">                   Informations générales</a>
+        </li>
+        <li role="presentation">
+            <a class="nav-link" href="#structures" aria-controls="structures" role="tab" data-toggle="tabz">                       Structures encadrantes</a>
+        </li>
+        <li role="presentation">
+            <a class="nav-link" href="#direction" aria-controls="direction" role="tab" data-toggle="tabz">             Direction de thèse</a>
+        </li>
+        <li role="presentation">
+            <a class="nav-link" href="#encadrements" aria-controls="encadrements" role="tab" data-toggle="tabz">                   Co-encadrements</a>
+        </li>
+        <li role="presentation">
+            <a class="nav-link" href="#confidentialite" aria-controls="confidentialite" role="tab" data-toggle="tabz">             Confidentialité</a>
+        </li>
+        <li role="presentation">
+            <a class="nav-link" href="#financement" aria-controls="financement" role="tab" data-toggle="tabz">             Financement</a>
+        </li>
+    </ul>
+</div>
+
 <?php echo $this->form()->openTag($form); ?>
-<?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
+<div class="tab-content">
+    <div id="informations" class="tab-pane " role="tabpanel">
+        <?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
+    </div>
+    <div id="structures" class="tab-pane " role="tabpanel">
+        <?php echo $this->partial('these/these-saisie/partial/structures'); ?>
+        <br/><br/>
+        <span class="alert alert-warning">Quid des co-tutelle ?</span>
+    </div>
+    <div id="direction" class="tab-pane " role="tabpanel">
+        <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
+        <br/><br/>
+        <span class="alert alert-warning">Quid des co-encadrements ici ?</span>
+    </div>
+    <div id="encadrements" class="tab-pane " role="tabpanel">
+        <?php echo $this->partial('these/these-saisie/partial/encadrement'); ?>
+        <br/><br/>
+    </div>
+    <div id="confidentialite" class="tab-pane " role="tabpanel">
+<!--        --><?php //echo $this->partial('these/these-saisie/partial/'); ?>
+    </div>
+<!--    <div id="financement" class="tab-pane " role="tabpanel">-->
+<!--        --><?php //echo $this->partial('these/these-saisie/partial/financement'); ?>
+<!--    </div>-->
+</div>
+<?php //echo $this->formControlGroup($form->get('titre')); ?>
 <?php echo $this->formHidden($form->get('security')); ?>
 <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
-
 <?php echo $this->form()->closeTag(); ?>
+
+
+<script>
+    $(function() {
+        let hash = $(location).attr('hash');
+        let name = hash.substring(1);
+        if (name === undefined || name === "") name = "informations";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').click(function () {
+            $(this).tab('show');
+        });
+    });
+
+    $('span.erase-acteur').click(function() {
+        let id = $(this).attr('id');
+        $('select[name=' + id + '-qualite]').val("");
+        $('select[name=' + id + '-etablissement]').val("");
+        $('input[name="' + id + '-individu[id]').val("");
+        $('input[name="' + id + '-individu[label]').val("");
+    });
+
+    // $('select').selectpicker();
+</script>
+
+<style>
+    span.erase-acteur {
+        cursor: pointer;
+    }
+</style>
+
+

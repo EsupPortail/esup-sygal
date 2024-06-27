@@ -8,7 +8,7 @@
     <legend>Généralités</legend>
 
     <?php
-    $fs = $form->get('Generalites');
+    $fs = $form->get('generalites');
     echo $this->formHidden($fs->get('id'));
     ?>
     <div class="row">
@@ -28,6 +28,56 @@
     <div class="row">
         <div class="col-4">
             <?php echo $this->formControlGroup($fs->get('discipline')) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('domaineHal')->get('domaineHal')); ?>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+        <h3>
+            Confidentialité de la thèse
+        </h3>
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
+            <?php echo $this->formControlGroup($fs->get('fin-confidentialite')); ?>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+        <h3>
+            Première inscription
+        </h3>
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('datePremiereInscription')) ?>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+        <h3>
+            Titre d'accès
+        </h3>
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('titreAccesInterneExterne')); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('libelleTitreAcces')); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codePaysTitreAcces')); ?>
         </div>
     </div>
 

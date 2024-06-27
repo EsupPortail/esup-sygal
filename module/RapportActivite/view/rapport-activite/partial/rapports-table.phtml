@@ -186,11 +186,11 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <?php if ($displayDirecteurThese): ?>
             <td class="acteurs text-sm">
                 <?php
-                $directeurs = $acteursFormatterDirecteurs->filter($these->getActeursNonHistorises());
+                $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
                 foreach ($directeurs as $directeur) {
                     echo $acteursFormatterDirecteurs->htmlifyActeur($directeur)."<br/>";
                 }
-                $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeursNonHistorises());
+                $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs());
                 foreach ($codirecteurs as $codirecteur) {
                     echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur)."<br/>";
                 }

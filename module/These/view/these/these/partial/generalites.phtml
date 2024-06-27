@@ -1,37 +1,43 @@
 <?php
 /**
- * @var \These\Entity\Db\These $these
+ * @var These $these
  * @var bool $estDoctorant
  * @var string $mailContact
  * @var string $etatMailContact
+ * @var string $modifierEmailContactConsentUrl
+ * @var string $modifierEmailContactUrl
  * @var string $modifierPersopassUrl
  *
  */
 
-use Application\Entity\Db\MailConfirmation;
+use Application\Entity\Db\DomaineHal;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Doctrine\ORM\PersistentCollection;
+use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
+use These\Entity\Db\These;
+use These\Provider\Privilege\ThesePrivileges;
 
 $canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
-$canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
-$canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
-$persopassModifiedEvent = 'persopass-modified-event';
+$canEditEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$canEditEmailContactConsent = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$emailContactModifiedEvent = 'email-contact-modified-event';
+$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
+$canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
 ?>
 
-<dl class="row">
-
+<dl class="row generalites">
     <dt class="col-md-3">
         <?php echo $this->translate("Établissement d'inscription"); ?>
     </dt>
-    <dd class="col-md-8">
+    <dd class="col-md-9">
         <?php if ($these->getEtablissement()): ?>
-            <?php echo $these->getEtablissement(); ?>
+            <span class="text-structure etablissement"><?php echo $these->getEtablissement()->getStructure()->getLibelle() ?></span>
         <?php else: ?>
-            <span class='text-danger'>
-                <span class='fas fa-exclamation-triangle'></span>
-                <?php echo $this->translate("Aucun établissement renseigné") ?>
-            </span>
-        <?php endif ?>
+            <div class='alert alert-sm alert-warning'>
+                <span class='fas fa-exclamation-triangle'></span> Aucun établissement n'est renseignée.
+            </div>
+        <?php endif; ?>
     </dd>
 
     <dt class="col-md-3">
@@ -43,9 +49,15 @@ $persopassModifiedEvent = 'persopass-modified-event';
             $these->getDoctorant()->getIndividu()->getDateNaissanceToString());
         ?>
         <?php
+        $canVisualiserIndividu = $this->isAllowed($these->getDoctorant()->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+        if ($canVisualiserIndividu) {
+            echo " <a href='".$this->url('individu/voir', ['individu' => $these->getDoctorant()->getIndividu()->getId()], [], true) ."'>";
+            echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
+        }
+        ?>
+        <?php
         // bouton d'usurpation d'identité
-        $individuUsurpationHelper = $this->plugin('individuUsurpation');
-        /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+        $individuUsurpationHelper = $this->plugin('individuUsurpation'); /* @var $individuUsurpationHelper IndividuUsurpationHelper */
         $individuUsurpationHelper->setIndividu($these->getDoctorant()->getIndividu());
         echo $individuUsurpationHelper();
         ?>
@@ -54,7 +66,10 @@ $persopassModifiedEvent = 'persopass-modified-event';
         <strong>
             <?php echo $this->translate("Nationalité :"); ?>
         </strong>
-        <?php echo $these->getDoctorant()->getNationalite() ?> <br>
+        <?php echo $these->getDoctorant()->getIndividu() && $these->getDoctorant()->getIndividu()->getPaysNationalite() ?
+            $these->getDoctorant()->getIndividu()->getPaysNationalite()->getLibelleNationalite() :
+            null;?>
+        <br>
 
         <strong>
             <?php echo $this->translate("N° étudiant :"); ?>
@@ -64,37 +79,39 @@ $persopassModifiedEvent = 'persopass-modified-event';
         <strong>
             <?php echo $this->translate("Adresse électronique institutionnelle :"); ?>
         </strong>
-        <?php if ($email = $these->getDoctorant()->getIndividu()->getEmail()): ?>
+        <?php if ($email = $these->getDoctorant()->getIndividu()->getEmailPro()): ?>
             <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
         <?php else: ?>
             <?php echo $this->translate("(Inconnu)"); ?>
         <?php endif ?>
 
         <?php if ($canVoirEmailContact) : ?>
-            <br/>
-
+            <br>
             <strong>
-                <?php echo $this->translate("Adresse électronique de contact :"); ?>
+                <?php echo $this->translate("Adresse de contact :"); ?>
             </strong>
-            <?php
-            if ($mailContact === null) {
-                echo "(Non renseigné) ";
-            } else {
-                echo $mailContact;
-                if ($etatMailContact === MailConfirmation::ENVOYE) {
-                    echo " (en attente) ";
-                }
-            }
-            ?>
+            <?php if ($mailContact = $these->getDoctorant()->getIndividu()->getEmailContact()): ?>
+                <a href="mailto: <?php echo $mailContact = $these->getDoctorant()->getIndividu()->getEmailContact() ?>"><?php echo $mailContact ?></a>
+            <?php else: ?>
+                (Non renseignée)
+            <?php endif; ?>
+            <?php if ($canEditEmailContact): ?>
+                <a href="<?php echo $modifierEmailContactUrl ?>"
+                   title="Modifer l'adresse de contact"
+                   data-event="<?php echo $emailContactModifiedEvent ?>"
+                   class="btn btn-secondary btn-sm ajax-modal">
+                    <?php echo $this->translate(($mailContact ? "Modifier" : "Renseigner") .  " l'adresse de contact"); ?>
+                </a>
+            <?php endif ?>
+            <?php if ($canEditEmailContactConsent): ?>
+                <a href="<?php echo $modifierEmailContactConsentUrl ?>"
+                   title="Votre consentement à utiliser l'adresse de contact"
+                   data-event="<?php echo $emailContactConsentModifiedEvent ?>"
+                   class="btn btn-secondary btn-sm ajax-modal">
+                    <?php echo $this->translate("Consentement"); ?>
+                </a>
+            <?php endif ?>
         <?php endif; ?>
-        <?php if ($canEditPersopass): ?>
-            <a href="<?php echo $modifierPersopassUrl ?>"
-               data-event="<?php echo $persopassModifiedEvent ?>"
-               class="btn btn-secondary btn-sm ajax-modal">
-                <span class="icon icon-edit"></span>
-                <?php echo $this->translate("Modifier"); ?>
-            </a>
-        <?php endif ?>
     </dd>
 
     <dt class="col-md-3">
@@ -109,15 +126,38 @@ $persopassModifiedEvent = 'persopass-modified-event';
     </dt>
     <dd class="col-md-8"><?php echo $these->getLibelleDiscipline() ?></dd>
 
+    <dt class="col-md-3">Domaine(s) HAL</dt>
+    <dd class="col-md-9">
+        <?php
+        if ($these->getDomainesHal() instanceof PersistentCollection && $these->getDomainesHal()->isEmpty()){ ?>
+            <em> Aucun domaine HAL de renseigné </em>
+        <?php }else{ ?>
+            <ul>
+                <?php foreach($these->getDomainesHal() as $domaine){ ?>
+                    <li>
+                        <?php
+                        /** @var DomaineHal $domaine */
+                        echo $domaine->getFrDomainS();
+                        ?>
+                    </li>
+                <?php } ?>
+            </ul>
+        <?php }
+        if($canDomaineHalModifier){?>
+            <td>
+                <div class="float-end">
+                    <a  <?php /**  @see \These\Controller\DomaineHalSaisieController::saisieDomaineHalAction() */ ?>
+                            class="ajax-modal" data-event="modification"
+                            href="<?php echo $this->url('these/saisie-domaine-hal', ['these' => $these->getId()], [], true); ?>"
+                    >
+                        <?php if ($these->getDomainesHal() instanceof PersistentCollection && $these->getDomainesHal()->isEmpty()){ ?>
+                            <span class="icon icon-plus"></span>
+                        <?php }else{ ?>
+                        <span class="icon icon-edit"></span>
+                        <?php } ?>
+                    </a>
+                </div>
+            </td>
+        <?php } ?>
+    </dd>
 </dl>
-
-
-<script>
-    $(function () {
-        $("body").one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
-            // Le persopass vient d'être modifié.
-            event.div.modal('hide'); // ferme la fenêtre modale
-            window.location.reload();
-        });
-    });
-</script>

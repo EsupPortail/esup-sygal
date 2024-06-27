@@ -6,6 +6,7 @@ use Application\View\Renderer\PhpRenderer;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
 use Structure\Service\Etablissement\EtablissementService;
+use These\Entity\Db\These;
 
 class DirectionFieldsetFactory
 {
@@ -36,6 +37,7 @@ class DirectionFieldsetFactory
         $fieldset->setUrlAutocompleteEcoleDoctorale($renderer->url('ecole-doctorale/rechercher', [], [], true));
         $fieldset->setUrlAutocompleteUniteRecherche($renderer->url('unite-recherche/rechercher', [], [], true));
 
+        $fieldset->setObject(new These());
         return $fieldset;
     }
 }

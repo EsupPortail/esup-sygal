@@ -23,6 +23,7 @@ class StructuresForm extends Form
         $this->setObject(new These());
 
         $fieldset = $this->getFormFactory()->getFormElementManager()->get(StructuresFieldset::class);
+        $fieldset->setName("structures");
         $fieldset->setUseAsBaseFieldset(true);
 
         $this

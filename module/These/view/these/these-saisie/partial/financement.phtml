@@ -1,0 +1,36 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+?>
+
+<fieldset>
+    <legend>Financement</legend>
+
+    <?php
+    $fs = $form->get('financements');
+//    echo $this->formHidden($fs->get('id'));
+    ?>
+<!--    <div class="row">-->
+<!--        <div class="col-3">-->
+<!--            --><?php //echo $this->formControlGroup($fs->get('annee')) ?>
+<!--        </div>-->
+<!--    </div>-->
+    <div class="row">
+        <div class="col-3">
+            <?php //echo $this->formControlGroup($fs->get('origineFinancement')) ?>
+            <?php echo $this->formElementCollection($fs); ?>
+        </div>
+    </div>
+<!--    <div class="row">-->
+<!--        <div class="col-3">-->
+<!--            --><?php //echo $this->formControlGroup($fs->get('complementFinancement')) ?>
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="row">-->
+<!--        <div class="col-3">-->
+<!--            --><?php //echo $this->formControlGroup($fs->get('quotiteFinancement')) ?>
+<!--        </div>-->
+<!--    </div>-->
+
+</fieldset>

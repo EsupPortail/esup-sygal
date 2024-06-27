@@ -419,7 +419,7 @@ class PropositionService extends BaseService
 
 
         /** Recuperation de la validation du directeur de thèse */
-        $directeurs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
         $validations[Role::CODE_DIRECTEUR_THESE] = [];
         foreach ($directeurs as $directeur) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $directeur->getIndividu());
@@ -427,7 +427,7 @@ class PropositionService extends BaseService
         }
 
         /** Recuperation de la validation du codirecteur de thèse */
-        $codirecteurs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        $codirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
         $validations[Role::CODE_CODIRECTEUR_THESE] = [];
         foreach ($codirecteurs as $codirecteur) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $codirecteur->getIndividu());

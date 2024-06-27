@@ -2,6 +2,7 @@
 
 namespace These\Fieldset\Structures;
 
+use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
@@ -15,7 +16,15 @@ class StructuresHydratorFactory
      */
     public function __invoke(ContainerInterface $container): StructuresHydrator
     {
+//        /**
+//         * @var EntityManager $entityManager
+//         */
+//        $entityManager = $container->get('Doctrine\ORM\EntityManager');
+//        $hydrator = new StructuresHydrator($entityManager);
+
         $hydrator = new StructuresHydrator();
+
+
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);

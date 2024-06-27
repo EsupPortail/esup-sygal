@@ -12,39 +12,44 @@
     </dt>
     <dd class="col-md-9">
         <?php if ($these->getUniteRecherche()): ?>
-            <?php echo $these->getUniteRecherche(); ?>
-            <?php if ($rattachements): ?>
-                <br>
-                <?php echo $this->translate("Rattachée à :"); ?>
-                <ul>
-                    <?php foreach ($rattachements as $rattachement): ?>
-                        <li><?php echo $rattachement->getEtablissement()->getStructure()->getLibelle() ?></li>
-                    <?php endforeach ?>
-                </ul>
-            <?php else: ?>
-                <p class="small">
-                    <?php echo $this->translate("(Aucun rattachement renseigné)") ?>
-                </p>
-            <?php endif ?>
+            <span class="text-structure ur"><?php echo $these->getUniteRecherche() ?></span>
+        <?php elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()): ?>
+            <?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?>
+            <div class='alert alert-sm alert-warning'>
+                <span class='fas fa-exclamation-triangle'></span> Utilisation du champs libre (unité de recherche mal renseignée).
+            </div>
         <?php else: ?>
-            <span class='text-danger'>
-                <span class='fas fa-exclamation-triangle'></span>
-                <?php echo $this->translate("Aucune unité de recherche renseignée") ?>
-            </span>
+            <div class='alert alert-sm alert-warning'>
+                <span class='fas fa-exclamation-triangle'></span> Aucune unité de recherche n'est renseignée
+            </div>
+        <?php endif; ?>
+    </dd>
+
+    <dt class="col-md-3 ps-4">
+        Établ. de rattachement de l'UR
+    </dt>
+    <dd class="col-md-9 ps-4">
+        <?php if (empty($rattachements)): ?>
+            (Aucun établissement de rattachement renseigné)
+        <?php else: ?>
+            <ul>
+                <?php foreach ($rattachements as $rattachement): ?>
+                    <li><?php echo $rattachement->getEtablissement()->getStructure() ?></li>
+                <?php endforeach ?>
+            </ul>
         <?php endif ?>
     </dd>
 
     <dt class="col-md-3">
-        <?php echo $this->translate("École doctorale"); ?>
+        <?php echo $this->translate("École doctorale (ED)"); ?>
     </dt>
     <dd class="col-md-9">
         <?php if ($these->getEcoleDoctorale()): ?>
-            <?php echo $these->getEcoleDoctorale(); ?>
+            <span class="text-structure ed"><?php echo $these->getEcoleDoctorale() ?></span>
         <?php else: ?>
-            <span class='text-danger'><span class='fas fa-exclamation-triangle'></span>
-                <?php echo $this->translate("Aucune école doctorale renseignée") ?>
-            </span>
+            <div class='alert alert-sm alert-warning'>
+                <span class='fas fa-exclamation-triangle'></span> Aucune école doctorale n'est renseignée.
+            </div>
         <?php endif ?>
     </dd>
-
 </dl>

@@ -43,7 +43,7 @@ class ConvocationPdfExporter extends PdfExporter
         /** @var These $these */
         $these = $this->vars["these"];
         /** @var Membre[] $jury */
-        $jury = $these->getActeursNonHistorisesByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
+        $jury = $these->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
 
         foreach ($jury as $membre) {
             $this->vars["membre"] = $membre;

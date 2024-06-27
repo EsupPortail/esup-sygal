@@ -150,7 +150,7 @@ class ValidationController extends AbstractController
 
         $utilisateurs = [];
         /** @var Acteur $acteur */
-        foreach ($these->getActeursNonHistorises() as $acteur) {
+        foreach ($these->getActeurs() as $acteur) {
             $individu = $acteur->getIndividu();
             $utilisateurs[$individu->getId()] = $this->utilisateurService->getRepository()->findByIndividu($individu); // ok
         }

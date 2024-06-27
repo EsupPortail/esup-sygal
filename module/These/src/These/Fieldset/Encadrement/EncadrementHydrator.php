@@ -4,6 +4,7 @@ namespace These\Fieldset\Encadrement;
 
 use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
@@ -27,9 +28,9 @@ class EncadrementHydrator implements HydratorInterface
 
         $coencadrants = $object->getId() !== null ?
             $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) :
-            $object->getActeursNonHistorisesByRoleCode(Role::CODE_CO_ENCADRANT);
+            $object->getActeursByRoleCode(Role::CODE_CO_ENCADRANT);
 
-        usort($coencadrants, fn(Acteur $a, Acteur $b) => $a->getIndividu()->getNomComplet() <=> $b->getIndividu()->getNomComplet());
+        if(is_array($coencadrants)) usort($coencadrants, fn(Acteur $a, Acteur $b) => $a->getIndividu()->getNomComplet() <=> $b->getIndividu()->getNomComplet());
         $i = 1;
         foreach ($coencadrants as $coencadrant) {
             $data['coencadrant' . $i . '-individu'] = [
@@ -59,7 +60,7 @@ class EncadrementHydrator implements HydratorInterface
                 $role = $this->roleService->getRepository()->findByCode(Role::CODE_CO_ENCADRANT);
                 if ($acteur === null) {
                     $acteur = $this->acteurService->newActeur($object, $individu, $role);
-                    //$this->save($acteur);
+                    $object->addActeur($acteur);
                 }
                 $acteur->setRole($role);
                 $acteur->setEtablissement($object->getEtablissement());
@@ -68,7 +69,7 @@ class EncadrementHydrator implements HydratorInterface
                 $temoins[] = $acteur->getId();
             }
         }
-        $coencadrants = $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT);
+        $coencadrants = $object->getId() ? $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) : [];
         foreach ($coencadrants as $acteur) {
             if (array_search($acteur->getId(), $temoins) === false) {
                 $acteur->historiser();

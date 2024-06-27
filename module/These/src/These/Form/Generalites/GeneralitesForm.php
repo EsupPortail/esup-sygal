@@ -15,6 +15,7 @@ class GeneralitesForm extends Form
     public function init()
     {
         $fieldset = $this->getFormFactory()->getFormElementManager()->get(GeneralitesFieldset::class);
+        $fieldset->setName("generalites");
         $fieldset->setUseAsBaseFieldset(true);
 
         $this

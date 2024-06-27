@@ -98,6 +98,23 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      *
      * @return callable
      */
+    static public function getComparisonFunction()
+    {
+        return function(Acteur $a1, Acteur $a2) {
+            return strcmp(
+                $a1->getRole()->getOrdreAffichage() . $a1->getIndividu()->getNomUsuel() . $a1->getIndividu()->getPrenom(),
+                $a2->getRole()->getOrdreAffichage() . $a2->getIndividu()->getNomUsuel() . $a2->getIndividu()->getPrenom()
+            );
+        };
+    }
+
+
+    /**
+     * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur rôle.
+     * @see usort()
+     *
+     * @return callable
+     */
     static public function getRoleComparisonFunction()
     {
         return function(Acteur $a1, Acteur $a2) {

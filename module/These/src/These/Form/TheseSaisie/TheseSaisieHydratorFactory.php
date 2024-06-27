@@ -10,16 +10,13 @@ use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Service\Acteur\ActeurService;
 
-/**
- * @deprecated
- */
 class TheseSaisieHydratorFactory {
 
     /**
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : TheseSaisieHydrator
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) : TheseSaisieHydrator
     {
         /**
          * @var ActeurService $acteurService
@@ -36,13 +33,15 @@ class TheseSaisieHydratorFactory {
         $qualiteService = $container->get(QualiteService::class);
         $uniteRechercheService = $container->get(UniteRechercheService::class);
 
-        $hydrator = new TheseSaisieHydrator();
-        $hydrator->setActeurService($acteurService);
-        $hydrator->setDoctorantService($doctorantService);
-        $hydrator->setEcoleDoctoraleService($ecoleDoctoraleService);
-        $hydrator->setEtablissementService($etablissementService);
-        $hydrator->setQualiteService($qualiteService);
-        $hydrator->setUniteRechercheService($uniteRechercheService);
-        return $hydrator;
+//        $hydrator = new TheseSaisieHydrator();
+//        $hydrator->setActeurService($acteurService);
+//        $hydrator->setDoctorantService($doctorantService);
+//        $hydrator->setEcoleDoctoraleService($ecoleDoctoraleService);
+//        $hydrator->setEtablissementService($etablissementService);
+//        $hydrator->setQualiteService($qualiteService);
+//        $hydrator->setUniteRechercheService($uniteRechercheService);
+
+        $entityManager = $container->get('Doctrine\ORM\EntityManager');
+        return new TheseSaisieHydrator($entityManager);
     }
 }

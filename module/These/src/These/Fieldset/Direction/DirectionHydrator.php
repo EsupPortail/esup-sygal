@@ -56,7 +56,7 @@ class DirectionHydrator extends AbstractHydrator
         if ($these->getId() !== null) {
             $directeur = current($this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE)) ?: null;
         } else {
-            $directeur = $these->getActeursNonHistorisesByRoleCode(Role::CODE_DIRECTEUR_THESE)->first() ?: null;
+            $directeur = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->first() ?: null;
         }
         if ($directeur === null) {
             return [];
@@ -79,10 +79,10 @@ class DirectionHydrator extends AbstractHydrator
         /** @var Acteur[] $codirecteurs */
         if ($these->getId() !== null) {
             $codirecteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
+            usort($codirecteurs, Acteur::getOrdreComparisonFunction());
         } else {
-            $codirecteurs = $these->getActeursNonHistorisesByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+            $codirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
         }
-        usort($codirecteurs, Acteur::getOrdreComparisonFunction());
 
         $i = 1;
         foreach ($codirecteurs as $codirecteur) {
@@ -128,7 +128,7 @@ class DirectionHydrator extends AbstractHydrator
             }
         }
 
-        $codirsEnBdd = $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
+        $codirsEnBdd = $these->getId() ?  $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE) : [];
         foreach ($codirsEnBdd as $codirecteur) {
             if (array_search($codirecteur->getId(), $temoins) === false) {
                 $codirecteur->historiser();
@@ -169,7 +169,7 @@ class DirectionHydrator extends AbstractHydrator
     private function addActeur(These $these, Individu $individu, string $role): Acteur
     {
         $role = $this->roleService->getRepository()->findByCode($role);
-        $acteur = $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $these);
+        $acteur = $these->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $these) : null;
         if ($acteur === null) {
             $acteur = $this->acteurService->newActeur($these, $individu, $role);
             $these->addActeur($acteur);

@@ -11,11 +11,17 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Depot\Entity\Db\Attestation;
+use Depot\Entity\Db\MetadonneeThese;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
+use Laminas\EventManager\Event;
 use Laminas\EventManager\ListenerAggregateTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Notification\Service\NotifierServiceAwareTrait;
@@ -68,30 +74,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         return $these;
     }
 
-    public function saveThese(These $these, string $domaine)
-    {
-        switch ($domaine) {
-            case 'generalites':
-                $this->saveTheseGeneralites($these);
-                break;
-            case 'direction':
-                $this->saveTheseDirection($these);
-                break;
-            case 'structures':
-                $this->saveTheseStructures($these);
-                break;
-            case 'encadrement':
-                $this->saveTheseEncadrement($these);
-                break;
-        }
-    }
-
-    private function saveTheseGeneralites(These $these)
-    {
-
-    }
-
-    private function saveTheseDirection(These $these)
+    public function saveThese(These $these, ?string $domaine)
     {
         /** @var Acteur[] $direction */
         $direction = $these->getActeursByRoleCode([
@@ -102,21 +85,41 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         foreach ($direction as $acteur) {
             try {
                 $this->getEntityManager()->persist($acteur);
-                $this->getEntityManager()->flush($acteur);
             } catch (ORMException $e) {
                 throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
             }
         }
-    }
 
-    private function saveTheseStructures(These $these)
-    {
+        /** @var Acteur[] $direction */
+        $coencadrants = $these->getActeursByRoleCode([
+            Role::CODE_CO_ENCADRANT,
+        ]);
 
-    }
+        foreach ($coencadrants as $acteur) {
+            try {
+                $this->getEntityManager()->persist($acteur);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            }
+        }
 
-    private function saveTheseEncadrement(These $these)
-    {
+        $titreAcces = $these->getTitreAcces();
+        try {
+            $this->getEntityManager()->persist($titreAcces);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+        }
 
+        $theseAnneeUniv = $these->getAnneeUniv1ereInscription();
+        if($theseAnneeUniv){
+            try {
+                $this->getEntityManager()->persist($theseAnneeUniv);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            }
+        }
+
+        return $this->create($these);
     }
 
     public function create(These $these): These
@@ -137,329 +140,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
         }
-    }
-
-    /**
-     * Met à jour le témoin de correction autorisée forcée.
-     *
-     * @param These  $these
-     * @param string|null $forcage
-     */
-    public function updateCorrectionAutoriseeForcee(These $these, string $forcage = null)
-    {
-        if ($forcage !== null) {
-            Assertion::inArray($forcage, [
-                These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
-                These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
-                These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
-            ]);
-        }
-
-        $these->setCorrectionAutoriseeForcee($forcage);
-
-        // s'il n'y a plus de correction attendue, effacement du sursis éventuel
-        if (! $these->getCorrectionAutorisee()) {
-            $these->unsetDateButoirDepotVersionCorrigeeAvecSursis();
-        }
-
-        try {
-            $this->entityManager->flush($these);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-    }
-
-    /**
-     * @param These           $these
-     * @param MetadonneeThese $metadonnee
-     */
-    public function updateMetadonnees(These $these, MetadonneeThese $metadonnee)
-    {
-        if (! $metadonnee->getId()) {
-            $metadonnee->setThese($these);
-            $these->addMetadonnee($metadonnee);
-
-            $this->entityManager->persist($metadonnee);
-        }
-
-        try {
-            $this->entityManager->flush($metadonnee);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-    }
-
-    /**
-     * @param Event $event
-     */
-    public function onFichierTheseTeleverse(Event $event)
-    {
-        /** @var These $these */
-        /** @var VersionFichier $version */
-        /** @var NatureFichier $nature */
-        $these = $event->getTarget();
-        $version = $event->getParam('version');
-
-        if ($version->estVersionOriginale() && $version->estVersionCorrigee()) {
-            $this->onFichierTheseTeleverseVersionCorrigee($these);
-        }
-    }
-
-    /**
-     * Lors du dépôt d'une version originale corrigée, selon la config de l'appli, il peut être nécessaire de créer
-     * automatiquement Diffusion et Attestation.
-     *
-     * @param These $these
-     */
-    private function onFichierTheseTeleverseVersionCorrigee(These $these)
-    {
-        // Création automatique d'une Diffusion pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
-        if (! $this->resaisirAutorisationDiffusionVersionCorrigee) {
-            $this->createDiffusionVersionCorrigee($these);
-        }
-        // Création automatique d'une Attestation pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
-        if (! $this->resaisirAttestationsVersionCorrigee) {
-            $this->createAttestationVersionCorrigee($these);
-        }
-    }
-
-    /**
-     * Création automatique d'une Attestation pour la version corrigée, identique à celle du 1er dépôt.
-     *
-     * @param These $these
-     */
-    public function createAttestationVersionCorrigee(These $these)
-    {
-        $versionOrig = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-        $attestationOrig = $these->getAttestationForVersion($versionOrig);
-        if ($attestationOrig === null) {
-            throw new LogicException("Aucune Attestation trouvée pour le 1er dépôt");
-        }
-
-        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
-        $attestationCorr = $these->getAttestationForVersion($versionCorr);
-        if ($attestationCorr !== null) {
-            return; // Attestation existante
-        }
-
-        $attestationCorr = clone $attestationOrig;
-        $attestationCorr->setVersionCorrigee(true);
-        $attestationCorr->setCreationAuto(true);
-        $this->updateAttestation($these, $attestationCorr);
-    }
-
-    /**
-     * @param These       $these
-     * @param Attestation $attestation
-     */
-    public function updateAttestation(These $these, Attestation $attestation)
-    {
-        if (! $attestation->getId()) {
-            $attestation->setThese($these);
-            $these->addAttestation($attestation);
-
-            $this->entityManager->persist($attestation);
-        }
-
-        try {
-            $this->entityManager->flush($attestation);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-    }
-
-    /**
-     * Supprime définitivement l'éventuelle Attestation concernant une version de fichier.
-     *
-     * @param These          $these Thèse concernée
-     * @param VersionFichier $version
-     */
-    public function deleteAttestationForVersion(These $these, VersionFichier $version)
-    {
-        $attestation = $these->getAttestationForVersion($version);
-        if ($attestation === null) {
-            return;
-        }
-
-        $these->removeAttestation($attestation);
-
-        try {
-            $this->entityManager->remove($attestation);
-            $this->entityManager->flush($attestation);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
-        }
-    }
-
-    /**
-     * Création automatique d'une Diffusion pour la version corrigée, identique à celle du 1er dépôt.
-     *
-     * @param These $these
-     */
-    public function createDiffusionVersionCorrigee(These $these)
-    {
-        $versionOrig = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-        $diffusionOrig = $these->getDiffusionForVersion($versionOrig);
-        if ($diffusionOrig === null) {
-            throw new LogicException("Aucune Diffusion trouvée pour le 1er dépôt");
-        }
-
-        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
-        $diffusionCorr = $these->getDiffusionForVersion($versionCorr);
-        if ($diffusionCorr !== null) {
-            return; // Diffusion existante
-        }
-
-        $diffusionCorr = clone $diffusionOrig;
-        $diffusionCorr->setVersionCorrigee(true);
-        $diffusionCorr->setCreationAuto(true);
-        $this->updateDiffusion($these, $diffusionCorr, $versionCorr);
-    }
-
-    /**
-     * @param These          $these
-     * @param Diffusion      $diffusion
-     * @param VersionFichier $version
-     */
-    public function updateDiffusion(These $these, Diffusion $diffusion, VersionFichier $version)
-    {
-        $isUpdate = $diffusion->getId() !== null;
-
-        if ($isUpdate) {
-            // on teste si la réponse à l'autorisation de diffusion existante a changé de manière "importante"
-            // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
-            $rule = new AutorisationDiffusionRule();
-            $rule->setDiffusion($diffusion)->execute();
-            $suppressionAttestationsAVerifier = $rule->computeChangementDeReponseImportant($this->entityManager);
-        } else {
-            $suppressionAttestationsAVerifier = false;
-        }
-
-        if (! $isUpdate) {
-            $diffusion->setThese($these);
-            $these->addDiffusion($diffusion);
-        }
-
-        try {
-            if (! $isUpdate) {
-                $this->entityManager->persist($diffusion);
-            }
-            $this->entityManager->flush($diffusion);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-
-        //
-        // Il peut être nécessaire de supprimer les "attestations" existantes en fonction des réponses
-        // à l'autorisation de diffusion.
-        //
-        if ($suppressionAttestationsAVerifier) {
-            $rule = new SuppressionAttestationsRequiseRule($these, $version);
-            $suppressionRequise = $rule->execute();
-
-            if ($suppressionRequise) {
-                $this->deleteAttestationForVersion($these, $version);
-            }
-        }
-    }
-
-    /**
-     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
-     * l'exemplaire papier est pertinent ou non.
-     *
-     * @param These          $these
-     * @param VersionFichier $version
-     * @return boolean
-     */
-    public function isRemiseExemplairePapierRequise(These $these, VersionFichier $version)
-    {
-        $diffusion = $these->getDiffusionForVersion($version);
-
-        if ($diffusion === null) {
-            throw new LogicException("Appel de méthode prématuré : autorisation de diffusion introuvable pour la $version");
-        }
-
-        return $diffusion->isRemiseExemplairePapierRequise();
-    }
-
-    /**
-     * Détermine d'après la réponse à l'autorisation de diffusion de la thèse si le flag de remise de
-     * l'exemplaire papier est pertinent ou non.
-     *
-     * @param These $these
-     * @return boolean|null
-     */
-    public function isExemplPapierFourniPertinent(These $these)
-    {
-        // le RDV BU ne concerne que le dépôt de la version initiale
-        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-
-        $diffusion = $these->getDiffusionForVersion($version);
-
-        if ($diffusion === null) {
-            return false;
-        }
-
-        return $diffusion->isRemiseExemplairePapierRequise();
-    }
-
-    /**
-     * Détermine si les infos qui doivent être saisies pour le RDV BU l'ont été.
-     *
-     * @param These $these
-     * @return bool
-     */
-    public function isInfosBuSaisies(These $these)
-    {
-        $rdvBu = $these->getRdvBu();
-
-        if ($rdvBu === null) {
-            return false;
-        }
-
-        $exemplairePapierFourniPertinent = $this->isExemplPapierFourniPertinent($rdvBu->getThese());
-
-        return
-            (!$exemplairePapierFourniPertinent || $exemplairePapierFourniPertinent && $rdvBu->getExemplPapierFourni()) &&
-            $rdvBu->getConventionMelSignee() && $rdvBu->getMotsClesRameau() &&
-            $rdvBu->isVersionArchivableFournie();
-    }
-
-    /**
-     * @param These $these
-     * @param RdvBu $rdvBu
-     */
-    public function updateRdvBu(These $these, RdvBu $rdvBu)
-    {
-        if (! $rdvBu->getId()) {
-            $rdvBu->setThese($these);
-            $these->addRdvBu($rdvBu);
-
-            $this->entityManager->persist($rdvBu);
-        }
-
-        try {
-            $this->entityManager->flush($rdvBu);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
-        }
-
-        // si tout est renseigné, on valide automatiquement
-        if ($this->isInfosBuSaisies($these)) {
-            $this->validationService->validateRdvBu($these, $this->userContextService->getIdentityIndividu());
-            $successMessage = "Validation enregistrée avec succès.";
-
-            // notification BDD et BU + doctorant (à la 1ere validation seulement)
-            $notifierDoctorant = ! $this->validationService->existsValidationRdvBuHistorisee($these);
-            $notification = new ValidationRdvBuNotification();
-            $notification->setThese($these);
-            $notification->setNotifierDoctorant($notifierDoctorant);
-            $this->notifierService->triggerValidationRdvBu($notification);
-//            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
-
-            $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);
-//            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
-        }
+        return $these;
     }
 
     /**
@@ -469,7 +150,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param These $these
      * @return PdcData
      */
-    public function fetchInformationsPageDeCouverture(These $these): PdcData
+    public function fetchInformationsPageDeCouverture(These $these) : PdcData
     {
         $pdcData = new PdcData();
         $propositions = $these->getPropositions()->toArray();
@@ -477,17 +158,17 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $proposition = end($propositions);
 
         if ($these->getDateSoutenance() !== null) {
-            $mois = (int)$these->getDateSoutenance()->format('m');
-            $annee = (int)$these->getDateSoutenance()->format('Y');
+            $mois = (int) $these->getDateSoutenance()->format('m');
+            $annee = (int) $these->getDateSoutenance()->format('Y');
 
-            if ($mois > 9) $anneeUniversitaire = $annee . "/" . ($annee + 1);
+            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
             else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
             $pdcData->setAnneeUniversitaire($anneeUniversitaire);
         }
 
         /** informations générales */
         $titre = trim($these->getTitre());
-        $titre = str_replace("\n", ' ', $titre);
+        $titre = str_replace("\n",' ', $titre);
         $pdcData->setTitre($titre);
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) {
@@ -507,7 +188,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         }
 
         /** Huis Clos */
-        if ($proposition and $proposition->isHuitClos()) {
+        if ($proposition AND $proposition->isHuitClos()) {
             $pdcData->setHuisClos(true);
         } else {
             $pdcData->setHuisClos(false);
@@ -516,7 +197,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         /** confidentialité */
         $pdcData->setDateFinConfidentialite($these->getDateFinConfidentialite());
         /** Jury de thèses */
-        $acteurs = $these->getActeursNonHistorises()->toArray();
+        $acteurs = $these->getActeurs()->toArray();
 
         $jury = array_filter($acteurs, function (Acteur $a) {
             return $a->estMembreDuJury();
@@ -579,17 +260,13 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         foreach ($acteursEnCouverture as $acteur) {
             $individu = $acteur->getIndividu();
 
-            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) {
-                return $a->getIndividu() === $individu;
-            });
+            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
 
             $acteurData = new MembreData();
             $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true)));
 
 
-            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {
-                return $a->getIndividu() === $acteur->getIndividu();
-            }));
+            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
 
             /** GESTION DES RÔLES SPÉCIAUX ****************************************************************************/
             if (!$acteur->estPresidentJury()) {
@@ -618,7 +295,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
 
             /** GESTION DES ETABLISSEMENTS ****************************************************************************/
             if ($etab = ($acteur->getEtablissementForce() ?: $acteur->getEtablissement())) {
-                $acteurData->setEtablissement((string)$etab);
+                $acteurData->setEtablissement((string) $etab);
             } else {
                 foreach ($acteursLies as $acteurLie) {
                     $membre = $this->getMembreService()->getMembreByActeur($acteurLie);
@@ -680,6 +357,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
 
         return $pdcData;
     }
+
 
     /**
      * @param AbstractActionController $controller

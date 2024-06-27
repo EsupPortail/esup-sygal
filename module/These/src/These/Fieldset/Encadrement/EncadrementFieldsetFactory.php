@@ -7,6 +7,7 @@ use Individu\Entity\Db\Individu;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
 use Structure\Service\Etablissement\EtablissementService;
+use These\Entity\Db\These;
 
 class EncadrementFieldsetFactory
 {
@@ -35,6 +36,8 @@ class EncadrementFieldsetFactory
         //todo route de recherche des directeurs
         $fieldset->setUrlDirecteur($renderer->url('individu/rechercher', [], [], true));
         $fieldset->setUrlCoEncadrant($renderer->url('utilisateur/rechercher-individu', [], ["query" => ['type' => Individu::TYPE_ACTEUR]], true));
+
+        $fieldset->setObject(new These());
 
         return $fieldset;
     }
