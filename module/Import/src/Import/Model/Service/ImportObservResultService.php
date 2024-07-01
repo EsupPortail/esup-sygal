@@ -5,6 +5,7 @@ namespace Import\Model\Service;
 use Application\Constants;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Doctrine\ORM\Exception\ORMException;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
@@ -25,6 +26,7 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
     use TheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use TheseNotificationFactoryAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use VariableServiceAwareTrait;
     use LoggerAwareTrait;
 
@@ -258,9 +260,9 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
 
             $these->setCorrectionAutorisee($ior->getImportObserv()->getToValue()); // anticipation nécessaire !
 
-            // notification
+            // notification par mail
             try {
-                $notif = $this->theseNotificationFactory->createNotificationCorrectionAttendue($ior, $these, $message);
+                $notif = $this->depotNotificationFactory->createNotificationCorrectionAttendue($ior, $these, $message);
                 if ($notif === null) {
                     $this->logger->info(sprintf("Aucune notif n'est nécessaire pour la thèse '%s'. ", $these->getSourceCode()) . $message);
                     continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant

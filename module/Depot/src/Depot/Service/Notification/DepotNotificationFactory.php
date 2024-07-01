@@ -9,10 +9,13 @@ use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Entity\Db\FichierThese;
+use Depot\Notification\ChangementCorrectionAttendueNotification;
 use Depot\Notification\ValidationDepotTheseCorrigeeNotification;
 use Depot\Notification\ValidationPageDeCouvertureNotification;
 use Depot\Notification\ValidationRdvBuNotification;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Fichier\Entity\Db\VersionFichier;
+use Import\Model\ImportObservResult;
 use Laminas\View\Helper\Url as UrlHelper;
 use Notification\Exception\RuntimeException;
 use Notification\Notification;
@@ -34,36 +37,21 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
     use RoleServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
 
-    /**
-     * @var UrlHelper
-     */
     protected UrlHelper $urlHelper;
 
-    /**
-     * @var ModuleOptions
-     */
     private ModuleOptions $appModuleOptions;
 
-    /**
-     * @param UrlHelper $urlHelper
-     */
-    public function setUrlHelper(UrlHelper $urlHelper)
+    public function setUrlHelper(UrlHelper $urlHelper): void
     {
         $this->urlHelper = $urlHelper;
     }
 
-    /**
-     * @param ModuleOptions $options
-     */
-    public function setAppModuleOptions(ModuleOptions $options)
+    public function setAppModuleOptions(ModuleOptions $options): void
     {
         $this->appModuleOptions = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initNotification(Notification $notification)
+    public function initNotification(Notification $notification): void
     {
         parent::initNotification($notification);
 
@@ -81,7 +69,6 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
      * @param string               $destinataires        Emails séparés par une virgule
      * @param FichierThese         $fichierTheseRetraite Fichier retraité concerné
      * @param ValiditeFichier|null $validite             Résultat du test d'archivabilité éventuel
-     * @return Notification
      * @return Notification
      */
     public function createNotificationForRetraitementFini(
@@ -160,9 +147,6 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
 
     /**
      * Notification à l'issue du dépôt d'un fichier.
-     *
-     * @param These $these
-     * @return Notification
      */
     public function createNotificationForFichierTeleverse(These $these): Notification
     {
@@ -178,10 +162,6 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
         return $notif;
     }
 
-    /**
-     * @param These $these
-     * @return Notification
-     */
     public function createNotificationForAccordSursisCorrection(These $these): Notification
     {
         $emailBDD = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
@@ -255,6 +235,45 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
         $notification->setEmailsAspectsBibliotheque($this->emailTheseService->fetchEmailAspectsBibliotheque($these));
 
         return $notification;
+    }
+
+    /**
+     * Notification à propos de corrections attendues.
+     *
+     * @param ImportObservResult $record
+     * @param These $these
+     * @param string|null $message
+     * @return \Notification\NotificationResult|null
+     */
+    public function createNotificationCorrectionAttendue(ImportObservResult $record, These $these, ?string &$message = null): ?Notification
+    {
+        // interrogation de la règle métier pour savoir comment agir...
+        $rule = new NotificationDepotVersionCorrigeeAttenduRule();
+        $rule
+            ->setThese($these)
+            ->setDateDerniereNotif($record->getDateNotif())
+            ->execute();
+        $message = $rule->getMessage(' ');
+        $estPremiereNotif = $rule->estPremiereNotif();
+        $dateProchaineNotif = $rule->getDateProchaineNotif();
+
+        if ($dateProchaineNotif === null) {
+            return null;
+        }
+
+        $dateProchaineNotif->setTime(0, 0, 0);
+        $now = (new \DateTime())->setTime(0, 0, 0);
+
+        if ($now != $dateProchaineNotif) {
+            return null;
+        }
+
+        $notif = new ChangementCorrectionAttendueNotification();
+        $notif
+            ->setThese($these)
+            ->setEstPremiereNotif($estPremiereNotif);
+
+        return $notif;
     }
 
     /**

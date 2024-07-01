@@ -3,10 +3,7 @@
 namespace These\Service\Notification;
 
 use Application\Service\Email\EmailTheseServiceAwareTrait;
-use Depot\Notification\ChangementCorrectionAttendueNotification;
 use Depot\Notification\PasDeMailPresidentJury;
-use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
-use Import\Model\ImportObservResult;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
@@ -78,45 +75,6 @@ class TheseNotificationFactory extends NotificationFactory
         return $notifs;
     }
 
-
-    /**
-     * Notification à propos de corrections attendues.
-     *
-     * @param ImportObservResult $record
-     * @param These $these
-     * @param string|null $message
-     * @return \Notification\NotificationResult|null
-     */
-    public function createNotificationCorrectionAttendue(ImportObservResult $record, These $these, ?string &$message = null): ?Notification
-    {
-        // interrogation de la règle métier pour savoir comment agir...
-        $rule = new NotificationDepotVersionCorrigeeAttenduRule();
-        $rule
-            ->setThese($these)
-            ->setDateDerniereNotif($record->getDateNotif())
-            ->execute();
-        $message = $rule->getMessage(' ');
-        $estPremiereNotif = $rule->estPremiereNotif();
-        $dateProchaineNotif = $rule->getDateProchaineNotif();
-
-        if ($dateProchaineNotif === null) {
-            return null;
-        }
-
-        $dateProchaineNotif->setTime(0, 0, 0);
-        $now = (new \DateTime())->setTime(0, 0, 0);
-
-        if ($now != $dateProchaineNotif) {
-            return null;
-        }
-
-        $notif = new ChangementCorrectionAttendueNotification();
-        $notif
-            ->setThese($these)
-            ->setEstPremiereNotif($estPremiereNotif);
-
-        return $notif;
-    }
 
     /**
      * Notification à propos du dépassement de la date butoir de dépôt de la version corrigée de la thèse.

@@ -2,6 +2,7 @@
 
 namespace Import\Model\Service;
 
+use Depot\Service\Notification\DepotNotificationFactory;
 use Notification\Service\NotifierService;
 use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
@@ -47,6 +48,10 @@ class ImportObservResultServiceFactory
         /** @var \These\Service\Notification\TheseNotificationFactory $theseNotificationFactory */
         $theseNotificationFactory = $container->get(TheseNotificationFactory::class);
         $service->setTheseNotificationFactory($theseNotificationFactory);
+
+        /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
+        $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
+        $service->setDepotNotificationFactory($depotNotificationFactory);
 
         if ($logger = $this->getLogger($container)) {
             $service->setLogger($logger);

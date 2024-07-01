@@ -5,7 +5,6 @@ namespace Depot\Notification;
 use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use These\Entity\Db\Interfaces\TheseAwareTrait;
-use UnicaenApp\Exception\LogicException;
 
 class ChangementCorrectionAttendueNotification extends Notification
 {
@@ -13,17 +12,20 @@ class ChangementCorrectionAttendueNotification extends Notification
 
     protected ?string $templatePath = 'depot/depot/mail/notif-depot-version-corrigee-attendu';
 
+    private bool $estPremiereNotif;
+
+    public function setEstPremiereNotif(bool $estPremiereNotif = true): static
+    {
+        $this->estPremiereNotif = $estPremiereNotif;
+
+        return $this;
+    }
+
     /**
      * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
-     *
-     * @return static
      */
-    public function prepare()
+    public function prepare(): static
     {
-        if ($this->estPremiereNotif === null) {
-            throw new LogicException("Attribut estPremiereNotif non sp avant l'appel de prepare()");
-        }
-
         $directeursTheseEnCopie = false;
         if ($this->these->getCorrectionAutoriseeEstObligatoire() && !$this->estPremiereNotif) {
             $directeursTheseEnCopie = true;
@@ -54,21 +56,4 @@ class ChangementCorrectionAttendueNotification extends Notification
 
         return $this;
     }
-
-    /**
-     * @var bool
-     */
-    private $estPremiereNotif;
-
-    /**
-     * @param bool $estPremiereNotif
-     * @return $this
-     */
-    public function setEstPremiereNotif($estPremiereNotif = true)
-    {
-        $this->estPremiereNotif = $estPremiereNotif;
-
-        return $this;
-    }
-
 }
