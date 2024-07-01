@@ -8,10 +8,7 @@ use Application\ORM\Query\Functions\Year;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
-use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\StructureConcreteInterface;
-use Structure\Entity\Db\UniteRecherche;
 use These\Entity\Db\These;
 use These\QueryBuilder\TheseQueryBuilder;
 
@@ -94,31 +91,6 @@ class TheseRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param Etablissement|null $etablissement
-     * @return string[]
-     */
-    public function fetchDistinctDisciplines(Etablissement $etablissement = null)
-    {
-        $qb = $this->createQueryBuilder('t');
-        $qb
-            ->distinct()
-            ->select("t.libelleDiscipline")
-            ->orderBy("t.libelleDiscipline");
-
-        if ($etablissement !== null) {
-            $qb
-                ->join('t.etablissement', 'etab', Join::WITH, 'etab = :etablissement')
-                ->setParameter('etablissement', $etablissement);
-        }
-
-        $results = array_map(function($value) {
-            return current($value);
-        }, $qb->getQuery()->getScalarResult());
-
-        return $results;
-    }
-
-    /**
      * @param Doctorant $doctorant
      * @param string[] $etats
      * @return These[]
@@ -171,29 +143,6 @@ class TheseRepository extends DefaultEntityRepository
 
     /**
      * @param Individu $individu
-     * @param array $etats
-     * @return These[]
-     */
-    public function fetchThesesByEncadrant(Individu $individu, array $etats = [These::ETAT_EN_COURS]): array
-    {
-        $qb = $this->createQueryBuilder('t')
-            ->join('t.acteurs', 'a')
-            ->join('a.role', 'r')
-            ->andWhere('r.code = :directeur OR r.code = :codirecteur')
-            ->setParameter('directeur', Role::CODE_DIRECTEUR_THESE)
-            ->setParameter('codirecteur', Role::CODE_CODIRECTEUR_THESE)
-            ->andWhereEtatIn($etats)
-            ->andWhere('a.individu = :individu')
-            ->setParameter('individu', $individu)
-            ->andWhere('t.histoDestruction is null')
-            ->orderBy('t.datePremiereInscription', 'ASC')
-        ;
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param Individu $individu
      * @return These[]
      */
     public function fetchThesesByCoEncadrant(Individu $individu): array
@@ -211,42 +160,5 @@ class TheseRepository extends DefaultEntityRepository
 
         $result = $qb->getQuery()->getResult();
         return $result;
-    }
-
-    /**
-     * @param EcoleDoctorale $structure
-     * @param array $etats
-     * @return These[]
-     */
-    public function findThesesForStructure(StructureConcreteInterface $structure, array $etats = [These::ETAT_EN_COURS]): array
-    {
-        $qb = $this->createQueryBuilder('t');
-
-        switch (true) {
-            case $structure instanceof UniteRecherche :
-                $qb
-                    ->join('t.uniteRecherche', 'ur')
-                    ->andWhere('ur = :unite')
-                    ->setParameter('unite', $structure);
-                break;
-            case $structure instanceof EcoleDoctorale :
-                $qb
-                    ->join('t.ecoleDoctorale', 'ed')
-                    ->andWhere('ed = :ecole')
-                    ->setParameter('ecole', $structure);
-                break;
-            case $structure instanceof Etablissement :
-                $qb
-                    ->join('t.etablissement', 'e')
-                    ->andWhere('e = :etablissement')
-                    ->setParameter('etablissement', $structure);
-                break;
-            default:
-                break;
-        }
-
-        $qb->andWhereEtatIn($etats);
-
-        return $qb->getQuery()->getResult();
     }
 }
