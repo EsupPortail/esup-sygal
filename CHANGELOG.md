@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.5.0
+-----
+- [FIX] Requête de recherche de thèses par acteur : les acteurs historisés n'étaient pas écartés.
+
 8.4.0
 -----
 - Filtre de recherche textuelle utilisant l'opérateur LIKE : amélioration pour qu'il soit insensible à la casse.
