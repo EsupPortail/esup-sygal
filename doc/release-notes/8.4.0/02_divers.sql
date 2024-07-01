@@ -1,4 +1,9 @@
 --
+-- Suppression préalable des vues matérialisées d'indicateurs.
+--
+call unicaen_indicateur_delete_matviews();
+
+--
 -- Suppression de individu.z_etablissement_id
 --
 
@@ -21,6 +26,8 @@ create trigger substit_trigger_individu
     for each row
     when (pg_trigger_depth() < 1)
 execute procedure substit_trigger_fct('individu');
+call unicaen_indicateur_delete_matviews();
+
 
 alter table individu drop column z_etablissement_id;
 
@@ -67,3 +74,9 @@ alter table soutenance_horodatage add constraint soutenance_horodatage_pk primar
 --
 
 update individu set id_ref = null where id_ref = '';
+
+
+--
+-- Rétablissement des vues matérialisées d'indicateurs.
+--
+call unicaen_indicateur_recreate_matviews();
