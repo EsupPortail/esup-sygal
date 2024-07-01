@@ -161,7 +161,7 @@ class TheseRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('t')
             ->join('t.acteurs', 'a')
             ->andWhere('a.individu = :individu')->setParameter('individu', $individu)
-            ->andWhere('a.role = :role')->setParameter('role', $role)
+            ->andWhere('a.role = :role')->setParameter('role', $role)->andWhereNotHistorise('a')
             ->andWhereEtatIn($etats)
             ->andWhereNotHistorise()
             ->orderBy('t.datePremiereInscription', 'ASC');
@@ -199,7 +199,7 @@ class TheseRepository extends DefaultEntityRepository
     public function fetchThesesByCoEncadrant(Individu $individu): array
     {
         $qb = $this->createQueryBuilder('t')
-            ->join('t.acteurs', 'a')
+            ->join('t.acteurs', 'a')->andWhereNotHistorise('a')
             ->join('a.role', 'r')
             ->andWhere('r.code = :coencadrant')
             ->setParameter('coencadrant', Role::CODE_CO_ENCADRANT)
