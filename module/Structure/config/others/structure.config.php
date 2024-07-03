@@ -111,6 +111,7 @@ return [
                         'options'       => [
                             'route'       => '/generer-roles-defauts/:id/:type',
                             'defaults'    => [
+                                /** @see StructureController::genererRolesDefautsAction() */
                                 'action' => 'generer-roles-defauts',
                             ],
                         ],

@@ -11,8 +11,8 @@ use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -23,10 +23,6 @@ use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
-/**
- * Class RoleService
- * @package Application\Service\Role
- */
 class RoleService extends BaseService
 {
     use SourceServiceAwareTrait;
@@ -227,7 +223,7 @@ class RoleService extends BaseService
     /**
      * @param UniteRecherche|EcoleDoctorale|Etablissement $structure
      */
-    public function addRoleByStructure($structure)
+    public function addRoleByStructure($structure): void
     {
         /** @var TypeStructure $type */
         $type = null;
@@ -243,24 +239,25 @@ class RoleService extends BaseService
                 break;
         }
 
-        /** @var Profil[] $roleModeles */
+        /** @var Profil[] $profils */
         $qb = $this->entityManager->getRepository(Profil::class)->createQueryBuilder("rm")
             ->andWhere("rm.structureType = :stype")->setParameter("stype", $type);
-        $roleModeles = $qb->getQuery()->execute();
+        $profils = $qb->getQuery()->execute();
 
-        foreach ($roleModeles as $roleModele) {
+        foreach ($profils as $profil) {
             if ($structure instanceof Etablissement) {
-                $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode(), $structure);
-                $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getSourceCode();
+                $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($profil->getRoleCode() . "_" . $structure->getSourceCode(), $structure);
+                $roleId = trim($profil->getLibelle() . " " . $structure->getStructure()->getSourceCode());
             } else {
-                $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode());
-                $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getSigle();
+                $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($profil->getRoleCode() . "_" . $structure->getSourceCode());
+                $roleId = trim($profil->getLibelle() . " " . $structure->getStructure()->getCode());
             }
 
-            $role = $this->createRole($roleModele->getRoleCode(), $roleModele->getLibelle(), $sourceCode);
+            $role = $this->createRole($profil->getRoleCode(), $profil->getLibelle(), $sourceCode);
             $role->setRoleId($roleId);
             $role->setTypeStructureDependant($type);
             $role->setStructure($structure->getStructure());
+            $role->addProfil($profil);
             try {
                 $this->entityManager->flush($role);
             } catch (ORMException $e) {
@@ -268,7 +265,7 @@ class RoleService extends BaseService
             }
 
             /** @var Privilege $privilege */
-            foreach ($roleModele->getPrivileges() as $privilege) {
+            foreach ($profil->getPrivileges() as $privilege) {
                 $privilege->addRole($role);
                 try {
                     $this->entityManager->flush($privilege);
