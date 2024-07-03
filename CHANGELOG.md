@@ -3,6 +3,7 @@ Journal des modifications
 
 8.5.0
 -----
+- Module Soutenance : modif de la qualité par défaut des membres lors de la création automatique de la proposition (lors du 1er accès à la page Proposition).
 - [FIX] Requête de recherche de thèses par acteur : les acteurs historisés n'étaient pas écartés.
 
 8.4.0

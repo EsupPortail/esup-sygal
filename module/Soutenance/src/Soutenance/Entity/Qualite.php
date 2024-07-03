@@ -10,7 +10,7 @@ class Qualite implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const ID_INCONNUE = 0;
+    const ID_QUALITE_PAR_DEFAUT = 1;
 
     /** @var int */
     private $id;

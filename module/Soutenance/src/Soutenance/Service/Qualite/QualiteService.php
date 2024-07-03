@@ -2,7 +2,9 @@
 
 namespace Soutenance\Service\Qualite;
 
+use Application\Service\BaseService;
 use Application\Service\UserContextServiceAwareTrait;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
@@ -10,12 +12,19 @@ use Soutenance\Entity\Qualite;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Webmozart\Assert\Assert;
 
-class QualiteService {
+class QualiteService extends BaseService
+{
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
+
+    public function getRepository(): EntityRepository
+    {
+        return $this->getEntityManager()->getRepository(Qualite::class);
+    }
 
     /**
      * @param Qualite $qualite
@@ -102,7 +111,7 @@ class QualiteService {
      */
     public function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder("qualite")
+        $qb = $this->getRepository()->createQueryBuilder("qualite")
             ->addSelect('libelleSupplementaire')->leftJoin('qualite.libellesSupplementaires', 'libelleSupplementaire');
 
         return $qb;
@@ -135,21 +144,22 @@ class QualiteService {
     }
 
     /**
-     * @param int|null $id
-     * @return Qualite|null
+     * Recherche une qualié par son id.
      */
-    public function getQualite(?int $id) : ?Qualite
+    public function getQualite(int $id): ?Qualite
     {
-        $qb = $this->createQueryBuilder()
-            ->andWhere("qualite.id = :id")
-            ->setParameter("id", $id);
+        return $this->getRepository()->find($id);
+    }
 
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs qualité partagent le même identifiant !");
-        }
-        return $result;
+    /**
+     * Retourne la qualié par défaut.
+     */
+    public function getQualiteParDefaut(): Qualite
+    {
+        $qualite = $this->getRepository()->find(Qualite::ID_QUALITE_PAR_DEFAUT);
+        Assert::notNull($qualite, "Anomalie : aucune qualité par défaut n'a été trouvée !");
+
+        return $qualite;
     }
 
     /**
@@ -181,7 +191,7 @@ class QualiteService {
      */
     public function findAllQualites() : array
     {
-        $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder('qualite')
+        $qb = $this->getRepository()->createQueryBuilder('qualite')
             ->orderBy('qualite.rang, qualite.libelle');
         return $qb->getQuery()->getResult();
     }

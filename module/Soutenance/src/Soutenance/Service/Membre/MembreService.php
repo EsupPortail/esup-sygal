@@ -227,6 +227,7 @@ class MembreService {
     }
 
     /** FACADE ********************************************************************************************************/
+
     /**
      * @param Proposition $proposition
      * @param Acteur $acteur
@@ -234,16 +235,15 @@ class MembreService {
      */
     public function createMembre(Proposition $proposition, Acteur $acteur) : Membre
     {
-        //Qualité par défaut
-        $inconnue = $this->getQualiteService()->getQualite(Qualite::ID_INCONNUE);
+        $qualite = $this->qualiteService->getQualiteByLibelle($acteur->getQualite()) ?:
+            $this->qualiteService->getQualiteParDefaut();
 
         $membre = new Membre();
         $membre->setProposition($proposition);
         $membre->setPrenom($acteur->getIndividu()->getPrenom());
         $membre->setNom($acteur->getIndividu()->getNomUsuel());
         $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
-        $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
-        $membre->setQualite(($qualite !== null)?$qualite:$inconnue);
+        $membre->setQualite($qualite);
         $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Etablissement inconnu");
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
