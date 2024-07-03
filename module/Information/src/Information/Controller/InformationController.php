@@ -43,12 +43,10 @@ class InformationController extends AbstractActionController {
         ]);
     }
 
-    public function ajouterAction()
+    public function ajouterAction(): ViewModel
     {
-        /** @var Information $information */
-        $information = new Information();
+        $information = $this->informationService->new();
 
-        /** @var InformationForm $form */
         $form = $this->informationForm;
         $form->bind($information);
 

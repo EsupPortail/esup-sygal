@@ -4,14 +4,16 @@ namespace Information\Service;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
+use Information\Service\InformationLangue\InformationLangueService;
 use Interop\Container\ContainerInterface;
 
-class InformationServiceFactory {
+class InformationServiceFactory
+{
     /**
-     * @param ContainerInterface $container
-     * @return InformationService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): InformationService
     {
         /**
          * @var EntityManager $entityManager
@@ -23,6 +25,10 @@ class InformationServiceFactory {
         $service = new InformationService();
         $service->setEntityManager($entityManager);
         $service->setUserContextService($userContextService);
+
+        /** @var InformationLangueService $informationLangueService */
+        $informationLangueService = $container->get(InformationLangueService::class);
+        $service->setInformationLangueService($informationLangueService);
 
         return $service;
     }

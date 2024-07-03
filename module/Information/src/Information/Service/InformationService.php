@@ -6,12 +6,15 @@ use Information\Entity\Db\Information;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Information\Service\InformationLangue\InformationLangueServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class InformationService {
+class InformationService
+{
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
+    use InformationLangueServiceAwareTrait;
 
     /**
      * @param bool $visibleOnly
@@ -47,6 +50,14 @@ class InformationService {
             throw new RuntimeException("Plusieurs Information partagent le même identifiant [".$id."]", $e);
         }
         return $result;
+    }
+
+    public function new(): Information
+    {
+        $information = new Information();
+        $information->setLangue($this->informationLangueService->getLangueParDefaut());
+
+        return $information;
     }
 
     /**

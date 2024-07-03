@@ -2,22 +2,35 @@
 
 namespace Information\Service\InformationLangue;
 
+use Application\Service\BaseService;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Information\Entity\Db\InformationLangue;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Webmozart\Assert\Assert;
 
-class InformationLangueService {
+class InformationLangueService extends BaseService
+{
     use EntityManagerAwareTrait;
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder()
+    public function getRepository(): EntityRepository
     {
-        $qb = $this->getEntityManager()->getRepository(InformationLangue::class)->createQueryBuilder('langue');
-        return $qb;
+        return $this->getEntityManager()->getRepository(InformationLangue::class);
+    }
+
+    public function createQueryBuilder(): QueryBuilder
+    {
+        return $this->getRepository()->createQueryBuilder('langue');
+    }
+
+    public function getLangueParDefaut(): InformationLangue
+    {
+        $lanque = $this->getRepository()->find(InformationLangue::ID_LANGUE_PAR_DEFAUT);
+        Assert::notNull($lanque, "Anomalie : aucune langue par défaut n'a été trouvée !");
+
+        return $lanque;
     }
 
     /**

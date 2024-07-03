@@ -3,12 +3,12 @@
 namespace Information\Form;
 
 use Information\Entity\Db\Information;
-use Information\Service\InformationLangue\InformationLangueerviceAwareTrait;
+use Information\Service\InformationLangue\InformationLangueServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
 
 class InformationHydrator implements HydratorInterface
 {
-    use InformationLangueerviceAwareTrait;
+    use InformationLangueServiceAwareTrait;
 
     /**
      * @param Information $object
@@ -32,7 +32,7 @@ class InformationHydrator implements HydratorInterface
      */
     public function hydrate(array $data, $object)
     {
-        $langue = $this->getInformationLangueService()->getLangue($data['langue']);
+        $langue = $this->informationLangueService->getLangue($data['langue']);
 
         $object->setTitre($data['titre']);
         $object->setContenu($data['contenu']);
