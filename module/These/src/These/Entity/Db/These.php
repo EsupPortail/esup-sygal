@@ -3,8 +3,10 @@
 namespace These\Entity\Db;
 
 use Application\Entity\AnneeUniv;
+use Application\Entity\Db\Discipline;
 use Application\Entity\Db\DomaineHal;
 use Application\Entity\Db\Financement;
+use Application\Entity\Db\Pays;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TitreAcces;
@@ -218,8 +220,13 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     private $validations;
 
+//    /**
+//     * @var Collection
+//     */
+//    private $titreAcces;
+
     /**
-     * @var Collection
+     * @var TitreAcces
      */
     private $titreAcces;
 
@@ -262,6 +269,20 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var ArrayCollection
      */
     private $domainesHal;
+    /**
+     * @var Discipline
+     */
+    private $discipline;
+
+    /**
+     * @var Etablissement
+     */
+    private $etablissementCoTutelle;
+
+    /**
+     * @var Pays
+     */
+    private $paysCoTutelle;
 
     /**
      * @return TitreApogeeFilter
@@ -390,8 +411,33 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Set discipline.
+     *
+     * @param Discipline|null $discipline
+     *
+     * @return These
+     */
+    public function setDiscipline(Discipline $discipline = null)
+    {
+        $this->discipline = $discipline;
+
+        return $this;
+    }
+
+    /**
+     * Get discipline.
+     *
+     * @return Discipline|null
+     */
+    public function getDiscipline()
+    {
+        return $this->discipline;
+    }
+
+    /**
      * @param string $libelleDiscipline
      * @return self
+     * @deprecated
      */
     public function setLibelleDiscipline($libelleDiscipline)
     {
@@ -402,6 +448,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getLibelleDiscipline()
     {
@@ -582,25 +629,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setCodeUniteRecherche($codeUniteRecherche)
     {
         $this->codeUniteRecherche = $codeUniteRecherche;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLibelleUniteRecherche()
-    {
-        return $this->libelleUniteRecherche;
-    }
-
-    /**
-     * @param string $libelleUniteRecherche
-     * @return self
-     */
-    public function setLibelleUniteRecherche($libelleUniteRecherche)
-    {
-        $this->libelleUniteRecherche = $libelleUniteRecherche;
 
         return $this;
     }
@@ -1005,20 +1033,21 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param bool                  $historisee
      * @return Collection
      */
-    public function getValidations($type, $historisee = false)
+    public function getValidations($type = null, $historisee = false)
     {
         if ($type instanceof TypeValidation) {
             $type = $type->getCode();
         }
 
         $validations = $this->validations;
-
-        $validations = $validations->filter(function(Validation $v) use ($type) {
-            return $v->getTypeValidation()->getCode() === $type;
-        });
-        $validations = $validations->filter(function(Validation $v) use ($historisee) {
-            return $historisee === null || !$historisee === $v->estNonHistorise();
-        });
+        if($validations){
+            $validations = $validations->filter(function(Validation $v) use ($type) {
+                return $v->getTypeValidation()->getCode() === $type;
+            });
+            $validations = $validations->filter(function(Validation $v) use ($historisee) {
+                return $historisee === null || !$historisee === $v->estNonHistorise();
+            });
+        }
 
         return $validations;
     }
@@ -1271,12 +1300,12 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Retourne l'année universitaire de première inscription,
      *
-     * @return TheseAnneeUniv|VTheseAnneeUnivFirst
+     * @return TheseAnneeUniv|VTheseAnneeUnivFirst|null
      */
     public function getAnneeUniv1ereInscription()
     {
         // NB: le mapping de VTheseAnneeUnivFirst est un copier-coller de TheseAnneeUniv
-        return $this->anneesUniv1ereInscription->first();
+        return $this->anneesUniv1ereInscription->first() ?: null;
     }
 
     /**
@@ -1322,11 +1351,20 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return TitreAcces
+     * @return TitreAcces|null
+     */
+    public function setTitreAcces(TitreAcces $titreAcces)
+    {
+        return $this->titreAcces = $titreAcces;
+    }
+
+    /**
+     * @return TitreAcces|null
      */
     public function getTitreAcces()
     {
-        return $this->titreAcces ? is_array($this->titreAcces) ? $this->titreAcces[0] : $this->titreAcces->first() : null ;
+//        return $this->titreAcces ? is_array($this->titreAcces) ? $this->titreAcces[0] : $this->titreAcces->first() : null ;
+        return $this->titreAcces;
     }
 
     /**
@@ -1713,13 +1751,15 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Add financement.
      *
-     * @param \Application\Entity\Db\Financement $financement
+     * @param Financement $financements
      *
      * @return These
      */
-    public function addFinancement(\Application\Entity\Db\Financement $financement)
+    public function addFinancements(Collection $financements)
     {
-        $this->financements[] = $financement;
+        foreach ($financements as $f) {
+            $this->financements->add($f);
+        }
 
         return $this;
     }
@@ -1727,13 +1767,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove financement.
      *
-     * @param \Application\Entity\Db\Financement $financement
-     *
+     * @param Collection $financements
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeFinancement(\Application\Entity\Db\Financement $financement)
+    public function removeFinancements(Collection $financements)
     {
-        return $this->financements->removeElement($financement);
+        foreach ($financements as $f) {
+            $this->financements->removeElement($f);
+        }
     }
 
     /**
@@ -1796,5 +1837,53 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDomainesHal()
     {
         return $this->domainesHal;
+    }
+
+    /**
+     * Set etablissementCoTutelle.
+     *
+     * @param Etablissement|null $etablissementCoTutelle
+     *
+     * @return These
+     */
+    public function setEtablissementCoTutelle(Etablissement $etablissementCoTutelle = null)
+    {
+        $this->etablissementCoTutelle = $etablissementCoTutelle;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissementCoTutelle.
+     *
+     * @return Etablissement|null
+     */
+    public function getEtablissementCoTutelle()
+    {
+        return $this->etablissementCoTutelle;
+    }
+
+    /**
+     * Set paysCoTutelle.
+     *
+     * @param Pays|null $paysCoTutelle
+     *
+     * @return These
+     */
+    public function setPaysCoTutelle(Pays $paysCoTutelle = null)
+    {
+        $this->paysCoTutelle = $paysCoTutelle;
+
+        return $this;
+    }
+
+    /**
+     * Get paysCoTutelle.
+     *
+     * @return Pays|null
+     */
+    public function getPaysCoTutelle()
+    {
+        return $this->paysCoTutelle;
     }
 }

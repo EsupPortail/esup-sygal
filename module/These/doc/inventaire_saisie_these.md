@@ -23,7 +23,7 @@ Existant :
 
 Importé et à ajouter :
 - type : chercher les usages (y compris dans des requêtes) pour suppression ?
-- prenom3
+- ~~prenom3~~
 - supann_id : correspond au numero employé dans le SI, modifiable
   nom_patronymique : encourager à le saisir pour le moteur substitutions
 - email : actuellement l'email est modifible dans individu_compl,
@@ -45,15 +45,16 @@ Importé et à ajouter :
 ## acteur
 
 Existant :
-  - role_id
-  - qualite : cf. rem plus bas
-  - etablissement_id
+  - ~~role_id~~
+  - ~~qualite : cf. rem plus bas~~
+  - ~~etablissement_id~~
   - etablissement_force_id : disparaitra puisque etablissement_id sera modifiable
-  - lib_role_compl : à supprimer (toujours null)
-  - unite_rech_id
+  - ~~lib_role_compl : à supprimer (toujours null)~~
+  - ~~unite_rech_id~~
 
 Importé et à ajouter :
-  - qualite : remplacer par un qualite_id, utiliser la table soutenance_qualite
+  - ~~qualite : remplacer par un qualite_id, utiliser la table soutenance_qualite~~ : FAIT, **que fait-on des qualités présentes 
+dans l'ancien champ mais pas dans la table qualité?**
 
 ## structure
 
@@ -109,8 +110,8 @@ Néant
 ## unite_rech
 
 Existant :
-- etab_support : à supprimer car toujours null
-- autres_etab : à supprimer car toujours null
+- ~~etab_support : à supprimer car toujours null~~
+- ~~autres_etab : à supprimer car toujours null~~
 - rnsr_id
 
 Importé et à ajouter :
@@ -131,16 +132,28 @@ Importé et à ajouter :
 - etat_these : 
   - 4 valeurs stables seulement (A,E,S,U), pas besoin de créer une table a priori
   - calculable selon workflow ?
-- resultat : 2 valeurs stables seulement (0,1), pas besoin de créer une table a priori
-- code_sise_disc :
-  - remplacer par un discipline_sise_id car (table discipline_sise), migration possible car que des codes sise
+- ~~resultat : 2 valeurs stables seulement (0,1), pas besoin de créer une table a priori~~
+- ~~code_sise_disc :~~
+  - ~~remplacer par un discipline_sise_id car (table discipline_sise), migration possible car que des codes sise~~
+    - **Champ pas encore supprimé : que faire des disciplines présentes dans les anciens champs mais non présents dans la table discipline ?**
   - comment la tenir à jour (API?) ?
-- lib_disc : à supprimer, cf. code_sise_disc
+- ~~lib_disc : à supprimer, cf. code_sise_disc~~
+    - **Champ pas encore supprimé : que faire des disciplines présentes dans les anciens champs mais non présents dans la table discipline ?**
 - date_prev_soutenance : utilité à confirmer avec fonctionnels
 - date_soutenance : est-ce la bonne table ?
-- date_fin_confid
-- lib_etab_cotut : remplacer par un etablissement_id (période de transition : on remplace pas, on ajoute)
-- lib_pays_cotut : remplacer par un pays_id_cotut (période de transition : on remplace pas, on ajoute)
+- ~~date_fin_confid~~
+- ~~lib_etab_cotut : remplacer par un etablissement_id (période de transition : on remplace pas, on ajoute)~~
+  - **FAIT : ajout du champ etab_cotut_id**
+  - **Comment effectuer la reprise de données ?**
+- ~~lib_pays_cotut : remplacer par un pays_id_cotut (période de transition : on remplace pas, on ajoute)~~
+  - **champ pas encore supprimé**
+  - **ajout du champ pays_cotut_id**
+  - **Reprise des données -> reste certains pays qui n'ont pas pu être repris (pas le même libellé dans la table pays) :**
+    - REPUBLIQUE TCHEQUE
+    - CHINE POPULAIRE
+    - RUSSIE
+    - VENEZUELA
+    - COTE D IVOIRE
 - correc_autorisee :
     - actuellement forçage possible via la colonne these.correc_autorisee_forcee,
     - à terme on abandonnera le forçage et ne restera que correc_autorisee
@@ -148,18 +161,24 @@ Importé et à ajouter :
 - soutenance_autoris : est-ce la bonne table ?
 - date_autoris_soutenance : est-ce la bonne table ?
 - tem_avenant_cotut : calculable d'après le dépôt d'un avenant de cotutelle ? ou bien autorise le dépôt ?
-- date_abandon : readonly si source importable
-- date_transfert : readonly si source importable
+- ~~date_abandon : readonly si source importable~~
+  - **ajouté au formulaire et readonly en fct de la source**
+- ~~date_transfert : readonly si source importable~~ 
+  - **ajouté au formulaire et readonly en fct de la source**
 
 A ajouter :
-- resultat : readonly si source importable
+- ~~resultat : readonly si source importable~~
+    - **ajouté au formulaire et readonly en fct de la source**
 - correc_date_butoir_avec_sursis : demander utilité aux fonctionnels
 
 Colonnes abandonnées à supprimer :
-- besoin_expurge
-- cod_unit_rech
-- lib_unit_rech
-- source_code_sav
+- ~~besoin_expurge~~
+- ~~cod_unit_rech~~
+- ~~lib_unit_rech~~
+- ~~source_code_sav~~
+
+
+- **FAIRE ATTENTION CERTAINES COLONNES SONT UTILISÉES DANS DES VUES**
 
 ## these_annee_univ
 
@@ -173,9 +192,11 @@ Existant :
 Importé et à ajouter :
   - date_debut, date_fin : nullable, utile ?
   - annee : quel rapport avec dates début/fin ?
-  - origine_financement_id
-  - complement_financement : texte libre
+    - **Ajouté au fieldset Financement : Select (question au dessus tjrs d'actualité)**
+  - ~~origine_financement_id~~
+  ~~- complement_financement : texte libre~~
   - quotite_financement : valeurs possibles ?
+    - **Ajouté au fieldset Financement : champ compris entre 1 et 100 (tjrs la question des valeurs possibles)**
   - code_type_financement : 
     - idée de créer une table type_financement(id, code, libelle) et remplacer par un type_financement_id ?
     - mais plusieurs libellés différents pour un même code ! ex: Sans Contrat Doctoral, Contrat Doctoral  Autres organismes, 10-Doct salarié fontion publique
@@ -184,12 +205,16 @@ Importé et à ajouter :
 ## titre_acces
 
 Importé et à ajouter :
-- titre_acces_interne_externe
+- ~~titre_acces_interne_externe~~ 
+  - **Ajouté au fieldset TitreAcces, lui même ajouté au fieldset Généralités**
 - libelle_titre_acces : créer une nomenclature ? demander aux fonctionnels
+  - **Ajouté au fieldset TitreAcces, lui même ajouté au fieldset Généralités (question au dessus tjrs d'actualité)**
 - type_etb_titre_acces : actuellement y a du n'importe quoi, trop de merde pour passer à une table de nomenclature
-- libelle_etb_titre_acces : remplacer par un etablissement_id ?
+- ~~libelle_etb_titre_acces : remplacer par un etablissement_id ?~~
+  - **FAIT : reste à récupérer les données dans libelle_etb_titre_acces**
 - code_dept_titre_acces : demander aux fonctionnels si utile
-- code_pays_titre_acces : demander aux fonctionnels si utile, si oui remplacer par pays_id
+- ~~code_pays_titre_acces : demander aux fonctionnels si utile, si oui remplacer par pays_id~~
+  - reste à demander aux fonctionnels si utile
 
 ## role
 
@@ -211,8 +236,10 @@ Aucune modification autorisée, import pur.
 ## variable
 
 Importé et à ajouter :
-- etablissement_id
-- description
-- valeur
-- date_deb_validite : mettre la date du jour de création systématiquement
-- date_fin_validite : mettre une date très éloignée
+- ~~etablissement_id~~
+- ~~description~~
+- ~~valeur~~
+- ~~date_deb_validite : mettre la date du jour de création systématiquement~~
+- ~~date_fin_validite : mettre une date très éloignée~~
+
+**Ajout d'un formulaire VariableForm accessible directement depuis la fiche de l'établissement**

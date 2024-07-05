@@ -7,46 +7,32 @@ use Laminas\Router\Http\Segment;
 use These\Controller\Factory\TheseSaisieControllerFactory;
 use These\Controller\TheseRechercheController;
 use These\Controller\TheseSaisieController;
-use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionFieldset;
-use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionFieldsetFactory;
-use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionHydrator;
-use These\Fieldset\AnneeUnivInscription\AnneeUnivInscriptionHydratorFactory;
+use These\Fieldset\Confidentialite\ConfidentialiteFieldset;
+use These\Fieldset\Confidentialite\ConfidentialiteFieldsetFactory;
 use These\Fieldset\Confidentialite\ConfidentialiteHydrator;
 use These\Fieldset\Confidentialite\ConfidentialiteHydratorFactory;
 use These\Fieldset\Direction\DirectionFieldset;
 use These\Fieldset\Direction\DirectionFieldsetFactory;
 use These\Fieldset\Direction\DirectionHydrator;
 use These\Fieldset\Direction\DirectionHydratorFactory;
+use These\Fieldset\Encadrement\EncadrementFieldset;
+use These\Fieldset\Encadrement\EncadrementFieldsetFactory;
 use These\Fieldset\Encadrement\EncadrementHydrator;
 use These\Fieldset\Encadrement\EncadrementHydratorFactory;
 use These\Fieldset\Financement\FinancementFieldset;
 use These\Fieldset\Financement\FinancementFieldsetFactory;
 use These\Fieldset\Financement\FinancementHydrator;
 use These\Fieldset\Financement\FinancementHydratorFactory;
-use These\Fieldset\Generalites\GeneralitesHydrator;
-use These\Fieldset\Generalites\GeneralitesHydratorFactory;
-use These\Fieldset\Structures\StructuresHydrator;
-use These\Fieldset\Structures\StructuresHydratorFactory;
-use These\Fieldset\Confidentialite\ConfidentialiteFieldset;
-use These\Fieldset\Confidentialite\ConfidentialiteFieldsetFactory;
-use These\Fieldset\Encadrement\EncadrementFieldset;
-use These\Fieldset\Encadrement\EncadrementFieldsetFactory;
 use These\Fieldset\Generalites\GeneralitesFieldset;
 use These\Fieldset\Generalites\GeneralitesFieldsetFactory;
+use These\Fieldset\Generalites\GeneralitesHydrator;
+use These\Fieldset\Generalites\GeneralitesHydratorFactory;
 use These\Fieldset\Structures\StructuresFieldset;
 use These\Fieldset\Structures\StructuresFieldsetFactory;
 use These\Fieldset\TitreAcces\TitreAccesFieldset;
 use These\Fieldset\TitreAcces\TitreAccesFieldsetFactory;
 use These\Fieldset\TitreAcces\TitreAccesHydrator;
 use These\Fieldset\TitreAcces\TitreAccesHydratorFactory;
-use These\Form\Confidentialite\ConfidentialiteForm;
-use These\Form\Confidentialite\ConfidentialiteFormFactory;
-use These\Form\Encadrement\EncadrementForm;
-use These\Form\Encadrement\EncadrementFormFactory;
-use These\Form\Generalites\GeneralitesForm;
-use These\Form\Generalites\GeneralitesFormFactory;
-use These\Form\Structures\StructuresForm;
-use These\Form\Structures\StructuresFormFactory;
 use These\Form\TheseFormsManager;
 use These\Form\TheseFormsManagerFactory;
 use These\Form\TheseSaisie\TheseSaisieForm;
@@ -214,7 +200,6 @@ return [
             EncadrementHydrator::class => EncadrementHydratorFactory::class,
             GeneralitesHydrator::class => GeneralitesHydratorFactory::class,
             DirectionHydrator::class => DirectionHydratorFactory::class,
-            StructuresHydrator::class => StructuresHydratorFactory::class,
             FinancementHydrator::class => FinancementHydratorFactory::class,
             TitreAccesHydrator::class => TitreAccesHydratorFactory::class,
         ],
@@ -226,5 +211,15 @@ return [
     ],
     'view_helpers' => [
         'factories' => [],
+    ],
+    'public_files' => [
+        'inline_scripts' => [
+        ],
+        'stylesheets' => [
+//            '080_admission' => '/css/admission.css',
+        ],
+        'head_scripts' => [
+            '090_these' => "/js/these.js",
+        ],
     ],
 ];

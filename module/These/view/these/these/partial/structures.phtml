@@ -13,11 +13,6 @@
     <dd class="col-md-9">
         <?php if ($these->getUniteRecherche()): ?>
             <span class="text-structure ur"><?php echo $these->getUniteRecherche() ?></span>
-        <?php elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()): ?>
-            <?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?>
-            <div class='alert alert-sm alert-warning'>
-                <span class='fas fa-exclamation-triangle'></span> Utilisation du champs libre (unité de recherche mal renseignée).
-            </div>
         <?php else: ?>
             <div class='alert alert-sm alert-warning'>
                 <span class='fas fa-exclamation-triangle'></span> Aucune unité de recherche n'est renseignée

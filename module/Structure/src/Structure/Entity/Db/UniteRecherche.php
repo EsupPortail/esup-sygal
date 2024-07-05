@@ -31,16 +31,6 @@ class UniteRecherche implements
     use SubstitutionAwareEntityTrait;
 
     /**
-     * @var string
-     */
-    protected $etablissementsSupport;
-
-    /**
-     * @var string
-     */
-    protected $autresEtablissements;
-
-    /**
      * @var integer
      */
     protected $id;
@@ -134,44 +124,6 @@ class UniteRecherche implements
     public function getSourceCode(): ?string
     {
         return $this->sourceCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEtablissementsSupport()
-    {
-        return $this->etablissementsSupport;
-    }
-
-    /**
-     * @param string $etablissementsSupport
-     * @return UniteRecherche
-     */
-    public function setEtablissementsSupport($etablissementsSupport)
-    {
-        $this->etablissementsSupport = $etablissementsSupport;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAutresEtablissements()
-    {
-        return $this->autresEtablissements;
-    }
-
-    /**
-     * @param string $autresEtablissements
-     * @return UniteRecherche
-     */
-    public function setAutresEtablissements($autresEtablissements)
-    {
-        $this->autresEtablissements = $autresEtablissements;
-
-        return $this;
     }
 
     /**

@@ -5,25 +5,21 @@
 ?>
 
 <fieldset>
-    <legend>Généralités</legend>
-
     <?php
     $fs = $form->get('generalites');
-    echo $this->formHidden($fs->get('id'));
+//    echo $this->formHidden($fs->get('id'));
     ?>
-    <div class="row">
-        <div class="col-3">
-            <?php echo $this->formControlGroup($fs->get('etablissement')) ?>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-4">
             <?php echo $this->formControlGroup($fs->get('doctorant')) ?>
         </div>
     </div>
 
-    <?php echo $this->formControlGroup($fs->get('titre')) ?>
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('titre')) ?>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-4">
@@ -43,9 +39,14 @@
         <h3>
             Confidentialité de la thèse
         </h3>
-        <div class="col-4">
+        <div class="col-md-7">
             <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
-            <?php echo $this->formControlGroup($fs->get('fin-confidentialite')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4" id="date-fin-confidentialite">
+            <?php echo $this->formControlGroup($fs->get('dateFinConfidentialite')); ?>
         </div>
     </div>
 
@@ -64,7 +65,7 @@
 
     <div class="row">
         <h3>
-            Titre d'accès
+            Titre d'accès à l'inscription en thèse
         </h3>
         <div class="col-4">
             <?php echo $this->formControlGroup($fs->get('titreAcces')->get('titreAccesInterneExterne')); ?>
@@ -77,7 +78,34 @@
     </div>
     <div class="row">
         <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codePaysTitreAcces')); ?>
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('pays')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>
+        </div>
+    </div>
+
+    <div class="alert alert-warning">
+        Où mettre les trois champs dateAbandon et dateTransfert et resultat?
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('dateAbandon')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('dateTransfert')); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('resultat')); ?>
         </div>
     </div>
 

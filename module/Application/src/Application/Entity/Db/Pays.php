@@ -13,6 +13,11 @@ class Pays
     private ?string $libelleNationalite;
     private ?string $codePaysApogee;
 
+    public function __toString(): string
+    {
+        return $this->getLibelle();
+    }
+
     /**
      * @return int
      */

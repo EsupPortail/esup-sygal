@@ -2,58 +2,35 @@
 
 namespace These\Form\TheseSaisie;
 
-use Application\Entity\Db\Role;
-use DateTime;
-use Doctorant\Entity\Db\Doctorant;
-use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Laminas\Hydrator\HydratorInterface;
-use PhpParser\Comment\Doc;
-use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\UniteRecherche;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 
-class TheseSaisieHydrator  implements HydratorInterface //extends DoctrineObject
+class TheseSaisieHydrator  extends DoctrineObject
 {
-    use ActeurServiceAwareTrait;
-    use QualiteServiceAwareTrait;
-    use DoctorantServiceAwareTrait;
-    use EcoleDoctoraleServiceAwareTrait;
-    use EtablissementServiceAwareTrait;
-    use UniteRechercheServiceAwareTrait;
-
     /**
-     * @param These $object
+     * @param object $object
      * @return array
      */
     public function extract(object $object): array
     {
+        /** @var These $object */
+        $data = parent::extract($object);
 
-        $data = [
-            'generalites' => $object,
-            'structures' => $object,
-            'encadrements' => $object,
-            'direction' => $object,
-//            'financements' => $object
-        ];
+        $data ['generalites'] = $object;
+        $data ['structures'] = $object;
+        $data ['encadrements'] = $object;
+        $data ['direction'] = $object;
 
         return $data;
     }
 
     /**
      * @param array $data
-     * @param These $object
-     * @return These|void
+     * @param object $object
+     * @return These
      */
-    public function hydrate(array $data, object $object): object
+    public function hydrate(array $data, object $object): These
     {
-        return $object;
+        return parent::hydrate($data,$object);
     }
 }

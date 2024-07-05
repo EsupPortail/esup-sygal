@@ -21,11 +21,11 @@ class ActeurHydrator extends AbstractHydrator
         $qualite = $object->getQualite() ? $this->qualiteService->findQualiteByLibelle($object->getQualite()) : null;
 
         $data = [];
-        $data['individu'] = $this->extractValue('individu', $object->getIndividu());
-        $data['etablissement'] = $this->extractValue('etablissement', $object->getEtablissement());
-        $data['ecoleDoctorale'] = $this->extractValue('ecoleDoctorale', $object->getEcoleDoctorale());
-        $data['uniteRecherche'] = $this->extractValue('uniteRecherche', $object->getUniteRecherche());
-        $data['qualite'] = $qualite->getId();
+        $data['individu'] = $object->getIndividu() ? $this->extractValue('individu', $object->getIndividu()) : null;
+        $data['etablissement'] = $object->getEtablissement() ? $this->extractValue('etablissement', $object->getEtablissement()) : null;
+        $data['ecoleDoctorale'] = $object->getEcoleDoctorale() ? $this->extractValue('ecoleDoctorale', $object->getEcoleDoctorale()) : null;
+        $data['uniteRecherche'] = $object->getUniteRecherche() ? $this->extractValue('uniteRecherche', $object->getUniteRecherche()) : null;
+        $data['qualite'] = $qualite?->getId();
         $data['principal'] = $object->isPrincipal();
         $data['exterieur'] = $object->isExterieur();
 

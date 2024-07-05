@@ -5,13 +5,14 @@
 
     <entity name="Application\Entity\Db\Variable" table="VARIABLE" repository-class="\Application\Entity\Db\Repository\VariableRepository">
 
-        <id name="id" type="integer" column="id"/>
-
-        <field name="code" type="string" column="code" length="64" nullable="false"/>
-        <field name="description" type="string" column="description" nullable="false"/>
-        <field name="valeur" type="string" column="valeur" nullable="false"/>
-        <field name="dateDebutValidite" type="datetime" column="date_deb_validite" nullable="false"/>
-        <field name="dateFinValidite" type="datetime" column="date_fin_validite" nullable="false"/>
+        <id name="id" type="integer" column="id">
+            <generator strategy="SEQUENCE"/>
+        </id>
+        <field name="code" type="string" column="CODE" length="64" nullable="false"/>
+        <field name="description" type="string" column="DESCRIPTION" nullable="false"/>
+        <field name="valeur" type="string" column="VALEUR" nullable="false"/>
+        <field name="dateDebutValidite" type="datetime" column="DATE_DEB_VALIDITE" nullable="false"/>
+        <field name="dateFinValidite" type="datetime" column="DATE_FIN_VALIDITE" nullable="false"/>
 
         <field name="sourceCode" type="string" column="source_code" length="64" nullable="false"/>
 

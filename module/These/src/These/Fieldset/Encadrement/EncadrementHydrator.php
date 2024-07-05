@@ -7,12 +7,11 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
-use Laminas\Hydrator\HydratorInterface;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 
-class EncadrementHydrator implements HydratorInterface
+class EncadrementHydrator extends DoctrineObject
 {
     use IndividuServiceAwareTrait;
     use ActeurServiceAwareTrait;
@@ -24,7 +23,8 @@ class EncadrementHydrator implements HydratorInterface
      */
     public function extract(object $object): array
     {
-        $data = [];
+        /** @var These $object */
+        $data = parent::extract($object);
 
         $coencadrants = $object->getId() !== null ?
             $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) :
@@ -55,7 +55,6 @@ class EncadrementHydrator implements HydratorInterface
             if ($individuId = $data['coencadrant' . $i . '-individu']['id'] ?? null) {
                 /** @var Individu $individu */
                 $individu = $this->individuService->getRepository()->find($individuId);
-                //$acteur = $this->acteurService->newOrModifiedActeur($object, $individu, Role::CODE_CO_ENCADRANT, null, $object->getEtablissement());
                 $acteur = $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $object);
                 $role = $this->roleService->getRepository()->findByCode(Role::CODE_CO_ENCADRANT);
                 if ($acteur === null) {
@@ -64,7 +63,6 @@ class EncadrementHydrator implements HydratorInterface
                 }
                 $acteur->setRole($role);
                 $acteur->setEtablissement($object->getEtablissement());
-                //$this->update($acteur);
 
                 $temoins[] = $acteur->getId();
             }
@@ -73,10 +71,9 @@ class EncadrementHydrator implements HydratorInterface
         foreach ($coencadrants as $acteur) {
             if (array_search($acteur->getId(), $temoins) === false) {
                 $acteur->historiser();
-                //$this->acteurService->save($acteur);
             }
         }
 
-        return $object;
+        return parent::hydrate($data,$object);
     }
 }

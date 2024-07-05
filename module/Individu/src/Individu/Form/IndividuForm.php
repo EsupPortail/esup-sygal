@@ -81,6 +81,10 @@ class IndividuForm extends Form implements InputFilterProviderInterface
                 ->setLabel("Prénom 2 :")
         );
         $this->add(
+            (new Text('prenom3'))
+                ->setLabel("Prénom 3 :")
+        );
+        $this->add(
             (new Text('email'))
                 ->setLabel("Adresse électronique institutionnelle/pro:")
         );
@@ -126,6 +130,7 @@ class IndividuForm extends Form implements InputFilterProviderInterface
         $this->get('nomPatronymique')->setAttribute('disabled', !$estModifiable);
         $this->get('prenom1')->setAttribute('disabled', !$estModifiable);
         $this->get('prenom2')->setAttribute('disabled', !$estModifiable);
+        $this->get('prenom3')->setAttribute('disabled', !$estModifiable);
         $this->get('email')->setAttribute('disabled', !$estModifiable);
         $this->get('dateNaissance')->setAttribute('disabled', !$estModifiable);
         $this->get('paysNationalite')->setAttribute('disabled', !$estModifiable);
@@ -172,6 +177,10 @@ class IndividuForm extends Form implements InputFilterProviderInterface
             ],
             'prenom2' => [
                 'name' => 'prenom2',
+                'required' => false,
+            ],
+            'prenom3' => [
+                'name' => 'prenom3',
                 'required' => false,
             ],
             'email' => [

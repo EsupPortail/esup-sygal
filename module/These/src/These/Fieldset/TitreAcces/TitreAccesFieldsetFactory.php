@@ -2,9 +2,10 @@
 
 namespace These\Fieldset\TitreAcces;
 
-use Application\Entity\Db\TitreAcces;
+use Application\Service\TitreAcces\TitreAccesService;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
-use These\Entity\Db\These;
+use Structure\Service\Etablissement\EtablissementService;
 
 class TitreAccesFieldsetFactory
 {
@@ -14,13 +15,25 @@ class TitreAccesFieldsetFactory
      */
     public function __invoke(ContainerInterface $container): TitreAccesFieldset
     {
-        $fieldset = new TitreAccesFieldset('AnneeUnivInscription');
+        $fieldset = new TitreAccesFieldset();
+        $fieldset->setName("titreAcces");
 
         /** @var TitreAccesHydrator $hydrator */
-        $hydrator = $container->get('HydratorManager')->get(TitreAccesHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
+
+//        $hydrator = $container->get('HydratorManager')->get(TitreAccesHydrator::class);
         $fieldset->setHydrator($hydrator);
 
-        $fieldset->setObject(new These());
+        /** @var EtablissementService $etablissementService */
+        $etablissementService = $container->get(EtablissementService::class);
+        $fieldset->setEtablissementService($etablissementService);
+        
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $fieldset->setEntityManager($entityManager);
+
+        /** @var TitreAccesService $titreAccesService */
+        $titreAccesService = $container->get(TitreAccesService::class);
+        $fieldset->setObject($titreAccesService->newTitreAcces());
 
         return $fieldset;
     }

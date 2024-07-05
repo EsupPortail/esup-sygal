@@ -2,58 +2,23 @@
 
 namespace These\Fieldset\Structures;
 
+use DoctrineModule\Form\Element\ObjectSelect;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Select;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class StructuresFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use UniteRechercheServiceAwareTrait;
     use StructureServiceAwareTrait;
-
-    public function getUnitesRecherchesAsOptions() : array
-    {
-        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
-
-        $options = [];
-        foreach ($unites as $unite) {
-            $sigle = $unite->getStructure() && $unite->getStructure()->getSigle() ? " (".$unite->getStructure()->getSigle().")" : null;
-            $options[$unite->getId()] = $unite->getStructure()->getLibelle() . $sigle;
-        }
-        return $options;
-    }
-
-    private function getEcolesDoctoralsAsOptions() : array
-    {
-        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
-
-        $options = [];
-        foreach ($ecoles as $ecole) {
-            $sigle = $ecole->getStructure() && $ecole->getStructure()->getSigle() ? " (".$ecole->getStructure()->getSigle().")" : null;
-            $options[$ecole->getId()] = $ecole->getStructure()->getLibelle() . $sigle;
-        }
-        return $options;
-    }
-
-    public function getEtablissementsAsOptions() : array
-    {
-        $etablissements = $this->etablissementService->getRepository()->findAll();
-
-        $options = [];
-        foreach ($etablissements as $etablissement) {
-            $sigle = $etablissement->getStructure() && $etablissement->getStructure()->getSigle() ? " (".$etablissement->getStructure()->getSigle().")" : null;
-            $options[$etablissement->getId()] = $etablissement->getStructure()->getLibelle() . $sigle;
-        }
-        return $options;
-    }
+    use EntityManagerAwareTrait;
 
     public function init()
     {
@@ -63,52 +28,83 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
         ]);
 
         $this->add([
-            'type' => Select::class,
+            'type' => ObjectSelect::class,
             'name' => 'etablissement',
             'options' => [
-                'label' => "Établissement :",
-                'value_options' => $this->getEtablissementsAsOptions(),
-                'empty_option' => "Sélectionner l'établissement",
+                'label' => 'Établissement * :',
+                'object_manager' => $this->etablissementService->getEntityManager(),
+                'target_class' => Etablissement::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
             ],
             'attributes' => [
                 'id' => 'etablissement',
                 'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'établissement",
                 'data-live-search' => 'true',
-                'data-bs-html' => 'true',
-                'disable_html_escape' => false,
-            ]
+            ],
         ]);
 
         $this->add([
-            'type' => Select::class,
-            'name' => 'unite-recherche',
+            'type' => ObjectSelect::class,
+            'name' => 'uniteRecherche',
             'options' => [
-                'label' => "Unité de recherche :",
-                'value_options' => $this->getUnitesRecherchesAsOptions(),
-                'empty_option' => "Sélectionner l'unité de recherche",
+                'label' => 'Unité de recherche * :',
+                'object_manager' => $this->structureService->getEntityManager(),
+                'target_class' => UniteRecherche::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                    'params' => [],
+                    'callback' => function() {
+                        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
+                    },
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
             ],
             'attributes' => [
                 'id' => 'unite-recherche',
                 'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'unité de recherche",
                 'data-live-search' => 'true',
-                'data-bs-html' => 'true',
-            ]
+            ],
         ]);
 
         $this->add([
-            'type' => Select::class,
-            'name' => 'ecole-doctorale',
+            'type' => ObjectSelect::class,
+            'name' => 'ecoleDoctorale',
             'options' => [
-                'label' => "École doctorale :",
-                'value_options' => $this->getEcolesDoctoralsAsOptions(),
-                'empty_option' => "Sélectionner l'école doctorale",
+                'label' => 'École doctorale * :',
+                'object_manager' => $this->structureService->getEntityManager(),
+                'target_class' => EcoleDoctorale::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                    'params' => [],
+                    'callback' => function() {
+                        $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
+                    },
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
             ],
             'attributes' => [
                 'id' => 'ecole-doctorale',
-                'class' => 'selectpicker show-menu-arrow',
                 'data-live-search' => 'true',
-                'data-bs-html' => 'true',
-            ]
+                'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'école doctorale"
+            ],
         ]);
     }
 
@@ -118,17 +114,14 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
     public function getInputFilterSpecification()
     {
         return [
-            'unite-recherche' => [
-                'name' => 'unite-recherche',
-                'required' => false,
+            'uniteRecherche' => [
+                'required' => true,
             ],
-            'ecole-doctorale' => [
-                'name' => 'ecole-doctorale',
-                'required' => false,
+            'ecoleDoctorale' => [
+                'required' => true,
             ],
             'etablissement' => [
-                'name' => 'etablissement',
-                'required' => false,
+                'required' => true,
             ],
         ];
     }

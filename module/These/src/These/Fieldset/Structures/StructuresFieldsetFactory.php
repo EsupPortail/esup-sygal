@@ -2,11 +2,10 @@
 
 namespace These\Fieldset\Structures;
 
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Entity\Db\These;
 
 class StructuresFieldsetFactory
@@ -17,7 +16,7 @@ class StructuresFieldsetFactory
      */
     public function __invoke(ContainerInterface $container): StructuresFieldset
     {
-        $fieldset = new StructuresFieldset('Structures');
+        $fieldset = new StructuresFieldset();
 
         /** @var StructureService $structureService */
         $structureService = $container->get(StructureService::class);
@@ -27,17 +26,11 @@ class StructuresFieldsetFactory
         $etablissementService = $container->get(EtablissementService::class);
         $fieldset->setEtablissementService($etablissementService);
 
-        /** @var EcoleDoctoraleService $ecoleDoctoraleService */
-        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
-        $fieldset->setEcoleDoctoraleService($ecoleDoctoraleService);
-
-        /** @var UniteRechercheService $uniteRechercheService */
-        $uniteRechercheService = $container->get(UniteRechercheService::class);
-        $fieldset->setUniteRechercheService($uniteRechercheService);
-
-        /** @var StructuresHydrator $hydrator */
-        $hydrator = $container->get('HydratorManager')->get(StructuresHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
         $fieldset->setHydrator($hydrator);
+
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $fieldset->setEntityManager($entityManager);
 
         $fieldset->setObject(new These());
 

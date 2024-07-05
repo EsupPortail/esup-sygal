@@ -8,12 +8,11 @@ use Laminas\Form\Form;
 ?>
 
 <fieldset>
-    <legend>Structures</legend>
     <?php
     $fs = $form->get('structures');
-    echo $this->formHidden($fs->get('id'));
+//    echo $this->formHidden($fs->get('id'));
     echo $this->formControlGroup($fs->get('etablissement'));
-    echo $this->formControlGroup($fs->get('ecole-doctorale'));
-    echo $this->formControlGroup($fs->get('unite-recherche'));
+    echo $this->formControlGroup($fs->get('ecoleDoctorale'));
+    echo $this->formControlGroup($fs->get('uniteRecherche'));
     ?>
 </fieldset>

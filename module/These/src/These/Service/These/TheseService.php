@@ -3,6 +3,7 @@
 namespace These\Service\These;
 
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
+use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -74,13 +75,14 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         return $these;
     }
 
-    public function saveThese(These $these, ?string $domaine)
+    public function saveThese(These $these)
     {
         /** @var Acteur[] $direction */
         $direction = $these->getActeursByRoleCode([
             Role::CODE_DIRECTEUR_THESE,
             Role::CODE_CODIRECTEUR_THESE,
         ]);
+
 
         foreach ($direction as $acteur) {
             try {
@@ -104,10 +106,12 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         }
 
         $titreAcces = $these->getTitreAcces();
-        try {
-            $this->getEntityManager()->persist($titreAcces);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+        if($titreAcces){
+            try {
+                $this->getEntityManager()->persist($titreAcces);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            }
         }
 
         $theseAnneeUniv = $these->getAnneeUniv1ereInscription();
@@ -119,7 +123,36 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
             }
         }
 
-        return $this->create($these);
+        $financements = $these->getFinancements();
+        /** @var Financement $financement */
+        foreach ($financements as $financement) {
+            try {
+                $financement->setThese($these);
+                $this->getEntityManager()->persist($financement);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            }
+        }
+        if($these->getId() !== null){
+            return $this->updateAll($these);
+        }else{
+            return $this->create($these);
+        }
+    }
+
+    public function updateAll(These $these, $serviceEntityClass = null): These
+    {
+        $entityClass = get_class($these);
+        $serviceEntityClass = $serviceEntityClass ?: These::class;
+        if ($serviceEntityClass != $entityClass && !is_subclass_of($these, $serviceEntityClass)) {
+            throw new \RuntimeException("L'entité transmise doit être de la classe $serviceEntityClass.");
+        }
+        try {
+            $this->getEntityManager()->flush();
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+        }
+        return $these;
     }
 
     public function create(These $these): These
@@ -170,7 +203,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $titre = trim($these->getTitre());
         $titre = str_replace("\n",' ', $titre);
         $pdcData->setTitre($titre);
-        $pdcData->setSpecialite($these->getLibelleDiscipline());
+        $pdcData->setSpecialite($these->getDiscipline());
         if ($these->getEtablissement()) {
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
         }

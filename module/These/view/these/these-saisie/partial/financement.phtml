@@ -5,32 +5,18 @@
 ?>
 
 <fieldset>
-    <legend>Financement</legend>
-
     <?php
     $fs = $form->get('financements');
-//    echo $this->formHidden($fs->get('id'));
+//    echo $this->formHidden($form->get('id'));
     ?>
-<!--    <div class="row">-->
-<!--        <div class="col-3">-->
-<!--            --><?php //echo $this->formControlGroup($fs->get('annee')) ?>
-<!--        </div>-->
-<!--    </div>-->
     <div class="row">
         <div class="col-3">
-            <?php //echo $this->formControlGroup($fs->get('origineFinancement')) ?>
             <?php echo $this->formElementCollection($fs); ?>
         </div>
     </div>
-<!--    <div class="row">-->
-<!--        <div class="col-3">-->
-<!--            --><?php //echo $this->formControlGroup($fs->get('complementFinancement')) ?>
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="row">-->
-<!--        <div class="col-3">-->
-<!--            --><?php //echo $this->formControlGroup($fs->get('quotiteFinancement')) ?>
-<!--        </div>-->
-<!--    </div>-->
-
 </fieldset>
+<script>
+    $(document).on('click', '.collection-add-link', function() {
+        $('select').selectpicker();
+    });
+</script>

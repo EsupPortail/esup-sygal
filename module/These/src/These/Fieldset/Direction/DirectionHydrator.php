@@ -142,9 +142,9 @@ class DirectionHydrator extends AbstractHydrator
 
         return [
             $prefixe . ($k = 'individu') => SAS2::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getIndividu()),
-            $prefixe . ($k = 'etablissement') => SAS2::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getEtablissement()),
-            $prefixe . ($k = 'ecoleDoctorale') => SAS2::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getEcoleDoctorale()),
-            $prefixe . ($k = 'uniteRecherche') => SAS2::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getUniteRecherche()),
+            $prefixe . ($k = 'etablissement') => $dataActeur[$k],
+            $prefixe . ($k = 'ecoleDoctorale') => $dataActeur[$k],
+            $prefixe . ($k = 'uniteRecherche') => $dataActeur[$k],
             $prefixe . ($k = 'qualite') => $dataActeur[$k],
             $prefixe . ($k = 'principal') => $dataActeur[$k] ?? false,
             $prefixe . ($k = 'exterieur') => $dataActeur[$k] ?? false,
@@ -155,9 +155,9 @@ class DirectionHydrator extends AbstractHydrator
     {
         $dataActeur = [
             ($k = 'individu') => SAS2::extractIdFromValue($data[$prefixe . $k]),
-            ($k = 'etablissement') => SAS2::extractIdFromValue($data[$prefixe . $k]),
-            ($k = 'ecoleDoctorale') => SAS2::extractIdFromValue($data[$prefixe . $k]),
-            ($k = 'uniteRecherche') => SAS2::extractIdFromValue($data[$prefixe . $k]),
+            ($k = 'etablissement') => $data[$prefixe . $k],
+            ($k = 'ecoleDoctorale') => $data[$prefixe . $k],
+            ($k = 'uniteRecherche') => $data[$prefixe . $k],
             ($k = 'qualite') => $data[$prefixe . $k],
             ($k = 'principal') => $data[$prefixe . $k] ?? false,
             ($k = 'exterieur') => $data[$prefixe . $k] ?? false,

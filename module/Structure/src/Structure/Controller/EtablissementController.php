@@ -2,6 +2,7 @@
 
 namespace Structure\Controller;
 
+use Application\Service\Variable\VariableServiceAwareTrait;
 use InvalidArgumentException;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
@@ -27,6 +28,7 @@ class EtablissementController extends StructureConcreteController
     use EtablissementServiceAwareTrait;
     use RoleServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_ETABLISSEMENT;
 
@@ -99,6 +101,8 @@ class EtablissementController extends StructureConcreteController
         $individus = $this->roleService->findIndividuForStructure($structureConcrete->getStructure());
         $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
+        $variables = $structureConcrete instanceOf Etablissement ? $this->variableService->getRepository()->findAllByEtab($structureConcrete) : [];
+
         foreach ($roles as $role) {
             if (!$role->isTheseDependant()) {
                 $roleListings [$role->getLibelle()] = 0;
@@ -125,6 +129,7 @@ class EtablissementController extends StructureConcreteController
             'individuListing' => $individuListings,
             'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
             'contenus'        => $contenus,
+            'variables' => $variables
         ]);
     }
 

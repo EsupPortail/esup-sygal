@@ -23,14 +23,6 @@ class GeneralitesHydratorFactory
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
         $hydrator = new GeneralitesHydrator($entityManager);
 
-//        $hydrator = new GeneralitesHydrator();
-
-
-
-        /** @var EtablissementService $etablissementService */
-        $etablissementService = $container->get(EtablissementService::class);
-        $hydrator->setEtablissementService($etablissementService);
-
         /** @var DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
         $hydrator->setDoctorantService($doctorantService);

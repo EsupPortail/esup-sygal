@@ -8,9 +8,9 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="sourceCode" type="string" column="source_code" length="100" nullable="true"/>
-        <field name="libelleRoleComplement" type="string" column="lib_role_compl" length="50" nullable="true"/>
-        <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>
+        <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
+<!--        <field name="libelleRoleComplement" type="string" column="LIB_ROLE_COMPL" length="50" nullable="true"/>-->
+<!--        <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>-->
         <field name="principal" type="boolean" column="PRINCIPAL" nullable="false"/>
         <field name="exterieur" type="boolean" column="EXTERIEUR" nullable="false"/>
         <field name="ordre" type="integer" column="ORDRE" nullable="false"/>
@@ -54,6 +54,11 @@
         <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
             <join-columns>
                 <join-column name="unite_rech_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="qualite" target-entity="Soutenance\Entity\Qualite">
+            <join-columns>
+                <join-column name="QUALITE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 

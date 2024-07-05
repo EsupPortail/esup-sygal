@@ -4,6 +4,7 @@ namespace Application\Service\Financement;
 
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\OrigineFinancement;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use These\Entity\Db\These;
@@ -13,6 +14,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 class FinancementService
 {
     use EntityManagerAwareTrait;
+    use SourceServiceAwareTrait;
 
     public function getRepository()
     {
@@ -119,6 +121,14 @@ class FinancementService
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenue en base pour une entité [Financement]",0, $e);
         }
+        return $financement;
+    }
+
+    public function newFinancement(){
+        $financement = new Financement();
+        $financement->setSource($this->sourceService->fetchApplicationSource());
+        $financement->setSourceCode($this->sourceService->genereateSourceCode());
+
         return $financement;
     }
 }

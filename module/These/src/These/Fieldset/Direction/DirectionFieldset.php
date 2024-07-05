@@ -2,20 +2,26 @@
 
 namespace These\Fieldset\Direction;
 
+use DoctrineModule\Form\Element\ObjectSelect;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Fieldset;
-use Laminas\InputFilter\Factory;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect2;
 
 class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 {
     use EtablissementServiceAwareTrait;
     use QualiteServiceAwareTrait;
+    use StructureServiceAwareTrait;
 
     const NBCODIR = 2;
 
@@ -101,7 +107,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 
     private function _addCommuns(string $prefixe)
     {
-        $individu = new SearchAndSelect2($prefixe . '-individu', ['label' => "Individu :"]);
+        $individu = new SearchAndSelect2($prefixe . '-individu', ['label' => "Individu * :"]);
         $individu
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
             ->setAttributes([
@@ -110,38 +116,118 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             ]);
         $this->add($individu);
 
-        $etab = new SearchAndSelect2($prefixe . '-etablissement', ['label' => "Établissement :"]);
-        $etab
-            ->setAutocompleteSource($this->urlAutocompleteEtablissement)
-            ->setAttributes([
+        $this->add([
+            'type' => ObjectSelect::class,
+            'name' => $prefixe . '-etablissement',
+            'options' => [
+                'label' => 'Établissement * :',
+                'object_manager' => $this->etablissementService->getEntityManager(),
+                'target_class' => Etablissement::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
                 'id' => $prefixe . '-etablissement',
-                'placeholder' => "Recherchez l'établissement...",
-            ]);
-        $this->add($etab);
+                'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'établissement",
+                'data-live-search' => 'true',
+            ],
+        ]);
 
-        $ed = new SearchAndSelect2($prefixe . '-ecoleDoctorale', ['label' => "École doctorale :"]);
-        $ed
-            ->setAutocompleteSource($this->urlAutocompleteEcoleDoctorale)
-            ->setAttributes([
-                'id' => $prefixe . '-ecoleDoctorale',
-                'placeholder' => "Recherchez l'école doctorale...",
-            ]);
-        $this->add($ed);
-
-        $ur = new SearchAndSelect2($prefixe . '-uniteRecherche', ['label' => "Unité de recherche :"]);
-        $ur
-            ->setAutocompleteSource($this->urlAutocompleteUniteRecherche)
-            ->setAttributes([
+        $this->add([
+            'type' => ObjectSelect::class,
+            'name' => $prefixe . '-uniteRecherche',
+            'options' => [
+                'label' => 'Unité de recherche * :',
+                'object_manager' => $this->structureService->getEntityManager(),
+                'target_class' => UniteRecherche::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                    'params' => [],
+                    'callback' => function() {
+                        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
+                    },
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
                 'id' => $prefixe . '-uniteRecherche',
-                'placeholder' => "Recherchez l'unité de recherche...",
-            ]);
-        $this->add($ur);
+                'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'unité de recherche",
+                'data-live-search' => 'true',
+            ],
+        ]);
+
+        $this->add([
+            'type' => ObjectSelect::class,
+            'name' => $prefixe . '-ecoleDoctorale',
+            'options' => [
+                'label' => 'École doctorale * :',
+                'object_manager' => $this->structureService->getEntityManager(),
+                'target_class' => EcoleDoctorale::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                    'params' => [],
+                    'callback' => function() {
+                        $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
+                    },
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'id' => $prefixe . '-ecoleDoctorale',
+                'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'école doctorale",
+                'data-live-search' => 'true',
+            ],
+        ]);
+
+//        $etab = new SearchAndSelect2($prefixe . '-etablissement', ['label' => "Établissement :"]);
+//        $etab
+//            ->setAutocompleteSource($this->urlAutocompleteEtablissement)
+//            ->setAttributes([
+//                'id' => $prefixe . '-etablissement',
+//                'placeholder' => "Recherchez l'établissement...",
+//            ]);
+//        $this->add($etab);
+
+//        $ed = new SearchAndSelect2($prefixe . '-ecoleDoctorale', ['label' => "École doctorale :"]);
+//        $ed
+//            ->setAutocompleteSource($this->urlAutocompleteEcoleDoctorale)
+//            ->setAttributes([
+//                'id' => $prefixe . '-ecoleDoctorale',
+//                'placeholder' => "Recherchez l'école doctorale...",
+//            ]);
+//        $this->add($ed);
+
+//        $ur = new SearchAndSelect2($prefixe . '-uniteRecherche', ['label' => "Unité de recherche :"]);
+//        $ur
+//            ->setAutocompleteSource($this->urlAutocompleteUniteRecherche)
+//            ->setAttributes([
+//                'id' => $prefixe . '-uniteRecherche',
+//                'placeholder' => "Recherchez l'unité de recherche...",
+//            ]);
+//        $this->add($ur);
 
         $this->add([
             'type' => Select::class,
             'name' => $prefixe . '-qualite',
             'options' => [
-                'label' => "Qualité :",
+                'label' => "Qualité * :",
                 'value_options' => $this->qualiteService->getQualitesAsGroupOptions(),
                 'empty_option' => "Sélectionner une qualité...",
             ],

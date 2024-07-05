@@ -3,6 +3,7 @@
 namespace Structure\Controller\Factory;
 
 use Application\Service\Role\RoleService;
+use Application\Service\Variable\VariableService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Structure\Controller\EtablissementController;
@@ -40,6 +41,9 @@ class EtablissementControllerFactory
         $controller->setStructureService($structureService);
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setStructureForm($form);
+
+        $variableService = $container->get(VariableService::class);
+        $controller->setVariableService($variableService);
 
         return $controller;
     }

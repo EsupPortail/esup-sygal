@@ -11,6 +11,33 @@ use UnicaenApp\Exception\RuntimeException;
 
 class VariableRepository extends DefaultEntityRepository
 {
+
+    /**
+     * Recherche les variables par un établissement.
+     *
+     * @param Etablissement $etablissement
+     * @return Variable[]|null
+     *
+     * @see VariableRepository::findOneByCodeAndEtab()
+     */
+    public function findAllByEtab(Etablissement $etablissement, DateTime $dateObservation = null): array|null
+    {
+        $dateObservation = $dateObservation ?: date_create();
+
+        $qb = $this->createQueryBuilder('v');
+        $qb
+            ->andWhere('v.etablissement = :etab')
+            ->andWhere(':dateObservation BETWEEN v.dateDebutValidite AND v.dateFinValidite')
+            ->orderBy('v.dateFinValidite', 'desc') // tri important!
+            ->setParameter('etab', $etablissement)
+            ->setParameter('dateObservation', $dateObservation)
+        ;
+
+        /** @var Variable[]|null $variable */
+        $variable = $qb->getQuery()->getResult();
+
+        return $variable;
+    }
     /**
      * Recherche une variable par son code et pour l'établissement de rattachement d'une thèse.
      *

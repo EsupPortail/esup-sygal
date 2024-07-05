@@ -60,6 +60,15 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
             </a>
         </li>
     <?php endif; ?>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link <?php echo $tab === StructureController::TAB_variables ? 'active' : '' ?>"
+           href="<?php echo $this->url('etablissement/voir', ['etablissement'=> $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_variables]], true); ?>"
+           role="tab"
+           aria-controls="variables"
+        >
+            Variables
+        </a>
+    </li>
 </ul>
 
 <div class="tab-content <?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
@@ -154,6 +163,12 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 <div class="tab-content <?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
 
     <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
+
+</div>
+
+<div class="tab-content <?php echo $tab === StructureController::TAB_variables ? '' : 'd-none' ?>" id="variables">
+
+    <?php echo $this->partial('structure/variable/index', ['etablissement' => $etablissement->getStructure(), 'variables' => $variables]); ?>
 
 </div>
 

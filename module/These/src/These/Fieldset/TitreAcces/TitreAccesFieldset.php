@@ -2,25 +2,21 @@
 
 namespace These\Fieldset\TitreAcces;
 
-use Laminas\Form\Element\Date;
+use Application\Entity\Db\Pays;
+use DoctrineModule\Form\Element\ObjectSelect;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    private ?array $pays = null;
-
-    public function setPays(array $paysAsOptions): void
-    {
-        $this->pays = $paysAsOptions;
-        $this->get('codePaysTitreAcces')->setEmptyOption('Sélectionnez une option');
-        $this->get('codePaysTitreAcces')->setValueOptions($this->pays);
-    }
-
+    use EtablissementServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     public function init()
     {
@@ -36,24 +32,61 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
                     'E' => 'Externe',
                     'I' => 'Interne',
                 ])
-                ->setLabel("Accès : ")
+                ->setLabel("Accès : * ")
+                ->setAttributes([
+                    'class' => 'selectpicker show-tick',
+                    'id' => "titreAccesInterneExterne"
+                ])
         );
 
         $this->add(
             (new Text("libelleTitreAcces"))
-                ->setLabel("Libellé : ")
+                ->setLabel("Libellé : * ")
         );
 
-        $this->add(
-            (new Select("codePaysTitreAcces"))
-                ->setLabel("Pays d'obtention : ")
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
-                ->setAttributes([
-                    'class' => 'selectpicker show-tick',
-                    'data-live-search' => 'true',
-                    'id' => "codePaysTitreAcces"
-                ])
-        );
+        $this->add([
+            'type' => ObjectSelect::class,
+            'name' => 'pays',
+            'options' => [
+                'label' => "Pays d'obtention * : ",
+                'object_manager' => $this->getEntityManager(),
+                'target_class' => Pays::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                ],
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'id' => 'etablissement',
+                'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'établissement",
+                'data-live-search' => 'true',
+            ],
+        ]);
+
+        $this->add([
+            'type' => ObjectSelect::class,
+            'name' => 'etablissement',
+            'options' => [
+                'label' => 'Établissement * :',
+                'object_manager' => $this->etablissementService->getEntityManager(),
+                'target_class' => Etablissement::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                ],
+                'label_generator' => function($targetEntity) {
+                    $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
+                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
+                },
+                'disable_inarray_validator' => true,
+            ],
+            'attributes' => [
+                'id' => 'etablissement',
+                'class' => 'selectpicker show-menu-arrow',
+                'title' => "Sélectionner l'établissement",
+                'data-live-search' => 'true',
+            ],
+        ]);
     }
 
     /**
@@ -63,16 +96,16 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
     {
         return [
             'titreAccesInterneExterne' => [
-                'name' => 'titreAccesInterneExterne',
-                'required' => false,
+                'required' => true,
             ],
             'libelleTitreAcces' => [
-                'name' => 'libelleTitreAcces',
-                'required' => false,
+                'required' => true,
             ],
-            'codePaysTitreAcces' => [
-                'name' => 'codePaysTitreAcces',
-                'required' => false,
+            'pays' => [
+                'required' => true,
+            ],
+            'etablissement' => [
+                'required' => true,
             ],
         ];
     }

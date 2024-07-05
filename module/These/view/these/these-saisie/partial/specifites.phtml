@@ -1,0 +1,30 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+?>
+
+<fieldset>
+    <?php
+        $fs = $form->get('generalites');
+//        echo $this->formHidden($fs->get('id'));
+    ?>
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('cotutelle')) ?>
+        </div>
+    </div>
+    <div class="row" id="informations-co-tutelle">
+        <div class="row">
+            <div class="col-4">
+                <?php echo $this->formControlGroup($fs->get('etablissementCoTutelle')) ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                <?php echo $this->formControlGroup($fs->get('paysCoTutelle')) ?>
+            </div>
+        </div>
+    </div>
+</fieldset>

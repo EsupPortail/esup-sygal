@@ -17,7 +17,7 @@ class EncadrementFieldsetFactory
      */
     public function __invoke(ContainerInterface $container): EncadrementFieldset
     {
-        $fieldset = new EncadrementFieldset('Encadrement');
+        $fieldset = new EncadrementFieldset();
 
         /** @var EncadrementHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get(EncadrementHydrator::class);

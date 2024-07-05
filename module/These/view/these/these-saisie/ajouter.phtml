@@ -4,6 +4,7 @@
  * @see \These\Controller\TheseSaisieController::ajouterAction()
  *
  * @var \Laminas\Form\Form $form
+ * @var ?array $errorMessages
  */
 
 $title = "Saisie d'une nouvelle thèse";
@@ -16,25 +17,53 @@ $form->prepare();
     <?php echo $title ?>
 </h1>
 
+<?php if(isset($errorMessages) && is_array($errorMessages)){ ?>
+    <div class="alert alert-danger">
+        Certains champ(s) du formulaire n'ont pas pu être validé : <br><br>
+        <ul>
+            <?php
+            foreach ($errorMessages as $key => $messageGroup) { ?>
+                <li>
+                    <ul>
+                        Onglet <?php echo $key; ?> :
+                        <?php foreach ($messageGroup as $name => $errors) { ?>
+
+                            <?php if (is_array($errors)) {
+                                foreach ($errors as $errorKey => $errorMessage) {
+                                    echo "<li><b>'$name'</b> : $errorMessage<br></li>";
+                                }
+                            } ?>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <br>
+            <?php } ?>
+        </ul>
+    </div>
+<?php } ?>
+
 <div role="tabpanel">
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation">
-            <a class="nav-link" href="#informations" aria-controls="informations" role="tab" data-toggle="tabz">                   Informations générales</a>
+            <a class="nav-link" href="#informations" aria-controls="informations" role="tab" data-toggle="tabz"><?php echo $form->get("generalites")->getLabel();?></a>
         </li>
         <li role="presentation">
-            <a class="nav-link" href="#structures" aria-controls="structures" role="tab" data-toggle="tabz">                       Structures encadrantes</a>
+            <a class="nav-link" href="#structures" aria-controls="structures" role="tab" data-toggle="tabz"><?php echo $form->get("structures")->getLabel();?></a>
         </li>
         <li role="presentation">
-            <a class="nav-link" href="#direction" aria-controls="direction" role="tab" data-toggle="tabz">             Direction de thèse</a>
+            <a class="nav-link" href="#specifites" aria-controls="specifites" role="tab" data-toggle="tabz">Spécifités envisagées</a>
         </li>
         <li role="presentation">
-            <a class="nav-link" href="#encadrements" aria-controls="encadrements" role="tab" data-toggle="tabz">                   Co-encadrements</a>
+            <a class="nav-link" href="#direction" aria-controls="confidentialite" role="tab" data-toggle="tabz"><?php echo $form->get("direction")->getLabel();?></a>
         </li>
         <li role="presentation">
-            <a class="nav-link" href="#confidentialite" aria-controls="confidentialite" role="tab" data-toggle="tabz">             Confidentialité</a>
+            <a class="nav-link" href="#encadrements" aria-controls="encadrements" role="tab" data-toggle="tabz"><?php echo $form->get("encadrements")->getLabel();?></a>
         </li>
+        <!--        <li role="presentation">-->
+        <!--            <a class="nav-link" href="#confidentialite" aria-controls="confidentialite" role="tab" data-toggle="tabz">             Confidentialité</a>-->
+        <!--        </li>-->
         <li role="presentation">
-            <a class="nav-link" href="#financement" aria-controls="financement" role="tab" data-toggle="tabz">             Financement</a>
+            <a class="nav-link" href="#financement" aria-controls="financement" role="tab" data-toggle="tabz"><?php echo $form->get("financements")->getLabel();?></a>
         </li>
     </ul>
 </div>
@@ -49,10 +78,13 @@ $form->prepare();
         <br/><br/>
         <span class="alert alert-warning">Quid des co-tutelle ?</span>
     </div>
+    <div id="specifites" class="tab-pane " role="tabpanel">
+        <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
+        <br/><br/>
+    </div>
     <div id="direction" class="tab-pane " role="tabpanel">
         <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
         <br/><br/>
-        <span class="alert alert-warning">Quid des co-encadrements ici ?</span>
     </div>
     <div id="encadrements" class="tab-pane " role="tabpanel">
         <?php echo $this->partial('these/these-saisie/partial/encadrement'); ?>
@@ -61,11 +93,10 @@ $form->prepare();
     <div id="confidentialite" class="tab-pane " role="tabpanel">
 <!--        --><?php //echo $this->partial('these/these-saisie/partial/'); ?>
     </div>
-<!--    <div id="financement" class="tab-pane " role="tabpanel">-->
-<!--        --><?php //echo $this->partial('these/these-saisie/partial/financement'); ?>
-<!--    </div>-->
+    <div id="financement" class="tab-pane " role="tabpanel">
+        <?php echo $this->partial('these/these-saisie/partial/financement'); ?>
+    </div>
 </div>
-<?php //echo $this->formControlGroup($form->get('titre')); ?>
 <?php echo $this->formHidden($form->get('security')); ?>
 <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
 <?php echo $this->form()->closeTag(); ?>

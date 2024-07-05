@@ -16,13 +16,13 @@ class EncadrementHydratorFactory
      */
     public function __invoke(ContainerInterface $container): EncadrementHydrator
     {
-//        /**
-//         * @var EntityManager $entityManager
-//         */
-//        $entityManager = $container->get('Doctrine\ORM\EntityManager');
-//        $hydrator = new EncadrementHydrator($entityManager);
+        /**
+         * @var EntityManager $entityManager
+         */
+        $entityManager = $container->get('Doctrine\ORM\EntityManager');
+        $hydrator = new EncadrementHydrator($entityManager);
 
-        $hydrator = new EncadrementHydrator();
+//        $hydrator = new EncadrementHydrator();
 
         /** @var \Individu\Service\IndividuService $individuService */
         $individuService = $container->get(IndividuService::class);

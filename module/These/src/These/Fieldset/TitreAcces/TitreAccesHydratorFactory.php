@@ -2,8 +2,7 @@
 
 namespace These\Fieldset\TitreAcces;
 
-use Application\Service\AnneeUniv\AnneeUnivService;
-use Application\Service\Source\SourceService;
+use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 
 class TitreAccesHydratorFactory
@@ -14,16 +13,10 @@ class TitreAccesHydratorFactory
      */
     public function __invoke(ContainerInterface $container): TitreAccesHydrator
     {
-        $hydrator = new TitreAccesHydrator();
-
-        /** @var AnneeUnivService $anneeUnivService */
-        $anneeUnivService = $container->get(AnneeUnivService::class);
-        $hydrator->setAnneeUnivService($anneeUnivService);
-
-        /** @var SourceService $sourceService */
-        $sourceService = $container->get(SourceService::class);
-        $hydrator->setSourceService($sourceService);
-
-        return $hydrator;
+        /**
+         * @var EntityManager $entityManager
+         */
+        $entityManager = $container->get('Doctrine\ORM\EntityManager');
+        return new TitreAccesHydrator($entityManager);
     }
 }
