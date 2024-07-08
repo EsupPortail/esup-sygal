@@ -1,11 +1,22 @@
 Troubleshooting
 ===============
 
+Erreur lors de la création de l'aperçu d'une page de couverture
+-----------------------------------
+
+### Erreur
+Un message d'erreur du genre "attempt to perform an operation not allowed by the security policy `PDF'"
+s'affiche dans la fenêtre sensée affichée un aperçu d'une page de couverture.
+
+### Solution
+Sur le serveur d'application, dans le fichier de config `/etc/ImageMagick-6/policy.xml` (à la version près), 
+ajouter ou décommenter la ligne suivante :
+
+`<policy domain="coder" rights="read|write" pattern="PDF" />`
+
+
 Utilisateur introuvable dans la page "Admin > Utilisateurs"
 -----------
-
-Ex: Marie LEGAY-MELEUX et Anne-Marie ROLLAND-LE CHEVREL
-https://redmine.unicaen.fr/Etablissement/issues/26539
 
 ### Cause
 L'individu référencé par l'utilisateur avait :
@@ -18,7 +29,7 @@ L'individu référencé par l'utilisateur avait :
 - Déhistoriser l'individu
 - Mettre type à NULL
 - Changer sa source à SYGAL (id=1)
-- Renseigner le supannId si besoin
+- Renseigner le supannId si besoin (valeur du supann(Emp|Etu|Ref)Id de l'utilisateur connecté)
 
 
 Rôle utilisateur non visible sur la page utilisateur mais visibles dans la fiche structure
@@ -43,7 +54,7 @@ where exists (
                  join role r on ir.ROLE_ID = r.ID and r.STRUCTURE_ID is not null
         where i.ID = ir.INDIVIDU_ID
     )
-  and i.HISTO_DESTRUCTION is not null
+  and i.HISTO_DESTRUCTION is not null;
 
 --
 -- Etape 2 : lister tous les individus présents dans les résultats de l'étape 1.
@@ -75,8 +86,7 @@ select i.ID,
        i.DATE_NAISSANCE,
        i.NATIONALITE,
        i.HISTO_CREATION,
-       i.HISTO_MODIFICATION,
-       i.ETABLISSEMENT_ID
+       i.HISTO_MODIFICATION
 from individu i
      join tmp
          on upper(tmp.NOM_USUEL) = upper(i.NOM_USUEL) and upper(tmp.PRENOM1) = upper(i.PRENOM1)

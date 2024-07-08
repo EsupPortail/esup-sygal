@@ -6,6 +6,7 @@ Journal des modifications
 - Module Soutenance : modif de la qualité par défaut des membres lors de la création automatique de la proposition (lors du 1er accès à la page Proposition).
 - Structures : la création des rôles par défaut à partir des profils existants oubliait de créer le lien role-->profil.
 - Doc : exemple de config SMTP plus complet dans config/autoload/secret.local.php.dist.
+- Doc : config ImageMagick en cas d'erreur 'attempt to perform an operation not allowed by the security policy PDF' lors de la création de l'aperçu d'une page de couverture.
 - BDD : ajout de triggers pour créer automatiquement les rôles associés à toute nouvelle structure créée (Etab d'inscription / ED / UR).
 - [FIX] Requête de recherche de thèses par acteur : les acteurs historisés n'étaient pas écartés.
 - [FIX] Module Information : utilisation d'une langue par défaut (FR) pour permettre la création d'une page d'information.
