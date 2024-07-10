@@ -1,7 +1,7 @@
-Création d'une base de données pour ESUP-SyGAL
-==============================================
+Création d'une base de données PostgreSQL pour ESUP-SyGAL
+=========================================================
 
-Les fichiers fournis permettant de créer une base de données neuve pour ESUP-SyGAL sont :
+Les fichiers fournis dans ce répertoire permettent de créer une base de données neuve pour ESUP-SyGAL :
 
 - d'une part, le fichier de config et le script bash de construction :
     - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adapter et à renommer en `.conf`)
@@ -19,6 +19,11 @@ Les fichiers fournis permettant de créer une base de données neuve pour ESUP-S
     - [`09_create_ced.sql.dist`](sql/09_create_ced.sql.dist)
     - [`10_init.sql.dist`](sql/10_init.sql.dist)
     - [`11_create_fixture.sql.dist`](sql/11_create_fixture.sql.dist)
+
+
+## Pré-requis
+
+Vous devez disposer d'un serveur de base de données PostgreSQL en **version 15**.
 
 
 ## Case départ
