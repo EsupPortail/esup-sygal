@@ -11623,11 +11623,11 @@
         },
         {
             "name": "unicaen/livelog",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/livelog.git",
-                "reference": "0ceb699fd914275f3851d18607d76a791ed9088d"
+                "reference": "da15568124b0f41a815909ce7475b6d56716b6da"
             },
             "require": {
                 "cboden/ratchet": "^0.4.4",
@@ -11652,7 +11652,7 @@
                 ]
             },
             "description": "Module permettant d'afficher des logs en live à l'aide d'une websocket (et d'une socket)",
-            "time": "2023-01-27T09:51:22+00:00"
+            "time": "2024-07-10T14:47:12+00:00"
         },
         {
             "name": "unicaen/parametre",
