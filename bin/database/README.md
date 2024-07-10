@@ -12,18 +12,9 @@ Cette génération se fait *à partir d'une bdd PostgreSQL modèle existante* à
 
 Le script shell [`./build_db_install_files.sh`](build_db_install_files.sh) génère dans un répertoire de votre choix :
 
-  - un répertoire `sql/` contenant un ensemble de scripts SQL ordonnés :
-    - `01_create_db_user.sql`
-    - `02_create_schema.sql`
-    - `03_insert_bootstrap_data.sql`
-    - `04_insert_data.sql`
-    - `05_prepare_data.sql`
-    - `06_prepare_sequences.sql`
-    - `07_create_constraints.sql`
-    - `08_create_comue.sql`
-    - `09_create_ced.sql`
-    - `10_init.sql`
-    - `11_create_fixture.sql`
+  - un répertoire `sql/` contenant des scripts SQL ordonnés dans les sous répertoires suivants :
+    - `01_admin/`
+    - `02_other/`
       
   - un script bash et un fichier de config pour "préparer" les scripts SQL ayant l'extension `.sql.dist` :    
     - `build_db_files.conf.dist`

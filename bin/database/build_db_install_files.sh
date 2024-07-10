@@ -126,7 +126,8 @@ NAME_CREATE_FIXTURE='create_fixture'
 NAME_CREATE_CONSTRAINTS='create_constraints'
 
 mkdir -p $OUTPUT_DIR/sql && \
-mkdir $OUTPUT_DIR/sql/admin
+mkdir $OUTPUT_DIR/sql/01_admin
+mkdir $OUTPUT_DIR/sql/02_other
 
 i=0
 
@@ -134,7 +135,7 @@ i=0
 ## clearing
 ##
 #i=$((i+1))
-#OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_CLEAR_DB)
+#OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_CLEAR_DB)
 #SRC_SCRIPT=$THIS_DIR/src/sql/$i_$NAME_CLEAR_DB.gen.sql
 #psql --tuples-only --output $OUTPUT_FILE <$SRC_SCRIPT
 #echo "> $OUTPUT_FILE"
@@ -143,7 +144,7 @@ i=0
 # db and user
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/admin/$(printf "%02d_%s.sql" $i $NAME_CREATE_DB_USER)
+OUTPUT_FILE=$OUTPUT_DIR/sql/01_admin/$(printf "%02d_%s.sql" $i $NAME_CREATE_DB_USER)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_DB_USER.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 injectConfParamsInScript $OUTPUT_FILE
@@ -153,7 +154,7 @@ echo "> $OUTPUT_FILE"
 # schema objects
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_CREATE_SCHEMA)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_CREATE_SCHEMA)
 pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' --exclude-table '*_SAV' --exclude-table 'SAV_*' --exclude-table 'Z_*' >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 #prepareScript $OUTPUT_FILE
@@ -163,7 +164,7 @@ echo "> $OUTPUT_FILE"
 # bootstrap data
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_INSERT_BOOTSTRAP_DATA)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_INSERT_BOOTSTRAP_DATA)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_INSERT_BOOTSTRAP_DATA.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -172,7 +173,7 @@ echo "> $OUTPUT_FILE"
 # data
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
 pg_dump --data-only --column-inserts \
 --table="admission_etat" \
 --table="admission_type_validation" \
@@ -214,17 +215,18 @@ echo "> $OUTPUT_FILE"
 # other data
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
 # role
-printf "copy role from stdin with header;\n" > $OUTPUT_FILE && \
-psql -c "copy (select * from role where structure_id is null) to STDOUT with HEADER;" >> $OUTPUT_FILE && \
+printf "copy role from stdin;\n" > $OUTPUT_FILE && \
+psql -c "copy (select * from role where structure_id is null) to STDOUT;" >> $OUTPUT_FILE && \
 printf "\.\n" >> $OUTPUT_FILE
+echo "> $OUTPUT_FILE"
 
 #
 # prepare data
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_PREPARE_DATA)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_PREPARE_DATA)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_PREPARE_DATA.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -233,7 +235,7 @@ echo "> $OUTPUT_FILE"
 # prepare sequences
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_PREPARE_SEQUENCES)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_PREPARE_SEQUENCES)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_PREPARE_SEQUENCES.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -242,7 +244,7 @@ echo "> $OUTPUT_FILE"
 # constraints
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql" $i $NAME_CREATE_CONSTRAINTS)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_CREATE_CONSTRAINTS)
 pg_dump --section=post-data --schema-only --exclude-table="mv_indicateur_*" --exclude-table '*_SAV' --exclude-table 'SAV_*' --exclude-table 'Z_*' >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -251,7 +253,7 @@ echo "> $OUTPUT_FILE"
 # COMUE
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql.dist" $i $NAME_CREATE_COMUE)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql.dist" $i $NAME_CREATE_COMUE)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_COMUE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -260,7 +262,7 @@ echo "> $OUTPUT_FILE"
 # CED
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql.dist" $i $NAME_CREATE_CED)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql.dist" $i $NAME_CREATE_CED)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_CED.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -269,7 +271,7 @@ echo "> $OUTPUT_FILE"
 # init
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql.dist" $i $NAME_INIT)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql.dist" $i $NAME_INIT)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_INIT.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -278,7 +280,7 @@ echo "> $OUTPUT_FILE"
 # fixtures
 #
 i=$((i+1))
-OUTPUT_FILE=$OUTPUT_DIR/sql/$(printf "%02d_%s.sql.dist" $i $NAME_CREATE_FIXTURE)
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql.dist" $i $NAME_CREATE_FIXTURE)
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_FIXTURE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"

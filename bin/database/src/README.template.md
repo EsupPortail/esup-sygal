@@ -7,18 +7,9 @@ Les fichiers fournis dans ce répertoire permettent de créer une base de donné
     - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adapter et à renommer en `.conf`)
     - [`build_db_files.sh`](build_db_files.sh)
     
-- d'autre part, les scripts SQL situés dans le répertoire [`sql/`](sql) :
-    - [`admin/01_create_db_user.sql`](sql/admin/01_create_db_user.sql)
-    - [`02_create_schema.sql`](sql/02_create_schema.sql)
-    - [`03_insert_bootstrap_data.sql`](sql/03_insert_bootstrap_data.sql)
-    - [`04_insert_data.sql`](sql/04_insert_data.sql)
-    - [`05_prepare_data.sql`](sql/05_prepare_data.sql)
-    - [`06_prepare_sequences.sql`](sql/06_prepare_sequences.sql)
-    - [`07_create_constraints.sql`](sql/07_create_constraints.sql)
-    - [`08_create_comue.sql.dist`](sql/08_create_comue.sql.dist)
-    - [`09_create_ced.sql.dist`](sql/09_create_ced.sql.dist)
-    - [`10_init.sql.dist`](sql/10_init.sql.dist)
-    - [`11_create_fixture.sql.dist`](sql/11_create_fixture.sql.dist)
+- d'autre part, des fichiers `.sql` ou `.sql.dist` situés dans les sous-répertoires du répertoire [`sql/`](sql) suivants :
+    - [`01_admin`](sql/01_admin/)
+    - [`02_other`](sql/02_other/)
 
 
 ## Pré-requis
@@ -38,11 +29,7 @@ mkdir -p /tmp/sygal && cp -r . /tmp/sygal/database && cd /tmp/sygal/database
 
 ## Préparation de certains scripts SQL
 
-Les scripts SQL à "préparer" portent l'extension `.sql.dist` :
-  - [`08_create_comue.sql.dist`](sql/08_create_comue.sql.dist)
-  - [`09_create_ced.sql.dist`](sql/09_create_ced.sql.dist)
-  - [`10_init.sql.dist`](sql/10_init.sql.dist)
-  - [`11_create_fixture.sql.dist`](sql/11_create_fixture.sql.dist)
+Les scripts SQL à "préparer" de trouvent dans le sous-répertoire `02_other` portent l'extension `.sql.dist`.
 
 Pour les préparer, vous devez dans l'ordre :
 
@@ -61,12 +48,8 @@ Pour les préparer, vous devez dans l'ordre :
     ./build_db_files.sh -c ./build_db_files.conf -i ./sql/
     ```
 
-Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQL supplémentaires dans le répertoire 
-[`sql/`](sql) :
-  - [`08_create_comue.sql`](sql/08_create_comue.sql)
-  - [`09_create_ced.sql`](sql/09_create_ced.sql)
-  - [`10_init.sql`](sql/10_init.sql)
-  - [`11_create_fixture.sql`](sql/11_create_fixture.sql)
+Une fois le script bash exécuté, vous devriez vous retrouver avec des scripts SQL supplémentaires dans le répertoire 
+[`sql/`](sql).
 
 À présent, tout est prêt pour lancer la création de la base de données.
 
@@ -99,7 +82,7 @@ psql \
   -v dbname=${SYGAL_DB} \
   -v dbuser=${SYGAL_USER} \
   -v dbpassword="'${SYGAL_PASSWORD}'" \
-  -f sql/admin/01_create_db_user.sql
+  -f sql/01_admin/01_create_db_user.sql
 ```
 
 
@@ -111,7 +94,7 @@ créés à l'étape précédente (et non plus avec le super-utilisateur).*
 - Lancez les lignes de commande suivantes :
 
 ```bash
-for f in sql/*.sql; do \
+for f in sql/02_other/*.sql; do \
   PGHOST=localhost \
   PGPORT=5432 \
   PGDATABASE=${SYGAL_DB} \

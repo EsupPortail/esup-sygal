@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.5 (Debian 15.5-0+deb12u1)
--- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
+-- Dumped by pg_dump version 16.3 (Ubuntu 16.3-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -160,6 +160,14 @@ ALTER TABLE ONLY public.composante_ens
 
 ALTER TABLE ONLY public.csi_membre
     ADD CONSTRAINT csi_membre_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: db_prune_tmp_central_data_params db_prune_tmp_central_data_params_table_name_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.db_prune_tmp_central_data_params
+    ADD CONSTRAINT db_prune_tmp_central_data_params_table_name_key UNIQUE (table_name);
 
 
 --
@@ -759,7 +767,7 @@ ALTER TABLE ONLY public.soutenance_etat
 --
 
 ALTER TABLE ONLY public.soutenance_horodatage
-    ADD CONSTRAINT soutenance_horodatage_pk PRIMARY KEY (proposition_id, horodatage_id);
+    ADD CONSTRAINT soutenance_horodatage_pk PRIMARY KEY (id);
 
 
 --
@@ -3134,7 +3142,7 @@ CREATE TRIGGER substit_trigger_etablissement AFTER INSERT OR DELETE OR UPDATE OF
 -- Name: individu substit_trigger_individu; Type: TRIGGER; Schema: public; Owner: :dbuser
 --
 
-CREATE TRIGGER substit_trigger_individu AFTER INSERT OR DELETE OR UPDATE OF nom_patronymique, prenom1, date_naissance, type, civilite, nom_usuel, prenom2, prenom3, email, nationalite, supann_id, z_etablissement_id, pays_id_nationalite, npd_force, histo_destruction, source_id ON public.individu FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('individu');
+CREATE TRIGGER substit_trigger_individu AFTER INSERT OR DELETE OR UPDATE OF nom_patronymique, prenom1, date_naissance, type, civilite, nom_usuel, prenom2, prenom3, email, nationalite, supann_id, pays_id_nationalite, npd_force, histo_destruction, source_id ON public.individu FOR EACH ROW WHEN ((pg_trigger_depth() < 1)) EXECUTE FUNCTION public.substit_trigger_fct('individu');
 
 
 --

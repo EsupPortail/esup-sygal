@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.5 (Debian 15.5-0+deb12u1)
--- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg20.04+1)
+-- Dumped by pg_dump version 16.3 (Ubuntu 16.3-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -152,6 +152,81 @@ $$;
 ALTER FUNCTION public.comprise_entre(date_debut timestamp without time zone, date_fin timestamp without time zone, date_obs timestamp without time zone, inclusif numeric) OWNER TO :dbuser;
 
 --
+-- Name: db_prune_tmp_func_generate_sql(); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.db_prune_tmp_func_generate_sql() RETURNS TABLE(step integer, ordering bigint, depth integer, table_name character varying, description character varying, sql character varying)
+    LANGUAGE plpgsql
+    AS $$begin
+    return query
+        select 1 as step,
+               row_number() over (order by v.depth desc, v.source_table) as ordering, -- Ordre important : on commence avec les tables les plus "éloignées"
+               v.depth,
+               v.source_table::varchar,
+               format('Parcours des tables liées de près ou de loin à %I en amont (tables mères)', ct.table_name)::varchar,
+               format('delete from %s where id not in (%s)', v.source_table, string_agg(v.sql, chr(10)||'union'||chr(10)))::varchar
+        from db_prune_tmp_v_fks_amont_sql v,
+             db_prune_tmp_central_data_params ct
+        group by ct.table_name, v.depth, v.source_table
+        union all
+        select 2,
+               1,
+               0,
+               ct.table_name,
+               format('Table centrale "%I"', ct.table_name)::varchar,
+               format('delete from %I where id not in (%s)', ct.table_name, ct.fetch_ids_sql)::varchar
+        from db_prune_tmp_central_data_params ct
+        union all
+        select 3,
+               row_number() over (order by v.depth, v.target_table), -- Ordre important : on commence avec les tables les plus "proches"
+               v.depth,
+               v.target_table::varchar,
+               format('Parcours des tables liées de près ou de loin à %I en aval (tables filles)', ct.table_name)::varchar,
+               format('delete from %I where id not in (select distinct id from (%s) t)', v.target_table, string_agg(v.sql, chr(10)||'union'||chr(10) order by v.subdepth))::varchar
+        from db_prune_tmp_v_fks_aval_sql v,
+             db_prune_tmp_central_data_params ct
+        group by ct.table_name, v.depth, v.target_table
+        --
+        order by step, ordering;
+end
+$$;
+
+
+ALTER FUNCTION public.db_prune_tmp_func_generate_sql() OWNER TO :dbuser;
+
+--
+-- Name: db_prune_tmp_proc_prune(); Type: PROCEDURE; Schema: public; Owner: :dbuser
+--
+
+CREATE PROCEDURE public.db_prune_tmp_proc_prune()
+    LANGUAGE plpgsql
+    AS $$declare
+    v_result record;
+    v_count int;
+    v_template varchar = 'with deleted as (%s returning *) select count(*) from deleted';
+begin
+    raise notice '%', 'Diminution du volume de données';
+    raise notice '%', '===============================';
+    refresh materialized view db_prune_tmp_v_fks;
+    refresh materialized view db_prune_tmp_v_excluded_tables;
+    refresh materialized view db_prune_tmp_v_fks_amont_sql;
+    refresh materialized view db_prune_tmp_v_fks_aval_sql;
+    raise notice '%', 'Refresh des vues matérialisées : Terminé';
+    for v_result in
+        select step, ordering, depth, table_name, description, sql
+        from db_prune_tmp_func_generate_sql()
+        order by step, ordering
+        loop
+            execute format(v_template, v_result.sql) into v_count;
+            raise notice '  %', format('%s > Suppressions dans "%s" : %s', v_result.description, v_result.table_name, v_count);
+        end loop;
+end
+$$;
+
+
+ALTER PROCEDURE public.db_prune_tmp_proc_prune() OWNER TO :dbuser;
+
+--
 -- Name: individu_haystack(text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
@@ -188,7 +263,7 @@ CREATE FUNCTION public.normalized_string(str character varying) RETURNS characte
     -- Fonction de normalisation d'une chaîne de caractères.
     --
 
-    return unaccent(
+    return public.unaccent(
         replace(
             translate(
                 regexp_replace(lower(str), '[_ ''"\.,@\-]', '', 'g'),
@@ -362,12 +437,50 @@ CREATE FUNCTION public.str_reduce(str text) RETURNS text
 BEGIN
 --     RETURN utl_raw.cast_to_varchar2(str COLLATE "binary_ai");
 --     return unaccent_string(str);
-    return lower(unaccent(str));
+    return lower(public.unaccent(str));
 END;
 $$;
 
 
 ALTER FUNCTION public.str_reduce(str text) OWNER TO :dbuser;
+
+--
+-- Name: substit__set_enabled_engine(boolean); Type: PROCEDURE; Schema: public; Owner: :dbuser
+--
+
+CREATE PROCEDURE public.substit__set_enabled_engine(IN enabled boolean DEFAULT true)
+    LANGUAGE plpgsql
+    AS $$declare
+    v_cmd varchar = case when enabled = true then 'enable' else 'disable' end;
+    v_cmd_str varchar = case when enabled = true then 'Activation' else 'Désactivation' end;
+    v_status_str varchar = case when enabled = true then 'activé' else 'désactivé' end;
+    v_tg_data record;
+begin
+    raise notice '%', format('%s du moteur de substitutions...', v_cmd_str);
+
+    -- action sur les triggers 'substit_trigger_*'
+    for v_tg_data in
+        select distinct event_object_table, trigger_name
+        from information_schema.triggers
+        where trigger_name ilike 'substit\_trigger\_%' and trigger_name not ilike 'substit\_trigger\_on\_%'
+        loop
+            execute format('alter table %I %s trigger %I', v_tg_data.event_object_table, v_cmd, v_tg_data.trigger_name);
+            raise notice '- %', format('Trigger %L sur la table %L : %s', v_tg_data.trigger_name, v_tg_data.event_object_table, v_status_str);
+        end loop;
+
+    -- RIEN sur les triggers 'substit_trigger_on_*'
+    for v_tg_data in
+        select distinct event_object_table, trigger_name
+        from information_schema.triggers
+        where trigger_name ilike 'substit\_trigger\_on\_%'
+        loop
+            raise notice '- %', format('Trigger %L sur la table %L : aucun changement', v_tg_data.trigger_name, v_tg_data.event_object_table);
+        end loop;
+end
+$$;
+
+
+ALTER PROCEDURE public.substit__set_enabled_engine(IN enabled boolean) OWNER TO :dbuser;
 
 --
 -- Name: substit_add_to_substitution(character varying, bigint, character varying, bigint); Type: FUNCTION; Schema: public; Owner: :dbuser
@@ -1571,10 +1684,8 @@ CREATE TABLE public.individu (
     histo_destructeur_id bigint,
     histo_destruction timestamp without time zone,
     supann_id character varying(30),
-    z_etablissement_id bigint,
     pays_id_nationalite bigint,
     id_ref character varying(32),
-    source_code_sav character varying(64),
     npd_force character varying(256),
     est_substituant_modifiable boolean DEFAULT true NOT NULL,
     synchro_undelete_enabled boolean DEFAULT true NOT NULL,
@@ -2711,6 +2822,63 @@ $$;
 ALTER FUNCTION public.trigger_fct_individu_rech_update() OWNER TO :dbuser;
 
 --
+-- Name: unicaen_indicateur_delete_matviews(); Type: PROCEDURE; Schema: public; Owner: :dbuser
+--
+
+CREATE PROCEDURE public.unicaen_indicateur_delete_matviews()
+    LANGUAGE plpgsql
+    AS $$declare
+    v_result indicateur;
+    v_name varchar;
+    v_template varchar = 'drop materialized view %s';
+begin
+    raise notice '%', 'Suppression des vues matérialisées...';
+    for v_result in
+        select i.* from indicateur i
+            join pg_matviews mv on schemaname = 'public' and matviewname = 'mv_indicateur_'||i.id
+        order by matviewname
+        loop
+            v_name = 'mv_indicateur_'||v_result.id;
+            execute format(v_template, v_name);
+            raise notice '%', format('- %s', v_name);
+        end loop;
+    raise notice '%', 'Terminé.';
+end
+$$;
+
+
+ALTER PROCEDURE public.unicaen_indicateur_delete_matviews() OWNER TO :dbuser;
+
+--
+-- Name: unicaen_indicateur_recreate_matviews(); Type: PROCEDURE; Schema: public; Owner: :dbuser
+--
+
+CREATE PROCEDURE public.unicaen_indicateur_recreate_matviews()
+    LANGUAGE plpgsql
+    AS $$declare
+    v_result indicateur;
+    v_name varchar;
+    v_template varchar = 'create materialized view %s as %s';
+begin
+    raise notice '%', 'Création des vues matérialisées manquantes...';
+    for v_result in
+        select i.* from indicateur i
+            left join pg_matviews mv on schemaname = 'public' and matviewname = 'mv_indicateur_'||i.id
+        where mv.matviewname is null
+        order by mv.matviewname
+        loop
+            v_name = 'mv_indicateur_'||v_result.id;
+            execute format(v_template, v_name, v_result.requete);
+            raise notice '%', format('- %s', v_name);
+        end loop;
+    raise notice '%', 'Terminé.';
+end
+$$;
+
+
+ALTER PROCEDURE public.unicaen_indicateur_recreate_matviews() OWNER TO :dbuser;
+
+--
 -- Name: acteur; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -2942,12 +3110,12 @@ ALTER TABLE public.admission_etat OWNER TO :dbuser;
 CREATE TABLE public.admission_etudiant (
     id bigint NOT NULL,
     admission_id bigint,
-    civilite character varying(5),
+    sexe character varying(5),
     nom_usuel character varying(60),
     nom_famille character varying(60),
-    prenom character varying(60),
-    prenom2 character varying(60),
-    prenom3 character varying(60),
+    prenom character varying(40),
+    prenom2 character varying(40),
+    prenom3 character varying(40),
     date_naissance timestamp without time zone,
     ville_naissance character varying(60),
     nationalite_id bigint,
@@ -2955,17 +3123,17 @@ CREATE TABLE public.admission_etudiant (
     code_nationalite character varying(5),
     ine character varying(11),
     adresse_code_pays character varying(5),
-    adresse_ligne1_etage character varying(45),
-    adresse_ligne2_etage character varying(45),
+    adresse_ligne1_etage character varying(38),
+    adresse_ligne2_batiment character varying(38),
     adresse_ligne3_batiment character varying(45),
-    adresse_ligne3_bvoie character varying(45),
-    adresse_ligne4_complement character varying(45),
+    adresse_ligne3_voie character varying(38),
+    adresse_ligne4_complement character varying(38),
     adresse_code_postal bigint,
-    adresse_code_commune character varying(10),
+    adresse_code_commune character varying(5),
     adresse_cp_ville_etrangere character varying(10),
     numero_telephone1 character varying(20),
     numero_telephone2 character varying(20),
-    courriel character varying(255),
+    courriel character varying(254),
     situation_handicap boolean,
     niveau_etude integer,
     intitule_du_diplome_national character varying(128),
@@ -2980,7 +3148,11 @@ CREATE TABLE public.admission_etudiant (
     histo_modificateur_id bigint,
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone
+    histo_destruction timestamp without time zone,
+    numero_candidat character varying(10),
+    code_commune_naissance character varying(5),
+    libelle_commune_naissance character varying(50),
+    adresse_nom_commune character varying(60)
 );
 
 
@@ -3020,14 +3192,14 @@ CREATE TABLE public.admission_financement (
     detail_contrat_doctoral character varying(1024),
     temps_travail integer,
     est_salarie boolean,
-    etablissement_laboratoire_recherche character varying(100),
     statut_professionnel character varying(200),
     histo_createur_id bigint NOT NULL,
     histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
     histo_modificateur_id bigint,
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone
+    histo_destruction timestamp without time zone,
+    etablissement_partenaire character varying(100)
 );
 
 
@@ -3080,7 +3252,7 @@ CREATE TABLE public.admission_inscription (
     fonction_codirecteur_these_id bigint,
     unite_recherche_codirecteur_id bigint,
     etablissement_rattachement_codirecteur_id bigint,
-    titre_these character varying(60),
+    titre_these character varying(1024),
     confidentialite boolean,
     date_confidentialite timestamp without time zone,
     co_tutelle boolean,
@@ -3093,7 +3265,8 @@ CREATE TABLE public.admission_inscription (
     histo_modificateur_id bigint,
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone
+    histo_destruction timestamp without time zone,
+    etablissement_laboratoire_recherche character varying
 );
 
 
@@ -3439,6 +3612,202 @@ ALTER SEQUENCE public.csi_membre_id_seq OWNER TO :dbuser;
 
 ALTER SEQUENCE public.csi_membre_id_seq OWNED BY public.csi_membre.id;
 
+
+--
+-- Name: db_prune_tmp_central_data_params; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.db_prune_tmp_central_data_params (
+    table_name character varying(128) NOT NULL,
+    fetch_ids_sql text NOT NULL
+);
+
+
+ALTER TABLE public.db_prune_tmp_central_data_params OWNER TO :dbuser;
+
+--
+-- Name: COLUMN db_prune_tmp_central_data_params.table_name; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.db_prune_tmp_central_data_params.table_name IS 'Nom de la table centrale';
+
+
+--
+-- Name: COLUMN db_prune_tmp_central_data_params.fetch_ids_sql; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.db_prune_tmp_central_data_params.fetch_ids_sql IS 'Requête SQL permettant de sélectionner les id des données centrales';
+
+
+--
+-- Name: db_prune_tmp_v_excluded_tables; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE MATERIALIZED VIEW public.db_prune_tmp_v_excluded_tables AS
+ SELECT 'admission_etat'::text AS table_name
+UNION
+ SELECT 'admission_type_validation'::text AS table_name
+UNION
+ SELECT 'categorie_privilege'::text AS table_name
+UNION
+ SELECT 'discipline_sise'::text AS table_name
+UNION
+ SELECT 'domaine_hal'::text AS table_name
+UNION
+ SELECT 'domaine_scientifique'::text AS table_name
+UNION
+ SELECT 'formation_enquete_categorie'::text AS table_name
+UNION
+ SELECT 'formation_etat'::text AS table_name
+UNION
+ SELECT 'nature_fichier'::text AS table_name
+UNION
+ SELECT 'origine_financement'::text AS table_name
+UNION
+ SELECT 'pays'::text AS table_name
+UNION
+ SELECT 'role'::text AS table_name
+UNION
+ SELECT 'role_privilege'::text AS table_name
+UNION
+ SELECT 'source'::text AS table_name
+UNION
+ SELECT 'soutenance_etat'::text AS table_name
+UNION
+ SELECT 'soutenance_qualite'::text AS table_name
+UNION
+ SELECT 'soutenance_qualite_sup'::text AS table_name
+UNION
+ SELECT 'type_rapport'::text AS table_name
+UNION
+ SELECT 'type_structure'::text AS table_name
+UNION
+ SELECT 'type_validation'::text AS table_name
+UNION
+ SELECT 'unicaen_avis_type'::text AS table_name
+UNION
+ SELECT 'version_fichier'::text AS table_name
+UNION
+ SELECT tables.table_name
+   FROM information_schema.tables
+  WHERE (((tables.table_schema)::name = 'public'::name) AND (((tables.table_name)::name ~~ 'tmp_%'::text) OR ((tables.table_name)::name ~~ 'substit_%'::text) OR ((tables.table_name)::name ~~ '%_log'::text)))
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW public.db_prune_tmp_v_excluded_tables OWNER TO :dbuser;
+
+--
+-- Name: db_prune_tmp_v_fks; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE MATERIALIZED VIEW public.db_prune_tmp_v_fks AS
+ SELECT kcu.table_name AS source_table,
+    rel_tco.table_name AS target_table,
+    kcu.column_name AS fk_column
+   FROM (((information_schema.table_constraints tco
+     JOIN information_schema.key_column_usage kcu ON ((((tco.constraint_schema)::name = (kcu.constraint_schema)::name) AND ((tco.constraint_name)::name = (kcu.constraint_name)::name))))
+     JOIN information_schema.referential_constraints rco ON ((((tco.constraint_schema)::name = (rco.constraint_schema)::name) AND ((tco.constraint_name)::name = (rco.constraint_name)::name))))
+     JOIN information_schema.table_constraints rel_tco ON ((((rco.unique_constraint_schema)::name = (rel_tco.constraint_schema)::name) AND ((rco.unique_constraint_name)::name = (rel_tco.constraint_name)::name))))
+  WHERE ((tco.constraint_type)::text = 'FOREIGN KEY'::text)
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW public.db_prune_tmp_v_fks OWNER TO :dbuser;
+
+--
+-- Name: db_prune_tmp_v_fks_amont_sql; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE MATERIALIZED VIEW public.db_prune_tmp_v_fks_amont_sql AS
+ WITH RECURSIVE fks_from(source_table, target_table, fk_column, depth, path, sql, accu) AS (
+         SELECT v.source_table,
+            v.target_table,
+            v.fk_column,
+            1 AS "?column?",
+            (((v.source_table)::text || ' > '::text) || (v.target_table)::text) AS "?column?",
+            format('select t.id from %s t where t.%s in (%s)'::text, v.source_table, v.fk_column, ct.fetch_ids_sql) AS format,
+            ARRAY[v.target_table] AS "array"
+           FROM public.db_prune_tmp_v_fks v,
+            public.db_prune_tmp_central_data_params ct
+          WHERE (((v.target_table)::name = (ct.table_name)::text) AND (NOT ((v.source_table)::name IN ( SELECT db_prune_tmp_v_excluded_tables.table_name
+                   FROM public.db_prune_tmp_v_excluded_tables))))
+        UNION
+         SELECT v.source_table,
+            v.target_table,
+            v.fk_column,
+            (fks_from_1.depth + 1),
+            (((v.source_table)::text || ' > '::text) || fks_from_1.path),
+            format('select t.id from %s t where t.%s in (%s)'::text, v.source_table, v.fk_column, fks_from_1.sql) AS format,
+            (fks_from_1.accu || ARRAY[v.target_table])
+           FROM (public.db_prune_tmp_v_fks v
+             JOIN fks_from fks_from_1 ON ((((v.target_table)::name = (fks_from_1.source_table)::name) AND ((fks_from_1.source_table)::name <> ALL ((fks_from_1.accu)::name[])) AND (NOT ((v.source_table)::name IN ( SELECT db_prune_tmp_v_excluded_tables.table_name
+                   FROM public.db_prune_tmp_v_excluded_tables))))))
+        )
+ SELECT fks_from.source_table,
+    fks_from.target_table,
+    fks_from.fk_column,
+    fks_from.depth,
+    fks_from.sql,
+    fks_from.path
+   FROM fks_from
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW public.db_prune_tmp_v_fks_amont_sql OWNER TO :dbuser;
+
+--
+-- Name: db_prune_tmp_v_fks_aval_sql; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE MATERIALIZED VIEW public.db_prune_tmp_v_fks_aval_sql AS
+ WITH RECURSIVE fks_to(source_table, target_table, fk_column, depth, subdepth, path, sql, accu) AS (
+         SELECT v.source_table,
+            v.target_table,
+            v.fk_column,
+            1 AS "?column?",
+            1 AS "?column?",
+            ((((upper((v.source_table)::text) || '--'::text) || (v.fk_column)::text) || '-->'::text) || upper((v.target_table)::text)) AS "?column?",
+            format('select t.* from %s t join %I r1 on t.id = r1.%s'::text, v.target_table, ct.table_name, v.fk_column) AS format,
+            ARRAY[v.source_table] AS "array"
+           FROM public.db_prune_tmp_v_fks v,
+            public.db_prune_tmp_central_data_params ct
+          WHERE (((v.source_table)::name = (ct.table_name)::text) AND (NOT ((v.target_table)::name IN ( SELECT db_prune_tmp_v_excluded_tables.table_name
+                   FROM public.db_prune_tmp_v_excluded_tables))))
+        UNION
+         SELECT v.source_table,
+            v.target_table,
+            v.fk_column,
+            (fks_to.depth + 1),
+            1,
+            ((((fks_to.path || '--'::text) || (v.fk_column)::text) || '-->'::text) || upper((v.target_table)::text)),
+            format('select t.* from %s t join (%s) r%s on t.id = r%s.%s'::text, v.target_table, fks_to.sql, (fks_to.depth + 1), (fks_to.depth + 1), v.fk_column) AS format,
+            (fks_to.accu || ARRAY[v.source_table])
+           FROM (public.db_prune_tmp_v_fks v
+             JOIN fks_to ON ((((v.source_table)::name = (fks_to.target_table)::name) AND ((fks_to.target_table)::name <> ALL ((fks_to.accu)::name[])) AND (NOT ((v.target_table)::name IN ( SELECT db_prune_tmp_v_excluded_tables.table_name
+                   FROM public.db_prune_tmp_v_excluded_tables))))))
+        )
+ SELECT fks_to.source_table,
+    fks_to.target_table,
+    fks_to.fk_column,
+    fks_to.depth,
+    fks_to.subdepth,
+    fks_to.sql,
+    fks_to.path
+   FROM fks_to
+UNION
+ SELECT v.source_table,
+    v.target_table,
+    v.fk_column,
+    fks_to.depth,
+    2 AS subdepth,
+    format('select t.* from %s t join %s r on t.id = r.%s'::text, v.target_table, v.source_table, v.fk_column) AS sql,
+    ((((('  '::text || upper((v.source_table)::text)) || '--'::text) || (v.fk_column)::text) || '-->'::text) || upper((v.target_table)::text)) AS path
+   FROM (public.db_prune_tmp_v_fks v
+     JOIN fks_to ON (((fks_to.target_table)::name = (v.target_table)::name)))
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW public.db_prune_tmp_v_fks_aval_sql OWNER TO :dbuser;
 
 --
 -- Name: diffusion; Type: TABLE; Schema: public; Owner: :dbuser
@@ -5087,6 +5456,90 @@ CREATE TABLE public.these_annee_univ (
 ALTER TABLE public.these_annee_univ OWNER TO :dbuser;
 
 --
+-- Name: soutenance_membre; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.soutenance_membre (
+    id bigint NOT NULL,
+    proposition_id bigint NOT NULL,
+    genre character varying(1) NOT NULL,
+    qualite bigint NOT NULL,
+    etablissement character varying(512) NOT NULL,
+    role_id character varying(64) NOT NULL,
+    exterieur character varying(3),
+    email character varying(256),
+    acteur_id bigint,
+    visio boolean DEFAULT false NOT NULL,
+    nom character varying(256),
+    prenom character varying(256),
+    histo_creation timestamp without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint,
+    clef character varying(64),
+    adresse text
+);
+
+
+ALTER TABLE public.soutenance_membre OWNER TO :dbuser;
+
+--
+-- Name: soutenance_proposition; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.soutenance_proposition (
+    id bigint NOT NULL,
+    these_id bigint NOT NULL,
+    dateprev timestamp without time zone,
+    lieu character varying(256),
+    rendu_rapport timestamp without time zone,
+    confidentialite timestamp without time zone,
+    label_europeen boolean DEFAULT false NOT NULL,
+    manuscrit_anglais boolean DEFAULT false NOT NULL,
+    soutenance_anglais boolean DEFAULT false NOT NULL,
+    huit_clos boolean DEFAULT false NOT NULL,
+    exterieur boolean DEFAULT false NOT NULL,
+    nouveau_titre character varying(2048),
+    etat_id bigint NOT NULL,
+    sursis character varying(1),
+    adresse_exacte character varying(2048),
+    histo_creation timestamp without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint
+);
+
+
+ALTER TABLE public.soutenance_proposition OWNER TO :dbuser;
+
+--
+-- Name: soutenance_qualite; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.soutenance_qualite (
+    id bigint NOT NULL,
+    libelle character varying(128) NOT NULL,
+    rang character varying(1) NOT NULL,
+    hdr character varying(1) NOT NULL,
+    emeritat character varying(1) NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id bigint,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint,
+    justificatif character varying(1) DEFAULT 'N'::character varying NOT NULL,
+    admission character varying(1)
+);
+
+
+ALTER TABLE public.soutenance_qualite OWNER TO :dbuser;
+
+--
 -- Name: type_validation; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -5670,7 +6123,6 @@ CREATE TABLE public.rapport_avis (
     id bigint NOT NULL,
     rapport_id bigint NOT NULL,
     avis public.avis_enum,
-    commentaires text,
     histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
     histo_createur_id bigint DEFAULT 1 NOT NULL,
     histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
@@ -6040,11 +6492,33 @@ ALTER SEQUENCE public.soutenance_etat_id_seq OWNER TO :dbuser;
 
 CREATE TABLE public.soutenance_horodatage (
     proposition_id integer NOT NULL,
-    horodatage_id integer NOT NULL
+    horodatage_id integer NOT NULL,
+    id bigint NOT NULL
 );
 
 
 ALTER TABLE public.soutenance_horodatage OWNER TO :dbuser;
+
+--
+-- Name: soutenance_horodatage_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.soutenance_horodatage_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.soutenance_horodatage_id_seq OWNER TO :dbuser;
+
+--
+-- Name: soutenance_horodatage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.soutenance_horodatage_id_seq OWNED BY public.soutenance_horodatage.id;
+
 
 --
 -- Name: soutenance_intervention; Type: TABLE; Schema: public; Owner: :dbuser
@@ -6115,36 +6589,6 @@ CREATE SEQUENCE public.soutenance_justificatif_id_seq
 ALTER SEQUENCE public.soutenance_justificatif_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_membre; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.soutenance_membre (
-    id bigint NOT NULL,
-    proposition_id bigint NOT NULL,
-    genre character varying(1) NOT NULL,
-    qualite bigint NOT NULL,
-    etablissement character varying(128) NOT NULL,
-    role_id character varying(64) NOT NULL,
-    exterieur character varying(3),
-    email character varying(256),
-    acteur_id bigint,
-    visio boolean DEFAULT false NOT NULL,
-    nom character varying(256),
-    prenom character varying(256),
-    histo_creation timestamp without time zone NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint NOT NULL,
-    histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint,
-    clef character varying(64),
-    adresse text
-);
-
-
-ALTER TABLE public.soutenance_membre OWNER TO :dbuser;
-
---
 -- Name: soutenance_membre_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
@@ -6159,37 +6603,6 @@ CREATE SEQUENCE public.soutenance_membre_id_seq
 ALTER SEQUENCE public.soutenance_membre_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_proposition; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.soutenance_proposition (
-    id bigint NOT NULL,
-    these_id bigint NOT NULL,
-    dateprev timestamp without time zone,
-    lieu character varying(256),
-    rendu_rapport timestamp without time zone,
-    confidentialite timestamp without time zone,
-    label_europeen boolean DEFAULT false NOT NULL,
-    manuscrit_anglais boolean DEFAULT false NOT NULL,
-    soutenance_anglais boolean DEFAULT false NOT NULL,
-    huit_clos boolean DEFAULT false NOT NULL,
-    exterieur boolean DEFAULT false NOT NULL,
-    nouveau_titre character varying(2048),
-    etat_id bigint NOT NULL,
-    sursis character varying(1),
-    adresse_exacte character varying(2048),
-    histo_creation timestamp without time zone NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint NOT NULL,
-    histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint
-);
-
-
-ALTER TABLE public.soutenance_proposition OWNER TO :dbuser;
-
---
 -- Name: soutenance_proposition_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
@@ -6202,29 +6615,6 @@ CREATE SEQUENCE public.soutenance_proposition_id_seq
 
 
 ALTER SEQUENCE public.soutenance_proposition_id_seq OWNER TO :dbuser;
-
---
--- Name: soutenance_qualite; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.soutenance_qualite (
-    id bigint NOT NULL,
-    libelle character varying(128) NOT NULL,
-    rang character varying(1) NOT NULL,
-    hdr character varying(1) NOT NULL,
-    emeritat character varying(1) NOT NULL,
-    histo_creation timestamp without time zone NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone,
-    histo_modificateur_id bigint,
-    histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint,
-    justificatif character varying(1) DEFAULT 'N'::character varying NOT NULL,
-    admission character varying(1)
-);
-
-
-ALTER TABLE public.soutenance_qualite OWNER TO :dbuser;
 
 --
 -- Name: soutenance_qualite_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -6965,8 +7355,7 @@ CREATE TABLE public.substit_doctorant (
     histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
     histo_createur_id bigint,
     histo_modification timestamp without time zone,
-    histo_modificateur_id bigint,
-    npd_sav character varying(256)
+    histo_modificateur_id bigint
 );
 
 
@@ -12429,6 +12818,13 @@ ALTER TABLE ONLY public.individu_role_etablissement ALTER COLUMN id SET DEFAULT 
 --
 
 ALTER TABLE ONLY public.privilege ALTER COLUMN id SET DEFAULT nextval('public.privilege_id_seq'::regclass);
+
+
+--
+-- Name: soutenance_horodatage id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.soutenance_horodatage ALTER COLUMN id SET DEFAULT nextval('public.soutenance_horodatage_id_seq'::regclass);
 
 
 --
