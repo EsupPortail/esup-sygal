@@ -135,19 +135,19 @@ end
 $$;
 
 
-create or replace trigger aa_structure_roles_update_trigger_on_etablissement
+create trigger aa_structure_roles_update_trigger_on_etablissement
     after insert or update of est_etab_inscription
     on etablissement
     for each row
 execute procedure structure_roles_update_trigger_on_etablissement();
 
-create or replace trigger aa_structure_roles_update_trigger_on_ecole_doct
+create trigger aa_structure_roles_update_trigger_on_ecole_doct
     after insert
     on ecole_doct
     for each row
 execute procedure structure_roles_update_trigger_on_ecole_doct();
 
-create or replace trigger aa_structure_roles_update_trigger_on_unite_rech
+create trigger aa_structure_roles_update_trigger_on_unite_rech
     after insert
     on unite_rech
     for each row
