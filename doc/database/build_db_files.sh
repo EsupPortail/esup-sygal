@@ -34,9 +34,13 @@ while getopts ":c:i:" arg; do
 done
 
 [[ -z "$CONFIG_FILE" ]] && echo ":-( Un fichier de config doit être spécifié." && usage && exit 1
-[[ -z "$INPUT_DIR" ]] && echo ":-( Le répertoire où se trouvent les scripts SQL doit être spécifié." && usage && exit 1
-
 [[ ! -f "$CONFIG_FILE" ]] && echo "Le fichier de config $CONFIG_FILE est introuvable" && exit 1
+
+[[ -z "$INPUT_DIR" ]] && echo ":-( Le répertoire où se trouvent les scripts SQL doit être spécifié." && usage && exit 1
+[[ ! -d "$INPUT_DIR" ]] && echo ":-( $INPUT_DIR n'est pas un répertoire." && usage && exit 1
+[[ ! -d "$INPUT_DIR/01_admin" ]] && echo ":-( Le répertoire $INPUT_DIR doit contenir un sous-répertoire 01_admin." && usage && exit 1
+[[ ! -d "$INPUT_DIR/02_other" ]] && echo ":-( Le répertoire $INPUT_DIR doit contenir un sous-répertoire 02_other." && usage && exit 1
+
 
 # Chargement des variables de config
 source ${CONFIG_FILE}
@@ -71,7 +75,7 @@ function injectEtabParamsInScript() {
 
 echo "Préparation des scripts SQL situés dans $INPUT_DIR..."
 
-for file in $INPUT_DIR/*.sql.dist; do
+for file in $INPUT_DIR/*/*.sql.dist; do
   [ ! -f "$file" ] && echo ":-( Aucun fichier .sql.dist trouvé." && break
   newfile="${file%.sql.dist}.sql"
   cp -- "$file" "$newfile"

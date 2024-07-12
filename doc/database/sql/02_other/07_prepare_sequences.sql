@@ -3,8 +3,6 @@
 --   - currval = max(table.id)
 --
 
-drop function if exists init_sequences_values_fdsfdgfd654gs6fd54;
-
 create or replace function init_sequences_values_fdsfdgfd654gs6fd54() returns void
 language plpgsql as
 $$

@@ -217,8 +217,8 @@ echo "> $OUTPUT_FILE"
 i=$((i+1))
 OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
 # role
-printf "copy role from stdin;\n" > $OUTPUT_FILE && \
-psql -c "copy (select * from role where structure_id is null) to STDOUT;" >> $OUTPUT_FILE && \
+printf "copy role from stdin with (FORMAT CSV, delimiter '|', HEADER);\n" > $OUTPUT_FILE && \
+psql -c "copy (select * from role where structure_id is null) to STDOUT with (FORMAT CSV, delimiter '|', HEADER);" >> $OUTPUT_FILE && \
 printf "\.\n" >> $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 

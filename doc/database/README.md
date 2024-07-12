@@ -82,7 +82,7 @@ psql \
   -v dbname=${SYGAL_DB} \
   -v dbuser=${SYGAL_USER} \
   -v dbpassword="'${SYGAL_PASSWORD}'" \
-  -f sql/admin/01_create_db_user.sql
+  -f sql/01_admin/01_create_db_user.sql
 ```
 
 
@@ -94,7 +94,7 @@ créés à l'étape précédente (et non plus avec le super-utilisateur).*
 - Lancez les lignes de commande suivantes :
 
 ```bash
-for f in sql/*.sql; do \
+for f in sql/02_other/*.sql; do \
   PGHOST=localhost \
   PGPORT=5432 \
   PGDATABASE=${SYGAL_DB} \

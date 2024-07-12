@@ -6272,6 +6272,13 @@ CREATE SEQUENCE public.role_id_seq
 ALTER SEQUENCE public.role_id_seq OWNER TO :dbuser;
 
 --
+-- Name: role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.role_id_seq OWNED BY public.role.id;
+
+
+--
 -- Name: role_privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -12818,6 +12825,13 @@ ALTER TABLE ONLY public.individu_role_etablissement ALTER COLUMN id SET DEFAULT 
 --
 
 ALTER TABLE ONLY public.privilege ALTER COLUMN id SET DEFAULT nextval('public.privilege_id_seq'::regclass);
+
+
+--
+-- Name: role id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.role ALTER COLUMN id SET DEFAULT nextval('public.role_id_seq'::regclass);
 
 
 --
