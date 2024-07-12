@@ -37,7 +37,7 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder("ed");
         if ($nonHistorise) {
-            $qb->andWhereNotHistorise('ur');
+            $qb->andWhereNotHistorise('ed');
         }
 
         return $this->_findByStructureId($qb, $structureId);

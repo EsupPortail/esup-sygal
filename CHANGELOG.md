@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] Requête de recherche de thèses par acteur : les acteurs historisés n'étaient pas écartés.
 - [FIX] Module Information : utilisation d'une langue par défaut (FR) pour permettre la création d'une page d'information.
 - [FIX] Rapport d'activité : PHP Notice à propos d'une variable non définie.
+- [FIX] Erreur 'L'alias ur est inconnu du QueryBuilder' en cliquant sur le bouton 'Générer rôles par défaut' pour une ED.
 
 8.4.0
 -----
