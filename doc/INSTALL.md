@@ -118,6 +118,18 @@ php_admin_value[error_log] = /var/log/php-fpm.log
 php_admin_flag[log_errors] = on
 ```
 
+### ImageMagick
+
+Pour que l'appli soit en mesure de générer l'aperçu de la page de couverture d'une thèse, il est nécessaire de
+configurer l'outil ImageMagick sur le serveur d'application.
+Dans le fichier de config `/etc/ImageMagick-6/policy.xml` (à la version près), décommentez (le cas échéant) ou 
+ajoutez la ligne suivante :
+
+`<policy domain="coder" rights="read|write" pattern="PDF" />`
+
+Si ce n'est pas fait vous rencontrerez une erreur du genre "attempt to perform an operation not allowed by the security policy `PDF'"
+dans la fenêtre sensée affichée un aperçu d'une page de couverture.
+
 
 
 Configuration de l'application
@@ -293,7 +305,8 @@ L'un des scripts de création de la base de données a créé un compte utilisat
 - Attention, le rôle "Administrateur technique" permet d'avoir un accès quasi omnipotent à l'application, notamment
   aux pages de gestion des droits d'accès et de création de comptes utilisateurs locaux.
 
-Pour d'autres modes d'authentification, reportez-vous à la [documentation consacrée à l'authentification](authentification/auth.md).**
+La [documentation consacrée à l'authentification](authentification/auth.md) aborde les autres modes d'authentification
+possibles ainsi que l'usurpation d'identité.
 
 
 
