@@ -112,9 +112,9 @@ class EtudiantService extends BaseService
 
     public function generateUniqueNumeroCandidat(Admission $admission): string
     {
-        $currentYear = (new \DateTime())->format('Y');
+        $currentYear = (new \DateTime())->format('y');
         $id = $admission->getId();
         $formattedId = str_pad($id, 2, '0', STR_PAD_LEFT);
-        return $currentYear.$formattedId;
+        return "SyG".$currentYear.$formattedId;
     }
 }
