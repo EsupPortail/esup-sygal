@@ -39,7 +39,7 @@ class GeneralitesFieldsetFactory
 
         /** @var PhpRenderer $renderer*/
         $renderer = $container->get('ViewRenderer');
-        $fieldset->setUrlDoctorant($renderer->url('recherche-doctorant', [], [], true));
+        $fieldset->setUrlAutocompleteIndividu($renderer->url('individu/rechercher', [], [], true));
 
         return $fieldset;
     }

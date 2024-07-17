@@ -33,7 +33,7 @@ $roleFormatter = function (Role $role) { return sprintf("'%s', id=%s", $role, $r
                 <?php endif ?>
                 <?php if ($individu !== null): ?>
                     <dt>Individu :</dt>
-                    <dd><?php echo sprintf("id=%s, supannId='%s', type='%s'", $individu->getId(), $individu->getSupannId(), $individu->getType()) ?></dd>
+                    <dd><?php echo sprintf("id=%s, supannId='%s'", $individu->getId(), $individu->getSupannId()) ?></dd>
                 <?php endif ?>
                 <?php if ($role !== null): ?>
                     <dt>Rôle :</dt>
@@ -54,7 +54,7 @@ Informations techniques utiles :<?php echo PHP_EOL ?>
     - Utilisateur : <?php echo sprintf("username='%s', id=%s", $utilisateur->getUsername(), $utilisateur->getId()) ?><?php echo PHP_EOL ?>
 <?php endif ?>
 <?php if ($individu !== null): ?>
-    - Individu : <?php echo sprintf("id=%s, supannId='%s', type='%s'", $individu->getId(), $individu->getSupannId(), $individu->getType()) ?><?php echo PHP_EOL ?>
+    - Individu : <?php echo sprintf("id=%s, supannId='%s'", $individu->getId(), $individu->getSupannId()) ?><?php echo PHP_EOL ?>
 <?php endif ?>
 <?php if ($role !== null): ?>
     - Rôle : <?php echo $roleFormatter($role) ?><?php echo PHP_EOL ?>

@@ -123,6 +123,15 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
             }
         }
 
+        $doctorant = $these->getDoctorant();
+        if($doctorant){
+            try {
+                $this->getEntityManager()->persist($doctorant);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            }
+        }
+
         $financements = $these->getFinancements();
         /** @var Financement $financement */
         foreach ($financements as $financement) {

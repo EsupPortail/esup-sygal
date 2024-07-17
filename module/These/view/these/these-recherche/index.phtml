@@ -43,6 +43,15 @@ $acteursFormatterCoencadrents->asSeparated()
 <h1 class="page-header">
     <?php echo $this->translate("Thèses"); ?>
 </h1>
+<?php if ($canEditThese = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+    <div class="col-md-7" style="align-content: center;">
+        <a href="<?php echo $this->url('these/ajouter', [], [], true). '#informations' ?>"
+           class="btn btn-primary">
+            <span class="icon icon-ajouter"></span>
+            <?php echo $this->translate("Ajouter une thèse"); ?>
+        </a>
+    </div>
+<?php endif ?>
 
 
 <!-- Formulaire de filtrage -->

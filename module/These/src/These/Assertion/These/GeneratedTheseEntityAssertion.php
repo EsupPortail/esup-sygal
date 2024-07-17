@@ -11,7 +11,7 @@ use Application\Assertion\Exception\UnexpectedPrivilegeException as UnexpectedPr
  * module/These/data/TheseEntityAssertion.csv'.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 25/03/2024 12:45:24
+ * @date 22/07/2024 11:40:33
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -55,13 +55,13 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === \These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE) {
+        if ($privilege === \These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_SES_THESES) {
         //--------------------------------------------------------------------------------------
             /* line 5 */
             $this->linesTrace[] = '/* line 5 */';
             if ($this->isRoleDoctorantSelected() /* test 1 */ && 
                 ! $this->isUtilisateurEstAuteurDeLaThese() /* test 22 */) {
-                $this->failureMessage = "Vous ne pouvez pas saisir le(s) domaines HAL car vous n’êtes pas l’auteur de la thèse.";
+                $this->failureMessage = "Vous ne pouvez pas modifier cette thèse car vous n’êtes pas l’auteur de la celle-ci.";
                 return false;
             }
             /* line 6 */
@@ -78,6 +78,45 @@ abstract class GeneratedTheseEntityAssertion
             }
             /* line 8 */
             $this->linesTrace[] = '/* line 8 */';
+            return true;
+        }
+
+        if ($privilege === \These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES) {
+        //--------------------------------------------------------------------------------------
+            /* line 9 */
+            $this->linesTrace[] = '/* line 9 */';
+            if (! $this->isTheseEnCours() /* test 5 */) {
+                $this->failureMessage = "L’état de la thèse ne permet pas cette opération.";
+                return false;
+            }
+            /* line 10 */
+            $this->linesTrace[] = '/* line 10 */';
+            return true;
+        }
+
+        if ($privilege === \These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE) {
+        //--------------------------------------------------------------------------------------
+            /* line 11 */
+            $this->linesTrace[] = '/* line 11 */';
+            if ($this->isRoleDoctorantSelected() /* test 1 */ && 
+                ! $this->isUtilisateurEstAuteurDeLaThese() /* test 22 */) {
+                $this->failureMessage = "Vous ne pouvez pas saisir le(s) domaines HAL car vous n’êtes pas l’auteur de la thèse.";
+                return false;
+            }
+            /* line 12 */
+            $this->linesTrace[] = '/* line 12 */';
+            if (! $this->isStructureDuRoleRespectee() /* test 3 */) {
+                $this->failureMessage = "Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.";
+                return false;
+            }
+            /* line 13 */
+            $this->linesTrace[] = '/* line 13 */';
+            if (! $this->isTheseEnCours() /* test 5 */) {
+                $this->failureMessage = "L’état de la thèse ne permet pas cette opération.";
+                return false;
+            }
+            /* line 14 */
+            $this->linesTrace[] = '/* line 14 */';
             return true;
         }
 
@@ -119,10 +158,16 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 1;1;\These\Provider\Privilege\ThesePrivileges::THESE_TOUT_FAIRE;;;;;;;;;;1;
 2;1;*;1:1;;;;;;;2:0;;0;Cette thèse n'est pas la vôtre.
 3;1;*;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
-5;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;1:1;;;;;;;2:0;;0;Vous ne pouvez pas saisir le(s) domaines HAL car vous n’êtes pas l’auteur de la thèse.
-6;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
-7;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;;;1:0;;;;;0;L’état de la thèse ne permet pas cette opération.
-8;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;;;;;;;;1;
+5;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_SES_THESES;1:1;;;;;;;2:0;;0;Vous ne pouvez pas modifier cette thèse car vous n’êtes pas l’auteur de la celle-ci.
+6;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_SES_THESES;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
+7;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_SES_THESES;;;;;1:0;;;;;0;L’état de la thèse ne permet pas cette opération.
+8;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_SES_THESES;;;;;;;;;;1;
+9;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES;;;;;1:0;;;;;0;L’état de la thèse ne permet pas cette opération.
+10;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES;;;;;;;;;;1;
+11;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;1:1;;;;;;;2:0;;0;Vous ne pouvez pas saisir le(s) domaines HAL car vous n’êtes pas l’auteur de la thèse.
+12;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
+13;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;;;1:0;;;;;0;L’état de la thèse ne permet pas cette opération.
+14;1;\These\Provider\Privilege\ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE;;;;;;;;;;1;
 EOT;
     }
 }

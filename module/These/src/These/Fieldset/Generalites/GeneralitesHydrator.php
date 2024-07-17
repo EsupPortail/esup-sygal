@@ -6,6 +6,7 @@ use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
+use Individu\Service\IndividuServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
 
@@ -14,6 +15,7 @@ class GeneralitesHydrator extends DoctrineObject
     use DoctorantServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
     use SourceServiceAwareTrait;
+    use IndividuServiceAwareTrait;
 
     /**
      * @param object $object
@@ -50,6 +52,8 @@ class GeneralitesHydrator extends DoctrineObject
         //Nécessaire sinon Doctrine pense que c'est les données appartenant à un fieldset
         $data['doctorant'] = $data['doctorant']['id'] ?? null;
 
+        $data['resultat'] = (isset($data['resultat']) && $data['resultat'] !== "") ? $data['resultat'] : null;
+
         //date
         $conf = (isset($data['confidentialite']) and $data['confidentialite'] == true);
         $data['dateFinConfidentialite'] = (!empty($data['dateFinConfidentialite']) && $conf) ? $data['dateFinConfidentialite'] : null;
@@ -82,7 +86,7 @@ class GeneralitesHydrator extends DoctrineObject
             }
         }
 
-        if(isset($data['cotutelle']) && !$data['cotutelle']) {
+        if(!isset($data['cotutelle']) || !$data['cotutelle']) {
             $data['etablissementCoTutelle'] = null;
             $data['paysCoTutelle'] = null;
         }

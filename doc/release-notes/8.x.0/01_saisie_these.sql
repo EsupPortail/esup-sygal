@@ -171,13 +171,22 @@ ALTER TABLE these
     ADD CONSTRAINT fk_pays_cotut_id
         FOREIGN KEY (pays_cotut_id) REFERENCES pays(id);
 
+WITH updated_these AS (
 UPDATE these t
-SET pays_cotut_id = (
-    SELECT p.id
+SET pays_cotut_id = p.id
     FROM pays p
-    WHERE unaccent(regexp_replace(p.libelle_iso, '[-]', ' ', 'g')) = unaccent(regexp_replace(t.lib_pays_cotut, '[-]', ' ', 'g'))
-)
-WHERE t.lib_pays_cotut IS NOT NULL;
+WHERE unaccent(lower(t.lib_pays_cotut)) = unaccent(lower(p.libelle))
+   OR
+    unaccent(lower(t.lib_pays_cotut)) = unaccent(lower(p.libelle_iso))
+   OR (
+    unaccent(lower(t.lib_pays_cotut)) = 'republique tcheque' AND unaccent(lower(p.libelle)) = 'tchequie'
+    )
+   OR (
+    unaccent(lower(t.lib_pays_cotut)) = 'cote d ivoire' AND unaccent(lower(p.libelle)) = 'cote d''ivoire'
+    )
+    RETURNING t.*
+    )
+SELECT * FROM updated_these;
 
 --
 -- Table TITREACCES
@@ -213,3 +222,17 @@ WHERE t.code_pays_titre_acces IS NOT NULL;
 -- Attention certaines colonnes sont utilisées dans des vues (Utiliser le script 03_matviews.sql présent ici : doc/release-notes/8.4.0)
 ALTER TABLE unite_rech DROP COLUMN etab_support;
 ALTER TABLE unite_rech DROP COLUMN autres_etab;
+
+--
+-- Table INDIVIDU
+--
+
+UPDATE individu i
+SET pays_id_nationalite = (SELECT p.id
+                           FROM pays p
+                           WHERE INITCAP(SUBSTRING(p.libelle_nationalite, 1, 1)) ||
+                                 lower(SUBSTRING(unaccent(p.libelle_nationalite), 2)) =
+                                 INITCAP(SUBSTRING(i.nationalite, 1, 1)) ||
+                                 lower(SUBSTRING(unaccent(i.nationalite), 2)))
+WHERE i.nationalite IS NOT NULL
+  and i.pays_id_nationalite is null;

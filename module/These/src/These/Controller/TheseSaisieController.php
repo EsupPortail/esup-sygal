@@ -3,49 +3,34 @@
 namespace These\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
-use Application\Service\Financement\FinancementServiceAwareTrait;
-use Application\Service\Pays\PaysServiceAwareTrait;
+use Application\Entity\Db\Role;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Form\FieldsetInterface;
 use Laminas\Form\Form;
 use Laminas\View\Model\ViewModel;
-use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
-use These\Form\Direction\DirectionForm;
-use These\Form\Encadrement\EncadrementForm;
-use These\Form\Generalites\GeneralitesForm;
-use These\Form\Structures\StructuresForm;
-use These\Form\TheseFormsManagerAwareTrait;
 use These\Form\TheseSaisie\TheseSaisieFormAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Form\Element\Collection;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
-class TheseSaisieController extends AbstractController {
-    use ActeurServiceAwareTrait;
+class TheseSaisieController extends AbstractController
+{
     use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use QualiteServiceAwareTrait;
     use TheseServiceAwareTrait;
     use TheseSaisieFormAwareTrait;
     use SourceAwareTrait;
-    use DomaineHalServiceAwareTrait;
     use TheseServiceAwareTrait;
-    use TheseFormsManagerAwareTrait;
-    use FinancementServiceAwareTrait;
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-    use PaysServiceAwareTrait;
-
-    private ?GeneralitesForm $generalitesForm = null;
-    private ?DirectionForm $directionForm = null;
-    private ?StructuresForm $structuresForm = null;
-    private ?EncadrementForm $encadrementForm = null;
+    use DoctorantServiceAwareTrait;
+    use RoleServiceAwareTrait;
 
     public function ajouterAction()
     {
@@ -74,6 +59,17 @@ class TheseSaisieController extends AbstractController {
         $these = $form->getData();
         $these->setSource($this->source);
         $these->setSourceCode(uniqid());
+
+        /** @var These $these */
+        $these = $form->getData();
+        $individu = $data["generalites"]['doctorant']["id"] ? $this->individuService->getRepository()->find($data["generalites"]['doctorant']["id"]) : null;
+        if ($individu) {
+            $doctorant = $this->doctorantService->newDoctorant($individu);
+            $these->setDoctorant($doctorant);
+            //Ajout du rôle doctorant à l'individu
+            $role = $this->roleService->getRepository()->findByCode(Role::CODE_DOCTORANT);
+            $this->roleService->addRole($individu, $role->getId());
+        }
         $this->theseService->saveThese($these);
 
         $this->flashMessenger()->addSuccessMessage("Thèse créée avec succès.");
@@ -81,16 +77,13 @@ class TheseSaisieController extends AbstractController {
         return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 
-    public function indexAction()
+    public function modifierAction()
     {
-        return $this->modifier($this->getTheseSaisieForm(), 'index');
-    }
-
-    public function modifier(Form $form, string $domaine)
-    {
+        $form = $this->getTheseSaisieForm();
         $request = $this->getRequest();
         $these = $this->requestedThese();
 
+        $form->setAttribute('action', $this->url()->fromRoute('these/modifier', ['these' => $these->getId()], [], true));
         $viewModel = new ViewModel([
             'these' => $these,
             'form' => $form,
@@ -118,8 +111,6 @@ class TheseSaisieController extends AbstractController {
             return $viewModel;
         }
 
-        /** @var These $these */
-        $these = $form->getData();
         $this->theseService->saveThese($these);
 
         $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
@@ -127,13 +118,13 @@ class TheseSaisieController extends AbstractController {
         return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], ['fragment' => $domaine], true);
     }
 
-    private function getErrorMessages() : array
+    private function getErrorMessages(): array
     {
         $messages = [];
 
         // Récupère les messages d'erreur de chaque fieldset
         foreach ($this->getTheseSaisieForm()->getFieldsets() as $fieldset) {
-            if($fieldset instanceof Collection){
+            if ($fieldset instanceof Collection) {
                 // Récupère les messages d'erreur de chaque élément du fieldset
                 foreach ($fieldset->getFieldsets() as $f) {
                     // Récupère les messages d'erreur de chaque élément du fieldset
@@ -144,12 +135,24 @@ class TheseSaisieController extends AbstractController {
                         }
                     }
                 }
-            }else if($fieldset instanceof FieldsetInterface){
+            } else if ($fieldset instanceof FieldsetInterface) {
                 // Récupère les messages d'erreur de chaque élément du fieldset
                 foreach ($fieldset->getElements() as $element) {
                     $elementMessages = $element->getMessages();
                     if (!empty($elementMessages)) {
                         $messages[$fieldset->getLabel()][$element->getLabel()] = $elementMessages;
+                    }
+                }
+                // Récupère les messages d'erreur des possibles fieldsets présents dans le fieldset
+                if($fieldsetsInFieldset = $fieldset->getFieldsets()){
+                    // Récupère les messages d'erreur de chaque élément du fieldset
+                    foreach ($fieldsetsInFieldset as $fieldsetInFieldset) {
+                        foreach ($fieldsetInFieldset->getElements() as $element) {
+                            $elementMessages = $element->getMessages();
+                            if (!empty($elementMessages)) {
+                                $messages[$fieldset->getLabel()][$element->getLabel()] = $elementMessages;
+                            }
+                        }
                     }
                 }
             }

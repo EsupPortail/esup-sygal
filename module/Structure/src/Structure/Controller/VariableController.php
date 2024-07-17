@@ -2,6 +2,7 @@
 
 namespace Structure\Controller;
 
+use Application\Entity\Db\Variable;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
@@ -42,16 +43,22 @@ class VariableController extends AbstractActionController {
 
         $form->setAttribute('action', $this->url()->fromRoute('etablissement/saisir-variable', ['etablissement'=> $etablissement->getId()], [], true));
 
+        $vm = new ViewModel([
+            'form' => $form,
+            'title' => "Ajout d'une variable liée à l'établissement",
+        ]);
+
         $variableId = $this->params()->fromRoute('id');
         $variable = null;
-        if($variableId){
+        if($variableId) {
+            /** @var Variable $variable */
             $variable = $this->variableService->getRepository()->find($variableId);
             if ($variable === null) {
                 throw new \InvalidArgumentException("Variable introuvable avec cet id");
             }
             $form->bind($variable);
+            $vm->setVariable('title', "Modification de la variable ".$variable->getCode());
         }
-
 
         /** @var Request $request */
         $request = $this->getRequest();
@@ -72,9 +79,7 @@ class VariableController extends AbstractActionController {
             }
         }
 
-        return new ViewModel([
-            'form' => $form,
-        ]);
+        return $vm;
     }
 
     public function supprimerAction(): Response

@@ -46,7 +46,8 @@ $ajoutUrl = $this->url( 'droits/roles/edition' );
 <?php endforeach; ?>
 </table>
 <?php if ($canEdit): // droits ?>
-<a href="<?php echo $ajoutUrl ?>" class="btn btn-primary ajax-modal" data-event="role-edition">Création d'un nouveau rôle</a>
+<!--<a href="--><?php //echo $ajoutUrl ?><!--" class="btn btn-primary ajax-modal" data-event="role-edition">Création d'un nouveau rôle</a>-->
+<a href="<?php echo  $this->url( 'role/ajouterRole', [] ) ?>" class="btn btn-primary ajax-modal" data-event="role-edition">Création d'un nouveau rôle</a>
 <?php endif; ?>
 <?php echo $this->modalAjaxDialog('roles-edition-suppression'); ?>
 <script type="text/javascript">

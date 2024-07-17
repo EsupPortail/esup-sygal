@@ -24,8 +24,8 @@ Existant :
 Importé et à ajouter :
 - type : chercher les usages (y compris dans des requêtes) pour suppression ?
 - ~~prenom3~~
-- supann_id : correspond au numero employé dans le SI, modifiable
-  nom_patronymique : encourager à le saisir pour le moteur substitutions
+- ~~supann_id : correspond au numero employé dans le SI, modifiable~~
+- ~~nom_patronymique : encourager à le saisir pour le moteur substitutions~~
 - email : actuellement l'email est modifible dans individu_compl,
   supprimer individu_compl lorsque la modif sera faite dans individu (penser à la reprise de données)
 - date_naissance : saisie recommandé (cf. moteur substitutions)

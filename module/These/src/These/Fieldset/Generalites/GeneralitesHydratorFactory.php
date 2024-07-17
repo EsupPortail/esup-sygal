@@ -6,6 +6,7 @@ use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\Source\SourceService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Structure\Service\Etablissement\EtablissementService;
 
@@ -34,6 +35,10 @@ class GeneralitesHydratorFactory
         /** @var SourceService $sourceService */
         $sourceService = $container->get(SourceService::class);
         $hydrator->setSourceService($sourceService);
+
+        /** @var \Individu\Service\IndividuService $individuService */
+        $individuService = $container->get(IndividuService::class);
+        $hydrator->setIndividuService($individuService);
 
         return $hydrator;
     }

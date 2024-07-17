@@ -10,6 +10,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Structure\Entity\Db\Etablissement;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
@@ -67,7 +68,10 @@ class Doctorant implements
      */
     public function getEtablissement(): Etablissement
     {
-        return $this->etablissement;
+        $theses = $this->getTheses();
+        /** @var These $these */
+        $these = (!empty($theses))?end($theses):null;
+        return $these?->getEtablissement();
     }
 
     /**
@@ -167,27 +171,6 @@ class Doctorant implements
     public function getDateNaissance()
     {
         return $this->getIndividu()->getDateNaissance();
-    }
-
-    /**
-     * @return string
-     * @deprecated Passe par getIndividu() toi-même !
-     */
-    public function getNationalite()
-    {
-        return $this->getIndividu()->getNationalite();
-    }
-
-    /**
-     * @param string $nationalite
-     * @return Doctorant
-     * @deprecated Passe par getIndividu() toi-même !
-     */
-    public function setNationalite($nationalite)
-    {
-        $this->getIndividu()->setNationalite($nationalite);
-
-        return $this;
     }
 
     /**

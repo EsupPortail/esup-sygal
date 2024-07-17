@@ -45,6 +45,8 @@ $canMissionAfficher = $this->isAllowed(MissionEnseignementPrivileges::getResourc
 $canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_MODIFIER));
 
 $canDomaineHalModifier = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
+$canEditThese = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_SES_THESES) || $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES) ;
+//$canEditThese = true ;
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
@@ -72,10 +74,37 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
     ->addAlertesFromFlashMessenger()
     ->renderAsBootstrapToasts() ?>
 
-<h1 class="page-header">
-    <?php echo $this->translate("Thèse"); ?>
-    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
-</h1>
+<div class="row">
+    <div class="col-md-5">
+        <h1 class="page-header">
+            <?php echo $this->translate("Thèse"); ?>
+            <small><?php echo $this->partial('these/these/partial/titre') ?></small>
+        </h1>
+    </div>
+    <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+        <div class="col-md-7" style="align-content: center;">
+            <a href="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#informations' ?>"
+               data-event="<?php echo $modifierStructuresEvent ?>"
+               class="btn btn-outline-primary">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier la thèse"); ?>
+            </a>
+        </div>
+    <?php endif ?>
+</div>
+
+<div class="modal fade" id="modalModificationThese" tabindex="-1" role="dialog" aria-labelledby="modalModificationTheseLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalModificationTheseContent">Chargement...</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="box card">
     <div class="card-header bg-dark text-white">
@@ -84,13 +113,11 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
         </h2>
     </div>
     <div class="card-body">
-        <?php if ($canEditGeneralites = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
-            <a href="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#informations' ?>"
-               data-event="<?php echo $modifierGeneralitesEvent ?>"
-               class="btn btn-outline-primary float-end ajax-modal">
+        <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+            <button type="button" class="btn btn-outline-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#informations' ?>">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les généralités"); ?>
-            </a>
+            </button>
         <?php endif ?>
         <?php echo $this->partial('these/these/partial/generalites') ?>
     </div>
@@ -103,13 +130,11 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
         </h2>
     </div>
     <div class="card-body">
-        <?php if ($canEditStructures = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
-            <a href="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#structures' ?>"
-               data-event="<?php echo $modifierStructuresEvent ?>"
-               class="btn btn-outline-primary float-end ajax-modal">
+        <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+            <button type="button" class="btn btn-outline-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#structures' ?>">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les structures"); ?>
-            </a>
+            </button>
         <?php endif ?>
         <?php echo $this->partial('these/these/partial/structures') ?>
     </div>

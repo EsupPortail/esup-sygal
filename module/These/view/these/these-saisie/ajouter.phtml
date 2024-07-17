@@ -42,89 +42,61 @@ $form->prepare();
     </div>
 <?php } ?>
 
-<div role="tabpanel">
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation">
-            <a class="nav-link" href="#informations" aria-controls="informations" role="tab" data-toggle="tabz"><?php echo $form->get("generalites")->getLabel();?></a>
-        </li>
-        <li role="presentation">
-            <a class="nav-link" href="#structures" aria-controls="structures" role="tab" data-toggle="tabz"><?php echo $form->get("structures")->getLabel();?></a>
-        </li>
-        <li role="presentation">
-            <a class="nav-link" href="#specifites" aria-controls="specifites" role="tab" data-toggle="tabz">Spécifités envisagées</a>
-        </li>
-        <li role="presentation">
-            <a class="nav-link" href="#direction" aria-controls="confidentialite" role="tab" data-toggle="tabz"><?php echo $form->get("direction")->getLabel();?></a>
-        </li>
-        <li role="presentation">
-            <a class="nav-link" href="#encadrements" aria-controls="encadrements" role="tab" data-toggle="tabz"><?php echo $form->get("encadrements")->getLabel();?></a>
-        </li>
-        <!--        <li role="presentation">-->
-        <!--            <a class="nav-link" href="#confidentialite" aria-controls="confidentialite" role="tab" data-toggle="tabz">             Confidentialité</a>-->
-        <!--        </li>-->
-        <li role="presentation">
-            <a class="nav-link" href="#financement" aria-controls="financement" role="tab" data-toggle="tabz"><?php echo $form->get("financements")->getLabel();?></a>
-        </li>
-    </ul>
-</div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="informations-tab" data-bs-toggle="tab" data-bs-target="#informations" type="button" role="tab" aria-controls="informations" aria-selected="true"><?php echo $form->get("generalites")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="structures-tab" data-bs-toggle="tab" data-bs-target="#structures" type="button" role="tab" aria-controls="structures" aria-selected="false"><?php echo $form->get("structures")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="specifites-tab" data-bs-toggle="tab" data-bs-target="#specifites" type="button" role="tab" aria-controls="specifites" aria-selected="false">Spécifités envisagées</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="direction-tab" data-bs-toggle="tab" data-bs-target="#direction" type="button" role="tab" aria-controls="direction" aria-selected="false"><?php echo $form->get("direction")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="encadrements-tab" data-bs-toggle="tab" data-bs-target="#encadrements" type="button" role="tab" aria-controls="encadrements" aria-selected="false"><?php echo $form->get("encadrements")->getLabel();?></button>
+    </li>
+<!--    <li class="nav-item" role="presentation">-->
+<!--        <button class="nav-link" id="confidentialite-tab" data-bs-toggle="tab" data-bs-target="#confidentialite" type="button" role="tab" aria-controls="confidentialite" aria-selected="false">Spécifités envisagées</button>-->
+<!--    </li>-->
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financement" type="button" role="tab" aria-controls="financement" aria-selected="false"><?php echo $form->get("financements")->getLabel();?></button>
+    </li>
+</ul>
 
 <?php echo $this->form()->openTag($form); ?>
-<div class="tab-content">
-    <div id="informations" class="tab-pane " role="tabpanel">
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
         <?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
     </div>
-    <div id="structures" class="tab-pane " role="tabpanel">
+    <div class="tab-pane fade" id="structures" role="tabpanel" aria-labelledby="structures-tab">
         <?php echo $this->partial('these/these-saisie/partial/structures'); ?>
         <br/><br/>
         <span class="alert alert-warning">Quid des co-tutelle ?</span>
     </div>
-    <div id="specifites" class="tab-pane " role="tabpanel">
+    <div class="tab-pane fade" id="specifites" role="tabpanel" aria-labelledby="specifites-tab">
         <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
-        <br/><br/>
     </div>
-    <div id="direction" class="tab-pane " role="tabpanel">
-        <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
-        <br/><br/>
-    </div>
-    <div id="encadrements" class="tab-pane " role="tabpanel">
+    <div class="tab-pane fade" id="encadrements" role="tabpanel" aria-labelledby="encadrements-tab">
         <?php echo $this->partial('these/these-saisie/partial/encadrement'); ?>
-        <br/><br/>
     </div>
-    <div id="confidentialite" class="tab-pane " role="tabpanel">
-<!--        --><?php //echo $this->partial('these/these-saisie/partial/'); ?>
+    <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
+        <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
     </div>
-    <div id="financement" class="tab-pane " role="tabpanel">
+    <div class="tab-pane fade" id="confidentialite" role="tabpanel" aria-labelledby="confidentialite-tab">
+        <!--        --><?php //echo $this->partial('these/these-saisie/partial/confidentialite'); ?>
+    </div>
+    <div class="tab-pane fade" id="financement" role="tabpanel" aria-labelledby="financement-tab">
         <?php echo $this->partial('these/these-saisie/partial/financement'); ?>
     </div>
 </div>
+
 <?php echo $this->formHidden($form->get('security')); ?>
 <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
 <?php echo $this->form()->closeTag(); ?>
 
-
-<script>
-    $(function() {
-        let hash = $(location).attr('hash');
-        let name = hash.substring(1);
-        if (name === undefined || name === "") name = "informations";
-
-        $('a[aria-controls=' + name + ']').tab('show');
-
-        $('.nav-tabs a').click(function () {
-            $(this).tab('show');
-        });
-    });
-
-    $('span.erase-acteur').click(function() {
-        let id = $(this).attr('id');
-        $('select[name=' + id + '-qualite]').val("");
-        $('select[name=' + id + '-etablissement]').val("");
-        $('input[name="' + id + '-individu[id]').val("");
-        $('input[name="' + id + '-individu[label]').val("");
-    });
-
-    // $('select').selectpicker();
-</script>
 
 <style>
     span.erase-acteur {

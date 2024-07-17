@@ -98,14 +98,16 @@ class DirectionHydrator extends AbstractHydrator
 
     private function hydrateDirecteur(array $data, These $these)
     {
-        /** @var Individu $individu */
-        $individuId = SAS2::extractIdFromValue($data['directeur-individu']);
-        $individu = $this->individuService->getRepository()->find($individuId);
+        if(isset($data['directeur-individu'])){
+            /** @var Individu $individu */
+            $individuId = SAS2::extractIdFromValue($data['directeur-individu']);
+            $individu = $this->individuService->getRepository()->find($individuId);
 
-        $acteur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE);
+            $acteur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE);
 
-        $prefixe = 'directeur-';
-        $this->hydrateActeur($acteur, $data, $prefixe);
+            $prefixe = 'directeur-';
+            $this->hydrateActeur($acteur, $data, $prefixe);
+        }
     }
 
     private function hydrateCodirecteurs(array $data, These $these)

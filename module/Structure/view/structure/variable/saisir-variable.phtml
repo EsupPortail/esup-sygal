@@ -1,16 +1,19 @@
 <?php
 /**
- * @var \Application\Entity\Db\Variable $variable
- * @var \Structure\Form\VariableForm $form
+ * @var Variable $variable
+ * @var VariableForm $form
+ *
+ * @see \Structure\Controller\VariableController::saisirVariableAction()
  */
+
+use Application\Entity\Db\Variable;
+use Structure\Form\VariableForm;
 
 $form->prepare();
 ?>
 
 <?php $this->headTitle($this->translate($title = "Variable"))
     ->prepend("Nouvelle variable") ?>
-
-    <h1 class="page-header">Nouvelle variable</h1>
 
 <?php echo $this->form()->openTag($form) ?>
     <div class="row">

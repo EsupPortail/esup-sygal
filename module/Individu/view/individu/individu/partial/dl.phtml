@@ -50,7 +50,7 @@ if (!isset($verbose)) $verbose = false;
 
     <dt class="<?php echo $dtClass ?>">Nationalité</dt>
     <dd class="<?php echo $ddClass ?>">
-        <?php echo (($pays = $entity->getPaysNationalite()) ? $pays->getLibelleNationalite() : $entity->getNationalite()) ?: "(Non renseignée)" ?>
+        <?php echo ($pays = $entity->getPaysNationalite()) ? $pays->getLibelleNationalite() : "(Non renseignée)" ?>
     </dd>
 </dl>
 

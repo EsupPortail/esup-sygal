@@ -29,14 +29,4 @@ class FinancementHydrator extends DoctrineObject
 
         return $data;
     }
-
-    /**
-     * @param array $data
-     * @param object $object
-     * @return Financement
-     */
-    public function hydrate(array $data, object $object): Financement
-    {
-        return parent::hydrate($data,$object);
-    }
 }

@@ -60,8 +60,8 @@ return [
                         'privileges' => [
                             ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
                             ThesePrivileges::THESE_CONSULTATION_SES_THESES,
-                            ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
-                            ThesePrivileges::THESE_MODIFICATION_SES_THESES,
+//                            ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
+//                            ThesePrivileges::THESE_MODIFICATION_SES_THESES,
                         ],
                         'resources' => ['These'],
                         'assertion' => TheseAssertion::class,

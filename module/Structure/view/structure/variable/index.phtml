@@ -32,7 +32,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
 <p>
     <?php if ($canModifier): ?>
         <a href="<?php echo $this->url('etablissement/saisir-variable', ['etablissement'=> $etablissement->getId()], [], true); ?>"
-           class="btn btn-primary action ajax-modal"
+           class="btn btn-primary action ajax-modal" data-event="modification"
         >
             <span class="icon icon-edit"></span> Ajouter une variable
         </a>

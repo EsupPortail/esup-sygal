@@ -35,6 +35,8 @@ class TitreAccesHydrator extends DoctrineObject //implements HydratorInterface
 //            $object->setSourceCode($this->sourceService->genereateSourceCode());
 //        }
 
+//        if(isset($data["etablissement"]) && $data["etablissement"] === "") $data["etablissement"] = null;
+
         return parent::hydrate($data, $object);
     }
 }

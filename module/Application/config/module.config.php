@@ -14,6 +14,8 @@ use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
+use Application\Form\Factory\RoleFormFactory;
+use Application\Form\RoleForm;
 use Application\Navigation\NavigationFactoryFactory;
 use Application\ORM\Query\Functions\Npd;
 use Application\ORM\Query\Functions\StrReduce;
@@ -215,7 +217,7 @@ return array(
     'service_manager' => array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
-            RoleService::class => 'RoleService',
+            'RoleService' =>  RoleService::class,
             UserContextService::class => 'UserContextService',
         ),
         'invokables' => array(
@@ -227,7 +229,7 @@ return array(
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
-            'RoleService' => RoleServiceFactory::class,
+            RoleService::class => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
             UserWrapperFactory::class => UserWrapperFactoryFactory::class,
         ),
@@ -307,6 +309,7 @@ return array(
         ],
         'factories' => [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,
+            RoleForm::class => RoleFormFactory::class,
         ],
 //        'initializers' => [
 //            'UnicaenApp\Service\EntityManagerAwareInitializer',

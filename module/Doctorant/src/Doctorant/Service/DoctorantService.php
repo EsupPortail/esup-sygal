@@ -5,6 +5,7 @@ namespace Doctorant\Service;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\Repository\DoctorantRepository;
@@ -12,13 +13,16 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
 use RuntimeException;
+use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 
 class DoctorantService extends BaseService
 {
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use SourceServiceAwareTrait;
 
     /**
      * @return DoctorantRepository
@@ -115,5 +119,18 @@ class DoctorantService extends BaseService
         } catch (\Doctrine\ORM\Exception\ORMException $e) {
             throw new \UnicaenApp\Exception\RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
         }
+    }
+
+    public function newDoctorant(Individu $individu)
+    {
+        $etablissement = $this->etablissementService->getRepository()->find(1);
+
+        $doctorant = new Doctorant();
+        $doctorant->setIndividu($individu);
+        $doctorant->setEtablissement($etablissement);
+        $doctorant->setSource($this->sourceService->fetchApplicationSource());
+        $doctorant->setSourceCode($this->sourceService->genereateSourceCode());
+
+        return $doctorant;
     }
 }

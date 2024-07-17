@@ -4,6 +4,7 @@ namespace These;
 
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use These\Assertion\These\TheseAssertion;
 use These\Controller\Factory\TheseSaisieControllerFactory;
 use These\Controller\TheseRechercheController;
 use These\Controller\TheseSaisieController;
@@ -39,25 +40,41 @@ use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormFactory;
 use These\Form\TheseSaisie\TheseSaisieHydrator;
 use These\Form\TheseSaisie\TheseSaisieHydratorFactory;
+use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [
+        'rule_providers' => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
+                            ThesePrivileges::THESE_MODIFICATION_SES_THESES,
+                        ],
+                        'resources' => ['These'],
+                        'assertion' => TheseAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => TheseSaisieController::class,
                     'action' => [
-                        'saisie', // todo: deprecated
                         'ajouter',
-                        'index',
+                        'modifier',
                         'supprimer',
-                        'generalites',
-                        'direction',
-                        'structures',
-                        'encadrement',
                     ],
-                    'roles' => 'Administrateur technique',
+                    'privileges' => [
+                        ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
+                        ThesePrivileges::THESE_MODIFICATION_SES_THESES,
+                    ],
+                    'assertion' => TheseAssertion::class,
+                    'resources' => ['These'],
                 ],
             ],
         ],
@@ -76,18 +93,6 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'saisie' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route' => '/saisie[/:these]',
-                            'defaults' => [
-                                'controller' => TheseSaisieController::class,
-                                'action' => 'saisie',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                    ],
-
                     'ajouter' => [
                         'type' => Segment::class,
                         'options' => [
@@ -107,54 +112,12 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
-                                /** @see TheseSaisieController::indexAction() */
+                                /** @see TheseSaisieController::modifierAction() */
                                 'controller' => TheseSaisieController::class,
-                                'action' => 'index',
+                                'action' => 'modifier',
                             ],
                         ],
                         'may_terminate' => true,
-                        'child_routes' => [
-                            'generalites' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route' => '/generalites',
-                                    'defaults' => [
-                                        /** @see TheseSaisieController::generalitesAction() */
-                                        'action' => 'generalites',
-                                    ],
-                                ],
-                            ],
-                            'direction' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route' => '/direction',
-                                    'defaults' => [
-                                        /** @see TheseSaisieController::directionAction() */
-                                        'action' => 'direction',
-                                    ],
-                                ],
-                            ],
-                            'structures' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route' => '/structures',
-                                    'defaults' => [
-                                        /** @see TheseSaisieController::structuresAction() */
-                                        'action' => 'structures',
-                                    ],
-                                ],
-                            ],
-                            'encadrement' => [
-                                'type' => Literal::class,
-                                'options' => [
-                                    'route' => '/encadrement',
-                                    'defaults' => [
-                                        /** @see TheseSaisieController::encadrementAction() */
-                                        'action' => 'encadrement',
-                                    ],
-                                ],
-                            ],
-                        ],
                     ],
                     'supprimer' => [
                         'type' => Segment::class,
@@ -216,7 +179,6 @@ return [
         'inline_scripts' => [
         ],
         'stylesheets' => [
-//            '080_admission' => '/css/admission.css',
         ],
         'head_scripts' => [
             '090_these' => "/js/these.js",
