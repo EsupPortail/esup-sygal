@@ -33,7 +33,7 @@ class AdmissionAvisAssertionFactory
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
         $assertion->setAdmissionOperationRule($admissionOperationRule);
 
-        /** @var \UnicaenAvis\Service\AvisService $admissionAvisRule */
+        /** @var AvisService $admissionAvisRule */
         $avisService = $container->get(AvisService::class);
         $assertion->setAvisService($avisService);
 

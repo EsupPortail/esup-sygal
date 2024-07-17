@@ -30,7 +30,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
 
     public function htmlifyCoTutelleInformations(Inscription $inscription){
         if ($inscription->getCoTutelle()) {
-            $etablissementInscription = $inscription->getEtablissementInscription() ? $inscription->getEtablissementInscription()->getStructure() : null;
+            $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
             $pays = $inscription->getPaysCoTutelle() ? $inscription->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
             $str = "- Vu la convention de co-tutelle internationale de thèse entre l’établissement <b>".
                 $etablissementInscription."</b> (Normandie) et <b>".$pays."</b>";

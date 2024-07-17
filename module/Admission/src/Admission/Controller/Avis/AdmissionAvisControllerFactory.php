@@ -35,7 +35,7 @@ class AdmissionAvisControllerFactory
 
         $controller->setForm($avisForm);
 
-        /** @var \UnicaenAvis\Service\AvisService $rapportActiviteAvisRule */
+        /** @var AvisService $rapportActiviteAvisRule */
         $avisService = $container->get(AvisService::class);
         $controller->setAvisService($avisService);
 

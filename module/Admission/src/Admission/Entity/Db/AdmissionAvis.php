@@ -2,7 +2,6 @@
 
 namespace Admission\Entity\Db;
 
-use Application\Constants;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;

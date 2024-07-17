@@ -4,7 +4,6 @@ namespace Admission\Hydrator\Etudiant;
 
 use Application\Service\Pays\PaysService;
 use Doctrine\ORM\EntityManager;
-use Individu\Service\IndividuService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 

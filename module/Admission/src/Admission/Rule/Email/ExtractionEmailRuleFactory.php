@@ -2,7 +2,6 @@
 
 namespace Admission\Rule\Email;
 
-use Admission\Rule\Operation\AdmissionOperationRule;
 use Application\Service\Role\RoleService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;

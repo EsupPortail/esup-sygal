@@ -1,7 +1,6 @@
 <?php
 namespace Admission\Entity\Db;
 
-use Application\Constants;
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

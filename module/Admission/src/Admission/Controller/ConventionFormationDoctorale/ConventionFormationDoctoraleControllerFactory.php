@@ -5,12 +5,8 @@ use Admission\Form\ConventionFormationDoctorale\ConventionFormationDoctoraleForm
 use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
-use Admission\Service\Document\DocumentService;
 use Admission\Service\Exporter\ConventionFormationDoctorale\ConventionFormationDoctoraleExporter;
-use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
-use Fichier\Service\NatureFichier\NatureFichierService;
-use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface;

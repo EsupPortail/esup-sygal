@@ -2,11 +2,6 @@
 
 namespace Admission\Hydrator\Verification;
 
-use Admission\Service\Document\DocumentService;
-use Admission\Service\Etudiant\EtudiantService;
-use Admission\Service\Financement\FinancementService;
-use Admission\Service\Inscription\InscriptionService;
-use Application\Application\Form\Hydrator\RecrutementHydrator;
 use Doctrine\ORM\EntityManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface;

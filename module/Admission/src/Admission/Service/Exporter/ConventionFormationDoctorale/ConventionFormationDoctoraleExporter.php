@@ -12,8 +12,6 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Admission\Provider\Template\PdfTemplates;
 use Admission\Service\Url\UrlServiceAwareTrait;
-use Individu\Entity\Db\IndividuRole;
-use Soutenance\Service\Notification\StringElement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenPdf\Exporter\PdfExporter as PdfExporter;

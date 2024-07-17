@@ -2,7 +2,6 @@
 
 namespace Admission\Hydrator\Financement;
 
-use Application\Application\Form\Hydrator\RecrutementHydrator;
 use Doctrine\ORM\EntityManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;

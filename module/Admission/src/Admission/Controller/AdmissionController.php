@@ -29,11 +29,7 @@ use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
-use Application\Controller\PaysController;
 use Application\Entity\Db\Role;
-use Application\Service\Discipline\DisciplineServiceAwareTrait;
-use Application\Service\Financement\FinancementServiceAwareTrait as ApplicationFinancementServiceAwareTrait;
-use Application\Service\Pays\PaysServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
@@ -50,19 +46,14 @@ use Laminas\View\Model\ViewModel;
 use Mpdf\MpdfException;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
-use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
 
 class AdmissionController extends AdmissionAbstractController {
 
-    use StructureServiceAwareTrait;
     use EntityManagerAwareTrait;
-    use DisciplineServiceAwareTrait;
     use NotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
     use AdmissionFormAwareTrait;
@@ -70,12 +61,7 @@ class AdmissionController extends AdmissionAbstractController {
     use IndividuServiceAwareTrait;
     use AdmissionServiceAwareTrait;
     use InscriptionServiceAwareTrait;
-    use FinancementServiceAwareTrait, ApplicationFinancementServiceAwareTrait  {
-        FinancementServiceAwareTrait::getFinancementService insteadof ApplicationFinancementServiceAwareTrait;
-        FinancementServiceAwareTrait::setFinancementService insteadof ApplicationFinancementServiceAwareTrait;
-        ApplicationFinancementServiceAwareTrait::getFinancementService as getApplicationFinancementService;
-        ApplicationFinancementServiceAwareTrait::setFinancementService as setApplicationFinancementService;
-    }
+    use FinancementServiceAwareTrait;
     use DocumentServiceAwareTrait;
     use VerificationServiceAwareTrait;
     use AdmissionOperationRuleAwareTrait;
@@ -86,9 +72,7 @@ class AdmissionController extends AdmissionAbstractController {
     use AdmissionOperationServiceAwareTrait;
     use ConventionFormationDoctoraleServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use QualiteServiceAwareTrait;
     use AdmissionRechercheServiceAwareTrait;
-    use PaysServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -106,13 +90,6 @@ class AdmissionController extends AdmissionAbstractController {
         }
 
         $etudiant = $this->admissionForm->get('etudiant');
-        if($etudiant instanceof EtudiantFieldset){
-            $pays = $this->paysService->getPaysAsOptions();
-            $etudiant->setPays($pays);
-
-            $nationalites = $this->paysService->getNationalitesAsOptions();
-            $etudiant->setNationalites($nationalites);
-        }
 
         //Récupération de l'objet Admission en BDD
         $admission = $this->getAdmission();
@@ -148,9 +125,6 @@ class AdmissionController extends AdmissionAbstractController {
             return $response;
         }
         $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
-
-        //Initialise les valeurs de certains champs du fieldset (Etablissement, Directeur de thèse...)
-        $this->initializeInscriptionFieldset();
 
         //Récupération de l'objet Admission en BDD
         /** @var Admission $admission */
@@ -210,11 +184,6 @@ class AdmissionController extends AdmissionAbstractController {
                 $this->enregistrerDocument($data, $admission);
             }
         }
-
-        $origines = $this->getApplicationFinancementService()->findOriginesFinancements("libelleLong");
-        /** @var FinancementFieldset $financement */
-        $financement = $this->admissionForm->get('financement');
-        $financement->setFinancements($origines);
 
         $response->setVariable('admission', $admission);
         $response->setTemplate('admission/ajouter-financement');
@@ -637,39 +606,6 @@ class AdmissionController extends AdmissionAbstractController {
         return false;
     }
 
-    private function initializeInscriptionFieldset(): void
-    {
-        $inscription = $this->admissionForm->get('inscription');
-        if($inscription instanceof InscriptionFieldset){
-            //Partie Informations sur l'inscription
-            /** @see AdmissionController::rechercherIndividuAction() */
-            $inscription->setUrlIndividuThese($this->url()->fromRoute('admission/rechercher-individu', [], ["query" => []], true));
-
-            $disciplines = $this->disciplineService->getDisciplinesAsOptions('code','ASC','code');
-            $inscription->setSpecialites($disciplines);
-
-            $composantes = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_COMPOSANTE_ENSEIGNEMENT, 'structure.libelle', false);
-            $inscription->setComposantesEnseignement($composantes);
-
-            $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
-            $inscription->setEcolesDoctorales($ecoles);
-
-            $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
-            $inscription->setUnitesRecherche($unites);
-
-            $etablissementsInscription = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
-            $inscription->setEtablissementsInscription($etablissementsInscription);
-
-            $qualites = $this->qualiteService->getQualitesForAdmission();
-            $inscription->setQualites($qualites);
-
-            //Partie Spécifités envisagées
-            /** @see PaysController::rechercherPaysAction() */
-            $inscription->setUrlPaysCoTutelle($this->url()->fromRoute('pays/rechercher-pays', [], ["query" => []], true));
-        }
-
-    }
-
     public function genererStatutDossierAction(): ViewModel|Response
     {
         $admission = $this->admissionService->getRepository()->findRequestedAdmission($this);
@@ -731,7 +667,6 @@ class AdmissionController extends AdmissionAbstractController {
 
         $canModifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
                                 $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION);
-        $canVerifierAdmission = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_VERIFIER);
         //si le dossier est validé, rejeté, en cours de validation ou abandonné et que l'utilisateur connecté n'a pas le droit de modifier le dossier
         if(!$canModifierAdmission){
             $submitButton->setValue("Revenir à l'accueil");

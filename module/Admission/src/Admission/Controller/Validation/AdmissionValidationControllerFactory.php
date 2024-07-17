@@ -2,11 +2,9 @@
 
 namespace Admission\Controller\Validation;
 
-use Admission\Entity\Db\TypeValidation;
 use Admission\Service\Admission\AdmissionService;
 use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\Validation\AdmissionValidationService;
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

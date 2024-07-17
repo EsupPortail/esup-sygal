@@ -80,7 +80,6 @@ class AdmissionOperationRule
     public function findLastCompletedOperation(Admission $admission): ?AdmissionOperationInterface
     {
         $prevOperation = null;
-        $operations = $this->getOperationsForAdmission($admission);
         foreach ($this->getOperationsForAdmission($admission) as $operation) {
             if ($operation->getId() === null) {
                 break;

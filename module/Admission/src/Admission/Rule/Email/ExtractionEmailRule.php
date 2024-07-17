@@ -164,7 +164,7 @@ class ExtractionEmailRule
         // Si on n'a aucun rôle sous la main, on recherche le 1er rôle existant ayant ce code, juste pour son libellé.
         if ($role === null) {
             $role = $this->roleService->getRepository()->findByCode($codeRole);
-            $roleToString = $role ? $role->getLibelle() : null; // NB : faut bien prendre le libellé
+            $roleToString = $role?->getLibelle(); // NB : faut bien prendre le libellé
         }
 
         if ($roleToString === null) {

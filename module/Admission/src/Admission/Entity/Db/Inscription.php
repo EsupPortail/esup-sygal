@@ -560,11 +560,11 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Set admission.
      *
-     * @param \Admission\Entity\Db\Admission|null $admission
+     * @param Admission|null $admission
      *
      * @return Inscription
      */
-    public function setAdmission(\Admission\Entity\Db\Admission $admission = null)
+    public function setAdmission(Admission $admission = null)
     {
         $this->admission = $admission;
 
@@ -574,7 +574,7 @@ class Inscription implements HistoriqueAwareInterface{
     /**
      * Get admission.
      *
-     * @return \Admission\Entity\Db\Admission|null
+     * @return Admission|null
      */
     public function getAdmission()
     {

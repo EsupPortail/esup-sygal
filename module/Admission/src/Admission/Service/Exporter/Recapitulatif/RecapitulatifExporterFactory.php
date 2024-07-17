@@ -3,7 +3,6 @@
 namespace Admission\Service\Exporter\Recapitulatif;
 
 use Admission\Service\Admission\AdmissionService;
-use Application\Service\Variable\VariableService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Admission\Service\Url\UrlService;
 use Psr\Container\ContainerExceptionInterface;

@@ -2,8 +2,6 @@
 
 namespace Admission\Service\Validation;
 
-use Admission\Service\Validation\AdmissionValidationService;
-
 trait AdmissionValidationServiceAwareTrait
 {
     /**

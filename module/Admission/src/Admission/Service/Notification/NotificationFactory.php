@@ -7,7 +7,6 @@ use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\Inscription;
-use Admission\Entity\Db\TypeValidation;
 use Admission\Notification\AdmissionAvisNotification;
 use Admission\Notification\AdmissionOperationAttenduNotification;
 use Admission\Provider\Template\MailTemplates;

@@ -2,15 +2,12 @@
 
 namespace Admission\Service\Admission;
 
-use Application\Service\DomaineScientifiqueService;
-use Application\Service\Financement\FinancementService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class AdmissionRechercheServiceFactory
 {

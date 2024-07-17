@@ -2,8 +2,6 @@
 
 namespace Admission\Service\Verification;
 
-use Admission\Service\Verification\VerificationService;
-
 trait VerificationServiceAwareTrait
 {
     /**

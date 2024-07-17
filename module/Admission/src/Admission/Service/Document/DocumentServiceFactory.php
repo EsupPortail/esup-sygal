@@ -9,7 +9,6 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Structure\Entity\Db\StructureDocument;
 use Structure\Service\StructureDocument\StructureDocumentService;
 
 class DocumentServiceFactory {

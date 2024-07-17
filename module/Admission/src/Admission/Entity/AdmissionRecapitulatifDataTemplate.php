@@ -6,7 +6,6 @@ use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Filter\AdmissionEtudiantFormatter;
-use Admission\Filter\AdmissionInscriptionFormatter;
 use Admission\Filter\AdmissionOperationsFormatter;
 
 class AdmissionRecapitulatifDataTemplate

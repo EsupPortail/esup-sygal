@@ -13,100 +13,75 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
+use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
     //Informations Inscription
-    private ?string $urlIndividuThese = null;
+    private string $urlIndividuThese;
+    private array $composantesEnseignement;
+    private array $ecolesDoctorales;
+    private array $unitesRecherche;
+    private array $etablissementInscription;
+    private array $specialites;
+    private array $qualites;
 
-    /** @var array */
-    private $composantesEnseignement = null;
-
-    /** @var array */
-    private $ecolesDoctorales = null;
-
-    /** @var array */
-    private $unitesRecherche = null;
-
-    /** @var array */
-    private $etablissementInscription = null;
-    private $specialites = null;
-
-    /** @var array $qualites  */
-    private $qualites = null;
-
+    //Spécifités envisagées
+    private string $dateDuJourFormatee;
+    private string $dateDans10Ans;
+    private string $urlPaysCoTutelle;
 
     public function setUrlIndividuThese(string $urlIndividuThese): void
     {
         $this->urlIndividuThese = $urlIndividuThese;
-        $this->get('nomDirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
-        $this->get('prenomDirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+    }
 
-        $this->get('nomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
-        $this->get('prenomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+    public function setUrlPaysCoTutelle(string $urlPaysCoTutelle): void
+    {
+        $this->urlPaysCoTutelle = $urlPaysCoTutelle;
     }
 
     public function setSpecialites(array $specialites): void
     {
         $this->specialites = $specialites;
-        $this->get('specialiteDoctorat')->setEmptyOption('Sélectionnez une option');
-        $this->get('specialiteDoctorat')->setValueOptions($this->specialites);
     }
 
     public function setEcolesDoctorales(array $ecolesDoctorales): void
     {
         $options = [];
-
         foreach ($ecolesDoctorales as $ecole) {
             $options[$ecole->getId()] = $ecole->getStructure()->getLibelle();
         }
         $this->ecolesDoctorales = $options;
-        $this->get('ecoleDoctorale')->setEmptyOption('Sélectionnez une option');
-        $this->get('ecoleDoctorale')->setValueOptions($this->ecolesDoctorales);
     }
 
     public function setComposantesEnseignement(array $composantesEnseignement): void
     {
         $options = [];
-
         foreach ($composantesEnseignement as $composanteEnseignement) {
             $options[$composanteEnseignement->getId()] = $composanteEnseignement->getStructure()->getLibelle();
         }
         $this->composantesEnseignement = $options;
-        $this->get('composanteDoctorat')->setEmptyOption('Sélectionnez une option');
-        $this->get('composanteDoctorat')->setValueOptions($this->composantesEnseignement);
     }
 
     public function setUnitesRecherche(array $unitesRecherche): void
     {
         $options = [];
-
         foreach ($unitesRecherche as $unite) {
             $options[$unite->getId()] = $unite->getStructure()->getLibelle();
         }
         $this->unitesRecherche = $options;
-        $this->get('uniteRecherche')->setEmptyOption('Sélectionnez une option');
-        $this->get('uniteRecherche')->setValueOptions($this->unitesRecherche);
-
-        $this->get('uniteRechercheCoDirecteur')->setEmptyOption('Sélectionnez une option');
-        $this->get('uniteRechercheCoDirecteur')->setValueOptions($this->unitesRecherche);
     }
 
     public function setEtablissementsInscription(array $etablissementsInscription): void
     {
         $options = [];
-
         foreach ($etablissementsInscription as $etablissementInscription) {
             $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle();
         }
         $this->etablissementInscription = $options;
-        $this->get('etablissementInscription')->setEmptyOption('Sélectionnez une option');
-        $this->get('etablissementInscription')->setValueOptions($this->etablissementInscription);
-
-        $this->get('etablissementRattachementCoDirecteur')->setEmptyOption('Sélectionnez une option');
-        $this->get('etablissementRattachementCoDirecteur')->setValueOptions($this->etablissementInscription);
     }
 
     public function setQualites(array $qualites): void
@@ -117,24 +92,31 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             $options[$qualite->getId()] = $qualite->getLibelle();
         }
         $this->qualites = $options;
-        $this->get('fonctionDirecteurThese')->setEmptyOption('Sélectionnez une option');
-        $this->get('fonctionDirecteurThese')->setValueOptions($this->qualites);
-
-        $this->get('fonctionCoDirecteurThese')->setEmptyOption('Sélectionnez une option');
-        $this->get('fonctionCoDirecteurThese')->setValueOptions($this->qualites);
     }
 
-    //Spécifités envisagées
-    private $dateDuJourFormatee;
-    private $dateDans10Ans;
-
-    private ?string $urlPaysCoTutelle = null;
-
-    public function setUrlPaysCoTutelle(string $urlPaysCoTutelle): void
+    public function prepareElement(FormInterface $form): void
     {
-        $this->urlPaysCoTutelle = $urlPaysCoTutelle;
+        $this->get('nomDirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+        $this->get('prenomDirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+
+        $this->get('nomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+        $this->get('prenomCodirecteurThese')->setAutocompleteSource($this->urlIndividuThese);
+
+        $this->get('specialiteDoctorat')->setValueOptions($this->specialites);
+        $this->get('composanteDoctorat')->setValueOptions($this->composantesEnseignement);
+        $this->get('ecoleDoctorale')->setValueOptions($this->ecolesDoctorales);
+        $this->get('uniteRecherche')->setValueOptions($this->unitesRecherche);
+        $this->get('uniteRechercheCoDirecteur')->setValueOptions($this->unitesRecherche);
+        $this->get('etablissementInscription')->setValueOptions($this->etablissementInscription);
+        $this->get('etablissementRattachementCoDirecteur')->setValueOptions($this->etablissementInscription);
+        $this->get('fonctionDirecteurThese')->setValueOptions($this->qualites);
+        $this->get('fonctionCoDirecteurThese')->setValueOptions($this->qualites);
         $this->get('paysCoTutelle')->setAutocompleteSource($this->urlPaysCoTutelle);
+
+        parent::prepareElement($form); // TODO: Change the autogenerated stub
     }
+
+
 
     public function __construct($name = null)
     {
@@ -157,7 +139,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("specialiteDoctorat"))
                 ->setLabel("Code et libellé de la spécialité d'inscription en doctorat souhaitée")
                 ->setLabelAttributes(['data-after' => ""])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -169,7 +151,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("disciplineDoctorat"))
                 ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
                 ->setLabelAttributes(['data-after' => " / Discipline code"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setEmptyOption("Indisponible")
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
@@ -182,7 +164,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("composanteDoctorat"))
                 ->setLabel("Composante de rattachement (U.F.R., instituts…)")
                 ->setLabelAttributes(['data-after' => " / Component of attachment"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -205,7 +187,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("ecoleDoctorale"))
                 ->setLabel("Ecole doctorale")
                 ->setLabelAttributes(['data-after' => " / Doctoral school"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -216,7 +198,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("uniteRecherche"))
                 ->setLabel("Unité de recherche")
                 ->setLabelAttributes(['data-after' => " /   Laboratory"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -228,7 +210,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("etablissementInscription"))
                 ->setLabel("Établissement d'inscription")
                 ->setLabelAttributes(['data-after' => " /   Registering establishment"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -277,7 +259,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("fonctionDirecteurThese"))
                 ->setLabel("Fonction")
                 ->setLabelAttributes(['data-after' => " /   Role"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -326,7 +308,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("uniteRechercheCoDirecteur"))
                 ->setLabel("Unité de recherche")
                 ->setLabelAttributes(['data-after' => " /   Laboratory"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -338,7 +320,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("etablissementRattachementCoDirecteur"))
                 ->setLabel("Établissement de rattachement")
                 ->setLabelAttributes(['data-after' => " /   Registering establishment"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',
@@ -350,7 +332,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             (new Select("fonctionCoDirecteurThese"))
                 ->setLabel("Fonction")
                 ->setLabelAttributes(['data-after' => " /   Role"])
-                ->setOptions(['emptyOption' => 'Choisissez un élément',])
+                ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',

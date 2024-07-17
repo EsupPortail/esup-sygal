@@ -6,7 +6,6 @@ use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\Etat;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Constants;
-use InvalidArgumentException;
 use Laminas\EventManager\EventManagerInterface;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Event\Operation\AdmissionOperationAbstractEventListener;

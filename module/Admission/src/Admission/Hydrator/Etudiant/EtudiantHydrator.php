@@ -6,7 +6,6 @@ use Admission\Entity\Db\Etudiant;
 use Application\Entity\Db\Pays;
 use Application\Service\Pays\PaysServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Individu\Service\IndividuServiceAwareTrait;
 
 /**
  * @author Unicaen

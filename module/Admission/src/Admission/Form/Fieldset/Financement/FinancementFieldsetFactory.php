@@ -4,6 +4,7 @@ namespace Admission\Form\Fieldset\Financement;
 
 use Admission\Entity\Db\Financement;
 use Admission\Hydrator\Financement\FinancementHydrator;
+use Application\Service\Financement\FinancementService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -22,6 +23,10 @@ class FinancementFieldsetFactory
         $fieldset = new FinancementFieldset();
         $fieldset->setHydrator($financementHydrator);
         $fieldset->setObject(new Financement());
+
+        $applicationFinancementService = $container->get(FinancementService::class);
+        $origines = $applicationFinancementService->findOriginesFinancements("libelleLong");
+        $fieldset->setFinancements($origines);
 
         return $fieldset;
     }

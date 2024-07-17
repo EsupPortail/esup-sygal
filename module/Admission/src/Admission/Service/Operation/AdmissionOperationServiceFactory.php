@@ -2,11 +2,9 @@
 
 namespace Admission\Service\Operation;
 
-use Admission\Rule\Operation\AdmissionOperationRule;
 use Admission\Service\Avis\AdmissionAvisService;
 use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\Validation\AdmissionValidationService;
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -34,7 +32,7 @@ class AdmissionOperationServiceFactory
         $admissionAvisService = $container->get(AdmissionAvisService::class);
         $service->setAdmissionAvisService($admissionAvisService);
 
-        /** @var \UnicaenAvis\Service\AvisService $avisService */
+        /** @var AvisService $avisService */
         $avisService = $container->get(AvisService::class);
         $service->setAvisService($avisService);
 

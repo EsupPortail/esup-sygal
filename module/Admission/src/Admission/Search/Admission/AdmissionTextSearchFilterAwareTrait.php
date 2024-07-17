@@ -1,30 +1,30 @@
 <?php
 
-namespace These\Search\These;
+namespace Admission\Search\Admission;
 
-trait TheseTextSearchFilterAwareTrait
+trait AdmissionTextSearchFilterAwareTrait
 {
     /**
-     * @var TheseTextSearchFilter
+     * @var AdmissionTextSearchFilter
      */
-    protected $theseTextSearchFilter;
+    protected $admissionTextSearchFilter;
 
     /**
-     * @return TheseTextSearchFilter
+     * @return AdmissionTextSearchFilter
      */
-    public function getTheseTextSearchFilter(): TheseTextSearchFilter
+    public function getAdmissionTextSearchFilter(): AdmissionTextSearchFilter
     {
-        if ($this->theseTextSearchFilter === null) {
-            $this->theseTextSearchFilter = TheseTextSearchFilter::newInstance();
+        if ($this->admissionTextSearchFilter === null) {
+            $this->admissionTextSearchFilter = AdmissionTextSearchFilter::newInstance();
         }
-        return $this->theseTextSearchFilter;
+        return $this->admissionTextSearchFilter;
     }
 
     /**
-     * @param TheseTextSearchFilter $theseTextSearchFilter
+     * @param AdmissionTextSearchFilter $admissionTextSearchFilter
      */
-    public function setTheseTextSearchFilter(TheseTextSearchFilter $theseTextSearchFilter)
+    public function setAdmissionTextSearchFilter(AdmissionTextSearchFilter $admissionTextSearchFilter)
     {
-        $this->theseTextSearchFilter = $theseTextSearchFilter;
+        $this->admissionTextSearchFilter = $admissionTextSearchFilter;
     }
 }

@@ -15,7 +15,7 @@ class AdmissionAvisServiceFactory
     {
         $service = new AdmissionAvisService();
 
-        /** @var \UnicaenAvis\Service\AvisService $avisService */
+        /** @var AvisService $avisService */
         $avisService = $container->get(AvisService::class);
         $service->setAvisService($avisService);
 

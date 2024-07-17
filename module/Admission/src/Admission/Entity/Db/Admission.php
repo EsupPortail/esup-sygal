@@ -363,9 +363,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function setOperationPossible(?AdmissionOperationInterface $operation = null): self
     {
         $this->operationPossible = $operation;
-        if ($this->operationPossible) {
-            $this->operationPossible->setAdmission($this);
-        }
+        $this->operationPossible?->setAdmission($this);
 
         return $this;
     }

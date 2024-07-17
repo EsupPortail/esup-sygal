@@ -4,7 +4,6 @@ namespace Admission\Assertion\Avis;
 
 use Admission\Entity\Db\Admission;
 use Application\Assertion\Exception\FailedAssertionException;
-use Application\RouteMatch;
 use Doctrine\ORM\NoResultException;
 use InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;

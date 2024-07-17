@@ -4,6 +4,7 @@ namespace Admission\Form\Fieldset\Etudiant;
 
 use Admission\Entity\Db\Etudiant;
 use Admission\Hydrator\Etudiant\EtudiantHydrator;
+use Application\Service\Pays\PaysService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -21,6 +22,14 @@ class EtudiantFieldsetFactory
         $fieldset = new EtudiantFieldset();
         $fieldset->setHydrator($etudiantHydrator);
         $fieldset->setObject(new Etudiant());
+
+        /** @var PaysService $paysService */
+        $paysService = $container->get(PaysService::class);
+        $pays = $paysService->getPaysAsOptions();
+        $fieldset->setPays($pays);
+
+        $nationalites = $paysService->getNationalitesAsOptions();
+        $fieldset->setNationalites($nationalites);
 
         return $fieldset;
     }
