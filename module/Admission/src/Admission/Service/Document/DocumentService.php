@@ -61,12 +61,11 @@ class DocumentService extends BaseService
 
     /**
      * @param Admission $admission
-     * @param Fichier[] $fichiers
+     * @param Fichier $fichiers
      * @return Document
      */
-    public function createDocumentFromUpload(Admission $admission, array $fichiers) : Document
+    public function createDocumentFromUpload(Admission $admission, Fichier $fichier) : Document
     {
-        $fichier = array_pop($fichiers); // il n'y a qu'un fichier
         $document = new Document();
         $document->setAdmission($admission);
         $document->setFichier($fichier);

@@ -2,22 +2,18 @@
 
 namespace Admission\Controller\Avis;
 
+use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\Etudiant;
+use Admission\Event\Avis\AdmissionAvisEvent;
+use Admission\Service\Admission\AdmissionServiceAwareTrait;
+use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
 use Application\Controller\AbstractController;
-use Application\EventRouterReplacerAwareTrait;
-use Application\Filter\IdifyFilterAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Response;
-use Admission\Entity\Db\AdmissionAvis;
-use Admission\Event\Avis\AdmissionAvisEvent;
-use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
-use Admission\Service\Admission\AdmissionServiceAwareTrait;
-use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAvis\Entity\Db\Avis;
 use UnicaenAvis\Form\AvisForm;
@@ -27,14 +23,9 @@ class AdmissionAvisController extends AbstractController
 {
     use AdmissionServiceAwareTrait;
     use AdmissionAvisServiceAwareTrait;
-    use AdmissionValidationServiceAwareTrait;
-    use ValidationServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use AvisServiceAwareTrait;
     use EtudiantServiceAwareTrait;
-
-    use IdifyFilterAwareTrait;
-    use EventRouterReplacerAwareTrait;
 
     private AvisForm $form;
 

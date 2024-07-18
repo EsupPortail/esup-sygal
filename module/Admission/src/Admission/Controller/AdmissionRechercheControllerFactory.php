@@ -26,7 +26,6 @@ class AdmissionRechercheControllerFactory
          */
         $admissionService = $container->get(AdmissionService::class);
         $admissionRechercheService = $container->get(AdmissionRechercheService::class);
-        $roleService = $container->get('RoleService');
         $admissionOperationService = $container->get(AdmissionOperationService::class);
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
 
@@ -36,7 +35,6 @@ class AdmissionRechercheControllerFactory
         $controller->setAdmissionOperationService($admissionOperationService);
         $controller->setAdmissionOperationService($admissionOperationService);
         $controller->setAdmissionOperationRule($admissionOperationRule);
-        $controller->setRoleService($roleService);
 
         return $controller;
     }

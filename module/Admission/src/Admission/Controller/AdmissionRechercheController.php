@@ -15,7 +15,6 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchResultPaginator;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -31,7 +30,6 @@ class AdmissionRechercheController extends AbstractController implements SearchC
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
 
-    use RoleServiceAwareTrait;
     use AdmissionServiceAwareTrait;
     use AdmissionOperationRuleAwareTrait;
     use AdmissionOperationServiceAwareTrait;

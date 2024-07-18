@@ -17,7 +17,6 @@ class AdmissionValidationControllerFactory
      */
     public function __invoke(ContainerInterface $container): AdmissionValidationController
     {
-        $entityManager = $container->get('doctrine.entitymanager.orm_default');
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);
         /** @var AdmissionValidationService $admissionValidationService */
@@ -26,7 +25,6 @@ class AdmissionValidationControllerFactory
         $typeValidationService = $container->get(TypeValidationService::class);
 
         $controller = new AdmissionValidationController();
-        $controller->setEntityManager($entityManager);
         $controller->setTypeValidationService($typeValidationService);
         $controller->setAdmissionService($admissionService);
         $controller->setAdmissionValidationService($admissionValidationService);

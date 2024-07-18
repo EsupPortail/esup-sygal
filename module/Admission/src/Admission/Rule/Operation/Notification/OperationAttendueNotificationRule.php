@@ -67,6 +67,7 @@ class OperationAttendueNotificationRule implements RuleInterface
 
         $followingOperationConfig = $this->admissionOperationRule->getConfigForOperation($this->operationAttendue);
         $to = $this->extractionMailRule->extractEmailsFromAdmissionRoles($admission, $followingOperationConfig);
+        $this->anomalies = $this->extractionMailRule->getAnomalies();
 
         $this->notificationRequired = true;
         $this->to = $to;

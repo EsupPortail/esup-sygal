@@ -541,7 +541,7 @@ class AdmissionController extends AdmissionAbstractController {
                 /** @var FinancementFieldset $financementFieldset */
                 $financementFieldset = $this->admissionForm->get('financement');
                 if(isset($data['financement']['verificationFinancement'])){
-                    $financementFieldset->bindValues($data['financement']);
+                    $financementFieldset->get('verificationFinancement')->bindValues($data['financement']['verificationFinancement']);
                 }
 
                 /** @var Verification $verification */

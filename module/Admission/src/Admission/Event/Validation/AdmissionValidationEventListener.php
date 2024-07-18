@@ -63,6 +63,7 @@ class AdmissionValidationEventListener extends AdmissionOperationAbstractEventLi
     private function handleNotificationValidationAjoutee()
     {
         $notif = $this->notificationFactory->createNotificationValidationAjoutee($this->operationRealisee);
+        $notif->setTemplateVariables(['messages' => $this->event->getMessages()]);
         $this->triggerNotification($notif);
     }
 

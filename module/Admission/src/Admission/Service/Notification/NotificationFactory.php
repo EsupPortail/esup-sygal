@@ -107,10 +107,12 @@ class NotificationFactory extends NF
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
-        if(!empty($admission->getInscription()->first()->getDirecteur())){
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first();
+        if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();;
             $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
@@ -158,10 +160,12 @@ class NotificationFactory extends NF
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
-        if(!empty($admission->getInscription()->first()->getDirecteur())){
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first();
+        if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();
             $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
@@ -218,8 +222,8 @@ class NotificationFactory extends NF
         $cc = [];
         if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
-            $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
+            $directeur = $inscription->getDirecteur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();
             $cc = [$emailDirecteur => $directeur->getNomComplet()];
         }
 
@@ -288,10 +292,12 @@ class NotificationFactory extends NF
         $vars['Url'] = $url;
 
         $cc = [];
-        if(!empty($admission->getInscription()->first()->getDirecteur())){
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first();
+        if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();
             $cc = [$emailDirecteur => $directeur->getNomComplet()];
         }
 
@@ -364,10 +370,12 @@ class NotificationFactory extends NF
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
-        if(!empty($admission->getInscription()->first()->getDirecteur())){
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first();
+        if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();
             $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
@@ -419,10 +427,12 @@ class NotificationFactory extends NF
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps());
 
-        if(!empty($admission->getInscription()->first()->getDirecteur())){
+        /** @var Inscription $inscription */
+        $inscription = $admission->getInscription()->first();
+        if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur();
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();;
             $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 

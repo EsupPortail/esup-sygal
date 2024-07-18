@@ -59,6 +59,7 @@ class ExtractionEmailRule
         }
 
         $emails = [];
+        $acteurs = [];
         foreach ((array) $roles['role'] as $codeRole) {
             switch ($codeRole) {
                 case Role::CODE_ADMIN_TECH:
@@ -90,15 +91,19 @@ class ExtractionEmailRule
                 case Role::CODE_CODIRECTEUR_THESE:
                 case Role::CODE_ADMISSION_DIRECTEUR_THESE:
                 case Role::CODE_ADMISSION_CODIRECTEUR_THESE:
-                    $acteurs[] = ($codeRole === Role::CODE_DIRECTEUR_THESE || $codeRole === Role::CODE_ADMISSION_DIRECTEUR_THESE) ?
+                    $acteur = ($codeRole === Role::CODE_DIRECTEUR_THESE || $codeRole === Role::CODE_ADMISSION_DIRECTEUR_THESE) ?
                         $admission->getInscription()->first()->getDirecteur() :
                         $admission->getInscription()->first()->getCoDirecteur();
-                    if (count($acteurs)) {
-                        $emailsActeurs = $this->collectEmails($admission, $acteurs);
-                    } else {
-                        $emailsActeurs = $this->collectFallbackEmails($admission,$codeRole);
-                    }
+                    if(!in_array($acteur, $acteurs)){
+                        $acteurs[] = $acteur;
+                        if (count($acteurs)) {
+                            $emailsActeurs = $this->collectEmails($admission, $acteurs);
+                        } else {
+                            $emailsActeurs = $this->collectFallbackEmails($admission,$codeRole);
+                        }
                     $emails = array_merge($emails, $emailsActeurs);
+                    }
+
                     break;
 
                 case Role::CODE_RESP_UR:

@@ -9,14 +9,12 @@ use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Laminas\Http\Response;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class AdmissionValidationController extends AbstractController
 {
     use AdmissionServiceAwareTrait;
     use AdmissionValidationServiceAwareTrait;
     use TypeValidationServiceAwareTrait;
-    use EntityManagerAwareTrait;
 
     public function validerAction(): Response
     {

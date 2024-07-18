@@ -3,7 +3,6 @@
 namespace Admission\Controller\Document;
 
 use Admission\Entity\Db\Document;
-use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
 use Exception;
@@ -32,7 +31,6 @@ class DocumentController extends AbstractActionController
     use DocumentServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
-    use AdmissionOperationRuleAwareTrait;
 
     public function enregistrerDocumentAction(): JsonModel|Response|bool
     {
@@ -63,6 +61,8 @@ class DocumentController extends AbstractActionController
 
                         $fileDetail = ["files" => $fileDetail];
                         $fichier = $this->fichierService->createFichiersFromUpload($fileDetail, $nature, $version);
+                        $fichier = array_pop($fichier);
+                        $fichier->setNom($admission->getIndividu()->getNomUsuel().'-'.$fichier->getShortUuid().'-'.$fichier->getNature()->getCode().'.'.$fileDetail["extension"]);
                         $this->documentService->createDocumentFromUpload($admission, $fichier);
                         return new JsonModel(['success' => 'Document téléversé avec succès']);
                     } catch (Exception $die) {
