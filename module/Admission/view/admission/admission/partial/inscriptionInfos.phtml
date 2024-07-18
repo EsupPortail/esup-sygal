@@ -55,11 +55,10 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="col-lg-6 col-sm-12">
             <?php
             $inscriptionExist = $admission && $admission->getInscription()->first();
-            if($inscriptionExist &&
-                ($admission->getInscription()->first()->getNomDirecteurThese() &&
-                empty($admission->getInscription()->first()->getDirecteur()))){ ?>
-                <label class="form-label individu-non-enregistre-label directeur-non-enregistre-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis supervisor</label>
-                <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
+            if(!$inscriptionExist ||
+                empty($admission->getInscription()->first()->getDirecteur())){ ?>
+                <label class="form-label" for="inscription[nomDirecteurThese]">Nom du directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis supervisor</label>
+                <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip" style="display:none;">
                     <span class="tooltip-text">Le dossier n'a pas pu être associé au directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br> Veillez à bien sélectionner un individu dans la liste proposée <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché</span>
                 </span>
             <?php }else{ ?>
@@ -159,11 +158,10 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                     <div class="row">
                         <?php echo $this->formControlGroup($fieldset->get('coDirecteur')) ?>
                         <div class="col-lg-6 col-sm-12">
-                            <?php if($inscriptionExist &&
-                                    $admission->getInscription()->first()->getNomCodirecteurThese() &&
+                            <?php if(!$inscriptionExist ||
                                     empty($admission->getInscription()->first()->getCoDirecteur())){ ?>
-                                    <label class="form-label individu-non-enregistre-label codirecteur-non-enregistre-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en individu-non-enregistre-label">&nbsp; / Lastname of thesis co-supervisor</label>
-                                    <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip">
+                                    <label class="form-label" for="inscription[nomCoDirecteurThese]">Nom du co-directeur de thèse</label><label class="label_en">&nbsp; / Lastname of thesis co-supervisor</label>
+                                    <span class="icon icon-warning admission-info-bulle" data-toggle="tooltip" style="display:none;">
                                         <span class="tooltip-text">Le dossier n'a pas pu être associé au co-directeur de thèse désigné, puisque <b>l'individu n'est pas connu de l'application.</b> <br> Veillez à bien sélectionner un individu dans la liste proposée <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché</span>
                                     </span>
                             <?php }else{ ?>

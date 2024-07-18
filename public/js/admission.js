@@ -144,6 +144,7 @@ function updateDirectionInfosLabels(idNom, idPrenom, nomInput, prenomInput, labe
             $labelInput.addClass('individu-non-enregistre-label '+labelIndividuNonEnregistre);
             if ($icon.length) {
                 $icon.removeClass('icon-success').addClass('icon-warning');
+                $icon.show()
                 const $spanElement = $icon.find('span.tooltip-text');
                 if ($spanElement.length) {
                     $spanElement.html("Veillez à bien <b>sélectionner un individu dans la liste proposée</b> <br><br> Rapprochez-vous de votre gestionnaire, si vous ne trouvez pas l'individu recherché");
@@ -158,6 +159,7 @@ function updateDirectionInfosLabels(idNom, idPrenom, nomInput, prenomInput, labe
                 }else{
                     $icon.removeClass('icon-warning').addClass('icon-success');
                 }
+                $icon.show()
                 const $spanElement = $icon.find('span.tooltip-text');
                 if ($spanElement.length) {
                     $spanElement.html("L'individu choisi sera associé au dossier lorsque vous passerez à l'étape précédente ou suivante");
