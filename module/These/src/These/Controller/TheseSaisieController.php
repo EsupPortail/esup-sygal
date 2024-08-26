@@ -115,7 +115,7 @@ class TheseSaisieController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
 
-        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], ['fragment' => $domaine], true);
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 
     private function getErrorMessages(): array
