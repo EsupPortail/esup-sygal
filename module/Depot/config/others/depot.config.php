@@ -35,6 +35,8 @@ use Depot\Form\Metadonnees\MetadonneesTheseHydratorFactory;
 use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
 use Depot\Form\Metadonnees\MetadonneeTheseFieldsetFactory;
 use Depot\Provider\Privilege\DepotPrivileges;
+use Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporter;
+use Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporterFactory;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
 use Depot\Service\These\DepotService;
@@ -699,6 +701,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see DepotController::exporterConventionMiseEnLigneAction() */
                                 'controller' => DepotController::class,
                                 'action' => 'exporter-convention-mise-en-ligne',
                             ],
@@ -1010,6 +1013,7 @@ return [
             UrlDepotService::class => UrlDepotServiceFactory::class,
             DepotService::class => DepotServiceFactory::class,
             PageDeCouverturePdfExporter::class => PageDeCouverturePdfExporterFactory::class,
+            ConventionDeMiseEnLigneExporter::class => ConventionDeMiseEnLigneExporterFactory::class,
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
         ],
@@ -1107,6 +1111,8 @@ return [
             ],
 
             [
+                // todo : supprimer
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_QUESTION,
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1125,6 +1131,8 @@ return [
             ],
 
             [
+                // todo : supprimer
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_REPONSE,
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1273,6 +1281,8 @@ return [
             ],
 
             [
+                // todo : supprimer
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
                 'id' => DiffusionMessages::DROITS_AUTEUR_OK_PHRASE_CONV,
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////

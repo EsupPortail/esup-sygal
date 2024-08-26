@@ -53,6 +53,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Stdlib\ParametersInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Mpdf\MpdfException;
 use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -1372,55 +1373,13 @@ class DepotController extends AbstractController
         return $form;
     }
 
-    public function exporterConventionMiseEnLigneAction()
+    public function exporterConventionMiseEnLigneAction(): void
     {
         $these = $this->requestedThese();
         $version = $this->fichierTheseService->fetchVersionFichier($this->params()->fromQuery('version'));
-        $diffusion = $these->getDiffusionForVersion($version);
-        $attestation = $these->getAttestationForVersion($version);
 
-        /** @var \Depot\Form\Diffusion\DiffusionTheseForm $form */
-        $form = $this->diffusionTheseForm;
-
-        $dateObs = $these->getDateSoutenance() ?: null;
-        $variableRepo = $this->variableService->getRepository();
-        $ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement(), $dateObs);
-        $ETB_ART_ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement(), $dateObs);
-
-        $etab = $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
-        $l = $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
-        $letab = lcfirst($l) . $etab;
-        $libEtablissementA = "à " . $letab;
-        $libEtablissementLe = $letab;
-        $libEtablissementDe = "de " . $letab;
-
-        $etablissement = $this->etablissementService->fetchEtablissementComue();
-        if ($etablissement === null) {
-            $etablissement = $these->getEtablissement();
-        }
-        try {
-            $cheminLogo = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
-        } catch (StorageAdapterException $e) {
-            $cheminLogo = null;
-        }
-
-        $renderer = $this->renderer;
-        $exporter = new ConventionPdfExporter($renderer, 'A4');
-        $exporter->setVars([
-            'etablissement'      => $etablissement,
-            'logo'               => $cheminLogo,
-            'these'              => $these,
-            'diffusion'          => $diffusion,
-            'attestation'        => $attestation,
-            'form'               => $form,
-            'libEtablissement'   => $etab,
-            'libEtablissementA'  => $libEtablissementA,
-            'libEtablissementLe' => $libEtablissementLe,
-            'libEtablissementDe' => $libEtablissementDe,
-            'comue'              => $this->etablissementService->fetchEtablissementComue(),
-        ]);
-        $exporter->export('Convention_MEL.pdf');
-        exit;
+        // todo : vérifier que l'existence de la COMUE est prise en compte
+        $this->fichierTheseService->generateConventionDeMiseEnLigne($these, $version);
     }
 
     public function modifierDescriptionAction()

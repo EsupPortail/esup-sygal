@@ -6,9 +6,6 @@ use These\Entity\Db\These;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
-/**
- * Diffusion
- */
 class Attestation implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;

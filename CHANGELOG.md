@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+10.3.0 ???
+------
+- Nouvelle charte de dépôt et diffusion des thèses.
+- La convention de MEL possède désormais son template Twig modifiable (via unicaen/renderer).
+
 10.2.1
 ------
 - Module Soutenance : Amélioration du workflow dans la pré-soutenance

@@ -3,6 +3,7 @@
 namespace Formation\Service\Exporter\Attestation;
 
 use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
+use Doctorant\Renderer\DoctorantRendererAdapter;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\Template\PdfTemplates;
