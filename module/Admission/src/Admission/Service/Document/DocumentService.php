@@ -252,7 +252,7 @@ class DocumentService extends BaseService
                 $newCharteDoctorat->setVersion($charteDoctorat->getVersion());
                 $newCharteDoctorat->setNom(NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT . "-" . $newCharteDoctorat->getShortUuid() . "." . $extension);
 
-                $this->createDocumentFromUpload($admission, [$newCharteDoctorat]);
+                $this->createDocumentFromUpload($admission, $newCharteDoctorat);
             }
         } catch (\Exception $die) {
             return $die->getMessage();

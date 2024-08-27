@@ -1106,7 +1106,7 @@ class Etudiant implements HistoriqueAwareInterface{
         $adresseParts = [];
 
         if ($etage = $this->getAdresseLigne1Etage()) {
-            $adresseParts[] = $etage;
+            $adresseParts[] = $etage." (étage)";
         }
 
         if ($batiment = $this->getAdresseLigne2Batiment()) {

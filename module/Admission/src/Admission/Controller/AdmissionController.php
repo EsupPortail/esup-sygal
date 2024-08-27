@@ -226,6 +226,16 @@ class AdmissionController extends AdmissionAbstractController {
             $operationEnAttente = $this->admissionOperationRule->getOperationEnAttente($admission);
             $role = $this->userContextService->getSelectedIdentityRole();
             $isOperationAllowedByRole = !$operationEnAttente || $this->admissionOperationRule->isOperationAllowedByRole($operationEnAttente, $role);
+
+            //Vérification de l'existence d'une charte doctorale
+            /** @var Inscription $inscription */
+            $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
+            $charteDoctorat = $this->documentService->getRepository()->findByAdmissionAndNature($admission, NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT);
+            if($inscription->getEtablissementInscription() && !$charteDoctorat){
+                //On essaie de relier une charte du doctorat au dossier d'admission
+                $this->documentService->addCharteDoctoraleToAdmission($inscription);
+            }
+
             //Récupération des documents liés à ce dossier d'admission
             $documents = $this->documentService->getRepository()->findDocumentsByAdmission($admission);
             /** @var Document $document */

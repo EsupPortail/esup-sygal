@@ -2,6 +2,7 @@
 
 namespace Admission\Filter;
 
+use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Entity\Db\Inscription;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\AbstractFilter;
@@ -108,6 +109,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
         if ($estSalarie) {
             $etablissementLaboratoireUR = $inscription->getEtablissementLaboratoireRecherche();
             $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
+            $etablissementPartenaire = $etablissementPartenaire ?: " <b>(Aucune information déclarée concernant l'employeur)</b>";
             $str = "- Vu la convention de collaboration entre l’employeur <b>".$etablissementPartenaire."</b>, le salarié doctorant, l’établissement d’inscription <b>".$etablissementInscription."</b>
             (Normandie)";
 
@@ -118,6 +120,29 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
                 $str .= ".";
             }
             return $str;
+        }
+    }
+
+    public function htmlifyConfidentialiteInformations(Inscription $inscription, ConventionFormationDoctorale $conventionFormationDoctorale)
+    {
+        if($inscription->getConfidentialite() === null){
+            return "<b>Non renseigné</b>";
+        }else{
+            if($inscription->getConfidentialite()){
+                $dateConfidentialite = $inscription->getDateConfidentialite() ? $inscription->getDateConfidentialite()->format("d/m/Y") : null;
+                return "Oui <br> 
+                        <ul>
+                          <li>
+                             <b>Date de fin de confidentialité souhaitée (limitée à 10 ans) : </b>" . $dateConfidentialite . "
+                          </li>
+                          <li>
+                             <b>Motivation de la demande de confidentialité par le doctorant et la direction de thèse: </b>" .
+                                $conventionFormationDoctorale->getMotivationDemandeConfidentialite() . "
+                          </li>
+                        </ul>";
+            } else {
+                return "Non";
+            }
         }
     }
 }

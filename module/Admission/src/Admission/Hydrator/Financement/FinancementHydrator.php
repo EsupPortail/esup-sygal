@@ -33,7 +33,9 @@ class FinancementHydrator extends DoctrineObject
             $data["detailContratDoctoral"] = null;
         }
 
-        $data["financement"] = !empty($data["financement"]) ? $data["financement"] : null;
+        if(isset($data["financement"]) && !empty($data["financement"])){
+            $data["financement"] = null;
+        }
 
         //Si la case estSalarie est décochée, on met à null les valeurs des champs reliés
         if (isset($data["estSalarie"]) && !$data["estSalarie"]) {

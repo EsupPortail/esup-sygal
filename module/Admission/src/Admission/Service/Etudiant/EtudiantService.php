@@ -15,6 +15,8 @@ class EtudiantService extends BaseService
 {
     use VerificationServiceAwareTrait;
 
+    private const DEFAULT_SOURCE_CODE = "SYG";
+
     /**
      * @return EtudiantRepository
      */
@@ -115,6 +117,6 @@ class EtudiantService extends BaseService
         $currentYear = (new \DateTime())->format('y');
         $id = $admission->getId();
         $formattedId = str_pad($id, 2, '0', STR_PAD_LEFT);
-        return "SyG".$currentYear.$formattedId;
+        return self::DEFAULT_SOURCE_CODE.$currentYear.$formattedId;
     }
 }
