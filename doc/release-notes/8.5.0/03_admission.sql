@@ -1,11 +1,13 @@
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionFinancement#EtablissementPartenaire',
-        '<p>Retourne les détails de l''établissement partenaire dans le cas d''une convention de collaboration</p>', 'admissionFinancement',
+        '<p>Retourne les détails de l''établissement partenaire dans le cas d''une convention de collaboration</p>',
+        'admissionFinancement',
         'getEtablissementPartenaire');
 
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionConventionFormationDoctorale#InfosConfidentialite',
-        '<p>Retourne les détails concernant la confidentialité souhaitée par l''étudiant</p>', 'admissionConventionFormationDoctoraleData',
+        '<p>Retourne les détails concernant la confidentialité souhaitée par l''étudiant</p>',
+        'admissionConventionFormationDoctoraleData',
         'getConfidentialiteInformationstoHtml');
 
 UPDATE public.unicaen_renderer_template
@@ -177,3 +179,10 @@ SET document_corps = '<h1 style="text-align: center;">Convention de formation do
 <h2>Validations accordées à la convention de formation doctorale</h2>
 <p>VAR[AdmissionConventionFormationDoctorale#Operations]</p>'
 WHERE code = 'ADMISSION_CONVENTION_FORMATION_DOCTORALE';
+
+UPDATE public.unicaen_renderer_template
+SET document_corps = '<p>Bonjour, </p>
+<p>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</p>
+<p>Votre dossier d''admission est noté comme <strong>incomplet</strong> par votre gestionnaire.</p>
+<p>Veuillez prendre connaissance des commentaires ajoutés à votre dossier, en vous connectant sur la plateforme ESUP-SyGAL via le lien suivant : VAR[Url#AccueilAdmission] </p>'
+WHERE code = 'ADMISSION_NOTIFICATION_DOSSIER_INCOMPLET';

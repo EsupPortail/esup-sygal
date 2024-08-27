@@ -51,4 +51,16 @@ class UrlService {
 
         return $url;
     }
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getAccueilAdmission() : string
+    {
+        $link = $this->renderer->url('admission', ['action' => 'index'], ['force_canonical' => true], true);
+        $url = "<a href='" . $link . "'>lien</a>";
+
+        return $url;
+    }
 }
