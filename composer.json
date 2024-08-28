@@ -59,8 +59,8 @@
         "webmozart/assert": "^1.3",
 
         "unicaen/alerte": "^3.0",
-        "unicaen/app": "^6.1",
-        "unicaen/auth": "^6.0",
+        "unicaen/app": "^6.1.6",
+        "unicaen/auth": "^6.0.4",
         "unicaen/auth-token": "^6.0",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "dev-release_3.1.0",
