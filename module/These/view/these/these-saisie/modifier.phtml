@@ -9,8 +9,7 @@
  * @var ?array $errorMessages
  */
 
-$this->headTitle($these->getDoctorant()->getNomUsuel());
-$this->headTitle($this->translate("Modification"));
+$this->headTitle($this->translate($these->getDoctorant()->getIndividu()->getNomUsuel()." Modification"));
 
 $form->prepare();
 ?>
@@ -44,11 +43,6 @@ $form->prepare();
     </div>
 <?php } ?>
 
-<?php
-echo $this->form()->openTag($form);
-echo $this->formHidden($form->get('id'));
-?>
-
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="informations-tab" data-bs-toggle="tab" data-bs-target="#informations" type="button" role="tab" aria-controls="informations" aria-selected="true"><?php echo $form->get("generalites")->getLabel();?></button>
@@ -65,15 +59,15 @@ echo $this->formHidden($form->get('id'));
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="encadrements-tab" data-bs-toggle="tab" data-bs-target="#encadrements" type="button" role="tab" aria-controls="encadrements" aria-selected="false"><?php echo $form->get("encadrements")->getLabel();?></button>
     </li>
-    <!--    <li class="nav-item" role="presentation">-->
-    <!--        <button class="nav-link" id="confidentialite-tab" data-bs-toggle="tab" data-bs-target="#confidentialite" type="button" role="tab" aria-controls="confidentialite" aria-selected="false">Spécifités envisagées</button>-->
-    <!--    </li>-->
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financement" type="button" role="tab" aria-controls="financement" aria-selected="false"><?php echo $form->get("financements")->getLabel();?></button>
     </li>
 </ul>
 
-<?php echo $this->form()->openTag($form); ?>
+<?php
+echo $this->form()->openTag($form);
+echo $this->formHidden($form->get('id'));
+?>
 
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
@@ -81,8 +75,6 @@ echo $this->formHidden($form->get('id'));
     </div>
     <div class="tab-pane fade" id="structures" role="tabpanel" aria-labelledby="structures-tab">
         <?php echo $this->partial('these/these-saisie/partial/structures'); ?>
-        <br/><br/>
-        <span class="alert alert-warning">Quid des co-tutelle ?</span>
     </div>
     <div class="tab-pane fade" id="specifites" role="tabpanel" aria-labelledby="specifites-tab">
         <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
@@ -92,9 +84,6 @@ echo $this->formHidden($form->get('id'));
     </div>
     <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
         <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
-    </div>
-    <div class="tab-pane fade" id="confidentialite" role="tabpanel" aria-labelledby="confidentialite-tab">
-        <!--        --><?php //echo $this->partial('these/these-saisie/partial/confidentialite'); ?>
     </div>
     <div class="tab-pane fade" id="financement" role="tabpanel" aria-labelledby="financement-tab">
         <?php echo $this->partial('these/these-saisie/partial/financement'); ?>
@@ -110,5 +99,3 @@ echo $this->formHidden($form->get('id'));
         cursor: pointer;
     }
 </style>
-
-

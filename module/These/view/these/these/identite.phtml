@@ -147,6 +147,12 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
         </h2>
     </div>
     <div class="card-body">
+        <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+            <button type="button" class="btn btn-outline-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#direction' ?>">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier la direction"); ?>
+            </button>
+        <?php endif ?>
         <?php echo $this->partial('these/these/partial/direction') ?>
     </div>
 </div>

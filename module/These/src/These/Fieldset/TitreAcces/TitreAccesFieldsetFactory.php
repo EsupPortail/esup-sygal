@@ -20,8 +20,6 @@ class TitreAccesFieldsetFactory
 
         /** @var TitreAccesHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
-
-//        $hydrator = $container->get('HydratorManager')->get(TitreAccesHydrator::class);
         $fieldset->setHydrator($hydrator);
 
         /** @var EtablissementService $etablissementService */

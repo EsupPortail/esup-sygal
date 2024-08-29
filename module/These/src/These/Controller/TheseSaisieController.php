@@ -5,30 +5,20 @@ namespace These\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Form\FieldsetInterface;
-use Laminas\Form\Form;
 use Laminas\View\Model\ViewModel;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Form\TheseSaisie\TheseSaisieFormAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Form\Element\Collection;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 class TheseSaisieController extends AbstractController
 {
-    use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use TheseServiceAwareTrait;
     use TheseSaisieFormAwareTrait;
-    use SourceAwareTrait;
-    use TheseServiceAwareTrait;
-    use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use DoctorantServiceAwareTrait;
     use RoleServiceAwareTrait;
 
@@ -36,12 +26,11 @@ class TheseSaisieController extends AbstractController
     {
         $request = $this->getRequest();
         $form = $this->getTheseSaisieForm();
+        $form->bind($this->theseService->newThese());
 
         $viewModel = new ViewModel([
             'form' => $form,
         ]);
-
-        $form->bind($this->theseService->newThese());
 
         if (!$request->isPost()) {
             return $viewModel;
@@ -54,11 +43,6 @@ class TheseSaisieController extends AbstractController
             $viewModel->setVariable("errorMessages", $messages);
             return $viewModel;
         }
-
-        /** @var These $these */
-        $these = $form->getData();
-        $these->setSource($this->source);
-        $these->setSourceCode(uniqid());
 
         /** @var These $these */
         $these = $form->getData();

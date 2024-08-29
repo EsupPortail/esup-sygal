@@ -17,6 +17,7 @@ use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\These;
+use UnicaenApp\Form\Element\SearchAndSelect;
 use UnicaenApp\Form\Element\SearchAndSelect2;
 
 class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
@@ -135,7 +136,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 
     private function _addCommuns(string $prefixe)
     {
-        $individu = new SearchAndSelect2($prefixe . '-individu', ['label' => "Individu * :"]);
+        $individu = new SearchAndSelect($prefixe . '-individu', ['label' => "Individu * :"]);
         $individu
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
             ->setAttributes([
@@ -149,11 +150,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => $prefixe . '-etablissement',
             'options' => [
                 'label' => 'Établissement * :',
-                'object_manager' => $this->etablissementService->getEntityManager(),
                 'target_class' => Etablissement::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                ],
                 'label_generator' => function($targetEntity) {
                     $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
                     return $targetEntity->getStructure()?->getLibelle() . $sigle;
@@ -201,15 +198,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => $prefixe . '-ecoleDoctorale',
             'options' => [
                 'label' => 'École doctorale * :',
-                'object_manager' => $this->structureService->getEntityManager(),
                 'target_class' => EcoleDoctorale::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                    'params' => [],
-                    'callback' => function() {
-                        $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
-                    },
-                ],
                 'label_generator' => function($targetEntity) {
                     $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
                     return $targetEntity->getStructure()?->getLibelle() . $sigle;
@@ -223,33 +212,6 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
                 'data-live-search' => 'true',
             ],
         ]);
-
-//        $etab = new SearchAndSelect2($prefixe . '-etablissement', ['label' => "Établissement :"]);
-//        $etab
-//            ->setAutocompleteSource($this->urlAutocompleteEtablissement)
-//            ->setAttributes([
-//                'id' => $prefixe . '-etablissement',
-//                'placeholder' => "Recherchez l'établissement...",
-//            ]);
-//        $this->add($etab);
-
-//        $ed = new SearchAndSelect2($prefixe . '-ecoleDoctorale', ['label' => "École doctorale :"]);
-//        $ed
-//            ->setAutocompleteSource($this->urlAutocompleteEcoleDoctorale)
-//            ->setAttributes([
-//                'id' => $prefixe . '-ecoleDoctorale',
-//                'placeholder' => "Recherchez l'école doctorale...",
-//            ]);
-//        $this->add($ed);
-
-//        $ur = new SearchAndSelect2($prefixe . '-uniteRecherche', ['label' => "Unité de recherche :"]);
-//        $ur
-//            ->setAutocompleteSource($this->urlAutocompleteUniteRecherche)
-//            ->setAttributes([
-//                'id' => $prefixe . '-uniteRecherche',
-//                'placeholder' => "Recherchez l'unité de recherche...",
-//            ]);
-//        $this->add($ur);
 
         $this->add([
             'type' => Select::class,

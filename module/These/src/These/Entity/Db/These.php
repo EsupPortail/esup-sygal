@@ -1751,14 +1751,15 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Add financement.
      *
-     * @param Financement $financements
+     * @param Collection $financements
      *
      * @return These
      */
     public function addFinancements(Collection $financements)
     {
         foreach ($financements as $f) {
-            $this->financements->add($f);
+            $f->setThese($this);
+            $this->financements[] = $f;
         }
 
         return $this;

@@ -3,24 +3,17 @@
 namespace These\Fieldset\Financement;
 
 use Application\Entity\Db\OrigineFinancement;
-use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Laminas\Filter\ToNull;
-use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Number;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
-use These\Fieldset\Direction\DirectionFieldset;
 
 class FinancementFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    use EtablissementServiceAwareTrait;
-    use DisciplineServiceAwareTrait;
-
     private array $originesFinancements;
 
     public function setOrigineFinancementsPossibles(array $originesFinancements): void
@@ -48,12 +41,12 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
 
     public function prepareElement(FormInterface $form): void
     {
+        /** @var These $these */
+        $these = $form->getObject();
+        $estModifiable = !$these->getSource()->getImportable();
+
         $this->get('origineFinancement')->setEmptyOption('Sélectionnez une option');
         $this->get('origineFinancement')->setValueOptions($this->originesFinancements);
-
-        /** @var These $these */
-        $these = $this->getObject();
-        $estModifiable = !$these->getSource()->getImportable();
 
         $this->get('annee')->setAttribute('disabled', !$estModifiable);
         $this->get('origineFinancement')->setAttribute('disabled', !$estModifiable);

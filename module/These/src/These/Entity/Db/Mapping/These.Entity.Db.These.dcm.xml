@@ -129,7 +129,7 @@
             </join-columns>
         </many-to-one>
 
-        <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these"/>
+        <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these" orphan-removal="true"/>
         <one-to-many target-entity="Soutenance\Entity\Proposition" field="propositions" mapped-by="these"/>
 
     </entity>

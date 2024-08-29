@@ -9,23 +9,11 @@ use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareTrait;
-use Depot\Entity\Db\Attestation;
-use Depot\Entity\Db\MetadonneeThese;
-use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Fichier\Entity\Db\NatureFichier;
-use Fichier\Entity\Db\VersionFichier;
+use Doctrine\ORM\Exception\ORMException;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
-use Laminas\EventManager\Event;
-use Laminas\EventManager\ListenerAggregateTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
-use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -36,19 +24,11 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\FichierThese\MembreData;
 use These\Service\FichierThese\PdcData;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 
-class TheseService extends BaseService //implements ListenerAggregateInterface
+class TheseService extends BaseService
 {
     use SourceServiceAwareTrait;
-    use ListenerAggregateTrait;
-    use ValidationServiceAwareTrait;
-    use NotifierServiceAwareTrait;
-    use FichierTheseServiceAwareTrait;
-    use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
-    use UserServiceAwareTrait;
-    use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use ActeurServiceAwareTrait;
@@ -75,14 +55,13 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         return $these;
     }
 
-    public function saveThese(These $these)
+    public function saveThese(These $these): These
     {
         /** @var Acteur[] $direction */
         $direction = $these->getActeursByRoleCode([
             Role::CODE_DIRECTEUR_THESE,
             Role::CODE_CODIRECTEUR_THESE,
         ]);
-
 
         foreach ($direction as $acteur) {
             try {
@@ -136,12 +115,14 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         /** @var Financement $financement */
         foreach ($financements as $financement) {
             try {
-                $financement->setThese($these);
+                // afin de satisfaire la contrainte d'unicité en BDD
+                if($financement->getId() === null) $financement->setSourceCode($this->sourceService->genereateSourceCode());
                 $this->getEntityManager()->persist($financement);
             } catch (ORMException $e) {
                 throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
             }
         }
+
         if($these->getId() !== null){
             return $this->updateAll($these);
         }else{
@@ -241,10 +222,6 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
 
-        $jury = array_filter($acteurs, function (Acteur $a) {
-            return $a->estMembreDuJury();
-        });
-
         $rapporteurs = array_filter($acteurs, function (Acteur $a) {
             return $a->estRapporteur();
         });
@@ -263,9 +240,6 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $pdcData->setCoencadrants($coencadrants);
         $president = array_filter($acteurs, function (Acteur $a) {
             return $a->estPresidentJury();
-        });
-        $coencadrants = array_filter($acteurs, function (Acteur $a) {
-            return $a->estCoEncadrant();
         });
 
         $rapporteurs = array_diff($rapporteurs, $president);
@@ -423,16 +397,6 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @return bool
      */
     public function isDoctorant(These $these, Individu $individu): bool
-    {
-        return ($these->getDoctorant()->getIndividu() === $individu);
-    }
-
-    /**
-     * @param These $these
-     * @param Individu $individu
-     * @return bool
-     */
-    public function isActeur(These $these, Individu $individu, ?array $roles = null): bool
     {
         return ($these->getDoctorant()->getIndividu() === $individu);
     }

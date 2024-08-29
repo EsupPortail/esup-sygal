@@ -2,12 +2,8 @@
 
 namespace These\Fieldset\Financement;
 
-use Application\Service\Financement\FinancementService;
-use Application\Service\Source\SourceService;
-use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
-use Structure\Service\Etablissement\EtablissementService;
 
 class FinancementHydratorFactory
 {

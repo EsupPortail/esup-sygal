@@ -32,10 +32,6 @@ use These\Fieldset\Structures\StructuresFieldset;
 use These\Fieldset\Structures\StructuresFieldsetFactory;
 use These\Fieldset\TitreAcces\TitreAccesFieldset;
 use These\Fieldset\TitreAcces\TitreAccesFieldsetFactory;
-use These\Fieldset\TitreAcces\TitreAccesHydrator;
-use These\Fieldset\TitreAcces\TitreAccesHydratorFactory;
-use These\Form\TheseFormsManager;
-use These\Form\TheseFormsManagerFactory;
 use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormFactory;
 use These\Form\TheseSaisie\TheseSaisieHydrator;
@@ -164,13 +160,10 @@ return [
             GeneralitesHydrator::class => GeneralitesHydratorFactory::class,
             DirectionHydrator::class => DirectionHydratorFactory::class,
             FinancementHydrator::class => FinancementHydratorFactory::class,
-            TitreAccesHydrator::class => TitreAccesHydratorFactory::class,
         ],
     ],
     'service_manager' => [
-        'factories' => [
-            TheseFormsManager::class => TheseFormsManagerFactory::class,
-        ],
+        'factories' => [],
     ],
     'view_helpers' => [
         'factories' => [],

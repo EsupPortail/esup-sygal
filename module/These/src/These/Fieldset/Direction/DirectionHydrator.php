@@ -100,7 +100,7 @@ class DirectionHydrator extends AbstractHydrator
     {
         if(isset($data['directeur-individu'])){
             /** @var Individu $individu */
-            $individuId = SAS2::extractIdFromValue($data['directeur-individu']);
+            $individuId = SAS2::extractIdFromValue($data['directeur-individu']["id"]);
             $individu = $this->individuService->getRepository()->find($individuId);
 
             $acteur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE);
@@ -119,7 +119,7 @@ class DirectionHydrator extends AbstractHydrator
             $isEnabled = $data[$prefixe . 'enabled'] ?? false;
             if ($isEnabled) {
                 /** @var Individu $individu */
-                $individuId = SAS2::extractIdFromValue($data[$prefixe . 'individu']);
+                $individuId = SAS2::extractIdFromValue($data[$prefixe . 'individu']["id"]);
                 $individu = $this->individuService->getRepository()->find($individuId);
 
                 $acteur = $this->addActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE);
@@ -156,7 +156,7 @@ class DirectionHydrator extends AbstractHydrator
     private function hydrateActeur(Acteur $acteur, array $data, string $prefixe)
     {
         $dataActeur = [
-            ($k = 'individu') => SAS2::extractIdFromValue($data[$prefixe . $k]),
+            ($k = 'individu') => SAS2::extractIdFromValue($data[$prefixe . $k]["id"]),
             ($k = 'etablissement') => $data[$prefixe . $k],
             ($k = 'ecoleDoctorale') => $data[$prefixe . $k],
             ($k = 'uniteRecherche') => $data[$prefixe . $k],

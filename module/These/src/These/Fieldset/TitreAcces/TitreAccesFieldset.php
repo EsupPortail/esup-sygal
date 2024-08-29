@@ -66,17 +66,13 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
             'name' => 'pays',
             'options' => [
                 'label' => "Pays d'obtention : *",
-                'object_manager' => $this->getEntityManager(),
                 'target_class' => Pays::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                ],
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [
-                'id' => 'etablissement',
+                'id' => 'pays',
                 'class' => 'selectpicker show-menu-arrow',
-                'title' => "Sélectionner l'établissement",
+                'title' => "Sélectionner le pays",
                 'data-live-search' => 'true',
             ],
         ]);
@@ -86,16 +82,11 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
             'name' => 'etablissement',
             'options' => [
                 'label' => 'Établissement : *',
-                'object_manager' => $this->etablissementService->getEntityManager(),
                 'target_class' => Etablissement::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                ],
                 'label_generator' => function($targetEntity) {
                     $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
                     return $targetEntity->getStructure()?->getLibelle() . $sigle;
                 },
-//                'disable_inarray_validator' => false,
             ],
             'attributes' => [
                 'id' => 'etablissement',

@@ -58,23 +58,19 @@ $form->prepare();
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="encadrements-tab" data-bs-toggle="tab" data-bs-target="#encadrements" type="button" role="tab" aria-controls="encadrements" aria-selected="false"><?php echo $form->get("encadrements")->getLabel();?></button>
     </li>
-<!--    <li class="nav-item" role="presentation">-->
-<!--        <button class="nav-link" id="confidentialite-tab" data-bs-toggle="tab" data-bs-target="#confidentialite" type="button" role="tab" aria-controls="confidentialite" aria-selected="false">Spécifités envisagées</button>-->
-<!--    </li>-->
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financement" type="button" role="tab" aria-controls="financement" aria-selected="false"><?php echo $form->get("financements")->getLabel();?></button>
     </li>
 </ul>
 
 <?php echo $this->form()->openTag($form); ?>
+
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
         <?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
     </div>
     <div class="tab-pane fade" id="structures" role="tabpanel" aria-labelledby="structures-tab">
         <?php echo $this->partial('these/these-saisie/partial/structures'); ?>
-        <br/><br/>
-        <span class="alert alert-warning">Quid des co-tutelle ?</span>
     </div>
     <div class="tab-pane fade" id="specifites" role="tabpanel" aria-labelledby="specifites-tab">
         <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
@@ -85,9 +81,6 @@ $form->prepare();
     <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
         <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
     </div>
-    <div class="tab-pane fade" id="confidentialite" role="tabpanel" aria-labelledby="confidentialite-tab">
-        <!--        --><?php //echo $this->partial('these/these-saisie/partial/confidentialite'); ?>
-    </div>
     <div class="tab-pane fade" id="financement" role="tabpanel" aria-labelledby="financement-tab">
         <?php echo $this->partial('these/these-saisie/partial/financement'); ?>
     </div>
@@ -97,11 +90,8 @@ $form->prepare();
 <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
 <?php echo $this->form()->closeTag(); ?>
 
-
 <style>
     span.erase-acteur {
         cursor: pointer;
     }
 </style>
-
-

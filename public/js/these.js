@@ -72,6 +72,7 @@ $(document).ready(function() {
     if (url.indexOf('these/identite/') !== -1) {
         $('.openModalModificationTheseBtn').on('click', function() {
             var url = $(this).data('url');
+            $.fn.modal.Constructor.prototype._enforceFocus = function () { };
             $('#modalModificationThese').modal('show');
             $.ajax({
                 url: url,
@@ -87,6 +88,7 @@ $(document).ready(function() {
                             tabButton.tab('show');
                         }
                     }
+                    $('#directeur-qualite, #codirecteur1-qualite, #codirecteur2-qualite').selectpicker('destroy'); // Désactive Bootstrap-Select dans la modal
                     updateFields()
                 },
                 error: function() {

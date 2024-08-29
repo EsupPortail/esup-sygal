@@ -26,7 +26,6 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
     use EtablissementServiceAwareTrait;
 
     private string $urlAutocompleteIndividu;
-    private string $domainesHal;
     private array $pays;
 
     public function setUrlAutocompleteIndividu(string $urlAutocompleteIndividu): void
@@ -157,15 +156,7 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Établissement de cotutelle * :',
                 'empty_option' => "Sélectionnez une option",
-                'object_manager' => $this->etablissementService->getEntityManager(),
                 'target_class' => Etablissement::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                ],
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [

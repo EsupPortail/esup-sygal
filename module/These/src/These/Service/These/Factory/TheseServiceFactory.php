@@ -27,7 +27,6 @@ class TheseServiceFactory
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
-
         /** @var FichierStorageService $fileService */
         $fileService = $container->get(FichierStorageService::class);
 
@@ -40,36 +39,6 @@ class TheseServiceFactory
         $service->setEtablissementService($etablissementService);
         $service->setFichierStorageService($fileService);
         $service->setSourceService($sourceService);
-
-//        $acteurService = $container->get(ActeurService::class);
-//        $validationService = $container->get('ValidationService');
-//        $membreService = $container->get(MembreService::class);
-//        $notifierService = $container->get(NotifierService::class);
-//        $fichierTheseService = $container->get('FichierTheseService');
-//        $variableService = $container->get('VariableService');
-//        $userContextService = $container->get('UserContextService');
-//        $userService = $container->get('unicaen-auth_user_service');
-//        $utilisateurService = $container->get(UtilisateurService::class);
-//        $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
-//        $sourceService = $container->get(SourceService::class);
-//        /** @var EtablissementService $etablissementService */
-//        $etablissementService = $container->get(EtablissementService::class);
-//        /** @var FichierStorageService $fileService */
-//        $fileService = $container->get(FichierStorageService::class);
-//        $service = new TheseService();
-//        $service->setActeurService($acteurService);
-//        $service->setValidationService($validationService);
-//        $service->setMembreService($membreService);
-//        $service->setNotifierService($notifierService);
-//        $service->setFichierTheseService($fichierTheseService);
-//        $service->setVariableService($variableService);
-//        $service->setUserContextService($userContextService);
-//        $service->setUserService($userService);
-//        $service->setUtilisateurService($utilisateurService);
-//        $service->setEtablissementService($etablissementService);
-//        $service->setFichierStorageService($fileService);
-//        $service->setAuthorizeService($authorizeService);
-//        $service->setSourceService($sourceService);
 
         return $service;
     }

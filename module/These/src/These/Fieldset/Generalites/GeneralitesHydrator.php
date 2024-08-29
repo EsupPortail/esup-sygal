@@ -4,18 +4,14 @@ namespace These\Fieldset\Generalites;
 
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Individu\Service\IndividuServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
 
 class GeneralitesHydrator extends DoctrineObject
 {
-    use DoctorantServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
     use SourceServiceAwareTrait;
-    use IndividuServiceAwareTrait;
 
     /**
      * @param object $object

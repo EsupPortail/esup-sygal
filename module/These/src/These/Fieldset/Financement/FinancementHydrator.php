@@ -3,19 +3,10 @@
 namespace These\Fieldset\Financement;
 
 use Application\Entity\Db\Financement;
-use Application\Service\Financement\FinancementServiceAwareTrait;
-use Application\Service\Source\SourceServiceAwareTrait;
-use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 
 class FinancementHydrator extends DoctrineObject
 {
-    use EtablissementServiceAwareTrait;
-    use DoctorantServiceAwareTrait;
-    use FinancementServiceAwareTrait;
-    use SourceServiceAwareTrait;
-
     /**
      * @param object $object $object
      * @return array
