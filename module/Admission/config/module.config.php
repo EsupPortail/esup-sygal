@@ -48,6 +48,7 @@ use Admission\Service\Document\DocumentService;
 use Admission\Service\Document\DocumentServiceFactory;
 use Admission\Service\Etudiant\EtudiantService;
 use Admission\Service\Etudiant\EtudiantServiceFactory;
+use Admission\Service\Exporter\Admission\AdmissionExporter;
 use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporter;
 use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporterFactory;
 use Admission\Service\Financement\FinancementService;
@@ -65,6 +66,7 @@ use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -421,6 +423,7 @@ return array(
             UrlService::class => UrlServiceFactory::class,
 
             RecapitulatifExporter::class => RecapitulatifExporterFactory::class,
+            AdmissionExporter::class => InvokableFactory::class,
 
             ExtractionEmailRule::class => ExtractionEmailRuleFactory::class
         ],

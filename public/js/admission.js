@@ -63,7 +63,7 @@ function isValidINE(ine) {
     }
 
     // Vérifie que le INE contient soit 10 chiffres et 1 lettre, soit 9 chiffres et 2 lettres
-    const regex = /^(?=(?:\D*\d){9,10}(?!\D*\d))(?=(?:\d*\D){1,2}(?!\d*\D))[A-Za-z0-9]{11}$/;
+    const regex = /^(?:\d{10}[A-Za-z]|\d{9}[A-Za-z]{2})$/;
     return regex.test(ine);
 }
 
@@ -556,8 +556,8 @@ document.addEventListener("DOMContentLoaded", function() {
                             // Ajouter le fichier à FilePond
                             pond.addFiles([fichier]);
                         }
+                        fileCharteDoctoratDiv.style.display = 'block';
                     }
-                    fileCharteDoctoratDiv.style.display = 'block';
                 });
             }
 
@@ -706,6 +706,9 @@ $(document).ready(function () {
         var labelInputDirecteur = $('label[for="inscription[nomDirecteurThese]"]');
         const labelDirecteurNonEnregistre = "directeur-non-enregistre-label";
 
+        if(idNomDirecteur.val() === '' && nomDirecteurAutocomplete.val() !== '' || idPrenomDirecteur.val() === '' && prenomDirecteurAutocomplete.val() !== ''){
+            updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
+        }
         nomDirecteurAutocomplete.on('autocompleteselect', function(event, data) {
             handleDirectionAutocompleteSelect(nomDirecteurAutocomplete, prenomDirecteurAutocomplete, idNomDirecteur, idPrenomDirecteur, emailDirecteur, data);
             updateDirectionInfosLabels(idNomDirecteur, idPrenomDirecteur, nomDirecteurAutocomplete, prenomDirecteurAutocomplete, labelInputDirecteur, labelDirecteurNonEnregistre)
@@ -735,6 +738,10 @@ $(document).ready(function () {
         const emailCodirecteur = $("#emailCodirecteurThese");
         const labelInputCoDirecteur = $('label[for="inscription[nomCoDirecteurThese]"]');
         const labelCoDirecteurNonEnregistre = "codirecteur-non-enregistre-label";
+
+        if(idNomCodirecteur.val() === '' && nomCodirecteurAutocomplete.val() !== '' || idPrenomCodirecteur.val() === '' && prenomCodirecteurAutocomplete.val() !== ''){
+            updateDirectionInfosLabels(idNomCodirecteur, idPrenomCodirecteur, nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, labelInputCoDirecteur, labelCoDirecteurNonEnregistre)
+        }
 
         nomCodirecteurAutocomplete.on('autocompleteselect', function(event, data) {
             handleDirectionAutocompleteSelect(nomCodirecteurAutocomplete, prenomCodirecteurAutocomplete, idNomCodirecteur, idPrenomCodirecteur, emailCodirecteur, data);

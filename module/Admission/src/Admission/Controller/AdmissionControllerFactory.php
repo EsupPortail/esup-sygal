@@ -8,6 +8,7 @@ use Admission\Service\Admission\AdmissionService;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleService;
 use Admission\Service\Document\DocumentService;
 use Admission\Service\Etudiant\EtudiantService;
+use Admission\Service\Exporter\Admission\AdmissionExporter;
 use Admission\Service\Exporter\Recapitulatif\RecapitulatifExporter;
 use Admission\Service\Financement\FinancementService;
 use Admission\Service\Inscription\InscriptionService;
@@ -58,6 +59,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
         $roleService = $container->get(RoleService::class);
         $admissionRechercheService = $container->get(AdmissionRechercheService::class);
+        $admissionExporter = $container->get(AdmissionExporter::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -88,6 +90,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
         $controller->setRoleService($roleService);
         $controller->setAdmissionRechercheService($admissionRechercheService);
+        $controller->setAdmissionExporter($admissionExporter);
 
         return $controller;
     }

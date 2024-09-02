@@ -2,24 +2,24 @@
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionOperationInterface;
-use Admission\Provider\Privilege\AdmissionPrivileges;use Admission\Service\Admission\AdmissionSorter;
+use Admission\Provider\Privilege\AdmissionPrivileges;
+use Admission\Service\Admission\AdmissionSorter;
 use Application\Entity\Db\Role;
-use Individu\Entity\Db\Individu;
 use Application\Search\SearchResultPaginator;
 use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 /**
  * @var PhpRenderer $this
  * @var SearchResultPaginator $admissions
- * @var string      $text
- * @var Role        $roleDirecteurThese
  * @var string      $routeName
  * @var Admission $admission
  * @var array $operations
  * @var Individu $individu
  * @var SearchAndSelect $inputIndividu
  * @var AdmissionOperationInterface $operationEnAttente
+ * @var Role $role
  * @var boolean $isOperationAllowedByRole
  * @var array $commentaires
  *
@@ -41,7 +41,23 @@ echo $this->partial('admission/admission/partial/header', []); ?>
         <form action="<?php echo $this->url('admission', [], [], true); ?>" method="post">
             <div class="row individu-recherche-index-container">
                 <div class="col-lg-4 col-sm-12 search-individu-label">
-                    <label for="individuId">Entrez l'individu recherché :</label>
+                    <label for="individuId">Entrez l'individu recherché</label>
+                    <?php if($role->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE || $role->getCode() === Role::CODE_DIRECTEUR_THESE) { ?>
+                        <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
+                            <span class="tooltip-text">
+                                Vous ne pourrez accéder à un dossier d'admission que si  : <br>
+                                - l'individu ne possède pas encore de dossier d'admission <br>
+                                - ou que vous êtes le (co-)directeur de thèse de celui-ci.
+                            </span>
+                        </span>
+                    <?php }else if($role->isEcoleDoctoraleDependant() || $role->isUniteRechercheDependant()){ ?>
+                        <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
+                            <span class="tooltip-text">
+                                Vous ne pourrez accéder à un dossier d'admission que si votre école doctorale/unité de recherche est déclarée dans celui-ci.
+                            </span>
+                        </span>
+                    <?php }?>
+                     :
                 </div>
                 <div class="col-lg-4 col-sm-12 search-individu-input">
                     <?php echo $this->formControlGroup($inputIndividu); ?>
@@ -235,7 +251,8 @@ echo $this->partial('admission/admission/partial/header', []); ?>
     <?php endif ?>
 <?php }else{ ?>
     <div class="row acces-admission-btn-container">
-        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], ['query' => ['refresh' => 'true']], true) ?>" class="btn btn-primary acces-admission-btn">Accéder à votre dossier d'admission</a>
+        <?php $texteBtn = $role->getRoleId() === Role::ROLE_ID_USER ? "Créer votre dossier d'admission" : "Accéder à votre dossier d'admission" ?>
+        <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant','individu' => $individu->getId()], ['query' => ['refresh' => 'true']], true) ?>" class="btn btn-primary acces-admission-btn"><?php echo $texteBtn; ?></a>
     </div>
 <?php } ?>
 
@@ -243,7 +260,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
     <a href="<?php echo $this->url('admission/generer-export-csv', [], ['query' => $this->queryParams()], true); ?>"
        class="btn btn-primary"
     >
-        <span class="icon icon-export"></span>
+        <span class="icon icon-zip"></span>
         Générer l'export CSV des dossiers d'admissions validés
     </a>
 <?php } ?>

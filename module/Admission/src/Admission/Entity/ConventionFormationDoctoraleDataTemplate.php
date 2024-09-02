@@ -87,19 +87,25 @@ class ConventionFormationDoctoraleDataTemplate
         return $inscription ? $admissionInscriptionFormatter->htmlifyConventionCollaborationInformations($inscription, $estSalarie, $etablissementPartenaire) : "";
     }
 
+    public function getConfidentialiteInformationstoHtml(): ?string
+    {
+        $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
+        $inscription = $this->admission->getInscription()->first() ? $this->admission->getInscription()->first() : null;
+        $conventionFormationDoctorale = $this->admission->getConventionFormationDoctorale()->first() ? $this->admission->getConventionFormationDoctorale()->first() : null;
+        return $inscription ? $admissionInscriptionFormatter->htmlifyConfidentialiteInformations($inscription, $conventionFormationDoctorale) : "";
+    }
+
     public function getResponsablesURDirecteurtoHtml()
     {
         $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
         $inscription = $this->admission->getInscription()->first() ? $this->admission->getInscription()->first() : null;
         return $admissionInscriptionFormatter->htmlifyResponsablesURDirecteur($inscription, $this->getIndividuResponsablesUniteRechercheDirecteur());
-
     }
 
     public function getResponsablesURCoDirecteurtoHtml()
     {
         $admissionInscriptionFormatter = new AdmissionInscriptionFormatter();
         return $admissionInscriptionFormatter->htmlifyResponsablesURCoDirecteur($this->getIndividuResponsablesUniteRechercheCoDirecteur());
-
     }
 
     /**
@@ -128,5 +134,4 @@ class ConventionFormationDoctoraleDataTemplate
         }
         return $operationsFormatter->htmlifyOperations($operationsToPrint);
     }
-
 }
