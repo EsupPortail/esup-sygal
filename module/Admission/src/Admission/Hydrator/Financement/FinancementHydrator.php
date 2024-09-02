@@ -33,7 +33,7 @@ class FinancementHydrator extends DoctrineObject
             $data["detailContratDoctoral"] = null;
         }
 
-        if(isset($data["financement"]) && !empty($data["financement"])){
+        if(isset($data["financement"]) && empty($data["financement"])){
             $data["financement"] = null;
         }
 

@@ -39,14 +39,12 @@ $canSupprimerOperation =
             <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
 
             <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
-                <?php if(isset($showActionButtons) && $showActionButtons) { ?>
-                    <br>
-                    <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                <br>
+                <a type="button" class="card-link text-sm" data-bs-toggle="modal"
                        data-bs-target="#avisComplemsModal">
-                        <span class="fas fa-glasses" title="Voir les détails de la validation"></span>
+                    <span class="fas fa-glasses" title="Voir les détails de la validation"></span>
                         Détails
-                    </a>
-                <?php } ?>
+                </a>
             <?php endif ?>
         </p>
         <div class="log-full-content d-none">

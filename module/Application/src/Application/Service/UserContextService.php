@@ -74,6 +74,16 @@ class UserContextService extends BaseUserContextService
         return $this->_getSelectedRoleForCode(Role::CODE_CODIRECTEUR_THESE);
     }
 
+    public function getSelectedRolePotentielDirecteurThese(): ?Role
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_ADMISSION_DIRECTEUR_THESE);
+    }
+
+    public function getSelectedRolePotentielCodirecteurThese(): ?Role
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_ADMISSION_CODIRECTEUR_THESE);
+    }
+
     /**
      * @return Role|null
      */

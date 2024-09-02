@@ -113,6 +113,7 @@ class AdmissionRechercheController extends AbstractController implements SearchC
             'text' => $text,
             'routeName' => $this->routeName,
             'operations' => $operations,
+            'role' => $this->userContextService->getSelectedIdentityRole(),
             'individu' => $individu,
             'admission' => $admission,
             'inputIndividu' => $inputIndividu,
