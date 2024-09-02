@@ -8,6 +8,8 @@ Journal des modifications
 - Doc : exemple de config SMTP plus complet dans config/autoload/secret.local.php.dist.
 - Doc : config ImageMagick en cas d'erreur 'attempt to perform an operation not allowed by the security policy PDF' lors de la création de l'aperçu d'une page de couverture.
 - BDD : ajout de triggers pour créer automatiquement les rôles associés à toute nouvelle structure créée (Etab d'inscription / ED / UR).
+- Module Admission : Ajout de la génération d'un fichier ZIP pour l'export des dossiers d'admission (fichiers dans l'archive : admis.csv, admissions.csv)
+- Module Admission : Changement du format du numéro de candidat, nécessaire pour l'export vers Pégase : SYG+AnnéeUniversitaire1èreInscription+NuméroDeDossier
 - [FIX] Requête de recherche de thèses par acteur : les acteurs historisés n'étaient pas écartés.
 - [FIX] Module Information : utilisation d'une langue par défaut (FR) pour permettre la création d'une page d'information.
 - [FIX] Rapport d'activité : PHP Notice à propos d'une variable non définie.
