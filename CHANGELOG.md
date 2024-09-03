@@ -10,6 +10,7 @@ Journal des modifications
 - BDD : ajout de triggers pour créer automatiquement les rôles associés à toute nouvelle structure créée (Etab d'inscription / ED / UR).
 - Module Admission : Ajout de la génération d'un fichier ZIP pour l'export des dossiers d'admission (fichiers dans l'archive : admis.csv, admissions.csv)
 - Module Admission : Changement du format du numéro de candidat, nécessaire pour l'export vers Pégase : SYG+AnnéeUniversitaire1èreInscription+NuméroDeDossier
+- Module Formations : Affichage systématique du nom patronymique pour le formateur
 - [FIX] Requête de recherche de thèses par acteur : les acteurs historisés n'étaient pas écartés.
 - [FIX] Module Information : utilisation d'une langue par défaut (FR) pour permettre la création d'une page d'information.
 - [FIX] Rapport d'activité : PHP Notice à propos d'une variable non définie.
