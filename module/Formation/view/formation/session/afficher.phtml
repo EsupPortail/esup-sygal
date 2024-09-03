@@ -270,7 +270,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             <ul>
             <?php foreach ($formateurs as $formateur) : ?>
                 <li>
-                    <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+                    <?php echo $formateur->getIndividu()->getNomComplet(false, false, false, false, true); ?>
                     <?php if ($canModifierSession) : ?>
                         <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
                         <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"

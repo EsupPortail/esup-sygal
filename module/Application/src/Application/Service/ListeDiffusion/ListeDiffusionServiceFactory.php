@@ -29,11 +29,11 @@ class ListeDiffusionServiceFactory
             $container->get(ListeDiffusionHandler::class),
         ]);
 
-        /**
-         * @var \Application\Service\ListeDiffusion\Url\UrlService $urlService
-         */
-        $urlService = $container->get(UrlService::class);
-        $service->setUrlService($urlService);
+//        /**
+//         * @var \Application\Service\ListeDiffusion\Url\UrlService $urlService
+//         */
+//        $urlService = $container->get(UrlService::class);
+//        $service->setUrlService($urlService);
 
         return $service;
     }
