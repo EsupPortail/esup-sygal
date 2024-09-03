@@ -15,6 +15,7 @@ Journal des modifications
 - [FIX] Module Information : utilisation d'une langue par défaut (FR) pour permettre la création d'une page d'information.
 - [FIX] Rapport d'activité : PHP Notice à propos d'une variable non définie.
 - [FIX] Erreur 'L'alias ur est inconnu du QueryBuilder' en cliquant sur le bouton 'Générer rôles par défaut' pour une ED.
+- [FIX] Module Formation : l'affichage du tableau des sessions de formation était buggé (à cause de l'affichage de la description d'une formation)
 
 8.4.0
 -----

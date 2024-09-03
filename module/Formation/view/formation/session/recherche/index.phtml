@@ -94,7 +94,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                         <?php echo $session->getFormation()->getLibelle(); ?>
                         <?php if ($session->getFormation()->getDescription() !== null AND trim($session->getFormation()->getDescription()) !== null) : ?>
                             <span class="icon icon-info"
-                                  title="<?php echo $session->getFormation()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                  title="<?php echo strip_tags($session->getFormation()->getDescription()); ?>" data-bs-toggle="tooltip" data-bs-html="true"
                             ></span>
                         <?php endif; ?>
                         <br>
