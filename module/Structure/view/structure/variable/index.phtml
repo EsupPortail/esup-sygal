@@ -81,7 +81,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
                         ?>
                         <a  <?php /**  @see \Structure\Controller\VariableController::supprimerAction() */ ?>
                                 data-event="modification" data-toggle="confirmationx"
-                                href="<?php echo $this->url('etablissement/supprimer', ['id' => $variable->getId()], ['query' => ['redirect' => $redirectUrl]], true); ?>"
+                                href="<?php echo $this->url('etablissement/supprimer-variable', ['id' => $variable->getId()], ['query' => ['redirect' => $redirectUrl]], true); ?>"
                         >
                                 <span class="icon icon-delete iconly float-end" style="color:darkred;"
                                       title="Supprimer la variable"></span>

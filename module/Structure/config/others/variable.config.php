@@ -42,7 +42,7 @@ return [
                             ],
                         ],
                     ],
-                    'supprimer' => [
+                    'supprimer-variable' => [
                         'type'          => Segment::class,
                         'options'       => [
                             'route'       => '/supprimer/:id',
