@@ -167,11 +167,11 @@ class ApplicationNavigationFactory extends NavigationFactory
 
         /** ADMISSION */
         /**
-         * Mon admission
+         * Admission
          */
-        // Rôle Doctorant : génération d'une page "Mon Admission"
+        // Rôle Admin Tech / Doctorant : génération d'une page "Admission"
         if ($page['pages'][$key = self::MON_ADMISSION_PAGE_ID] ?? null) {
-            if ($this->role !== null && ($this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CANDIDAT || $this->role->getRoleId() == Role::ROLE_ID_USER)) {
+            if ($this->role !== null && ($this->role->getCode() == Role::CODE_ADMIN_TECH || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CANDIDAT || $this->role->getRoleId() == Role::ROLE_ID_USER)) {
                 $page['visible'] = true;
             } else {
                 unset($page['pages'][$key]);
@@ -182,7 +182,7 @@ class ApplicationNavigationFactory extends NavigationFactory
          * Mes admissions
          */
         if ($page['pages'][$key = self::MES_ADMISSIONS_PAGE_ID] ?? null) {
-            if ($this->role !== null && ($this->role->getCode() == Role::CODE_ADMIN_TECH || $this->userContextService->getSelectedRoleDirecteurThese() || $this->userContextService->getSelectedRoleCodirecteurThese() || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE)) {
+            if ($this->role !== null && ($this->userContextService->getSelectedRoleDirecteurThese() || $this->userContextService->getSelectedRoleCodirecteurThese() || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE || $this->role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE)) {
                 $page['visible'] = true;
             } else {
                 unset($page['pages'][$key]);

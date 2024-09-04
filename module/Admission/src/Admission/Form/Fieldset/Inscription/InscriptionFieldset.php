@@ -15,6 +15,7 @@ use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\NotEmpty;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
@@ -146,18 +147,21 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 ])
         );
 
-        //Disciplines à récupérer -> liste en attente de récupération (demandée à Emilie)
+//        $this->add(
+//            (new Select("disciplineDoctorat"))
+//                ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
+//                ->setLabelAttributes(['data-after' => " / Discipline code"])
+//                ->setEmptyOption('Sélectionnez une option')
+//                ->setAttributes([
+//                    'class' => 'bootstrap-selectpicker show-tick',
+//                    'data-live-search' => 'true',
+//                ])
+//        );
+
         $this->add(
-            (new Select("disciplineDoctorat"))
+            (new Text('disciplineDoctorat'))
                 ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
                 ->setLabelAttributes(['data-after' => " / Discipline code"])
-                ->setEmptyOption('Sélectionnez une option')
-                ->setEmptyOption("Indisponible")
-                ->setAttributes([
-                    'class' => 'bootstrap-selectpicker show-tick',
-                    'data-live-search' => 'true',
-                    'disabled' => 'true'
-                ])
         );
 
         $this->add(
@@ -185,7 +189,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
 
         $this->add(
             (new Select("ecoleDoctorale"))
-                ->setLabel("Ecole doctorale")
+                ->setLabel("Ecole doctorale *")
                 ->setLabelAttributes(['data-after' => " / Doctoral school"])
                 ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
@@ -441,9 +445,19 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
             ],
             'ecoleDoctorale' => [
                 'name' => 'ecoleDoctorale',
-                'required' => false,
+                'required' => true,
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
+                ],
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => [
+                                NotEmpty::IS_EMPTY => "Merci de renseigner votre école doctorale afin d'associer un gestionnaire à ce dossier",
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'uniteRecherche' => [

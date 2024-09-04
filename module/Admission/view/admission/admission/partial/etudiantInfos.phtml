@@ -1,9 +1,11 @@
 <?php
 
 use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\Etat;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Etudiant\EtudiantFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
 
@@ -13,6 +15,7 @@ use Individu\Entity\Db\Individu;
  * @var AdmissionForm $form
  * @var Admission $admission
  * @var Individu $individu
+ * @var Role $role
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
  */
@@ -24,6 +27,14 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Étudiant<label class="admission-section-title-en">&nbsp; / Student</label></h2>
     </div>
+    <?php if($role->getCode() === Role::CODE_GEST_ED && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE){ ?>
+        <div class="admission-informations-container">
+            <i class="fas fa-info-circle"></i>
+            <p>
+                Si certaines informations concernant l'identité de l'individu sont manquantes, renseignez-les directement dans <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()]) ?>">sa fiche</a>
+            </p>
+        </div>
+    <?php } ?>
     <div class="row subfield">
         <div class="col-md-12">
             <div class="col-mb-2">

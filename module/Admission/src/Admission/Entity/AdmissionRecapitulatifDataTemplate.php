@@ -57,7 +57,10 @@ class AdmissionRecapitulatifDataTemplate
                 "dateCreation" => $operation->getId() !== null ? $operation->getHistoCreation()->format(\Application\Constants::DATETIME_FORMAT) : "/"
             ];
         }
-        return $operationsFormatter->htmlifyOperations($operationsToPrint);
+        $string = "<pagebreak />
+                    <h2>Validations et Avis accordés au dossier d'admission</h2>";
+        $string .= $operationsFormatter->htmlifyOperations($operationsToPrint);
+        return $string;
     }
 
     /**
