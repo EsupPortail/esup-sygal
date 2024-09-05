@@ -23,12 +23,11 @@ use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
-use These\Provider\Template\PdfTemplates;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
+use These\Service\Exporter\CoEncadrements\CoEncadrementsExporterAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
-use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class CoEncadrantController extends AbstractActionController
@@ -43,7 +42,7 @@ class CoEncadrantController extends AbstractActionController
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use RenduServiceAwareTrait;
-
+    use CoEncadrementsExporterAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(PhpRenderer $renderer): void
@@ -58,6 +57,7 @@ class CoEncadrantController extends AbstractActionController
 
         /** @see CoEncadrantController::rechercherCoEncadrantAction() */
         $form->setUrlCoEncadrant($this->url()->fromRoute('co-encadrant/rechercher-co-encadrant', [], [], true));
+        $form->setUrlEtablisssement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
         $form->get('bouton')->setLabel("Afficher l'historique de co-encadrement");
 
         $request = $this->getRequest();
@@ -173,10 +173,6 @@ class CoEncadrantController extends AbstractActionController
         $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
-        $vars = [
-            'acteur' => $coencadrant,
-        ];
-
         $listing = "<ul>";
         foreach ($theses as $these) {
             //todo macro ou formateur ...
@@ -207,18 +203,14 @@ class CoEncadrantController extends AbstractActionController
             "ETAB" => $logoETAB,
         ];
 
-        $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::COENCADREMENTS_JUSTIFICATIF, $vars);
-        $corps = str_replace("###LISTING_THESE###", $listing, $rendu->getCorps());
-        $filename = 'justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf";
-
-        $export = new PdfExporter();
-
+        $export = $this->coEncadrementsExporter;
         try {
-            $export->getMpdf()->SetMargins(0, 0, 60);
-            //todo passer un header exploitant les logo
-            $export->setHeaderScript('these/pdf/coencadrant-header.phtml', null, $logos);
-            $export->setFooterScript('these/pdf/coencadrant-footer.phtml');
-            $export->addBodyHtml($corps);
+            $export->setVars([
+                'logos' => $logos,
+                'listing' => $listing,
+                'acteur' => $coencadrant
+            ]);
+            $filename = 'justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf";
             return $export->export($filename);
         } catch (MpdfException $e) {
             throw new RuntimeException("Un problème est survenu lors de la génération du PDF", 0 , $e);

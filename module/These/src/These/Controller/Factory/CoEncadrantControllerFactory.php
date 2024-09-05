@@ -15,6 +15,7 @@ use These\Controller\CoEncadrantController;
 use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
+use These\Service\Exporter\CoEncadrements\CoEncadrementsExporter;
 use These\Service\These\TheseService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
@@ -49,6 +50,8 @@ class CoEncadrantControllerFactory
         $renduService = $container->get(RenduService::class);
         $theseService = $container->get('TheseService');
         $uniteRechercheService = $container->get(UniteRechercheService::class);
+        $coEncadrementsExporter = $container->get(CoEncadrementsExporter::class);
+
 
         /**
          * @var RechercherCoEncadrantForm $rechercheCoEncadrantForm
@@ -70,6 +73,8 @@ class CoEncadrantControllerFactory
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setRechercherCoEncadrantForm($rechercheCoEncadrantForm);
         $controller->setRenderer($renderer);
+        $controller->setCoEncadrementsExporter($coEncadrementsExporter);
+
         return $controller;
     }
 }

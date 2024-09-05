@@ -19,6 +19,8 @@ use These\Controller\Plugin\Url\UrlThesePluginFactory;
 use These\Controller\TheseController;
 use These\Controller\TheseRechercheController;
 use These\Provider\Privilege\ThesePrivileges;
+use These\Service\Exporter\CoEncadrements\CoEncadrementsExporter;
+use These\Service\Exporter\CoEncadrements\CoEncadrementsExporterFactory;
 use These\Service\These\Factory\TheseSearchServiceFactory;
 use These\Service\These\Factory\TheseServiceFactory;
 use These\Service\These\TheseSearchService;
@@ -374,6 +376,8 @@ return [
 
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
+
+            CoEncadrementsExporter::class => CoEncadrementsExporterFactory::class
         ],
         'aliases' => [
             TheseService::class => 'TheseService',
