@@ -42,7 +42,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
             <div class="row individu-recherche-index-container">
                 <div class="col-lg-4 col-sm-12 search-individu-label">
                     <label for="individuId">Entrez l'individu recherché</label>
-                    <?php if($role->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE || $role->getCode() === Role::CODE_DIRECTEUR_THESE) { ?>
+                    <?php if($role->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE || $role->getCode() === Role::CODE_DIRECTEUR_THESE ) { ?>
                         <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
                             <span class="tooltip-text">
                                 Vous ne pourrez accéder à un dossier d'admission que si  : <br>

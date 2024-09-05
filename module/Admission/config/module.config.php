@@ -338,7 +338,7 @@ return array(
             'home' => [
                 'pages' => [
                     /**
-                     * Page pour le Candidat.
+                     * Page pour le Candidat/Admin tech.
                      */
                     // DEPTH = 1
                     ApplicationNavigationFactory::MON_ADMISSION_PAGE_ID => [
@@ -362,7 +362,7 @@ return array(
                         ],
                     ],
                     /**
-                     * Page pour Dir, Codir.
+                     * Page pour Ecole doct, Unité de rech, Maison du doct
                      */
                     ApplicationNavigationFactory::NOS_ADMISSIONS_PAGE_ID => [
                         'order' => -200,

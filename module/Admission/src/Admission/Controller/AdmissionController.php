@@ -111,6 +111,7 @@ class AdmissionController extends AdmissionAbstractController {
         $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
         $response->setVariable('admission', $admission);
         $response->setVariable('individu', $individu);
+        $response->setVariable('role', $this->userContextService->getSelectedIdentityRole());
         $response->setTemplate('admission/ajouter-etudiant');
 
         return $response;
@@ -121,15 +122,27 @@ class AdmissionController extends AdmissionAbstractController {
         //Vide la session, si l'utilisateur demandé est différent de celui en session
         $this->isUserDifferentFromUserInSession();
 
+        //Récupération de l'objet Admission en BDD
+        /** @var Admission $admission */
+        $admission = $this->getAdmission();
+
+        if(!empty($admission)){
+            $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
+            if(!$canModifierAdmission){
+                /** @var InscriptionFieldset $inscription */
+                $inscription = $this->admissionForm->get('inscription');
+                $inscription->disableModificationFieldset();
+                //permet de rendre le champ ecoleDoctorale non requis lorsque l'utilisateur connecté n'a pas le privilège de modifier le dossier d'admission
+                $inputFilter = $this->admissionForm->getInputFilter()->get('inscription');
+                $inputFilter->get('ecoleDoctorale')->setRequired(false);
+            }
+        }
+
         $response = $this->processMultipageForm($this->admissionForm);
         if ($response instanceof Response) {
             return $response;
         }
         $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
-
-        //Récupération de l'objet Admission en BDD
-        /** @var Admission $admission */
-        $admission = $this->getAdmission();
 
         if($data['_fieldset'] == "etudiant") {
             //Enregistrement des informations de l'Etudiant
@@ -138,15 +151,6 @@ class AdmissionController extends AdmissionAbstractController {
             $this->admissionForm->bind($admission);
             //Enregistrement des informations de financement
             $this->enregistrerFinancement($data, $admission);
-        }
-
-        if(!empty($admission)){
-            $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-            if(!$canModifierAdmission){
-                /** @var InscriptionFieldset $inscription */
-                $inscription = $this->admissionForm->get('inscription');
-                $inscription->disableModificationFieldset();
-            }
         }
 
         $response->setVariable('admission', $admission);

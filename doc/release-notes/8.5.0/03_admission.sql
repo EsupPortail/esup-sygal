@@ -1,4 +1,9 @@
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
+VALUES ('AdmissionInscription#DisciplineInscription',
+        '<p>Retourne la discipline d''inscription choisie pour le doctorat de l''étudiant</p>',
+        'admissionInscription', 'getDisciplineDoctorat');
+
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name)
 VALUES ('AdmissionFinancement#EtablissementPartenaire',
         '<p>Retourne les détails de l''établissement partenaire dans le cas d''une convention de collaboration</p>',
         'admissionFinancement',
@@ -62,6 +67,7 @@ SET document_corps = '<h1 style="text-align: center;">Récapitulatif du dossier 
 <h2>Inscription </h2>
 <h3>Informations concernant son inscription demandée</h3>
 <ul>
+<li><strong>Discipline d''inscription : </strong>VAR[AdmissionInscription#DisciplineInscription]</li>
 <li><strong>Spécialité d''inscription :</strong> VAR[AdmissionInscription#SpecialiteDoctorat]</li>
 <li><strong>Composante de rattachement : </strong>VAR[AdmissionInscription#ComposanteRattachement]</li>
 <li><strong>École Doctorale :</strong> VAR[AdmissionInscription#EcoleDoctorale]</li>
@@ -107,7 +113,6 @@ SET document_corps = '<h1 style="text-align: center;">Récapitulatif du dossier 
 </ul>
 </li>
 </ul>
-<h2>Validations et Avis accordés au dossier d''admission</h2>
 <p>VAR[AdmissionRecapitulatif#Operations]</p>
 <h2>Validation par la direction de l''établissement</h2>
 <ul>
