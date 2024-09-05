@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Controller\FormationController;
 use Formation\Controller\FormationControllerFactory;
 use Formation\Controller\Recherche\FormationRechercheController;
@@ -87,12 +88,11 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'formation' => [
+                    ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                         'pages' => [
-                            'formation' => [
+                            ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                                 'label'    => 'Formations',
                                 'route'    => 'formation/formation',
-                                'resource' => PrivilegeController::getResourceId(FormationRechercheController::class, 'index') ,
                                 'order'    => 110,
                                 'pages' => [
                                     'afficher' => [

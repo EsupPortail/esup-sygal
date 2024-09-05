@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Controller\IndexController;
 use Formation\Controller\IndexControllerFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
@@ -48,22 +49,22 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'formation' => [
+                    ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                         'label'    => 'Formations',
                         'route'    => 'formation',
-                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index') ,
+//                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index') ,
                         'order'    => 90,
                     ],
-                    'formation-doctorant' => [
+                    ApplicationNavigationFactory::MES_FORMATIONS_DOCTORANT_PAGE_ID => [
                         'label'    => 'Mes formations',
                         'route'    => 'formation/index-doctorant',
-                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
+//                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
                         'order'    => 91,
                     ],
-                    'formation-formateur' => [
+                    ApplicationNavigationFactory::MES_FORMATIONS_FORMATEUR_PAGE_ID => [
                         'label'    => 'Mes formations',
                         'route'    => 'formation/index-formateur',
-                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-formateur') ,
+//                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-formateur') ,
                         'order'    => 92,
                     ],
                 ],

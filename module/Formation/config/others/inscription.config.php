@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Assertion\Inscription\InscriptionAssertion;
 use Formation\Assertion\Inscription\InscriptionAssertionFactory;
 use Formation\Controller\InscriptionController;
@@ -140,7 +141,7 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'formation' => [
+                    ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                         'pages' => [
                             'inscription' => [
                                 'label'    => 'Inscriptions',

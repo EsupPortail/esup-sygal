@@ -39,6 +39,8 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const CODE_GEST_ED = 'GEST_ED';
     const CODE_RESP_UR = 'RESP_UR';
     const CODE_GEST_UR = 'GEST_UR';
+
+    const CODE_FORMATEUR = 'FORMATEUR';
     const CODE_OBSERVATEUR_COMUE = "OBSERV";
 
     const ROLE_ID_USER = 'user'; // ROLE_ID du rôle correspondant à un utilisateur authentifié avec succès.

@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Assertion\Session\SessionAssertion;
 use Formation\Assertion\Session\SessionAssertionFactory;
 use Formation\Controller\Console\SessionConsoleController;
@@ -139,7 +140,7 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'formation' => [
+                    ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                         'pages' => [
                             'session' => [
                                 'label'    => 'Sessions',

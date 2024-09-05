@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Controller\FormationController;
 use Formation\Controller\ModuleController;
 use Formation\Controller\ModuleControllerFactory;
@@ -97,7 +98,7 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'formation' => [
+                    ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                         'pages' => [
                             'catalogue' => [
                                 'label'    => 'Catalogue des formations',

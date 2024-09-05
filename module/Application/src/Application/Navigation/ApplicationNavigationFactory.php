@@ -29,6 +29,10 @@ class ApplicationNavigationFactory extends NavigationFactory
     const MES_THESES_PAGE_ID = 'MES_THESES';
     const NOS_THESES_PAGE_ID = 'NOS_THESES';
 
+    const FORMATIONS_PAGE_ID = 'FORMATIONS';
+    const MES_FORMATIONS_DOCTORANT_PAGE_ID = 'MES_FORMATIONS_DOCTORANT';
+    const MES_FORMATIONS_FORMATEUR_PAGE_ID = 'MES_FORMATIONS_FORMATEUR';
+
     const MON_ADMISSION_PAGE_ID = 'MON_ADMISSION';
     const MES_ADMISSIONS_PAGE_ID = 'MES_ADMISSIONS';
     const NOS_ADMISSIONS_PAGE_ID = 'NOS_ADMISSIONS';
@@ -161,6 +165,42 @@ class ApplicationNavigationFactory extends NavigationFactory
         if ($page['pages'][$key = self::THESE_SELECTIONNEE_PAGE_ID] ?? null) {
             if ($this->pageMaTheseCreated) {
                 // si une page 'Ma thèse' est présente, la page 'Thèse sélectionnée' qui fait doublon est supprimée
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Formations
+         */
+        // Rôle Doctorant : génération d'une page "Formations"
+        if ($page['pages'][$key = self::FORMATIONS_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->getCode() === Role::CODE_ADMIN_TECH || $this->role->getCode() === Role::CODE_RESP_ED || $this->role->getCode() === Role::CODE_BDD)) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Mes formations
+         */
+        // Rôle Doctorant : génération d'une page "Mes formations"
+        if ($page['pages'][$key = self::MES_FORMATIONS_DOCTORANT_PAGE_ID] ?? null) {
+            if ($this->role !== null && $this->role->isDoctorant()) {
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Mes formations
+         */
+        // Rôle Formateur : génération d'une page "Mes formations"
+        if ($page['pages'][$key = self::MES_FORMATIONS_FORMATEUR_PAGE_ID] ?? null) {
+            if ($this->role !== null && $this->role->getCode() === Role::CODE_FORMATEUR) {
+                $page['visible'] = true;
+            } else {
                 unset($page['pages'][$key]);
             }
         }

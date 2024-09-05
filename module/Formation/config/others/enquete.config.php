@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Controller\EnqueteQuestionController;
 use Formation\Controller\EnqueteQuestionControllerFactory;
 use Formation\Controller\EnqueteReponseController;
@@ -116,7 +117,7 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'formation' => [
+                    ApplicationNavigationFactory::FORMATIONS_PAGE_ID => [
                         'pages' => [
                             'enquete-question' => [
                                 'label'    => 'Enquête - Question',
