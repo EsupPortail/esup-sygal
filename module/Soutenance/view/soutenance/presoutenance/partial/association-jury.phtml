@@ -67,7 +67,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                     <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>
                         <?php if($canAssocierMembreIndividu): ?>
-                            <?php if ($membre->estRapporteur()) : ?>
+<!--                            --><?php //if ($membre->estRapporteur()) : ?>
                                 <?php if (! $membre->getActeur()): ?>
                                     <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::associerJuryAction() */ ?>
                                         href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
@@ -83,7 +83,7 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                                         <span class="icon icon-delete iconly" title="Casser l'association d'un individu à un membre de jury"></span>
                                     </a>
                                 <?php endif; ?>
-                            <?php endif; ?>
+<!--                            --><?php //endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>
