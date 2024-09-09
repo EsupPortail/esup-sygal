@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.6.0
+-----
+- 
+
 8.5.0
 -----
 - Module Soutenance : modif de la qualité par défaut des membres lors de la création automatique de la proposition (lors du 1er accès à la page Proposition).
