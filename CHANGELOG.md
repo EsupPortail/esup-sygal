@@ -3,7 +3,7 @@ Journal des modifications
 
 8.6.0
 -----
-- 
+- [FIX] Synchro : plantage lors de la génération du diff (unicaen/db-import 6.1.3 nécessaire car nouvelle plateforme Doctrine\DBAL\Platforms\PostgreSQL120Platform).
 
 8.5.0
 -----

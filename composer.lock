@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaf0865a34638f214ff1c0424c1b07eb",
+    "content-hash": "b5c049b3e8c528393b77f5fa1eae9d36",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11533,11 +11533,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "6.1.2",
+            "version": "6.1.3",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "ae9d301b8a907185b46308d11ba358ab0b2c5b51"
+                "reference": "cb85af4d41a83c130f476fe200289f29de822330"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -11570,7 +11570,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2024-04-11T08:39:40+00:00"
+            "time": "2024-09-09T09:37:26+00:00"
         },
         {
             "name": "unicaen/etat",
