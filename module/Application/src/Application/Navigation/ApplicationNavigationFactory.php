@@ -151,7 +151,7 @@ class ApplicationNavigationFactory extends NavigationFactory
          */
         // Rôles ED, UR, MDD, etc. : génération d'une page "Nos thèses" contenant une page fille indiquant la structure filtrante
         if ($protoPage = $page['pages'][$key = self::NOS_THESES_PAGE_ID] ?? null) {
-            if ($this->role !== null && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
+            if ($this->role !== null && !$this->role->isDoctorant() && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
                 $newPages = $this->createPageNosTheses($protoPage, $this->role);
                 $page['pages'][$key]['pages'] = $newPages;
             } else {
