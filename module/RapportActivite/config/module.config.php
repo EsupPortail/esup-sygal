@@ -258,10 +258,10 @@ return [
                         'index',
                         'filters',
                     ],
-//                    'privileges' => [
-//                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
-//                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
-//                    ],
+                    'privileges' => [
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
+                    ],
                     'assertion' => RapportActiviteRechercheAssertion::class,
                 ],
                 [
