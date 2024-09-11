@@ -60,6 +60,14 @@ class RapportActiviteRechercheAssertion extends AbstractAssertion
                 case 'index':
                 case 'filters':
                 case 'telecharger-zip':
+                    $role = $this->userContextService->getSelectedIdentityRole();
+                    if (!$role) {
+                        return false;
+                    }
+                    //todo : ajouter un nouveau privilège afin que le doctorant n'ait pas accès à l'index des rapports d'activité (conflit avec les gest/resp ed/ur)
+                    if ($role->isDoctorant()) {
+                        return false;
+                    }
                     break;
             }
 

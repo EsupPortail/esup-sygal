@@ -78,7 +78,6 @@ return [
                 [
                     'controller' => PropositionRechercheController::class,
                     'action' => [
-                        'index',
                         'filters',
                         'notres',
                         'notresFilters',

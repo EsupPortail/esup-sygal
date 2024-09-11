@@ -111,6 +111,8 @@ class PresoutenanceAssertion extends AbstractAssertion
 
     private function assertCanAccessInformationsPresoutenance(These $these){
         $role = $this->userContextService->getSelectedIdentityRole();
+        $individu = $this->userContextService->getIdentityIndividu();
+
         if (!$role) {
             return;
         }
@@ -139,6 +141,18 @@ class PresoutenanceAssertion extends AbstractAssertion
                 $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
                 "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
             );
+        } elseif ($role->isDirecteurThese()) {
+            $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+            $individus = [];
+            foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
+            $this->assertTrue(array_search($individu, $individus) !== false,
+                $individu." n'est pas le directeur de cette thèse");
+        } elseif ($role->getCode() === Role::CODE_CODIRECTEUR_THESE) {
+            $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+            $individus = [];
+            foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
+            $this->assertTrue(array_search($individu, $individus) !== false,
+                $individu." n'est pas le co-directeur de cette thèse");
         }
     }
 

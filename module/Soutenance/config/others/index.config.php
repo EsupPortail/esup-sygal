@@ -37,9 +37,9 @@ return array(
                     'privileges' => IndexPrivileges::INDEX_RAPPORTEUR,
                 ],
                 [
-                    'controller' => IndexController::class,
+                    'controller' => PropositionRechercheController::class,
                     'action' => [
-                        'index-structure',
+                        'index',
                     ],
                     'privileges' => IndexPrivileges::INDEX_STRUCTURE,
                 ],
