@@ -61,6 +61,8 @@ return [
                         'presoutenance',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                    'assertion' => PresoutenanceAssertion::class,
+
                 ],
                 [
                     'controller' => PresoutenanceController::class,

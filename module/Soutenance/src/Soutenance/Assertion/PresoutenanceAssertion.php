@@ -2,51 +2,160 @@
 
 namespace Soutenance\Assertion;
 
+use Application\Assertion\AbstractAssertion;
+use Application\Assertion\Exception\FailedAssertionException;
+use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
+use Application\RouteMatch;
+use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Provider\Privilege\PresoutenancePrivileges;
-use Laminas\Permissions\Acl\Acl;
-use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Laminas\Permissions\Acl\Role\RoleInterface;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\Service\MessageCollectorAwareInterface;
+use UnicaenApp\Service\MessageCollectorAwareTrait;
 
-class PresoutenanceAssertion implements  AssertionInterface {
+class PresoutenanceAssertion extends AbstractAssertion
+    implements UserContextServiceAwareInterface, MessageCollectorAwareInterface {
+
     use UserContextServiceAwareTrait;
+    use MessageCollectorAwareTrait;
+    use TheseServiceAwareTrait;
+    use ThrowsFailedAssertionExceptionTrait;
+
+    private ?These $these = null;
 
     /**
-     * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
-     *
-     * @return array
+     * @param array $page
+     * @return bool
      */
-    public function __sleep()
+    public function __invoke(array $page): bool
     {
-        return [];
+        return $this->assertPage($page);
     }
 
-    public function __invoke($page)
+    /**
+     * @param array $page
+     * @return bool
+     */
+    private function assertPage(array $page): bool
     {
         return true;
     }
 
-    public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
+    /**
+     * @param These $entity
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
-        /** @var These $these */
-        $these = $resource;
-
-        switch ($privilege) {
-            case PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
-            case PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
-                break;
-            case PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return (($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) ||
-                    $role->getCode() === Role::CODE_OBSERVATEUR ||
-                    $role->getCode() === Role::CODE_ADMIN_TECH);
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
         }
 
-        return false;
+        $this->these = $entity;
+
+        try {
+
+            switch ($privilege) {
+                case PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
+                case PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION:
+                    $role = $this->userContextService->getSelectedIdentityRole();
+                    return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $this->these->getEtablissement()->getStructure());
+            }
+
+
+        } catch (FailedAssertionException $e) {
+            if ($e->getMessage()) {
+                $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $controller
+     * @param string $action
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertController($controller, $action = null, $privilege = null): bool
+    {
+        if (!parent::assertController($controller, $action, $privilege)) {
+            return false;
+        }
+
+        $this->these = $this->getRequestedThese();
+
+        try {
+            switch ($action) {
+                case 'presoutenance':
+                    if ($this->these !== null) {
+                        $this->assertCanAccessInformationsPresoutenance($this->these);
+                    }
+                    break;
+            }
+        } catch (FailedAssertionException $e) {
+            if ($e->getMessage()) {
+                $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    private function assertCanAccessInformationsPresoutenance(These $these){
+        $role = $this->userContextService->getSelectedIdentityRole();
+        if (!$role) {
+            return;
+        }
+
+        if ($role->isDoctorant()) {
+            $doctorant = $this->userContextService->getIdentityDoctorant();
+            $this->assertTrue(
+                $these->getDoctorant()->getId() === $doctorant->getId(),
+                "La thèse n'appartient pas au doctorant " . $doctorant
+            );
+        }
+        if ($roleMaisonDoctorat = $this->userContextService->getSelectedRoleBDD()) {
+            $this->assertTrue(
+                $these->getEtablissement()->getStructure()->getId() === $roleMaisonDoctorat->getStructure()->getId(),
+                "La thèse n'appartient pas à la maison du doctorat " . $roleMaisonDoctorat->getStructure()->getId()
+            );
+        }
+        elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
+            $this->assertTrue(
+                $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
+                "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
+            );
+        }
+        elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
+            $this->assertTrue(
+                $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
+                "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
+            );
+        }
+    }
+
+    protected function getRequestedThese(): ?These
+    {
+        $these = null;
+        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('these')) {
+            $these = $this->theseService->getRepository()->find($id);
+        }
+
+        return $these;
+    }
+
+    protected function getRouteMatch(): ?RouteMatch
+    {
+        /** @var RouteMatch $rm */
+        $rm = $this->getMvcEvent()->getRouteMatch();
+        return $rm;
     }
 }
