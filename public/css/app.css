@@ -494,6 +494,9 @@ form.form-retraiter {
     width: 260px; }
   .dl-horizontal.dl-horizontal-lg dd {
     margin-left: 280px; } }
+@media (max-width: 768px) {
+  .text-structure {
+    text-wrap: wrap; } }
 @media (min-width: 1100px) {
   .modal-dialog {
     max-width: 1000px; } }

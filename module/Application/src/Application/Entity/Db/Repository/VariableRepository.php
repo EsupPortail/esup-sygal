@@ -49,7 +49,7 @@ class VariableRepository extends DefaultEntityRepository
      */
     public function findOneByCodeAndThese(string $code, These $these): ?Variable
     {
-        $dateObservation = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
+        $dateObservation = $these->getDateSoutenance() ?: null;
 
         return $this->findOneByCodeAndEtab(
             $code,

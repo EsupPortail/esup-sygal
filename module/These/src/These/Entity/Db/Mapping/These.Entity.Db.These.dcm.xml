@@ -14,7 +14,6 @@
         <field name="datePremiereInscription" type="datetime" column="date_prem_insc" nullable="true"/>
         <field name="codeSiseDiscipline" type="string" column="code_sise_disc" length="32" nullable="true"/>
         <field name="libelleDiscipline" type="string" column="lib_disc" length="200" nullable="true"/>
-        <field name="datePrevisionSoutenance" type="datetime" column="date_prev_soutenance" nullable="true"/>
         <field name="dateSoutenance" type="datetime" column="date_soutenance" nullable="true"/>
         <field name="dateFinConfidentialite" type="datetime" column="date_fin_confid" nullable="true"/>
         <field name="dateAbandon" type="datetime" column="date_abandon" nullable="true"/>

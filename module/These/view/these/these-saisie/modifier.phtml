@@ -18,6 +18,7 @@ $form->prepare();
     <?php echo $this->translate("Modification de la thèse de") . " {$these->getDoctorant()}" ?>
 </h1>
 
+
 <?php if(isset($errorMessages) && is_array($errorMessages)){ ?>
     <div class="alert alert-danger">
         Certains champ(s) du formulaire n'ont pas pu être validé : <br><br>
@@ -70,6 +71,11 @@ echo $this->formHidden($form->get('id'));
 ?>
 
 <div class="tab-content" id="myTabContent">
+    <?php if($these->getSource()->getImportable()){ ?>
+        <div class="alert alert-warning these-informations-div">
+            Cette thèse n'ayant pas été créée dans SyGAL, vous ne pourrez modifier qu'un nombre restreint de champs.
+        </div>
+    <?php } ?>
     <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
         <?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
     </div>

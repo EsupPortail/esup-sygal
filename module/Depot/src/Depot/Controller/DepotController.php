@@ -1373,7 +1373,7 @@ class DepotController extends AbstractController
         /** @var \Depot\Form\Diffusion\DiffusionTheseForm $form */
         $form = $this->diffusionTheseForm;
 
-        $dateObs = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
+        $dateObs = $these->getDateSoutenance() ?: null;
         $variableRepo = $this->variableService->getRepository();
         $ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement(), $dateObs);
         $ETB_ART_ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement(), $dateObs);

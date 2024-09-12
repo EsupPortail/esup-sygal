@@ -268,23 +268,23 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             ];
             $spec[$name = 'codirecteur' . $i . '-individu'] = [
                 'name' => $name,
-                'required' => $codirEnabled,
+                'required' => $codirEnabled && $estModifiable,
             ];
             $spec[$name = 'codirecteur' . $i . '-etablissement'] = [
                 'name' => $name,
-                'required' => $codirEnabled,
+                'required' => $codirEnabled && $estModifiable,
             ];
             $spec[$name = 'codirecteur' . $i . '-ecoleDoctorale'] = [
                 'name' => $name,
-                'required' => $codirEnabled,
+                'required' => $codirEnabled && $estModifiable,
             ];
             $spec[$name = 'codirecteur' . $i . '-uniteRecherche'] = [
                 'name' => $name,
-                'required' => $codirEnabled,
+                'required' => $codirEnabled && $estModifiable,
             ];
             $spec[$name = 'codirecteur' . $i . '-qualite'] = [
                 'name' => $name,
-                'required' => $codirEnabled,
+                'required' => $codirEnabled && $estModifiable,
             ];
             $spec[$name = 'codirecteur' . $i . '-principal'] = [
                 'name' => $name,

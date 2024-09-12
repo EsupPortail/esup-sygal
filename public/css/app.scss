@@ -784,6 +784,12 @@ form.form-retraiter {
   }
 }
 
+@media (max-width: 768px) {
+  .text-structure {
+    text-wrap: wrap;
+  }
+}
+
 @media (min-width: 1100px) {
   .modal-dialog {
     max-width: 1000px;

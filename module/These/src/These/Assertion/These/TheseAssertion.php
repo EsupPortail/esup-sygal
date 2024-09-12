@@ -94,6 +94,12 @@ class TheseAssertion extends AbstractAssertion
             return true;
         }
 
+        if ($action == 'modifier') {
+            if ($this->these->getEtatThese() !== These::ETAT_EN_COURS) {
+                return false;
+            }
+        }
+
 //        if (! $this->userContextService->isStructureDuRoleRespecteeForThese($this->these)) {
 //            return false;
 //        }

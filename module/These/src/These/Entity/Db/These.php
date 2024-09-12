@@ -455,34 +455,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         return $this->libelleDiscipline;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getDatePrevisionSoutenance()
-    {
-        return $this->datePrevisionSoutenance;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDatePrevisionSoutenanceToString()
-    {
-        return Util::formattedDate($this->getDatePrevisionSoutenance());
-    }
-
-    /**
-     * @param DateTime $datePrevisionSoutenance
-     * @return self
-     */
-    public function setDatePrevisionSoutenance(DateTime $datePrevisionSoutenance = null)
-    {
-        $this->datePrevisionSoutenance = $datePrevisionSoutenance;
-
-        return $this;
-    }
-
-    /**
+    /**so
      * @return DateTime|null
      */
     public function getDateSoutenance(): ?DateTime

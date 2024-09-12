@@ -46,7 +46,6 @@ $canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourc
 
 $canDomaineHalModifier = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
 $canEditThese = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_SES_THESES) || $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES) ;
-//$canEditThese = true ;
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
@@ -75,7 +74,7 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
     ->renderAsBootstrapToasts() ?>
 
 <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-4">
         <h1 class="page-header">
             <?php echo $this->translate("Thèse"); ?>
             <small><?php echo $this->partial('these/these/partial/titre') ?></small>
@@ -85,7 +84,7 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
         <div class="col-md-7" style="align-content: center;">
             <a href="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#informations' ?>"
                data-event="<?php echo $modifierStructuresEvent ?>"
-               class="btn btn-outline-primary">
+               class="btn btn-primary">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier la thèse"); ?>
             </a>
@@ -100,7 +99,11 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
-                <div id="modalModificationTheseContent">Chargement...</div>
+                <div id="modalModificationTheseContent">
+                    <div id="loading-indicator">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -112,9 +115,9 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
             <?php echo $this->translate("Généralités"); ?>
         </h2>
     </div>
-    <div class="card-body">
+    <div class="card-body these-identite-body">
         <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
-            <button type="button" class="btn btn-outline-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#informations' ?>">
+            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#informations' ?>">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les généralités"); ?>
             </button>
@@ -129,9 +132,9 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
             <?php echo $this->translate("Structures"); ?>
         </h2>
     </div>
-    <div class="card-body">
+    <div class="card-body these-identite-body">
         <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
-            <button type="button" class="btn btn-outline-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#structures' ?>">
+            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#structures' ?>">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les structures"); ?>
             </button>
@@ -146,9 +149,9 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
             <?php echo $this->translate("Direction"); ?>
         </h2>
     </div>
-    <div class="card-body">
+    <div class="card-body these-identite-body">
         <?php if ($canEditThese/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
-            <button type="button" class="btn btn-outline-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#direction' ?>">
+            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-url="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true). '#direction' ?>">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier la direction"); ?>
             </button>
@@ -163,7 +166,7 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
             <?php echo $this->translate("Encadrement"); ?>
         </h2>
     </div>
-    <div class="card-body">
+    <div class="card-body these-identite-body">
         <?php echo $this->partial('these/these/partial/encadrement') ?>
     </div>
 </div>
@@ -176,7 +179,7 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
         </h2>
     </div>
 
-    <div class="card-body">
+    <div class="card-body these-identite-body">
 
         <div id="photo-div" class="float-end">
             <!--            <div class="photo-placeholder loading"-->
@@ -287,9 +290,6 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
             <?php if ($these->getDateSoutenance()): ?>
                 <dt class="col-md-3">Date réelle de soutenance</dt>
                 <dd class="col-md-9"><?php echo $these->getDateSoutenanceToString() ?></dd>
-            <?php else: ?>
-                <!--<dt>Date prévisionnelle de soutenance</dt>
-                <dd><?php /*echo $these->getDatePrevisionSoutenanceToString() ?: "(Non renseignée)" */?></dd>-->
             <?php endif ?>
 
             <?php if ($these->getLibelleEtabCotutelle()): ?>

@@ -164,6 +164,10 @@ ALTER TABLE these DROP COLUMN besoin_expurge;
 ALTER TABLE these DROP COLUMN cod_unit_rech;
 ALTER TABLE these DROP COLUMN lib_unit_rech;
 ALTER TABLE these DROP COLUMN source_code_sav;
+-- Supprimer la vue utilisant le champ date_autoris_soutenance
+DROP VIEW v_diff_these;
+ALTER TABLE these DROP COLUMN date_autoris_soutenance;
+ALTER TABLE these DROP COLUMN date_prop;
 
 -- Ajout de la nouvelle colone etab_cotut_id
 ALTER TABLE these ADD COLUMN etab_cotut_id bigint;
@@ -207,7 +211,7 @@ ALTER TABLE titre_acces
     ADD CONSTRAINT fk_etab_id
         FOREIGN KEY (etab_id) REFERENCES etablissement(id);
 
--- Ajout de la nouvelle colone pays_id
+-- Ajout de la nouvelle colonne pays_id
 ALTER TABLE titre_acces ADD COLUMN pays_id bigint;
 
 ALTER TABLE titre_acces
@@ -244,3 +248,6 @@ SET pays_id_nationalite = (SELECT p.id
                                  lower(SUBSTRING(unaccent(i.nationalite), 2)))
 WHERE i.nationalite IS NOT NULL
   and i.pays_id_nationalite is null;
+
+-- Ajout de la nouvelle colonne pays_naissance_id
+alter table individu add pays_naissance_id bigint REFERENCES pays (id);

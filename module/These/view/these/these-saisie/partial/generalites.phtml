@@ -81,7 +81,12 @@
             <?php echo $this->formControlGroup($fs->get('titreAcces')->get('pays')); ?>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('nomDeptTitreAcces')); ?>
+            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codeDeptTitreAcces')); ?>
+        </div>
+    </div>
     <div class="row">
         <div class="col-4">
             <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>

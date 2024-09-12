@@ -4,6 +4,7 @@ namespace These\Fieldset\Financement;
 
 use Application\Entity\Db\OrigineFinancement;
 use Laminas\Filter\ToNull;
+use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Number;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
@@ -49,6 +50,8 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
         $this->get('origineFinancement')->setValueOptions($this->originesFinancements);
 
         $this->get('annee')->setAttribute('disabled', !$estModifiable);
+        $this->get('dateDebut')->setAttribute('disabled', !$estModifiable);
+        $this->get('dateFin')->setAttribute('disabled', !$estModifiable);
         $this->get('origineFinancement')->setAttribute('disabled', !$estModifiable);
         $this->get('complementFinancement')->setAttribute('disabled', !$estModifiable);
         $this->get('quotiteFinancement')->setAttribute('disabled', !$estModifiable);
@@ -67,6 +70,22 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
                     'class' => 'selectpicker show-menu-arrow',
                 ])
         );
+
+        $this->add([
+            'type' => Date::class,
+            'name' => 'dateDebut',
+            'options' => [
+                'label' => "Date de début du financement : ",
+            ],
+        ]);
+
+        $this->add([
+            'type' => Date::class,
+            'name' => 'dateFin',
+            'options' => [
+                'label' => "Date de fin du financement : ",
+            ],
+        ]);
 
         $this->add(
             (new Select("origineFinancement"))
@@ -114,6 +133,14 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
             'annee' => [
                 'name' => 'annee',
                 'required' => $estModifiable,
+            ],
+            'dateDebut' => [
+                'name' => 'dateDebut',
+                'required' => false,
+            ],
+            'dateFin' => [
+                'name' => 'dateFin',
+                'required' => false,
             ],
             'origineFinancement' => [
                 'name' => 'origineFinancement',

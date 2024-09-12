@@ -82,7 +82,6 @@ class ExportController extends AbstractController
             'Date de première inscription'                  => fn($r) => $r['date_prem_insc'],
             "Date d'abandon"                                => fn($r) => $r['date_abandon'],
             'Date de transfert'                             => fn($r) => $r['date_transfert'],
-            'Date de prévisionnel de soutenance'            => fn($r) => $r['date_prev_soutenance'],
             'Date de soutenance'                            => fn($r) => $r['date_soutenance'],
             'Date de fin de confientialité'                 => fn($r) => $r['date_fin_confid'],
             'Date de dépôt version initiale'                => fn($r) => $r['date_depot_vo'],
