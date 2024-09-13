@@ -6,6 +6,7 @@ namespace Depot;
  * Config concernant les fichiers liés à une thèse.
  */
 
+use Depot\Assertion\These\TheseAssertion;
 use Depot\Controller\Factory\FichierTheseControllerFactory;
 use Depot\Controller\FichierTheseController;
 use Depot\Controller\Plugin\UrlFichierThese;
@@ -32,21 +33,17 @@ return [
                         'lister-fichiers',
                     ],
                     'privileges' => DepotPrivileges::THESE_CONSULTATION_DEPOT,
+                    'assertion' => TheseAssertion::class,
                 ],
                 [
                     'controller' => FichierTheseController::class,
                     'action' => [
                         'telecharger-fichier',
                         'apercevoir-fichier',
-                    ],
-                    'privileges' => DepotPrivileges::THESE_TELECHARGEMENT_FICHIER,
-                ],
-                [
-                    'controller' => FichierTheseController::class,
-                    'action' => [
                         'apercevoir-page-de-couverture',
                     ],
                     'privileges' => DepotPrivileges::THESE_TELECHARGEMENT_FICHIER,
+                    'assertion' => TheseAssertion::class,
                 ],
                 [
                     'controller' => FichierTheseController::class,
@@ -55,6 +52,7 @@ return [
                         'supprimer-fichier',
                     ],
                     'privileges' => DepotPrivileges::THESE_DEPOT_VERSION_INITIALE,
+                    'assertion' => TheseAssertion::class,
                 ],
                 [
                     'controller' => FichierTheseController::class,
@@ -63,6 +61,7 @@ return [
                         'supprimer-fichier',
                     ],
                     'privileges' => DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE,
+                    'assertion' => TheseAssertion::class,
                 ],
                 [
                     'controller' => FichierTheseController::class,
