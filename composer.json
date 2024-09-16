@@ -66,7 +66,7 @@
         "unicaen/db-anonym": "^3.1.0",
         "unicaen/db-import": "^6.1.3",
         "unicaen/faq": "^6.0",
-        "unicaen/idref": "dev-master",
+        "unicaen/idref": "^1.0.0",
         "unicaen/ldap": "^6.0",
         "unicaen/livelog": "^2.0",
         "unicaen/parametre": "^6.0",
