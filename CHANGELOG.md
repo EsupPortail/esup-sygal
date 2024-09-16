@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Possibilité de déclarer un individu apatride (i.e. sans nationalité) ; réorganisation du formulaire.
 - Suppression de la contrainte vérifiant si le membre est un rapporteur lors de la liaison entre un acteur et un membre dans la prép. de la soutenance.
+- Nouveau favicon, moche mais universel !
 - [FIX] Le bouton de recherche/liaison de notice IdRef ne fonctionnait pas dans une modale (unicaen/idref 1.0.0 requis).
 - [FIX] Synchro : plantage lors de la génération du diff (unicaen/db-import 6.1.3 nécessaire car nouvelle plateforme Doctrine\DBAL\Platforms\PostgreSQL120Platform).
 - [FIX] Le menu Nos Thèses s'affichait à tort pour le rôle Doctorant (du fait que ce dernier est désormais tagué établissement-dépendant).
