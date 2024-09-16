@@ -8,61 +8,101 @@ use UnicaenIdref\Domain\Index1;
  * @var PhpRenderer $this
  *
  * @see \Individu\Controller\IndividuController::ajouterAction()
+ * @see \Individu\Controller\IndividuController::modifierAction()
  */
+
+$isCreation = $form->getObject()?->getId() === null;
 
 $form->setAttribute('class', 'row')->prepare();
 ?>
 
-<?php $this->headTitle($title = $this->translate("Modification d'un individu")) ?>
+<?php $this->headTitle($title = $this->translate($isCreation ? "Création d'un nouvel individu" : "Modification d'un individu")) ?>
 
-<h1 class="page-header"><?php echo $title ?> </h1>
+<h1 class="page-header">
+    <?php echo $title ?>
+</h1>
 
+<?php if ($isCreation): ?>
+<p class="lead text-warning">
+    <strong>Attention !</strong>
+    NB : prenez garde de ne créer un individu que si vous êtres certain·e qu'il n'existe pas déjà.
+    Dédoublonner des individus n'est pas chose facile.
+</p>
+<?php endif ?>
+
+<?php echo $this->form()->openTag($form) ?>
 <div class="row">
-    <div class="col-6">
-        <?php echo $this->form()->openTag($form) ?>
-        <div class="col-3">
-            <?php echo $this->formControlGroup($form->get('civilite')) ?>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <?php echo $this->formControlGroup($form->get('nomUsuel')->setAttribute('id', 'nomUsuel')) ?>
-            </div>
-            <div class="col-md-6">
-                <?php echo $this->formControlGroup($form->get('nomPatronymique')) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-5">
-                <?php echo $this->formControlGroup($form->get('prenom1')->setAttribute('id', 'prenom1')) ?>
-            </div>
-            <div class="col-md-5">
-                <?php echo $this->formControlGroup($form->get('prenom2')) ?>
-            </div>
-        </div>
-        <div class="col-6">
-            <?php echo $this->formControlGroup($form->get('email')) ?>
-        </div>
-        <div class="col-md-4">
-            <?php echo $this->formControlGroup($form->get('dateNaissance')) ?>
-        </div>
-        <div class="col-md-6">
-            <?php echo $this->formControlGroup($form->get('paysNationalite')) ?>
-        </div>
-        <div class="col-md-4">
-            <?php echo $this->formControlGroup($form->get('supannId')) ?>
-        </div>
-        <div class="row">
-            <div class="col-md-5">
-                <?php echo $this->formControlGroup($form->get('idRef')->setAttribute('id', 'idRef')) ?>
-            </div>
-            <div class="col-md-2">
-                <?php echo $this->idrefPopupTrigger([
-                    ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
-                    ['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => ['nomUsuel', 'prenom1']],
-                ], 'idRef') ?>
-            </div>
-        </div>
-        <?php echo $this->formSubmit($form->get('submit')) ?>
-        <?php echo $this->form()->closeTag() ?>
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('civilite')) ?>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-4">
+        <?php echo $this->formControlGroup($form->get('nomPatronymique')) ?>
+    </div>
+    <div class="col-md-4">
+        <?php echo $this->formControlGroup($form->get('prenom1')->setAttribute('id', 'prenom1')) ?>
+    </div>
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('dateNaissance')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <?php echo $this->formControlGroup($form->get('nomUsuel')->setAttribute('id', 'nomUsuel')) ?>
+    </div>
+    <div class="col-md-4">
+        <?php echo $this->formControlGroup($form->get('prenom2')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <?php echo $this->formControlGroup($form->get('paysNationalite')->setAttribute('id', 'paysNationalite')) ?>
+    </div>
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('apatride')->setAttribute('id', 'apatride')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <?php echo $this->formControlGroup($form->get('email')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('idRef')->setAttribute('id', 'idRef')) ?>
+    </div>
+    <div class="col-md-2">
+        <?php echo $this->idrefPopupTrigger([
+            ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+            ['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => ['nomUsuel', 'prenom1']],
+        ], 'idRef') ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('supannId')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formSubmit($form->get('submit')) ?>
+    </div>
+</div>
+<?php echo $this->form()->closeTag() ?>
+
+<script>
+    $(function() {
+
+        const
+            $apatride = $("#apatride"),
+            $paysNationalite = $("#paysNationalite").selectpicker(),
+            updateNationalite = () =>
+                $apatride.is(":checked") ?
+                    $paysNationalite.selectpicker('val','').attr('disabled',true) :
+                    $paysNationalite.removeAttr('disabled');
+
+        $apatride.on('change', updateNationalite);
+        updateNationalite();
+    });
+</script>

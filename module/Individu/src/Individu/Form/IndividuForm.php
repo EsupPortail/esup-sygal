@@ -5,6 +5,7 @@ namespace Individu\Form;
 use Application\Form\Validator\NewEmailValidator;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\ToNull;
+use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
@@ -99,6 +100,10 @@ class IndividuForm extends Form implements InputFilterProviderInterface
                 ->setValueOptions($this->getNationalitesOptions())
         );
         $this->add(
+            (new Checkbox('apatride'))
+                ->setLabel("Apatride")
+        );
+        $this->add(
             (new Text('supannId'))
                 ->setLabel("Supann Id :")
                 //->setAttribute('disabled', true)
@@ -119,7 +124,7 @@ class IndividuForm extends Form implements InputFilterProviderInterface
         /** @var \Individu\Entity\Db\Individu $individu */
         $individu = $this->getObject();
 
-        $estModifiable = ! $individu->getSource()->getImportable();
+        $estModifiable = ! $individu->getSource()?->getImportable();
 
         $this->get('civilite')->setAttribute('disabled', !$estModifiable);
         $this->get('nomUsuel')->setAttribute('disabled', !$estModifiable);
@@ -128,6 +133,7 @@ class IndividuForm extends Form implements InputFilterProviderInterface
         $this->get('prenom2')->setAttribute('disabled', !$estModifiable);
         $this->get('email')->setAttribute('disabled', !$estModifiable);
         $this->get('dateNaissance')->setAttribute('disabled', !$estModifiable);
+        $this->get('apatride')->setAttribute('disabled', !$estModifiable);
         $this->get('paysNationalite')->setAttribute('disabled', !$estModifiable);
         $this->get('supannId')->setAttribute('disabled', !$estModifiable);
 
@@ -189,6 +195,10 @@ class IndividuForm extends Form implements InputFilterProviderInterface
                 'filters' => [
                     ['name' => ToNull::class], /** nécessaire et suffisant pour mettre la relation à null */
                 ],
+            ],
+            'apatride' => [
+                'name' => 'apatride',
+                'required' => false,
             ],
             'supannId' => [
                 'name' => 'supannId',

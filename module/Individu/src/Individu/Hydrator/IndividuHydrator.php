@@ -17,4 +17,15 @@ class IndividuHydrator extends DoctrineObject
 
         return $data;
     }
+
+    public function hydrate(array $data, object $object): object
+    {
+        /** @var \Individu\Entity\Db\Individu $object */
+
+        if (!array_key_exists('sourceCode', $data)) {
+            $data['sourceCode'] = uniqid('', true);
+        }
+
+        return parent::hydrate($data, $object);
+    }
 }

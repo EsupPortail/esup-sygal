@@ -184,7 +184,8 @@ class IndividuController extends AbstractActionController implements SearchContr
             $data = $request->getPost();
             $this->individuForm->setData($data);
             if ($this->individuForm->isValid()) {
-                $individu = $this->individuService->newIndividuFromData($data->toArray());
+                /** @var Individu $individu */
+                $individu = $this->individuForm->getData();
                 $this->individuService->saveIndividu($individu);
 
                 $this->flashMessenger()->addSuccessMessage("L'individu &laquo; $individu &raquo; a été créé avec succès.");
@@ -204,9 +205,9 @@ class IndividuController extends AbstractActionController implements SearchContr
             }
         }
 
-        return new ViewModel([
+        return (new ViewModel([
             'form' => $this->individuForm,
-        ]);
+        ]))->setTemplate('individu/individu/modifier');
     }
 
     /**

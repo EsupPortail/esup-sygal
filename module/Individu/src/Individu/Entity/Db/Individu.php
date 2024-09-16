@@ -62,6 +62,8 @@ class Individu implements
      */
     protected $nationalite;
 
+    protected bool $apatride = false;
+
     /**
      * @var \DateTime
      */
@@ -243,6 +245,17 @@ class Individu implements
     {
         $this->nationalite = $nationalite;
 
+        return $this;
+    }
+
+    public function isApatride(): bool
+    {
+        return $this->apatride;
+    }
+
+    public function setApatride(bool $apatride): self
+    {
+        $this->apatride = $apatride;
         return $this;
     }
 
