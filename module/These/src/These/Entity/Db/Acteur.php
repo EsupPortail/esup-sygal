@@ -71,7 +71,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      */
     private $role;
 
-//    private ?string $qualite = null;
+    private ?string $libelleQualite = null;
 
     private bool $principal = false;
     private bool $exterieur = false;
@@ -312,29 +312,29 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     }
 
 
-//    /**
-//     * @param string|null $qualite
-//     * @return self
-//     */
-//    public function setQualite(?string $qualite): self
-//    {
-//        $this->qualite = $qualite;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * @return string qualite
-//     */
-//    public function getQualite(): string
-//    {
-//        if ($this->qualite === null) {
-//            return " ";
-////            return "Qualité non indiquée";
-//        } else {
-//            return $this->qualite;
-//        }
-//    }
+    /**
+     * @param string|null $qualite
+     * @return self
+     */
+    public function setLibelleQualite(?string $qualite): self
+    {
+        $this->qualite = $qualite;
+
+        return $this;
+    }
+
+    /**
+     * @return string qualite
+     */
+    public function getLibelleQualite(): string
+    {
+        if ($this->libelleQualite === null) {
+            return " ";
+//            return "Qualité non indiquée";
+        } else {
+            return $this->libelleQualite;
+        }
+    }
 
     /**
      * @return bool

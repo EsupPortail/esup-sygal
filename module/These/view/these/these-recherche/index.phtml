@@ -36,6 +36,9 @@ $acteursFormatterCoencadrents = new ActeursFormatter();
 $acteursFormatterCoencadrents->asSeparated()
     ->paramDisplay(['role' => true, 'complement' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CO_ENCADRANT]));
+
+$canEditThese = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES));
+
 ?>
 
 <?php $this->headTitle($this->translate("Thèses")); ?>
@@ -43,7 +46,7 @@ $acteursFormatterCoencadrents->asSeparated()
 <h1 class="page-header">
     <?php echo $this->translate("Thèses"); ?>
 </h1>
-<?php if ($canEditThese = true/*$this->isAllowed($these, ThesePrivileges::THESE_SAISIE_XXX)*/): ?>
+<?php if ($canEditThese): ?>
     <div class="col-md-7" style="align-content: center;">
         <a href="<?php echo $this->url('these/ajouter', [], [], true). '#informations' ?>"
            class="btn btn-primary">

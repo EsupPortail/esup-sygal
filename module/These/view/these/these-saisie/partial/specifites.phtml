@@ -9,22 +9,21 @@
         $fs = $form->get('generalites');
 //        echo $this->formHidden($fs->get('id'));
     ?>
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('cotutelle')) ?>
-        </div>
-    </div>
-    <div class="row" id="informations-co-tutelle">
-        <div class="row">
-            <div class="col-4">
-                <?php echo $this->formControlGroup($fs->get('etablissementCoTutelle')) ?>
-            </div>
-        </div>
+    <div class="col-6 mb-3 these-saisie-form-section">
+        <h3 class="these-saisie-title-section">Co-tutelle envisagée ?</h3>
 
         <div class="row">
-            <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('cotutelle')) ?>
+        </div>
+        <div class="row" id="informations-co-tutelle">
+            <div class="row">
+                <?php echo $this->formControlGroup($fs->get('etablissementCoTutelle')) ?>
+            </div>
+
+            <div class="row">
                 <?php echo $this->formControlGroup($fs->get('paysCoTutelle')) ?>
             </div>
         </div>
     </div>
+
 </fieldset>

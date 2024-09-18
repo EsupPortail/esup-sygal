@@ -8,8 +8,12 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Form\FieldsetInterface;
+use Laminas\Form\Form;
 use Laminas\View\Model\ViewModel;
 use These\Entity\Db\These;
+use These\Form\Financement\FinancementsFormAwareTrait;
+use These\Form\Generalites\GeneralitesFormAwareTrait;
+use These\Form\Structures\StructuresFormAwareTrait;
 use These\Form\TheseSaisie\TheseSaisieFormAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Form\Element\Collection;
@@ -21,6 +25,9 @@ class TheseSaisieController extends AbstractController
     use TheseSaisieFormAwareTrait;
     use DoctorantServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use GeneralitesFormAwareTrait;
+    use StructuresFormAwareTrait;
+    use FinancementsFormAwareTrait;
 
     public function ajouterAction()
     {
@@ -142,5 +149,51 @@ class TheseSaisieController extends AbstractController
             }
         }
         return $messages;
+    }
+
+    public function generalitesAction()
+    {
+        return $this->modifierTheseSaisiePart($this->getGeneralitesForm(), 'generalites');
+    }
+
+    public function structuresAction()
+    {
+        return $this->modifierTheseSaisiePart($this->getStructuresForm(), 'structures');
+    }
+
+    public function financementsAction()
+    {
+        return $this->modifierTheseSaisiePart($this->getFinancementsForm(), 'financements');
+    }
+
+    private function modifierTheseSaisiePart(Form $form, string $domaine)
+    {
+        $request = $this->getRequest();
+        $these = $this->requestedThese();
+
+        $form->setAttribute('action', $this->url()->fromRoute("these/modifier/$domaine", ['these' => $these->getId()], [], true));
+        $viewModel = new ViewModel([
+            'these' => $these,
+            'form' => $form,
+        ]);
+        $viewModel->setTemplate("these/these-saisie/partial/$domaine");
+
+        $form->bind($these);
+
+        if (!$request->isPost()) {
+            return $viewModel;
+        }
+
+        $form->setData($request->getPost());
+        if (!$form->isValid()) {
+            return $viewModel;
+        }
+
+        /** @var These $these */
+        $these = $form->getData();
+        $this->theseService->saveThese($these);
+
+        $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 }

@@ -10,6 +10,7 @@ use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Filter\ActeursFormatter;
 use These\Provider\Privilege\ActeurPrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
 
 $acteursFormatter = new ActeursFormatter();
 $acteursFormatter->paramFilter(["role" => [
@@ -43,6 +44,7 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                                 <?php
                                 $ligne = [];
                                 $canVisualiserIndividu = $this->isAllowed($acteur->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+                                $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
                                 if ($canVisualiserIndividu) {
                                     $identite = " <a href='".$this->url('individu/voir', ['individu' => $acteur->getIndividu()->getId()], [], true) ."'>" .
                                         "<span title='Accéder à la fiche détaillée de cet individu'>" . $result["nom"] . "</span></a>";

@@ -78,7 +78,6 @@ class TheseSaisieForm extends Form
 
         $financements = new Collection('financements');
         $financements
-            ->setLabel("Financement")
             ->setMinElements(0)
             ->setOptions([
                 'count' => 0,

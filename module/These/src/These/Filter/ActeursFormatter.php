@@ -167,6 +167,9 @@ class ActeursFormatter extends AbstractFilter {
         $results = [];
 
         foreach ($acteurs as $acteur) {
+            $these = $acteur->getThese();
+            $estModifiable = !$these->getSource()->getImportable();
+            $qualite = $estModifiable ? $acteur->getQualite() : $acteur->getLibelleQualite();
             $result = [];
             $result["acteur"] = $acteur;
             $result["nom"] = $acteur->getIndividu()->getNomComplet(true);
@@ -176,8 +179,8 @@ class ActeursFormatter extends AbstractFilter {
             if ($this->displayRoleComplement === true && trim($acteur->getLibelleRoleComplement())) {
                 $result["complement"] = $acteur->getLibelleRoleComplement();
             }
-            if ($this->displayQualite === true && trim($acteur->getQualite())) {
-                $result["qualite"] = $acteur->getQualite();
+            if ($this->displayQualite === true && trim($qualite)) {
+                $result["qualite"] = $qualite;
             }
             if ($this->displayEtablissement === true) {
                 $result["etablissement"] = ($etab = $acteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : "(Établissement non renseigné)";

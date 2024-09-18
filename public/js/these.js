@@ -68,9 +68,10 @@ $(document).ready(function() {
     }
 
     if (url.indexOf('these/identite/') !== -1) {
-        $('.openModalModificationTheseBtn').on('click', function() {
+        $('.openModalModificationTheseBtn').on('click', function(event) {
+            event.preventDefault()
             var url = $(this).data('url');
-            $.fn.modal.Constructor.prototype._enforceFocus = function () { };
+            var domaine = $(this).data('domaine')
             $('#modalModificationThese').modal('show');
             $.ajax({
                 url: url,
@@ -78,18 +79,9 @@ $(document).ready(function() {
                 success: function(data) {
                     $('#modalModificationThese .modal-body').css('height', 'auto');
                     $('#modalModificationTheseContent').html(data);
-                    let hashIndex = url.indexOf('#');
-                    let hash = hashIndex !== -1 ? url.substring(hashIndex + 1) : null;
-                    if (hash) {
-                        var tabButton = $('button[data-bs-target="#' + hash + '"]');
-                        if (tabButton.length) {
-                            tabButton.tab('show');
-                        }
-                    }
                     updateFields()
-                    initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput)
+                    if(domaine === "generalites") initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput)
                     $('select').selectpicker("render");
-                    $('#directeur-qualite, #codirecteur1-qualite, #codirecteur2-qualite').selectpicker('destroy'); // Désactive Bootstrap-Select dans la modal
                 },
                 error: function() {
                     $('#modalModificationTheseContent').html('Erreur lors du chargement du contenu.');
@@ -126,6 +118,7 @@ function initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput){
             }
         });
     }
+    setupAutocompleteDepartement(nomDeptInput, codeDeptInput);
 }
 
 function setupAutocompleteDepartement(inputNomId, inputCodeId) {

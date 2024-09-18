@@ -143,7 +143,6 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(
             (new Radio('cotutelle'))
-                ->setLabel("Co-tutelle envisagée ?")
                 ->setValueOptions([
                     0 => "Non",
                     1 => "Oui"

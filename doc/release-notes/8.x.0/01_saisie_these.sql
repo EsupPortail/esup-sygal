@@ -33,17 +33,78 @@ WHERE sq.libelle = a.qualite;
 
 -- Supprimer l'ancienne colonne lib_role_compl (toujours null) :
 
--- 1- Supprimer la vue utilisant le champ
-DROP VIEW v_diff_acteur;
+-- 1- Supprimer les vues utilisant le champ
+DROP VIEW IF EXISTS v_diff_acteur;
+DROP VIEW IF EXISTS src_acteur;
 
 -- 2- Supprimer le champ
 ALTER TABLE acteur DROP COLUMN lib_role_compl;
 
--- 3- Recréer la vue
+-- 3- Recréer les vues
+create or replace view src_acteur
+            (id, source_id, source_code, these_id, role_id, individu_id, etablissement_id, qualite) as
+WITH pre AS (SELECT NULL::bigint      AS id,
+                    tmp.source_code,
+                    src.id            AS source_id,
+                    i.id              AS individu_id,
+                    t.id              AS these_id,
+                    r.id              AS role_id,
+                    eact.id           AS etablissement_id,
+                    tmp.lib_cps       AS qualite
+             FROM tmp_acteur tmp
+                      JOIN source src ON src.id = tmp.source_id
+                      JOIN individu i ON i.source_code::text = tmp.individu_id::text
+                      JOIN these t ON t.source_code::text = tmp.these_id::text
+                      JOIN role r ON r.source_code::text = tmp.role_id::text AND r.code::text = 'P'::text
+                      LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text
+             UNION ALL
+             SELECT NULL::bigint                       AS id,
+                    tmp.source_code::text || 'P'::text AS source_code,
+                    src.id                             AS source_id,
+                    i.id                               AS individu_id,
+                    t.id                               AS these_id,
+                    r_pj.id                            AS role_id,
+                    eact.id                            AS etablissement_id,
+                    tmp.lib_cps                        AS qualite
+             FROM tmp_acteur tmp
+                      JOIN source src ON src.id = tmp.source_id
+                      JOIN individu i ON i.source_code::text = tmp.individu_id::text
+                      JOIN these t ON t.source_code::text = tmp.these_id::text
+                      JOIN role r ON r.source_code::text = tmp.role_id::text AND r.code::text = 'M'::text
+                      JOIN role r_pj ON r_pj.code::text = 'P'::text AND r_pj.structure_id = r.structure_id
+                      LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text
+             WHERE tmp.lib_roj_compl::text = 'Président du jury'::text
+             UNION ALL
+             SELECT NULL::bigint            AS id,
+                    tmp.source_code,
+                    src.id                  AS source_id,
+                    i.id                    AS individu_id,
+                    t.id                    AS these_id,
+                    r.id                    AS role_id,
+                    eact.id                 AS etablissement_id,
+                    tmp.lib_cps             AS qualite
+             FROM tmp_acteur tmp
+                      JOIN source src ON src.id = tmp.source_id
+                      JOIN individu i ON i.source_code::text = tmp.individu_id::text
+                      JOIN these t ON t.source_code::text = tmp.these_id::text
+                      JOIN role r ON r.source_code::text = tmp.role_id::text AND r.code::text <> 'P'::text
+                      LEFT JOIN etablissement eact ON eact.source_code::text = tmp.acteur_etablissement_id::text)
+SELECT pre.id,
+       pre.source_id,
+       pre.source_code,
+       pre.these_id,
+       pre.role_id,
+       COALESCE(isub.to_id, pre.individu_id)      AS individu_id,
+       COALESCE(esub.to_id, pre.etablissement_id) AS etablissement_id,
+       pre.qualite
+FROM pre
+         LEFT JOIN substit_individu isub ON isub.from_id = pre.individu_id
+         LEFT JOIN substit_etablissement esub ON esub.from_id = pre.etablissement_id;
+
 create view public.v_diff_acteur
             (source_code, source_id, operation, u_source_id, u_these_id, u_role_id, u_individu_id, u_etablissement_id,
              u_qualite, s_source_id, s_these_id, s_role_id, s_individu_id, s_etablissement_id,
-             s_qualite, s_lib_role_compl, d_source_id, d_these_id, d_role_id, d_individu_id, d_etablissement_id,
+             s_qualite, d_source_id, d_these_id, d_role_id, d_individu_id, d_etablissement_id,
              d_qualite)
 as
 WITH diff AS (SELECT COALESCE(s.source_code, d.source_code) AS source_code,
@@ -99,7 +160,6 @@ END                                AS u_qualite,
                      s.individu_id                          AS s_individu_id,
                      s.etablissement_id                     AS s_etablissement_id,
                      s.qualite                              AS s_qualite,
-                     s.lib_role_compl                       AS s_lib_role_compl,
                      d.source_id                            AS d_source_id,
                      d.these_id                             AS d_these_id,
                      d.role_id                              AS d_role_id,
@@ -124,7 +184,6 @@ SELECT diff.source_code,
        diff.s_individu_id,
        diff.s_etablissement_id,
        diff.s_qualite,
-       diff.s_lib_role_compl,
        diff.d_source_id,
        diff.d_these_id,
        diff.d_role_id,
@@ -199,6 +258,87 @@ WHERE unaccent(lower(t.lib_pays_cotut)) = unaccent(lower(p.libelle))
     RETURNING t.*
     )
 SELECT * FROM updated_these;
+
+-- Recréer les vues utilisant les champs supprimés
+DROP VIEW IF EXISTS src_these;
+create view src_these
+            (id, source_code, source_id, doctorant_id, etablissement_id, ecole_doct_id, unite_rech_id, titre,
+             etat_these, resultat, code_sise_disc, lib_disc, date_prem_insc, date_soutenance,
+             date_fin_confid, lib_etab_cotut, lib_pays_cotut, correc_autorisee, correc_effectuee, soutenance_autoris, tem_avenant_cotut, date_abandon, date_transfert)
+as
+WITH pre AS (WITH version_corrigee_deposee AS (SELECT t.source_code,
+                                                      f.id AS fichier_id
+                                               FROM fichier_these ft
+                                                        JOIN these t ON ft.these_id = t.id
+                                                        JOIN fichier f ON ft.fichier_id = f.id AND f.histo_destruction IS NULL
+                                                        JOIN nature_fichier nf
+                                                             ON f.nature_id = nf.id AND nf.code::text = 'THESE_PDF'::text
+        JOIN version_fichier vf
+        ON f.version_fichier_id = vf.id AND vf.code::text = 'VOC'::text
+        WHERE ft.est_annexe = false
+        AND ft.est_expurge = false
+        AND ft.retraitement IS NULL)
+SELECT NULL::bigint                   AS id,
+        tmp.source_code,
+       src.id                         AS source_id,
+       e.id                           AS etablissement_id,
+       d.id                           AS doctorant_id,
+       ed.id                          AS ecole_doct_id,
+       ur.id                          AS unite_rech_id,
+       tmp.lib_ths                    AS titre,
+       tmp.eta_ths                    AS etat_these,
+       tmp.cod_neg_tre::numeric       AS resultat,
+        tmp.code_sise_disc,
+       tmp.lib_int1_dis               AS lib_disc,
+       tmp.dat_deb_ths                AS date_prem_insc,
+       tmp.dat_sou_ths                AS date_soutenance,
+       tmp.dat_fin_cfd_ths            AS date_fin_confid,
+       tmp.lib_etab_cotut,
+       tmp.lib_pays_cotut,
+       tmp.correction_possible        AS correc_autorisee,
+       CASE
+           WHEN vcd.source_code IS NOT NULL THEN 'O'::character varying
+                        ELSE tmp.correction_effectuee
+END::character varying(30) AS correc_effectuee,
+                    tmp.tem_sou_aut_ths            AS soutenance_autoris,
+                    tmp.tem_avenant_cotut,
+                    tmp.dat_abandon                AS date_abandon,
+                    tmp.dat_transfert_dep          AS date_transfert
+             FROM tmp_these tmp
+                      JOIN source src ON src.id = tmp.source_id
+                      JOIN etablissement e ON e.id = src.etablissement_id
+                      JOIN doctorant d ON d.source_code::text = tmp.doctorant_id::text
+                      LEFT JOIN ecole_doct ed ON ed.source_code::text = tmp.ecole_doct_id::text
+                      LEFT JOIN unite_rech ur ON ur.source_code::text = tmp.unite_rech_id::text
+                      LEFT JOIN version_corrigee_deposee vcd ON vcd.source_code::text = tmp.source_code::text)
+SELECT pre.id,
+       pre.source_code,
+       pre.source_id,
+       COALESCE(dsub.to_id, pre.doctorant_id)     AS doctorant_id,
+       COALESCE(esub.to_id, pre.etablissement_id) AS etablissement_id,
+       COALESCE(edsub.to_id, pre.ecole_doct_id)   AS ecole_doct_id,
+       COALESCE(ursub.to_id, pre.unite_rech_id)   AS unite_rech_id,
+       pre.titre,
+       pre.etat_these,
+       pre.resultat,
+       pre.code_sise_disc,
+       pre.lib_disc,
+       pre.date_prem_insc,
+       pre.date_soutenance,
+       pre.date_fin_confid,
+       pre.lib_etab_cotut,
+       pre.lib_pays_cotut,
+       pre.correc_autorisee,
+       pre.correc_effectuee,
+       pre.soutenance_autoris,
+       pre.tem_avenant_cotut,
+       pre.date_abandon,
+       pre.date_transfert
+FROM pre
+         LEFT JOIN substit_doctorant dsub ON dsub.from_id = pre.doctorant_id
+         LEFT JOIN substit_etablissement esub ON esub.from_id = pre.etablissement_id
+         LEFT JOIN substit_ecole_doct edsub ON edsub.from_id = pre.ecole_doct_id
+         LEFT JOIN substit_unite_rech ursub ON ursub.from_id = pre.unite_rech_id;
 
 --
 -- Table TITREACCES
@@ -467,3 +607,11 @@ FROM these th
          LEFT JOIN dernier_rapport_activite ract ON ract.these_id = th.id
          LEFT JOIN dernier_rapport_csi rcsi ON rcsi.these_id = th.id
 WHERE th.histo_destruction IS NULL;
+
+
+-- Gestion des privilèges
+-- Suppression du privilège pour le Doctorant pour modifier sa thèse, qui n'était pas utilisé
+DELETE
+from role_privilege
+where privilege_id in (select id from privilege where code LIKE 'modification-de-ses-theses')
+  and role_id in (select id from role where code LIKE 'DOCTORANT');

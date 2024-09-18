@@ -32,6 +32,8 @@ use These\Fieldset\Structures\StructuresFieldset;
 use These\Fieldset\Structures\StructuresFieldsetFactory;
 use These\Fieldset\TitreAcces\TitreAccesFieldset;
 use These\Fieldset\TitreAcces\TitreAccesFieldsetFactory;
+use These\Form\Financement\FinancementsForm;
+use These\Form\Financement\FinancementsFormFactory;
 use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormFactory;
 use These\Form\TheseSaisie\TheseSaisieHydrator;
@@ -64,6 +66,9 @@ return [
                         'ajouter',
                         'modifier',
                         'supprimer',
+                        'generalites',
+                        'structures',
+                        'financements'
                     ],
                     'privileges' => [
                         ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
@@ -114,6 +119,38 @@ return [
                             ],
                         ],
                         'may_terminate' => true,
+                        'child_routes' => [
+                            'generalites' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route' => '/generalites',
+                                    'defaults' => [
+                                        /** @see TheseSaisieController::generalitesAction() */
+                                        'action' => 'generalites',
+                                    ],
+                                ],
+                            ],
+                            'structures' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route' => '/structures',
+                                    'defaults' => [
+                                        /** @see TheseSaisieController::structuresAction() */
+                                        'action' => 'structures',
+                                    ],
+                                ],
+                            ],
+                            'financements' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route' => '/financements',
+                                    'defaults' => [
+                                        /** @see TheseSaisieController::financementsAction() */
+                                        'action' => 'financements',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'supprimer' => [
                         'type' => Segment::class,
@@ -149,6 +186,7 @@ return [
             StructuresFieldset::class => StructuresFieldsetFactory::class,
             FinancementFieldset::class => FinancementFieldsetFactory::class,
             TitreAccesFieldset::class => TitreAccesFieldsetFactory::class,
+            FinancementsForm::class => FinancementsFormFactory::class
         ],
     ],
     'hydrators' => [

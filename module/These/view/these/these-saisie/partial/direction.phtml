@@ -3,19 +3,24 @@
  * @var \Laminas\Form\Form $form
  */
 
+use Application\Entity\Db\Role;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use These\Fieldset\Direction\DirectionFieldset;
 
 ?>
 
 <fieldset>
     <?php
-    $fs = $form->get('direction');
-//    echo $this->formHidden($fs->get('id'));
+        $fs = $form->get('direction');
+        /** @var These $these */
+        $these = $fs->getObject();
+        $estImportable = $these?->getSource()->getImportable();
     ?>
 
-    <h3>Directeur·trice de thèse <span class="icon icon-information"
-                                        title="Un·e seul·e directeur·trice de thèse"></span></h3>
-    <div class="mb-3">
+    <div class="mb-3 these-saisie-form-section">
+        <h3 class="these-saisie-title-section">Directeur·trice de thèse <span class="icon icon-information"
+                                                                              title="Un·e seul·e directeur·trice de thèse"></span></h3>
         <div class="row directeur">
             <div class="col-md-4">
                 <div class="row">
@@ -25,7 +30,14 @@ use These\Fieldset\Direction\DirectionFieldset;
                 </div>
                 <div class="row">
                     <div class="col-md-10">
-                        <?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?>
+                        <?php if(!$estImportable){ ?>
+                            <?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?>
+                        <?php }else{
+                            /** @var Acteur $directeur */
+                            $directeur = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->first();
+                            echo "Qualité : ";
+                            echo trim($directeur?->getLibelleQualite()) !== null ? $directeur->getLibelleQualite() : "<i>Aucune qualité de renseignée</i>";
+                        } ?>
                     </div>
                 </div>
             </div>
@@ -37,17 +49,21 @@ use These\Fieldset\Direction\DirectionFieldset;
             <div class="col-md-1">
 
             </div>
-            <div class="col-md-1 pull-right">
-                <span data-target-id="directeur" class="erase-acteur icon icon-historiser"
-                      title="Vider les champs concernant le directeur"></span>
-            </div>
+            <?php if(!$estImportable): ?>
+                <div class="col-md-1 pull-right">
+                    <span data-target-id="directeur" class="erase-direction-acteur icon icon-historiser"
+                          title="Vider les champs concernant le directeur"></span>
+                </div>
+            <?php endif ?>
         </div>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 these-saisie-form-section">
         <?php for ($i = 1; $i <= DirectionFieldset::NBCODIR; $i++)  : ?>
-            <hr>
-            <h3>
+            <?php if($i === 2): ?>
+                <div class="separator"></div>
+            <?php endif ?>
+            <h3 class="these-saisie-title-section">
                 <?php echo $this->formElement($fs->get('codirecteur' . $i . '-enabled')); ?>
                 Codirecteur·trice de thèse n°<?php echo $i ?>
             </h3>
@@ -56,12 +72,25 @@ use These\Fieldset\Direction\DirectionFieldset;
                 <div class="col-md-4">
                     <div class="row">
                         <div class="col-md-12">
-                            <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?>
+                            <?php
+                            echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?>
+                            <?php if(!$estImportable){ ?>
+                                <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?>
+                            <?php }else{
+                                $individuId = $fs->get('codirecteur' . $i . '-individu')->getValue();
+                                /** @var Acteur $coDirecteur */
+                                $coDirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+                                foreach($coDirecteurs as $coDirecteur){
+                                    if((int)$individuId === $coDirecteur->getIndividu()->getId()){
+                                        echo "Qualité : ";
+                                        echo trim($coDirecteur->getLibelleQualite()) !== null ? $coDirecteur->getLibelleQualite() : "<i>Aucune qualité de renseignée</i>";
+                                    }
+                                }
+                            } ?>
                         </div>
                     </div>
                 </div>
@@ -78,10 +107,12 @@ use These\Fieldset\Direction\DirectionFieldset;
                         <?php echo $this->formControlGroup($fs->get($name)); ?>
                     <?php endif ?>
                 </div>
-                <div class="col-md-1 pull-right">
-                    <span data-target-id="codirecteur<?php echo $i; ?>" class="erase-acteur icon icon-historiser"
-                          title="Vider les champs concernant ce codirecteur"></span>
-                </div>
+                <?php if(!$estImportable): ?>
+                    <div class="col-md-1 pull-right">
+                        <span data-target-id="codirecteur<?php echo $i; ?>" class="erase-direction-acteur icon icon-historiser"
+                              title="Vider les champs concernant ce codirecteur"></span>
+                    </div>
+                <?php endif; ?>
             </div>
         <?php endfor; ?>
     </div>
@@ -119,7 +150,7 @@ use These\Fieldset\Direction\DirectionFieldset;
             updateCodirecteurDiv($(this));
         });
 
-        $('.erase-acteur').click(function() {
+        $('.erase-direction-acteur').click(function() {
             let container = $("div." + $(this).data('target-id'));
             container.find("input").val('');
             container.find("select").val(null).trigger('change');
@@ -128,9 +159,6 @@ use These\Fieldset\Direction\DirectionFieldset;
 </script>
 
 <style>
-    span.erase-acteur {
-        cursor: pointer;
-    }
     .select2-container {
         z-index: 9999 !important;
     }

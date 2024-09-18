@@ -44,7 +44,7 @@ $form->prepare();
     </div>
 <?php } ?>
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
+<ul class="nav nav-tabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="informations-tab" data-bs-toggle="tab" data-bs-target="#informations" type="button" role="tab" aria-controls="informations" aria-selected="true"><?php echo $form->get("generalites")->getLabel();?></button>
     </li>
@@ -61,7 +61,7 @@ $form->prepare();
         <button class="nav-link" id="encadrements-tab" data-bs-toggle="tab" data-bs-target="#encadrements" type="button" role="tab" aria-controls="encadrements" aria-selected="false"><?php echo $form->get("encadrements")->getLabel();?></button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financement" type="button" role="tab" aria-controls="financement" aria-selected="false"><?php echo $form->get("financements")->getLabel();?></button>
+        <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financements" type="button" role="tab" aria-controls="financement" aria-selected="false">Financement</button>
     </li>
 </ul>
 
@@ -91,8 +91,8 @@ echo $this->formHidden($form->get('id'));
     <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
         <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
     </div>
-    <div class="tab-pane fade" id="financement" role="tabpanel" aria-labelledby="financement-tab">
-        <?php echo $this->partial('these/these-saisie/partial/financement'); ?>
+    <div class="tab-pane fade" id="financements" role="tabpanel" aria-labelledby="financements-tab">
+        <?php echo $this->partial('these/these-saisie/partial/financements'); ?>
     </div>
 </div>
 

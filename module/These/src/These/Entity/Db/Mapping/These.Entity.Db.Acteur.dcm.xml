@@ -10,7 +10,7 @@
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
 <!--        <field name="libelleRoleComplement" type="string" column="LIB_ROLE_COMPL" length="50" nullable="true"/>-->
-<!--        <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>-->
+        <field name="libelleQualite" type="string" column="QUALITE" length="50" nullable="true"/>
         <field name="principal" type="boolean" column="PRINCIPAL" nullable="false"/>
         <field name="exterieur" type="boolean" column="EXTERIEUR" nullable="false"/>
         <field name="ordre" type="integer" column="ORDRE" nullable="false"/>

@@ -1,28 +1,29 @@
 <?php
 /**
- * @var Form $form
+ * @var \Laminas\Form\Form $form
  */
-
-use Laminas\Form\Form;
-
 ?>
 
 <fieldset>
     <?php
-    $fs = $form->get('structures');
+    $fs = $form->get('financements');
     $form->prepare();
     echo $this->form()->openTag($form);
     ?>
     <div class="col-6 mb-3 these-saisie-form-section">
-        <?php
-        echo $this->formControlGroup($fs->get('etablissement'));
-        echo $this->formControlGroup($fs->get('ecoleDoctorale'));
-        echo $this->formControlGroup($fs->get('uniteRecherche'));
-        ?>
+        <h3 class="these-saisie-title-section">Financement(s)</h3>
+        <div class="row">
+            <?php echo $this->formElementCollection($fs); ?>
+        </div>
     </div>
-    <?php if($fs->useAsBaseFieldset()): ?>
+    <?php if($form->hasAttribute("formName")): ?>
         <?php echo $this->formHidden($form->get('security')); ?>
         <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
         <?php echo $this->form()->closeTag(); ?>
     <?php endif ?>
 </fieldset>
+<script>
+    $(document).on('click', '.collection-add-link', function() {
+        $('select').selectpicker();
+    });
+</script>

@@ -2,119 +2,136 @@
 /**
  * @var \Laminas\Form\Form $form
  */
+
+use These\Fieldset\Generalites\GeneralitesFieldset;
+
 ?>
 
 <fieldset>
     <?php
-    $fs = $form->get('generalites');
-//    echo $this->formHidden($fs->get('id'));
+        /** @var GeneralitesFieldset $fs */
+        $fs = $form->get('generalites');
+        $these = $fs->getObject();
+        $form->prepare();
+        echo $this->form()->openTag($form);
     ?>
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('doctorant')) ?>
+    <div class="row these-saisie-form-section">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('doctorant')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('titre')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('discipline')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('domaineHal')->get('domaineHal')); ?>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Confidentialité de la thèse
+                </h3>
+                <div class="col-md-7">
+                    <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4" id="date-fin-confidentialite">
+                    <?php echo $this->formControlGroup($fs->get('dateFinConfidentialite')); ?>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Première inscription
+                </h3>
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('datePremiereInscription')) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Titre d'accès à l'inscription en thèse
+                </h3>
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('titreAccesInterneExterne')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('libelleTitreAcces')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('pays')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('nomDeptTitreAcces')); ?>
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codeDeptTitreAcces')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titre')) ?>
-        </div>
-    </div>
+    <?php if($these->getId() !== null): ?>
+        <div class="separator"></div>
+        <div class="row these-saisie-form-section">
+            <div class="row ">
+                <h3 class="these-saisie-title-section">
+                    Gestion de la thèse
+                </h3>
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('dateAbandon')); ?>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('discipline')) ?>
-        </div>
-    </div>
+            <div class="row">
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('dateTransfert')); ?>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('domaineHal')->get('domaineHal')); ?>
+            <div class="row">
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('resultat')); ?>
+                </div>
+            </div>
         </div>
-    </div>
+    <?php endif ?>
 
-    <br>
-
-    <div class="row">
-        <h3>
-            Confidentialité de la thèse
-        </h3>
-        <div class="col-md-7">
-            <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4" id="date-fin-confidentialite">
-            <?php echo $this->formControlGroup($fs->get('dateFinConfidentialite')); ?>
-        </div>
-    </div>
-
-    <br>
-
-    <div class="row">
-        <h3>
-            Première inscription
-        </h3>
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('datePremiereInscription')) ?>
-        </div>
-    </div>
-
-    <br>
-
-    <div class="row">
-        <h3>
-            Titre d'accès à l'inscription en thèse
-        </h3>
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('titreAccesInterneExterne')); ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('libelleTitreAcces')); ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('pays')); ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('nomDeptTitreAcces')); ?>
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codeDeptTitreAcces')); ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <h3>
-            Gestion de la thèse
-        </h3>
-        <div class="alert alert-warning">
-            Où mettre les trois champs dateAbandon et dateTransfert et resultat?
-        </div>
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('dateAbandon')); ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('dateTransfert')); ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-4">
-            <?php echo $this->formControlGroup($fs->get('resultat')); ?>
-        </div>
-    </div>
+    <?php if($fs->useAsBaseFieldset()): ?>
+        <?php echo $this->formHidden($form->get('security')); ?>
+        <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+    <?php endif ?>
 
 </fieldset>

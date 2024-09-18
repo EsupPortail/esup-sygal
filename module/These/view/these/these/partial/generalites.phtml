@@ -17,6 +17,7 @@ use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
 use These\Entity\Db\These;
 use These\Provider\Privilege\ThesePrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
 
 $canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
 $canEditEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
@@ -44,12 +45,14 @@ $canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFIC
         <?php echo $this->translate("Doctorant"); ?>
     </dt>
     <dd class="col-md-8">
-        <?php echo sprintf("%s (%s)",
-            $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true),
-            $these->getDoctorant()->getIndividu()->getDateNaissanceToString());
+        <?php
+            $nomComplet = $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true);
+            $dateNaissance = $these->getDoctorant()->getIndividu()->getDateNaissanceToString();
+            echo !empty($dateNaissance) ? sprintf("%s (%s)", $nomComplet, $dateNaissance) : $nomComplet;
         ?>
         <?php
         $canVisualiserIndividu = $this->isAllowed($these->getDoctorant()->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
         if ($canVisualiserIndividu) {
             echo " <a href='".$this->url('individu/voir', ['individu' => $these->getDoctorant()->getIndividu()->getId()], [], true) ."'>";
             echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
