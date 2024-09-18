@@ -51,10 +51,6 @@ return [
         'actif' => true,
     ],
 
-    'import-api' => [
-        // cf. secret.local.php
-    ],
-
     'import' => [
         // cf. secret.local.php
     ],
