@@ -465,6 +465,12 @@ class TheseService extends BaseService
                 $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
                 "La thèse n'est pas codirigée par " . $individuUtilisateur
             );
+        } elseif($role->getCode() === Role::CODE_BDD) {
+            $structure = $role->getStructure();
+            $this->assertTrue(
+                $these->getEtablissement()->getStructure() === $structure,
+                "La thèse n'appartient pas à la structure  " . $structure
+            );
         }
     }
 }

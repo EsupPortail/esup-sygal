@@ -5,6 +5,7 @@ namespace These\Assertion\Acteur;
 use Application\Assertion\AbstractAssertion;
 use Psr\Container\ContainerInterface;
 use These\Service\Acteur\ActeurService;
+use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\These\TheseService;
 
 class ActeurAssertionFactory
@@ -25,6 +26,10 @@ class ActeurAssertionFactory
         /** @var ActeurService $acteurService */
         $acteurService = $container->get(ActeurService::class);
         $assertion->setActeurService($acteurService);
+
+        /** @var CoEncadrantService $coEncadrantService */
+        $coEncadrantService = $container->get(CoEncadrantService::class);
+        $assertion->setCoEncadrantService($coEncadrantService);
 
         $this->injectCommons($assertion, $container);
 

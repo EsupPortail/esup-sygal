@@ -615,3 +615,33 @@ DELETE
 from role_privilege
 where privilege_id in (select id from privilege where code LIKE 'modification-de-ses-theses')
   and role_id in (select id from role where code LIKE 'DOCTORANT');
+
+delete from profil_privilege pp1
+where exists (
+    select *
+    from profil_privilege pp
+             join profil on pp.profil_id = profil.id and role_id in ('DOCTORANT')
+             join privilege p on pp.privilege_id = p.id
+    where p.code in ('modification-de-ses-theses')
+      and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
+);
+
+-- Suppression du privilège pour le Gestionnaire d'ED pour modifier leur thèse
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'these', 'modification-de-ses-theses')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+    'GEST_ED'
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
+select p2r.ROLE_ID, pp.PRIVILEGE_ID
+from PROFIL_TO_ROLE p2r
+         join profil pr on pr.id = p2r.PROFIL_ID
+         join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
+where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
+;

@@ -14,7 +14,6 @@ use These\Provider\Privilege\CoEncadrantPrivileges;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 $canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
-$canCoEncadrantGerer = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_GERER));
 
 $acteursFormatter = new ActeursFormatter();
 $acteursFormatter->paramFilter(["role" => [
@@ -88,6 +87,7 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                             </td>
                             <td>
                                 <div class="float-end">
+                                    <?php $canCoEncadrantGerer = $this->isAllowed($acteur, CoEncadrantPrivileges::COENCADRANT_GERER); ?>
                                     <?php if ($canCoEncadrantGerer && $acteur->estCoEncadrant()): /**  @see CoEncadrantController::ajouterCoEncadrantAction() */ ?>
                                         <a class="iconly ajax-modal" data-event="modification"
                                            href="<?php echo $this->url('co-encadrant/ajouter-co-encadrant', ['these' => $these->getId()], [], true); ?>"
@@ -124,7 +124,9 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
         <dt class="col-md-3">
             Co-encadrant
         </dt>
-        <?php if ($canCoEncadrantGerer){ ?>
+        <?php
+        $canCoEncadrantGerer = $this->isAllowed(new Acteur(),CoEncadrantPrivileges::COENCADRANT_GERER);
+        if ($canCoEncadrantGerer){ ?>
             <dd class="col-md-9 acteurs">
                 <table class="table table-extra-condensed">
                     <tr>

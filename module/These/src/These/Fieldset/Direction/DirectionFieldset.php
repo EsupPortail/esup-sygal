@@ -19,6 +19,7 @@ use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Form\Element\SearchAndSelect;
 use UnicaenApp\Form\Element\SearchAndSelect2;
+use Webmozart\Assert\Assert;
 
 class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -29,10 +30,40 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
     const NBCODIR = 2;
 
     private string $urlAutocompleteIndividu;
-    private string $urlAutocompleteEtablissement;
-    private string $urlAutocompleteEcoleDoctorale;
-    private string $urlAutocompleteUniteRecherche;
-    
+    private array $etablissements;
+    private array $ecolesDoctorales;
+    private array $unitesRecherche;
+
+    public function setEtablissements(array $etablissements): void
+    {
+        $options = [];
+        foreach ($etablissements as $etablissement) {
+            $sigle = $etablissement->getStructure()?->getSigle() ? " (".$etablissement->getStructure()->getSigle().")" : null;
+            $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
+        }
+        $this->etablissements = $options;
+    }
+
+    public function setEcolesDoctorales(array $ecolesDoctorales): void
+    {
+        $options = [];
+
+        foreach ($ecolesDoctorales as $ecole) {
+            $sigle = $ecole->getStructure()?->getCode() ? " (".$ecole->getStructure()->getCode().")" : null;
+            $options[$ecole->getId()] = $ecole->getStructure()?->getLibelle() . $sigle;
+        }
+        $this->ecolesDoctorales = $options;
+    }
+
+    /**
+     * @param array $unitesRecherche
+     */
+    public function setUnitesRecherche(array $unitesRecherche): void
+    {
+        Assert::allIsInstanceOf($unitesRecherche, UniteRecherche::class);
+        $this->unitesRecherche = $unitesRecherche;
+    }
+
     public function prepareElement(FormInterface $form): void
     {
         /** @var These $these */
@@ -62,18 +93,6 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
     public function setUrlAutocompleteIndividu(string $urlAutocompleteIndividu): void
     {
         $this->urlAutocompleteIndividu = $urlAutocompleteIndividu;
-    }
-    public function setUrlAutocompleteEtablissement(string $urlAutocompleteEtablissement): void
-    {
-        $this->urlAutocompleteEtablissement = $urlAutocompleteEtablissement;
-    }
-    public function setUrlAutocompleteEcoleDoctorale(string $urlAutocompleteEcoleDoctorale): void
-    {
-        $this->urlAutocompleteEcoleDoctorale = $urlAutocompleteEcoleDoctorale;
-    }
-    public function setUrlAutocompleteUniteRecherche(string $urlAutocompleteUniteRecherche): void
-    {
-        $this->urlAutocompleteUniteRecherche = $urlAutocompleteUniteRecherche;
     }
 
     public function init()
@@ -151,10 +170,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Établissement * :',
                 'target_class' => Etablissement::class,
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
+                'value_options' => $this->etablissements,
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [
@@ -170,19 +186,8 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'name' => $prefixe . '-uniteRecherche',
             'options' => [
                 'label' => 'Unité de recherche * :',
-                'object_manager' => $this->structureService->getEntityManager(),
                 'target_class' => UniteRecherche::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                    'params' => [],
-                    'callback' => function() {
-                        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
-                    },
-                ],
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
+                'value_options' => UniteRecherche::toValueOptions($this->unitesRecherche),
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [
@@ -199,10 +204,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'options' => [
                 'label' => 'École doctorale * :',
                 'target_class' => EcoleDoctorale::class,
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
+                'value_options' => $this->ecolesDoctorales,
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [

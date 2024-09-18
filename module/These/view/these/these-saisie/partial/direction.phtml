@@ -42,9 +42,9 @@ use These\Fieldset\Direction\DirectionFieldset;
                 </div>
             </div>
             <div class="col-md-6">
-                <?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?>
-                <?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?>
                 <?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?>
+                <?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?>
+                <?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?>
             </div>
             <div class="col-md-1">
 
@@ -95,9 +95,9 @@ use These\Fieldset\Direction\DirectionFieldset;
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?>
-                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?>
                     <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?>
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?>
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?>
                 </div>
                 <div class="col-md-1">
                     <?php if ($fs->has($name = 'codirecteur' . $i . '-principal')): ?>

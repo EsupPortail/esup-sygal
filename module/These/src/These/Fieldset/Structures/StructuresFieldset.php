@@ -16,12 +16,44 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Webmozart\Assert\Assert;
 
 class StructuresFieldset extends Fieldset implements InputFilterProviderInterface
 {
     use EtablissementServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EntityManagerAwareTrait;
+
+    private array $etablissements;
+    private array $ecolesDoctorales;
+    private array $unitesRecherche;
+
+    public function setEtablissements(array $etablissements): void
+    {
+        $options = [];
+        foreach ($etablissements as $etablissement) {
+            $sigle = $etablissement->getStructure()?->getSigle() ? " (".$etablissement->getStructure()->getSigle().")" : null;
+            $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
+        }
+        $this->etablissements = $options;
+    }
+
+    public function setEcolesDoctorales(array $ecolesDoctorales): void
+    {
+        $options = [];
+
+        foreach ($ecolesDoctorales as $ecole) {
+            $sigle = $ecole->getStructure()?->getCode() ? " (".$ecole->getStructure()->getCode().")" : null;
+            $options[$ecole->getId()] = $ecole->getStructure()?->getLibelle() . $sigle;
+        }
+        $this->ecolesDoctorales = $options;
+    }
+
+    public function setUnitesRecherche(array $unitesRecherche): void
+    {
+        Assert::allIsInstanceOf($unitesRecherche, UniteRecherche::class);
+        $this->unitesRecherche = $unitesRecherche;
+    }
 
     public function prepareElement(FormInterface $form): void
     {
@@ -49,10 +81,7 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Établissement : *',
                 'target_class' => Etablissement::class,
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
+                'value_options' => $this->etablissements,
             ],
             'attributes' => [
                 'id' => 'etablissement',
@@ -68,17 +97,7 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Unité de recherche : *',
                 'target_class' => UniteRecherche::class,
-                'find_method' => [
-                    'name' => 'findAll',
-                    'params' => [],
-                    'callback' => function() {
-                        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
-                    },
-                ],
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
+                'value_options' => UniteRecherche::toValueOptions($this->unitesRecherche),
             ],
             'attributes' => [
                 'id' => 'unite-recherche',
@@ -94,10 +113,7 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'École doctorale : *',
                 'target_class' => EcoleDoctorale::class,
-                'label_generator' => function($targetEntity) {
-                    $sigle = $targetEntity->getStructure()?->getCode() ? " (".$targetEntity->getStructure()->getCode().")" : null;
-                    return $targetEntity->getStructure()?->getLibelle() . $sigle;
-                },
+                'value_options' => $this->ecolesDoctorales,
             ],
             'attributes' => [
                 'id' => 'ecole-doctorale',

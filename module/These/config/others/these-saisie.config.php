@@ -8,10 +8,6 @@ use These\Assertion\These\TheseAssertion;
 use These\Controller\Factory\TheseSaisieControllerFactory;
 use These\Controller\TheseRechercheController;
 use These\Controller\TheseSaisieController;
-use These\Fieldset\Confidentialite\ConfidentialiteFieldset;
-use These\Fieldset\Confidentialite\ConfidentialiteFieldsetFactory;
-use These\Fieldset\Confidentialite\ConfidentialiteHydrator;
-use These\Fieldset\Confidentialite\ConfidentialiteHydratorFactory;
 use These\Fieldset\Direction\DirectionFieldset;
 use These\Fieldset\Direction\DirectionFieldsetFactory;
 use These\Fieldset\Direction\DirectionHydrator;
@@ -179,7 +175,6 @@ return [
     'form_elements' => [
         'factories' => [
             TheseSaisieForm::class => TheseSaisieFormFactory::class,
-            ConfidentialiteFieldset::class => ConfidentialiteFieldsetFactory::class,
             EncadrementFieldset::class => EncadrementFieldsetFactory::class,
             GeneralitesFieldset::class => GeneralitesFieldsetFactory::class,
             DirectionFieldset::class => DirectionFieldsetFactory::class,
@@ -193,7 +188,6 @@ return [
         'factories' => [
             TheseSaisieHydrator::class => TheseSaisieHydratorFactory::class,
 
-            ConfidentialiteHydrator::class => ConfidentialiteHydratorFactory::class,
             EncadrementHydrator::class => EncadrementHydratorFactory::class,
             GeneralitesHydrator::class => GeneralitesHydratorFactory::class,
             DirectionHydrator::class => DirectionHydratorFactory::class,

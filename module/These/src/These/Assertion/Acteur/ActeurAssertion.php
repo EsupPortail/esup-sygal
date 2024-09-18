@@ -5,13 +5,16 @@ namespace These\Assertion\Acteur;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
+use Application\Entity\Db\Role;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Provider\Privilege\ActeurPrivileges;
+use These\Provider\Privilege\CoEncadrantPrivileges;
 use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 
@@ -21,9 +24,10 @@ class ActeurAssertion extends AbstractAssertion
     use ThrowsFailedAssertionExceptionTrait;
     use TheseServiceAwareTrait;
     use ActeurServiceAwareTrait;
+    use CoEncadrantServiceAwareTrait;
 
-    private Acteur $acteur;
-    private These $these;
+    private ?Acteur $acteur;
+    private ?These $these;
 
     /**
      * @param array $page
@@ -70,12 +74,15 @@ class ActeurAssertion extends AbstractAssertion
         }
 
         $this->acteur = $this->getRequestedActeur();
+        $this->these = $this->acteur?->getId() !== null ? $this->acteur->getThese() : $this->getRequestedThese();
 
         try {
             switch ($action) {
                 case 'modifier':
-                    $this->assertEtatThese($this->acteur->getThese());
-                    $this->theseService->assertAppartenanceThese($this->acteur->getThese(), $this->userContextService);
+                case 'ajouter-co-encadrant':
+                case 'retirer-co-encadrant':
+                    $this->assertEtatThese($this->these);
+                    $this->theseService->assertAppartenanceThese($this->these, $this->userContextService);
                     break;
             }
 
@@ -101,13 +108,17 @@ class ActeurAssertion extends AbstractAssertion
         }
 
         $this->acteur = $entity;
+        $this->these = $this->acteur->getId() !== null ? $this->acteur->getThese() : $this->getRequestedThese();
 
         try {
-
             switch ($privilege) {
                 case ActeurPrivileges::MODIFIER_ACTEUR_SES_THESES:
-                    $this->assertEtatThese($this->acteur->getThese());
-                    $this->theseService->assertAppartenanceThese($this->acteur->getThese(), $this->userContextService);
+                case ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES:
+                case CoEncadrantPrivileges::COENCADRANT_GERER:
+                    if($this->these){
+                        $this->assertEtatThese($this->these);
+                        $this->theseService->assertAppartenanceThese($this->these, $this->userContextService);
+                    }
             }
 
         } catch (FailedAssertionException $e) {
@@ -140,6 +151,8 @@ class ActeurAssertion extends AbstractAssertion
     {
         if ($id = $this?->getRouteMatch()?->getParam('acteur')) {
             return $this->acteurService->getRepository()->find($id);
+        }else if($id = $this?->getRouteMatch()?->getParam('co-encadrant')){
+            return $this->coEncadrantService->getCoEncadrant($id);
         }
 
         return null;
