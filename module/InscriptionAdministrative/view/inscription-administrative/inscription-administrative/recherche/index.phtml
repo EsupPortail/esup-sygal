@@ -1,0 +1,137 @@
+<?php
+/**
+ * @see \InscriptionAdministrative\Controller\Recherche\InscriptionAdministrativeRechercheController::indexAction()
+ *
+ * @var string $title
+ * @var LaminasPaginator $paginator
+ * @var string $text
+ *
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative[] $inscriptionAdministratives
+ * @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService
+ */
+
+use Application\Constants;
+use Application\Entity\AnneeUniv;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+
+$statutInscriptionClasses = [
+    InscriptionAdministrative::STATUT_INSCRIPTION_VALIDE => 'success',
+    InscriptionAdministrative::STATUT_INSCRIPTION_ANNULE => 'danger',
+];
+
+$this->headTitle($this->translate("IA importées"));
+?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("Inscriptions administratives importées") ?>
+    <span class="badge bg-secondary">
+        <?php echo $paginator->getTotalItemCount() ?>
+    </span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url('inscription-administrative/recherche/filters', [], ['query' => $this->queryParams()], true); ?>
+    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 160px">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<?php if ($paginator->getTotalItemCount()): ?>
+
+    <table class="table table-bordered table-sm table-hover">
+        <tr>
+            <th>Id</th>
+            <th>Source de<br>l'import</th>
+            <th>No candidat</th>
+            <th>Apprenant</th>
+            <th>ED</th>
+            <th>Statut</th>
+<!--            <th>Chemin</th>-->
+            <th>Date inscription</th>
+            <th><abbr title="Année universitaire issue de la période">Année univ.</abbr></th>
+            <th>Doctorant lié</th>
+            <th>Dernière modif.</th>
+            <th></th>
+        </tr>
+        <?php foreach ($paginator as $ia): ?>
+            <tr>
+                <td>
+                    <a href="<?php echo $this->url('inscription-administrative/voir', ['id' => $ia['id']]) ?>"><?php echo $ia['id'] ?></span></a>
+                </td>
+                <td><?php echo $ia['source']['code'] ?></td>
+                <td>
+                    <?php echo $ia['noCandidat'] ?>
+                </td>
+                <td>
+                    <?php echo $this->partial('inscription-administrative/inscription-administrative-apprenant/partial/apercu', [
+                        'inscriptionAdministrativeApprenant' => $ia['inscriptionAdministrativeApprenant'][0],
+                    ]); ?>
+                </td>
+                <td>
+                    <a href="<?php echo $this->url('ecole-doctorale/voir', ['ecole-doctorale' => $ia['ecoleDoctorale']['id']]) ?>">
+                        <?php echo $ia['ecoleDoctorale']['structure']['code'] ?>
+                    </a>
+                </td>
+                <td>
+                    <?php echo sprintf('<span class="badge bg-%s">%s</span>',
+                        $statutInscriptionClasses[$statut = $ia['statutInscription']] ?? 'secondary',
+                        $statut) ?>
+                </td>
+<!--                <td>--><?php //echo $ia['chemin'] ?><!--</td>-->
+                <td><?php echo $ia['dateInscription']->format(Constants::DATE_FORMAT) ?></td>
+                <td>
+                    <?php if ($periodeAnneeUniv = $ia['periodeAnneeUniversitaire']): ?>
+                        <?php echo AnneeUniv::fromPremiereAnnee($periodeAnneeUniv) ?>
+                    <?php else: ?>
+                        <?php echo $ia['periodeDateDebut']->format(Constants::DATE_FORMAT) ?><br>
+                        <?php echo $ia['periodeDateFin']->format(Constants::DATE_FORMAT) ?>
+                        <?php
+                        $anneeUnivDeduite = $anneeUnivService->fromDate($ia['periodeDateDebut']);
+                        $anneeUnivClass = $anneeUnivDeduite->getPremiereAnnee() <> $periodeAnneeUniv ? 'danger' : 'success';
+                        ?>
+                        <abbr class="text-<?php echo $anneeUnivClass ?>" title="<?php echo InscriptionAdministrative::COMMENTAIRE_ANNEE_UNIV_PERIODE ?>">
+                            <?php echo AnneeUniv::fromPremiereAnnee($anneeUnivDeduite) ?>
+                        </abbr>
+                    <?php endif ?>
+                </td>
+                <td>
+                    <?php if ($iad = $ia['inscriptionAdministrativeDoctorant'][0] ?? null): ?>
+                        <?php echo $iad['doctorant']['individu']['nomPatronymique'] ?>
+                        <?php echo $iad['doctorant']['individu']['prenom1'] ?> <br>
+                            <small class="text-secondary">Lien créé le <?php echo $iad['histoCreation']?->format(Constants::DATETIME_FORMAT) ?></small>
+                    <?php else: ?>
+                        <span class="text text-danger">Aucun</span>
+                    <?php endif; ?>
+                </td>
+                <td><?php echo ($ia['histoModification'] ?: $ia['histoCreation'])->format(Constants::DATETIME_FORMAT_BR) ?></td>
+                <td>
+                    <?php if (count($ia['inscriptionAdministrativeApprenant']) > 1): ?>
+                        <span data-toggle="tooltip" class="icon icon-warning text-danger"
+                              title="Anomalie : inscription liée à plus d'1 apprenant"></span>
+                    <?php endif ?>
+                    <a href="<?php echo $this->url('inscription-administrative/voir', ['id' => $ia['id']]) ?>"><span class="icon icon-voir"></span></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+
+    <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => 'inscription-administrative/recherche/index']) ?>
+
+<?php else: ?>
+
+    Aucune inscription administrative trouvée.
+
+<?php endif ?>
+
+
+<script>
+    $(function() {
+        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

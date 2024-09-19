@@ -2,6 +2,7 @@
 
 namespace Application\Search\Filter;
 
+use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
 
 class TextSearchFilter extends SearchFilter
@@ -21,26 +22,35 @@ class TextSearchFilter extends SearchFilter
         return strlen($filterValue) > 1;
     }
 
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb): void
+    protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
-        $template = $this->createTemplate("%s");
+//        $template = $this->createTemplate("%s");
+//        $paramName = uniqid('p');
+//        $qb
+//            ->andWhere(sprintf($template, $this->whereFields[0], $paramName))
+//            ->setParameter($paramName, $this->getComparisonValue());
+        $template = $this->createComparisonTemplate("%s");
         $paramName = uniqid('p');
+        $or = new Orx(array_map(
+            fn($field) => sprintf($template, $field, $paramName),
+            $this->whereFields
+        ));
         $qb
-            ->andWhere(sprintf($template, $this->whereField, $paramName))
+            ->andWhere($or)
             ->setParameter($paramName, $this->getComparisonValue());
     }
 
     protected function applyToQueryBuilderByDefault(QueryBuilder $qb): void
     {
         $alias = current($qb->getRootAliases());
-        $template = $this->createTemplate("%s.%s");
+        $template = $this->createComparisonTemplate("%s.%s");
         $paramName = uniqid('p');
         $qb
             ->andWhere(sprintf($template, $alias, $this->getName(), $paramName))
             ->setParameter($paramName, $this->getComparisonValue());
     }
 
-    protected function createTemplate(string $expr): string
+    protected function createComparisonTemplate(string $expr): string
     {
         if ($this->useLikeOperator) {
             $template = "lower($expr) like lower(:%s)";
@@ -56,5 +66,16 @@ class TextSearchFilter extends SearchFilter
         $filterValue = trim($this->getValue());
 
         return $this->useLikeOperator ? "%$filterValue%" : $filterValue;
+    }
+
+    /**
+     * @param string[] $whereFields
+     * @return self
+     */
+    public function setWhereFields(array $whereFields): self
+    {
+        $this->whereFields = $whereFields;
+
+        return $this;
     }
 }

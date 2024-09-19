@@ -1,0 +1,87 @@
+{
+  "id": "ETAB97@7810166@LICENCE_MAI&gt;LICENCE-MAI-L1@PER-2019",
+  "instancePegase": "PEGASE_INSA",
+  "apprenant": {
+    "code": "7810166",
+    "INE": "409145555",
+    "deuxiemePrenom": "Alphonse",
+    "genre": "F",
+    "mailPersonnel": "sophie.pires@noos.fr",
+    "mailUrgence": null,
+    "nomDeNaissance": "Pascal",
+    "nomUsuel": "Pascal",
+    "prenom": "Émilie",
+    "prenomUsage": "Émilie",
+    "telephonePersonnel": "0123456789",
+    "telephoneUrgence": "",
+    "troisiemePrenom": "",
+    "naissance": {
+      "communeDeNaissance": "67482",
+      "communeDeNaissanceEtranger": "",
+      "dateDObtentionDeLaDeuxiemeNationalite": null,
+      "dateDeNaissance": "2000-01-01",
+      "deuxiemeNationalite": null,
+      "libelleCommuneDeNaissance": "Strasbourg",
+      "libelleDeuxiemeNationalite": "eiusmod aute ullamco id",
+      "libelleNationalite": "Française",
+      "libellePaysDeNaissance": "France",
+      "nationalite": "FR",
+      "paysDeNaissance": "FR"
+    },
+    "adresseResidenceUniversitaire": {
+      "codeInsee": "1234",
+      "codePostal": "67482",
+      "libelleCommune": "Strasbourg",
+      "libellePays": "France",
+      "ligne1OuEtage": "",
+      "ligne2OuBatiment": "",
+      "ligne3OuVoie": "",
+      "ligne4OuComplement": "",
+      "ligne5Etranger": "",
+      "pays": "FR"
+    },
+    "adresseFixeHorsPeriodeUniversitaire": {
+      "codeInsee": "1234",
+      "codePostal": "67482",
+      "libelleCommune": "Strasbourg",
+      "libellePays": "France",
+      "ligne1OuEtage": "",
+      "ligne2OuBatiment": "",
+      "ligne3OuVoie": "",
+      "ligne4OuComplement": "",
+      "ligne5Etranger": "",
+      "pays": "FR"
+    }
+  },
+  "inscription": {
+    "ecoleDoctorale": "558",
+    "noCandidat": "1234",
+    "origine": "ECANDIDAT",
+    "formation": "ut Excepteur",
+    "statutInscription": "VALIDE",
+    "regimeInscription": {
+      "code": "1234",
+      "libelle": "sdfsfjmsdqfjmjklh"
+    },
+    "chemin": "LICENCE_MAI&gt;LICENCE-MAI-L1",
+    "codeStructureEtablissementDuChemin": "ETAB97",
+    "principale": true,
+    "cesure": "SANS",
+    "mobilite": "SANS",
+    "periode": {
+      "code": "PER-2019",
+      "libelle": "Lorem ut adipisicing do",
+      "dateDebut": "2022-09-01",
+      "dateFin": "2023-08-31",
+      "anneeUniversitaire": 2022
+    },
+    "boursesEtAides": [
+      {
+        "code": "HJFJHFG",
+        "libelle": "cillum"
+      }
+    ],
+    "dateInscription": "2022-09-01",
+    "dateAnnulation": null
+  }
+}

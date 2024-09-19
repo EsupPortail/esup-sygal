@@ -1,0 +1,60 @@
+<?php
+/**
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant $inscriptionAdministrativeApprenant
+ */
+?>
+
+<dl class="row">
+            <dt class="col-sm-3" title="Nom de naissance/patronymique et prénom">Identité</dt>
+            <dd class="col-sm-9">
+                <?php echo mb_strtoupper($inscriptionAdministrativeApprenant['nomDeNaissance']) ?>
+                <?php echo $inscriptionAdministrativeApprenant['prenom'] ?>
+            </dd>
+<!--            <dt class="col-sm-3">nomUsuel</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['nomUsuel'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">deuxiemePrenom</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['deuxiemePrenom'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">troisiemePrenom</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['troisiemePrenom'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">prenomUsage</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['prenomUsage'] ?: '-' ?><!--</dd>-->
+            <dt class="col-sm-3" title="Date de naissance">Date naiss.</dt>
+            <dd class="col-sm-9"><?php echo $inscriptionAdministrativeApprenant['dateDeNaissance']->format(\Application\Constants::DATE_FORMAT) ?></dd>
+<!--            <dt class="col-sm-3">Genre</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['genre'] ?: '-' ?><!--</dd>-->
+
+            <dt class="col-sm-3" title="Code apprenant">Code appren.</dt>
+            <dd class="col-sm-9"><?php echo $inscriptionAdministrativeApprenant['code'] ?></dd>
+            <dt class="col-sm-3">INE</dt>
+            <dd class="col-sm-9"><?php echo $inscriptionAdministrativeApprenant['INE'] ?></dd>
+<!--            <dt class="col-sm-3">mailPersonnel</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['mailPersonnel'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">mailUrgence</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['mailUrgence'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">telephonePersonnel</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['telephonePersonnel'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">telephoneUrgence</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['telephoneUrgence'] ?: '-' ?><!--</dd>-->
+
+<!--            <dt class="col-sm-3" title="Nationalité">Nation.</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['nationalite'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">libelleNationalite</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['libelleNationalite'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">paysDeNaissance</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['paysDeNaissance'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">libellePaysDeNaissance</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['libellePaysDeNaissance'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">communeDeNaissance</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['communeDeNaissance'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">libelleCommuneDeNaissance</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['libelleCommuneDeNaissance'] ?: '-' ?><!--</dd>-->
+
+<!--            <dt class="col-sm-3">communeDeNaissanceEtranger</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['communeDeNaissanceEtranger'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">deuxiemeNationalite</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['deuxiemeNationalite'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">libelleDeuxiemeNationalite</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['libelleDeuxiemeNationalite'] ?: '-' ?><!--</dd>-->
+<!--            <dt class="col-sm-3">dateDObtentionDeLaDeuxiemeNationalite</dt>-->
+<!--            <dd class="col-sm-9">--><?php //echo $inscriptionAdministrativeApprenant['dateDObtentionDeLaDeuxiemeNationalite'] ?: '-' ?><!--</dd>-->
+</dl>

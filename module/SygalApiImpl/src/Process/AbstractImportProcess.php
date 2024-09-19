@@ -1,6 +1,6 @@
 <?php
 
-namespace SygalApiImpl\V1\Facade;
+namespace SygalApiImpl\Process;
 
 use Doctrine\DBAL\Connection;
 use Exception;
@@ -14,7 +14,7 @@ use UnicaenDbImport\Service\Exception\DatabaseServiceException;
 use UnicaenDbImport\Service\ImportService;
 use UnicaenDbImport\Service\SynchroService;
 
-abstract class AbstractImportFacade
+abstract class AbstractImportProcess
 {
     protected Connection $destinationConnection;
     protected ImportService $importService;
@@ -75,7 +75,7 @@ abstract class AbstractImportFacade
         }
     }
 
-    protected function commit()
+    protected function commit(): void
     {
         try {
             $this->destinationConnection->commit();
@@ -85,7 +85,7 @@ abstract class AbstractImportFacade
         }
     }
 
-    protected function rollback(Exception $reason)
+    protected function rollback(Exception $reason): void
     {
         try {
             $this->destinationConnection->rollback();

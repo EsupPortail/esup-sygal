@@ -37,6 +37,38 @@ class DoctorantRepository extends DefaultEntityRepository
         }
     }
 
+    public function findOneByCodeApprenant(string $codeApprenant): ?Doctorant
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb
+            ->join('t.individu', 'i')->addSelect('i')
+            ->where('t.codeApprenantInSource = :codeApprenant')
+            ->andWhere('t.histoDestruction is null')
+            ->setParameter('codeApprenant', $codeApprenant);
+
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs doctorants ont été trouvés avec le même code apprenant " . $codeApprenant);
+        }
+    }
+
+    public function findOneByIne(string $ine): ?Doctorant
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb
+            ->join('t.individu', 'i')->addSelect('i')
+            ->where('t.ine = :ine')
+            ->andWhere('t.histoDestruction is null')
+            ->setParameter('ine', $ine);
+
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs doctorants ont été trouvés avec le même INE " . $ine);
+        }
+    }
+
     /**
      * Recherche d'un doctorant par son individu lié.
      *

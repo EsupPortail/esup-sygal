@@ -3,7 +3,7 @@
 namespace SygalApiImpl\V1\Rest\InscriptionAdministrative;
 
 use Psr\Container\ContainerInterface;
-use SygalApiImpl\V1\Rest\InscriptionAdministrative\Facade\ImportFacade;
+use SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\ImportProcess;
 
 class InscriptionAdministrativeResourceFactory
 {
@@ -19,8 +19,8 @@ class InscriptionAdministrativeResourceFactory
         $logger = $container->get('inscription_resource_logger');
         $resource->setLogger($logger);
 
-        /** @var \SygalApiImpl\V1\Rest\InscriptionAdministrative\Facade\ImportFacade $importFacade */
-        $importFacade = $container->get(ImportFacade::class);
+        /** @var \SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\ImportProcess $importFacade */
+        $importFacade = $container->get(ImportProcess::class);
         $resource->setImportFacade($importFacade);
 
         return $resource;

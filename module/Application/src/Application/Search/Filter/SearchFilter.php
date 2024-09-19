@@ -48,9 +48,9 @@ abstract class SearchFilter implements SearchFilterInterface
     protected $applyToQueryBuilderCallable;
 
     /**
-     * @var string|null
+     * @var string[]
      */
-    protected ?string $whereField = null;
+    protected array $whereFields = [];
 
     /**
      * Indique si ce filtre doit impacter le query builder ou non.
@@ -135,9 +135,9 @@ abstract class SearchFilter implements SearchFilterInterface
             return;
         }
 
-        if ($this->whereField !== null) {
+        if (count($this->whereFields) > 0) {
             // utilisation du champ de condition spécifié
-            $this->applyToQueryBuilderUsingWhereField($qb);
+            $this->applyToQueryBuilderUsingWhereFields($qb);
         } else {
             // tentative de construction automatique du where
             $this->applyToQueryBuilderByDefault($qb);
@@ -160,11 +160,20 @@ abstract class SearchFilter implements SearchFilterInterface
      *
      * @param \Doctrine\ORM\QueryBuilder $qb
      */
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
+        Assert::maxCount($this->whereFields, 1,
+            sprintf("La classe %s n'autorise qu'un seul 'where field'", get_class($this))
+        );
+
         $qb
-            ->andWhere(sprintf("%s = :%s", $this->whereField, $paramName = uniqid('p')))
+            ->andWhere(sprintf("%s = :%s", $this->whereFields[0], $paramName = uniqid('p')))
             ->setParameter($paramName, $this->getValue());
+    }
+
+    protected function generateWhereFieldComparisonPattern(string $field, string $paramName): string
+    {
+        return sprintf("%s = :%s", $field, $paramName);
     }
 
     /**
@@ -308,13 +317,8 @@ abstract class SearchFilter implements SearchFilterInterface
      */
     public function setWhereField(string $whereField): self
     {
-        $this->whereField = $whereField;
+        $this->whereFields = [$whereField];
 
         return $this;
-    }
-
-    protected function checkWhereField()
-    {
-        Assert::notNull($this->whereField, "Vous n'avez pas spécifié le champ sur lequel doit porter le 'where'");
     }
 }

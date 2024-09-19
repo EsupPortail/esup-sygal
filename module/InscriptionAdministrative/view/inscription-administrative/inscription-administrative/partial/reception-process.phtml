@@ -1,0 +1,39 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscriptionAdministrative
+ * @var \InscriptionAdministrative\Rule\Reception\ReceptionRule $receptionRule
+ */
+
+?>
+
+<?php if ($receptionRule->canPerformAnyAction()): ?>
+
+    <div class="alert alert-success">
+        <span class="icon icon-info"></span> <strong>Information</strong> <br>
+        <ul>
+            <?php foreach ($receptionRule->getMessagesForActions() as $message): ?>
+                <li><?php echo $message ?></li>
+            <?php endforeach ?>
+        </ul>
+        <a data-toggle="confirmationx"
+           class="btn btn-primary"
+           href="<?php echo $this->url('inscription-administrative/process', ['id' => $inscriptionAdministrative->getId()]) ?>">
+            Ok, faisons-le...
+        </a>
+    </div>
+
+<?php endif; ?>
+
+<?php if ($messages = $receptionRule->getMessagesForWarnings()): ?>
+
+    <div class="alert alert-warning">
+        <span class="icon icon-info"></span> <strong>Information</strong>
+        <ul>
+            <?php foreach ($messages as $message): ?>
+                <li><?php echo $message ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+
+<?php endif; ?>

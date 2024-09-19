@@ -36,10 +36,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
      */
     private $id;
 
-    /**
-     * @var string|null
-     */
-    private $numeroCandidature;
+    private string $numeroCandidature;
 
     /**
      * @var Collection
@@ -75,10 +72,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
      */
     private $individu;
 
-    /**
-     * @var Doctorant
-     */
-    private $doctorant;
+    private ?Doctorant $doctorant = null;
 
     /** @var AdmissionAvis | AdmissionValidation|null */
     private $operationPossible = null;
@@ -123,28 +117,26 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
         return $this->id;
     }
 
-    /**
-     * Set numeroCandidature.
-     *
-     * @param string|null $numeroCandidature
-     *
-     * @return Admission
-     */
-    public function setNumeroCandidature($numeroCandidature = null)
+    public function getNumeroCandidature(): string
+    {
+        return $this->numeroCandidature;
+    }
+
+    public function setNumeroCandidature(string $numeroCandidature): self
     {
         $this->numeroCandidature = $numeroCandidature;
-
         return $this;
     }
 
-    /**
-     * Get numeroCandidature.
-     *
-     * @return string|null
-     */
-    public function getNumeroCandidature()
+    public function getDoctorant(): ?Doctorant
     {
-        return $this->numeroCandidature;
+        return $this->doctorant;
+    }
+
+    public function setDoctorant(?Doctorant $doctorant): self
+    {
+        $this->doctorant = $doctorant;
+        return $this;
     }
 
     /**
@@ -390,30 +382,6 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function getIndividu()
     {
         return $this->individu;
-    }
-
-    /**
-     * Set doctorant.
-     *
-     * @param Doctorant|null $doctorant
-     *
-     * @return Admission
-     */
-    public function setDoctorant(Doctorant $doctorant = null)
-    {
-        $this->doctorant = $doctorant;
-
-        return $this;
-    }
-
-    /**
-     * Get doctorant.
-     *
-     * @return Doctorant|null
-     */
-    public function getDoctorant()
-    {
-        return $this->doctorant;
     }
 
     /**

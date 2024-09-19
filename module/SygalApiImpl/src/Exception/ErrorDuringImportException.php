@@ -1,6 +1,6 @@
 <?php
 
-namespace SygalApiImpl\V1\Exception;
+namespace SygalApiImpl\Exception;
 
 use Exception;
 

@@ -5,6 +5,7 @@ namespace Application\Search\Controller;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\SearchResultPaginator;
 use Application\Search\SearchServiceInterface;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use DomainException;
@@ -32,7 +33,7 @@ class SearchControllerPlugin extends AbstractPlugin
      *
      * @return Response|SearchResultPaginator
      */
-    public function search(?callable $queryBuilderModifierCallback = null)
+    public function search(?callable $queryBuilderModifierCallback = null, int $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
     {
         $queryParams = array_filter(
             $this->getController()->params()->fromQuery(),
@@ -52,6 +53,7 @@ class SearchControllerPlugin extends AbstractPlugin
         $searchService->initFiltersWithUnpopulatedOptions();
         $searchService->processQueryParams($queryParams);
 
+        /** @var \Doctrine\ORM\QueryBuilder $qb */
         $qb = $searchService->getQueryBuilder();
         if ($queryBuilderModifierCallback !== null) {
             $queryBuilderModifierCallback($qb);
@@ -60,7 +62,10 @@ class SearchControllerPlugin extends AbstractPlugin
         /** Configuration du paginator **/
         $maxi = $this->getController()->params()->fromQuery('maxi', 50);
         $page = $this->getController()->params()->fromQuery('page', 1);
-        $paginator = new SearchResultPaginator(new DoctrinePaginator(new Paginator($qb, true)));
+        $paginator = new SearchResultPaginator(new DoctrinePaginator(new Paginator(
+            $qb->getQuery()->setHydrationMode($hydrationMode),
+            true
+        )));
         $paginator
             ->setContainsRealSearchResult(true)
             ->setPageRange(30)
@@ -84,7 +89,7 @@ class SearchControllerPlugin extends AbstractPlugin
      *
      * @return Response|SearchResultPaginator
      */
-    public function searchIfRequested(?callable $queryBuilderModifierCallback = null)
+    public function searchIfRequested(?callable $queryBuilderModifierCallback = null, int $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
     {
         $queryParams = array_filter($this->getController()->params()->fromQuery());
 
@@ -95,7 +100,7 @@ class SearchControllerPlugin extends AbstractPlugin
             return $paginator;
         }
 
-        return $this->search($queryBuilderModifierCallback);
+        return $this->search($queryBuilderModifierCallback, $hydrationMode);
     }
 
     /**

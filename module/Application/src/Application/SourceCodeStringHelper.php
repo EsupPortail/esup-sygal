@@ -18,6 +18,14 @@ class SourceCodeStringHelper
     private ?string $defaultPrefix = null;
 
     /**
+     * @return string
+     */
+    public function getSeparator(): string
+    {
+        return $this->separator;
+    }
+
+    /**
      * @param string $defaultPrefix
      */
     public function setDefaultPrefix(string $defaultPrefix)

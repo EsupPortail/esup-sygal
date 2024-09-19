@@ -1,0 +1,41 @@
+<?php
+/**
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative|array $inscriptionAdministrative
+ * @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService
+ */
+
+use Application\Entity\AnneeUniv;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
+?>
+
+<dl class="row">
+    <dt class="col-md-4">Code</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getPeriodeCode() ?></dd>
+    <dt class="col-md-4">Libellé</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getPeriodeLibelle() ?></dd>
+    <dt class="col-md-4">Début - Fin</dt>
+    <dd class="col-md-8">
+        <?php if ($anneeUniv = $inscriptionAdministrative->getPeriodeAnneeUniversitaire()): ?>
+            <span class="text-muted">
+                <abbr title="Dates non prises en compte car la période mentionne une année universitaire">
+                    <?php echo $inscriptionAdministrative->getPeriodeDateDebutToString() ?> - <?php echo $inscriptionAdministrative->getPeriodeDateFinToString() ?>
+                </abbr>
+            </span>
+        <?php else: ?>
+            <?php echo $inscriptionAdministrative->getPeriodeDateDebutToString() ?> - <?php echo $inscriptionAdministrative->getPeriodeDateFinToString() ?>
+        <?php endif ?>
+    </dd>
+    <dt class="col-md-4">Année univ.</dt>
+    <dd class="col-md-8">
+        <?php
+        $anneeUnivDeduite = $anneeUnivService->fromDate($inscriptionAdministrative->getPeriodeDateDebut());
+        $anneeUnivClass = $anneeUnivDeduite->getPremiereAnnee() <> $anneeUniv ? 'danger' : 'success';
+        ?>
+        <?php if ($anneeUniv): ?>
+            <?php echo AnneeUniv::fromPremiereAnnee($anneeUniv) ?>
+        <?php else: ?>
+            <abbr class="text-<?php echo $anneeUnivClass ?>"
+                  title="<?php echo InscriptionAdministrative::COMMENTAIRE_ANNEE_UNIV_PERIODE ?>"><?php echo $anneeUnivDeduite ?></abbr>
+        <?php endif ?>
+    </dd>
+</dl>

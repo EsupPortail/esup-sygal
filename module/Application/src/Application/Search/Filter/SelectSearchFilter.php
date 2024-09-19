@@ -120,12 +120,16 @@ class SelectSearchFilter extends SearchFilter
      *
      * @param \Doctrine\ORM\QueryBuilder $qb
      */
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
+        Assert::maxCount($this->whereFields, 1,
+            sprintf("La classe %s n'autorise qu'un seul 'where field'", get_class($this))
+        );
+
         if ($this->getValue() === self::VALUE_NULL) {
-            $qb->andWhere(sprintf("%s IS NULL", $this->whereField));
+            $qb->andWhere(sprintf("%s IS NULL", $this->whereFields[0]));
         } else {
-            parent::applyToQueryBuilderUsingWhereField($qb);
+            parent::applyToQueryBuilderUsingWhereFields($qb);
         }
     }
 

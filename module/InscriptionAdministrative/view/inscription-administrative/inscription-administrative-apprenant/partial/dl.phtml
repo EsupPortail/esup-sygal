@@ -1,0 +1,65 @@
+<?php
+/**
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant $inscriptionAdministrativeApprenant
+ */
+?>
+
+<dl class="row">
+    <dt class="col-md-5">Id</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getId() ?></dd>
+    <dt class="col-md-5">Nom de naissance</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getNomDeNaissance() ?></dd>
+    <dt class="col-md-5">Nom usuel</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getNomUsuel() ?: '-' ?></dd>
+    <dt class="col-md-5">Prénom</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getPrenom() ?></dd>
+    <dt class="col-md-5">Prénom 2</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getDeuxiemePrenom() ?: '-' ?></dd>
+    <dt class="col-md-5">Prénom 3</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getTroisiemePrenom() ?: '-' ?></dd>
+    <!--            <dt class=col-md-5>prenomUsage</dt>-->
+    <!--            <dd class=col-md-7>--><?php //echo $inscriptionAdministrativeApprenant->getPrenomUsage() ?: '-' ?><!--</dd>-->
+    <dt class="col-md-5">Date de naissance</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getDateDeNaissanceToString() ?></dd>
+    <dt class="col-md-5">Genre</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getGenre() ?: '-' ?></dd>
+    <dt class="col-md-5"><abbr title="Code Apprenant <?php echo $inscriptionAdministrativeApprenant->getSource()->getCode() ?>">Code Apprenant</abbr></dt>
+    <dd class="col-md-7"><code><?php echo $inscriptionAdministrativeApprenant->getCode() ?></code></dd>
+    <dt class="col-md-5">N° INE</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getINE() ?></dd>
+    <dt class="col-md-5">Adresse mail perso</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getMailPersonnel() ?: '-' ?></dd>
+    <!--            <dt class=col-md-5>mailUrgence</dt>-->
+    <!--            <dd class=col-md-7>--><?php //echo $inscriptionAdministrativeApprenant->getMailUrgence() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>telephonePersonnel</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getTelephonePersonnel() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>telephoneUrgence</dt>-->
+    <!--            <dd class=col-md-7>--><?php //echo $inscriptionAdministrativeApprenant->getTelephoneUrgence() ?: '-' ?><!--</dd>-->
+<!--    <dt class="col-md-5">nationalite</dt>-->
+<!--    <dd class="col-md-7">--><?php //echo $inscriptionAdministrativeApprenant->getNationalite() ?: '-' ?><!--</dd>-->
+    <dt class="col-md-5">Nationalité</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getLibelleNationalite() ?: '-' ?></dd>
+<!--    <dt class="col-md-5">paysDeNaissance</dt>-->
+<!--    <dd class="col-md-7">--><?php //echo $inscriptionAdministrativeApprenant->getPaysDeNaissance() ?: '-' ?><!--</dd>-->
+    <dt class="col-md-5">Pays Naissance</dt>
+    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getLibellePaysDeNaissance() ?: '-' ?></dd>
+    <!--            <dt class=col-md-5>communeDeNaissance</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getCommuneDeNaissance() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>libelleCommuneDeNaissance</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getLibelleCommuneDeNaissance() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>communeDeNaissanceEtranger</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getCommuneDeNaissanceEtranger() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>deuxiemeNationalite</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getDeuxiemeNationalite() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>libelleDeuxiemeNationalite</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getLibelleDeuxiemeNationalite() ?: '-' ?><!--</dd>-->
+    <!--            <dt class=col-md-5>dateDObtentionDeLaDeuxiemeNationalite</dt>-->
+    <!--            <dd class=col-md-7>-->
+    <?php //echo $inscriptionAdministrativeApprenant->getDateDObtentionDeLaDeuxiemeNationaliteToString() ?: '-' ?><!--</dd>-->
+</dl>

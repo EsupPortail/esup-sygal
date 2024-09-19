@@ -4,7 +4,7 @@ namespace Application\Search\Filter;
 
 class StrReducedTextSearchFilter extends TextSearchFilter
 {
-    protected function createTemplate(string $expr): string
+    protected function createComparisonTemplate(string $expr): string
     {
         if ($this->useLikeOperator) {
             $template = "lower(strReduce($expr)) like lower(strReduce(:%s))";

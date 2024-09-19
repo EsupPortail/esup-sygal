@@ -1,9 +1,24 @@
 #!/usr/bin/env php
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
 use Laminas\Stdlib\Glob;
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
+
+#[NoReturn] function usage(): void {
+    echo "Génération des commandes curl d'envoi de fichiers JSON à l'API 'inscription-administrative'." . PHP_EOL . PHP_EOL;
+    echo "Usage :" . PHP_EOL;
+    echo "   HOST=<HOST> PORT=<PORT> USER=<USER> PASSWORD=<USER> VERSION=<VERSION> N=<N> php {$_SERVER['argv'][0]}" . PHP_EOL . PHP_EOL;
+    echo "Avec <HOST> : host SyGAL, 'localhost' par défaut" . PHP_EOL;
+    echo "     <PORT> : port à utiliser, obligatoire" . PHP_EOL;
+    echo "     <USER> : user pour l'authentification, obligatoire" . PHP_EOL;
+    echo "     <PASSWORD> : mot de passe pour l'authentification, obligatoire" . PHP_EOL;
+    echo "     <VERSION> : version de l'API, 'v1' par défaut" . PHP_EOL;
+    echo "     <N> : nombre de fichiers JSON à prendre en compte, 1 par défaut" . PHP_EOL . PHP_EOL;
+    echo "Possibilité de rediriger la sortie standard pour créer un script." . PHP_EOL . PHP_EOL;
+    exit(1);
+}
 
 $host = $_SERVER['HOST'] ?? 'localhost';
 $port = $_SERVER['PORT'] ?? null;
@@ -13,26 +28,18 @@ $version = $_SERVER['VERSION'] ?? 'v1';
 $n = $_SERVER['N'] ?? 1;
 
 if ($port === null) {
-    echo "Le port doit être spécifié via la variable d'env PORT" . PHP_EOL;
-    exit(1);
+    usage();
 }
 if ($user === null) {
-    echo "Le user doit être spécifié via la variable d'env USER" . PHP_EOL;
-    exit(1);
+    usage();
 }
 if ($password === null) {
-    echo "Le password doit être spécifié via la variable d'env PASSWORD" . PHP_EOL;
-    exit(1);
+    usage();
 }
 
 $sourceDataDirPath = '/tmp/api-data';
-$outputScriptDirPath = '/tmp/api-bin';
 $outputScriptFileName = 'call-sygal-api-inscription.sh';
 
-if (!file_exists($outputScriptDirPath)) {
-    echo "Répertoire destination introuvable : $outputScriptDirPath" . PHP_EOL;
-    exit(1);
-}
 if (!file_exists($sourceDataDirPath)) {
     echo "Répertoire source introuvable : $sourceDataDirPath" . PHP_EOL;
     exit(1);

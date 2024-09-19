@@ -41,7 +41,7 @@ class UtilisateurProcess extends AbstractProcess
 
             $utilisateur = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
             $this->userService->updateUserPasswordResetToken($utilisateur);
-            // todo : créer updateUserPasswordResetToken(), cf.  UnicaenAuth\Service\Traits\UserServiceAwareTrait
+            // todo : créer updateUserPasswordResetToken(), cf.  UnicaenUtilisateur\Service\User\UserServiceAwareTrait
 
             $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($utilisateur);
             $result = $this->notifierService->trigger($notif);

@@ -12,6 +12,7 @@ use Doctorant\Entity\Db\Repository\DoctorantRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Individu\Entity\Db\Individu;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -115,10 +116,13 @@ class DoctorantService extends BaseService
             $this->entityManager->persist($doctorant);
             $this->entityManager->flush();
         } catch (ORMException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
+            throw new RuntimeException("Erreur lors de l'enregistrement du nouveau doctorant", null, $e);
         }
     }
 
+    /**
+     * Instancie et intialise un nouveau Doctorant, lié à l'établissement spécifié.
+     */
     public function newDoctorant(Individu $individu, Etablissement $etablissement): Doctorant
     {
         try {
@@ -134,5 +138,30 @@ class DoctorantService extends BaseService
         $doctorant->setSourceCode($this->sourceService->genereateSourceCode());
 
         return $doctorant;
+    }
+
+    /**
+     * Met à jour les attributs de l'instance de Doctorant spécifiée, à partir des données apprenant fournies.
+     */
+    public function updateDoctorantFromApprenant(Doctorant $doctorant, InscriptionAdministrativeApprenant $iaa): void
+    {
+        $doctorant->setCodeApprenantInSource($iaa->getCode());
+        $doctorant->setIne($iaa->getINE());
+    }
+
+    /**
+     * Détermine si le doctorant spécifié possède des attributs dont la valeur pourrait être mise à jour
+     * à partir de ceux de l'apprenant spécifié.
+     */
+    public function diffDoctorantFromApprenant(
+        Doctorant                          $doctorant,
+        InscriptionAdministrativeApprenant $apprenant): array
+    {
+        $callable = function() use ($doctorant, $apprenant) {
+            // update provisoire du doctorant UNIQUEMENT pour pouvoir calculer le "changeset" Doctrine
+            $this->updateDoctorantFromApprenant($doctorant, $apprenant);
+        };
+
+        return $this->computeDiffForUpdate($doctorant, $callable, ['ine']);
     }
 }

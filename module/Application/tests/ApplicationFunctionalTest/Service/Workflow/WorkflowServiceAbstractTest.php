@@ -27,7 +27,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
     protected $wfs;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

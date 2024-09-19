@@ -17,7 +17,27 @@
         <testsuite name="Assertions">
             <directory>./module/Application/tests/ApplicationUnitTest/Assertion</directory>
         </testsuite>
+        <testsuite name="SygalApi">
+            <directory>./module/SygalApiImpl/tests/SygalApiTest/Functional</directory>
+        </testsuite>
+        <testsuite name="InscriptionAdministrative">
+            <directory>./module/InscriptionAdministrative/tests/InscriptionAdministrativeTest</directory>
+        </testsuite>
     </testsuites>
+
+    <coverage cacheDirectory="/tmp"
+              includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="true">
+        <include>
+            <directory suffix=".php">./module/InscriptionAdministrative/src/InscriptionAdministrative/Rule</directory>
+        </include>
+        <report>
+            <html outputDirectory="./tmp/coverage" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
 
     <logging>
         <!--<log type="junit" target="/tmp/phpunit/logs/junit.xml" />-->
@@ -25,15 +45,12 @@
         <!--<log type="coverage-html" target="/tmp/phpunit/coverage" />-->
     </logging>
 
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./module/Import</directory>
-        </whitelist>
-    </filter>
+<!--    <filter>-->
+<!--        <whitelist processUncoveredFilesFromWhitelist="true">-->
+<!--            <directory suffix=".php">./module/Import</directory>-->
+<!--        </whitelist>-->
+<!--    </filter>-->
 
-    <groups>
-
-    </groups>
     <!--
     <groups>
         <exclude>

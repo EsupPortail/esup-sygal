@@ -8,7 +8,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="numeroCandidature" type="string" column="numero_candidature" length="10" nullable="true"/>
+        <field name="numeroCandidature" column="numero_candidature"/>
 
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
@@ -22,7 +22,7 @@
 
         <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
             <join-columns>
-                <join-column name="doctorant_id" referenced-column-name="id"/>
+                <join-column name="doctorant_id"/>
             </join-columns>
         </many-to-one>
 

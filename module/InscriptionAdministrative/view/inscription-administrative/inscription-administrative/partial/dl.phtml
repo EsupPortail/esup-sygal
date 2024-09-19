@@ -1,0 +1,80 @@
+<?php
+/**
+ * @see \InscriptionAdministrative\Controller\InscriptionAdministrativeController::voirAction()
+ *
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscriptionAdministrative
+ * @var \Admission\Entity\Db\Admission $admission
+ */
+
+use Application\Constants;
+
+?>
+
+<dl class="row">
+    <dt class="col-md-4">Id</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getId() ?></dd>
+    <dt class="col-md-4">Ecole doctorale</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getEcoleDoctorale() ?></dd>
+    <dt class="col-md-4">Date d'inscription</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getDateInscriptionToString() ?></dd>
+    <dt class="col-md-4">Statut Inscription</dt>
+    <dd class="col-md-8">
+        <?php echo sprintf('<span class="badge bg-%s">%s</span>',
+            $statutInscriptionClasses[$statut = $inscriptionAdministrative->getStatutInscription()] ?? 'secondary',
+            $statut) ?>
+    </dd>
+    <?php if ($dateAnnulation = $inscriptionAdministrative->getDateAnnulation()): ?>
+        <dt class="col-md-4">Date d'annulation</dt>
+        <dd class="col-md-8"><?php echo $inscriptionAdministrative->getDateAnnulationToString() ?></dd>
+    <?php endif ?>
+    <dt class="col-md-4">Période</dt>
+    <dd class="col-md-8"><?php echo $this->partial('inscription-administrative/inscription-administrative/partial/periode-dl') ?></dd>
+    <dt class="col-md-4">Principale</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->isPrincipale() ? 'Oui' : 'Non' ?></dd>
+    <dt class="col-md-4">Chemin</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getChemin() ?></dd>
+    <dt class="col-md-4">N° candidature</dt>
+    <dd class="col-md-8">
+        <code><?php echo $noCandidat = $inscriptionAdministrative->getNoCandidat() ?></code>
+        <?php if ($admission === null): ?>
+            <div class="text-warning">
+                <span class="icon icon-attention"></span> <strong>Avertissement</strong>
+                Aucun dossier d'admission ayant le même numéro de candidature que cette inscription
+                administrative importée
+                n'a été trouvé (<?php echo $noCandidat ?>).
+            </div>
+        <?php else: ?>
+            <div class="text text-success">
+                <span class="icon icon-info"></span> <strong>Information</strong>
+                Un dossier d'admission existe avec le numéro de candidature figurant sur
+                cette inscription administrative importée (<?php echo $noCandidat ?>).
+                <!-- TODO : remplacer par l'URL de consultation du dossier d'admission quand elle existera -->
+                <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $admission->getIndividu()->getId()]) ?>">
+                    Accéder au dossier d'admission...
+                </a>
+            </div>
+        <?php endif; ?>
+    </dd>
+
+    <dt class="col-md-4">Césure</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getCesure() ?></dd>
+    <dt class="col-md-4"><abbr title="Code Structure Etablissement Chemin">Code Structure</abbr></dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getCodeStructureEtablissementDuChemin() ?></dd>
+    <dt class="col-md-4">Formation</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getFormation() ?: '-' ?></dd>
+    <dt class="col-md-4">Mobilité</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getMobilite() ?></dd>
+    <dt class="col-md-4">Origine</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getOrigine() ?></dd>
+    <dt class="col-md-4">Regime d'inscription</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getRegimeInscriptionLibelle() ?></dd>
+    <dt class="col-md-4">Source de données</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getSource()->getCode() ?></dd>
+    <dt class="col-md-4">Source Code</dt>
+    <dd class="col-md-8"><code><?php echo $inscriptionAdministrative->getSourceCode() ?></code></dd>
+    <dt class="col-md-4">Création</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getHistoCreation()->format(Constants::DATETIME_FORMAT) ?></dd>
+    <dt class="col-md-4">Modification</dt>
+    <dd class="col-md-8"><?php echo $inscriptionAdministrative->getHistoModification()?->format(Constants::DATETIME_FORMAT) ?: '-' ?></dd>
+</dl>
