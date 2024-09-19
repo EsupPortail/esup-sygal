@@ -3,6 +3,7 @@
 namespace Application\Service\Utilisateur;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
@@ -12,7 +13,6 @@ use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
@@ -204,9 +204,8 @@ class UtilisateurService extends BaseService
      * @param string $password
      * @return Utilisateur
      */
-    public function changePassword($utilisateur, $password)
+    public function changePassword(Utilisateur $utilisateur, string $password): Utilisateur
     {
-
         $bcrypt = new Bcrypt();
         $bcrypt->setCost($this->userService->getZfcUserOptions()->getPasswordCost());
         $password = $bcrypt->create($password);
@@ -215,8 +214,8 @@ class UtilisateurService extends BaseService
         $utilisateur->setPasswordResetToken();
 
         try {
-            $this->getEntityManager()->flush($utilisateur);
-        } catch (OptimisticLockException $e) {
+            $this->entityManager->flush();
+        } catch (ORMException $e) {
             throw new RuntimeException("Impossible d'enregistrer l'utilisateur", null, $e);
         }
 

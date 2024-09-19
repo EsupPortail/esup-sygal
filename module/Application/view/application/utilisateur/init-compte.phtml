@@ -65,6 +65,7 @@ $this->headTitle("Initialisation du compte utilisateur");
         </div>
     </div>
     <?php echo $this->formControlGroup($form->get('bouton')); ?>
+    <?php echo $this->formElement($form->get('csrf')); ?>
     <?php echo $this->form()->closeTag(); ?>
 
 <?php else : ?>

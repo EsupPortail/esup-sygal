@@ -83,10 +83,9 @@ class ApplicationNotificationFactory extends NotificationFactory
      * Notification à propos de la création d'un compte local.
      *
      * @param Utilisateur $utilisateur
-     * @param string $token
      * @return \Notification\Notification
      */
-    public function createNotificationInitialisationCompte(Utilisateur $utilisateur, string $token): Notification
+    public function createNotificationInitialisationCompte(Utilisateur $utilisateur): Notification
     {
         $email = $utilisateur->getEmail();
         if ($email === null) {
@@ -94,7 +93,16 @@ class ApplicationNotificationFactory extends NotificationFactory
         }
 
         $token = $utilisateur->getPasswordResetToken();
-        if ($token === null) throw new LogicException("Aucun token de fourni !");
+        if ($token === null) {
+            throw new LogicException("Aucun reset token présent pour l'utilisateur '{$utilisateur->getUsername()}' !");
+        }
+
+        $url = $this->urlHelper->__invoke(
+            'utilisateur/init-compte',
+            ['token' => $token],
+            ['query' => ['username' => $utilisateur->getUsername()], 'force_canonical' => true],
+            true
+        );
 
         $notif = new Notification();
         $notif
@@ -103,7 +111,7 @@ class ApplicationNotificationFactory extends NotificationFactory
             ->setTemplatePath('application/utilisateur/mail/init-compte')
             ->setTemplateVariables([
                 'username' => $utilisateur->getUsername(),
-                'url' => $this->urlHelper->__invoke('utilisateur/init-compte', ['token' => $token], ['force_canonical' => true], true),
+                'url' => $url,
             ]);
 
         return $notif;

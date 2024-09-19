@@ -20,6 +20,7 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
 
     private ?string $nom = null;
     private ?string $prenom = null;
+    protected $state = 1;
 
     /**
      * @var Individu

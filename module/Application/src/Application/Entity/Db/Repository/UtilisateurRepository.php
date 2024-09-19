@@ -63,10 +63,9 @@ class UtilisateurRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param string $token
-     * @return Utilisateur
+     * Recherche un utilisateur par le token permettant de changer de mot de passe.
      */
-    public function findByToken($token)
+    public function findByToken(string $token): ?Utilisateur
     {
         $qb = $this->createQueryBuilder('u')
             ->andWhere('u.passwordResetToken = :token')
@@ -77,6 +76,7 @@ class UtilisateurRepository extends DefaultEntityRepository
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs Utilisateur partagent le même token [".$token."]", 0 , $e);
         }
+
         return $result;
     }
 }

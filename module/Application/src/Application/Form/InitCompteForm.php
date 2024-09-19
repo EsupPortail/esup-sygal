@@ -5,6 +5,7 @@ namespace Application\Form;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
@@ -78,6 +79,8 @@ class InitCompteForm extends Form
                 'class' => 'btn btn-primary',
             ],
         ]);
+
+        $this->add(new Csrf('csrf'));
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'username' => [

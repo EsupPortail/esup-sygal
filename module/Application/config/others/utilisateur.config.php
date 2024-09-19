@@ -186,6 +186,7 @@ return [
                         'options'       => [
                             'route'       => '/init-compte/:token',
                             'defaults'    => [
+                                /** @see \Application\Controller\UtilisateurController::initCompteAction() */
                                 'action' => 'init-compte',
                             ],
                         ],

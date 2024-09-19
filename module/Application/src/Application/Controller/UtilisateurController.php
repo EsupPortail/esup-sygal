@@ -423,7 +423,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
             $this->userService->updateUserPasswordResetToken($user);
 
-            $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+            $url = $this->url()->fromRoute(
+                'utilisateur/init-compte',
+                ['token' => $user->getPasswordResetToken()],
+                ['query' => ['username' => $user->getUsername()], 'force_canonical' => true],
+                true
+            );
             try {
                 $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($user, $url);
                 $this->notifierService->trigger($notif);
@@ -446,7 +451,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         if ($utilisateur !== null) {
             $this->userService->updateUserPasswordResetToken($utilisateur);
-            $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $utilisateur->getPasswordResetToken()], ['force_canonical' => true], true);
+            $url = $this->url()->fromRoute(
+                'utilisateur/init-compte',
+                ['token' => $utilisateur->getPasswordResetToken()],
+                ['query' => ['username' => $utilisateur->getUsername()], 'force_canonical' => true],
+                true
+            );
 
             try {
                 $notif = $this->applicationNotificationFactory->createNotificationResetCompte($utilisateur, $url);
@@ -464,6 +474,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function initCompteAction(): Response|ViewModel
     {
         $token = $this->params()->fromRoute('token');
+        $username = $this->params()->fromQuery('username');
+
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
         if ($utilisateur === null) {
             return new ViewModel([
@@ -472,8 +484,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         $this->initCompteForm->setUsername($utilisateur->getUsername());
-        $this->initCompteForm->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], [], true));
-        $this->initCompteForm->bind(new Utilisateur());
+        $this->initCompteForm->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], true));
+        $this->initCompteForm->bind((new Utilisateur())->setUsername($username));
 
         /** @var Request $request */
         $request = $this->getRequest();
