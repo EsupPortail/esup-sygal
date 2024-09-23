@@ -97,7 +97,7 @@ echo $this->formHidden($form->get('id'));
 </div>
 
 <?php echo $this->formHidden($form->get('security')); ?>
-<?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
+<?php echo $this->formControlGroup($form->get('submit')); ?>
 <?php echo $this->form()->closeTag(); ?>
 
 <style>

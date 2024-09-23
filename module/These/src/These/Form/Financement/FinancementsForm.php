@@ -2,8 +2,8 @@
 
 namespace These\Form\Financement;
 
+use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Csrf;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use These\Fieldset\Financement\FinancementFieldset;
 use UnicaenApp\Form\Element\Collection;
@@ -32,6 +32,19 @@ class FinancementsForm extends Form
         $this
             ->setAttribute('formName', 'financementsForm')
             ->add(new Csrf('security'))
-            ->add((new Submit('submit'))->setValue('Enregistrer'));
+            ->add([
+                'type' => Button::class,
+                'name' => 'submit',
+                'options' => [
+                    'label' => '<span class="icon icon-save"></span> Enregistrer',
+                    'label_options' => [
+                        'disable_html_escape' => true,
+                    ],
+                ],
+                'attributes' => [
+                    'type' => 'submit',
+                    'class' => 'btn btn-primary',
+                ],
+            ]);
     }
 }

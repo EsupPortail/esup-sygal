@@ -1,23 +1,21 @@
-<?php
+    <?php
 
-use Application\Constants;
-use Application\Entity\Db\Role;
-use Application\Entity\Db\Validation;
-use Depot\Controller\Plugin\UrlFichierThese;
-use Doctorant\Entity\Db\Doctorant;
-use Individu\Entity\Db\IndividuRole;
-use Soutenance\Entity\Avis;
-use Soutenance\Entity\Etat;
-use Soutenance\Entity\Justificatif;
-use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Privilege\JustificatifPrivileges;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Soutenance\Provider\Validation\TypeValidation;
-use Soutenance\Service\Horodatage\HorodatageService;
-use These\Entity\Db\Acteur;
-use These\Entity\Db\These;
+    use Application\Entity\Db\Role;
+    use Application\Entity\Db\Validation;
+    use Depot\Controller\Plugin\UrlFichierThese;
+    use Doctorant\Entity\Db\Doctorant;
+    use Individu\Entity\Db\IndividuRole;
+    use Soutenance\Entity\Avis;
+    use Soutenance\Entity\Etat;
+    use Soutenance\Entity\Justificatif;
+    use Soutenance\Entity\Proposition;
+    use Soutenance\Provider\Privilege\JustificatifPrivileges;
+    use Soutenance\Provider\Privilege\PropositionPrivileges;
+    use Soutenance\Provider\Validation\TypeValidation;
+    use These\Entity\Db\Acteur;
+    use These\Entity\Db\These;
 
-/**
+    /**
  * @see \Soutenance\Controller\PropositionController::propositionAction()
  *
 // * @var \Application\View\Renderer\PhpRenderer $this
@@ -168,8 +166,6 @@ echo $this->partial('partial/informations-complementaires', [
     'urlFichierThese' => $urlFichierThese,
     'attestationsIntegriteScientifique' => $attestationsIntegriteScientifique,
 ]); ?>
-
-<br/><br/>
 
 <div id="VALIDATION"></div>
 <?php

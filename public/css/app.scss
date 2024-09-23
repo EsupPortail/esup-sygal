@@ -8,9 +8,14 @@ $dangerColor: #d23544;
 
 $historiseColor: #d22828;
 
+$navbarBackgroundColor: #004980;
 
 h1, h2, h3 {
   font-weight: bold;
+}
+
+h1 small {
+  color: #7f8c8d;
 }
 
 h2 {
@@ -95,6 +100,7 @@ h2.modal-title {
 
 .card.box {
   margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   .card-header {
     padding: 5px 10px;
@@ -372,6 +378,11 @@ a.toggle-details:hover, a.toggle-details:focus {
   text-decoration: none;
 }
 
+.form-check-label{
+  vertical-align: text-top;
+  margin-left: 2px;
+}
+
 
 
 /** Tabs **/
@@ -494,21 +505,27 @@ input[type="checkbox"] {
 }
 
 .text-structure {
-  border: black 1px dotted;
+  //border: black 1px dotted;
   border-radius: 5px 5px;
-  padding: 0 3px 0 0;
+  padding: 0 4px 4px 4px;
   white-space: nowrap;
+  margin-top: inherit !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 .text-structure:before {
   font-family: "Font Awesome 5 Free", serif;
   content: "\f1ad";
   font-weight: 900;
   font-size: 90%;
-  color: grey;
+  //color: grey;
+  color: white;
   display: inline-block;
   border-right: black 1px dotted;
   padding: 0 3px 0 3px;
   margin-right: 4px;
+  margin-bottom: 5px;
+  background-color: #004980;
+  border-radius: inherit;
 }
 .text-structure.etablissement:before {
   content: "\f19c";
@@ -621,6 +638,7 @@ div.filters {
         height: 20px;
         background-color: #eee;
         border-color: darkgray;
+        border-radius: initial;
       }
       .input-group {
         .input-group-text {
@@ -810,15 +828,39 @@ form.form-retraiter {
 
 form {
   [type='submit'] {
-    margin-top: 20px;
+    margin-top: 16px;
   }
 }
 
 /******** Boutons ***********/
 
+.btn{
+  border: none;
+  padding: 07px 15px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+  width: fit-content;
+}
+
+.btn > span, .btn > .fas {
+  margin-right:5px;
+}
+
+.btn .icon, .btn .fa, .btn .fas  {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.btn:hover .icon, .btn:hover .fa, .btn:hover .fas {
+  transform: scale(1.2); /* Zoom à 120% */
+}
+
 .btn-info {
   background-color: $infoColor;
   border-color: $infoColor;
+  color: #fff;
 }
 .btn-success {
   background-color: $successColor;
@@ -831,6 +873,13 @@ form {
 .btn-warning {
   background-color: $warningColor;
   border-color: $warningColor;
+}
+.btn-primary {
+  background-color: #337ab7;
+}
+
+.btn-primary:hover {
+  background-color: $navbarBackgroundColor;
 }
 
 .box {

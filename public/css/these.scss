@@ -1,47 +1,39 @@
-.titre-these-div{
+/**
+  Identité de la thèse
+*/
+
+.informations-these-header{
   display: flex;
   align-items: center;
 }
 
-.titre-these-div > div:first-child{
+.informations-these-header > div:first-child{
   width:auto;
 }
 
-.erase-coencadrant-acteur-div{
-  align-content: center;
+.thesis-title {
+  font-size: 16px;
+  font-weight: 450;
+  margin-top: inherit!important;
+  padding: 5px 20px;
+  border-left: 5px solid #004980;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-style:italic;
 }
 
- span.erase-direction-acteur, span.erase-coencadrant-acteur {
-   cursor: pointer;
-   display: block;
-   height:06px;
-   color : #337ab7;
- }
-
-.form-label[for="directeur-qualite"], .form-label[for="codirecteur1-qualite"], .form-label[for="codirecteur2-qualite"]{
-margin-right: 10px;
-}
-
-.these-saisie-form-section {
-  padding: 20px;
-  /*background-color: #f9f9f9;*/
-  border-radius: 8px;
-  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+.these-titre-div{
+  width: fit-content;
   margin-bottom: 20px;
+  margin-top: 5px!important;
 }
 
-.these-saisie-title-section {
-  margin-bottom: 10px;
-  border-left: 4px solid #004980;
-  padding-left: 10px;
+.these-card-header{
+  background-color: #004980!important;
 }
 
-.separator {
-  width: 50%;
-  height: 2px;
-  background-color: #004980;
-  margin: 20px auto;
-  border-radius: 2px;
+.btn-forcage-correction{
+  margin-left:15px;
 }
 
 #modalModificationThese #loading-indicator {
@@ -69,12 +61,89 @@ margin-right: 10px;
   height:150px;
 }
 
-.these-informations-div{
-  width: fit-content;
-}
-
 @media (max-width: 768px) {
+  .informations-these-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .informations-these-header .btn-edit {
+    width: 100%;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .informations-these-header .col-md-7 {
+    text-align: left;
+    margin-top: 15px;
+  }
+
+  .thesis-title {
+    font-size: 20px;
+    text-align: center; /* Centrer le texte sur les petits écrans */
+  }
+
   .these-identite-body {
     display: grid;
   }
 }
+
+/**
+  Fin Identité de la thèse
+*/
+
+/**
+  Form saisie de la thèse
+*/
+
+.erase-coencadrant-acteur-div{
+  align-content: center;
+}
+
+ span.erase-direction-acteur, span.erase-coencadrant-acteur {
+   cursor: pointer;
+   display: block;
+   height:06px;
+   color : #337ab7;
+ }
+
+.form-label[for="directeur-qualite"], .form-label[for="codirecteur1-qualite"], .form-label[for="codirecteur2-qualite"]{
+  margin-right: 10px;
+}
+
+.codirecteur-principal, .codirecteur-exterieur{
+  margin-right:6px;
+}
+
+.codirecteur-principal + label, .codirecteur-exterieur + label {
+  margin-top: 2px;
+}
+
+.these-saisie-form-section {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.these-saisie-title-section {
+  margin-bottom: 10px;
+  border-left: 4px solid #004980;
+  padding-left: 10px;
+}
+
+.separator {
+  width: 50%;
+  height: 2px;
+  background-color: #004980;
+  margin: 20px auto;
+  border-radius: 2px;
+}
+
+.these-informations-div{
+  width: fit-content;
+}
+
+/**
+  Fin Form saisie de la thèse
+*/

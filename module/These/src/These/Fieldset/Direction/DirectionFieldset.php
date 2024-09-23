@@ -129,11 +129,12 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
                 'type' => Checkbox::class,
                 'name' => $name = 'codirecteur' . $i . '-principal',
                 'options' => [
-                    'label' => "Principal",
+                    'label' => "Principal·e ?",
                 ],
                 'attributes' => [
                     'id' => $name,
-                    'title' => "Principal ?"
+                    'title' => "Est-il(elle) le co-directeur·trice principal·e ?",
+                    'class' => "codirecteur-principal",
                 ]
             ]);
 
@@ -142,11 +143,12 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
                     'type' => Checkbox::class,
                     'name' => $name = 'codirecteur' . $i . '-exterieur',
                     'options' => [
-                        'label' => "Extérieur",
+                        'label' => "Extérieur·e",
                     ],
                     'attributes' => [
                         'id' => $name,
-                        'title' => "Extérieur ?"
+                        'title' => "Est-il(elle) extérieur·e ?",
+                        'class' => "codirecteur-exterieur",
                     ]
                 ]);
             }
@@ -225,7 +227,8 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             ],
             'attributes' => [
                 'id' => $prefixe . '-qualite',
-                'class' => 'select2',
+                'class' => 'selectpicker show-menu-arrow',
+                'data-live-search' => 'true',
             ]
         ]);
     }

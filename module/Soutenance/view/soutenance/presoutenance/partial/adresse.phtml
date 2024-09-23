@@ -15,7 +15,7 @@ $adresse = $proposition->getAdresseActive();
     <?php echo $adresse->format(); ?>
 <?php else :?>
     <?php if ($proposition->getAdresse() !== null) : ?>
-        <div class="alert alert-warning"> Adresse récupérer de l'ancien système. </div>
+        <div class="alert alert-warning"> Adresse récupérée de l'ancien système. </div>
         <?php echo $proposition->getAdresse(); ?>
     <?php else : ?>
         <p class="lead">L'adresse exacte n'a pas encore été saisie dans la partie proposition.</p>

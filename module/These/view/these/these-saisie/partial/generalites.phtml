@@ -17,26 +17,29 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
     ?>
     <div class="row these-saisie-form-section">
         <div class="col-6">
+            <h3 class="these-saisie-title-section">
+                Informations générales
+            </h3>
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('doctorant')) ?>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titre')) ?>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('discipline')) ?>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('domaineHal')->get('domaineHal')); ?>
                 </div>
             </div>
@@ -47,13 +50,13 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
                 <h3 class="these-saisie-title-section">
                     Confidentialité de la thèse
                 </h3>
-                <div class="col-md-7">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-4" id="date-fin-confidentialite">
+                <div class="col-md-9" id="date-fin-confidentialite">
                     <?php echo $this->formControlGroup($fs->get('dateFinConfidentialite')); ?>
                 </div>
             </div>
@@ -64,7 +67,7 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
                 <h3 class="these-saisie-title-section">
                     Première inscription
                 </h3>
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('datePremiereInscription')) ?>
                 </div>
             </div>
@@ -74,28 +77,28 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
                 <h3 class="these-saisie-title-section">
                     Titre d'accès à l'inscription en thèse
                 </h3>
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('titreAccesInterneExterne')); ?>
                 </div>
             </div>
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('libelleTitreAcces')); ?>
                 </div>
             </div>
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('pays')); ?>
                 </div>
             </div>
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('nomDeptTitreAcces')); ?>
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codeDeptTitreAcces')); ?>
                 </div>
             </div>
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>
                 </div>
             </div>
@@ -130,7 +133,7 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
 
     <?php if($fs->useAsBaseFieldset()): ?>
         <?php echo $this->formHidden($form->get('security')); ?>
-        <?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
+        <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
     <?php endif ?>
 

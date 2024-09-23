@@ -75,7 +75,31 @@ $isImportable = $these->getSource()->getImportable();
     ->addAlertesFromFlashMessenger()
     ->renderAsBootstrapToasts() ?>
 
-<div class="row titre-these-div">
+<!--<div class="row titre-these-div">-->
+<!--    <div class="col-md-4">-->
+<!--        <h1 class="page-header">-->
+<!--            --><?php //echo $this->translate("Thèse"); ?>
+<!--            <small>--><?php //echo $this->partial('these/these/partial/titre') ?><!--</small>-->
+<!--        </h1>-->
+<!--    </div>-->
+<!--    --><?php //if ($canEditThese): ?>
+<!--        <div class="col-md-7">-->
+<!--            --><?php ///**  @see \These\Controller\TheseSaisieController::modifierAction() */ ?>
+<!--            <a href="--><?php //echo $this->url('these/modifier', ['these' => $these->getId()], [], true) ?><!--"-->
+<!--               data-event="--><?php //echo $modifierStructuresEvent ?><!--"-->
+<!--               class="btn btn-primary">-->
+<!--                <span class="icon icon-edit"></span>-->
+<!--                --><?php //echo $this->translate("Modifier la thèse"); ?>
+<!--            </a>-->
+<!--        </div>-->
+<!--    --><?php //endif ?>
+<!--</div>-->
+<!--<div class="row these-saisie-title-section">-->
+<!--    <h2>-->
+<!--        Titre : --><?php //echo $these->getTitre(); ?>
+<!--    </h2>-->
+<!--</div>-->
+<div class="row informations-these-header">
     <div class="col-md-4">
         <h1 class="page-header">
             <?php echo $this->translate("Thèse"); ?>
@@ -93,6 +117,12 @@ $isImportable = $these->getSource()->getImportable();
             </a>
         </div>
     <?php endif ?>
+
+</div>
+<div class="row these-titre-div">
+    <div class="col-md-12">
+        <h2 class="thesis-title" data-bs-toggle="tooltip" data-bs-original-title="Titre de la thèse"><?= $these->getTitre(); ?></h2>
+    </div>
 </div>
 
 <div class="modal fade" id="modalModificationThese" tabindex="-1" role="dialog" aria-labelledby="modalModificationTheseLabel" aria-hidden="true">
@@ -114,7 +144,7 @@ $isImportable = $these->getSource()->getImportable();
 </div>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header these-card-header text-white">
         <h2 class="first">
             <?php echo $this->translate("Généralités"); ?>
         </h2>
@@ -132,7 +162,7 @@ $isImportable = $these->getSource()->getImportable();
 </div>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header these-card-header text-white">
         <h2 class="first">
             <?php echo $this->translate("Structures"); ?>
         </h2>
@@ -150,7 +180,7 @@ $isImportable = $these->getSource()->getImportable();
 </div>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header these-card-header text-white">
         <h2 class="first">
             <?php echo $this->translate("Direction"); ?>
         </h2>
@@ -161,7 +191,7 @@ $isImportable = $these->getSource()->getImportable();
 </div>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header these-card-header text-white">
         <h2 class="first">
             <?php echo $this->translate("Encadrement"); ?>
         </h2>
@@ -173,7 +203,7 @@ $isImportable = $these->getSource()->getImportable();
 
 <div class="box card">
 
-    <div class="card-header bg-dark text-white">
+    <div class="card-header these-card-header text-white">
         <h2 class="first">
             <?php echo $this->translate("Fiche"); ?>
         </h2>
@@ -346,7 +376,7 @@ $isImportable = $these->getSource()->getImportable();
                         <?php if ($these->isCorrectionAutoriseeForcee()): ?>
                             <em>Cette valeur est forcée.</em>
                         <?php endif ?>
-                        <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                        <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info btn-forcage-correction ajax-modal"
                            data-event="event-correction-autorisee-forcee-modified"
                            title="Forçage du témoin de corrections attendues"
                         >Forçage</a>
