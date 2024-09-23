@@ -40,7 +40,7 @@ class DirectionFieldsetFactory
         $fieldset->setEcolesDoctorales($ecolesDoctorales);
         $unitesRecherche = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, ['structure.sigle', 'structure.libelle'], false);
         $fieldset->setUnitesRecherche($unitesRecherche);
-        $etablissements = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT, 'structure.libelle', false);
+        $etablissements = $etablissementService->getRepository()->findAllEtablissementsInscriptions();
         $fieldset->setEtablissements($etablissements);
 
         /** @var PhpRenderer $renderer*/

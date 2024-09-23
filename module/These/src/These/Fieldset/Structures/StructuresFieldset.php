@@ -10,7 +10,6 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\NotEmpty;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;

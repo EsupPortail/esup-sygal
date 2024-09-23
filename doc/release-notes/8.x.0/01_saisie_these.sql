@@ -7,16 +7,16 @@
 -- Table ACTEUR
 --
 
-alter table acteur add acteur_ecoledoct_id bigint;
+alter table acteur add if not exists acteur_ecoledoct_id bigint;
 alter table acteur add constraint acteur_ecole_doct_id_fk foreign key (acteur_ecoledoct_id) references ecole_doct;
-alter table acteur add principal boolean default false not null;
-alter table acteur add exterieur boolean default false not null;
-alter table acteur add ordre smallint default 1 not null;
+alter table acteur add if not exists principal boolean default false not null;
+alter table acteur add if not exists exterieur boolean default false not null;
+alter table acteur add if not exists ordre smallint default 1 not null;
 -- Index manquant sur individu_rech
-create index individu_rech_haystack_index on individu_rech (haystack asc);
+create index if not exists individu_rech_haystack_index on individu_rech (haystack asc);
 
 -- Ajouter la nouvelle colonne qualite_id
-ALTER TABLE acteur ADD COLUMN qualite_id bigint;
+ALTER TABLE acteur ADD COLUMN if not exists qualite_id bigint;
 
 ALTER TABLE acteur
     ADD CONSTRAINT fk_qualite_id
@@ -38,7 +38,7 @@ DROP VIEW IF EXISTS v_diff_acteur;
 DROP VIEW IF EXISTS src_acteur;
 
 -- 2- Supprimer le champ
-ALTER TABLE acteur DROP COLUMN lib_role_compl;
+ALTER TABLE acteur DROP COLUMN if exists lib_role_compl;
 
 -- 3- Recréer les vues
 create or replace view src_acteur
@@ -201,7 +201,7 @@ WHERE diff.operation IS NOT NULL
 --
 
 -- Ajout de la nouvelle colone discipline_sise_code
-ALTER TABLE these ADD COLUMN discipline_sise_code varchar(255);
+ALTER TABLE these ADD COLUMN if not exists discipline_sise_code varchar(255);
 
 UPDATE these t
 SET discipline_sise_code = ds.code
@@ -219,24 +219,24 @@ WHERE ds.libelle = t.lib_disc;
 
 -- Colonnes devenues inutiles
 -- Attention certaines colonnes sont utilisées dans des vues (Utiliser le script 03_matviews.sql présent ici : doc/release-notes/8.4.0)
-ALTER TABLE these DROP COLUMN besoin_expurge;
-ALTER TABLE these DROP COLUMN cod_unit_rech;
-ALTER TABLE these DROP COLUMN lib_unit_rech;
-ALTER TABLE these DROP COLUMN source_code_sav;
+ALTER TABLE these DROP COLUMN if exists besoin_expurge;
+ALTER TABLE these DROP COLUMN if exists cod_unit_rech;
+ALTER TABLE these DROP COLUMN if exists lib_unit_rech;
+ALTER TABLE these DROP COLUMN if exists source_code_sav;
 -- Supprimer la vue utilisant le champ date_autoris_soutenance
-DROP VIEW v_diff_these;
-ALTER TABLE these DROP COLUMN date_autoris_soutenance;
-ALTER TABLE these DROP COLUMN date_prop;
+DROP VIEW if exists v_diff_these;
+ALTER TABLE these DROP COLUMN if exists date_autoris_soutenance;
+ALTER TABLE these DROP COLUMN if exists date_prop;
 
 -- Ajout de la nouvelle colone etab_cotut_id
-ALTER TABLE these ADD COLUMN etab_cotut_id bigint;
+ALTER TABLE these ADD COLUMN if not exists etab_cotut_id bigint;
 
 ALTER TABLE these
     ADD CONSTRAINT fk_etab_cotut_id
         FOREIGN KEY (etab_cotut_id) REFERENCES etablissement(id);
 
 -- Ajout de la nouvelle colone pays_cotut_id
-ALTER TABLE these ADD COLUMN pays_cotut_id bigint;
+ALTER TABLE these ADD COLUMN if not exists pays_cotut_id bigint;
 
 ALTER TABLE these
     ADD CONSTRAINT fk_pays_cotut_id
@@ -345,14 +345,14 @@ FROM pre
 --
 
 -- Ajout de la nouvelle colone etab_cotut_id
-ALTER TABLE titre_acces ADD COLUMN etab_id bigint;
+ALTER TABLE titre_acces ADD COLUMN if not exists etab_id bigint;
 
 ALTER TABLE titre_acces
     ADD CONSTRAINT fk_etab_id
         FOREIGN KEY (etab_id) REFERENCES etablissement(id);
 
 -- Ajout de la nouvelle colonne pays_id
-ALTER TABLE titre_acces ADD COLUMN pays_id bigint;
+ALTER TABLE titre_acces ADD COLUMN if not exists pays_id bigint;
 
 ALTER TABLE titre_acces
     ADD CONSTRAINT fk_pays_id
@@ -372,8 +372,8 @@ WHERE t.code_pays_titre_acces IS NOT NULL;
 
 -- Colonnes devenues inutiles
 -- Attention certaines colonnes sont utilisées dans des vues (Utiliser le script 03_matviews.sql présent ici : doc/release-notes/8.4.0)
-ALTER TABLE unite_rech DROP COLUMN etab_support;
-ALTER TABLE unite_rech DROP COLUMN autres_etab;
+ALTER TABLE unite_rech DROP COLUMN if exists etab_support;
+ALTER TABLE unite_rech DROP COLUMN if exists autres_etab;
 
 --
 -- Table INDIVIDU
@@ -390,11 +390,11 @@ WHERE i.nationalite IS NOT NULL
   and i.pays_id_nationalite is null;
 
 -- Ajout de la nouvelle colonne pays_naissance_id
-alter table individu add pays_naissance_id bigint REFERENCES pays (id);
+alter table individu add if not exists pays_naissance_id bigint REFERENCES pays (id);
 
 
 DROP VIEW v_extract_theses;
-ALTER TABLE these DROP COLUMN date_prev_soutenance;
+ALTER TABLE these DROP COLUMN if exists date_prev_soutenance;
 
 -- Script de création récupéré de 7.0.0/substitutions/00_substitution_prepare.sql
 create or replace view v_extract_theses

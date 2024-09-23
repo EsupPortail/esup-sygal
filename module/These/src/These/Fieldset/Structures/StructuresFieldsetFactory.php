@@ -23,11 +23,15 @@ class StructuresFieldsetFactory
         $structureService = $container->get(StructureService::class);
         $fieldset->setStructureService($structureService);
 
+        /** @var EtablissementService $etablissementService */
+        $etablissementService = $container->get(EtablissementService::class);
+        $fieldset->setEtablissementService($etablissementService);
+
         $ecolesDoctorales = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
         $fieldset->setEcolesDoctorales($ecolesDoctorales);
         $unitesRecherche = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, ['structure.sigle', 'structure.libelle'], false);
         $fieldset->setUnitesRecherche($unitesRecherche);
-        $etablissements = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT, 'structure.libelle', false);
+        $etablissements = $etablissementService->getRepository()->findAllEtablissementsInscriptions();
         $fieldset->setEtablissements($etablissements);
 
         /** @var EtablissementService $etablissementService */
