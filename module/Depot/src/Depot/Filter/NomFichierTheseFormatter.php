@@ -4,7 +4,6 @@ namespace Depot\Filter;
 
 use Depot\Entity\Db\FichierThese;
 use Fichier\Filter\AbstractNomFichierFormatter;
-use Laminas\Filter\Exception;
 
 /**
  * Filtre générateur du nom de fichier lié à une thèse.
@@ -13,16 +12,12 @@ use Laminas\Filter\Exception;
  */
 class NomFichierTheseFormatter extends AbstractNomFichierFormatter
 {
-    private $separator = '-';
-
     /**
      * Retourne un nom de fichier conforme aux règles de nommage.
      *
      * @param  FichierThese $fichierThese
-     * @return string
-     * @throws Exception\RuntimeException If filtering $value is impossible
      */
-    public function filter($fichierThese)
+    public function filter($fichierThese): string
     {
         $doctorant = $fichierThese->getThese()->getDoctorant();
 

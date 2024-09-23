@@ -8,6 +8,7 @@ use Application\Entity\Db\ValiditeFichier;
 use Application\Service\BaseService;
 use Depot\Entity\Db\FichierThese;
 use Depot\Entity\Db\Repository\FichierTheseRepository;
+use Depot\Filter\NomFichierFusionPdcEtTheseFormatter;
 use Depot\Filter\NomFichierTheseFormatter;
 use Depot\Service\FichierThese\Exception\DepotImpossibleException;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
@@ -35,7 +36,6 @@ use These\Entity\Db\These;
 use These\Service\FichierThese\PdcData;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
-use UnicaenApp\Util;
 
 class FichierTheseService extends BaseService
 {
@@ -500,22 +500,13 @@ class FichierTheseService extends BaseService
      */
     public function fusionnerPdcEtThese(These $these, PdcData $pdcData, string $versionFichier, bool $removeFirstPage = false, string $timeout = null): string
     {
-        $outputFilePath = $this->generateOutputFilePathForMerge($these);
+        $formatter = new NomFichierFusionPdcEtTheseFormatter();
+        $outputFilePath = sys_get_temp_dir() . '/' . $formatter->filter($these);
+
         $command = $this->createCommandForPdcMerge($these, $pdcData, $versionFichier, $removeFirstPage, $outputFilePath);
         $this->runShellCommand($command, $timeout);
 
         return $outputFilePath;
-    }
-
-    private function generateOutputFilePathForMerge(These $these): string
-    {
-        $outputFilePath = uniqid(sprintf("sygal_fusion_%s-%s-%s_",
-            $these->getId(),
-            $these->getDoctorant()->getIndividu()->getNomUsuel(),
-            $these->getDoctorant()->getIndividu()->getPrenom()
-        )) . '.pdf';
-
-        return sys_get_temp_dir() . '/' . Util::reduce($outputFilePath);
     }
 
     /**

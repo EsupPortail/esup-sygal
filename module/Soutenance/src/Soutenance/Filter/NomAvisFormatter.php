@@ -3,8 +3,8 @@
 namespace Soutenance\Filter;
 
 use Fichier\Entity\Db\Fichier;
-use Individu\Entity\Db\Individu;
 use Fichier\Filter\NomFichierFormatter;
+use Individu\Entity\Db\Individu;
 
 /**
  * Filtre générateur du nom de l'avis téléversé.
@@ -13,7 +13,6 @@ use Fichier\Filter\NomFichierFormatter;
  */
 class NomAvisFormatter extends NomFichierFormatter
 {
-    private $separator = '-';
     /** @var Individu */
     private $individu;
 
@@ -31,9 +30,8 @@ class NomAvisFormatter extends NomFichierFormatter
      * Retourne un nom de fichier conforme aux règles de nommage.
      *
      * @param Fichier $fichier
-     * @return string
      */
-    public function filter($fichier)
+    public function filter($fichier): string
     {
         $parts = [];
         $parts['id'] = $fichier->getShortUuid();

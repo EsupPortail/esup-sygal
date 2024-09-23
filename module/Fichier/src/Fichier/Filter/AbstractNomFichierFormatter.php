@@ -3,53 +3,39 @@
 namespace Fichier\Filter;
 
 use Fichier\Entity\Db\Fichier;
-use UnicaenApp\Util;
 use Laminas\Filter\AbstractFilter;
+use UnicaenApp\Util;
 
 /**
- * Filtre générateur du nom de fichier.
+ * Filtre générateur de nom de fichier.
  *
  * @author Unicaen
  */
 abstract class AbstractNomFichierFormatter extends AbstractFilter
 {
-    private $separator = '-';
+    protected string $separator = '-';
 
-    /**
-     * @param Fichier $fichier
-     * @return string
-     */
-    protected function extractExtensionFromFichier(Fichier $fichier)
+    protected function extractExtensionFromFichier(Fichier $fichier): string
     {
         $pathParts = pathinfo($fichier->getNomOriginal());
 
         return mb_strtolower($pathParts['extension']);
     }
 
-    /**
-     * @param string $str
-     * @return string
-     */
-    protected function normalizedString($str)
+    protected function normalizedString(string $str): string
     {
-        $nom = str_replace('_', '-', $this->transformText($str));
+        $nom = str_replace('_', $this->separator, $this->transformText($str));
 
         return mb_strtoupper($nom);
     }
 
-    /**
-     * @param string $str
-     * @param string $encoding
-     *
-     * @return string
-     */
-    private function transformText($str, $encoding = 'UTF-8')
+    private function transformText(string $str): string
     {
         $s = $this->separator;
 
         $from = "ÀÁÂÃÄÅÇÐÈÉÊËÌÍÎÏÒÓÔÕÖØÙÚÛÜŸÑàáâãäåçðèéêëìíîïòóôõöøùúûüÿñ€@ \"'";
         $to   = "AAAAAACDEEEEIIIIOOOOOOUUUUYNaaaaaacdeeeeiiiioooooouuuuynEA$s$s$s";
 
-        return Util::strtr($str, $from, $to, false, $encoding);
+        return Util::strtr($str, $from, $to);
     }
 }

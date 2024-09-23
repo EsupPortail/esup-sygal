@@ -5,13 +5,13 @@ namespace Fichier\Filter;
 use Fichier\Entity\Db\Fichier;
 
 /**
- * Filtre générateur du nom de fichier.
+ * Filtre générateur de nom de fichier.
  *
  * @author Unicaen
  */
 class NomFichierFormatter extends AbstractNomFichierFormatter
 {
-    private $separator = '-';
+    protected string $separator = '-';
 
     /**
      * Retourne un nom de fichier conforme aux règles de nommage.
@@ -19,7 +19,7 @@ class NomFichierFormatter extends AbstractNomFichierFormatter
      * @param  Fichier $fichier
      * @return string
      */
-    public function filter($fichier)
+    public function filter($fichier): string
     {
         $extension = $this->extractExtensionFromFichier($fichier);
 

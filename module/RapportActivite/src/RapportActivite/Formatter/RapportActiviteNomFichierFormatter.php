@@ -13,8 +13,6 @@ use RapportActivite\Entity\Db\RapportActivite;
  */
 class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
 {
-    private string $separator = '-';
-
     /**
      * @var \RapportActivite\Entity\Db\RapportActivite
      */

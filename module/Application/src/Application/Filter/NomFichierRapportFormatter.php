@@ -2,8 +2,8 @@
 
 namespace Application\Filter;
 
-use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\Rapport;
+use Fichier\Entity\Db\Fichier;
 use Fichier\Filter\AbstractNomFichierFormatter;
 
 /**
@@ -13,8 +13,6 @@ use Fichier\Filter\AbstractNomFichierFormatter;
  */
 class NomFichierRapportFormatter extends AbstractNomFichierFormatter
 {
-    private $separator = '-';
-
     /**
      * @var Rapport
      */
