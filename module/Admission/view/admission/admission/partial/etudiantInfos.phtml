@@ -35,6 +35,16 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             </p>
         </div>
     <?php } ?>
+    <?php if(!$admission && ($role->getCode() === Role::CODE_ADMISSION_DIRECTEUR_THESE || $role->isDirecteurThese())){ ?>
+        <div class="admission-informations-container">
+            <i class="fas fa-info-circle"></i>
+            <p>
+                Si en tant que directeur de thèse, vous voulez créer ce dossier à la place de <?php echo $individu ?>,
+                vous devrez impérativement vous déclarer à l'étape suivante en tant que directeur de ce dossier. <br>
+                Dans le cas contraire, tant que l'information ne sera pas saisie, seul le doctorant pourra accéder à celui-ci une fois créé.
+            </p>
+        </div>
+    <?php } ?>
     <div class="row subfield">
         <div class="col-md-12">
             <div class="col-mb-2">
@@ -159,7 +169,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="admission-form-checkboxes">
             <?php echo $this->formControlGroup($fieldset->get('niveauEtude')) ?>
         </div>
-        <div id="additional_fields_diplome">
+        <div class="collapse" id="additional_fields_diplome">
             <div class="row subfield">
                 <div class="col-lg-4 col-sm-12">
                     <?php echo $this->formControlGroup($fieldset->get('intituleDuDiplomeNational')) ?>
@@ -172,7 +182,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                 </div>
             </div>
         </div>
-        <div id="additional_fields_autre">
+        <div class="collapse" id="additional_fields_autre">
             <div class="row subfield">
                 <div class="col">
                     <div class="admission-form-checkboxes checkbox-diplome">

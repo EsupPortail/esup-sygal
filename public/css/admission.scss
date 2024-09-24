@@ -637,6 +637,10 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   cursor: pointer;
 }
 
+.admission-commentaires-card-header{
+  background-color: #F1732D;
+}
+
 .dossier-refuse-card {
   border: 3px solid #d23544;
   border-radius: 11px;
@@ -679,7 +683,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 }
 
 #file-recap-signe-container {
-  display: none;
+  //display: none;
 }
 
 /** Fin Partie Circuit de signatures **/

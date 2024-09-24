@@ -51,11 +51,11 @@ class EtudiantHydrator extends DoctrineObject
             $data["adresseNomCommune"] = null;
         }
         //Si aucune ville française de naissance n'est renseignée, on met à vide le code INSEE précédemment renseigné
-        if(empty($data["libelleCommuneNaissance"])){
+        if(empty($data["libelleCommuneNaissance"]) || empty($data["codeCommuneNaissance"])){
             $data["codeCommuneNaissance"] = null;
         }
         //Si aucune ville française n'est renseignée, on met à vide le code postal et le code INSEE précédemment renseigné
-        if(empty($data["adresseNomCommune"])){
+        if(empty($data["adresseNomCommune"]) || empty($data["adresseCodeCommune"])){
             $data["adresseCodePostal"] = null;
             $data["adresseCodeCommune"] = null;
         }

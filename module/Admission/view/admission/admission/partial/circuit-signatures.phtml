@@ -112,18 +112,19 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                                     Cela permettra la notification des gestionnaires des modifications effectuées.
                                 </p>
                             </div>
-                            <ul>
-                                <?php
-                                if($commentaires && is_array($commentaires)){
-                                    foreach ($commentaires as $commentaire) { ?>
-                                        <li>
-                                            <?php
-                                            echo $commentaire['etape']. " : ". $commentaire['commentaire'];
-                                            ?>
-                                        </li>
-                                    <?php }
-                                } ?>
-                            </ul>
+                            <?php
+                            if($commentaires && is_array($commentaires)){
+                                foreach ($commentaires as $commentaire) { ?>
+                                    <div class="box card">
+                                        <div class="card-header admission-commentaires-card-header text-white">
+                                            <h2 class="first"><?= $commentaire['etape'] ?></h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <?php echo $commentaire['commentaire']; ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
