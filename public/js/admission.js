@@ -625,22 +625,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        //GESTION DU RÉCAPITULATIF DU DOSSIER
-        const lienRecapitulatif = document.querySelector('.access-recap-signe-btn');
-        const divRecapitulatif = document.getElementById('file-recap-signe-container');
-
-        if(lienRecapitulatif){
-            lienRecapitulatif.addEventListener('click', function(event) {
-                event.preventDefault();
-
-                if (divRecapitulatif.style.display === 'none' || divRecapitulatif.style.display === '') {
-                    divRecapitulatif.style.display = 'block';
-                } else {
-                    divRecapitulatif.style.display = 'none';
-                }
-            });
-        }
-
         $('input[name="document[enregistrerVerification]"]').val("")
         //Permet d'enregistrer les commentaires entrés par la/le gestionnaire du dossier
         $('.enregistrer-verification-btn').on('click', function() {

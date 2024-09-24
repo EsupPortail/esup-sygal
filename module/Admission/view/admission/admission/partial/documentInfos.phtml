@@ -272,15 +272,15 @@ if ($canVerifierAdmission) { ?>
     //ou soit que le dossier ne soit pas plus en cours de saisie et que le récap soit déjà uploadé
     if($canAccederRecapitulatifSigne){
         if($canGererRecapitulatifSigne || isset($documents[$fieldset->get('recapitulatifDossierSigne')->getAttribute('id')])){ ?>
-            <a class="btn btn-primary access-recap-signe-btn" href="">
-                <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
+            <a class="btn btn-primary access-recap-signe-btn" role="button" data-bs-toggle="collapse" href="#file-recap-signe-container" aria-expanded="false" aria-controls="file-recap-signe-container">
+                <span class="icon icon-pdf" title="Télécharger le récapitulatif"></span>
                 <?php if ($canGererRecapitulatifSigne) { ?>
                     Téléverser le récapitulatif signé
                 <?php } else { ?>
                     Accéder au récapitulatif signé
                 <?php } ?>
             </a>
-            <div id="file-recap-signe-container">
+            <div class="collapse" id="file-recap-signe-container">
                 <?php if ($canGererRecapitulatifSigne) {
                     echo $this->partial('admission/partial/document/document', [
                         'fieldset' => $fieldset->get('recapitulatifDossierSigne')->setAttribute('disabled', false),

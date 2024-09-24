@@ -169,7 +169,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="admission-form-checkboxes">
             <?php echo $this->formControlGroup($fieldset->get('niveauEtude')) ?>
         </div>
-        <div id="additional_fields_diplome">
+        <div class="collapse" id="additional_fields_diplome">
             <div class="row subfield">
                 <div class="col-lg-4 col-sm-12">
                     <?php echo $this->formControlGroup($fieldset->get('intituleDuDiplomeNational')) ?>
@@ -182,7 +182,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                 </div>
             </div>
         </div>
-        <div id="additional_fields_autre">
+        <div class="collapse" id="additional_fields_autre">
             <div class="row subfield">
                 <div class="col">
                     <div class="admission-form-checkboxes checkbox-diplome">

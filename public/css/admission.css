@@ -508,6 +508,9 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .commentaires-ajoutes-card:hover {
   cursor: pointer; }
 
+.admission-commentaires-card-header {
+  background-color: #F1732D; }
+
 .dossier-refuse-card {
   border: 3px solid #d23544;
   border-radius: 11px;
@@ -540,9 +543,6 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 
 .validations-cards-container {
   margin-top: 15px; }
-
-#file-recap-signe-container {
-  display: none; }
 
 /** Fin Partie Circuit de signatures **/
 /** Formulaire Convention de formation doctorale **/
