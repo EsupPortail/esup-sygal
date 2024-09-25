@@ -8,7 +8,14 @@ $dangerColor: #d23544;
 
 $historiseColor: #d22828;
 
-$navbarBackgroundColor: #004980;
+$navbarBackgroundColor: var(--primary-color);
+
+:root{
+  //--primary-color:#004980;
+  //--secondary-color:#337ab7;
+  --primary-color:#337ab7;
+  --secondary-color:#004980;
+}
 
 h1, h2, h3 {
   font-weight: bold;
@@ -24,6 +31,12 @@ h2 {
 
 h2:nth-of-type(1) {
   margin-top: 20px;
+}
+
+h3 {
+  margin-bottom: 10px;
+  border-left: 4px solid var(--primary-color);
+  padding-left: 10px;
 }
 
 a.anchor {
@@ -70,7 +83,7 @@ h2.modal-title {
   }
 }
 .modal-header {
-  background-color: rgb(51, 122, 183);
+  background-color: var(--primary-color);
   .modal-title {
     color: white;
     background-color: transparent;
@@ -354,6 +367,22 @@ li.uploaded-file {
   width: 100px;
 }
 
+button.nav-link {
+  color: var(--primary-color);
+}
+button.nav-link:hover {
+  color: var(--secondary-color);
+}
+
+.page-item.active .page-link{
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.page-link{
+  color: var(--primary-color);
+}
+
 ul.pagination {
   li a {
     padding: 3px 6px;
@@ -383,6 +412,14 @@ a.toggle-details:hover, a.toggle-details:focus {
   margin-left: 2px;
 }
 
+.form-check-input:checked{
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.dropdown-item.active{
+  background-color: var(--secondary-color)
+}
 
 
 /** Tabs **/
@@ -524,7 +561,7 @@ input[type="checkbox"] {
   padding: 0 3px 0 3px;
   margin-right: 4px;
   margin-bottom: 5px;
-  background-color: #004980;
+  background-color: var(--secondary-color);
   border-radius: inherit;
 }
 .text-structure.etablissement:before {
@@ -633,6 +670,7 @@ div.filters {
           padding: 3px 7px;
         }
       }
+
       button.dropdown-toggle {
         padding: 3px 4px 3px 4px;
         height: 20px;
@@ -857,6 +895,10 @@ form {
   transform: scale(1.2); /* Zoom à 120% */
 }
 
+a.btn > span.icon {
+  color:white;
+}
+
 .btn-info {
   background-color: $infoColor;
   border-color: $infoColor;
@@ -875,7 +917,7 @@ form {
   border-color: $warningColor;
 }
 .btn-primary {
-  background-color: #337ab7;
+  background-color: var(--secondary-color);
 }
 
 .btn-primary:hover {

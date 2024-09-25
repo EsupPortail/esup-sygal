@@ -71,7 +71,8 @@ $now = new DateTime();
         <?php if ($canCatalogueAfficher) : ?>
             <?php /** @see \Formation\Controller\ModuleController::catalogueAction() */?>
             <a href="<?php echo $this->url('formation/catalogue',[],[], true); ?>" class="btn btn-primary" target="_blank">
-                <span class="icon icon-voir"> Accéder au catalogue des formations</span>
+                <span class="icon icon-voir"></span>
+                Accéder au catalogue des formations
             </a>
         <?php endif; ?>
     </div>

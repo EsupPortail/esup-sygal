@@ -66,6 +66,28 @@ $modifierEncadrementEvent = 'event-modifier-encadrement';
 
 $isImportable = $these->getSource()->getImportable();
 
+$etatTheseTextTooltip = "État de la thèse";
+switch ($these->getEtatThese()){
+    case "E" :
+        $etatTheseClass = "en-cours";
+        $iconEtatThese = "hourglass";
+        break;
+    case "A" :
+        $etatTheseClass = "abandonnee";
+        $iconEtatThese = "ko";
+        break;
+    case "U" :
+        $etatTheseClass = "transferee";
+        $iconEtatThese = "export";
+        break;
+    case "S" :
+        $etatTheseClass = $these->getResultat() === 1 ? "admis" : "non-admis";
+        $iconEtatThese = $these->getResultat() === 1 ? "ok" : "ko";
+        $etatTheseTextTooltip = $these->getResultatToString();
+        break;
+    default:
+        $etatTheseClass = "";
+}
 ?>
 
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
@@ -75,31 +97,7 @@ $isImportable = $these->getSource()->getImportable();
     ->addAlertesFromFlashMessenger()
     ->renderAsBootstrapToasts() ?>
 
-<!--<div class="row titre-these-div">-->
-<!--    <div class="col-md-4">-->
-<!--        <h1 class="page-header">-->
-<!--            --><?php //echo $this->translate("Thèse"); ?>
-<!--            <small>--><?php //echo $this->partial('these/these/partial/titre') ?><!--</small>-->
-<!--        </h1>-->
-<!--    </div>-->
-<!--    --><?php //if ($canEditThese): ?>
-<!--        <div class="col-md-7">-->
-<!--            --><?php ///**  @see \These\Controller\TheseSaisieController::modifierAction() */ ?>
-<!--            <a href="--><?php //echo $this->url('these/modifier', ['these' => $these->getId()], [], true) ?><!--"-->
-<!--               data-event="--><?php //echo $modifierStructuresEvent ?><!--"-->
-<!--               class="btn btn-primary">-->
-<!--                <span class="icon icon-edit"></span>-->
-<!--                --><?php //echo $this->translate("Modifier la thèse"); ?>
-<!--            </a>-->
-<!--        </div>-->
-<!--    --><?php //endif ?>
-<!--</div>-->
-<!--<div class="row these-saisie-title-section">-->
-<!--    <h2>-->
-<!--        Titre : --><?php //echo $these->getTitre(); ?>
-<!--    </h2>-->
-<!--</div>-->
-<div class="row informations-these-header">
+<div class="row informations-principales-these-header">
     <div class="col-md-4">
         <h1 class="page-header">
             <?php echo $this->translate("Thèse"); ?>
@@ -117,11 +115,15 @@ $isImportable = $these->getSource()->getImportable();
             </a>
         </div>
     <?php endif ?>
-
 </div>
-<div class="row these-titre-div">
-    <div class="col-md-12">
-        <h2 class="thesis-title" data-bs-toggle="tooltip" data-bs-original-title="Titre de la thèse"><?= $these->getTitre(); ?></h2>
+<div class="row informations-compl-these-div">
+    <div class="col-md-6 informations-compl-these-card">
+        <h2 class="informations-titre-these-card" data-bs-toggle="tooltip" data-bs-original-title="Titre de la thèse"><?= $these->getTitre(); ?></h2>
+    </div>
+    <div class="col-md-6 informations-compl-these-card information-etat-these-card <?=$etatTheseClass?>-etat-these-card"
+         data-bs-toggle="tooltip" data-bs-original-title="<?=$etatTheseTextTooltip?>">
+        <span class="icon icon-<?=$iconEtatThese?>"></span>
+        <h2><?= $these->getEtatTheseToString(); ?></h2>
     </div>
 </div>
 
@@ -210,13 +212,6 @@ $isImportable = $these->getSource()->getImportable();
     </div>
 
     <div class="card-body these-identite-body">
-
-        <div id="photo-div" class="float-end">
-            <!--            <div class="photo-placeholder loading"-->
-            <!--                 data-src="-->
-            <?php //echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCodeSansPrefix()]) ?><!--"></div>-->
-        </div>
-
         <dl class="row these">
             <dt class="col-md-3">
                 <?php echo $this->translate("Titre d'accès à l'inscr. en thèse") ?>
@@ -286,11 +281,6 @@ $isImportable = $these->getSource()->getImportable();
             <?php else: ?>
                 <dd class="col-md-9">Non confidentielle</dd>
             <?php endif ?>
-
-            <dt class="col-md-3">État</dt>
-            <dd class="col-md-9">
-                <span class="badge bg-secondary"><?php echo $these->getEtatTheseToString() ?></span>
-            </dd>
 
             <?php if ($resultat = $these->getResultatToString()): ?>
                 <dt class="col-md-3">Résultat</dt>

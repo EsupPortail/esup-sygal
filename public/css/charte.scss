@@ -17,8 +17,29 @@ body {
 }
 
 a {
-  color: #337ab7;
+  color: var(--primary-color);
   text-decoration: none;
+}
+
+a:hover{
+  color: var(--secondary-color);
+}
+
+dd{
+  a > span.icon, td > a > span.fas{
+    color: var(--secondary-color);
+  }
+  a > span.icon:hover, a > span.fas:hover{
+    color: var(--primary-color);
+  }
+}
+
+td > a > span.icon, td > a > span.fas{
+  color: var(--secondary-color);
+}
+
+td > a > span.icon:hover, td > a > span.fas:hover{
+  color: var(--primary-color);
 }
 
 h1 {
@@ -246,7 +267,7 @@ h1.app-name {
     .active .nav-link {
       background-color: $navbarBackgroundColorActive;
       border-color: $navbarBackgroundColorActive;
-      color: white;
+      color: white!important;
     }
 
     .divider {
