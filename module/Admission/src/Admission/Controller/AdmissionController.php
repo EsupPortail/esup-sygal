@@ -34,7 +34,9 @@ use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -719,7 +721,10 @@ class AdmissionController extends AdmissionAbstractController {
         $qb = $this->admissionRechercheService->getQueryBuilder();
         $qb
             ->andWhere($qb->expr()->orX('admission.etat = :etat'))
-            ->setParameter('etat', Etat::CODE_VALIDE);
+            ->setParameter('etat', Etat::CODE_VALIDE)
+            ->leftJoin('admission.individu', 'i')
+            ->leftJoin(Doctorant::class, 'd', 'WITH', 'd.individu = i')
+            ->andWhere('d.id IS NULL');
         $listing = $qb->getQuery()->getResult();
 
         //Génération des CSV
