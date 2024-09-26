@@ -2,6 +2,7 @@
 
 namespace These\Fieldset\TitreAcces;
 
+use ApiSkeletons\DoctrineORMHydrationModule\Hydrator\DoctrineHydrator;
 use Application\Service\TitreAcces\TitreAccesService;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
@@ -18,7 +19,7 @@ class TitreAccesFieldsetFactory
         $fieldset = new TitreAccesFieldset();
         $fieldset->setName("titreAcces");
 
-        /** @var TitreAccesHydrator $hydrator */
+        /** @var DoctrineHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
         $fieldset->setHydrator($hydrator);
 
@@ -31,6 +32,7 @@ class TitreAccesFieldsetFactory
 
         /** @var TitreAccesService $titreAccesService */
         $titreAccesService = $container->get(TitreAccesService::class);
+        $fieldset->setTypesEtabTitreAcces($titreAccesService->getTypeEtabOptions());
         $fieldset->setObject($titreAccesService->newTitreAcces());
 
         return $fieldset;

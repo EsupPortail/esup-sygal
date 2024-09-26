@@ -84,16 +84,19 @@ class TitreAcces implements HistoriqueAwareInterface
     {
         $etab = $this->getTypeEtabTitreAcces();
         if ($this->getPays()) {
-            $etab .= sprintf("%s, %s",
+            $etab .= sprintf(" %s, %s",
                 $this->getCodeDeptTitreAcces(),
                 $this->getPays()->getLibelle()
             );
         }
 
+        //pour afficher les établissements provenant de thèse d'un SI
+        $etabLibelle = $this->getEtablissement() ?: $this->getLibelleEtabTitreAcces();
+
         return sprintf("%s (%s), %s (%s)",
             $this->getLibelleTitreAcces(),
             $this->getTitreAccesInterneExterneToString(),
-            $this->getEtablissement(),
+            $etabLibelle,
             $etab
         );
     }

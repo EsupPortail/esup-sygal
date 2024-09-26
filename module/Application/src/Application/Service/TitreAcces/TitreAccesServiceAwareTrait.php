@@ -7,13 +7,13 @@ trait TitreAccesServiceAwareTrait
     /**
      * @var TitreAccesService
      */
-    protected TitreAccesService $TitreAccesService;
+    protected TitreAccesService $titreAccesService;
 
     /**
-     * @param TitreAccesService $TitreAccesService
+     * @param TitreAccesService $titreAccesService
      */
-    public function setTitreAccesService(TitreAccesService $TitreAccesService)
+    public function setTitreAccesService(TitreAccesService $titreAccesService)
     {
-        $this->TitreAccesService = $TitreAccesService;
+        $this->titreAccesService = $titreAccesService;
     }
 }

@@ -3,6 +3,7 @@
  * @var \Laminas\Form\Form $form
  */
 
+use These\Entity\Db\These;
 use These\Fieldset\Generalites\GeneralitesFieldset;
 
 ?>
@@ -11,6 +12,7 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
     <?php
         /** @var GeneralitesFieldset $fs */
         $fs = $form->get('generalites');
+        /** @var These $these */
         $these = $fs->getObject();
         $form->prepare();
         echo $this->form()->openTag($form);
@@ -100,12 +102,17 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
             <div class="row">
                 <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>
+                    <?php if($these->getSource()->getImportable()): ?>
+                        Type d'établissement : <?php echo $these->getTitreAcces()->getLibelleEtabTitreAcces(); ?>
+                        <?php else: ?>
+                        <?php echo $this->formControlGroup($fs->get('titreAcces')->get('typeEtabTitreAcces'));
+                    endif; ?>
                 </div>
             </div>
         </div>
     </div>
 
-    <?php if($these->getId() !== null): ?>
+    <?php if($these->getId() !== null && !$these->getSource()->getImportable()): ?>
         <div class="separator"></div>
         <div class="row these-saisie-form-section">
             <div class="row ">

@@ -255,6 +255,12 @@ WHERE unaccent(lower(t.lib_pays_cotut)) = unaccent(lower(p.libelle))
    OR (
     unaccent(lower(t.lib_pays_cotut)) = 'cote d ivoire' AND unaccent(lower(p.libelle)) = 'cote d''ivoire'
     )
+   OR (
+    unaccent(lower(t.lib_pays_cotut)) = replace(lower(p.libelle), '-', ' ')
+    )
+   OR (
+    unaccent(lower(t.lib_pays_cotut)) = replace(lower(p.libelle_iso), '-', ' ')
+    )
     RETURNING t.*
     )
 SELECT * FROM updated_these;
