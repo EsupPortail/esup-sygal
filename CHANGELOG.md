@@ -8,6 +8,8 @@ Journal des modifications
 - Nouveau favicon, moche mais universel !
 - Possibilité de spécifier le username dans l'URL de modification de mot de passe (paramètre GET).
 - Formateur du nom de fichier pour la fusion PDC & manuscrit : séparateur 'underscore' car STEP-STAR n'aime pas le tiret du 6.
+- Module Admission : Export vers Pégase -> concernant le sexe, M et Mme deviennent M et F
+- Module Admission : Export vers Pégase -> export seulement des thèses dont l'individu n'est pas encore doctorant
 - [FIX] Le bouton de recherche/liaison de notice IdRef ne fonctionnait pas dans une modale (unicaen/idref 1.0.0 requis).
 - [FIX] Synchro : plantage lors de la génération du diff (unicaen/db-import 6.1.3 nécessaire car nouvelle plateforme Doctrine\DBAL\Platforms\PostgreSQL120Platform).
 - [FIX] Le menu Nos Thèses s'affichait à tort pour le rôle Doctorant (du fait que ce dernier est désormais tagué établissement-dépendant).
