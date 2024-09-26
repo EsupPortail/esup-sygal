@@ -241,6 +241,11 @@ class ValidationController extends AbstractController
                 // notification par mail si plus aucune validation attendue
                 $results = $this->depotValidationService->getValidationsAttenduesPourCorrectionThese($these);
                 if (count($results) === 0) {
+                    //Met à jour le témoin correction effectuée pour une thèse provenant de SyGAL
+                    if(!$these->getSource()->getImportable()){
+                        $these->setCorrectionEffectuee("O");
+                        $this->theseService->update($these);
+                    }
                     // notification de la MDD
                     $notification = $this->depotNotificationFactory->createNotificationValidationCorrectionThese($these);
                     $notificationResult = $this->notifierService->trigger($notification);

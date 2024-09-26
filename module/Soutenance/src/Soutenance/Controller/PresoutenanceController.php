@@ -378,6 +378,12 @@ class PresoutenanceController extends AbstractController
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
+        //Met à jour le témoin soutenance autorisée pour une thèse provenant de SyGAL
+        if(!$these->getSource()->getImportable()){
+            $these->setSoutenanceAutorisee("O");
+            $this->theseService->update($these);
+        }
+
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($proposition);
             $this->notifierService->trigger($notif);
@@ -404,6 +410,12 @@ class PresoutenanceController extends AbstractController
                 $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::REJETEE);
                 $proposition->setEtat($etat);
                 $this->getPropositionService()->update($proposition);
+
+                //Met à jour le témoin soutenance autorisée pour une thèse provenant de SyGAL
+                if(!$these->getSource()->getImportable()){
+                    $these->setSoutenanceAutorisee("N");
+                    $this->theseService->update($these);
+                }
 
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationStopperDemarcheSoutenance($these);

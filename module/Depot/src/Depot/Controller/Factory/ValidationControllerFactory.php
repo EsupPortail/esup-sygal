@@ -12,6 +12,7 @@ use Depot\Service\Validation\DepotValidationService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
+use These\Service\These\TheseService;
 
 class ValidationControllerFactory implements FactoryInterface
 {
@@ -20,17 +21,20 @@ class ValidationControllerFactory implements FactoryInterface
         /**
          * @var ValidationService $validationService
          * @var NotifierService $notifierService
+         * @var TheseService $theseService
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
          */
         $validationService = $container->get(ValidationService::class);
         $notifierService = $container->get(NotifierService::class);
+        $theseService = $container->get(TheseService::class);
         $roleService = $container->get('RoleService');
         $utilisateurService = $container->get('UtilisateurService');
 
         $controller = new ValidationController();
         $controller->setValidationService($validationService);
         $controller->setNotifierService($notifierService);
+        $controller->setTheseService($theseService);
         $controller->setRoleService($roleService);
         $controller->setUtilisateurService($utilisateurService);
 
