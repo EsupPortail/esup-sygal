@@ -3,6 +3,7 @@
 namespace These\Fieldset\Direction;
 
 use DoctrineModule\Form\Element\ObjectSelect;
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
@@ -12,13 +13,12 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\These;
+use UnicaenApp\Filter\SearchAndSelectFilter;
 use UnicaenApp\Form\Element\SearchAndSelect;
-use UnicaenApp\Form\Element\SearchAndSelect2;
 use Webmozart\Assert\Assert;
 
 class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
@@ -160,6 +160,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
         $individu = new SearchAndSelect($prefixe . '-individu', ['label' => "Individu * :"]);
         $individu
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => $prefixe . '-individu',
                 'placeholder' => "Recherchez l'individu...",
@@ -245,6 +246,9 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             $name = 'directeur-individu' => [
                 'name' => $name,
                 'required' => $estModifiable,
+                'filters' => [
+                    ['name' => SearchAndSelectFilter::class],
+                ],
             ],
             $name = 'directeur-etablissement' => [
                 'name' => $name,
@@ -274,6 +278,9 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             $spec[$name = 'codirecteur' . $i . '-individu'] = [
                 'name' => $name,
                 'required' => $codirEnabled && $estModifiable,
+                'filters' => [
+                    ['name' => SearchAndSelectFilter::class],
+                ],
             ];
             $spec[$name = 'codirecteur' . $i . '-etablissement'] = [
                 'name' => $name,
