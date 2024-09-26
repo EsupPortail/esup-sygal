@@ -72,7 +72,7 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                                 <?php
                                 $ligne = [];
                                 if (isset($result["etablissementForce"]) && trim($result["etablissementForce"]) != "") {
-                                    $ligne[] = sprintf("<span class='text-structure etablissement'><em title='Valeur forcée (initialement : %s)'>%s</em></span>",
+                                    $ligne[] = sprintf("<span class='text-structure etablissement'><em data-bs-toggle='tooltip' data-bs-original-title='Valeur forcée (initialement : %s)'>%s</em></span>",
                                         $result["etablissement"] ?? 'vide',
                                         $result["etablissementForce"],
                                     );

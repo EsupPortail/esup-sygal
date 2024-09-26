@@ -70,17 +70,17 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                                 <?php
                                 $ligne = [];
                                 if (isset($result["etablissementForce"]) && trim($result["etablissementForce"]) != "") {
-                                    $ligne[] = sprintf("<span class='text-structure etablissement'><em title='Valeur forcée (initialement : %s)'>%s</em></span>",
+                                    $ligne[] = sprintf("<span class='text-structure etablissement'><em data-bs-toggle='tooltip' data-bs-original-title='Valeur forcée (initialement : %s)'>%s</em></span>",
                                         $result["etablissement"] ?? 'vide',
                                         $result["etablissementForce"],
                                     );
                                 }
                                 elseif (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
-                                    $ligne[] = "<span class='text-structure etablissement'>" . $result["etablissement"] . "</span>";
+                                    $ligne[] = "<span class='text-structure etablissement' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
                                 }
 
                                 if (isset($result["uniteRecherche"]) && trim($result["uniteRecherche"]) != "") {
-                                    $ligne[] = "<span class='text-structure ur'>" . $result["uniteRecherche"] . "</span>";
+                                    $ligne[] = "<span class='text-structure ur' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
                                 }
                                 echo implode('<br>', $ligne);
                                 ?>
