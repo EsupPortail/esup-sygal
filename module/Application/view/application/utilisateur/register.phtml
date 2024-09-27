@@ -1,0 +1,71 @@
+<?php
+
+use Application\Controller\UtilisateurController;
+
+/**
+ * @var \Application\Entity\Db\Utilisateur|null $utilisateur
+ * @var \Laminas\Form\Form $form
+ * @var \Application\View\Renderer\PhpRenderer $this
+ *
+ * @see UtilisateurController::registerAction()
+ */
+
+?>
+
+<?php $this->headTitle($this->translate("Création d'un compte utilisateur local")) ?>
+
+<h1 class="page-header"><?php echo $this->translate("Création d'un compte utilisateur local"); ?> </h1>
+
+<?php if ($utilisateur !== null): ?>
+
+    <p class="alert alert-success">
+        Votre compte utilisateur local <strong><?php echo $utilisateur->getUsername() ?></strong> a été créé avec succès. <br>
+        Un mail vous a été envoyé pour vous indiquer comment initialiser votre compte.
+    </p>
+    <p>
+        <a href="<?php echo $this->url('home') ?>">< Retour à l'accueil</a>
+    </p>
+
+<?php else: ?>
+
+    <?php echo $this->alertes()->addAlertesFromFlashMessenger(true)->renderAsBootstrapToasts() ?>
+
+    <p class="lead">
+        Cette page permet de vous créer un compte utilisateur local.
+        Notez bien que l'adresse électronique saisie sera votre identifiant de connexion.
+    </p>
+
+    <?php echo $this->form()->openTag($form->prepare()) ?>
+
+    <?php echo $this->formHidden($form->get('csrf')) ?>
+    <?php echo $this->formHidden($form->get('id')) ?>
+
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('civilite')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('nomPatronymique')) ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('nomUsuel')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <?php echo $this->formControlGroup($form->get('prenom')) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('email')) ?>
+        </div>
+    </div>
+
+    <?php echo $this->formElement($form->get('submit')) ?>
+    <?php echo $this->form()->closeTag() ?>
+
+<?php endif ?>

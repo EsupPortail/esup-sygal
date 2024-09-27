@@ -4,8 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
-use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
+use Application\Process\Utilisateur\UtilisateurProcessAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
@@ -68,6 +68,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserServiceAwareTrait;
     use TokenServiceAwareTrait;
 
+    use UtilisateurProcessAwareTrait;
+
     use SessionServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
@@ -87,10 +89,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      */
     protected $shibService;
 
-    /**
-     * @var CreationUtilisateurForm
-     */
-    private $creationUtilisateurForm;
+    private CreationUtilisateurForm $creationUtilisateurForm;
 
     /**
      * @param ModuleOptions $authModuleOptions
@@ -116,10 +115,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $this->shibService = $shibService;
     }
 
-    /**
-     * @param CreationUtilisateurForm $creationUtilisateurForm
-     */
-    public function setCreationUtilisateurForm(CreationUtilisateurForm $creationUtilisateurForm)
+    public function setCreationUtilisateurForm(CreationUtilisateurForm $creationUtilisateurForm): void
     {
         $this->creationUtilisateurForm = $creationUtilisateurForm;
     }
@@ -226,7 +222,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                     $individu = $this->individuService->newIndividuFromData($data->toArray());
                     $this->individuService->saveIndividu($individu);
 
-                    $utilisateur = $this->utilisateurService->createFromIndividuAndFormData($individu, $data->toArray());
+                    $utilisateur = $this->utilisateurService->createUtilisateurFromIndividuAndFormData($individu, $data->toArray());
                 } else {
                     $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
                 }
@@ -414,6 +410,33 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         ]);
     }
 
+    public function registerAction(): ViewModel
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $this->creationUtilisateurForm->setData($data);
+            if ($this->creationUtilisateurForm->isValid()) {
+                try {
+                    $utilisateur = $this->utilisateurProcess->createUtilisateurAndIndividuFromFormData($data->toArray());
+
+                    return new ViewModel([
+                        'utilisateur' => $utilisateur,
+                    ]);
+                } catch (Exception $e) {
+                    $this->flashMessenger()->addErrorMessage(
+                        "Une erreur est survenue, la création a été annulée ! " . $e->getMessage()
+                    );
+                }
+            }
+        }
+
+        return new ViewModel([
+            'utilisateur' => null,
+            'form' => $this->creationUtilisateurForm,
+        ]);
+    }
+
     public function creerCompteLocalIndividuAction()
     {
         $individu = $this->getIndividuService()->getRequestedIndividu($this);
@@ -480,6 +503,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         if ($utilisateur === null) {
             return new ViewModel([
                 'utilisateur' => null,
+                'initialized' => false,
             ]);
         }
 
@@ -494,14 +518,18 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $this->initCompteForm->setData($data);
             if ($this->initCompteForm->isValid()) {
                 $this->utilisateurService->changePassword($utilisateur, $data['password1']);
-                $this->flashMessenger()->addSuccessMessage('Mot de passe initialisé avec succés.');
-                return $this->redirect()->toRoute('home');
+
+                return new ViewModel([
+                    'utilisateur' => $utilisateur,
+                    'initialized' => true,
+                ]);
             }
         }
 
         return new ViewModel([
             'form' => $this->initCompteForm,
             'utilisateur' => $utilisateur,
+            'initialized' => false,
         ]);
     }
 

@@ -84,6 +84,7 @@ class ApplicationNotificationFactory extends NotificationFactory
      *
      * @param Utilisateur $utilisateur
      * @return \Notification\Notification
+     * @throws \Notification\Exception\RuntimeException Création impossible
      */
     public function createNotificationInitialisationCompte(Utilisateur $utilisateur): Notification
     {
@@ -94,13 +95,13 @@ class ApplicationNotificationFactory extends NotificationFactory
 
         $token = $utilisateur->getPasswordResetToken();
         if ($token === null) {
-            throw new LogicException("Aucun reset token présent pour l'utilisateur '{$utilisateur->getUsername()}' !");
+            throw new RuntimeException("Aucun reset token présent pour l'utilisateur '{$utilisateur->getUsername()}' !");
         }
 
         $url = $this->urlHelper->__invoke(
             'utilisateur/init-compte',
             ['token' => $token],
-            ['query' => ['username' => $utilisateur->getUsername()], 'force_canonical' => true],
+            ['force_canonical' => true],
             true
         );
 

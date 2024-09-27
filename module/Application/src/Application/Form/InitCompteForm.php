@@ -36,7 +36,7 @@ class InitCompteForm extends Form
             'type' => Text::class,
             'name' => 'username',
             'options' => [
-                'label' => "Nom d'utilisateur / Username * :",
+                'label' => "Identifiant de connexion / Username * :",
             ],
             'attributes' => [
                 'id' => 'username',
@@ -93,7 +93,7 @@ class InitCompteForm extends Form
                     'name' => Callback::class,
                     'options' => [
                         'messages' => [
-                            Callback::INVALID_VALUE => "Ce nom d'utilisateur ne correspond pas à celui attendu / This username doesn't match with the given one.",
+                            Callback::INVALID_VALUE => "Cet identifiant de connexion ne correspond pas à celui attendu / This username doesn't match with the given one.",
                         ],
                         'callback' => function ($value) {
                             return ($value === $this->username);

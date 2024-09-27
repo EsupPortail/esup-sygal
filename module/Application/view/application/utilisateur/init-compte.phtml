@@ -5,74 +5,86 @@
  *
  * @var InitCompteForm $form
  * @var ?Utilisateur $utilisateur
+ * @var bool $initialized Indique si le changement de mot de passe a été réalisé
  */
-
 
 use Application\Entity\Db\Utilisateur;
 use Application\Form\InitCompteForm;
 
-$this->headTitle("Initialisation du compte utilisateur");
+$this->headTitle("Init. compte utilisateur local");
 ?>
 
 <h1 class="page-header">
-    Initialisation du compte / Account setup
+    Initialisation du compte utilisateur local / Local account setup
 </h1>
 
 <?php if ($utilisateur !== null) : ?>
 
-    <?php echo $this->form()->openTag($form); ?>
-    <div class="row">
-        <div class="col-md-3">
-            <?php echo $this->formControlGroup($form->get('username')); ?>
-        </div>
-        <div class="col-md-5">
-            <div class="alert alert-info">
-                <span class="fas fa-info-circle"></span>
-                Le nom d’utilisateur vous a été transmis dans le mail électronique / Your username was indicated in the e-mail.
+    <?php if ($initialized === false) : ?>
+
+        <?php echo $this->form()->openTag($form); ?>
+        <div class="row">
+            <div class="col-md-3">
+                <?php echo $this->formControlGroup($form->get('username')); ?>
+            </div>
+            <div class="col-md-5">
+                <div class="alert alert-info">
+                    <span class="fas fa-info-circle"></span>
+                    L'dentifiant de connexion vous a été transmis dans le mail électronique / Your username was indicated in the e-mail.
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <?php echo $this->formControlGroup($form->get('password1')); ?>
-            <?php echo $this->formControlGroup($form->get('password2')); ?>
-        </div>
-        <div class="col-md-6">
-            <div class="alert alert-info">
-                <div class="row">
-                    <div class="col-md-6">
-                        <span class="fas fa-info-circle"></span>
-                        Le mot de passe doit :
-                        <ul>
-                            <li> être d'une longueur minimale de 8 caractères ; </li>
-                            <li> posséder des caractères en majuscule et en minuscule ; </li>
-                            <li> posséder au moins un chiffre ; </li>
-                            <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <span class="fas fa-info-circle"></span>
-                        The password should contain :
-                        <ul>
-                            <li> at least 8 characters ; </li>
-                            <li> at least one lowercase character and at least one uppercase character ; </li>
-                            <li> at least one digit  ; </li>
-                            <li> at least one special character (among '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
-                        </ul>
+        <div class="row">
+            <div class="col-md-4">
+                <?php echo $this->formControlGroup($form->get('password1')); ?>
+                <?php echo $this->formControlGroup($form->get('password2')); ?>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="fas fa-info-circle"></span>
+                            Le mot de passe doit :
+                            <ul>
+                                <li> être d'une longueur minimale de 8 caractères ; </li>
+                                <li> posséder des caractères en majuscule et en minuscule ; </li>
+                                <li> posséder au moins un chiffre ; </li>
+                                <li> posséder au moins un caractère spécial (parmi '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="fas fa-info-circle"></span>
+                            The password should contain :
+                            <ul>
+                                <li> at least 8 characters ; </li>
+                                <li> at least one lowercase character and at least one uppercase character ; </li>
+                                <li> at least one digit  ; </li>
+                                <li> at least one special character (among '!', '@', '#', '$', '%', '^', '&', '*', '_').</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <?php echo $this->formControlGroup($form->get('bouton')); ?>
-    <?php echo $this->formElement($form->get('csrf')); ?>
-    <?php echo $this->form()->closeTag(); ?>
+        <?php echo $this->formControlGroup($form->get('bouton')); ?>
+        <?php echo $this->formElement($form->get('csrf')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+
+    <?php else : ?>
+
+        <p class="alert alert-success">
+            Le mot de passe de votre compte utilisateur local <strong><?php echo $utilisateur->getUsername() ?></strong>
+            a été modifié avec succès. <br>
+            Rendez-vous sur la <a href="<?php echo $this->url('zfcuser/login', ['type' => 'local']) ?>">page de connexion</a>...
+        </p>
+
+    <?php endif; ?>
 
 <?php else : ?>
 
 <div class="alert alert-danger">
     <p>
-        <span class="icon icon-attention"></span> Aucun compte utilisateur ne correspond à ce jeton d'identification.
+        <span class="icon icon-attention"></span> Aucun compte utilisateur local ne correspond à ce jeton d'identification.
     </p>
     Ceci peut se produire si :
     <ul>

@@ -14,13 +14,15 @@ use Application\Form\InitCompteForm;
 use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
+use Application\Process\Utilisateur\UtilisateurProcess;
+use Application\Process\Utilisateur\UtilisateurProcessFactory;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
-use Individu\View\Helper\IndividuUsurpationHelperFactory;
 use Application\View\Helper\RoleHelper;
+use Individu\View\Helper\IndividuUsurpationHelperFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -72,6 +74,7 @@ return [
                 [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
+                        'register',
                         'init-compte',
                     ],
                     'roles' => [],
@@ -249,6 +252,18 @@ return [
 
                 ],
             ],
+            'zfcuser' => [
+                'child_routes' => [
+                    'register' => [
+                        'options' => [
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Utilisateur',
+                                'action' => 'register',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
         ],
     ],
     'navigation'      => [
@@ -275,6 +290,7 @@ return [
         ],
         'factories' => [
             'UtilisateurService' => UtilisateurServiceFactory::class,
+            UtilisateurProcess::class => UtilisateurProcessFactory::class,
             UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
         'aliases' => [

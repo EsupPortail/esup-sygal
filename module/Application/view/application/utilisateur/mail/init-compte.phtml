@@ -3,25 +3,22 @@
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @see
- *
  * @var PhpRenderer $this
  * @var string $username
  * @var string $url
  */
-
 ?>
 
 <p>
     Bonjour,
 </p>
 <p>
-    Un compte utilisateur local vient de vous être créé dans l'application <strong> <?php echo $this->appInfos()->nom; ?> </strong>.
-    Afin de pouvoir vous connecter à l'application, vous devez initialiser votre compte.
+    Un compte utilisateur local a été créé pour vous dans l'application <strong> <?php echo $this->appInfos()->nom; ?> </strong>.
+    Afin de pouvoir vous connecter à l'application, vous devez à présent choisir un mot de passe.
 </p>
 <p>
     Votre identifiant de connexion est <strong><?php echo $username; ?></strong>. Veuillez le noter car celui-ci vous sera demandé dans le formulaire
-    d'initialisation que vous trouverez à l'adresse suivante : <br/>
+    que vous trouverez à l'adresse suivante : <br/>
     <a href="<?php echo $url; ?>"><?php echo $url;?> </a>
 </p>
 

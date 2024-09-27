@@ -5,6 +5,7 @@ namespace Application\Form;
 use Application\Form\Validator\NewEmailValidator;
 use Individu\Entity\Db\Individu;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Submit;
@@ -14,35 +15,38 @@ use Laminas\InputFilter\InputFilterProviderInterface;
 
 class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
 {
-    public function init()
+    public function init(): void
     {
         $this->add(
             (new Hidden('id'))
         );
         $this->add(
+            (new Csrf('csrf'))
+        );
+        $this->add(
             (new Radio('civilite'))
                 ->setValueOptions([
+                    '' => 'Aucune (neutre)',
                     Individu::CIVILITE_M => Individu::CIVILITE_M,
                     Individu::CIVILITE_MME => Individu::CIVILITE_MME,
                 ])
-                ->setLabel("Civilité :")
+                ->setLabel("Civilité")
         );
         $this->add(
             (new Text('nomUsuel'))
-                ->setLabel("Nom usuel :")
+                ->setLabel("Nom d'usage *")
         );
-
         $this->add(
             (new Text('nomPatronymique'))
-            ->setLabel("Nom Patronymique :")
+            ->setLabel("Nom de famille (patronymique) *")
         );
         $this->add(
             (new Text('prenom'))
-                ->setLabel("Prénom :")
+                ->setLabel("Prénom *")
         );
         $this->add(
             (new Text('email'))
-                ->setLabel("Adresse électronique (identifiant de connexion) :")
+                ->setLabel("Adresse électronique (sera votre identifiant de connexion) *")
         );
         $this->add(
             (new Checkbox('individu'))
@@ -54,15 +58,12 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'civilite' => [
                 'name' => 'civilite',
-                'required' => true,
+                'required' => false,
             ],
             'nomUsuel' => [
                 'name' => 'nomUsuel',
@@ -70,7 +71,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
             ],
             'nomPatronymique' => [
                 'name' => 'nomPatronymique',
-                'required' => false,
+                'required' => true,
             ],
             'prenom' => [
                 'name' => 'prenom',

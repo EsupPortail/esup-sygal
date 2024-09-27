@@ -5,6 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
+use Application\Process\Utilisateur\UtilisateurProcess;
 use Application\Service\Notification\ApplicationNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use Notification\Service\NotifierService;
@@ -114,6 +115,10 @@ class UtilisateurControllerFactory
         $controller->setSearchService($utilisateurSearchService);
         $controller->setUserMapper($userMapper);
         $controller->setSessionService($sessionService);
+
+        /** @var UtilisateurProcess $utilisateurProcess */
+        $utilisateurProcess = $container->get(UtilisateurProcess::class);
+        $controller->setUtilisateurProcess($utilisateurProcess);
 
         /** @var \Application\Service\Notification\ApplicationNotificationFactory $applicationNotificationFactory */
         $applicationNotificationFactory = $container->get(ApplicationNotificationFactory::class);

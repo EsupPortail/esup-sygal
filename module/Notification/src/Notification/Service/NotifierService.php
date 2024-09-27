@@ -85,6 +85,9 @@ final class NotifierService
         return $result;
     }
 
+    /**
+     * @throws RuntimeException Problème rencontré lors de l'envoi de la notif
+     */
     protected function sendNotification(Notification $notification): Message
     {
         $email = $this->createMailMessageForNotification($notification);

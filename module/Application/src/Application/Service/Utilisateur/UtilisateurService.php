@@ -2,28 +2,30 @@
 
 namespace Application\Service\Utilisateur;
 
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
-use Doctrine\ORM\Exception\ORMException;
-use Exception;
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\NomCompletFormatter;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Exception;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Crypt\Password\Bcrypt;
+use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
-use Laminas\Crypt\Password\Bcrypt;
-use Laminas\Mvc\Controller\AbstractActionController;
 
 class UtilisateurService extends BaseService
 {
     use SourceServiceAwareTrait;
     use UserServiceAwareTrait;
+    use IndividuServiceAwareTrait;
 
     const SQL_CREATE_APP_USER =
         "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application ESUP-SyGAL', 'ldap');";
@@ -38,10 +40,11 @@ class UtilisateurService extends BaseService
 
         return $repo;
     }
+
     /**
-     * @return Utilisateur
+     * Fetche le pseudo-utilisateur représentant l'application.
      */
-    public function fetchAppPseudoUtilisateur()
+    public function fetchAppPseudoUtilisateur(): Utilisateur
     {
         $qb = $this->getRepository()->createQueryBuilder('u')
             ->where('u.username = :username')
@@ -137,8 +140,8 @@ class UtilisateurService extends BaseService
         $utilisateur->setIndividu($individu);
 
         try {
-            $this->getEntityManager()->persist($utilisateur);
-            $this->getEntityManager()->flush($utilisateur);
+            $this->entityManager->persist($utilisateur);
+            $this->entityManager->flush($utilisateur);
         } catch (ORMException $e) {
             throw new RuntimeException("Impossible d'enregistrer le nouvel utilisateur", null, $e);
         }
@@ -151,7 +154,7 @@ class UtilisateurService extends BaseService
      * @param array $formData
      * @return Utilisateur
      */
-    public function createFromIndividuAndFormData(Individu $individu, array $formData): Utilisateur
+    public function createUtilisateurFromIndividuAndFormData(Individu $individu, array $formData): Utilisateur
     {
         if (!$individu->getEmailPro()) {
             throw new RuntimeException("Impossible de créer un utilisateur à partir d'un individu n'ayant pas d'email");

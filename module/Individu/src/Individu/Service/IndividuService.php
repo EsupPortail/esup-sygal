@@ -6,7 +6,7 @@ use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\Repository\IndividuRepository;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -98,11 +98,8 @@ class IndividuService extends BaseService
 
     /**
      * Instancie un Individu, à partir des données fournies.
-     *
-     * @param array $data
-     * @return Individu
      */
-    public function newIndividuFromData(array $data): Individu
+    public function newIndividuFromData(array $data, ?Utilisateur $createur = null): Individu
     {
         $sourceCode = $data['sourceCode'] ?? uniqid('', true);
 
@@ -113,6 +110,7 @@ class IndividuService extends BaseService
         $individu->setPrenom1($data['prenom1'] ?? $data['prenom']);
         $individu->setEmailPro($data['email']);
         $individu->setSourceCode($sourceCode);
+        $individu->setHistoCreateur($createur);
 
         return $individu;
     }
