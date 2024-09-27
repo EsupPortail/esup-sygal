@@ -5,7 +5,7 @@ namespace Soutenance\Entity;
 use Doctrine\Common\Collections\Collection;
 use Horodatage\Entity\Interfaces\HasHorodatagesInterface;
 use Horodatage\Entity\Traits\HasHorodatagesTrait;
-use http\Exception\RuntimeException;
+use RuntimeException;
 use JetBrains\PhpStorm\Pure;
 use These\Entity\Db\These;
 use DateTime;
