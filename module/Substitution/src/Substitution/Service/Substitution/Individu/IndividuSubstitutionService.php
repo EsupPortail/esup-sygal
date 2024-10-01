@@ -26,7 +26,6 @@ class IndividuSubstitutionService extends SpecificSubstitutionAbstractService
     {
         if (strlen($text) < 2) return [];
 
-        $text = Util::reduce($text);
         $criteres = explode(' ', $text);
 
         $sql =
