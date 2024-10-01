@@ -420,7 +420,7 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     public function toStringDateSoutenance() : string
     {
         $date = $this->getDate();
-        if ($date) return $date->format('d/m/Y');
+        if ($date) return $date->format('d/m/Y à H:i');
         return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
     }
 
