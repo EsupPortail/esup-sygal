@@ -904,6 +904,9 @@ a.btn > span.icon {
   border-color: $infoColor;
   color: #fff;
 }
+.btn-info:hover {
+  color: white;
+}
 .btn-success {
   background-color: $successColor;
   border-color: $successColor;
@@ -919,8 +922,14 @@ a.btn > span.icon {
 .btn-primary {
   background-color: var(--secondary-color);
 }
+.btn-link {
+  color: var(--secondary-color);
+}
+.btn-link:hover {
+  color: var(--primary-color);
+}
 
-.btn-primary:hover {
+.btn-primary:hover, .btn-primary:focus {
   background-color: $navbarBackgroundColor;
 }
 
@@ -966,6 +975,10 @@ ul.roadmap.pagination {
 
 #navbar .dropdown-item {
   padding: .1rem .5rem;
+}
+
+#navbar .dropdown-item:active {
+  background-color: var(--primary-color)
 }
 
 

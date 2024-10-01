@@ -24,6 +24,7 @@ use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Structure\Service\StructureDocument\StructureDocumentService;
+use These\Form\Acteur\ActeurForm;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
 use UnicaenAuth\Service\User as UserService;
@@ -82,6 +83,7 @@ class PresoutenanceControllerFactory
         $justificatifService = $container->get(JustificatifService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
         $parametreService = $container->get(ParametreService::class);
+        $acteurForm = $container->get('FormElementManager')->get(ActeurForm::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -116,6 +118,7 @@ class PresoutenanceControllerFactory
         $controller->setParametreService($parametreService);
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
+        $controller->setActeurForm($acteurForm);
 
         $controller->setRenderer($renderer);
 

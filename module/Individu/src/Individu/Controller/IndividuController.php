@@ -18,6 +18,7 @@ use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Individu\Form\IndividuForm;
 use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -181,6 +182,7 @@ class IndividuController extends AbstractActionController implements SearchContr
     {
         /** @var Request $request */
         $request = $this->getRequest();
+        $redirectUrl = $this->params()->fromQuery('redirect');
         if ($request->isPost()) {
             $data = $request->getPost();
             $this->individuForm->setData($data);
@@ -189,6 +191,8 @@ class IndividuController extends AbstractActionController implements SearchContr
                 $this->individuService->saveIndividu($individu);
 
                 $this->flashMessenger()->addSuccessMessage("L'individu &laquo; $individu &raquo; a été créé avec succès.");
+
+                if ($redirectUrl !== null) return $this->redirect()->toUrl($redirectUrl. '&individu=' . $individu->getId());
 
                 // On positionne dans le Header un champ 'individu' pour le cas où l'action est appelée par un autre contrôleur
                 // ayant besoin de connaître l'individu créé :
@@ -203,8 +207,8 @@ class IndividuController extends AbstractActionController implements SearchContr
                 $individu = $this->individuService->newIndividuFromUtilisateur($utilisateur);
                 $this->individuForm->bind($individu);
             }
+            if ($redirectUrl !== null) $this->individuForm->setAttribute('action', $this->url()->fromRoute('individu/ajouter',[],["query" => ["redirect" => $redirectUrl]]));
         }
-
         return new ViewModel([
             'form' => $this->individuForm,
         ]);

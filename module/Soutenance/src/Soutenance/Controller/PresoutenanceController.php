@@ -25,7 +25,6 @@ use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierServiceAwareTrait;
-use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
@@ -49,6 +48,8 @@ use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
+use These\Fieldset\Acteur\ActeurFieldset;
+use These\Form\Acteur\ActeurFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -81,17 +82,18 @@ class PresoutenanceController extends AbstractController
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
+    use ActeurFormAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
 
     /** @var PhpRenderer */
-    private $renderer;
+    private PhpRenderer $renderer;
 
     /**
      * @param PhpRenderer $renderer
      */
-    public function setRenderer($renderer)
+    public function setRenderer(PhpRenderer $renderer): void
     {
         $this->renderer = $renderer;
     }
@@ -99,31 +101,31 @@ class PresoutenanceController extends AbstractController
     public function presoutenanceAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+        $proposition = $this->propositionService->findOneForThese($these);
+        $rapporteurs = $this->propositionService->getRapporteurs($proposition);
         $nbRapporteurs = count($rapporteurs);
 
         $renduRapport = $proposition->getRenduRapport();
-        if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
+        if (!$renduRapport) $this->propositionService->initialisationDateRetour($proposition);
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
-        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
-        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
+        $justificatifs = $this->justificatifService->generateListeJustificatif($proposition);
+        $justificatifsOk = $this->justificatifService->isJustificatifsOk($proposition, $justificatifs);
 
-        $autorisation = $proposition->getJustificatif(NatureFichier::CODE_AUTORISATION_SOUTENANCE, null);
-        $rapport = $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_SOUTENANCE, null);
-        $pv = $proposition->getJustificatif(NatureFichier::CODE_PV_SOUTENANCE, null);
+        $autorisation = $proposition->getJustificatif(NatureFichier::CODE_AUTORISATION_SOUTENANCE);
+        $rapport = $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_SOUTENANCE);
+        $pv = $proposition->getJustificatif(NatureFichier::CODE_PV_SOUTENANCE);
 
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
-        $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
-        $avis = $this->getAvisService()->getAvisByThese($these);
+        $engagements = $this->engagementImpartialiteService->getEngagmentsImpartialiteByThese($these);
+        $avis = $this->avisService->getAvisByThese($these);
 
-        $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $validationBDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $validationPDC = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
 
         /** Parametres ---------------------------------------------------------------------------------------------- */
         try {
-            $deadline = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR);
+            $deadline = $this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR);
         } catch (Exception $e) {
             throw new RuntimeException("Une erreur est survenue lors de la récupération de la valeur d'un paramètre", 0 , $e);
         }
@@ -154,7 +156,7 @@ class PresoutenanceController extends AbstractController
     public function dateRenduRapportAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
         $form = $this->getDateRenduRapportForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [], true));
@@ -165,8 +167,8 @@ class PresoutenanceController extends AbstractController
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $this->getPropositionService()->update($proposition);
-                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date de rendu");
+                $this->propositionService->update($proposition);
+                $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date de rendu");
             }
         }
 
@@ -187,11 +189,11 @@ class PresoutenanceController extends AbstractController
     public function associerJuryAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
         /** @var Membre[] $membres */
         $membres = $proposition->getMembres();
-        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $membre = $this->membreService->getRequestedMembre($this);
 
         /** Ici, on prépare la liste des acteurs correspondant aux différents rôles pour le Select du formulaire
          *  d'association. On part du principe :
@@ -199,7 +201,7 @@ class PresoutenanceController extends AbstractController
          *  - qu'un Rapporteur absent est Rapporteur,
          *  - qu'un Membre du jury est Membre du jury.
          */
-        $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
+        $acteurs = $this->acteurService->getRepository()->findActeurByThese($these);
         $acteurs = array_filter($acteurs, function (Acteur $a) { return $a->estNonHistorise();});
         switch ($membre->getRole()) {
             case Membre::RAPPORTEUR_JURY :
@@ -243,35 +245,18 @@ class PresoutenanceController extends AbstractController
             $data = $request->getPost();
             $acteurId = $data['acteur'];
             /** @var Acteur $acteur */
-            $acteur = $this->getActeurService()->getRepository()->find($acteurId);
-            $individu = $acteur->getIndividu();
+            $acteur = $this->acteurService->getRepository()->find($acteurId);
 
             if (! isset($acteur)) throw new RuntimeException("Aucun acteur à associer !");
 
             //mise à jour du membre de soutenance
             $membre->setActeur($acteur);
-            $this->getMembreService()->update($membre);
-            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+            $this->membreService->update($membre);
+            $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+
             //creation de l'utilisateur
-
             if ($membre->estRapporteur()) {
-                $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
-                $user = null;
-                if (empty($utilisateurs)) {
-                    $user = $this->utilisateurService->createFromIndividu($individu, $this->getMembreService()->generateUsername($membre), 'none');
-                    $user->setEmail($membre->getEmail());
-                    $this->userService->updateUserPasswordResetToken($user);
-                }
-
-                $token = $this->getMembreService()->retrieveOrCreateToken($membre);
-                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true);
-                try {
-                    $notif = $this->soutenanceNotificationFactory->createNotificationConnexionRapporteur($proposition, $membre);
-                    $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire, todo : cas à gérer !
-                }
+                $this->createUtilisateurRapporteur($acteur, $membre);
             }
         }
 
@@ -286,10 +271,10 @@ class PresoutenanceController extends AbstractController
     public function deassocierJuryAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $proposition = $this->propositionService->findOneForThese($these);
+        $membre = $this->membreService->getRequestedMembre($this);
 
-        $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
+        $acteurs = $this->acteurService->getRepository()->findActeurByThese($these);
         $acteur = null;
         foreach ($acteurs as $acteur_) {
             if ($acteur_ === $membre->getActeur()) $acteur = $acteur_;
@@ -298,18 +283,110 @@ class PresoutenanceController extends AbstractController
 
         //retrait dans membre de soutenance
         $membre->setActeur(null);
-        $this->getMembreService()->update($membre);
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+        $this->membreService->update($membre);
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
-        $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
+        if(!$these->getSource()->getImportable()) $this->acteurService->delete($acteur);
+
+        $validation = $this->validationService->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
         if ($validation !== null) {
-            $this->getValidationService()->unsignEngagementImpartialite($validation);
+            $this->validationService->unsignEngagementImpartialite($validation);
         }
 
-        $utilisateur = $this->getMembreService()->getUtilisateur($membre);
-        if ($utilisateur) $this->utilisateurService->supprimerUtilisateur($utilisateur);
-
+        $utilisateur = $this->membreService->getUtilisateur($membre);
+        if ($utilisateur){
+            try {
+                $this->utilisateurService->supprimerUtilisateur($utilisateur);
+            }catch (Exception $e) {
+                throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
+            }
+        }
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    /**
+     * Ici on affecte au membre des individus enregistrés dans SyGAL
+     */
+    public function associerJuryTheseSygalAction() : ViewModel|Response
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->propositionService->findOneForThese($these);
+        $membre = $this->membreService->getRequestedMembre($this);
+        $role = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete("R", $these->getEtablissement());
+
+        $individu = $this->params()->fromQuery('individu') ?  $this->individuService->getRepository()->find($this->params()->fromQuery('individu')) : new Individu();
+        $acteur = $this->acteurService->newActeur($these, $individu, $role);
+        $acteur->setQualite($membre->getQualite());
+        $acteur->setThese($these);
+
+        $form = $this->acteurForm;
+        $form->bind($acteur);
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/associer-jury-these-sygal', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true));
+
+        $roles = $this->roleService->getRepository()->findAll();
+        /** @var ActeurFieldset $acteurFieldset */
+        $acteurFieldset = $form->get('acteur');
+        $acteurFieldset->setRoles($roles);
+
+        $viewModel = new ViewModel([
+            'title' => "Association de " . $membre->getDenomination() . " à un individu " . $this->appInfos()->getNom(),
+            'form' => $form,
+            'membre' => $membre,
+            'these' => $these,
+            'returnUrl' => $this->url()->fromRoute('soutenance/presoutenance/associer-jury-these-sygal', ['these' => $these->getId(), 'membre' => $membre->getId()], ["query" => ["modal" => "1"]], true)
+        ]);
+        $viewModel->setTemplate('these/acteur/modifier');
+
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $viewModel;
+        }
+
+        $data = $request->getPost();
+        $form->setData($data);
+        if (!$form->isValid()) {
+            return $viewModel;
+        }
+
+        /** @var Acteur $acteur **/
+        $acteur = $form->getData();
+        try {
+            $this->acteurService->create($acteur);
+        }catch(RuntimeException) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
+        }
+
+        //mise à jour du membre de soutenance
+        $membre->setActeur($acteur);
+        $this->membreService->update($membre);
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+
+        //creation de l'utilisateur
+        if ($membre->estRapporteur()) {
+            $this->createUtilisateurRapporteur($acteur, $membre);
+        }
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    private function createUtilisateurRapporteur(Acteur $acteur, Membre $membre): void
+    {
+        $individu = $acteur->getIndividu() ? $acteur->getIndividu() : throw new RuntimeException("Aucun individu associé à l'acteur !");
+        $these = $acteur->getThese();
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+        if (empty($utilisateurs)) {
+            $user = $this->utilisateurService->createFromIndividu($individu, $this->membreService->generateUsername($membre), 'none');
+            $user->setEmail($membre->getEmail());
+            $this->userService->updateUserPasswordResetToken($user);
+        }
+
+        $this->membreService->retrieveOrCreateToken($membre);
+        try {
+            $proposition = $this->propositionService->findOneForThese($these);
+            $notif = $this->soutenanceNotificationFactory->createNotificationConnexionRapporteur($proposition, $membre);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException) {
+            // aucun destinataire, todo : cas à gérer !
+        }
     }
 
     /**
@@ -319,39 +396,39 @@ class PresoutenanceController extends AbstractController
     public function notifierDemandeAvisSoutenanceAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $proposition = $this->propositionService->findOneForThese($these);
+        $membre = $this->membreService->getRequestedMembre($this);
 
         /** @var Membre[] $rapporteurs */
         $rapporteurs = [];
         if ($membre) {
             $rapporteurs[] = $membre;
         } else {
-            $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
+            $rapporteurs = $this->propositionService->getRapporteurs($proposition);
         }
 
         foreach ($rapporteurs as $rapporteur) {
-            $hasRapport = ($this->getAvisService()->getAvisByMembre($rapporteur) !== null);
+            $hasRapport = ($this->avisService->getAvisByMembre($rapporteur) !== null);
             if ($hasRapport === false) {
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAvisSoutenance($these, $rapporteur);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
+                } catch (\Notification\Exception\RuntimeException) {
                     // aucun destinataire, todo : cas à gérer !
                 }
             }
         }
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de rapport de pré-soutenance");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de rapport de pré-soutenance");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     public function revoquerAvisSoutenanceAction() : Response
     {
         $idAvis = $this->params()->fromRoute('avis');
-        $avis = $this->getAvisService()->getAvis($idAvis);
+        $avis = $this->avisService->getAvis($idAvis);
 
-        $this->getAvisService()->historiser($avis);
+        $this->avisService->historiser($avis);
 
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }
@@ -359,24 +436,24 @@ class PresoutenanceController extends AbstractController
     public function indiquerDossierCompletAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
-        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::COMPLET);
+        $etat = $this->propositionService->findPropositionEtatByCode(Etat::COMPLET);
         $proposition->setEtat($etat);
-        $this->getPropositionService()->update($proposition);
+        $this->propositionService->update($proposition);
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Dossier complet");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Dossier complet");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     public function feuVertAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
-        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::VALIDEE);
+        $etat = $this->propositionService->findPropositionEtatByCode(Etat::VALIDEE);
         $proposition->setEtat($etat);
-        $this->getPropositionService()->update($proposition);
+        $this->propositionService->update($proposition);
 
         //Met à jour le témoin soutenance autorisée pour une thèse provenant de SyGAL
         if(!$these->getSource()->getImportable()){
@@ -387,29 +464,29 @@ class PresoutenanceController extends AbstractController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($proposition);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
+        } catch (\Notification\Exception\RuntimeException) {
             // aucun destinataire, todo : cas à gérer !
         }
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     public function stopperDemarcheAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data["reponse"] === "oui") {
-                $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::REJETEE);
+                $etat = $this->propositionService->findPropositionEtatByCode(Etat::REJETEE);
                 $proposition->setEtat($etat);
-                $this->getPropositionService()->update($proposition);
+                $this->propositionService->update($proposition);
 
                 //Met à jour le témoin soutenance autorisée pour une thèse provenant de SyGAL
                 if(!$these->getSource()->getImportable()){
@@ -420,14 +497,14 @@ class PresoutenanceController extends AbstractController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationStopperDemarcheSoutenance($these);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
+                } catch (\Notification\Exception\RuntimeException) {
                     // aucun destinataire, todo : cas à gérer !
                 }
                 $this->flashMessenger()
                     //->setNamespace('presoutenance')
                     ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
-                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance");
+                $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance");
                 exit();
             }
         }
@@ -449,9 +526,9 @@ class PresoutenanceController extends AbstractController
     #[NoReturn] public function procesVerbalSoutenanceAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
         $exporter = new ProcesVerbalSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -460,16 +537,16 @@ class PresoutenanceController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_proces_verbal.pdf');
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Procès verbal");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Procès verbal");
         exit;
     }
 
     #[NoReturn] public function avisSoutenanceAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
         $exporter = new AvisSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -478,16 +555,16 @@ class PresoutenanceController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_avis_soutenance.pdf');
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance");
         exit;
     }
 
     #[NoReturn] public function rapportSoutenanceAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
         $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -496,16 +573,16 @@ class PresoutenanceController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_rapport_soutenance.pdf');
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance");
         exit;
     }
 
     #[NoReturn] public function rapportTechniqueAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
         $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'these' => $these,
@@ -513,7 +590,7 @@ class PresoutenanceController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_rapport_technique.pdf');
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport technique");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport technique");
         exit;
     }
 
@@ -524,21 +601,12 @@ class PresoutenanceController extends AbstractController
      */
     private function getVille(Etablissement $etablissement) : string
     {
-        switch ($etablissement->getStructure()->getSigle()) {
-            case "UCN" :
-                $ville = "Caen";
-                break;
-            case "URN" :
-            case "INSA" :
-                $ville = "Rouen";
-                break;
-            case "ULHN" :
-                $ville = "Le Havre";
-                break;
-            default:
-                $ville = "Manquant";
-        }
-        return $ville;
+        return match ($etablissement->getStructure()->getSigle()) {
+            "UCN" => "Caen",
+            "URN", "INSA" => "Rouen",
+            "ULHN" => "Le Havre",
+            default => "Manquant",
+        };
     }
 
     private function findSignatureEtablissement(These $these): ?string
@@ -583,12 +651,12 @@ class PresoutenanceController extends AbstractController
     #[NoReturn] public function convocationsAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
         $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
 
-        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $validationMDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         $ville = $this->getVille($these->getEtablissement());
@@ -604,19 +672,19 @@ class PresoutenanceController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_convocation.pdf');
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Convocations");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Convocations");
         exit;
     }
 
     #[NoReturn] public function convocationDoctorantAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
         $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
 
-        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $validationMDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         $ville = $this->getVille($these->getEtablissement());
@@ -637,13 +705,13 @@ class PresoutenanceController extends AbstractController
     #[NoReturn] public function convocationMembreAction(): void
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $proposition = $this->propositionService->findOneForThese($these);
+        $membre = $this->membreService->getRequestedMembre($this);
         $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
 
-        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $validationMDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
         $ville = $this->getVille($these->getEtablissement());
@@ -665,14 +733,14 @@ class PresoutenanceController extends AbstractController
     public function envoyerConvocationAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
         //doctorant
         $doctorant = $these->getDoctorant();
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationDoctorant($doctorant, $proposition);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
+        } catch (\Notification\Exception\RuntimeException) {
             // aucun destinataire, todo : cas à gérer !
         }
 
@@ -687,28 +755,27 @@ class PresoutenanceController extends AbstractController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($membre, $proposition);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
+                } catch (\Notification\Exception\RuntimeException) {
                     // aucun destinataire, todo : cas à gérer !
                 }
             }
         }
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Convocations");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Convocations");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     /** Route console ... */
-    public function notifierRetardRapportPresoutenanceAction()
+    public function notifierRetardRapportPresoutenanceAction(): void
     {
         $delai = new DateInterval('P15D');
-        $membres = $this->getMembreService()->getRapporteursEnRetard($delai);
-        $url = $this->url()->fromRoute('soutenances/index-rapporteur', [], ['force_canonical' => true], true);
+        $membres = $this->membreService->getRapporteursEnRetard($delai);
 
         foreach ($membres as $membre) {
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationNotificationRapporteurRetard($membre, $url);
+                $notif = $this->soutenanceNotificationFactory->createNotificationNotificationRapporteurRetard($membre);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (\Notification\Exception\RuntimeException) {
                 // aucun destinataire, todo : cas à gérer !
             }
         }
@@ -718,16 +785,16 @@ class PresoutenanceController extends AbstractController
     public function transmettreDocumentsDirectionTheseAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
 
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationTransmettreDocumentsDirectionThese($these, $proposition);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
+        } catch (\Notification\Exception\RuntimeException) {
             // aucun destinataire, todo : cas à gérer !
         }
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Transmission des documents");
+        $this->horodatageService->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Transmission des documents");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -736,13 +803,13 @@ class PresoutenanceController extends AbstractController
     public function genererSimulationAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
         $membres = $proposition->getMembres();
 
         /** @var Role $rapporteur */
         /** @var Role $membreJury */
-        $rapporteur = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete('R', $these->getEtablissement());
-        $membreJury = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete('M', $these->getEtablissement());
+        $rapporteur = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete('R', $these->getEtablissement());
+        $membreJury = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete('M', $these->getEtablissement());
 
         /** @var Source $sygal */
         $sygal = $this->sourceService->getRepository()->findOneBy(['code' => 'SYGAL::sygal']);
@@ -751,7 +818,7 @@ class PresoutenanceController extends AbstractController
         foreach($membres as $membre) {
             /** @var Individu $individu */
             $source_code_individu = 'SyGAL_Simulation_' . $membre->getId();
-            $individu = $this->getIndividuService()->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
+            $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
             if ($individu === null) {
                 $individu = new Individu();
                 $individu->setPrenom($membre->getPrenom());
@@ -760,14 +827,18 @@ class PresoutenanceController extends AbstractController
                 $individu->setEmailPro($membre->getEmail());
                 $individu->setSource($sygal);
                 $individu->setSourceCode($source_code_individu);
-                $this->getIndividuService()->getEntityManager()->persist($individu);
-                $this->getIndividuService()->getEntityManager()->flush($individu);
+                try {
+                    $this->individuService->getEntityManager()->persist($individu);
+                    $this->individuService->getEntityManager()->flush($individu);
+                }catch (ORMException $e) {
+                    throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
+                }
             }
 
             if ($membre->estRapporteur()) {
                 /** @var Acteur $acteur */
                 $source_code_acteur = 'SyGAL_Simulation_Rapporteur_' . $membre->getId();
-                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+                $acteur = $this->acteurService->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
 
                 if ($acteur === null) {
                     $acteur = new Acteur();
@@ -776,15 +847,19 @@ class PresoutenanceController extends AbstractController
                     $acteur->setThese($these);
                     $acteur->setSource($sygal);
                     $acteur->setSourceCode($source_code_acteur);
-                    $this->getActeurService()->getEntityManager()->persist($acteur);
-                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                    try {
+                        $this->acteurService->getEntityManager()->persist($acteur);
+                        $this->acteurService->getEntityManager()->flush($acteur);
+                    }catch (ORMException $e) {
+                        throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
+                    }
                 }
             }
 
             if ($membre->estMembre()) {
                 /** @var Acteur $acteur */
                 $source_code_acteur = 'SyGAL_Simulation_Membre_' . $membre->getId();
-                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+                $acteur = $this->acteurService->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
 
                 if ($acteur === null) {
                     $acteur = new Acteur();
@@ -793,8 +868,12 @@ class PresoutenanceController extends AbstractController
                     $acteur->setThese($these);
                     $acteur->setSource($sygal);
                     $acteur->setSourceCode($source_code_acteur);
-                    $this->getActeurService()->getEntityManager()->persist($acteur);
-                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                    try {
+                        $this->acteurService->getEntityManager()->persist($acteur);
+                        $this->acteurService->getEntityManager()->flush($acteur);
+                    }catch (ORMException $e) {
+                        throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
+                    }
                 }
             }
         }
@@ -805,33 +884,33 @@ class PresoutenanceController extends AbstractController
     public function nettoyerSimulationAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $proposition = $this->propositionService->findOneForThese($these);
         $membres = $proposition->getMembres();
 
         try {
             foreach ($membres as $membre) {
                 /** @var Acteur $acteur */
                 $source_code_acteur = 'SyGAL_Simulation_Rapporteur_' . $membre->getId();
-                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+                $acteur = $this->acteurService->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
                 if ($acteur !== null) {
-                    $this->getActeurService()->getEntityManager()->remove($acteur);
-                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                    $this->acteurService->getEntityManager()->remove($acteur);
+                    $this->acteurService->getEntityManager()->flush($acteur);
                 }
 
                 /** @var Acteur $acteur */
                 $source_code_acteur = 'SyGAL_Simulation_Membre_' . $membre->getId();
-                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+                $acteur = $this->acteurService->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
                 if ($acteur !== null) {
-                    $this->getActeurService()->getEntityManager()->remove($acteur);
-                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                    $this->acteurService->getEntityManager()->remove($acteur);
+                    $this->acteurService->getEntityManager()->flush($acteur);
                 }
 
                 /** @var Individu $source_code_individu */
                 $source_code_individu = 'SyGAL_Simulation_' . $membre->getId();
-                $individu = $this->getIndividuService()->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
+                $individu = $this->individuService->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
                 if ($individu !== null) {
-                    $this->getActeurService()->getEntityManager()->remove($individu);
-                    $this->getActeurService()->getEntityManager()->flush($individu);
+                    $this->acteurService->getEntityManager()->remove($individu);
+                    $this->acteurService->getEntityManager()->flush($individu);
                 }
             }
         } catch (ORMException $e) {

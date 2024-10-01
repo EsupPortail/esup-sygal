@@ -580,6 +580,9 @@ a.btn > span.icon {
   border-color: #009ce4;
   color: #fff; }
 
+.btn-info:hover {
+  color: white; }
+
 .btn-success {
   background-color: #2EA662;
   border-color: #2EA662; }
@@ -595,7 +598,13 @@ a.btn > span.icon {
 .btn-primary {
   background-color: var(--secondary-color); }
 
-.btn-primary:hover {
+.btn-link {
+  color: var(--secondary-color); }
+
+.btn-link:hover {
+  color: var(--primary-color); }
+
+.btn-primary:hover, .btn-primary:focus {
   background-color: var(--primary-color); }
 
 .box .btn.btn-primary {
@@ -623,6 +632,9 @@ ul.roadmap.pagination {
 /************* Menu *************/
 #navbar .dropdown-item {
   padding: .1rem .5rem; }
+
+#navbar .dropdown-item:active {
+  background-color: var(--primary-color); }
 
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 0.9); }

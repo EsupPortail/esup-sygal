@@ -10,6 +10,7 @@ use Laminas\Form\Element\Text;
 use Laminas\Form\Fieldset;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use These\Rule\ActeurRule;
@@ -23,6 +24,8 @@ use Webmozart\Assert\Assert;
  */
 class ActeurFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    use QualiteServiceAwareTrait;
+
     private string $urlIndividu;
     private string $urlEtablissement;
     private array $unitesRecherches;
@@ -128,14 +131,28 @@ class ActeurFieldset extends Fieldset implements InputFilterProviderInterface
             ],
         ]);
 
+//        $this->add([
+//            'type' => Text::class,
+//            'name' => 'qualite',
+//            'options' => [
+//                'label' => "Qualité :",
+//            ],
+//            'attributes' => [
+//                'id' => 'qualite',
+//            ]
+//        ]);
         $this->add([
-            'type' => Text::class,
+            'type' => Select::class,
             'name' => 'qualite',
             'options' => [
                 'label' => "Qualité :",
+                'value_options' => $this->qualiteService->getQualitesAsGroupOptions(),
+                'empty_option' => "Sélectionner une qualité...",
             ],
             'attributes' => [
                 'id' => 'qualite',
+                'class' => 'selectpicker show-menu-arrow',
+                'data-live-search' => 'true',
             ]
         ]);
     }
@@ -185,7 +202,7 @@ class ActeurFieldset extends Fieldset implements InputFilterProviderInterface
             ],
             'qualite' => [
                 'filters' => [
-                    ['name' => StringTrim::class],
+                    ['name' => SearchAndSelectFilter::class],
                     ['name' => ToNull::class],
                 ],
             ],

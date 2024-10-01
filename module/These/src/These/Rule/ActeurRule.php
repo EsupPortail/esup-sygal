@@ -27,18 +27,18 @@ class ActeurRule implements RuleInterface
     public function prepareActeurFieldset(ActeurFieldset $fieldset): void
     {
         if ($this->acteurExistant) {
-            $fieldset->get('role')->setAttribute('disabled', true);
             $fieldset->get('individu')->setAttribute('disabled', true);
         }
 
         if ($this->acteurImporte) {
-            $fieldset->get('role')->setAttribute('disabled', true);
             $fieldset->get('individu')->setAttribute('disabled', true);
             $fieldset->get('etablissement')->setAttribute('disabled', true);
             $fieldset->get('qualite')->setAttribute('disabled', true);
         } else {
             $fieldset->remove('etablissementForce');
         }
+
+        $fieldset->get('role')->setAttribute('disabled', true);
     }
 
     public function prepareActeurHydratorData(array $data): array
@@ -64,7 +64,7 @@ class ActeurRule implements RuleInterface
     {
         return array_merge_recursive($spec, [
             'role' => [
-                'required' => !$this->acteurImporte && !$this->acteurExistant,
+                'required' => false,
             ],
             'individu' => [
                 'required' => !$this->acteurImporte && !$this->acteurExistant,
