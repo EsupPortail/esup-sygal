@@ -2,25 +2,20 @@
 
 namespace Structure\Controller;
 
+use Application\Service\Role\RoleServiceAwareTrait;
 use InvalidArgumentException;
+use Laminas\Http\Response;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use Individu\Entity\Db\IndividuRole;
-use Application\Entity\Db\Role;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use Laminas\View\Model\JsonModel;
-use UnicaenApp\Exception\RuntimeException;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
-use UnicaenApp\Util;
 
 /**
- * Class EtablissementController
+ * @property \Structure\Form\EtablissementForm $structureForm
  */
 class EtablissementController extends StructureConcreteController
 {
@@ -47,24 +42,18 @@ class EtablissementController extends StructureConcreteController
 
         $etablissements = $viewModel->getVariable('structures');
 
-        $etablissementsPrincipaux = array_filter($etablissements, function (Etablissement $e) {
-            return $e->estMembre();
-        });
-        $etablissementsExternes = array_filter($etablissements, function (Etablissement $e) {
-            return !$e->estMembre();
-        });
-        $etablissementsCeds = array_filter($etablissements, function (Etablissement $e) {
-            return $e->estCed();
-        });
+        $etablissementsMembres = array_filter($etablissements, fn(Etablissement $e) =>$e->estMembre());
+        $etablissementsCeds = array_filter($etablissements, fn(Etablissement $e) => $e->estCed());
+        $etablissementsAutres = array_filter($etablissements, fn(Etablissement $e) => !$e->estMembre() && !$e->estCed());
 
         if (count($etablissementsCeds) > 1) {
             throw new \RuntimeException("Anomalie rencontrée : il existe plusieurs établissements CED");
         }
 
         return new ViewModel([
-            'etablissementsSygal' => $etablissementsPrincipaux,
-            'etablissementsExternes' => $etablissementsExternes,
+            'etablissementsMembres' => $etablissementsMembres,
             'etablissementsCeds' => $etablissementsCeds,
+            'etablissementsAutres' => $etablissementsAutres,
         ]);
     }
 
@@ -128,12 +117,15 @@ class EtablissementController extends StructureConcreteController
         ]);
     }
 
-    /**
-     * @return Response|ViewModel
-     */
-    public function modifierAction()
+    public function ajouterAction(): Response|ViewModel
     {
-        $viewModel = parent::modifierAction();
+        $type = $this->params('type', Etablissement::TYPE_AUTRE);
+
+        $etablissement = new Etablissement();
+        $etablissement->initializeForType($type);
+        $this->structureForm->bind($etablissement);
+
+        $viewModel = parent::ajouterAction();
 
         if ($viewModel instanceof Response) {
             return $viewModel;
@@ -144,12 +136,13 @@ class EtablissementController extends StructureConcreteController
         return $viewModel;
     }
 
-    /**
-     * @return Response|ViewModel
-     */
-    public function ajouterAction()
+    public function modifierAction(): Response|ViewModel
     {
-        $viewModel = parent::ajouterAction();
+        /** @var Etablissement $structureConcrete */
+        $structureConcrete = $this->getRequestedStructureConcrete();
+        $structureConcrete->initializeForType();
+
+        $viewModel = parent::modifierAction();
 
         if ($viewModel instanceof Response) {
             return $viewModel;

@@ -131,7 +131,13 @@ class StructureController extends AbstractController
             NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
             NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT
         ]);
-        $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
+        if ($etab = $structure->getEtablissement()) {
+            $allowAucunEtablissement = false;
+            $etablissements = [$etab];
+        } else {
+            $allowAucunEtablissement = true;
+            $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
+        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -154,6 +160,7 @@ class StructureController extends AbstractController
             'action' => $this->url()->fromRoute('structure/televerser-document', ['structure' => $structure->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true),
             'natures' => $natures,
             'etablissements' => $etablissements,
+            'allowAucunEtablissement' => $allowAucunEtablissement,
         ]);
         $vm->setTemplate('structure/structure/televerser-document');
 

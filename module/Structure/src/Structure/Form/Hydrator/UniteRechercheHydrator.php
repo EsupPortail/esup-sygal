@@ -4,7 +4,7 @@ namespace Structure\Form\Hydrator;
 
 use Structure\Entity\Db\UniteRecherche;
 
-class UniteRechercheHydrator extends StructureHydrator
+class UniteRechercheHydrator extends StructureConcreteHydrator
 {
     /**
      * @param UniteRecherche $ur

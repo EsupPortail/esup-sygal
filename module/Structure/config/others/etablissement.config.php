@@ -1,16 +1,22 @@
 <?php
 
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Structure\Controller\EtablissementController;
 use Structure\Controller\Factory\EtablissementControllerFactory;
 use Structure\Form\Factory\EtablissementFormFactory;
 use Structure\Form\Factory\EtablissementHydratorFactory;
+use Structure\Form\InputFilter\Etablissement\Ced\EtablissementCedInputFilter;
+use Structure\Form\InputFilter\Etablissement\Ced\EtablissementCedInputFilterFactory;
+use Structure\Form\InputFilter\Etablissement\EtablissementInputFilter;
+use Structure\Form\InputFilter\Etablissement\EtablissementInputFilterFactory;
+use Structure\Form\InputFilter\Etablissement\Inscription\EtablissementInscriptionInputFilter;
+use Structure\Form\InputFilter\Etablissement\Inscription\EtablissementInscriptionInputFilterFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceFactory;
 use Structure\View\Helper\EtablissementHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -105,9 +111,9 @@ return [
                         ],
                     ],
                     'ajouter' => [
-                        'type'          => Literal::class,
+                        'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/ajouter',
+                            'route'       => '/ajouter[/:type]',
                             'defaults'    => [
                                 'action' => 'ajouter',
                             ],
@@ -242,6 +248,13 @@ return [
         ],
         'factories' => [
             'EtablissementForm' => EtablissementFormFactory::class,
+        ],
+    ],
+    'input_filters' => [
+        'factories' => [
+            EtablissementInputFilter::class => EtablissementInputFilterFactory::class,
+            EtablissementInscriptionInputFilter::class => EtablissementInscriptionInputFilterFactory::class,
+            EtablissementCedInputFilter::class => EtablissementCedInputFilterFactory::class,
         ],
     ],
     'hydrators' => array(

@@ -20,13 +20,24 @@ $this->headTitle("Établissement '{$etablissement->getStructure()->getLibelle()}
 
 $canAddRole = true;
 $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+$canModifierCetEtab = !$etablissement->getSource()->getImportable() &&
+    $this->isAllowed($etablissement->getStructure(),StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES);
+
+$historisee = !$etablissement->estNonHistorise();
 
 $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 ?>
 
 <h1 class="page-header">
-    Établissement &laquo; <?php echo $etablissement->getStructure()->getLibelle(); ?> &raquo;
+    <?php if ($etablissement->estInscription()): ?>
+        Établissement d'inscription &laquo; <?php echo $etablissement ?> &raquo;
+    <?php elseif ($etablissement->estCed()): ?>
+        Collège des Écoles Doctorales
+    <?php else: ?>
+        Établissement &laquo; <?php echo $etablissement ?> &raquo;
+    <?php endif ?>
 </h1>
+
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
@@ -68,29 +79,33 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
             <?php echo $this->partial('structure/etablissement/partial/information', ['entity' => $etablissement]) ?>
         </div>
         <div class="col-md-4">
-            <dl>
-                <dt>Étiquettes associées : </dt>     <dd>
-                    <?php if ($etablissement->estMembre()): ?>
-                        <span class="badge bg-primary">Membre</span>
-                    <?php endif ?>
-                    <?php if ($etablissement->estAssocie()): ?>
-                        <span class="badge bg-info">Associé</span>
-                    <?php endif ?>
-                    <?php if ($etablissement->estInscription()): ?>
-                        <span class="badge bg-warning">Inscription</span>
-                    <?php endif ?>
-                    <?php if ($etablissement->getStructure()->estFermee()) : ?>
-                        <span class="badge bg-secondary" style="background-color:darkred">Structure fermée</span>
-                    <?php else : ?>
-                        <span class="badge bg-secondary" style="background-color:darkgreen">Structure ouverte</span>
-                    <?php endif; ?>
-                </dd>
-                <dt>Logo :</dt>
-                <dd>
-                    <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
-                         src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"/>
-                </dd>
-            </dl>
+            <h3>
+                Étiquettes
+            </h3>
+            <p>
+                <?php if ($etablissement->estMembre()): ?>
+                    <span class="badge bg-primary">Membre</span>
+                <?php endif ?>
+                <?php if ($etablissement->estAssocie()): ?>
+                    <span class="badge bg-info">Associé</span>
+                <?php endif ?>
+                <?php if ($etablissement->estInscription()): ?>
+                    <span class="badge bg-warning">Inscription</span>
+                <?php endif ?>
+                <?php if ($etablissement->getStructure()->estFermee()) : ?>
+                    <span class="badge bg-secondary" style="background-color:darkred">Structure fermée</span>
+                <?php else : ?>
+                    <span class="badge bg-secondary" style="background-color:darkgreen">Structure ouverte</span>
+                <?php endif; ?>
+            </p>
+
+            <h3>
+                Logo
+            </h3>
+            <p>
+                <img id="logo" alt="Logo de la structure" style="max-width: 200px; max-height: 200px; background-color: white;"
+                     src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"/>
+            </p>
         </div>
         <div class="col-md-4">
             <div class="box card">
@@ -104,11 +119,24 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
         </div>
     </div>
 
-    <?php if($canModifierEtablissement): ?>
+    <?php if ($canModifierEtablissement || $canModifierCetEtab): ?>
         <a href="<?php echo $this->url('etablissement/modifier', ['etablissement'=> $etablissement->getId()], [], true); ?>"
-           class="btn btn-primary action"
-        >
-            <span class="icon icon-edit"></span> Modifier l'établissement
+           class="btn btn-primary action">
+            <span class="icon icon-edit"></span> Modifier cet établissement
+        </a>
+    <?php endif; ?>
+    <?php if (($canModifierEtablissement || $canModifierCetEtab) && !$historisee) : ?>
+        <a href="<?php echo $this->url('etablissement/supprimer', ["etablissement" => $etablissement->getId()], [], true); ?>"
+           class="btn btn-danger action"
+           data-toggle="confirmationx">
+            <span class="icon icon-delete"></span> Supprimer cet établissement
+        </a>
+    <?php endif; ?>
+    <?php if (($canModifierEtablissement || $canModifierCetEtab) && $historisee) : ?>
+        <a href="<?php echo $this->url('etablissement/restaurer', ["etablissement" => $etablissement->getId()], [], true); ?>"
+           class="btn btn-danger action"
+           data-toggle="confirmationx">
+            <span class="icon icon-restaurer"></span> Restaurer cet établissement
         </a>
     <?php endif; ?>
 </div>

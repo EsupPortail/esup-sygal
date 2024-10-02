@@ -4,47 +4,50 @@ namespace Structure\Form\Hydrator;
 
 use Structure\Entity\Db\Etablissement;
 
-class EtablissementHydrator extends StructureHydrator
+class EtablissementHydrator extends StructureConcreteHydrator
 {
     /**
-     * @param Etablissement $etablissement
+     * @param Etablissement $object
      * @return array
      */
-    public function extract($etablissement): array
+    public function extract($object): array
     {
-        $data = parent::extract($etablissement);
+        $data = parent::extract($object);
 
-        $data['estMembre'] = $etablissement->estMembre();
-        $data['estAssocie'] = $etablissement->estAssocie();
-        $data['estInscription'] = $etablissement->estInscription();
-        $data['estCed'] = $etablissement->estCed();
+        $data['estMembre'] = $object->estMembre();
+        $data['estAssocie'] = $object->estAssocie();
+        $data['estInscription'] = $object->estInscription();
+        $data['estCed'] = $object->estCed();
 
-        $data['adresse'] = $etablissement->getStructure()->getAdresse();
-        $data['telephone'] = $etablissement->getStructure()->getTelephone();
-        $data['fax'] = $etablissement->getStructure()->getFax();
-        $data['email'] = $etablissement->getStructure()->getEmail();
-        $data['siteWeb'] = $etablissement->getStructure()->getSiteWeb();
+        $structure = $object->getStructure();
+
+        $data['adresse'] = $structure->getAdresse();
+        $data['telephone'] = $structure->getTelephone();
+        $data['fax'] = $structure->getFax();
+        $data['email'] = $structure->getEmail();
+        $data['siteWeb'] = $structure->getSiteWeb();
 
         return $data;
     }
 
     /**
      * @param array $data
-     * @param Etablissement $etablissement
+     * @param Etablissement $object
      * @return Etablissement
      */
-    public function hydrate(array $data, $etablissement): Etablissement
+    public function hydrate(array $data, $object): Etablissement
     {
         if (!isset($data['id']) || $data['id'] === "") $data['id'] = null;
 
-        /** @var Etablissement $object */
-        $object = parent::hydrate($data, $etablissement);
+        $object = parent::hydrate($data, $object);
 
-        $object->getStructure()->setAdresse($data['adresse'] ?: null);
-        $object->getStructure()->setTelephone($data['telephone'] ?: null);
-        $object->getStructure()->setFax($data['fax'] ?: null);
-        $object->getStructure()->setEmail($data['email'] ?: null);
-        $object->getStructure()->setSiteWeb($data['siteWeb'] ?: null);
+        $structure = $object->getStructure();
+
+        $structure->setAdresse($data['adresse'] ?: null);
+        $structure->setTelephone($data['telephone'] ?: null);
+        $structure->setFax($data['fax'] ?: null);
+        $structure->setEmail($data['email'] ?: null);
+        $structure->setSiteWeb($data['siteWeb'] ?: null);
 
         return $object;
     }

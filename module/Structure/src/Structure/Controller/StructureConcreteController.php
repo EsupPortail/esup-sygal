@@ -3,9 +3,13 @@
 namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
-use Structure\Entity\Db\EcoleDoctorale;
-use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Application\Service\Role\RoleServiceAwareTrait;
+use BjyAuthorize\Exception\UnAuthorizedException;
+use Individu\Entity\Db\IndividuRole;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
@@ -16,13 +20,9 @@ use Structure\Form\UniteRechercheForm;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use BjyAuthorize\Exception\UnAuthorizedException;
 use UnicaenApp\Exception\RuntimeException;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
 
 abstract class StructureConcreteController extends AbstractController
 {
@@ -134,11 +134,9 @@ abstract class StructureConcreteController extends AbstractController
      * Modifier permet soit d'afficher le formulaire associé à la modification soit de mettre à jour
      * les données associées à une structure (Sigle, Libellé, Code et Logo)
      *
-     * @return Response|ViewModel
-     *
      * TODO en cas de changement de SIGLE ou de CODE penser à faire un renommage du logo
      */
-    public function modifierAction()
+    public function modifierAction(): Response|ViewModel
     {
         $structureConcrete = $this->getRequestedStructureConcrete();
         $this->structureForm->bind($structureConcrete);
@@ -190,10 +188,7 @@ abstract class StructureConcreteController extends AbstractController
         );
     }
 
-    /**
-     * @return Response|ViewModel
-     */
-    public function ajouterAction()
+    public function ajouterAction(): Response|ViewModel
     {
         $request = $this->getRequest();
 
@@ -213,9 +208,6 @@ abstract class StructureConcreteController extends AbstractController
                     $this->ajouterLogoStructure($file['cheminLogo']['tmp_name'], $structureConcrete);
                 }
 
-                // creation automatique des roles associés à une structure
-                $this->roleService->addRoleByStructure($structureConcrete);
-
                 $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' créée avec succès");
 
                 $structureId = $structureConcrete->getStructure()->getId();
@@ -223,8 +215,6 @@ abstract class StructureConcreteController extends AbstractController
                 return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
             }
         }
-
-        $this->structureForm->setAttribute('action', $this->url()->fromRoute($this->routeName . '/ajouter'));
 
         return new ViewModel([
             'form' => $this->structureForm,

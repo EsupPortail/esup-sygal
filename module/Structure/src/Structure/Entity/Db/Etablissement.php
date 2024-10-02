@@ -32,6 +32,10 @@ class Etablissement implements
 
     const CODE_TOUT_ETABLISSEMENT_CONFONDU = 'Tous';
 
+    const TYPE_INSCRIPTION = 'inscription';
+    const TYPE_COLLEGE_ED = 'ced';
+    const TYPE_AUTRE = 'autre';
+
     protected $id;
     protected ?string $emailAssistance = null;
     protected ?string $emailBibliotheque = null;
@@ -79,9 +83,6 @@ class Etablissement implements
      */
     protected $estComue = false;
 
-    /**
-     * @var bool
-     */
     protected bool $estCed = false;
 
     /**
@@ -91,6 +92,31 @@ class Etablissement implements
     {
         $this->structure = new Structure();
         $this->substitues = new ArrayCollection();
+    }
+
+    public function initializeForType(?string $type = null): self
+    {
+        if ($type === null) {
+            $type = $this->getTypeFromEtiquettes();
+        }
+
+        $this->setEtiquettesForType($type);
+
+        switch ($type) {
+            case Etablissement::TYPE_COLLEGE_ED:
+                $this->getStructure()->setLibelle("Collège des Écoles Doctorales");
+                $this->getStructure()->setCode("CED");
+                $this->getStructure()->setSigle("CED");
+                $this->getStructure()->setSourceCode("CED");
+                $this->setSourceCode("CED");
+                break;
+            case Etablissement::TYPE_INSCRIPTION:
+            case Etablissement::TYPE_AUTRE:
+            default:
+                break;
+        }
+
+        return $this;
     }
 
     /**
@@ -209,6 +235,53 @@ class Etablissement implements
     public function setDomaine($domaine)
     {
         $this->domaine = $domaine;
+    }
+
+    public function setEtiquettesForType(string $type): self
+    {
+        switch ($type) {
+            case Etablissement::TYPE_INSCRIPTION:
+                $this->setEstInscription(true);
+                $this->setEstMembre(true);
+                $this->setEstCed(false);
+                $this->setEstAssocie(false);
+                $this->setEstComue(false);
+                break;
+            case Etablissement::TYPE_COLLEGE_ED:
+                $this->setEstInscription(false);
+                $this->setEstMembre(false);
+                $this->setEstCed(true);
+                $this->setEstAssocie(false);
+                $this->setEstComue(false);
+                break;
+            case Etablissement::TYPE_AUTRE:
+            default:
+                $this->setEstInscription(false);
+                $this->setEstMembre(false);
+                $this->setEstCed(false);
+                $this->setEstAssocie(false);
+                $this->setEstComue(false);
+                break;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Détermine le "type" d'après la valeur des "étiquettes" {@see estInscription()}, {@see estCed()}, etc.
+     *
+     * @return string Exemple : {@see \Structure\Entity\Db\Etablissement::TYPE_INSCRIPTION}
+     */
+    public function getTypeFromEtiquettes(): string
+    {
+        if ($this->estInscription) {
+            return self::TYPE_INSCRIPTION;
+        }
+        elseif ($this->estCed) {
+            return self::TYPE_COLLEGE_ED;
+        }
+
+        return self::TYPE_AUTRE;
     }
 
     /**

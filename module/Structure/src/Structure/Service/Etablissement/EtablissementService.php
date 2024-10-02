@@ -79,7 +79,10 @@ class EtablissementService extends BaseService
             throw new RuntimeException("Erreur lors de l'obtention du repository Doctrine", null, $e);
         }
 
-        $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
+        $sourceCode = $structureConcrete->getSourceCode();
+        if ($sourceCode === null) {
+            $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
+        }
         $structureConcrete->setSourceCode($sourceCode);
         $structureConcrete->setHistoCreateur($createur);
 
@@ -100,6 +103,11 @@ class EtablissementService extends BaseService
         }
 
         return $structureConcrete;
+    }
+
+    protected function computeSourceCodeForEtablissement(Etablissement $structureConcrete, Utilisateur $createur)
+    {
+        $sourceCode = $structureConcrete->getSourceCode();
     }
 
     /**

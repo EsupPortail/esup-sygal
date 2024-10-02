@@ -3,6 +3,7 @@
 /**
  * @var NatureFichier[] $natures ;
  * @var Etablissement[] $etablissements ;
+ * @var bool $allowAucunEtablissement
  * @var string $action
  */
 
@@ -27,7 +28,9 @@ use Fichier\Entity\Db\NatureFichier;
             <div class="mb-2">
                 <label for="etablissement" class="form-label">Établissement lié : </label>
                 <select class="form-control" id="etablissement" name="etablissement">
-                    <option value="null">(Aucun)</option>
+                    <?php if ($allowAucunEtablissement): ?>
+                        <option value="null">(Aucun)</option>
+                    <?php endif ?>
                     <?php foreach ($etablissements as $etablissement) : ?>
                         <option value="<?php echo $etablissement->getId(); ?>"> <?php echo $etablissement->getStructure()->getLibelle(); ?> </option>
                     <?php endforeach; ?>

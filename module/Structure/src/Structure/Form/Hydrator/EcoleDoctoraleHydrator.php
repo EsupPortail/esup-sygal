@@ -4,7 +4,7 @@ namespace Structure\Form\Hydrator;
 
 use Structure\Entity\Db\EcoleDoctorale;
 
-class EcoleDoctoraleHydrator extends StructureHydrator
+class EcoleDoctoraleHydrator extends StructureConcreteHydrator
 {
     /**
      * @param EcoleDoctorale $ed

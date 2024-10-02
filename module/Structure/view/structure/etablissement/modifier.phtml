@@ -4,6 +4,7 @@ use Structure\Controller\EtablissementController;
 use Structure\Entity\Db\Etablissement;
 use Structure\Form\EtablissementForm;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Form\View\Helper\FormControlGroup;
 use UnicaenIdref\Domain\Index1;
 
 /**
@@ -12,8 +13,9 @@ use UnicaenIdref\Domain\Index1;
  * @var EtablissementForm  $form
  * @var string|null        $logoContent
  *
- * @method string formControlGroup()
+ * @method FormControlGroup formControlGroup()
  *
+ * @see EtablissementController::ajouterAction()
  * @see EtablissementController::modifierAction()
  */
 
@@ -31,14 +33,26 @@ $form->get('libelle')->setAttribute('readonly', !$editable);
 $form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
 
-$this->headTitle("Modification de l'établissement ".$etablissement->getStructure()->getCode());
+$this->headTitle(($isNew ? "Création" : "Modif.") . " établissemnt " . $etablissement->getStructure()->getCode());
 ?>
 
 <h1 class="page-header">
     <?php if ($isNew): ?>
-        Création d'un nouvel établissement
+        <?php if ($etablissement->estInscription()): ?>
+            Création d'un nouvel établissement d'inscription
+        <?php elseif ($etablissement->estCed()): ?>
+            Création du Collège des Écoles Doctorales
+        <?php else: ?>
+            Création d'un nouvel établissement
+        <?php endif ?>
     <?php else: ?>
-        Modification de l'établissement &laquo; <?php echo $etablissement ?> &raquo;
+        <?php if ($etablissement->estInscription()): ?>
+            Modification de l'établissement d'inscription &laquo; <?php echo $etablissement ?> &raquo;
+        <?php elseif ($etablissement->estCed()): ?>
+            Modification du Collège des Écoles Doctorales
+        <?php else: ?>
+            Modification de l'établissement &laquo; <?php echo $etablissement ?> &raquo;
+        <?php endif ?>
     <?php endif ?>
 </h1>
 
@@ -57,13 +71,20 @@ $this->headTitle("Modification de l'établissement ".$etablissement->getStructur
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'etablissement')) ?>
 
-<div class="row">
-    <div class="col-md-6">
+<div class="row justify-content-around">
+    <div class="col-5">
         <fieldset>
             <legend><h2>Informations générales</h2></legend>
             <?php echo $fcg($form->get('libelle')->setAttribute('id', 'libelle')) ?>
-            <?php echo $fcg($form->get('sigle')) ?>
+            <div class="row row-cols-3">
+                <div class="col"><?php echo $fcg($form->get('code')) ?></div>
+                <div class="col"><?php echo $fcg($form->get('sigle')) ?></div>
+                <div class="col"><?php echo $fcg($form->get('sourceCode')) ?></div>
+            </div>
             <div class="row">
+                <?php if ($form->has('domaine')) : ?>
+                    <?php echo $fcg($form->get('domaine')) ?>
+                <?php endif ?>
                 <div class="col-md-10"><?php echo $fcg($form->get('siteWeb')) ?></div>
             </div>
         </fieldset>
@@ -78,37 +99,68 @@ $this->headTitle("Modification de l'établissement ".$etablissement->getStructur
         <fieldset>
             <legend><h2>Contact</h2></legend>
             <?php echo $fcg($form->get('email')) ?>
-            <?php echo $fcg($form->get('emailAssistance')) ?>
-            <?php echo $fcg($form->get('emailBibliotheque')) ?>
-            <?php echo $fcg($form->get('emailDoctorat')) ?>
+            <?php if ($form->has('emailAssistance')) : ?>
+                <?php echo $fcg($form->get('emailAssistance')) ?>
+            <?php endif ?>
+            <?php if ($form->has('emailBibliotheque')) : ?>
+                <?php echo $fcg($form->get('emailBibliotheque')) ?>
+            <?php endif ?>
+            <?php if ($form->has('emailDoctorat')) : ?>
+                <?php echo $fcg($form->get('emailDoctorat')) ?>
+            <?php endif ?>
         </fieldset>
         <fieldset>
-            <legend><h2>Informations techniques</h2></legend>
+            <legend><h2>Autres attributs</h2></legend>
             <div class="row">
                 <div class="col-md-5">
-                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'idRef')) ?>
+                    <?php if ($form->has('id_ref')) : ?>
+                        <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'idRef')) ?>
+                    <?php endif ?>
                 </div>
                 <div class="col-md-2">
-                    <?php echo $this->idrefPopupTrigger([
-                        ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
-                        ['Index1' => Index1::INDEX_NomDeCollectivité, 'Index1Value' => ['libelle']],
-                    ], 'idRef') ?>
+                    <?php if ($form->has('id_ref')) : ?>
+                        <style>
+                            .idref-popup-trigger {
+                                position: relative;
+                                top: 18px;
+                                left: -15px;
+
+                            }
+                        </style>
+                        <?php echo $this->idrefPopupTrigger([
+                            ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+                            ['Index1' => Index1::INDEX_NomDeCollectivité, 'Index1Value' => ['libelle']],
+                        ], 'idRef') ?>
+                    <?php endif ?>
+                </div>
+                <div class="col-md-5">
+                    <?php if ($form->has('id_hal')) : ?>
+                        <?php echo $fcg($form->get('id_hal')) ?>
+                    <?php endif ?>
                 </div>
             </div>
-            <?php echo $fcg($form->get('id_hal')) ?>
-            <?php echo $fcg($form->get('code')) ?>
-            <?php echo $fcg($form->get('domaine')) ?>
         </fieldset>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-5">
         <fieldset>
             <legend><h2>Étiquettes associées</h2></legend>
-            <?php echo $fcg($form->get('estMembre')) ?>
-            <?php echo $fcg($form->get('estAssocie')) ?>
-            <?php echo $fcg($form->get('estInscription')) ?>
-            <?php echo $fcg($form->get('estFerme')) ?>
-            <?php echo $fcg($form->get('estCed')) ?>
+            <?php if ($form->has('estCed')) : ?>
+                <?php echo $fcg($form->get('estCed')) ?>
+            <?php endif ?>
+            <?php if ($form->has('estInscription')) : ?>
+                <?php echo $fcg($form->get('estInscription')) ?>
+            <?php endif; ?>
+            <?php if ($form->has('estMembre')) : ?>
+                <?php echo $fcg($form->get('estMembre')) ?>
+            <?php endif ?>
+            <?php if ($form->has('estAssocie')) : ?>
+                <?php echo $fcg($form->get('estAssocie')) ?>
+            <?php endif ?>
+            <?php if ($form->has('estFerme')) : ?>
+                <?php echo $fcg($form->get('estFerme')) ?>
+            <?php endif ?>
+
         </fieldset>
 
         <fieldset id="logo-div">
@@ -169,6 +221,8 @@ $this->headTitle("Modification de l'établissement ".$etablissement->getStructur
     </div>
 
 </div>
+<?php echo $this->formHidden($form->get('id')) ?>
+<?php echo $this->formHidden($form->get('csrf')) ?>
 <?php echo $this->formElement($form->get('submit')) ?>
 <?php echo $this->form()->closeTag() ?>
 

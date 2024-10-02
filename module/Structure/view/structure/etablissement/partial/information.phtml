@@ -55,7 +55,7 @@
     <dd><?php echo $entity->getStructure()->getId(); ?></dd>
 
     <dt>Source Code :</dt>
-    <dd><?php echo $entity->getStructure()->getSourceCode(); ?></dd>
+    <dd><code><?php echo $entity->getStructure()->getSourceCode(); ?></code></dd>
     <dt>IdRef :</dt>
     <dd>
         <?php if ($entity->getStructure()->getIdRef() !== null and trim($entity->getStructure()->getIdRef()) !== "") : ?>

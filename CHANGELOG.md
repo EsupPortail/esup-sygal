@@ -11,6 +11,7 @@ Journal des modifications
 - Module Admission : Export vers Pégase -> concernant le sexe, M et Mme deviennent M et F
 - Module Admission : Export vers Pégase -> export seulement des thèses dont l'individu n'est pas encore doctorant
 - Possibilité pour le futur doctorant de se créer un compte utilisateur local pour saisir un dossier d'admission.
+- Etablissements : 3 saisies dédiées selon le type d'étab (d'inscription, CED, autre) ; amélioration du listing des établissements.
 - [FIX] Recherche textuelle d'individu : la prise en compte de chacun des termes avait été sabotée !
 - [FIX] Le bouton de recherche/liaison de notice IdRef ne fonctionnait pas dans une modale (unicaen/idref 1.0.0 requis).
 - [FIX] Synchro : plantage lors de la génération du diff (unicaen/db-import 6.1.3 nécessaire car nouvelle plateforme Doctrine\DBAL\Platforms\PostgreSQL120Platform).

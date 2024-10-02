@@ -2,13 +2,17 @@
 
 namespace Structure\Form\Factory;
 
+use Interop\Container\ContainerInterface;
 use Structure\Form\EtablissementForm;
 use Structure\Form\Hydrator\EtablissementHydrator;
-use Interop\Container\ContainerInterface;
 
 class EtablissementFormFactory
 {
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): EtablissementForm
     {
         /** @var EtablissementHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get('EtablissementHydrator');
