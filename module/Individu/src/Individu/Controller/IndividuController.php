@@ -18,7 +18,6 @@ use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Individu\Form\IndividuForm;
 use Individu\Service\IndividuServiceAwareTrait;
-use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -269,18 +268,30 @@ class IndividuController extends AbstractActionController implements SearchContr
         return $this->redirect()->toRoute('individu/voir', ['individu' => $individu->getId()]);
     }
 
-    public function rechercherAction()
+    /**
+     * AJAX.
+     *
+     * Recherche d'un Individu.
+     *
+     * @return JsonModel
+     */
+    public function rechercherAction(): JsonModel
     {
+        $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
-            $individus = $this->getIndividuService()->getRepository()->findByText($term);
+            $individus = $this->getIndividuService()->getRepository()->findByText($term, $type);
             $f = new NomCompletFormatter(true);
             $result = [];
             foreach ($individus as $individu) {
+                $prenoms23 = implode(' ', array_filter([$individu['prenom2'], $individu['prenom3']]));
+                // mise en forme attendue par l'aide de vue FormSearchAndSelect
+                $label = trim($f->filter($individu) . ' ' . $prenoms23);
+                $extra = $individu['email'] ?: $individu['source_code'];
                 $result[] = [
                     'id' => $individu['id'],
-                    'label' => $label = $f->filter($individu),
+                    'label' => $label,
                     'text' => $label, // pour Select2.js
-                    'extra' => $individu['email'] ?: $individu['source_code'],
+                    'extra' => $extra,
                 ];
             }
             usort($result, fn($a, $b) => $a['label'] <=> $b['label']);

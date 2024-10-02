@@ -34,9 +34,10 @@ class EncadrementFieldsetFactory
         /** @var PhpRenderer $renderer*/
         $renderer = $container->get('ViewRenderer');
         //todo route de recherche des directeurs
+        /** @see IndividuController::rechercherAction() */
         $fieldset->setUrlDirecteur($renderer->url('individu/rechercher', [], [], true));
-        $fieldset->setUrlCoEncadrant($renderer->url('utilisateur/rechercher-individu', [], ["query" => ['type' => Individu::TYPE_ACTEUR]], true));
-
+        /** @see IndividuController::rechercherAction() */
+        $fieldset->setUrlCoEncadrant($renderer->url('individu/rechercher', [], ["query" => ['type' => Individu::TYPE_ACTEUR]], true));
         $fieldset->setObject(new These());
 
         return $fieldset;

@@ -21,6 +21,7 @@ use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Controller\IndividuController;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
+use JetBrains\PhpStorm\Deprecated;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Request;
@@ -175,14 +176,10 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
     }
 
-    /**
-     * AJAX.
-     *
-     * Recherche d'un Individu.
-     *
-     * @param string|null $type => permet de spécifier un type d'acteur ...
-     * @return JsonModel
-     */
+    #[Deprecated(
+        reason: 'Utiliser IndividuController::rechercherAction à la place.',
+        replacement: 'IndividuController::rechercherAction')
+    ]
     public function rechercherIndividuAction(?string $type = null) : JsonModel
     {
         $type = $this->params()->fromQuery('type');

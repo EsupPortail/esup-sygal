@@ -16,7 +16,8 @@ use UnicaenApp\Form\Element\SearchAndSelect;
     $sas = new SearchAndSelect('individu');
     $sas->setLabel($this->translate("Recherche d'un·e doctorant·e"));
     $sas->setAttribute('class', 'individu-finder');
-    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], ['query' => ['type' => Individu::TYPE_DOCTORANT]], true));
+    /** @see IndividuController::rechercherAction() */
+    $sas->setAutocompleteSource($this->url('individu/rechercher', [], ['query' => ['type' => Individu::TYPE_DOCTORANT]], true));
     echo $this->formControlGroup($sas, 'formSearchAndSelect');
     ?>
 

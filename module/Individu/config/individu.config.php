@@ -3,7 +3,6 @@
 namespace Individu;
 
 use BjyAuthorize\Provider\Resource\Config;
-use Individu\Controller\IndividuComplController;
 use Individu\Assertion\IndividuAssertion;
 use Individu\Assertion\IndividuAssertionFactory;
 use Individu\Controller\IndividuController;
@@ -161,6 +160,7 @@ return [
                             'route' => '/rechercher',
                             'defaults' => [
                                 'controller' => IndividuController::class,
+                                /** @see IndividuController::rechercherAction() */
                                 'action' => 'rechercher',
                             ],
                         ],

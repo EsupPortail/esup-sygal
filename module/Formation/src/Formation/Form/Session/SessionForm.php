@@ -74,7 +74,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'structure',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -101,7 +101,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'modalite',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -116,7 +116,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'type',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -131,7 +131,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'type_structure',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);

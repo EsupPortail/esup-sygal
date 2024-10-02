@@ -632,9 +632,11 @@ where exists (
       and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
 );
 
--- Suppression du privilège pour le Gestionnaire d'ED pour modifier leur thèse
+-- Ajout du privilège pour le Gestionnaire d'ED pour modifier leur thèse, et rechercher des individus
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'these', 'modification-de-ses-theses')
+with data(categ, priv) as (select 'these', 'modification-de-ses-theses'
+                           union
+                           select 'individu', 'lister')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (

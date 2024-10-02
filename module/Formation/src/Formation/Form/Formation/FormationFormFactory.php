@@ -37,7 +37,7 @@ class FormationFormFactory {
         $pluginManager = $container->get('ViewHelperManager');
         $urlManager = $pluginManager->get('Url');
         /** @see AgentController::rechercherAction() */
-        $urlResponsable =  $urlManager->__invoke('utilisateur/rechercher-individu', [], [], true);
+        $urlResponsable =  $urlManager->__invoke('individu/rechercher', [], [], true);
         $form->setUrlResponsable($urlResponsable);
         $form->setEtablissementService($etablissementService);
         $form->setModuleService($moduleService);

@@ -2,7 +2,6 @@
 
 namespace These\Controller;
 
-use Application\Controller\UtilisateurController;
 use DateTime;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -106,8 +105,8 @@ class CoEncadrantController extends AbstractActionController
 
         $form = $this->getRechercherCoEncadrantForm();
         $form->setAttribute('action', $this->url()->fromRoute('co-encadrant/ajouter-co-encadrant', [], [], true));
-        /** @see UtilisateurController::rechercherIndividuAction() */
-        $form->setUrlCoEncadrant($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
+        /** @see IndividuController::rechercherAction() */
+        $form->setUrlCoEncadrant($this->url()->fromRoute('individu/rechercher', [], ["query" => []], true));
         $form->setUrlEtablisssement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
 
         $request = $this->getRequest();
