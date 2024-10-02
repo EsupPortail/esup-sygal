@@ -250,6 +250,10 @@ class EtablissementInputFilter extends InputFilter implements EtablissementInput
 
     public function prepareForm(EtablissementForm $etablissementForm): void
     {
+        $etablissementForm->remove('domaine');
+        $etablissementForm->remove('emailAssistance');
+        $etablissementForm->remove('emailBibliotheque');
+        $etablissementForm->remove('emailDoctorat');
         $etablissementForm->remove('estInscription');
         $etablissementForm->remove('estCed');
         if (!$etablissementForm->getObject()->getId()) {
