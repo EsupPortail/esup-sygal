@@ -583,7 +583,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             const accessButtonConventionFormationDoctorale = document.querySelectorAll('.access-conv-form-doct-btn');
-            if(accessButtonConventionFormationDoctorale){
+            if(accessButtonConventionFormationDoctorale && fileConventionFormationDoctoraleDiv){
                 accessButtonConventionFormationDoctorale.forEach(function(button) {
                     button.addEventListener('click', function(event) {
                         event.preventDefault();

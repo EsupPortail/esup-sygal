@@ -117,9 +117,10 @@ $enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_
                     $this->isAllowed($conventionFormationDoctorale, AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER); ?>
                 <div class="col-lg-12 upload-file">
                     <?php if ($canAccederConventionFormationDoctorale && $enCours) {
-                        $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation'; ?>
+                        $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation';
+                        $classButton = $canGenererConventionFormationDoctorale ? "" : "required"; ?>
                         <a href="<?php echo $this->url($nameRoute, ['admission' => $admission->getId()], [], true) ?>"
-                           class="btn btn-primary"
+                           class="btn btn-primary access-conv-form-doct-btn <?=$classButton?>"
                            title="Accéder à la convention de formation doctorale">Remplir la convention de formation doctorale</a>
                     <?php }
 
