@@ -2,9 +2,13 @@
 
 namespace Application;
 
+use Application\Controller\AutorisationInscriptionController;
+use Application\Entity\AnneeUniv;
+use Application\Entity\Db\AutorisationInscription;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
+use These\Entity\Db\TheseAnneeUniv;
 use These\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
@@ -15,7 +19,8 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var Rapport[] $rapports
+ * @var array $rapports
+ * @var AutorisationInscription[] $autorisationsInscription
  *
  * @var string $routeName
  * @var TypeValidation $typeValidation
@@ -150,9 +155,10 @@ $acteursFormatterCodirecteurs->asSeparated()
     </thead>
 
     <tbody>
-    <?php foreach ($rapports as $rapport): ?>
+    <?php foreach ($rapports as $ra): ?>
         <tr>
             <?php
+            $rapport = $ra["rapport"] ?? $ra;
             $these = $rapport->getThese();
             $rapportValidation = $rapport->getRapportValidation();
             $rapportAvis = $rapport->getRapportAvis();
@@ -309,13 +315,107 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <td class="action">
                 <?php if ($canDel): ?>
-                    <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl ?? '']]) ?>"
-                       title="Supprimer ce rapport ?"
-                       data-bs-toggle="confirmationx"
-                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
+<!--                    <a href="--><?php //echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl ?? '']]) ?><!--"-->
+<!--                       title="Supprimer ce rapport ?"-->
+<!--                       data-bs-toggle="confirmationx"-->
+<!--                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>-->
                 <?php endif; ?>
+                <?php
+                $anneesInscriptionThese = array_map(function(TheseAnneeUniv $anneeUniv) {
+                    return $anneeUniv->getPremiereAnnee();
+                },  $these->getAnneesUnivInscription()->toArray());
+                $derniereAnneeUnivInscription = AnneeUniv::fromPremiereAnnee(max($anneesInscriptionThese));
+
+                /** @var AutorisationInscription|null $autorisationInscription */
+                $autorisationInscription = $ra["autorisationInscription"] ?? null;
+                $hasAutorisation = $autorisationInscription?->getAutorisationInscription();
+
+                if ($derniereAnneeUnivInscription === $rapport->getAnneeUniv() && $hasAutorisation === null): ?>
+                    <a  <?php /**  @see AutorisationInscriptionController::ajouterAction() */ ?>
+                            class="btn btn-primary action ajax-modal"
+                            data-event="ajout-autorisation-inscription"
+                            title="Autoriser la réinscription ?"
+                            class="btn btn-success"
+                            href="<?php echo $this->url('autoriser-inscription/ajouter', ['rapport' => $rapport->getId()], [], true); ?>"
+                    >
+                        <span class="fa fa-redo"></span>
+                        Autoriser à se réinscrire dans l'année suivante
+                    </a>
+                <?php elseif($autorisationInscription):
+                    if($autorisationInscription->getAutorisationInscription() === true) :?>
+                        <div class="alert alert-info" style="margin-left: 1rem;max-width: initial;">
+                            <span class="icon icon-ok"></span>
+                            Autorisé·e à se réinscrire dans l'année suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
+                            <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
+                                Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>,
+                                le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+                            </div>
+                        </div>
+                    <?php elseif($autorisationInscription->getAutorisationInscription() === false): ?>
+                        <div class="alert alert-danger" style="margin-left: 1rem;max-width: initial;">
+                            <span class="icon icon-ko"></span>
+                            Non autorisé·e à se réinscrire dans l'année suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
+                            <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
+                                Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>,
+                                le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+                            </div>
+                            <?php if($autorisationInscription->getCommentaires()): ?>
+                                <a type="button" class="card-link text-sm" data-bs-toggle="modal" data-bs-target="#commentairesAutorisationInscrModal">
+                                    <span class="fas fa-glasses" title="Voir le motif de la non-autorisation"></span>
+                                    Détails
+                                </a>
+                                <div class="log-full-content d-none">
+                                    <p>Motif de la non-autorisation :</p>
+                                    <p class="avis-complement">
+                                        <span class="avis-complem-textarea">
+                                            <span class="avis-complem-libelle">Commentaires</span> :
+                                            <span class="avis-complem-valeur"><?= $autorisationInscription->getCommentaires() ?></span>
+                                        </span>
+                                    </p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif;
+                endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<div class="modal fade" id="commentairesAutorisationInscrModal" tabindex="-1" aria-labelledby="commentairesAutorisationInscrModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentairesAutorisationInscrModalLabel">Détails de l'avis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <!-- rempli dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("ajout-autorisation-inscription", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    })
+
+    $(function() {
+        const avisComplemsModal = document.getElementById('commentairesAutorisationInscrModal')
+        avisComplemsModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const logFullContent = $(button).siblings(".log-full-content").html();
+
+            const modalBody = avisComplemsModal.querySelector('.modal-body');
+            $(modalBody).html(logFullContent);
+        });
+    })
+</script>

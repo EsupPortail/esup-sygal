@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Application\Entity\Db\AutorisationInscription;
 use Application\Entity\Db\Rapport;
 use ComiteSuiviIndividuel\Entity\Db\Membre;
 use These\Entity\Db\These;
@@ -13,7 +14,8 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer $this
  * @var These $these
- * @var Rapport[] $rapports
+ * @var array $rapports
+ * @var AutorisationInscription[] $autorisationsInscription
  * @var RapportCsiForm $form
  * @var bool $isTeleversementPossible
  * @var TypeValidation $typeValidation
@@ -223,16 +225,14 @@ $canModifier = ($privilege_TELEVERSER_SIEN OR $privilege_TELEVERSER_TOUT);
                         <?php
                         echo $this->formControlGroup($form->get('files'));
                         echo $this->formControlGroup($form->get('security'));
-                        echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
                         ?>
+                        <div class="col-mb-2">
+                            <?php echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary'])); ?>
+                            <a href="#" id="annulerBtn" class="btn btn-danger me-2" style="margin-top: 16px;">Annuler</a>
+                        </div>
                     </div>
                 </div>
                 <?php echo $this->form()->closeTag() ?>
-                <div class="row">
-                    <div class="col-md-3">
-                        <a href="#" id="annulerBtn" class="btn btn-danger">Annuler</a>
-                    </div>
-                </div>
             </div>
         </div>
 

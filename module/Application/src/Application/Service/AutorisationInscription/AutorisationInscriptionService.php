@@ -1,36 +1,41 @@
 <?php
 
-namespace Application\Service\Rapport;
+namespace Application\Service\AutorisationInscription;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
-use Fichier\Entity\Db\NatureFichier;
+use Application\Entity\Db\AutorisationInscription;
 use Application\Entity\Db\Rapport;
-use These\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Filter\NomFichierRapportFormatter;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
-use InvalidArgumentException;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use These\Service\FichierThese\PdcData;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
-use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Closure;
+use DateInterval;
+use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use InvalidArgumentException;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\FichierThese\PdcData;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 
-class RapportService extends BaseService
+class AutorisationInscriptionService extends BaseService
 {
     use FichierServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
@@ -40,6 +45,91 @@ class RapportService extends BaseService
     use RapportValidationServiceAwareTrait;
     use PageDeCouverturePdfExporterAwareTrait;
     use ShellCommandRunnerTrait;
+    use AnneeUnivServiceAwareTrait;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRepository()
+    {
+        return $this->entityManager->getRepository(AutorisationInscription::class);
+    }
+
+    public function createQueryBuilder() : QueryBuilder
+    {
+        $qb = $this->getEntityManager()->getRepository(AutorisationInscription::class)->createQueryBuilder('autorisationInscription');
+        return $qb;
+    }
+
+    public function create(AutorisationInscription $autorisationInscription) : AutorisationInscription
+    {
+        try {
+            $this->getEntityManager()->persist($autorisationInscription);
+            $this->getEntityManager()->flush($autorisationInscription);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $autorisationInscription;
+    }
+
+    /**
+     * @param AutorisationInscription $autorisationInscription
+     * @return AutorisationInscription
+     */
+    public function update(AutorisationInscription $autorisationInscription) : AutorisationInscription
+    {
+        try {
+            $this->getEntityManager()->flush($autorisationInscription);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $autorisationInscription;
+    }
+
+    /**
+     * @param AutorisationInscription $autorisationInscription
+     * @return AutorisationInscription
+     */
+    public function historise(AutorisationInscription $autorisationInscription) : AutorisationInscription
+    {
+        try {
+            $autorisationInscription->historiser();
+            $this->getEntityManager()->flush($autorisationInscription);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $autorisationInscription;
+    }
+
+    /**
+     * @param AutorisationInscription $autorisationInscription
+     * @return AutorisationInscription
+     */
+    public function restore(AutorisationInscription $autorisationInscription) : AutorisationInscription
+    {
+        try {
+            $autorisationInscription->dehistoriser();
+            $this->getEntityManager()->flush($autorisationInscription);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $autorisationInscription;
+    }
+
+    /**
+     * @param AutorisationInscription $autorisationInscription
+     * @return AutorisationInscription
+     */
+    public function delete(AutorisationInscription $autorisationInscription) : AutorisationInscription
+    {
+        try {
+            $this->getEntityManager()->remove($autorisationInscription);
+            $this->getEntityManager()->flush();
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
+        }
+        return $autorisationInscription;
+    }
 
     /**
      * @param int $id
@@ -83,14 +173,6 @@ class RapportService extends BaseService
         }
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRepository()
-    {
-        return $this->entityManager->getRepository(Rapport::class);
     }
 
     /**
@@ -252,64 +334,28 @@ class RapportService extends BaseService
     }
 
     /**
-     * Générer une page de couverture et l'ajouter au rapport spécifié.
-     *
-     * @param \Application\Entity\Db\Rapport $rapport
-     * @param PdcData $data
-     * @return string
+     * @param These $these
+     * @param bool $cacheable
+     * @return array
      */
-    public function ajouterPdc(Rapport $rapport, PdcData $data): string
+    public function findAutorisationsInscriptionParThese(These $these): array
     {
-        // generation de la page de couverture
-        $pdcFilePath = tempnam(sys_get_temp_dir(), 'sygal_rapport_pdc_') . '.pdf';
-        $this->generatePageDeCouverture($rapport, $data, $pdcFilePath);
-
-        $outputFilePath = tempnam(sys_get_temp_dir(), 'sygal_fusion_rapport_pdc_') . '.pdf';
-        $command = $this->createCommandForAjoutPdc($rapport, $pdcFilePath, $outputFilePath);
-        try {
-            $this->runShellCommand($command);
-        } catch (TimedOutCommandException $e) {
-            // sans timeout, cette exception n'est pas lancée.
-        }
-
-        return $outputFilePath;
+        return $this->getRepository()->findBy(['these' => $these]);
     }
 
-    /**
-     * @param \Application\Entity\Db\Rapport $rapport
-     * @param string $pdcFilePath
-     * @param string $outputFilePath
-     * @return PdfMergeShellCommandQpdf
-     */
-    private function createCommandForAjoutPdc(Rapport $rapport, string $pdcFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
+    public function initAutorisationInscriptionFromRapport(Rapport $rapport): AutorisationInscription
     {
-        try {
-            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
-            $rapportFilePath = $this->fichierStorageService->getFileForFichier($rapport->getFichier());
-        } catch (StorageAdapterException $e) {
-            throw new RuntimeException(
-                "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $rapport->getFichier(), null, $e);
-        }
+        $these = $rapport->getThese();
+        $anneeUniv = $rapport->getAnneeUniv();
+        $dateDebutAnneeUniv = $this->anneeUnivService->computeDateDebut($anneeUniv);
+        $prochaineAnneeUniv = $this->anneeUnivService->fromDate($dateDebutAnneeUniv->add(new DateInterval('P1Y1M')));
 
-        $command = new PdfMergeShellCommandQpdf();
-        $command->setInputFilesPaths([
-            'couverture' => $pdcFilePath,
-            'rapport' => $rapportFilePath,
-        ]);
-        $command->setOutputFilePath($outputFilePath);
-        $command->generateCommandLine();
+        $autorisationInscription = new AutorisationInscription();
+        $autorisationInscription->setThese($these);
+        $autorisationInscription->setIndividu($these->getDoctorant()->getIndividu());
+        $autorisationInscription->setRapport($rapport);
+        $autorisationInscription->setAnneeUniv($prochaineAnneeUniv->getPremiereAnnee());
 
-        return $command;
-    }
-
-    /**
-     * @param \Application\Entity\Db\Rapport $rapport
-     * @param PdcData $data
-     * @param string $filepath
-     */
-    public function generatePageDeCouverture(Rapport $rapport, PdcData $data, string $filepath)
-    {
-        $this->pageDeCouverturePdfExporter->setVars(['rapport' => $rapport, 'data' => $data]);
-        $this->pageDeCouverturePdfExporter->export($filepath, Pdf::DESTINATION_FILE);
+        return $autorisationInscription;
     }
 }

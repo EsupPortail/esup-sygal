@@ -2,7 +2,9 @@
 
 namespace These\Service\TheseAnneeUniv;
 
+use Application\Entity\Db\AutorisationInscription;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Structure\Entity\Db\Etablissement;
@@ -10,6 +12,7 @@ use These\Entity\Db\TheseAnneeUniv;
 
 class TheseAnneeUnivService extends BaseService
 {
+    use SourceServiceAwareTrait;
     /**
      * @return EntityRepository
      */
@@ -43,5 +46,16 @@ class TheseAnneeUnivService extends BaseService
         return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
+    }
+
+    public function initFromAutorisationInscription(AutorisationInscription $autorisationInscription): TheseAnneeUniv
+    {
+        $theseAnneeUnivPremiereInscription = new TheseAnneeUniv();
+        $theseAnneeUnivPremiereInscription->setAnneeUniv($autorisationInscription->getAnneeUniv()->getPremiereAnnee());
+        $theseAnneeUnivPremiereInscription->setThese($autorisationInscription->getThese());
+        $theseAnneeUnivPremiereInscription->setSource($this->sourceService->fetchApplicationSource());
+        $theseAnneeUnivPremiereInscription->setSourceCode($this->sourceService->genereateSourceCode());
+
+        return $theseAnneeUnivPremiereInscription;
     }
 }

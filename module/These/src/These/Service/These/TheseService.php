@@ -93,12 +93,14 @@ class TheseService extends BaseService
             }
         }
 
-        $theseAnneeUniv = $these->getAnneeUniv1ereInscription();
-        if($theseAnneeUniv){
-            try {
-                $this->getEntityManager()->persist($theseAnneeUniv);
-            } catch (ORMException $e) {
-                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+        $theseAnneesUniv = $these->getAnneesUniv1ereInscription();
+        if($theseAnneesUniv){
+            foreach ($theseAnneesUniv as $theseAnneeUniv) {
+                try {
+                    $this->getEntityManager()->persist($theseAnneeUniv);
+                } catch (ORMException $e) {
+                    throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+                }
             }
         }
 

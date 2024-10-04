@@ -2,10 +2,19 @@
 
 namespace These\Service\TheseAnneeUniv;
 
-class TheseAnneeUnivServiceFactory
+use Application\Service\Source\SourceService;
+use Interop\Container\Containerinterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+
+class TheseAnneeUnivServiceFactory implements FactoryInterface
 {
-    public function __invoke()
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new TheseAnneeUnivService();
+        $sourceService = $container->get(SourceService::class);
+
+        $service = new TheseAnneeUnivService();
+        $service->setSourceService($sourceService);
+
+        return $service;
     }
 }

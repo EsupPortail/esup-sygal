@@ -1,10 +1,12 @@
 <?php
 
-namespace Application\Controller\Factory\Rapport;
+namespace Application\Controller\Factory;
 
-use Application\Controller\Rapport\RapportCsiController;
+use Application\Controller\AutorisationInscriptionController;
 use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
+use Application\Form\AutorisationInscriptionForm;
+use Application\Form\Rapport\RapportAvisForm;
 use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportCsiForm;
 use Application\Service\AnneeUniv\AnneeUnivService;
@@ -20,13 +22,13 @@ use Interop\Container\ContainerInterface;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
-class RapportCsiControllerFactory
+class AutorisationInscriptionControllerFactory
 {
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): RapportCsiController
+    public function __invoke(ContainerInterface $container): AutorisationInscriptionController
     {
         /**
          * @var TheseService          $theseService
@@ -41,35 +43,29 @@ class RapportCsiControllerFactory
          * @var MembreService $membreService
          */
         $theseService = $container->get('TheseService');
-        $fichierService = $container->get(FichierService::class);
         $rapportService = $container->get(RapportService::class);
-        $versionFichierService = $container->get('VersionFichierService');
         $individuService = $container->get(IndividuService::class);
-        $rapportForm = $container->get('FormElementManager')->get(RapportCsiForm::class);
-        $validationService = $container->get(ValidationService::class);
-        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $typeRapport = $rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_CSI);
-        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_CSI);
         $anneeUnivService = $container->get(AnneeUnivService::class);
         $sourceService = $container->get(SourceService::class);
+        $rapportService = $container->get(RapportService::class);
         $autorisationInscriptionService = $container->get(AutorisationInscriptionService::class);
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
+        $form = $container->get('FormElementManager')->get(AutorisationInscriptionForm::class);
 
         $membreService = $container->get(MembreService::class);
 
-        $controller = new RapportCsiController();
+        $controller = new AutorisationInscriptionController();
         $controller->setTheseService($theseService);
         $controller->setRapportService($rapportService);
-        $controller->setFichierService($fichierService);
-        $controller->setVersionFichierService($versionFichierService);
         $controller->setIndividuService($individuService);
-        $controller->setForm($rapportForm);
-        $controller->setValidationService($validationService);
         $controller->setAnneeUnivService($anneeUnivService);
-        $controller->setAnneesUnivs($theseAnneeUnivService);
-        $controller->setTypeRapport($typeRapport);
-        $controller->setTypeValidation($typeValidation);
+//        $controller->setTypeRapport($typeRapport);
         $controller->setMembreService($membreService);
         $controller->setSourceService($sourceService);
+        $controller->setRapportService($rapportService);
+        $controller->setAnneesUnivs($theseAnneeUnivService);
+        $controller->setAutorisationInscriptionForm($form);
         $controller->setAutorisationInscriptionService($autorisationInscriptionService);
 
 //        $theseService->attach($controller->getEventManager());

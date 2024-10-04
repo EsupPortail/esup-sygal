@@ -44,6 +44,14 @@ class AnneeUnivService
     }
 
     /**
+     * Retourne une instance correspondant à l'année universitaire suivante celle en cours.
+     */
+    public function suivante(): AnneeUniv
+    {
+        return $this->fromDate((new DateTime())->add(new DateInterval('P1Y')));
+    }
+
+    /**
      * Retourne une instance correspondant à l'année universitaire courante.
      */
     public function courante(): AnneeUniv
