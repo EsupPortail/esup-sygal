@@ -30,16 +30,24 @@ $canTelechargerDocument =
 
 /** @var Inscription $inscription */
 $inscription = isset($admission) && $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
+
+$key = $fieldset->getAttribute('id');
+$enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE;
 ?>
 
 <div class="row subfield">
     <div class="col-lg-3 col-sm-12 filename-label">
-        <?php echo $this->formlabel($fieldset) ?>
+        <?php
+            echo $this->formlabel($fieldset);
+            if($key === "ADMISSION_CONVENTION" && $enCours): ?>
+                <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
+                    <span class="tooltip-text">Merci de remplir ce formulaire en collaboration avec votre direction de thèse.</span>
+                </span>
+            <?php endif; ?>
     </div>
     <div class="col-lg-9 col-sm-12">
         <div class="row detail-file-container">
             <?php
-            $key = $fieldset->getAttribute('id');
             if($key === NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT){ ?>
                 <div class="col-lg-12 upload-file">
                    <?php if($inscription && $inscription->getEtablissementInscription() === null){ ?>
@@ -108,7 +116,7 @@ $inscription = isset($admission) && $admission->getInscription()->first() ? $adm
                 $canGenererConventionFormationDoctorale =
                     $this->isAllowed($conventionFormationDoctorale, AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER); ?>
                 <div class="col-lg-12 upload-file">
-                    <?php if ($canAccederConventionFormationDoctorale && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE) {
+                    <?php if ($canAccederConventionFormationDoctorale && $enCours) {
                         $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation'; ?>
                         <a href="<?php echo $this->url($nameRoute, ['admission' => $admission->getId()], [], true) ?>"
                            class="btn btn-primary"

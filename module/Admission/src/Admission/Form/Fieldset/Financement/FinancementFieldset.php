@@ -72,8 +72,8 @@ class FinancementFieldset extends AdmissionBaseFieldset implements InputFilterPr
         $this->add(
             (new Radio('tempsTravail'))
                 ->setValueOptions([
-                    1 => "Temps complet",
-                    2 => "à temps partiel"
+                    1 => "temps complet",
+                    2 => "temps partiel"
                 ])
                 ->setLabel("Temps de travail du doctorant mené à")
                 ->setLabelAttributes(['data-after' => " / Doctoral student's working time in"])
