@@ -2,11 +2,13 @@
 
 namespace Application;
 
+use Application\Assertion\AutorisationInscription\AutorisationInscriptionAssertion;
+use Application\Assertion\AutorisationInscription\AutorisationInscriptionAssertionFactory;
 use Application\Controller\AutorisationInscriptionController;
 use Application\Controller\Factory\AutorisationInscriptionControllerFactory;
 use Application\Form\AutorisationInscriptionForm;
 use Application\Form\Factory\AutorisationInscriptionFormFactory;
-use Application\Provider\Privilege\RapportPrivileges;
+use Application\Provider\Privilege\AutorisationInscriptionPrivileges;
 use Application\Service\AutorisationInscription\AutorisationInscriptionService;
 use Application\Service\AutorisationInscription\AutorisationInscriptionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -24,28 +26,10 @@ return [
                 'allow' => [
                     [
                         'privileges' => [
-                            RapportPrivileges::RAPPORT_CSI_LISTER_TOUT,
-                            RapportPrivileges::RAPPORT_CSI_LISTER_SIEN,
-                            RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT,
-                            RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN,
-                            RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN,
-                            RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT,
-                            RapportPrivileges::RAPPORT_CSI_RECHERCHER_SIEN,
-                            RapportPrivileges::RAPPORT_CSI_TELECHARGER_TOUT,
-                            RapportPrivileges::RAPPORT_CSI_TELECHARGER_SIEN,
-
-                            RapportPrivileges::RAPPORT_MIPARCOURS_LISTER_TOUT,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_LISTER_SIEN,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_TOUT,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_SIEN,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_RECHERCHER_SIEN,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_TOUT,
-                            RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_SIEN,
+                            AutorisationInscriptionPrivileges::AUTORISATION_INSCRIPTION_AJOUTER,
                         ],
-                        'resources'  => ['Rapport'],
-                        'assertion' => 'Assertion\\Rapport', /** @see RapportAssertion */
+                        'resources'  => ['AutorisationInscription'],
+                        'assertion' => AutorisationInscriptionAssertion::class,
                     ],
                 ],
             ],
@@ -55,14 +39,12 @@ return [
                 [
                     'controller' => AutorisationInscriptionController::class,
                     'action'     => [
-                        'autoriser-inscription', // à modifier ensuite,
                         'ajouter'
                     ],
                     'privileges' => [
-                        RapportPrivileges::RAPPORT_CSI_LISTER_TOUT,
-                        RapportPrivileges::RAPPORT_CSI_LISTER_SIEN,
+                        AutorisationInscriptionPrivileges::AUTORISATION_INSCRIPTION_AJOUTER,
                     ],
-                    'assertion' => 'Assertion\\Rapport',
+                    'assertion' => AutorisationInscriptionAssertion::class,
                 ],
             ],
         ],
@@ -99,7 +81,8 @@ return [
 
     'service_manager' => [
         'factories' => [
-            AutorisationInscriptionService::class => AutorisationInscriptionServiceFactory::class
+            AutorisationInscriptionService::class => AutorisationInscriptionServiceFactory::class,
+            AutorisationInscriptionAssertion::class => AutorisationInscriptionAssertionFactory::class
         ],
     ],
     'controllers' => [

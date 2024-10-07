@@ -653,3 +653,60 @@ from PROFIL_TO_ROLE p2r
          join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
 where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;
+
+--
+-- Nouvelle catégorie de privilèges : AutorisationInscription.
+--
+INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE)
+SELECT nextval('categorie_privilege_id_seq'), 'autorisation-inscription', 'Autorisation d''inscription', 11020
+    WHERE NOT EXISTS (SELECT 1
+                  FROM CATEGORIE_PRIVILEGE
+                  WHERE CODE = 'autorisation-inscription');
+
+insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+with d(ordre, code, lib) as (select 1,
+                                    'ajouter',
+                                    'Ajouter (ou non) une autorisation d''inscription sur l''année suivante')
+select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
+from d
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = 'autorisation-inscription'
+WHERE NOT EXISTS (SELECT 1
+                  FROM PRIVILEGE p
+                  WHERE p.CODE = d.code);
+
+-- Ajout du privilège pour le responsable d'ED/Admin tech pour ajouter une autorisation d'inscription
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (select 'autorisation-inscription', 'ajouter')
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in (
+                                           'RESP_ED',
+                                           'ADMIN_TECH'
+    )
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+
+insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
+select p2r.ROLE_ID, pp.PRIVILEGE_ID
+from PROFIL_TO_ROLE p2r
+         join profil pr on pr.id = p2r.PROFIL_ID
+         join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
+where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
+;
+
+-- Suppression du privilège pour le RESP_ED de supprimer un rapport CSI
+DELETE
+from role_privilege
+where privilege_id in (select id from privilege where code LIKE 'supprimer-sien' and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi'))
+  and role_id in (select id from role where code LIKE 'RESP_ED');
+
+delete from profil_privilege pp1
+where exists (
+    select *
+    from profil_privilege pp
+             join profil on pp.profil_id = profil.id and role_id in ('RESP_ED')
+             join privilege p on pp.privilege_id = p.id
+    where p.code in ('supprimer-sien') and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi')
+      and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
+);
