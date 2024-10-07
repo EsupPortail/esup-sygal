@@ -68,7 +68,6 @@ class RapportCsiController extends RapportController
 
         return new ViewModel([
             'rapports' => $rapportsAvecAutorisationInscription ?? $this->rapportsTeleverses,
-            'autorisationsInscription' => $this->fetchAutorisationsInscriptionParThese($this->these),
             'these' => $this->these,
             'form' => $this->form,
             'isTeleversementPossible' => $this->isTeleversementPossible(),

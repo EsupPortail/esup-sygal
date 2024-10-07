@@ -96,13 +96,13 @@
 
         <many-to-one field="etablissementCoTutelle" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
-                <join-column name="etab_cotut_id" referenced-column-name="ID"/>
+                <join-column name="etab_cotut_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="paysCoTutelle" target-entity="Application\Entity\Db\Pays">
             <join-columns>
-                <join-column name="pays_cotut_id" referenced-column-name="ID"/>
+                <join-column name="pays_cotut_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

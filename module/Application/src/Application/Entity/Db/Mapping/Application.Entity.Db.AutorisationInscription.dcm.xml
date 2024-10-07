@@ -13,17 +13,17 @@
 
     <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
       <join-columns>
-        <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+        <join-column name="INDIVIDU_ID" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
 
     <many-to-one field="these" target-entity="These\Entity\Db\These">
-      <join-column name="THESE_ID" referenced-column-name="ID"/>
+      <join-column name="THESE_ID" referenced-column-name="id"/>
     </many-to-one>
 
     <many-to-one field="rapport" target-entity="Application\Entity\Db\Rapport">
       <join-columns>
-        <join-column name="RAPPORT_ID" referenced-column-name="ID"/>
+        <join-column name="RAPPORT_ID" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
@@ -32,17 +32,17 @@
 
     <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
-        <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+        <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
-        <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+        <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
-        <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+        <join-column name="HISTO_CREATEUR_ID" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
 

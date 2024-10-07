@@ -29,13 +29,13 @@
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
-                <join-column name="etab_id" referenced-column-name="ID"/>
+                <join-column name="etab_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="pays" target-entity="Application\Entity\Db\Pays">
             <join-columns>
-                <join-column name="pays_id" referenced-column-name="ID"/>
+                <join-column name="pays_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

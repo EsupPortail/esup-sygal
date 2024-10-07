@@ -19,7 +19,10 @@ use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var array $rapports
+ * @var array{
+ *      rapport: Rapport,
+ *      autorisationInscription: AutorisationInscription
+ *  } | array<Rapport> $rapports
  * @var AutorisationInscription[] $autorisationsInscription
  *
  * @var string $routeName
@@ -158,7 +161,7 @@ $acteursFormatterCodirecteurs->asSeparated()
     <?php foreach ($rapports as $ra): ?>
         <tr>
             <?php
-            $rapport = $ra["rapport"] ?? $ra;
+            $rapport = is_array($ra) && $ra["rapport"] ? $ra["rapport"] : $ra;
             $these = $rapport->getThese();
             $rapportValidation = $rapport->getRapportValidation();
             $rapportAvis = $rapport->getRapportAvis();
@@ -327,7 +330,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 $derniereAnneeUnivInscription = AnneeUniv::fromPremiereAnnee(max($anneesInscriptionThese));
 
                 /** @var AutorisationInscription|null $autorisationInscription */
-                $autorisationInscription = $ra["autorisationInscription"] ?? null;
+                $autorisationInscription = is_array($ra) && $ra["autorisationInscription"] ? $ra["autorisationInscription"] : null;
                 $hasAutorisation = $autorisationInscription?->getAutorisationInscription();
 
                 if ($derniereAnneeUnivInscription === $rapport->getAnneeUniv() && $hasAutorisation === null): ?>

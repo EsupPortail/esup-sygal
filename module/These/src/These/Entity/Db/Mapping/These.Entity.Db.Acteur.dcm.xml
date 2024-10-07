@@ -47,7 +47,7 @@
         </many-to-one>
         <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
             <join-columns>
-                <join-column name="ACTEUR_ECOLEDOCT_ID" referenced-column-name="ID"/>
+                <join-column name="ACTEUR_ECOLEDOCT_ID" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <!-- Pas besoin d'une UR forcée car l'UR n'est pas importée -->
@@ -58,7 +58,7 @@
         </many-to-one>
         <many-to-one field="qualite" target-entity="Soutenance\Entity\Qualite">
             <join-columns>
-                <join-column name="QUALITE_ID" referenced-column-name="ID"/>
+                <join-column name="QUALITE_ID" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
