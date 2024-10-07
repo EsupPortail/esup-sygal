@@ -13,7 +13,7 @@ class UniteRechercheForm extends StructureForm implements InputFilterProviderInt
     /**
      * NB: hydrateur injecté par la factory
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
