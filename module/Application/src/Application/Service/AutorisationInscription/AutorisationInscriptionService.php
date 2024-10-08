@@ -2,49 +2,18 @@
 
 namespace Application\Service\AutorisationInscription;
 
-use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\ShellCommandRunnerTrait;
-use Application\Entity\AnneeUniv;
 use Application\Entity\Db\AutorisationInscription;
 use Application\Entity\Db\Rapport;
-use Application\Entity\Db\TypeRapport;
-use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
-use Closure;
 use DateInterval;
-use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
-use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
-use Fichier\Entity\Db\NatureFichier;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use InvalidArgumentException;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
-use These\Service\FichierThese\PdcData;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Exporter\Pdf;
 
 class AutorisationInscriptionService extends BaseService
 {
-    use FichierServiceAwareTrait;
-    use FichierStorageServiceAwareTrait;
-    use VersionFichierServiceAwareTrait;
-    use EtablissementServiceAwareTrait;
-    use NatureFichierServiceAwareTrait;
-    use RapportValidationServiceAwareTrait;
-    use PageDeCouverturePdfExporterAwareTrait;
-    use ShellCommandRunnerTrait;
     use AnneeUnivServiceAwareTrait;
 
     /**

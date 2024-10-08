@@ -2,7 +2,6 @@
 
 namespace Application\Controller\Rapport;
 
-use Application\Entity\Db\Rapport;
 use Application\Provider\Privilege\RapportPrivileges;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\AutorisationInscription\AutorisationInscriptionServiceAwareTrait;

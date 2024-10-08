@@ -316,12 +316,6 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php endif; ?>
 
             <td class="action">
-                <?php if ($canDel): ?>
-                    <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl ?? '']]) ?>"
-                       title="Supprimer ce rapport ?"
-                       data-bs-toggle="confirmationx"
-                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
-                <?php endif; ?>
                 <?php
                 /** @var AutorisationInscription|null $autorisationInscription */
                 if (!(is_array($ra) && $ra["autorisationInscription"])) {
@@ -333,55 +327,76 @@ $acteursFormatterCodirecteurs->asSeparated()
                 $canAjouterAutorisationInscription = $this->isAllowed($autorisationInscription, AutorisationInscriptionPrivileges::AUTORISATION_INSCRIPTION_AJOUTER);
                 if ($canAjouterAutorisationInscription): ?>
                     <a <?php /**  @see AutorisationInscriptionController::ajouterAction() */ ?>
-                            class="btn btn-primary action ajax-modal"
+                            class="action ajax-modal"
                             data-event="ajout-autorisation-inscription"
-                            title="Autoriser la réinscription ?"
+                            data-bs-toggle="tooltip"
+                            data-bs-html="true"
+                            title="Autoriser la réinscription dans l'année suivante ?"
                             class="btn btn-success"
                             href="<?php echo $this->url('autoriser-inscription/ajouter', ['rapport' => $rapport->getId()], [], true); ?>"
                     >
                         <span class="fa fa-redo"></span>
-                        Autoriser à se réinscrire dans l'année suivante
                     </a>
                 <?php endif; ?>
                 <?php if ($autorisationInscription->getAutorisationInscription() === true) :?>
-                        <div class="alert alert-info" style="margin-left: 1rem;max-width: initial;">
-                            <span class="icon icon-ok"></span>
-                            Autorisé·e à se réinscrire dans l'année
-                            suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
-                            <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
-                                Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>
-                                ,
-                                le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
-                            </div>
+                    <div class="alert alert-info" style="margin-left: 1rem;max-width: initial;">
+                        <span class="icon icon-ok"></span>
+                        Autorisé·e à se réinscrire dans l'année
+                        suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
+                        <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
+                            Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>
+                            ,
+                            le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
                         </div>
-                    <?php elseif ($autorisationInscription->getAutorisationInscription() === false): ?>
-                        <div class="alert alert-danger" style="margin-left: 1rem;max-width: initial;">
-                            <span class="icon icon-ko"></span>
-                            Non autorisé·e à se réinscrire dans l'année
-                            suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
-                            <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
-                                Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>
-                                ,
-                                le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+                        <?php if ($autorisationInscription->getCommentaires()): ?>
+                            <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                               data-bs-target="#commentairesAutorisationInscrModal">
+                                <span class="fas fa-glasses" title="Voir les commentaires concernant l'autorisation"></span>
+                                Détails
+                            </a>
+                            <div class="log-full-content d-none">
+                                <h3>Commentaires</h3>
+                                <p class="avis-complement">
+                                    <span class="avis-complem-textarea">
+                                        <span class="avis-complem-valeur"><?= $autorisationInscription->getCommentaires() ?></span>
+                                    </span>
+                                </p>
                             </div>
-                            <?php if ($autorisationInscription->getCommentaires()): ?>
-                                <a type="button" class="card-link text-sm" data-bs-toggle="modal"
-                                   data-bs-target="#commentairesAutorisationInscrModal">
-                                    <span class="fas fa-glasses" title="Voir le motif de la non-autorisation"></span>
-                                    Détails
-                                </a>
-                                <div class="log-full-content d-none">
-                                    <p>Motif de la non-autorisation :</p>
-                                    <p class="avis-complement">
-                                            <span class="avis-complem-textarea">
-                                                <span class="avis-complem-libelle">Commentaires</span> :
-                                                <span class="avis-complem-valeur"><?= $autorisationInscription->getCommentaires() ?></span>
-                                            </span>
-                                    </p>
-                                </div>
-                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php elseif ($autorisationInscription->getAutorisationInscription() === false): ?>
+                    <div class="alert alert-danger" style="margin-left: 1rem;max-width: initial;">
+                        <span class="icon icon-ko"></span>
+                        Non autorisé·e à se réinscrire dans l'année
+                        suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
+                        <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
+                            Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>
+                            ,
+                            le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
                         </div>
-                    <?php endif; ?>
+                        <?php if ($autorisationInscription->getCommentaires()): ?>
+                            <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                               data-bs-target="#commentairesAutorisationInscrModal">
+                                <span class="fas fa-glasses" title="Voir le motif de la non-autorisation"></span>
+                                Détails
+                            </a>
+                            <div class="log-full-content d-none">
+                                <h3>Motif de la non-autorisation</h3>
+                                <p class="avis-complement">
+                                    <span class="avis-complem-textarea">
+                                        <span class="avis-complem-valeur"><?= $autorisationInscription->getCommentaires() ?></span>
+                                    </span>
+                                </p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($canDel && !$autorisationInscription->getId()): ?>
+                    <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl ?? '']]) ?>"
+                       title="Supprimer ce rapport ?"
+                       data-bs-toggle="confirmationx"
+                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="fa fa-trash"></span></a>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>

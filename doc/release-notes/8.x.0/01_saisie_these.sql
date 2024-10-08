@@ -654,6 +654,25 @@ from PROFIL_TO_ROLE p2r
 where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
 ;
 
+-- Autorisation d'inscription
+create table IF NOT EXISTS autorisation_inscription
+(
+    id                    bigserial                                                    not null
+    primary key,
+    individu_id           bigint REFERENCES individu (id)                              not null,
+    these_id              bigint REFERENCES these (id),
+    rapport_id               bigint REFERENCES rapport (id),
+    annee_univ            bigint                                                       not null,
+    tem_autor_inscription boolean not null,
+    commentaires          text,
+    histo_createur_id     bigint                                                       not null REFERENCES utilisateur (id),
+    histo_creation        timestamp default ('now'::text)::timestamp without time zone not null,
+    histo_modificateur_id bigint REFERENCES utilisateur (id),
+    histo_modification    timestamp,
+    histo_destructeur_id  bigint REFERENCES utilisateur (id),
+    histo_destruction     timestamp
+);
+
 --
 -- Nouvelle catégorie de privilèges : AutorisationInscription.
 --

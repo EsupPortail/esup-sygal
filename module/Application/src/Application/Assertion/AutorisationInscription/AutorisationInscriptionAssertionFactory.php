@@ -5,7 +5,6 @@ namespace Application\Assertion\AutorisationInscription;
 use Application\Assertion\AbstractAssertion;
 use Application\Service\AutorisationInscription\AutorisationInscriptionService;
 use Application\Service\Rapport\RapportService;
-use Individu\Service\IndividuService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

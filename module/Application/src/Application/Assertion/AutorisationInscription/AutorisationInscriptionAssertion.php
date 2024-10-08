@@ -60,19 +60,18 @@ class AutorisationInscriptionAssertion extends AbstractAssertion implements User
             return false;
         }
 
-        $this->getRequestedAutorisationInscription();
+        $this->autorisationInscription = $this->getRequestedAutorisationInscription();
         $these = $this->rapport?->getThese();
         try {
             if ($action == 'ajouter') {
-                if ($this->autorisationInscription === null) {
-                    if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
-                        $this->assertTrue(
-                            $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
-                            "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
-                        );
-                    }
-                    return $this->canAjouterAutorisationInscription($these);
+                if ($this->autorisationInscription !== null) return false;
+                if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
+                    $this->assertTrue(
+                        $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
+                        "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
+                    );
                 }
+                return $this->canAjouterAutorisationInscription($these);
             }
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -96,13 +95,20 @@ class AutorisationInscriptionAssertion extends AbstractAssertion implements User
         }
 
         $this->autorisationInscription = $entity;
+        if($this->autorisationInscription->getId() === null){
+            $this->autorisationInscription = $this->autorisationInscriptionService->getRepository()->findOneBy(["rapport" => $this->autorisationInscription->getRapport()->getId()]) ?
+                $this->autorisationInscriptionService->getRepository()->findOneBy(["rapport" => $this->autorisationInscription->getRapport()->getId()]) :
+                $this->autorisationInscription;
+        }
 
         try {
             switch ($privilege) {
                 case AutorisationInscriptionPrivileges::AUTORISATION_INSCRIPTION_AJOUTER:
                     if($this->autorisationInscription->getId()) return false;
+
                     $this->rapport = $this->autorisationInscription->getRapport();
                     $these = $this->rapport?->getThese();
+
                     if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
                         $this->assertTrue(
                             $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
@@ -123,6 +129,9 @@ class AutorisationInscriptionAssertion extends AbstractAssertion implements User
 
     private function canAjouterAutorisationInscription(These $these): bool
     {
+        //Si la thèse est importée, ne pas donner le droit de créer une autorisation d'inscription (pour l'instant)
+        if($these->getSource()->getImportable()) return false;
+
         $anneesInscriptionThese = array_map(function(TheseAnneeUniv $anneeUniv) {
             return $anneeUniv->getPremiereAnnee();
         },  $these->getAnneesUnivInscription()->toArray());
