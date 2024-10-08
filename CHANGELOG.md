@@ -12,6 +12,7 @@ Journal des modifications
 - Module Admission : Export vers Pégase -> export seulement des thèses dont l'individu n'est pas encore doctorant
 - Possibilité pour le futur doctorant de se créer un compte utilisateur local pour saisir un dossier d'admission.
 - Etablissements : 3 saisies dédiées selon le type d'étab (d'inscription, CED, autre) ; amélioration du listing des établissements.
+- [FIX] Listing des rapports d'activité : plantage en cas de liste d'années universitaires vide.
 - [FIX] Procédure privilege__update_role_privilege() en bdd : abandon des retraits de privilèges en fonction des profils car des rôles ne sont associés à aucun profil.
 - [FIX] Recherche textuelle d'individu : la prise en compte de chacun des termes avait été sabotée !
 - [FIX] Le bouton de recherche/liaison de notice IdRef ne fonctionnait pas dans une modale (unicaen/idref 1.0.0 requis).

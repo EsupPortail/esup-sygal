@@ -76,18 +76,20 @@ class RapportActiviteController extends AbstractController
         $this->rapportActiviteCreationRule->execute();
 
         $anneesUnivs = $this->these->getAnneesUnivInscription();
-        $this->rapportActiviteCreationRule->setAnneesUnivs($anneesUnivs->toArray());
-        $anneesUnivsPossiblesPourRapportAnnuel = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportAnnuel();
-        sort($anneesUnivsPossiblesPourRapportAnnuel);
-        $anneesUnivsPossiblesPourRapportFinContrat = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportFinContrat();
-        sort($anneesUnivsPossiblesPourRapportFinContrat);
-
         $typesRapportPossiblesData = [];
-        if ($this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {
-            $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_ANNUEL, 'value' => 0];
-        }
-        if ($this->rapportActiviteCreationRule->canCreateRapportFinContrat()) {
-            $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_FIN_CONTRAT, 'value' => 1];
+        if (!$anneesUnivs->isEmpty()) {
+            $this->rapportActiviteCreationRule->setAnneesUnivs($anneesUnivs->toArray());
+            $anneesUnivsPossiblesPourRapportAnnuel = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportAnnuel();
+            sort($anneesUnivsPossiblesPourRapportAnnuel);
+            $anneesUnivsPossiblesPourRapportFinContrat = $this->rapportActiviteCreationRule->getAnneesUnivsDisponiblesPourRapportFinContrat();
+            sort($anneesUnivsPossiblesPourRapportFinContrat);
+
+            if ($this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {
+                $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_ANNUEL, 'value' => 0];
+            }
+            if ($this->rapportActiviteCreationRule->canCreateRapportFinContrat()) {
+                $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_FIN_CONTRAT, 'value' => 1];
+            }
         }
 
         $typeRapportPossiblesOptions = [];
