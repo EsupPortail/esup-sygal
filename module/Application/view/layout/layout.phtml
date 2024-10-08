@@ -57,7 +57,7 @@ $navigationHelper = $this->navigation('navigation');
         
         <div id="contenu-principal" class="container">
             <?php
-            $menuSecondaireHelper = $navigationHelper->menuSecondaire();
+            $menuSecondaireHelper = $navigationHelper->menuSecondaire('navigation');
             if ($menuSecondaire = (string) $menuSecondaireHelper): ?>
                 <div class="row">
                     <div class="col-12 col-md-2">
