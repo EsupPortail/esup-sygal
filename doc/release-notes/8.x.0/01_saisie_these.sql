@@ -729,3 +729,24 @@ where exists (
     where p.code in ('supprimer-sien') and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi')
       and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
 );
+
+-- Suppression du privilège pour le RESP_UR/GEST_UR/Directeur de thèse de consulter/télécharger les rapports CSI d'une thèse
+DELETE
+from role_privilege
+where privilege_id in (select id from privilege where code LIKE 'lister-sien' and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi'))
+  and role_id in (select id from role where code LIKE 'RESP_UR' or code LIKE 'GEST_UR' or code LIKE 'D');
+
+DELETE
+from role_privilege
+where privilege_id in (select id from privilege where code LIKE 'telecharger-sien' and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi'))
+  and role_id in (select id from role where code LIKE 'RESP_UR' or code LIKE 'GEST_UR' or code LIKE 'D');
+
+delete from profil_privilege pp1
+where exists (
+    select *
+    from profil_privilege pp
+             join profil on pp.profil_id = profil.id and role_id in ('RESP_UR', 'GEST_UR', 'D')
+             join privilege p on pp.privilege_id = p.id
+    where p.code in ('lister-sien', 'telecharger-sien') and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi')
+      and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
+);
