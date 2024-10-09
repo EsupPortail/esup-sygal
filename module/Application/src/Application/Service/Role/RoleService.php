@@ -125,8 +125,10 @@ class RoleService extends BaseService
             ->addSelect('i, r')
             ->join('ir.individu', 'i')
             ->join('ir.role', 'r')
+            ->leftJoin('r.structure', 's')->addSelect('s')
             ->where('i = :individu')
             ->andWhere('pasHistorise(r) = 1')
+            ->andWhere('s.id is null or s.histoDestruction is null')
             ->setParameter('individu', $individu);
 
         return $qb->getQuery()->execute();
@@ -146,7 +148,9 @@ class RoleService extends BaseService
             ->addSelect('i, r')
             ->join('ir.individu', 'i', Join::WITH, "i.sourceCode LIKE :pattern")
             ->join('ir.role', 'r')
+            ->leftJoin('r.structure', 's')->addSelect('s')
             ->andWhere('pasHistorise(r) = 1')
+            ->andWhere('s.id is null or s.histoDestruction is null')
             ->setParameter('pattern', $individuSourceCodePattern);
         return $qb->getQuery()->execute();
     }

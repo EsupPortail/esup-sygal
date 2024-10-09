@@ -15,6 +15,7 @@ Journal des modifications
 - [FIX] Listing des rapports d'activité : plantage en cas de liste d'années universitaires vide.
 - [FIX] Procédure privilege__update_role_privilege() en bdd : abandon des retraits de privilèges en fonction des profils car des rôles ne sont associés à aucun profil.
 - [FIX] Recherche textuelle d'individu : la prise en compte de chacun des termes avait été sabotée !
+- [FIX] La recherche des rôles de l'utilisateur connecté n'écartait pas ceux dont la structure était historisée.
 - [FIX] Le bouton de recherche/liaison de notice IdRef ne fonctionnait pas dans une modale (unicaen/idref 1.0.0 requis).
 - [FIX] Synchro : plantage lors de la génération du diff (unicaen/db-import 6.1.3 nécessaire car nouvelle plateforme Doctrine\DBAL\Platforms\PostgreSQL120Platform).
 - [FIX] Le menu Nos Thèses s'affichait à tort pour le rôle Doctorant (du fait que ce dernier est désormais tagué établissement-dépendant).
