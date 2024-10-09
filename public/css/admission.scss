@@ -649,6 +649,11 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   max-width: fit-content;
 }
 
+.dossier-complet-card > div, .dossier-incomplet-card > div, .commentaires-ajoutes-card > div, .dossier-refuse-card > div {
+  display:flex;
+  align-items: center;
+}
+
 .dossier-complet-card > div > p, .dossier-incomplet-card > div > p, .commentaires-ajoutes-card > div >p, .dossier-refuse-card > div > p {
   color: #707070;
   font-size: 15px;
@@ -688,6 +693,14 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   //display: none;
 }
 
+.avisCompl{
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+}
+
 /** Fin Partie Circuit de signatures **/
 
 
@@ -714,6 +727,8 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   border-radius: 5px;
   width: fit-content;
   margin: 15px;
+  display: flex;
+  align-items: center;
 }
 
 .admission-enregistrer-verification-container > .admission-informations-container{
@@ -721,13 +736,9 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 }
 
 .precisions-action-container p, .precisions-convention-intro-container p, .admission-informations-container p {
-  margin: 0;
   font-weight: bold;
   display: inline-block;
-}
-
-.precisions-action-container, .precisions-convention-intro-container i {
-  margin-right: 10px;
+  margin: 0 0 0 8px;
 }
 
 .precisions-convention-champs {

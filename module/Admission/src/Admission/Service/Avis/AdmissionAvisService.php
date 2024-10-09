@@ -4,7 +4,7 @@ namespace Admission\Service\Avis;
 
 use Application\Service\BaseService;
 use DateTime;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use Laminas\EventManager\EventManagerAwareTrait;
 use Admission\Entity\Db\Admission;

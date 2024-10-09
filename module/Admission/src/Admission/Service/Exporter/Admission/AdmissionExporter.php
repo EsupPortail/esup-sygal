@@ -70,7 +70,7 @@ class AdmissionExporter{
             if($sexe = $etudiant->getSexe()){
                 $sexe = rtrim($etudiant->getSexe(), '.') === "M" ? "M" : "F";
             }
-            $entry['numero_candidat'] = $etudiant->getNumeroCandidat();
+            $entry['numero_candidat'] = $admission->getNumeroCandidat();
             $entry['sexe'] = $sexe;
             $entry['nom_famille'] = $etudiant->getNomFamille();
             $entry['nom_usuel'] = $etudiant->getNomUsuel();
@@ -115,9 +115,7 @@ class AdmissionExporter{
         /** @var Admission $admission */
         foreach ($admissions as $admission) {
             $entry = [];
-            /** @var Etudiant $etudiant */
-            $etudiant = $admission->getEtudiant()->first();
-            $entry['numero_candidat'] = $etudiant->getNumeroCandidat();
+            $entry['numero_candidat'] = $admission->getNumeroCandidat();
             $entry['origine_admission'] = "CO";
             $entry['voie_admission'] = "D";
             $entry['annee_concours'] = null;

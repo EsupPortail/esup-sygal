@@ -37,21 +37,23 @@ $canSupprimerOperation =
     <div class="col-lg-4 text-sm text-muted info-validation-container etape-signature-infos-container">
         <p class="card-text text-<?php echo $statusClass ?>">
             <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
-
-            <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+            <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()):
+                $idAvis = "avisCompl".$avis->getId(); ?>
                 <br>
-                <a type="button" class="card-link text-sm" data-bs-toggle="modal"
-                       data-bs-target="#avisComplemsModal">
+                <a class="card-link text-sm complements-avis" type="button" data-bs-target="#<?= $idAvis ?>" data-bs-toggle="collapse" aria-expanded="false" aria-controls="<?= $idAvis ?>">
                     <span class="fas fa-glasses" title="Voir les détails de la validation"></span>
-                        Détails
+                    Détails
                 </a>
             <?php endif ?>
         </p>
-        <div class="log-full-content d-none">
-            <p>Voici les compléments :</p>
+    </div>
+    <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+        <div id="<?= $idAvis ?>" class="avisCompl collapse">
+            <h3>Compléments</h3>
             <?php echo $avisComplemsToHtml ?>
         </div>
-    </div>
+    <?php endif ?>
+
     <div class="col-lg-2 info-validation-container etape-signature-infos-container">
         <?php if ($canModifierOperation && ((isset($showActionButtons) && $showActionButtons))): ?>
             <a href="<?php echo $this->url('admission/modifierAvis', ['admissionAvis' => $operation->getId()]) ?>"

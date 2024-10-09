@@ -161,7 +161,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                     <td><?php echo $admission->getEtat() ?>
                         <a href="<?php echo $this->url('admission/generer-statut-dossier', ['action' => 'generer-statut-dossier','admission' => $admission->getId()], [], true) ?>"
                            title="Appuyer pour avoir plus de détails"
-                           data-bs-toggle="tooltip" data-bs-html="true" class="info_statut_dossier action ajax-modal">
+                           data-bs-toggle="tooltip" data-bs-html="true" data-event="acces-statut-dossier" class="info_statut_dossier action ajax-modal">
                             <span class="icon icon-information"></span>
                         </a>
                     </td>

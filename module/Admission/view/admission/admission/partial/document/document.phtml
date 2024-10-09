@@ -146,7 +146,7 @@ $enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_
                                                 <div class="spinner"></div>
                                             </div>
                                             <object id='conventionFormationDoctoraleObject'
-                                                    data="<?php echo $this->url('admission/generer-convention-formation', ['admission' => $admission->getId()], [], true) ?>"
+                                                    data="<?php echo $this->url('admission/generer-convention-formation', ['admission' => $admission->getId()], [], true) ?>#view=fit"
                                                     type="application/pdf" width="100%" height="4000">
                                             </object>
                                         </div>

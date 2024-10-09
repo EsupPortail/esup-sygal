@@ -11,7 +11,7 @@ use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\DateTimeAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\UserContextServiceAwareTrait;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\Exception\FichierServiceException;

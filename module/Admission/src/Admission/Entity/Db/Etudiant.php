@@ -56,11 +56,6 @@ class Etudiant implements HistoriqueAwareInterface{
     private $ine;
 
     /**
-     * @var string|null
-     */
-    private $numeroCandidat;
-
-    /**
      * @var Pays
      */
     private $adresseCodePays;
@@ -417,30 +412,6 @@ class Etudiant implements HistoriqueAwareInterface{
     public function getIne()
     {
         return $this->ine;
-    }
-
-    /**
-     * Set numeroCandidat.
-     *
-     * @param string|null $numeroCandidat
-     *
-     * @return Etudiant
-     */
-    public function setNumeroCandidat($numeroCandidat = null)
-    {
-        $this->numeroCandidat = $numeroCandidat;
-
-        return $this;
-    }
-
-    /**
-     * Get numeroCandidat.
-     *
-     * @return string|null
-     */
-    public function getNumeroCandidat()
-    {
-        return $this->numeroCandidat;
     }
 
     /**

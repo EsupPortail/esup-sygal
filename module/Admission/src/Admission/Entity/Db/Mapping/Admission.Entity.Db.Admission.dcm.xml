@@ -8,6 +8,8 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
+        <field name="numeroCandidat" type="string" column="numero_candidat" length="10" nullable="true"/>
+
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
         <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>

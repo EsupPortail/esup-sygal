@@ -642,7 +642,8 @@ class AdmissionController extends AdmissionAbstractController {
             'operationEnAttente' => $operationEnAttente,
             'showActionButtons' => false,
             'isOperationAllowedByRole' => $isOperationAllowedByRole,
-            'commentaires' => $commentaires
+            'commentaires' => $commentaires,
+            'title' => "Statut du dossier d'admission de {$admission->getIndividu()}"
         ]);
     }
 

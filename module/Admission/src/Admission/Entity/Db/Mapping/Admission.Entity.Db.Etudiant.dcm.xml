@@ -16,7 +16,6 @@
         <field name="prenom3" type="string" column="prenom3" length="40" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="date_naissance" nullable="true"/>
         <field name="ine" type="string" column="ine" length="11" nullable="true"/>
-        <field name="numeroCandidat" type="string" column="numero_candidat" length="10" nullable="true"/>
         <field name="adresseLigne1Etage" type="string" column="adresse_ligne1_etage" length="38" nullable="true"/>
         <field name="adresseLigne2Batiment" type="string" column="adresse_ligne2_batiment" length="38" nullable="true"/>
         <field name="adresseLigne3voie" type="string" column="adresse_ligne3_voie" length="38" nullable="true"/>

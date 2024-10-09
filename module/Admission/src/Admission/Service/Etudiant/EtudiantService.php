@@ -8,14 +8,12 @@ use Admission\Entity\Db\Repository\EtudiantRepository;
 use Admission\Entity\Db\Verification;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Service\BaseService;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtudiantService extends BaseService
 {
     use VerificationServiceAwareTrait;
-
-    private const DEFAULT_SOURCE_CODE = "SYG";
 
     /**
      * @return EtudiantRepository
@@ -110,13 +108,5 @@ class EtudiantService extends BaseService
         }
 
         return $etudiant;
-    }
-
-    public function generateUniqueNumeroCandidat(Admission $admission): string
-    {
-        $currentYear = (new \DateTime())->format('y');
-        $id = $admission->getId();
-        $formattedId = str_pad($id, 2, '0', STR_PAD_LEFT);
-        return self::DEFAULT_SOURCE_CODE.$currentYear.$formattedId;
     }
 }
