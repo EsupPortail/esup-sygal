@@ -27,3 +27,8 @@ WHERE aa.id = ae.admission_id;
 
 ALTER TABLE admission_etudiant
 DROP COLUMN numero_candidat;
+
+-- Nouveau nature de fichier pour la charte du doctorat signée
+INSERT INTO nature_fichier (id, code, libelle)
+VALUES (220, 'ADMISSION_CHARTE_DOCTORAT_SIGNEE', 'Charte du doctorat signée')
+ON CONFLICT DO NOTHING;

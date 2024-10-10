@@ -1,13 +1,13 @@
 <?php
 /**
  * @var array $operations
- * @var Individu $individu
  * @var string $returnUrl
  * @var AdmissionOperationInterface $operationEnAttente
  * @var Admission $admission
  * @var boolean $showActionButtons
  * @var boolean $isOperationAllowedByRole
  * @var array $commentaires
+ * @var Role $role
  */
 
 use Admission\Entity\Db\Admission;
@@ -15,9 +15,12 @@ use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionOperationInterface;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\TypeValidation;
+use Application\Entity\Db\Role;
 use Individu\Entity\Db\Individu;
 
 $ajaxModalEvent = 'EVENT_AVIS_SAISI';
+/** @var Individu $individu */
+$individu = $admission?->getIndividu()->getId();
 ?>
 <div class="row">
     <div class="col-lg-7 col-sm-12">
@@ -105,14 +108,15 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                             <h4 class="modal-title" id="myModalLabel">Commentaires associés à ce dossier d'admission</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="admission-informations-container">
-                                <i class="fas fa-info-circle"></i>
-                                <p>
-                                    Une fois les remarques corrigées, vous pourrez de nouveau attester sur l'honneur (à l'étape 4) de l'exactitude des informations saisies.
-                                    Cela permettra la notification des gestionnaires des modifications effectuées.
-                                </p>
-                            </div>
-                            <?php
+                            <?php if($role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT): ?>
+                                <div class="admission-informations-container">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>
+                                        Une fois les remarques corrigées, vous pourrez de nouveau attester sur l'honneur (à l'étape 4) de l'exactitude des informations saisies.
+                                        Cela permettra la notification des gestionnaires des modifications effectuées.
+                                    </p>
+                                </div>
+                            <?php endif;
                             if($commentaires && is_array($commentaires)){
                                 foreach ($commentaires as $commentaire) { ?>
                                     <div class="box card">

@@ -2,6 +2,7 @@
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionOperationInterface;
+use Application\Entity\Db\Role;
 use Individu\Entity\Db\Individu;
 
 /**
@@ -13,6 +14,7 @@ use Individu\Entity\Db\Individu;
  * * @var boolean $showActionButtons
  * * @var boolean $isOperationAllowedByRole
  * * @var array $commentaires
+ * * @var Role $role
  */
 echo $this->partial('admission/admission/partial/circuit-signatures', [
     'operations' => $operations,
@@ -22,5 +24,6 @@ echo $this->partial('admission/admission/partial/circuit-signatures', [
     'admission' => $admission,
     'showActionButtons' => $showActionButtons,
     'isOperationAllowedByRole' => $isOperationAllowedByRole,
-    'commentaires' => $commentaires
+    'commentaires' => $commentaires,
+    'role' => $role
 ]);

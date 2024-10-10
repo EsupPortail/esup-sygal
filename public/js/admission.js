@@ -440,11 +440,39 @@ document.addEventListener("DOMContentLoaded", function() {
                         url: '/enregistrer-document/' + individuId + '/' + inputId,
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
+                        onload: (response => {
+                            if (inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE") {
+                                const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
+                                if (charteDoctoratSigneContainer && precisionsContainer) {
+                                    const icon = precisionsContainer.querySelector("i");
+                                    if (icon) {
+                                        icon.classList.add("fa-check-circle")
+                                        icon.classList.remove("fa-exclamation-circle")
+                                    }
+                                    precisionsContainer.classList.add("success")
+                                }
+                            }
+                        }),
                     },
                     revert: {
                         url: '/supprimer-document/' + individuId + '/' + inputId,
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
+                        onload: (response => {
+                            if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE"){
+                                const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
+                                if(charteDoctoratSigneContainer && precisionsContainer){
+                                    const icon = precisionsContainer.querySelector("i");
+                                    if(icon){
+                                        icon.classList.remove("fa-check-circle")
+                                        icon.classList.add("fa-exclamation-circle")
+                                    }
+                                    precisionsContainer.classList.remove("success")
+                                }
+                            }
+                        }),
                     },
                     load: (source, load, error) => {
                         fetch('/admission/telecharger-document/' + individuId + '/' + inputId + '?name='+documents[inputId].libelle, {
@@ -482,6 +510,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                     if (dateTeleversementDiv && actionFileDiv) {
                                         dateTeleversementDiv.style.display = 'none';
                                         actionFileDiv.style.display = 'none';
+                                    }
+                                    if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE"){
+                                        const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                        const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
+                                        if(charteDoctoratSigneContainer && precisionsContainer){
+                                            const icon = precisionsContainer.querySelector("i");
+                                            if(icon){
+                                                icon.classList.remove("fa-check-circle")
+                                                icon.classList.add("fa-exclamation-circle")
+                                            }
+                                            precisionsContainer.classList.remove("success")
+                                        }
                                     }
                                 }
                             }

@@ -171,6 +171,9 @@ div.header-admission .introduction {
   width: auto; }
 
 /** INDEX Admission **/
+.individu-recherche-index-container {
+  align-items: baseline; }
+
 .admission-form {
   display: flex;
   flex-direction: column;
@@ -290,6 +293,9 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .file-charte-doctorat, .file-convention-formation-doctorale {
   display: none;
   width: auto; }
+
+.acces-charte-doct-signee-btn {
+  color: #337ab7; }
 
 .charte-doctorale-operations, .convention-formation-doctorale-operations {
   display: none; }
@@ -550,7 +556,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .validations-cards-container {
   margin-top: 15px; }
 
-.avisCompl {
+.avisCompl, #file-charte-doctorat-signe-container {
   background-color: #f8f9fa;
   border-radius: 15px;
   padding: 20px;
@@ -562,25 +568,29 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .convention-formation-doctorale-container > form > .row {
   margin-bottom: 30px; }
 
+.precisions-action-container, .precisions-convention-intro-container, .admission-informations-container {
+  padding: 15px;
+  border-radius: 5px;
+  width: fit-content;
+  display: flex;
+  align-items: center; }
+
 .precisions-action-container, .precisions-convention-intro-container {
   background-color: #f8d7da;
   color: #721c24;
-  padding: 15px;
   border: 1px solid #f5c6cb;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  width: fit-content; }
+  margin-bottom: 20px; }
+
+.precisions-action-container.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb; }
 
 .admission-informations-container {
   background-color: #fdf2d2;
   color: #93700f;
-  padding: 15px;
   border: 1px solid #ffe49b;
-  border-radius: 5px;
-  width: fit-content;
-  margin: 15px;
-  display: flex;
-  align-items: center; }
+  margin: 15px; }
 
 .admission-enregistrer-verification-container > .admission-informations-container {
   margin-left: auto; }

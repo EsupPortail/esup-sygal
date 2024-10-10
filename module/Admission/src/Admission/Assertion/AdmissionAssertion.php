@@ -12,6 +12,7 @@ use Application\Entity\Db\Role;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\Common\Collections\Collection;
+use Fichier\Entity\Db\NatureFichier;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
@@ -266,6 +267,10 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 $admission->getEtat()->getCode() == (Admission::ETAT_EN_COURS_VALIDATION || Admission::ETAT_VALIDE || Admission::ETAT_REJETE),
                 "Le dossier d'admission doit être en cours de validation / être validé / être rejeté"
             );
+        }elseif($codeNatureFichier === NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT_SIGNEE){
+            if(!($this->userContextService->getSelectedIdentityRole()->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT)){
+                throw new FailedAssertionException("Seul le candidat peut gérer ce document");
+            }
         }else{
             $this->assertTrue(
                 $admission->getEtat()->getCode() == Admission::ETAT_EN_COURS_SAISIE,

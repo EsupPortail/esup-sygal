@@ -14,6 +14,8 @@ use Admission\Service\Financement\FinancementService;
 use Admission\Service\Inscription\InscriptionService;
 use Admission\Service\Notification\NotificationFactory;
 use Admission\Service\Operation\AdmissionOperationService;
+use Admission\Service\TypeValidation\TypeValidationService;
+use Admission\Service\Validation\AdmissionValidationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -60,6 +62,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $roleService = $container->get(RoleService::class);
         $admissionRechercheService = $container->get(AdmissionRechercheService::class);
         $admissionExporter = $container->get(AdmissionExporter::class);
+        $admissionTypeValidationService = $container->get(TypeValidationService::class);
+        $admissionValidationService = $container->get(AdmissionValidationService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -91,6 +95,8 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setRoleService($roleService);
         $controller->setAdmissionRechercheService($admissionRechercheService);
         $controller->setAdmissionExporter($admissionExporter);
+        $controller->setTypeValidationService($admissionTypeValidationService);
+        $controller->setAdmissionValidationService($admissionValidationService);
 
         return $controller;
     }

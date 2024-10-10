@@ -1,0 +1,139 @@
+<?php
+/**
+* @var PhpRenderer $this
+* @var $fieldset
+* @var $fieldsetCharteDoctoratSignee
+* @var array $documents
+* @var AdmissionValidation $validation_charte_doctorat
+* @var string $returnUrl
+* @var Admission $admission
+* @var boolean $isOperationAllowedByRole
+* @var boolean $canTelechargerDocument
+* @var Role $role
+*/
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\Inscription;
+use Application\Entity\Db\Role;
+use Application\View\Renderer\PhpRenderer;
+use Fichier\Entity\Db\NatureFichier;
+use Individu\Entity\Db\Individu;
+
+/** @var Inscription $inscription */
+$inscription = $admission?->getInscription()->first();
+/** @var Individu $individu */
+$individu = $admission?->getIndividu()->getId();
+$natureFichierCharteDoctoratSignee = $fieldsetCharteDoctoratSignee->getAttribute('id');
+$natureFichierCharteDoctorat = $fieldset->getAttribute('id');
+$dejaTeleversee = array_key_exists($natureFichierCharteDoctoratSignee, $documents);
+?>
+<div class="modal fade" id="modalShowCharteDoctorale" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Charte du doctorat</h4>
+            </div>
+            <div class="modal-body">
+                <?php
+
+                if($inscription && $inscription->getEtablissementInscription() !== null && !isset($documents[NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])): ?>
+                    <div class="precisions-action-container">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>
+                            Aucune charte doctorale n'était associée à votre établissement (lors du choix de l'établissement d'inscription, à l'étape 2 du formulaire).<br>
+                            Veuillez vous rapprocher de votre gestionnaire afin de résoudre cette situation.
+                        </p>
+                    </div>
+                <?php elseif($validation_charte_doctorat->getId() === null): ?>
+                    <div class="precisions-action-container">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>
+                            L'étudiant (<?= $admission->getIndividu() ?>) doit lire l'intégralité de cette charte, puis certifier avoir effectivement pris connaissance de son contenu à la fin du document.
+                        </p>
+                    </div>
+                <?php endif; ?>
+                <?php $class = $dejaTeleversee ? " success" : null; ?>
+                <div class="precisions-action-container <?= $class ?>">
+                    <?php if($class): ?>
+                        <i class="fas fa-check-circle"></i>
+                    <?php else: ?>
+                        <i class="fas fa-exclamation-circle"></i>
+                    <?php endif;
+                        $texte1 = $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT ? " vous devrez" : " l'étudiant devra";
+                        $texte2 = $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT ? " Vous pourrez ensuite" : " Il pourra ensuite";
+                    ?>
+                    <p>
+                        Une fois signée, <?= $texte1 ?>
+                        <?php if($canTelechargerDocument): ?>
+                            <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $natureFichierCharteDoctorat], [],true) ?>">télécharger</a>
+                        <?php else: ?>
+                            télécharger
+                        <?php endif; ?>
+                        la charte du doctorat afin d'effectuer le circuit de signatures (présent à la fin du document).
+                        <br>
+                        <?= $texte2 ?> la téléverser à
+                        <a type="button" class="acces-charte-doct-signee-btn" data-bs-target="#file-charte-doctorat-signe-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="file-charte-doctorat-signe-container">
+                            l'endroit prévu ici.
+                        </a>
+                    </p>
+                </div>
+                <?php $class = $dejaTeleversee ? " show" : null; ?>
+                <div class="collapse <?= $class ?> row subfield" id="file-charte-doctorat-signe-container">
+                    <div class="col-lg-3 col-sm-12 filename-label">
+                        <?php echo $this->formlabel($fieldsetCharteDoctoratSignee); ?>
+                    </div>
+                    <div class="col-lg-9 col-sm-12">
+                        <div class="row detail-file-container">
+                            <div class="col-lg-7 upload-file">
+                                <?php echo $this->formfile($fieldsetCharteDoctoratSignee->setAttribute('disabled', false)); ?>
+                            </div>
+                            <?php if($dejaTeleversee): ?>
+                                <div class="col-lg-3 date-televersement-container">
+                                    <p>Téléversé le
+                                        <?php
+                                        echo $documents[$natureFichierCharteDoctoratSignee]['televersement'];
+                                        ?>
+                                    </p>
+                                </div>
+                                <?php if($canTelechargerDocument): ?>
+                                    <div class="col-lg-1 action-file-container">
+                                        <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $natureFichierCharteDoctoratSignee], [],true) ?>"
+                                           class="icon icon-download iconly"
+                                           title="Télécharger ?"></a>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if(isset($documents[NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])): ?>
+                    <div class="col-lg-5 upload-file file-charte-doctorat">
+                        <?php echo $this->formfile($fieldset); ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="charte-doctorale-operations">
+                    <?php
+                    $libelleOperation = "J'atteste sur l'honneur avoir pris connaissance de l'intégralité de la charte doctorale mentionnée ci-dessus.";
+                    echo $this->partial('admission/admission/partial/operation-card', [
+                        'operation' => $validation_charte_doctorat,
+                        'count' => 1,
+                        'individu' => $individu,
+                        'operationEnAttente' => null,
+                        'returnUrl' => $returnUrl,
+                        'libelleOperation' => $libelleOperation,
+                        'showRangOperation' => false,
+                        'showActionButtons' => true,
+                        'isOperationAllowedByRole' => $isOperationAllowedByRole
+                    ]);
+                    ?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>

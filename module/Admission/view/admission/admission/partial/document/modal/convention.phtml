@@ -1,0 +1,74 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var $fieldset
+ * @var $fieldsetCharteDoctoratSignee
+ * @var array $documents
+ * @var string $returnUrl
+ * @var Admission $admission
+ * @var boolean $isOperationAllowedByRole
+ * @var boolean $canTelechargerDocument
+ * @var ConventionFormationDoctorale $conventionFormationDoctorale
+ * @var array $conventionFormationDoctoraleOperations
+ */
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\ConventionFormationDoctorale;
+use Admission\Entity\Db\Inscription;
+use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
+
+/** @var Inscription $inscription */
+$inscription = $admission?->getInscription()->first();
+/** @var Individu $individu */
+$individu = $admission?->getIndividu()->getId();
+?>
+<div class="modal fade" id="modalShowConventionFormationDoctorale" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Convention de formation doctorale</h4>
+            </div>
+            <div class="modal-body">
+                <div class="precisions-action-container">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>
+                        Il est nécessaire de lire l'intégralité de cette convention, puis de
+                        certifier avoir effectivement pris connaissance de son contenu à la fin du
+                        document.
+                    </p>
+                </div>
+                <div class="col-lg-5 upload-file file-convention-formation-doctorale">
+                    <div id="loading-indicator">
+                        <div class="spinner"></div>
+                    </div>
+                    <object id='conventionFormationDoctoraleObject'
+                            data="<?php echo $this->url('admission/generer-convention-formation', ['admission' => $admission->getId()], [], true) ?>#view=fit"
+                            type="application/pdf" width="100%" height="4000">
+                    </object>
+                </div>
+                <div class="convention-formation-doctorale-operations">
+                    <?php
+                    $count = 1;
+                    foreach ($conventionFormationDoctoraleOperations as $conventionFormationDoctoraleOperation):
+                        echo $this->partial('admission/admission/partial/operation-card', [
+                            'operation' => $conventionFormationDoctoraleOperation,
+                            'count' => $count,
+                            'individu' => $individu,
+                            'operationEnAttente' => null,
+                            'returnUrl' => $returnUrl,
+                            'libelleOperation' => null,
+                            'showRangOperation' => true,
+                            'showActionButtons' => true,
+                            'isOperationAllowedByRole' => $isOperationAllowedByRole
+                        ]);
+                        $count += 1;
+                    endforeach; ?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>

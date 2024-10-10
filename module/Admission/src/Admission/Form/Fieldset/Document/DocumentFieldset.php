@@ -45,7 +45,7 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         $this->add(
             (new File('exemplairesConvention'))
                 ->setLabel("Convention de formation doctorale")
-                ->setAttributes(["id" => "ADMISSION_CONVENTION"])
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CONVENTION])
                 ->setLabelAttributes(['data-after' => " / Doctoral Training Agreement"])
         );
 
@@ -54,6 +54,13 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 ->setLabel("Charte du doctorat")
                 ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])
                 ->setLabelAttributes(['data-after' => " / PhD Charter"])
+        );
+
+        $this->add(
+            (new File('charteDoctoratSignee'))
+                ->setLabel("Charte du doctorat signée")
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT_SIGNEE])
+                ->setLabelAttributes(['data-after' => " / PhD Charter signed"])
         );
 
         $this->add(

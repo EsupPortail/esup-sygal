@@ -10,6 +10,7 @@ use Admission\Entity\Db\TypeValidation;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Document\DocumentFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -24,6 +25,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
  * @var boolean $isOperationAllowedByRole
  * @var array $commentaires
+ * @var Role $role
  * @see \Admission\Controller\AdmissionController::documentAction()
  */
 $form->prepare();
@@ -69,41 +71,42 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('diplomeBac'),
         'documents' => $documents,
-        'individu' => $individu,
+        'admission' => $admission,
     ]);
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('curicculumVitae'),
         'documents' => $documents,
-        'individu' => $individu,
+        'admission' => $admission,
     ]);
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('financement'),
         'documents' => $documents,
-        'individu' => $individu,
+        'admission' => $admission,
     ]);
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('projetThese'),
         'documents' => $documents,
-        'individu' => $individu,
+        'admission' => $admission,
     ]);
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('exemplairesConvention'),
         'documents' => $documents,
-        'individu' => $individu,
         'admission' => $admission,
         'returnUrl' => $returnUrl,
         'conventionFormationDoctoraleOperations' => $conventionFormationDoctoraleOperations,
         'conventionFormationDoctorale' => $conventionFormationDoctorale,
-        'isOperationAllowedByRole' => $isOperationAllowedByRole
+        'isOperationAllowedByRole' => $isOperationAllowedByRole,
+        'role' => $role
     ]);
     echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('exemplairesCharteDoctorat'),
         'documents' => $documents,
-        'individu' => $individu,
         'admission' => $admission,
         'validation_charte_doctorat' => $operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE],
         'isOperationAllowedByRole' => $isOperationAllowedByRole,
         'returnUrl' => $returnUrl,
+        'fieldsetCharteDoctoratSignee' => $fieldset->get('charteDoctoratSignee'),
+        'role' => $role
     ]);
     if ($etudiant->getNiveauEtude() == 2) { ?>
         <div class="row subfield">
@@ -130,17 +133,17 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         echo $this->partial('admission/partial/document/document', [
             'fieldset' => $fieldset->get('diplomesRelevesNotesTraduits'),
             'documents' => $documents,
-            'individu' => $individu,
+            'admission' => $admission,
         ]);
         echo $this->partial('admission/partial/document/document', [
             'fieldset' => $fieldset->get('acteNaissance'),
             'documents' => $documents,
-            'individu' => $individu,
+            'admission' => $admission,
         ]);
         echo $this->partial('admission/partial/document/document', [
             'fieldset' => $fieldset->get('photocopiePasseport'),
             'documents' => $documents,
-            'individu' => $individu,
+            'admission' => $admission,
         ]);
     } ?>
     <?php if ($etudiant->getNiveauEtude() == 2 && $etudiant->getTypeDiplomeAutre() == 2){ ?>
@@ -153,7 +156,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         echo $this->partial('admission/partial/document/document', [
             'fieldset' => $fieldset->get('diplomesTravauxExperiencePro'),
             'documents' => $documents,
-            'individu' => $individu,
+            'admission' => $admission,
         ]);
     } ?>
     <?php if ($inscription && ($inscription->getConfidentialite() || $inscription->getCoTutelle() || $inscription->getCoEncadrement())) { ?>
@@ -173,14 +176,14 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
             echo $this->partial('admission/partial/document/document', [
                 'fieldset' => $fieldset->get('documentsCotutelle'),
                 'documents' => $documents,
-                'individu' => $individu,
+                'admission' => $admission,
             ]);
         } ?>
         <?php if ($inscription->getCoEncadrement()) {
             echo $this->partial('admission/partial/document/document', [
                 'fieldset' => $fieldset->get('documentsCoencadrement'),
                 'documents' => $documents,
-                'individu' => $individu,
+                'admission' => $admission,
             ]);
         }
     } ?>
@@ -250,22 +253,22 @@ if ($canVerifierAdmission) { ?>
     unset($operations[TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
     echo $this->partial('admission/admission/partial/circuit-signatures', [
         'operations' => $operations,
-        'individu' => $individu,
+        'admission' => $admission,
         'returnUrl' => $returnUrl,
         'operationEnAttente' => $operationEnAttente,
-        'admission' => $admission,
         'showActionButtons' => true,
         'isOperationAllowedByRole' => $isOperationAllowedByRole,
-        'commentaires' => $commentaires
+        'commentaires' => $commentaires,
+        'role' => $role
     ]);
 
     if ($canGenererRecapitulatif) { ?>
-            <a class="btn btn-primary"
-               href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
-               target="_blank">
-                <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
-                Télécharger le récapitulatif du dossier d'admission
-            </a>
+        <a class="btn btn-primary"
+           href="<?php echo $this->url('admission/generer-recapitulatif', ['admission' => $admission->getId()], [], true); ?>"
+           target="_blank">
+            <span class="icon icon-pdf" title="Télécharger le récapitulatif" data-bs-toggle="tooltip" data-bs-html="true"></span>
+            Télécharger le récapitulatif du dossier d'admission
+        </a>
     <?php }
 
     //Affichage du bouton seulement si l'on peut gérer un récap signé
@@ -285,17 +288,16 @@ if ($canVerifierAdmission) { ?>
                     echo $this->partial('admission/partial/document/document', [
                         'fieldset' => $fieldset->get('recapitulatifDossierSigne')->setAttribute('disabled', false),
                         'documents' => $documents,
-                        'individu' => $individu,
+                        'admission' => $admission,
                     ]);
                 } else {
                     echo $this->partial('admission/partial/document/document', [
                         'fieldset' => $fieldset->get('recapitulatifDossierSigne'),
                         'documents' => $documents,
-                        'individu' => $individu,
+                        'admission' => $admission,
                     ]);
                 } ?>
             </div>
         <?php }
     } ?>
-
 </div>
