@@ -138,8 +138,8 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
         //Informations Inscription
         $this->add(
             (new Select("specialiteDoctorat"))
-                ->setLabel("Code et libellé de la spécialité d'inscription en doctorat souhaitée")
-                ->setLabelAttributes(['data-after' => ""])
+                ->setLabel("Spécialité d'inscription en doctorat souhaitée")
+                ->setLabelAttributes(['data-after' => " / Preferred doctoral specialization"])
                 ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([
                     'class' => 'bootstrap-selectpicker show-tick',
@@ -160,8 +160,8 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
 
         $this->add(
             (new Text('disciplineDoctorat'))
-                ->setLabel("Code et libellé de la discipline d'inscription en doctorat souhaitée")
-                ->setLabelAttributes(['data-after' => " / Discipline code"])
+                ->setLabel("Discipline d'inscription en doctorat souhaitée")
+                ->setLabelAttributes(['data-after' => " / Preferred doctoral discipline"])
         );
 
         $this->add(
@@ -375,8 +375,6 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
                 ->setValueOptions([
                     1 => "Oui",
                     0 => "Non"])
-                ->setLabel("Cotutelle envisagée")
-                ->setLabelAttributes(['data-after' => " / Planned cotutelle"])
         );
 
         $paysCoTutelle = new SearchAndSelect('paysCoTutelle', ['label' => "Pays concerné"]);

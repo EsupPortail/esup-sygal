@@ -36,6 +36,11 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     private $id;
 
     /**
+     * @var string|null
+     */
+    private $numeroCandidature;
+
+    /**
      * @var Collection
      */
     private $financement;
@@ -110,6 +115,30 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set numeroCandidature.
+     *
+     * @param string|null $numeroCandidature
+     *
+     * @return Admission
+     */
+    public function setNumeroCandidature($numeroCandidature = null)
+    {
+        $this->numeroCandidature = $numeroCandidature;
+
+        return $this;
+    }
+
+    /**
+     * Get numeroCandidature.
+     *
+     * @return string|null
+     */
+    public function getNumeroCandidature()
+    {
+        return $this->numeroCandidature;
     }
 
     /**

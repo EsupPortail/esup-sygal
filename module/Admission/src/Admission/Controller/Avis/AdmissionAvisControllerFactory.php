@@ -22,12 +22,10 @@ class AdmissionAvisControllerFactory
         $admissionService = $container->get(AdmissionService::class);
         $admissionAvisService = $container->get(AdmissionAvisService::class);
         $avisForm = $container->get('FormElementManager')->get(AvisForm::class);
-        $etudiantService = $container->get(EtudiantService::class);
 
         $controller = new AdmissionAvisController();
         $controller->setAdmissionService($admissionService);
         $controller->setAdmissionAvisService($admissionAvisService);
-        $controller->setEtudiantService($etudiantService);
 
         $controller->setForm($avisForm);
 

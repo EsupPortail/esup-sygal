@@ -440,11 +440,39 @@ document.addEventListener("DOMContentLoaded", function() {
                         url: '/enregistrer-document/' + individuId + '/' + inputId,
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
+                        onload: (response => {
+                            if (inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE") {
+                                const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
+                                if (charteDoctoratSigneContainer && precisionsContainer) {
+                                    const icon = precisionsContainer.querySelector("i");
+                                    if (icon) {
+                                        icon.classList.add("fa-check-circle")
+                                        icon.classList.remove("fa-exclamation-circle")
+                                    }
+                                    precisionsContainer.classList.add("success")
+                                }
+                            }
+                        }),
                     },
                     revert: {
                         url: '/supprimer-document/' + individuId + '/' + inputId,
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
+                        onload: (response => {
+                            if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE"){
+                                const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
+                                if(charteDoctoratSigneContainer && precisionsContainer){
+                                    const icon = precisionsContainer.querySelector("i");
+                                    if(icon){
+                                        icon.classList.remove("fa-check-circle")
+                                        icon.classList.add("fa-exclamation-circle")
+                                    }
+                                    precisionsContainer.classList.remove("success")
+                                }
+                            }
+                        }),
                     },
                     load: (source, load, error) => {
                         fetch('/admission/telecharger-document/' + individuId + '/' + inputId + '?name='+documents[inputId].libelle, {
@@ -483,6 +511,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                         dateTeleversementDiv.style.display = 'none';
                                         actionFileDiv.style.display = 'none';
                                     }
+                                    if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE"){
+                                        const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                        const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
+                                        if(charteDoctoratSigneContainer && precisionsContainer){
+                                            const icon = precisionsContainer.querySelector("i");
+                                            if(icon){
+                                                icon.classList.remove("fa-check-circle")
+                                                icon.classList.add("fa-exclamation-circle")
+                                            }
+                                            precisionsContainer.classList.remove("success")
+                                        }
+                                    }
                                 }
                             }
                         }).catch(error => {
@@ -520,7 +560,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 credits: false,
                 maxFiles: 1,
                 pdfPreviewHeight: inputId === "ADMISSION_CHARTE_DOCTORAT" ? "8000" : false,
-                pdfComponentExtraParams: inputId === "ADMISSION_CHARTE_DOCTORAT" ? 'toolbar=0&page=1' : false,
+                pdfComponentExtraParams: inputId === "ADMISSION_CHARTE_DOCTORAT" ? 'toolbar=0&view=fit&page=1' : false,
                 allowPdfPreview: inputId === "ADMISSION_CHARTE_DOCTORAT",
             });
 
@@ -583,7 +623,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             const accessButtonConventionFormationDoctorale = document.querySelectorAll('.access-conv-form-doct-btn');
-            if(accessButtonConventionFormationDoctorale){
+            if(accessButtonConventionFormationDoctorale && fileConventionFormationDoctoraleDiv){
                 accessButtonConventionFormationDoctorale.forEach(function(button) {
                     button.addEventListener('click', function(event) {
                         event.preventDefault();

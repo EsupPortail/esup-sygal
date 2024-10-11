@@ -6,11 +6,13 @@ use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\TypeValidation;
+use Admission\Service\Transmission\TransmissionServiceAwareTrait;
 use Application\Entity\Db\Role;
 use InvalidArgumentException;
 
 class ModuleConfig
 {
+    use TransmissionServiceAwareTrait;
     const ATTESTATION_HONNEUR_CHARTE_DOCTORALE = 'ATTESTATION_HONNEUR_CHARTE_DOCTORALE';
     const ATTESTATION_HONNEUR = 'ATTESTATION_HONNEUR';
     const VALIDATION_GESTIONNAIRE = 'VALIDATION_GESTIONNAIRE';
@@ -83,7 +85,10 @@ class ModuleConfig
                         $directeur = $admission->getInscription()->first()->getDirecteur();
                         $coDirecteur = !$admission->getInscription()->first()->getCoDirection() || $admission->getInscription()->first()->getCoDirecteur();
                     }
-                    return $admission->isDossierComplet() && $directeur && $coDirecteur;
+
+                    $transmissionInBdd = $this->transmissionService->getRepository()->findOneBy(["admission" => $admission]);
+
+                    return $admission->isDossierComplet() && $directeur && $coDirecteur && $transmissionInBdd;
                 },
                 'enabled' => null,
                 'enabled_as_dql' => null,

@@ -41,7 +41,6 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
         $admission = $this->getRequestedAdmissionForAvis();
         
         try {
-
             switch ($action) {
                 case 'aviser':
                 case 'modifier':
@@ -159,7 +158,7 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
     {
         switch ($action) {
             case 'aviser':
-                $admission = $this->admissionService->getRepository()->findOneById($this->getRouteMatch()->getParam('admission'));
+                $admission = $this->admissionService->getRepository()->find($this->getRouteMatch()->getParam('admission'));
                 if ($admission === null) {
                     return false;
                 }
@@ -197,11 +196,7 @@ class AdmissionAvisAssertion extends AdmissionOperationAbstractAssertion
         }
 
         if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('admission') ) {
-            try {
-                $admission = $this->admissionService->getRepository()->findOneById($id);
-            } catch (NoResultException $e) {
-                throw new RuntimeException("Aucun avis trouvé avec cet id : $id", 0, $e);
-            }
+            $admission = $this->admissionService->getRepository()->find($id);
         }
 
         return $admission;

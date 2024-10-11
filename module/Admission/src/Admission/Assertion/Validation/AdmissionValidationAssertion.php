@@ -32,7 +32,7 @@ class AdmissionValidationAssertion extends AdmissionOperationAbstractAssertion
     {
         switch ($action) {
             case 'valider':
-                $admission = $this->admissionService->getRepository()->findOneById($this->getRouteMatch()->getParam('admission'));
+                $admission = $this->admissionService->getRepository()->find($this->getRouteMatch()->getParam('admission'));
                 if ($admission === null) {
                     return false;
                 }

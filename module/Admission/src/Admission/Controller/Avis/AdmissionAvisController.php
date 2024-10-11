@@ -4,11 +4,9 @@ namespace Admission\Controller\Avis;
 
 use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\Etat;
-use Admission\Entity\Db\Etudiant;
 use Admission\Event\Avis\AdmissionAvisEvent;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
-use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Doctrine\ORM\NoResultException;
 use Individu\Service\IndividuServiceAwareTrait;
@@ -25,7 +23,6 @@ class AdmissionAvisController extends AbstractController
     use AdmissionAvisServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use AvisServiceAwareTrait;
-    use EtudiantServiceAwareTrait;
 
     private AvisForm $form;
 
@@ -69,10 +66,8 @@ class AdmissionAvisController extends AbstractController
 
                 if($admission->getEtat()->getCode() === Etat::CODE_VALIDE){
                     //Génération du numéro de candidat
-                    /** @var Etudiant $etudiant */
-                    $etudiant = $admission->getEtudiant()->first();
-                    $etudiant->setNumeroCandidat($this->etudiantService->generateUniqueNumeroCandidat($admission));
-                    $this->etudiantService->update($etudiant);
+                    $admission->setNumeroCandidature($this->admissionService->generateUniqueNumeroCandidature($admission));
+                    $this->admissionService->update($admission);
                 }
 
                 $this->flashMessenger()->addSuccessMessage("Avis enregistré avec succès.");
@@ -118,10 +113,8 @@ class AdmissionAvisController extends AbstractController
 
                 if($admission->getEtat()->getCode() === Etat::CODE_VALIDE){
                     //Génération du numéro de candidat
-                    /** @var Etudiant $etudiant */
-                    $etudiant = $admission->getEtudiant()->first();
-                    $etudiant->setNumeroCandidat($this->etudiantService->generateUniqueNumeroCandidat($admission));
-                    $this->etudiantService->update($etudiant);
+                    $admission->setNumeroCandidature($this->admissionService->generateUniqueNumeroCandidature($admission));
+                    $this->admissionService->update($admission);
                 }
 
                 $this->flashMessenger()->addSuccessMessage("Avis modifié avec succès.");

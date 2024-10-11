@@ -16,9 +16,9 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
     {
         $this->add(
             (new File('diplomeBac'))
-                ->setLabel("Copie du diplôme de Bac + 5 permettant l'accès au doctorat")
+                ->setLabel("Diplôme de Bac + 5 permettant l'accès au doctorat")
                 ->setAttributes(["id" => "ADMISSION_DIPLOME_BAC"])
-                ->setLabelAttributes(['data-after' => " / Copy of the Bac +5 diploma allowing access to the doctorate"])
+                ->setLabelAttributes(['data-after' => " / Bac +5 diploma allowing access to the doctorate"])
         );
 
         $this->add(
@@ -37,7 +37,7 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
 
         $this->add(
             (new File('projetThese'))
-                ->setLabel("Le projet de thèse et son titre (dactylographiés) 1 à 1 page 1/2 maximum")
+                ->setLabel("Le projet de thèse et son titre (dactylographiés)")
                 ->setAttributes(["id" => "ADMISSION_PROJET_THESE"])
                 ->setLabelAttributes(['data-after' => " / The thesis proposal and its title (typed)"])
         );
@@ -45,7 +45,7 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
         $this->add(
             (new File('exemplairesConvention'))
                 ->setLabel("Convention de formation doctorale")
-                ->setAttributes(["id" => "ADMISSION_CONVENTION"])
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CONVENTION])
                 ->setLabelAttributes(['data-after' => " / Doctoral Training Agreement"])
         );
 
@@ -54,6 +54,13 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 ->setLabel("Charte du doctorat")
                 ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])
                 ->setLabelAttributes(['data-after' => " / PhD Charter"])
+        );
+
+        $this->add(
+            (new File('charteDoctoratSignee'))
+                ->setLabel("Charte du doctorat signée")
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT_SIGNEE])
+                ->setLabelAttributes(['data-after' => " / PhD Charter signed"])
         );
 
         $this->add(

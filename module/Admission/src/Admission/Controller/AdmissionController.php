@@ -29,6 +29,8 @@ use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Notification\NotificationFactoryAwareTrait;
 use Admission\Service\Operation\AdmissionOperationServiceAwareTrait;
+use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
+use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -76,6 +78,8 @@ class AdmissionController extends AdmissionAbstractController {
     use RoleServiceAwareTrait;
     use AdmissionRechercheServiceAwareTrait;
     use AdmissionExporterAwareTrait;
+    use TypeValidationServiceAwareTrait;
+    use AdmissionValidationServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -267,6 +271,7 @@ class AdmissionController extends AdmissionAbstractController {
         $response->setVariable('conventionFormationDoctoraleOperations', $conventionFormationDoctoraleOperations ?? null);
         $response->setVariable('isOperationAllowedByRole', $isOperationAllowedByRole ?? null);
         $response->setVariable('commentaires', $commentaires ?? null);
+        $response->setVariable('role', $this->userContextService->getSelectedIdentityRole());
         $response->setTemplate('admission/ajouter-document');
         return $response;
     }
@@ -471,9 +476,13 @@ class AdmissionController extends AdmissionAbstractController {
                     //Si on l'établissement d'inscription est modifié, on supprime l'ancienne charte doctorale, puis on ajoute la nouvelle
                     if($etablissementInscriptionBeforeUpdate !== $inscription->getEtablissementInscription()){
                         $charteDoctorat = $this->documentService->getRepository()->findByAdmissionAndNature($admission, NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT);
-                        if($charteDoctorat){
-                            $this->documentService->delete($charteDoctorat);
-                        }
+                        if($charteDoctorat) $this->documentService->delete($charteDoctorat);
+
+                        //on supprime une possible validation déjà effectuée sur la charte du doctorat
+                        $typeValidation = $this->typeValidationService->getRepository()->findOneBy(["code" => TypeValidation::CODE_ATTESTATION_HONNEUR_CHARTE_DOCTORALE]);
+                        $validation = $typeValidation ? $this->admissionValidationService->getRepository()->findAdmissionValidationByTypeValidationAndAdmission($admission, $typeValidation) : null;
+                        if($validation) $this->admissionValidationService->deleteAdmissionValidation($validation);
+
                         //On relie une charte du doctorat au dossier d'admission
                         $this->documentService->addCharteDoctoraleToAdmission($inscription);
                     }
@@ -642,7 +651,9 @@ class AdmissionController extends AdmissionAbstractController {
             'operationEnAttente' => $operationEnAttente,
             'showActionButtons' => false,
             'isOperationAllowedByRole' => $isOperationAllowedByRole,
-            'commentaires' => $commentaires
+            'commentaires' => $commentaires,
+            'title' => "Statut du dossier d'admission de {$admission->getIndividu()}",
+            'role' => $role
         ]);
     }
 

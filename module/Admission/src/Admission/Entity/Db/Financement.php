@@ -22,6 +22,11 @@ class Financement implements HistoriqueAwareInterface{
     private $financement;
 
     /**
+     * @var OrigineFinancement
+     */
+    private $financementCompl;
+
+    /**
      * @var string|null
      */
     private $detailContratDoctoral;
@@ -114,6 +119,30 @@ class Financement implements HistoriqueAwareInterface{
     public function getFinancement()
     {
         return $this->financement;
+    }
+
+    /**
+     * Set financementCompl.
+     *
+     * @param OrigineFinancement $financementCompl
+     *
+     * @return Financement|null
+     */
+    public function setFinancementCompl($financementCompl = null)
+    {
+        $this->financementCompl = $financementCompl;
+
+        return $this;
+    }
+
+    /**
+     * Get financementCompl.
+     *
+     * @return OrigineFinancement|null
+     */
+    public function getFinancementCompl()
+    {
+        return $this->financementCompl;
     }
 
     /**
@@ -315,8 +344,10 @@ class Financement implements HistoriqueAwareInterface{
             return "<b>Non renseigné</b>";
         }else{
             if($this->getContratDoctoral()){
+                $financement = $this->getFinancement()->getLibelleLong();
+                $financement .= $this->getFinancementCompl() ? ", ".$this->getFinancementCompl()->getLibelleLong() : "";
                 return $this->getFinancement() ?
-                        "Oui - ".$this->getFinancement()->getLibelleLong() :
+                        "Oui - ".$financement :
                         'Oui - Aucun employeur choisi';
             }else{
                 return "Aucun contrat doctoral prévu";
@@ -331,7 +362,7 @@ class Financement implements HistoriqueAwareInterface{
         if($this->tempsTravail == 1){
             return "temps complet";
         }else if($this->tempsTravail == 2){
-            return "à temps partiel";
+            return "temps partiel";
         }else{
             return "<b>Non renseigné</b>";
         }

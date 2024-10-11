@@ -2,8 +2,8 @@
 /**
  * @var PhpRenderer $this
  * @var $fieldset
+ * @var $fieldsetCharteDoctoratSignee
  * @var array $documents
- * @var int $individu
  * @var AdmissionValidation $validation_charte_doctorat
  * @var string $returnUrl
  * @var boolean $showActionButtons
@@ -11,6 +11,7 @@
  * @var Admission $admission
  * @var array $conventionFormationDoctoraleOperations
  * @var boolean $isOperationAllowedByRole
+ * @var Role $role
  */
 
 use Admission\Entity\Db\Admission;
@@ -19,178 +20,110 @@ use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Entity\Db\Etat;
 use Admission\Entity\Db\Inscription;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Fichier\Entity\Db\NatureFichier;
-
-$ajaxModalEvent = 'EVENT_AVIS_SAISI';
+use Individu\Entity\Db\Individu;
 
 $canTelechargerDocument =
     $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_TOUT_DOCUMENT)) ||
     $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT));
 
+$canAccederConventionFormationDoctorale = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_MODIFIER));
+$canGenererConventionFormationDoctorale = isset($conventionFormationDoctorale) && $this->isAllowed($conventionFormationDoctorale, AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER);
+
 /** @var Inscription $inscription */
 $inscription = isset($admission) && $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
+/** @var Individu $individu */
+$individu = $admission?->getIndividu()->getId();
+
+$natureFichier = $fieldset->getAttribute('id');
+$enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE;
 ?>
 
 <div class="row subfield">
     <div class="col-lg-3 col-sm-12 filename-label">
-        <?php echo $this->formlabel($fieldset) ?>
+        <?php
+            echo $this->formlabel($fieldset);
+            if($natureFichier === NatureFichier::CODE_ADMISSION_CONVENTION && $enCours && $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT): ?>
+                <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
+                    <span class="tooltip-text">Merci de remplir ce formulaire en collaboration avec votre direction de thèse.</span>
+                </span>
+            <?php endif; ?>
     </div>
     <div class="col-lg-9 col-sm-12">
         <div class="row detail-file-container">
-            <?php
-            $key = $fieldset->getAttribute('id');
-            if($key === NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT){ ?>
+            <?php if($natureFichier === NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT): ?>
                 <div class="col-lg-12 upload-file">
-                   <?php if($inscription && $inscription->getEtablissementInscription() === null){ ?>
+                   <?php if($inscription && $inscription->getEtablissementInscription() === null): ?>
                        <a class="btn aucune-charte-doctorale-associee-btn" data-toggle="tooltip" title="Veuillez renseigner un établissement d'inscription (à l'étape 2 du formulaire)">
                            <span class="icon icon-warning"></span>
                            Aucune charte doctorale associée au dossier
                        </a>
-                   <?php }else if($validation_charte_doctorat->getId() === null){ ?>
+                   <?php elseif($validation_charte_doctorat->getId() === null): ?>
                        <a class="btn access-charte-doctorat-btn required">Lire et valider la charte du doctorat</a>
-                    <?php }else{?>
+                   <?php else: ?>
                        <a class="btn btn-primary access-charte-doctorat-btn">Lire la charte du doctorat</a>
-                    <?php }?>
-                    <div class="modal fade" id="modalShowCharteDoctorale" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Charte du doctorat</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <?php if($inscription && $inscription->getEtablissementInscription() !== null && !isset($documents[NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT])){ ?>
-                                        <div class="precisions-action-container">
-                                            <i class="fas fa-exclamation-circle"></i>
-                                            <p>
-                                                Aucune charte doctorale n'était associée à votre établissement (lors du choix de l'établissement d'inscription, à l'étape 2 du formulaire).<br>
-                                                Veuillez vous rapprocher de votre gestionnaire afin de résoudre cette situation.
-                                            </p>
-                                        </div>
-                                    <?php }else if($validation_charte_doctorat->getId() === null){ ?>
-                                        <div class="precisions-action-container">
-                                            <i class="fas fa-exclamation-circle"></i>
-                                            <p>
-                                                L'étudiant (<?= $admission->getIndividu() ?>) doit lire l'intégralité de cette charte, puis certifier avoir effectivement pris connaissance de son contenu à la fin du document.
-                                            </p>
-                                        </div>
-                                    <?php }?>
-                                    <div class="col-lg-5 upload-file file-charte-doctorat">
-                                        <?php
-                                        echo $this->formfile($fieldset); ?>
-                                    </div>
-                                    <div class="charte-doctorale-operations">
-                                        <?php
-                                        $libelleOperation = "J'atteste sur l'honneur avoir pris connaissance de l'intégralité de la charte doctorale mentionnée ci-dessus.";
-                                        echo $this->partial('admission/admission/partial/operation-card', [
-                                            'operation' => $validation_charte_doctorat,
-                                            'count' => 1,
-                                            'individu' => $individu,
-                                            'operationEnAttente' => null,
-                                            'returnUrl' => $returnUrl,
-                                            'libelleOperation' => $libelleOperation,
-                                            'showRangOperation' => false,
-                                            'showActionButtons' => true,
-                                            'isOperationAllowedByRole' => $isOperationAllowedByRole
-                                        ]);
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                   <?php endif;
+                   echo $this->partial('admission/admission/partial/document/modal/charte', [
+                       'documents' => $documents,
+                       'validation_charte_doctorat' => $validation_charte_doctorat,
+                       'admission' => $admission,
+                       'fieldsetCharteDoctoratSignee' => $fieldsetCharteDoctoratSignee,
+                       'canTelechargerDocument' => $canTelechargerDocument,
+                       'fieldset' => $fieldset,
+                       'returnUrl' => $returnUrl,
+                       'isOperationAllowedByRole' => $isOperationAllowedByRole,
+                       'role' => $role
+                   ]); ?>
                 </div>
-            <?php } else if ($key === "ADMISSION_CONVENTION") {
-                $canAccederConventionFormationDoctorale = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_MODIFIER));
-                $canGenererConventionFormationDoctorale =
-                    $this->isAllowed($conventionFormationDoctorale, AdmissionPrivileges::ADMISSION_CONVENTION_FORMATION_GENERER); ?>
+            <?php elseif ($natureFichier === NatureFichier::CODE_ADMISSION_CONVENTION): ?>
                 <div class="col-lg-12 upload-file">
-                    <?php if ($canAccederConventionFormationDoctorale && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE) {
-                        $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation'; ?>
+                    <?php if ($canAccederConventionFormationDoctorale && $enCours):
+                        $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation';
+                        $classButton = $canGenererConventionFormationDoctorale ? "" : "required"; ?>
                         <a href="<?php echo $this->url($nameRoute, ['admission' => $admission->getId()], [], true) ?>"
-                           class="btn btn-primary"
+                           class="btn btn-primary access-conv-form-doct-btn <?=$classButton?>"
                            title="Accéder à la convention de formation doctorale">Remplir la convention de formation doctorale</a>
-                    <?php }
+                    <?php endif;
 
-                    if ($canGenererConventionFormationDoctorale) { ?>
+                    if ($canGenererConventionFormationDoctorale): ?>
                         <a class="btn btn-primary access-conv-form-doct-btn">Lire la convention de formation doctorale</a>
-                        <div class="modal fade" id="modalShowConventionFormationDoctorale" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Convention de formation doctorale</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="precisions-action-container">
-                                            <i class="fas fa-exclamation-circle"></i>
-                                            <p>
-                                                Il est nécessaire de lire l'intégralité de cette convention, puis de
-                                                certifier avoir effectivement pris connaissance de son contenu à la fin du
-                                                document.
-                                            </p>
-                                        </div>
-                                        <div class="col-lg-5 upload-file file-convention-formation-doctorale">
-                                            <div id="loading-indicator">
-                                                <div class="spinner"></div>
-                                            </div>
-                                            <object id='conventionFormationDoctoraleObject'
-                                                    data="<?php echo $this->url('admission/generer-convention-formation', ['admission' => $admission->getId()], [], true) ?>"
-                                                    type="application/pdf" width="100%" height="4000">
-                                            </object>
-                                        </div>
-                                        <div class="convention-formation-doctorale-operations">
-                                            <?php
-                                            $count = 1;
-                                            foreach ($conventionFormationDoctoraleOperations as $conventionFormationDoctoraleOperation) {
-                                                echo $this->partial('admission/admission/partial/operation-card', [
-                                                    'operation' => $conventionFormationDoctoraleOperation,
-                                                    'count' => $count,
-                                                    'individu' => $individu,
-                                                    'operationEnAttente' => null,
-                                                    'returnUrl' => $returnUrl,
-                                                    'libelleOperation' => null,
-                                                    'showRangOperation' => true,
-                                                    'showActionButtons' => true,
-                                                    'isOperationAllowedByRole' => $isOperationAllowedByRole
-                                                ]);
-                                                $count += 1;
-                                            }
-                                            ?>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php } ?>
+                        <?php echo $this->partial('admission/admission/partial/document/modal/convention', [
+                            'documents' => $documents,
+                            'conventionFormationDoctoraleOperations' => $conventionFormationDoctoraleOperations,
+                            'admission' => $admission,
+                            'canTelechargerDocument' => $canTelechargerDocument,
+                            'natureFichier' => $natureFichier,
+                            'conventionFormationDoctorale' => $conventionFormationDoctorale,
+                            'fieldset' => $fieldset,
+                            'returnUrl' => $returnUrl,
+                            'isOperationAllowedByRole' => $isOperationAllowedByRole,
+                            'role' => $role
+                        ]); ?>
+                    <?php endif ?>
                 </div>
-            <?php } else { ?>
+            <?php else: ?>
                 <div class="col-lg-5 upload-file">
                     <?php echo $this->formfile($fieldset) ?>
                 </div>
-                <?php
-                if(array_key_exists($key, $documents)){?>
+                <?php if(array_key_exists($natureFichier, $documents)): ?>
                     <div class="col-lg-3 date-televersement-container">
                         <p>Téléversé le
                             <?php
-                            echo $documents[$key]['televersement'];
+                            echo $documents[$natureFichier]['televersement'];
                             ?>
                         </p>
                     </div>
-                    <?php if($canTelechargerDocument){ ?>
+                    <?php if($canTelechargerDocument): ?>
                         <div class="col-lg-1 action-file-container">
-                            <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $key], [],true) ?>"
+                            <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $natureFichier], [],true) ?>"
                                class="icon icon-download iconly"
                                title="Télécharger ?"></a>
                         </div>
-                    <?php } ?>
-                <?php } ?>
-            <?php } ?>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

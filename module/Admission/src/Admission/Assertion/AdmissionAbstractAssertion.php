@@ -146,7 +146,7 @@ class AdmissionAbstractAssertion extends AbstractAssertion
 
         if (empty($admission)) {
             if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('admission')) {
-                $admission = $this->admissionService->getRepository()->findOneById($id);
+                $admission = $this->admissionService->getRepository()->find($id);
             }
         }
 

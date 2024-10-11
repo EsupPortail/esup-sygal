@@ -6,7 +6,7 @@ use Admission\Entity\Db\TypeValidation;
 use Admission\Entity\Db\Repository\TypeValidationRepository;
 use Application\Service\BaseService;
 use Doctrine\ORM\Exception\NotSupported;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class TypeValidationService extends BaseService

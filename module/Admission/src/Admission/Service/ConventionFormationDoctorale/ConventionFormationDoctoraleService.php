@@ -4,7 +4,7 @@ namespace Admission\Service\ConventionFormationDoctorale;
 
 use Admission\Entity\Db\ConventionFormationDoctorale;
 use Application\Service\BaseService;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class ConventionFormationDoctoraleService extends BaseService

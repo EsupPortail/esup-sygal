@@ -20,6 +20,10 @@ class FinancementHydrator extends DoctrineObject
             $data["financement"] = $data["financement"]->getId();
         }
 
+        if (array_key_exists($key = 'financementCompl', $data) && $data[$key] instanceof OrigineFinancement) {
+            $data["financementCompl"] = $data["financementCompl"]->getId();
+        }
+
         $data['verificationFinancement'] = $object->getVerificationFinancement()->first() ?: null;
 
         return $data;
@@ -35,6 +39,10 @@ class FinancementHydrator extends DoctrineObject
 
         if(isset($data["financement"]) && empty($data["financement"])){
             $data["financement"] = null;
+        }
+
+        if(isset($data["financementCompl"]) && empty($data["financementCompl"])){
+            $data["financementCompl"] = null;
         }
 
         //Si la case estSalarie est décochée, on met à null les valeurs des champs reliés

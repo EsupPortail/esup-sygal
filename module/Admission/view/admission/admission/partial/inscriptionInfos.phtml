@@ -131,6 +131,17 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="row subfield">
             <div class="col-lg-3 col-sm-12">
                 <div class="admission-form-checkboxes">
+                    <div class="col-lg-12 these-titre-container">
+                        <label class="form-label" for="inscription[coTutelle]">Cotutelle envisagée</label><label class="label_en">&nbsp; / Planned cotutelle</label>
+                        <span class="icon icon-information admission-info-bulle" data-toggle="tooltip">
+                            <span class="tooltip-text">
+                                La cotutelle de thèse est un dispositif qui favorise la coopération scientifique entre des équipes de recherche française et étrangère.
+                                <br>
+                                <br>
+                                Thesis cotutelle is a system that encourages scientific cooperation between French and foreign research teams.
+                            </span>
+                        </span>
+                    </div>
                     <?php echo $this->formControlGroup($fieldset->get('coTutelle')) ?>
                 </div>
             </div>

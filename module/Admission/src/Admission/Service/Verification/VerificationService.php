@@ -7,7 +7,7 @@ use Admission\Entity\Db\Repository\VerificationRepository;
 use Admission\Entity\Db\Verification;
 use Application\Service\BaseService;
 use Application\Service\UserContextServiceAwareTrait;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class VerificationService extends BaseService
@@ -112,29 +112,25 @@ class VerificationService extends BaseService
      */
     public function deleteAllVerificationFromAdmission(Admission $admission): void
     {
-        try {
-            $queryBuilder = $this->getRepository()->createQueryBuilder('verif');
+        $queryBuilder = $this->getRepository()->createQueryBuilder('verif');
 
-            $verifications = $queryBuilder
-                ->leftJoin('verif.etudiant', 'e')
-                ->leftJoin('verif.inscription', 'i')
-                ->leftJoin('verif.financement', 'f')
-                ->leftJoin('verif.document', 'd')
-                ->where('e.admission = :admissionId OR i.admission = :admissionId OR f.admission = :admissionId OR d.admission = :admissionId')
-                ->setParameter('admissionId', $admission)
-                ->getQuery()
-                ->getResult();
+        $verifications = $queryBuilder
+            ->leftJoin('verif.etudiant', 'e')
+            ->leftJoin('verif.inscription', 'i')
+            ->leftJoin('verif.financement', 'f')
+            ->leftJoin('verif.document', 'd')
+            ->where('e.admission = :admissionId OR i.admission = :admissionId OR f.admission = :admissionId OR d.admission = :admissionId')
+            ->setParameter('admissionId', $admission)
+            ->getQuery()
+            ->getResult();
 
-            foreach($verifications as $verification){
-                try {
-                    $this->entityManager->remove($verification);
-                    $this->entityManager->flush($verification);
-                } catch (\Doctrine\ORM\Exception\ORMException $e) {
-                    throw new RuntimeException("Erreur rencontrée lors de la suppression en bdd", null, $e);
-                }
+        foreach($verifications as $verification){
+            try {
+                $this->entityManager->remove($verification);
+                $this->entityManager->flush($verification);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Erreur rencontrée lors de la suppression en bdd", null, $e);
             }
-        } catch(ORMException $e) {
-            throw new RuntimeException("Un problème est survenue lors de la suppression en base d' Verification");
         }
     }
 

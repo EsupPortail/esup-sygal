@@ -149,7 +149,7 @@ div.header-admission {
 
 .verification-gestionnaire {
   margin-left: 30px;
-  display: inline-block;
+  display: flex;
   padding: 8px 12px;
   color: white;
   border-radius: 4px;
@@ -223,6 +223,10 @@ div.header-admission {
 }
 
 /** INDEX Admission **/
+
+.individu-recherche-index-container{
+  align-items: baseline;
+}
 
 .admission-form {
   display: flex;
@@ -377,6 +381,10 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   width: auto;
 }
 
+.acces-charte-doct-signee-btn{
+  color: #337ab7;
+}
+
 .charte-doctorale-operations, .convention-formation-doctorale-operations {
   display: none;
 }
@@ -515,14 +523,21 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   clear: both;
 }
 
-.access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required, .access-notification-dossier-incomplet-btn.required {
+.admission-btn{
+  width: fit-content;
+}
+
+.admission-btn.required, .access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required, .access-notification-dossier-incomplet-btn.required {
   background-color: #F1732D;
   color: #fff;
   font-weight: bold;
+  border-color: #F1732D;
+  width: fit-content;
 }
 
-.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover {
-  background-color: #824012;
+.admission-btn.required:hover, .access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover {
+  background-color: #9e5725;
+  border-color: #9e5725;
 }
 
 .aucune-charte-doctorale-associee-btn{
@@ -647,6 +662,11 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   max-width: fit-content;
 }
 
+.dossier-complet-card > div, .dossier-incomplet-card > div, .commentaires-ajoutes-card > div, .dossier-refuse-card > div {
+  display:flex;
+  align-items: center;
+}
+
 .dossier-complet-card > div > p, .dossier-incomplet-card > div > p, .commentaires-ajoutes-card > div >p, .dossier-refuse-card > div > p {
   color: #707070;
   font-size: 15px;
@@ -686,6 +706,14 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   //display: none;
 }
 
+.avisCompl, #file-charte-doctorat-signe-container{
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+}
+
 /** Fin Partie Circuit de signatures **/
 
 
@@ -693,25 +721,32 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .convention-formation-doctorale-container > form > .row {
   margin-bottom: 30px;
 }
+.precisions-action-container, .precisions-convention-intro-container, .admission-informations-container {
+  padding: 15px;
+  border-radius: 5px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+}
 
 .precisions-action-container, .precisions-convention-intro-container {
   background-color: #f8d7da;
   color: #721c24;
-  padding: 15px;
   border: 1px solid #f5c6cb;
-  border-radius: 5px;
   margin-bottom: 20px;
-  width: fit-content;
+}
+
+.precisions-action-container.success{
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .admission-informations-container{
   background-color: #fdf2d2;
   color: #93700f;
-  padding: 15px;
   border: 1px solid #ffe49b;
-  border-radius: 5px;
-  width: fit-content;
-  margin: 15px;
+  margin: 15px 15px 15px 0;
 }
 
 .admission-enregistrer-verification-container > .admission-informations-container{
@@ -719,13 +754,9 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 }
 
 .precisions-action-container p, .precisions-convention-intro-container p, .admission-informations-container p {
-  margin: 0;
   font-weight: bold;
   display: inline-block;
-}
-
-.precisions-action-container, .precisions-convention-intro-container i {
-  margin-right: 10px;
+  margin: 0 0 0 8px;
 }
 
 .precisions-convention-champs {

@@ -1,6 +1,7 @@
 <?php
 
 use Admission\Entity\Db\AdmissionValidation;
+use Admission\Entity\Db\TypeValidation;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 
 /**
@@ -13,6 +14,9 @@ use Admission\Provider\Privilege\AdmissionPrivileges;
 $canSupprimerOperation =
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_DEVALIDER_SIEN) ||
     $this->isAllowed($operation, AdmissionPrivileges::ADMISSION_DEVALIDER_TOUT);
+
+$admission = $operation->getAdmission();
+$canAjouterDonneesExport = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_AJOUTER_DONNEES_EXPORT);
 ?>
 <div class="row subfield">
     <div class="col-lg-2 circle-etape etape-signature-infos-container">
@@ -60,4 +64,17 @@ $canSupprimerOperation =
             </div>
         </div>
     <?php } ?>
+    <?php if($operation->getTypeValidation()->getCode() === TypeValidation::CODE_VALIDATION_GESTIONNAIRE &&
+        $canAjouterDonneesExport &&
+        ((isset($showActionButtons) && $showActionButtons))): ?>
+        <a class="btn btn-primary admission-btn action ajax-modal" role="button"
+           href="<?php echo $this->url(
+               'admission/ajouter-transmission',
+               ['admission' => $admission->getId()],
+               [])?>" data-event="ajout-export-donnees-pegase"
+            data-bs-toggle="tooltip" data-bs-html="true"
+            title="Données nécessaires pour l'export vers Pégase">
+            Déclarer le code voeu/période
+        </a>
+    <?php endif; ?>
 </div>

@@ -44,11 +44,14 @@ class AdmissionService extends BaseService
     const ADMISSION__AJOUTE__EVENT = 'ADMISSION__AJOUTE__EVENT';
     const ADMISSION__SUPPRIME__EVENT = 'ADMISSION__SUPPRIME__EVENT';
 
+    private const DEFAULT_SOURCE_CODE = "SYG";
+
+
     /**
      * @return AdmissionRepository
      * @throws NotSupported
      */
-    public function getRepository()
+    public function getRepository(): AdmissionRepository
     {
         /** @var AdmissionRepository $repo */
         $repo = $this->entityManager->getRepository(Admission::class);
@@ -165,16 +168,10 @@ class AdmissionService extends BaseService
     /**
      * @param Admission $admission
      * @return void
-     * @throws ORMException
      */
     public function deleteAllVerifications(Admission $admission): void
     {
-        try {
-            $this->verificationService->deleteAllVerificationFromAdmission($admission);
-        } catch (ORMException $e) {
-            $this->rollBack();
-            throw $e;
-        }
+        $this->verificationService->deleteAllVerificationFromAdmission($admission);
     }
 
     /**
@@ -300,5 +297,13 @@ class AdmissionService extends BaseService
             $libelle .= $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
         }
         return $libelle;
+    }
+
+    public function generateUniqueNumeroCandidature(Admission $admission): string
+    {
+        $currentYear = (new \DateTime())->format('y');
+        $id = $admission->getId();
+        $formattedId = str_pad($id, 2, '0', STR_PAD_LEFT);
+        return self::DEFAULT_SOURCE_CODE.$currentYear.$formattedId;
     }
 }
