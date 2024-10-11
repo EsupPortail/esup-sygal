@@ -4,6 +4,8 @@ namespace Admission\Service\Exporter\Admission;
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Etudiant;
+use Admission\Entity\Db\Transmission;
+use Admission\Service\Transmission\TransmissionServiceAwareTrait;
 use DateTime;
 use RuntimeException;
 use UnicaenApp\View\Model\CsvModel;
@@ -11,6 +13,7 @@ use ZipArchive;
 
 class AdmissionExporter{
 
+    use TransmissionServiceAwareTrait;
     public function exportToZip(array $csvs, string $zipFilename): ZipArchive
     {
         // Création de l'archive ZIP
@@ -114,13 +117,16 @@ class AdmissionExporter{
         $records = [];
         /** @var Admission $admission */
         foreach ($admissions as $admission) {
+            /** @var Transmission $transmission */
+            $transmission = $this->transmissionService->getRepository()->findOneBy(["admission" => $admission]);
+
             $entry = [];
             $entry['numero_candidat'] = $admission->getNumeroCandidat();
             $entry['origine_admission'] = "CO";
             $entry['voie_admission'] = "D";
             $entry['annee_concours'] = null;
-            $entry['code_voeu'] = "";
-            $entry['code_periode'] = "";
+            $entry['code_voeu'] = $transmission?->getCodeVoeu();
+            $entry['code_periode'] = $transmission?->getCodePeriode();
             $entry['code_sise'] = null;
             $entry['code_formation_psup'] = null;
             $entry['code_etablissement_affectation'] = null;

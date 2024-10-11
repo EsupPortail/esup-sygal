@@ -4,7 +4,6 @@ namespace Admission\Service\Admission;
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\Etat;
-use Admission\Search\Admission\AdmissionTextSearchFilter;
 use Admission\Search\Admission\EtatAdmissionSearchFilterAwareTrait;
 use Application\Entity\Db\Role;
 use Application\QueryBuilder\DefaultQueryBuilder;
@@ -14,7 +13,6 @@ use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilterAwareTrait;
@@ -26,10 +24,6 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use UnicaenApp\Exception\LogicException;
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Util;
-use Webmozart\Assert\Assert;
 
 class AdmissionRechercheService extends SearchService
 {
@@ -37,7 +31,6 @@ class AdmissionRechercheService extends SearchService
     use UniteRechercheSearchFilterAwareTrait;
     use EcoleDoctoraleSearchFilterAwareTrait;
     use EtatAdmissionSearchFilterAwareTrait;
-//    use TheseTextSearchFilterAwareTrait;
 
     use UserContextServiceAwareTrait;
     use AdmissionServiceAwareTrait;
@@ -212,108 +205,6 @@ class AdmissionRechercheService extends SearchService
             default:
                 throw new \InvalidArgumentException("Cas imprévu");
         }
-    }
-
-    /**
-     * Recherche textuelle de thèses dans la vue matérialisée MV_RECHERCHE_THESE.
-     *
-     * Le contenu de la colonne MV_RECHERCHE_THESE.HAYSTACK suit le format suivant :
-     * <pre>
-     * code-ed{...} code-ur{...} titre{...} doctorant-numero{...} doctorant-nom{...} doctorant-prenom{...} directeur-nom{...}
-     * </pre>
-     * Exemple :
-     * <pre>
-     * code-ed{591} code-ur{umr6614} titre{bivalve dreissena polymorpha} doctorant-numero{85982906} doctorant-nom{hochon hochon} doctorant-prenom{paule} directeur-nom{terieur}
-     * </pre>
-     *
-     * L'expression régulière utilisée est donc de la forme suivante :
-     * <pre>
-     * (<critere>|<critere>)\{[^{]*<terme>[^}]*\}
-     * </pre>
-     * Exemple :
-     * <pre>
-     * (doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}
-     * </pre>
-     *
-     * Lorsque le texte recherché est "hochon" par exemple, la requête SQL générée est la suivante :
-     * <pre>
-     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
-     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i')
-     *      )
-     * </pre>
-     *
-     * Lorsque le texte recherché contient plusieurs mots séparés par des espaces, "hochon bivalve" par exemple,
-     * la requête SQL générée est la suivante :
-     * <pre>
-     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
-     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i') OR
-     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*bivalve[^}]*\}]', 'i')
-     *      )
-     * </pre>
-     *
-     * @param string $text Texte recherché. Ex: "hochon", "hochon bivalve"
-     * @param string[] $criteria Critères sur lesquels porte la recherche. EX: ['doctorant-nom', 'directeur-nom']
-     * @param integer $limit
-     *
-     * @return array [<CODE_THESE> => ['code' => <CODE_THESE>, 'code-doctorant' => <CODE_DOCTORANT>]]
-     */
-    public function findThesesSourceCodesByText(string $text, array $criteria, $limit = 1000): array
-    {
-        Assert::notEmpty($criteria, "Un tableau de critère vide n'est pas acceptée");
-
-        $text = trim($text);
-
-        if (strlen($text) < 2) return [];
-
-        if ($unknown = array_diff($criteria, array_keys(AdmissionTextSearchFilter::CRITERIA))) {
-            throw new LogicException("Les critères de recherche suivants ne sont pas supportés : " . implode(', ', $unknown));
-        }
-
-        $words = explode(' ', $text);
-        $words = array_map('trim', $words);
-        $words = array_map([Util::class, 'reduce'], $words);
-
-        $orc = [];
-        foreach ($words as $word) {
-            // le caractère '*' est autorisé pour signifier "n'importe quel caractère répété 0 ou N fois"
-            $word = str_replace('*', '.*', $word);
-            $word = str_replace("'", "''", $word);
-            if (count($criteria) === count(AdmissionTextSearchFilter::CRITERIA)) {
-                // si tous les critères possibles sont spécifiés, on peut simplifier la regexp :
-                // regexp : \{[^}]*<terme>.*\}
-                $regexp = "\{[^}]*" . $word . ".*\}";
-            } else {
-                // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
-                $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
-            }
-            $orc[] = "    haystack ~* '" . $regexp . "'"; // la syntaxe q'[]' dispense de doubler les '
-        }
-        $orc = implode(' OR ' . PHP_EOL, $orc);
-
-        $sql = <<<EOS
-SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, HAYSTACK 
-FROM MV_RECHERCHE_THESE MV 
-WHERE (
-$orc
-)
-limit $limit 
-EOS;
-
-        try {
-            $stmt = $this->admissionService->getEntityManager()->getConnection()->executeQuery($sql);
-        } catch (Exception $e) {
-            throw new RuntimeException("Erreur rencontrée lors de la requête", null, $e);
-        }
-
-        $theses = [];
-        while ($r = $stmt->fetchAssociative()) {
-            $theses[$r['code_these']] = [
-                'code'           => $r['code_these'],
-                'code-doctorant' => $r['code_doctorant'],
-            ];
-        }
-
-        return $theses;
     }
 
     ////////////////////////////////// Fetch /////////////////////////////////////

@@ -22,7 +22,7 @@ if ($operation instanceof AdmissionValidation) {
             'operation' => $operation,
             'returnUrl' => $returnUrl,
             'libelleOperation' => $libelleOperation,
-            'showActionButtons' => $showActionButtons
+            'showActionButtons' => $showActionButtons,
         ]);
     } else {
         echo $this->partial('admission/admission/partial/validation/validation_etape_non_existante', [
@@ -61,4 +61,12 @@ if ($operation instanceof AdmissionValidation) {
     }
 }else{
     throw new InvalidArgumentException("Type inattendu");
-}
+} ?>
+
+<script>
+    $("body").one("ajout-export-donnees-pegase", function (event) {
+        // Les métadonnées viennent d'être modifiées.
+        event.div.modal('hide'); // ferme la fenêtre modale
+        window.location.reload();
+    });
+</script>

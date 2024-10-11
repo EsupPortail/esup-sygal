@@ -1,0 +1,51 @@
+<?php
+
+namespace Admission;
+
+use Admission\Controller\Transmission\TransmissionController;
+use Admission\Entity\Db\Admission;
+use Admission\Form\Transmission\TransmissionForm;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Admission $admission
+ * @var TransmissionForm $form
+ *
+ * @see TransmissionController::ajouterTransmissionAction()
+ */
+
+$form->prepare(); ?>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<div class="admission-informations-container">
+    <i class="fas fa-info-circle"></i>
+    <p>
+        Une fois le dossier validé, ces données seront utilisées afin de permettre l'export vers Pégase
+    </p>
+</div>
+
+<?php echo $this->form()->openTag($form) ?>
+
+<div class="row">
+    <div class="col-md-7">
+        <?php echo $this->formControlGroup($form->get('codeVoeu')); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <?php echo $this->formControlGroup($form->get('codePeriode')); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <?php
+        echo $this->formControlGroup($form->get('security'));
+        echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+        ?>
+    </div>
+</div>
+<?php echo $this->form()->closeTag() ?>

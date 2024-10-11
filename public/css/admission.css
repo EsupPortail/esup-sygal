@@ -413,15 +413,19 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .multipage-nav.cancel {
   clear: both; }
 
-.access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required, .access-notification-dossier-incomplet-btn.required {
+.admission-btn {
+  width: fit-content; }
+
+.admission-btn.required, .access-conv-form-doct-btn.required, .access-charte-doctorat-btn.required, .access-notification-dossier-incomplet-btn.required {
   background-color: #F1732D;
   color: #fff;
   font-weight: bold;
-  border-color: #F1732D; }
+  border-color: #F1732D;
+  width: fit-content; }
 
-.access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover {
-  background-color: #824012;
-  border-color: #824012; }
+.admission-btn.required:hover, .access-conv-form-doct-btn.required:hover, .access-charte-doctorat-btn.required:hover, .access-notification-dossier-incomplet-btn.required:hover {
+  background-color: #9e5725;
+  border-color: #9e5725; }
 
 .aucune-charte-doctorale-associee-btn {
   background-color: #d23544;
@@ -590,7 +594,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   background-color: #fdf2d2;
   color: #93700f;
   border: 1px solid #ffe49b;
-  margin: 15px; }
+  margin: 15px 15px 15px 0; }
 
 .admission-enregistrer-verification-container > .admission-informations-container {
   margin-left: auto; }

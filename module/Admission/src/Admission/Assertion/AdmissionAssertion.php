@@ -84,6 +84,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case 'notifier-dossier-complet':
                 case 'generer-recapitulatif':
                 case 'ajouter-convention-formation' :
+                case 'ajouter-transmission' :
                     if ($this->admission !== null) {
                         $this->assertAppartenanceAdmission($this->admission);
                     }
@@ -176,6 +177,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 case AdmissionPrivileges::ADMISSION_TELECHARGER_SON_DOCUMENT:
                 case AdmissionPrivileges::ADMISSION_VERIFIER:
                 case AdmissionPrivileges::ADMISSION_NOTIFIER_DOSSIER_INCOMPLET:
+                case AdmissionPrivileges::ADMISSION_AJOUTER_DONNEES_EXPORT:
                     $this->assertAppartenanceAdmission($this->admission);
             }
 
