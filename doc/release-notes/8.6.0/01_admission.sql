@@ -16,12 +16,12 @@ VALUES ('Url#AccueilAdmission', '<p>Permet de récupérer l''url de l''accueil d
 alter table admission_financement
     ADD column if not exists financement_compl_id bigint REFERENCES origine_financement (id);
 
--- déplacement du numero_candidat de admission_etudiant vers admission_admission
+-- déplacement du numero_candidature de admission_etudiant vers admission_admission
 ALTER TABLE admission_admission
-    ADD COLUMN numero_candidat VARCHAR(10);
+    ADD COLUMN numero_candidature VARCHAR(10);
 
 UPDATE admission_admission aa
-SET numero_candidat = ae.numero_candidat
+SET numero_candidature = ae.numero_candidat
     FROM admission_etudiant ae
 WHERE aa.id = ae.admission_id;
 

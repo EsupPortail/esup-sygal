@@ -66,7 +66,7 @@ class AdmissionAvisController extends AbstractController
 
                 if($admission->getEtat()->getCode() === Etat::CODE_VALIDE){
                     //Génération du numéro de candidat
-                    $admission->setNumeroCandidat($this->admissionService->generateUniqueNumeroCandidat($admission));
+                    $admission->setNumeroCandidature($this->admissionService->generateUniqueNumeroCandidature($admission));
                     $this->admissionService->update($admission);
                 }
 
@@ -113,7 +113,7 @@ class AdmissionAvisController extends AbstractController
 
                 if($admission->getEtat()->getCode() === Etat::CODE_VALIDE){
                     //Génération du numéro de candidat
-                    $admission->setNumeroCandidat($this->admissionService->generateUniqueNumeroCandidat($admission));
+                    $admission->setNumeroCandidature($this->admissionService->generateUniqueNumeroCandidature($admission));
                     $this->admissionService->update($admission);
                 }
 

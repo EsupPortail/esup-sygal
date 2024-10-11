@@ -299,7 +299,7 @@ class AdmissionService extends BaseService
         return $libelle;
     }
 
-    public function generateUniqueNumeroCandidat(Admission $admission): string
+    public function generateUniqueNumeroCandidature(Admission $admission): string
     {
         $currentYear = (new \DateTime())->format('y');
         $id = $admission->getId();
