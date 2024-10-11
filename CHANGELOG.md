@@ -10,6 +10,9 @@ Journal des modifications
 - Formateur du nom de fichier pour la fusion PDC & manuscrit : séparateur 'underscore' car STEP-STAR n'aime pas le tiret du 6.
 - Module Admission : Export vers Pégase -> concernant le sexe, M et Mme deviennent M et F
 - Module Admission : Export vers Pégase -> export seulement des thèses dont l'individu n'est pas encore doctorant
+- Module Admission : Ajout d'un deuxième champ pour saisir un financement supplémentaire
+- Module Admission : Possibilité de télécharger la charte doctorale, puis de déposer (par le candidat) la charte doctorale signée 
+- Module Admission : Possibilité de saisir le code voeu/période par la/le gestionnaire de l'ED, nécessaire pour l'export vers Pégase
 - Possibilité pour le futur doctorant de se créer un compte utilisateur local pour saisir un dossier d'admission.
 - Etablissements : 3 saisies dédiées selon le type d'étab (d'inscription, CED, autre) ; amélioration du listing des établissements.
 - [FIX] Listing des rapports d'activité : plantage en cas de liste d'années universitaires vide.
