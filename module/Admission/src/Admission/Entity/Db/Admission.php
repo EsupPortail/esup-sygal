@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
@@ -73,6 +74,11 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
      * @var Individu
      */
     private $individu;
+
+    /**
+     * @var Doctorant
+     */
+    private $doctorant;
 
     /** @var AdmissionAvis | AdmissionValidation|null */
     private $operationPossible = null;
@@ -384,6 +390,30 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function getIndividu()
     {
         return $this->individu;
+    }
+
+    /**
+     * Set doctorant.
+     *
+     * @param Doctorant|null $doctorant
+     *
+     * @return Admission
+     */
+    public function setDoctorant(Doctorant $doctorant = null)
+    {
+        $this->doctorant = $doctorant;
+
+        return $this;
+    }
+
+    /**
+     * Get doctorant.
+     *
+     * @return Doctorant|null
+     */
+    public function getDoctorant()
+    {
+        return $this->doctorant;
     }
 
     /**
