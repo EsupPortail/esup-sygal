@@ -110,6 +110,10 @@
   height:150px;
 }
 
+.row .generalites > div > dl, .row .these > div > dl {
+  display: flex;
+}
+
 @media (max-width: 768px) {
   .informations-these-header {
     flex-direction: column;

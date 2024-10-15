@@ -113,8 +113,8 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'name' => 'confidentialite',
             'options' => [
                 'value_options' => [
-                    0 => "These non confidentielle ",
-                    1 => "Thèse confidentielle ",
+                    0 => "Non confidentielle ",
+                    1 => "Confidentielle ",
                 ],
             ],
             'attributes' => [

@@ -52,16 +52,16 @@ $form->prepare();
         <button class="nav-link" id="structures-tab" data-bs-toggle="tab" data-bs-target="#structures" type="button" role="tab" aria-controls="structures" aria-selected="false"><?php echo $form->get("structures")->getLabel();?></button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="specifites-tab" data-bs-toggle="tab" data-bs-target="#specifites" type="button" role="tab" aria-controls="specifites" aria-selected="false">Spécifités envisagées</button>
+        <button class="nav-link" id="direction-tab" data-bs-toggle="tab" data-bs-target="#direction" type="button" role="tab" aria-controls="direction" aria-selected="false"><?php echo $form->get("direction")->getLabel();?></button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="direction-tab" data-bs-toggle="tab" data-bs-target="#direction" type="button" role="tab" aria-controls="direction" aria-selected="false"><?php echo $form->get("direction")->getLabel();?></button>
+        <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financements" type="button" role="tab" aria-controls="financement" aria-selected="false">Financement</button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="encadrements-tab" data-bs-toggle="tab" data-bs-target="#encadrements" type="button" role="tab" aria-controls="encadrements" aria-selected="false"><?php echo $form->get("encadrements")->getLabel();?></button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financements" type="button" role="tab" aria-controls="financement" aria-selected="false">Financement</button>
+        <button class="nav-link" id="specifites-tab" data-bs-toggle="tab" data-bs-target="#specifites" type="button" role="tab" aria-controls="specifites" aria-selected="false">Spécifités envisagées</button>
     </li>
 </ul>
 
@@ -79,20 +79,20 @@ echo $this->formHidden($form->get('id'));
     <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
         <?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
     </div>
+    <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
+        <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
+    </div>
     <div class="tab-pane fade" id="structures" role="tabpanel" aria-labelledby="structures-tab">
         <?php echo $this->partial('these/these-saisie/partial/structures'); ?>
     </div>
-    <div class="tab-pane fade" id="specifites" role="tabpanel" aria-labelledby="specifites-tab">
-        <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
+    <div class="tab-pane fade" id="financements" role="tabpanel" aria-labelledby="financements-tab">
+        <?php echo $this->partial('these/these-saisie/partial/financements'); ?>
     </div>
     <div class="tab-pane fade" id="encadrements" role="tabpanel" aria-labelledby="encadrements-tab">
         <?php echo $this->partial('these/these-saisie/partial/encadrement'); ?>
     </div>
-    <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
-        <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
-    </div>
-    <div class="tab-pane fade" id="financements" role="tabpanel" aria-labelledby="financements-tab">
-        <?php echo $this->partial('these/these-saisie/partial/financements'); ?>
+    <div class="tab-pane fade" id="specifites" role="tabpanel" aria-labelledby="specifites-tab">
+        <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
     </div>
 </div>
 

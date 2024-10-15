@@ -44,9 +44,9 @@ class FinancementFormatterHelper extends \Laminas\View\Helper\AbstractHelper
 
     /**
      * @param Financement[] $financements
-     * @return string
+     * @return array|string
      */
-    public function format(array $financements): string
+    public function format(array $financements): array|string
     {
         return $this->formatter->doFormat($financements);
     }

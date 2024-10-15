@@ -18,51 +18,27 @@ use These\Provider\Privilege\ThesePrivileges;
 /**
  * @var PhpRenderer  $this
  * @var These        $these
- * @var string       $modifierEmailContactUrl
- * @var string       $modifierEmailContactConsentUrl
- * @var bool         $estDoctorant
  * @var string       $modifierCorrecAutorUrl
  * @var string       $accorderSursisCorrecUrl
  * @var string       $nextStepUrl
  * @var Validation[] $validationsDesCorrectionsEnAttente
- * @var Utilisateur[] $utilisateurs
- * @var EtablissementRattachement[] $rattachements
+ * @var string $modifierEmailContactUrl
+ * @var string $modifierEmailContactConsentUrl
  *
  * @see TheseController::detailIdentiteAction()
  */
 
-$canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
-$canEditEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
-$canEditEmailContactConsent = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
 $emailContactModifiedEvent = 'email-contact-modified-event';
 $emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
-$canCreate = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_CREATE_FROM_INDIVIDU));
-
-$canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
-$canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_GERER));
 
 $canMissionAfficher = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_VISUALISER));
 $canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_MODIFIER));
 
-$canDomaineHalModifier = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
 $canEditThese = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_SES_THESES) || $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES) ;
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
-$financementFormatter = $this->financementFormatter();
-$financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
-$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES);
-
-$acteursFormatter = new ActeursFormatter();
-$acteursFormatter->paramDisplay(["role" => true, "complement" => true, "qualite" => true, "etablissement" => true, "uniteRecherche" => true]);
-$acteursFormatter->asArray(true);
-$acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toArray());
-
-$hasCoEncadrant = false;
-
-$modifierGeneralitesEvent = 'event-modifier-generalites';
 $modifierStructuresEvent = 'event-modifier-structures';
-$modifierEncadrementEvent = 'event-modifier-encadrement';
 
 $isImportable = $these->getSource()->getImportable();
 
@@ -152,14 +128,9 @@ switch ($these->getEtatThese()){
         </h2>
     </div>
     <div class="card-body these-identite-body">
-        <?php if ($canEditThese && !$isImportable): ?>
-            <?php /**  @see \These\Controller\TheseSaisieController::generalitesAction() */ ?>
-            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-domaine="generalites" data-url="<?php echo $this->url('these/modifier/generalites', ['these' => $these->getId()], [], true) ?>">
-                <span class="icon icon-edit"></span>
-                <?php echo $this->translate("Modifier les généralités"); ?>
-            </button>
-        <?php endif ?>
-        <?php echo $this->partial('these/these/partial/generalites') ?>
+        <?php echo $this->partial('these/these/partial/generalites', ["these" => $these, "canEditThese" => $canEditThese,
+            "isImportable" => $isImportable, "modifierEmailContactConsentUrl" => $modifierEmailContactConsentUrl,
+            "modifierEmailContactUrl" => $modifierEmailContactUrl]) ?>
     </div>
 </div>
 
@@ -204,204 +175,191 @@ switch ($these->getEtatThese()){
 </div>
 
 <div class="box card">
+    <div class="card-header these-card-header text-white">
+        <h2 class="first">
+            <?php echo $this->translate("Financements"); ?>
+        </h2>
+    </div>
+    <div class="card-body these-identite-body">
+        <?php if ($canEditThese && !$isImportable): ?>
+            <?php /**  @see \These\Controller\TheseSaisieController::financementsAction() */ ?>
+            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-domaine="financements" data-url="<?php echo $this->url('these/modifier/financements', ['these' => $these->getId()], [], true) ?>">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier les financements"); ?>
+            </button>
+        <?php endif ?>
+        <?php echo $this->partial('these/these/partial/financements', ["these" => $these, "canEditThese" => $canEditThese, "isImportable" => $isImportable]) ?>
+    </div>
+</div>
+
+<div class="box card">
 
     <div class="card-header these-card-header text-white">
         <h2 class="first">
-            <?php echo $this->translate("Fiche"); ?>
+            <?php echo $this->translate("Informations complémentaires"); ?>
         </h2>
     </div>
 
     <div class="card-body these-identite-body">
         <dl class="row these">
-            <dt class="col-md-3">
-                <?php echo $this->translate("Titre d'accès à l'inscr. en thèse") ?>
-            </dt>
-            <dd class="col-md-9">
-                <?php
-                echo ($titreAcces = $these->getTitreAcces()) ?: "(Non renseigné)";
-                ?>
-            </dd>
-
-            <dt class="col-md-3">
-                Financement·s
-            </dt>
-            <dd class="col-md-9">
-                <?php if ($canEditThese && !$isImportable): ?>
-                    <a <?php /**  @see \These\Controller\TheseSaisieController::financementsAction() */ ?>
-                            class="icon icon-plus iconly float-end openModalModificationTheseBtn" data-domaine="financements" data-event="modification" data-url = "<?php echo $this->url('these/modifier/financements', ['these' => $these->getId()], [], true) ?>"
-                            href=""
-                            title="Ajouter un financement"></a>
-                <?php endif ?>
-                <?php if ($these->getFinancements()->isEmpty()): ?>
-                    (Non renseigné)
-                <?php else: ?>
-                    <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
-                <?php endif ?>
-            </dd>
-
-            <?php if ($canMissionAfficher) : ?>
-                <dt class="col-md-3">
-                    Mission·s d'enseignement
-                </dt>
-                <dd class="col-md-9">
-                <?php if ($canMissionGerer) : ?>
-                    <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::ajouterAction() */ ?>
-                            class="icon icon-plus iconly ajax-modal float-end" data-event="modification"
-                            href="<?php echo $this->url('doctorant/mission-enseignement/ajouter', ['doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
-                            title="Ajouter une mission d'enseignement"></a>
-                <?php endif; ?>
-                <?php if (empty($missions)) : ?>
-                    (Aucune mission renseignée)
-                <?php else: ?>
-                    <ul>
-                    <?php foreach ($missions as $mission) : ?>
-                        <li>Mission d'enseignement pour l'année <?php echo $mission->getAnneeUniversitaire(); ?>/<?php echo ($mission->getAnneeUniversitaire()+1); ?>
-                        <?php if ($canMissionGerer) : ?>
-                            <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::retirerAction() */ ?>
-                                    class="ajax-modal" data-event="modification"
-                                    data-toggle="confirmationx" data-message="Êtes-vous sûr·e de vouloir retirer cette mission d'enseignement ?"
-                                    href="<?php echo $this->url('doctorant/mission-enseignement/retirer', ['mission' => $mission->getId(), 'doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
-                            ><span class="icon icon-supprimer"></span></a>
-                            </li>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </dd>
-            <?php endif; ?>
-
-            <dt class="col-md-3">
-                <?php echo $this->translate("Confidentialité"); ?>
-            </dt>
-            <?php if ($these->etaitConfidentielle()): ?>
-                <dd class="col-md-9">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
-            <?php elseif ($these->estConfidentielle()): ?>
-                <dd class="col-md-9 text-danger">Confidentielle,
-                    jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
-            <?php else: ?>
-                <dd class="col-md-9">Non confidentielle</dd>
-            <?php endif ?>
-
-            <?php if ($resultat = $these->getResultatToString()): ?>
-                <dt class="col-md-3">Résultat</dt>
-                <dd class="col-md-9">
-                    <?php echo $resultat ?>
-                </dd>
-            <?php endif ?>
-
-            <dt class="col-md-3">Date de 1ère<br>inscription</dt>
-            <dd class="col-md-9"><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
-
-            <dt class="col-md-3">Année universitaire<br>de 1ère inscription</dt>
-            <dd class="col-md-9"><?php echo $these->getAnneeUniv1ereInscription() ?></dd>
-
-            <dt class="col-md-3">Années universitaires<br>d'inscription</dt>
-            <dd class="col-md-9"><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
-
-            <?php if ($these->getDateAbandon()): ?>
-            <dt class="col-md-3">Date d'abandon</dt>
-            <dd class="col-md-9"><?php echo $these->getDateAbandonToString() ?></dd>
-            <?php endif ?>
-
-            <?php if ($these->getDateTransfert()): ?>
-            <dt class="col-md-3">Date de transfert
-            <dd class="col-md-9"><?php echo $these->getDateTransfertToString() ?></dd>
-            <?php endif ?>
-
-            <?php if ($these->getSoutenanceAutorisee()): ?>
-                <dt class="col-md-3">Soutenance autorisée</dt>
-                <dd class="col-md-9"><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>
-            <?php endif ?>
-
-            <?php if ($these->getDateSoutenance()): ?>
-                <dt class="col-md-3">Date réelle de soutenance</dt>
-                <dd class="col-md-9"><?php echo $these->getDateSoutenanceToString() ?></dd>
-            <?php endif ?>
-
-            <?php if ($these->getLibelleEtabCotutelle()): ?>
-                <dt class="col-md-3">Cotutelle</dt>
-                <dd class="col-md-9">En cotutelle avec <?php echo $these->getLibelleEtabCotutelle() ?>,
-                    <?php echo $these->getLibellePaysCotutelle() ?></dd>
-            <?php endif ?>
-
-            <!------------------------------- Corrections attendues --------------------------------->
-            <?php
-            $titre = "Corrections attendues";
-            $reponse = "Non.";
-            $message = null;
-            $class = null;
-
-            $validationsDesCorrectionsEnAttente = [1]; //////////////////////
-
-            if ($these->isCorrectionAutorisee()) {
-                $dateButoirDepassee =
-                    $these->isDateButoirDepotVersionCorrigeeDepassee($these->getDateSoutenance()) &&
-                    ! empty($validationsDesCorrectionsEnAttente);
-
-                if ($these->getCorrectionAutoriseeEstFacultative()) {
-                    $class = "text-warning";
-                    $reponse = "Oui, facultatives.";
-                    $message = $dateButoirDepassee ?
-                        "<strong>Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence.</strong>" :
-                        null;
-                } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
-                    $class = "text-danger";
-                    $reponse = "Oui, obligatoires.";
-                    $message = $dateButoirDepassee ?
-                        "<strong>Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés.</strong>" :
-                        null;
-                }
-                if (is_array($validationsDesCorrectionsEnAttente) && empty($validationsDesCorrectionsEnAttente)) {
-                    $titre = "Corrections";
-                    $message = sprintf("Les corrections %s ont été validées.", lcfirst($these->getCorrectionAutoriseeToString(true)));
-                    $canEditForcageCorrectionAutorisee = false;
-                }
-            }
-            ?>
-            <dt class="col-md-3 <?php echo $class ?>"><?php echo $titre ?></dt>
-            <dd class="col-md-9 <?php echo $class ?>">
-                <p>
-                    <?php echo $reponse ?>
-                    <?php if ($canEditForcageCorrectionAutorisee): ?>
-                        <?php if ($these->isCorrectionAutoriseeForcee()): ?>
-                            <em>Cette valeur est forcée.</em>
-                        <?php endif ?>
-                        <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info btn-forcage-correction ajax-modal"
-                           data-event="event-correction-autorisee-forcee-modified"
-                           title="Forçage du témoin de corrections attendues"
-                        >Forçage</a>
-                    <?php endif ?>
-                </p>
-                <?php if ($these->isCorrectionAutorisee()): ?>
-                    <?php if ($dateSoutenance = $these->getDateSoutenance()): ?>
-                        <p>
-                            Date butoir :
-                            <?php if ($these->getDateButoirDepotVersionCorrigeeAvecSursis()): ?>
-                                <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?> (sursis inclus)
+            <div class="col-md-8">
+                <?php if ($canMissionAfficher) : ?>
+                    <dl style="display:flex">
+                        <dt class="col-md-3">
+                            Mission·s d'enseignement
+                        </dt>
+                        <dd class="col-md-9">
+                            <?php if ($canMissionGerer) : ?>
+                                <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::ajouterAction() */ ?>
+                                        class="icon icon-plus iconly ajax-modal float-end" data-event="modification"
+                                        href="<?php echo $this->url('doctorant/mission-enseignement/ajouter', ['doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
+                                        title="Ajouter une mission d'enseignement"></a>
+                            <?php endif; ?>
+                            <?php if (empty($missions)) : ?>
+                                (Aucune mission renseignée)
                             <?php else: ?>
-                                <abbr title="<?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> après la date de soutenance">
-                                    <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
-                                </abbr>
-                            <?php endif ?>
-                            <?php if ($this->isAllowed($these, DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
-                                <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
-                                   data-event="event-sursis-correction-modified"
-                                   title="Accorder un sursis"
-                                >Accorder un sursis</a>
+                                <ul>
+                                    <?php foreach ($missions as $mission) : ?>
+                                        <li>Mission d'enseignement pour l'année <?php echo $mission->getAnneeUniversitaire(); ?>/<?php echo ($mission->getAnneeUniversitaire()+1); ?>
+                                        <?php if ($canMissionGerer) : ?>
+                                            <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::retirerAction() */ ?>
+                                                    class="ajax-modal" data-event="modification"
+                                                    data-toggle="confirmationx" data-message="Êtes-vous sûr·e de vouloir retirer cette mission d'enseignement ?"
+                                                    href="<?php echo $this->url('doctorant/mission-enseignement/retirer', ['mission' => $mission->getId(), 'doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
+                                            ><span class="icon icon-supprimer"></span></a>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </dd>
+                    </dl>
+                <?php endif; ?>
+
+                <?php if ($resultat = $these->getResultatToString()): ?>
+                    <dl>
+                        <dt class="col-md-3">Résultat</dt>
+                        <dd class="col-md-9">
+                            <?php echo $resultat ?>
+                        </dd>
+                    </dl>
+                <?php endif ?>
+
+                <?php if ($these->getDateAbandon()): ?>
+                    <dl>
+                        <dt class="col-md-3">Date d'abandon</dt>
+                        <dd class="col-md-9"><?php echo $these->getDateAbandonToString() ?></dd>
+                    </dl>
+                <?php endif ?>
+
+                <?php if ($these->getDateTransfert()): ?>
+                    <dl>
+                        <dt class="col-md-3">Date de transfert
+                        <dd class="col-md-9"><?php echo $these->getDateTransfertToString() ?></dd>
+                    </dl>
+                <?php endif ?>
+
+                <?php if ($these->getSoutenanceAutorisee()): ?>
+                    <dl>
+                        <dt class="col-md-3">Soutenance autorisée</dt>
+                        <dd class="col-md-9"><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>
+                    </dl>
+                <?php endif ?>
+
+                <?php if ($these->getDateSoutenance()): ?>
+                    <dl>
+                        <dt class="col-md-3">Date réelle de soutenance</dt>
+                        <dd class="col-md-9"><?php echo $these->getDateSoutenanceToString() ?></dd>
+                    </dl>
+                <?php endif ?>
+
+                <?php if ($these->getLibelleEtabCotutelle()): ?>
+                    <dl>
+                        <dt class="col-md-3">Cotutelle</dt>
+                        <dd class="col-md-9">En cotutelle avec <?php echo $these->getLibelleEtabCotutelle() ?>,
+                            <?php echo $these->getLibellePaysCotutelle() ?></dd>
+                    </dl>
+                <?php endif ?>
+
+                <!------------------------------- Corrections attendues --------------------------------->
+                <?php
+                $titre = "Corrections attendues";
+                $reponse = "Non.";
+                $message = null;
+                $class = null;
+
+                $validationsDesCorrectionsEnAttente = [1]; //////////////////////
+
+                if ($these->isCorrectionAutorisee()) {
+                    $dateButoirDepassee =
+                        $these->isDateButoirDepotVersionCorrigeeDepassee($these->getDateSoutenance()) &&
+                        ! empty($validationsDesCorrectionsEnAttente);
+
+                    if ($these->getCorrectionAutoriseeEstFacultative()) {
+                        $class = "text-warning";
+                        $reponse = "Oui, facultatives.";
+                        $message = $dateButoirDepassee ?
+                            "<strong>Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence.</strong>" :
+                            null;
+                    } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
+                        $class = "text-danger";
+                        $reponse = "Oui, obligatoires.";
+                        $message = $dateButoirDepassee ?
+                            "<strong>Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés.</strong>" :
+                            null;
+                    }
+                    if (is_array($validationsDesCorrectionsEnAttente) && empty($validationsDesCorrectionsEnAttente)) {
+                        $titre = "Corrections";
+                        $message = sprintf("Les corrections %s ont été validées.", lcfirst($these->getCorrectionAutoriseeToString(true)));
+                        $canEditForcageCorrectionAutorisee = false;
+                    }
+                }
+                ?>
+                <dl>
+                    <dt class="col-md-3 <?php echo $class ?>"><?php echo $titre ?></dt>
+                    <dd class="col-md-9 <?php echo $class ?>">
+                        <p>
+                            <?php echo $reponse ?>
+                            <?php if ($canEditForcageCorrectionAutorisee): ?>
+                                <?php if ($these->isCorrectionAutoriseeForcee()): ?>
+                                    <em>Cette valeur est forcée.</em>
+                                <?php endif ?>
+                                <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info btn-forcage-correction ajax-modal"
+                                   data-event="event-correction-autorisee-forcee-modified"
+                                   title="Forçage du témoin de corrections attendues"
+                                >Forçage</a>
                             <?php endif ?>
                         </p>
-                    <?php endif ?>
-                <?php endif ?>
-                <?php if ($message): ?>
-                    <p>
-                        <?php echo $message ?>
-                    </p>
-                <?php endif ?>
-            </dd>
-
+                        <?php if ($these->isCorrectionAutorisee()): ?>
+                            <?php if ($dateSoutenance = $these->getDateSoutenance()): ?>
+                                <p>
+                                    Date butoir :
+                                    <?php if ($these->getDateButoirDepotVersionCorrigeeAvecSursis()): ?>
+                                        <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?> (sursis inclus)
+                                    <?php else: ?>
+                                        <abbr title="<?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> après la date de soutenance">
+                                            <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
+                                        </abbr>
+                                    <?php endif ?>
+                                    <?php if ($this->isAllowed($these, DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
+                                        <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                                           data-event="event-sursis-correction-modified"
+                                           title="Accorder un sursis"
+                                        >Accorder un sursis</a>
+                                    <?php endif ?>
+                                </p>
+                            <?php endif ?>
+                        <?php endif ?>
+                        <?php if ($message): ?>
+                            <p>
+                                <?php echo $message ?>
+                            </p>
+                        <?php endif ?>
+                    </dd>
+                </dl>
+            </div>
         </dl>
     </div>
-
 </div>
 
 
