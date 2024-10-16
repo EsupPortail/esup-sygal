@@ -27,19 +27,9 @@ use Soutenance\Entity\Proposition;
 $date = new DateTime();
 
 $civilite = null;
-//$civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
-if ($membre->getIndividu()) {
-    if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
-    if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
-    $denomination = $membre->getIndividu()->getNomComplet();
-
-} else {
-    if ($membre->getGenre() === 'F') $civilite = "Madame";
-    if ($membre->getGenre() === 'H') $civilite = "Monsieur";
-    $denomination = $membre->getDenomination();
-}
+$civilite = $membre->getCivilite();
+$denomination = $membre->getIndividu() ? $membre->getIndividu()->getNomComplet() : $membre->getDenomination();
 ?>
-
 
 <style>
     .not-yet {

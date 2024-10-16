@@ -2,6 +2,7 @@
 
 namespace These\Form\Direction;
 
+use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
@@ -20,11 +21,25 @@ class DirectionForm extends Form
         $this->setObject(new These());
 
         $fieldset = $this->getFormFactory()->getFormElementManager()->get(DirectionFieldset::class);
+        $fieldset->setName("direction");
         $fieldset->setUseAsBaseFieldset(true);
 
         $this
             ->add($fieldset)
             ->add(new Csrf('security'))
-            ->add((new Submit('submit'))->setValue('Enregistrer'));
+            ->add([
+                'type' => Button::class,
+                'name' => 'submit',
+                'options' => [
+                    'label' => '<span class="icon icon-save"></span> Enregistrer',
+                    'label_options' => [
+                        'disable_html_escape' => true,
+                    ],
+                ],
+                'attributes' => [
+                    'type' => 'submit',
+                    'class' => 'btn btn-primary',
+                ],
+            ]);
     }
 }

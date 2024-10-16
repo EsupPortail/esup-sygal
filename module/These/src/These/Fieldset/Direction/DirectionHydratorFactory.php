@@ -6,6 +6,7 @@ use Application\Service\Role\RoleService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\Hydrator\HydratorPluginManager;
+use Structure\Service\Etablissement\EtablissementService;
 use These\Hydrator\ActeurHydrator;
 use These\Service\Acteur\ActeurService;
 
@@ -30,6 +31,10 @@ class DirectionHydratorFactory
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);
         $hydrator->setRoleService($roleService);
+
+        /** @var EtablissementService $etablissementService */
+        $etablissementService = $container->get(EtablissementService::class);
+        $hydrator->setEtablissementService($etablissementService);
 
         /** @var \These\Hydrator\ActeurHydrator $acteurHydrator */
         $acteurHydrator = $container->get(HydratorPluginManager::class)->get(ActeurHydrator::class);

@@ -242,7 +242,9 @@ class MembreService {
         $membre->setProposition($proposition);
         $membre->setPrenom($acteur->getIndividu()->getPrenom());
         $membre->setNom($acteur->getIndividu()->getNomUsuel());
-        $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
+
+        //GERER CE CAS!!
+        $membre->setGenre($acteur->getGenreFromIndividu());
         $membre->setQualite($qualite);
         $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Etablissement inconnu");
         $membre->setRole(Membre::MEMBRE_JURY);

@@ -64,6 +64,7 @@ return [
                         'supprimer',
                         'generalites',
                         'structures',
+                        'direction',
                         'financements'
                     ],
                     'privileges' => [
@@ -133,6 +134,16 @@ return [
                                     'defaults' => [
                                         /** @see TheseSaisieController::structuresAction() */
                                         'action' => 'structures',
+                                    ],
+                                ],
+                            ],
+                            'direction' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route' => '/direction',
+                                    'defaults' => [
+                                        /** @see TheseSaisieController::directionAction() */
+                                        'action' => 'direction',
                                     ],
                                 ],
                             ],

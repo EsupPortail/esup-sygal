@@ -100,6 +100,15 @@ class TheseAssertion extends AbstractAssertion
             }
         }
 
+        switch ($action) {
+            case 'generalites':
+            case 'structures':
+            case 'direction':
+            case 'financements':
+                if($this->these->getSource()?->getImportable()) return false;
+                break;
+        }
+
 //        if (! $this->userContextService->isStructureDuRoleRespecteeForThese($this->these)) {
 //            return false;
 //        }

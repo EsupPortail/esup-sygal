@@ -33,6 +33,16 @@ class FinancementFormatterHelper extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
+     * @param bool $displayComplement
+     * @return self
+     */
+    public function setDisplayComplement(bool $displayComplement): self
+    {
+        $this->formatter->setDisplayComplement($displayComplement);
+        return $this;
+    }
+
+    /**
      * @param string $sortBy
      * @return self
      */

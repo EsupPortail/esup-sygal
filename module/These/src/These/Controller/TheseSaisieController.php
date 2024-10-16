@@ -11,6 +11,7 @@ use Laminas\Form\FieldsetInterface;
 use Laminas\Form\Form;
 use Laminas\View\Model\ViewModel;
 use These\Entity\Db\These;
+use These\Form\Direction\DirectionFormAwareTrait;
 use These\Form\Financement\FinancementsFormAwareTrait;
 use These\Form\Generalites\GeneralitesFormAwareTrait;
 use These\Form\Structures\StructuresFormAwareTrait;
@@ -28,6 +29,7 @@ class TheseSaisieController extends AbstractController
     use GeneralitesFormAwareTrait;
     use StructuresFormAwareTrait;
     use FinancementsFormAwareTrait;
+    use DirectionFormAwareTrait;
 
     public function ajouterAction()
     {
@@ -159,6 +161,11 @@ class TheseSaisieController extends AbstractController
     public function structuresAction()
     {
         return $this->modifierTheseSaisiePart($this->getStructuresForm(), 'structures');
+    }
+
+    public function directionAction()
+    {
+        return $this->modifierTheseSaisiePart($this->getDirectionForm(), 'direction');
     }
 
     public function financementsAction()

@@ -9,6 +9,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use These\Controller\TheseSaisieController;
+use These\Form\Direction\DirectionForm;
 use These\Form\Financement\FinancementsForm;
 use These\Form\Generalites\GeneralitesForm;
 use These\Form\Structures\StructuresForm;
@@ -36,6 +37,7 @@ class TheseSaisieControllerFactory
         $generalitesForm =  $container->get('FormElementManager')->get(GeneralitesForm::class);
         $structuresForm =  $container->get('FormElementManager')->get(StructuresForm::class);
         $financementsForm =  $container->get('FormElementManager')->get(FinancementsForm::class);
+        $directionForm =  $container->get('FormElementManager')->get(DirectionForm::class);
         $theseSaisieForm = $container->get('FormElementManager')->get(TheseSaisieForm::class);
 
         $controller = new TheseSaisieController();
@@ -44,6 +46,7 @@ class TheseSaisieControllerFactory
         $controller->setTheseSaisieForm($theseSaisieForm);
         $controller->setGeneralitesForm($generalitesForm);
         $controller->setStructuresForm($structuresForm);
+        $controller->setDirectionForm($directionForm);
         $controller->setFinancementsForm($financementsForm);
 
         /** @var DoctorantService $doctorantService */

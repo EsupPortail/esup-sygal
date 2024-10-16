@@ -91,6 +91,25 @@ class Membre implements HistoriqueAwareInterface {
     }
 
     /**
+     * @return string|null
+     */
+    public function getCivilite(): string|null
+    {
+        $civilite = null;
+        if ($this->getIndividu()) {
+            if ($this->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
+            if ($this->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
+        }
+
+        if(empty($civilite)){
+            if ($this->getGenre() === 'F') $civilite = "Madame";
+            if ($this->getGenre() === 'H') $civilite = "Monsieur";
+        }
+
+        return $civilite;
+    }
+
+    /**
      * @return string
      */
     public function getDenomination()

@@ -7,10 +7,13 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Hydrator\AbstractHydrator;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Hydrator\ActeurHydratorAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Form\Element\SearchAndSelect2 as SAS2;
 
 class DirectionHydrator extends AbstractHydrator
@@ -18,6 +21,7 @@ class DirectionHydrator extends AbstractHydrator
     use IndividuServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
 
     use ActeurHydratorAwareTrait;
 
@@ -103,7 +107,17 @@ class DirectionHydrator extends AbstractHydrator
             $individuId = SAS2::extractIdFromValue($data['directeur-individu']["id"]);
             $individu = $this->individuService->getRepository()->find($individuId);
 
-            $acteur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE);
+            /** @var Acteur[] $directeursEnBdd */
+            $directeursEnBdd = $these->getId() ?  $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE) : [];
+            foreach ($directeursEnBdd as $directeur) {
+                if ($directeur->getIndividu()?->getId() !== $individu->getId()) {
+                    $directeur->historiser();
+                }
+            }
+
+            $etablissement = isset($data['directeur-etablissement']) ? $this->etablissementService->getRepository()->find($data['directeur-etablissement']) : new Etablissement();
+
+            $acteur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE, $etablissement);
 
             $prefixe = 'directeur-';
             $this->hydrateActeur($acteur, $data, $prefixe);
@@ -122,7 +136,8 @@ class DirectionHydrator extends AbstractHydrator
                 $individuId = SAS2::extractIdFromValue($data[$prefixe . 'individu']["id"]);
                 $individu = $this->individuService->getRepository()->find($individuId);
 
-                $acteur = $this->addActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE);
+                $etablissement = isset($data[$prefixe.'etablissement']) ? $this->etablissementService->getRepository()->find($data[$prefixe.'etablissement']) : new Etablissement();
+                $acteur = $this->addActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE, $etablissement);
                 $acteur->setOrdre($i);
                 $this->hydrateActeur($acteur, $data, $prefixe);
 
@@ -168,17 +183,20 @@ class DirectionHydrator extends AbstractHydrator
         $this->acteurHydrator->hydrate($dataActeur, $acteur);
     }
 
-    private function addActeur(These $these, Individu $individu, string $role): Acteur
+    private function addActeur(These $these, Individu $individu, string $role, Etablissement $etablissement): Acteur
     {
-        $role = $this->roleService->getRepository()->findByCode($role);
+        $role = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete($role, $etablissement);
         $acteur = $these->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $these) : null;
-        if ($acteur === null) {
-            $acteur = $this->acteurService->newActeur($these, $individu, $role);
-            $these->addActeur($acteur);
-        } else {
-            $acteur->setRole($role);
+        if($role){
+            if ($acteur === null) {
+                $acteur = $this->acteurService->newActeur($these, $individu, $role);
+                $these->addActeur($acteur);
+            } else {
+                $acteur->setRole($role);
+            }
+        }else{
+            throw new RuntimeException("Aucun rôle n'a été trouvé pour le code [".$role."] et l'établissement ['.$etablissement.']");
         }
-
         return $acteur;
     }
 }

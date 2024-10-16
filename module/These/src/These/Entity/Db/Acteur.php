@@ -497,6 +497,18 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
         return $this->membre;
     }
 
+    /**
+     * @return string
+     */
+    public function getGenreFromIndividu(): string
+    {
+        $individu = $this->getIndividu();
+        if($individu && $individu->getCivilite()){
+            return  $individu->estUneFemme() ? "F" : "H";
+        }
+        return "";
+    }
+
     /** FONCTION POUR LES MACROS **************************************************************************************/
 
     /** @noinspection PhpUnused */

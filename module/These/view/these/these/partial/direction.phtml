@@ -24,6 +24,8 @@ $acteursFormatter->paramFilter(["role" => [
 $acteursFormatter->paramDisplay(["role" => true, "complement" => true, "qualite" => true, "etablissement" => true, "uniteRecherche" => true]);
 $acteursFormatter->asArray(true);
 $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toArray());
+
+$estImportable = $these?->getSource()->getImportable();
 ?>
 
 <dl class="row">
@@ -87,20 +89,22 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                                 echo implode('<br>', $ligne);
                                 ?>
                             </td>
-                            <td>
-                                <div class="float-end">
-                                    <?php
-                                    $canEditActeur =
-                                        $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES) ||
-                                        $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_SES_THESES);
-                                    ?>
-                                    <?php if ($canEditActeur): ?>
-                                        <a href="<?php echo $this->url('these/acteur/modifier', ['acteur' => $acteur->getId()], [], true) ?>"
-                                           class="ajax-modal" data-event="modification">
-                                            <span class='icon icon-edit iconly' title='Modifier cet acteur'></span></a>
-                                    <?php endif ?>
-                                </div>
-                            </td>
+                            <?php if($estImportable): ?>
+                                <td>
+                                    <div class="float-end">
+                                        <?php
+                                        $canEditActeur =
+                                            $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES) ||
+                                            $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_SES_THESES);
+                                        ?>
+                                        <?php if ($canEditActeur): ?>
+                                            <a href="<?php echo $this->url('these/acteur/modifier', ['acteur' => $acteur->getId()], [], true) ?>"
+                                               class="ajax-modal" data-event="modification">
+                                                <span class='icon icon-edit iconly' title='Modifier cet acteur'></span></a>
+                                        <?php endif ?>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php } ?>
                 </table>

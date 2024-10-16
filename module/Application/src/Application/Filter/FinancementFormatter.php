@@ -26,6 +26,16 @@ class FinancementFormatter
     private bool $displayComplement = false;
 
     /**
+     * @param bool $displayComplement
+     * @return self
+     */
+    public function setDisplayComplement(bool $displayComplement): self
+    {
+        $this->displayComplement = $displayComplement;
+        return $this;
+    }
+
+    /**
      * @param string $displayAs
      * @return self
      */

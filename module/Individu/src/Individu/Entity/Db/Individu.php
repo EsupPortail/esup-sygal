@@ -508,7 +508,7 @@ class Individu implements
         return [
             self::CIVILITE_M => 'M',
             self::CIVILITE_MME => 'F',
-        ][$this->getCivilite()];
+        ][$this->getCivilite()] ?? "";
     }
 
     /**

@@ -11,6 +11,7 @@ use Application\Filter\FinancementFormatter;
 $financementFormatter = $this->financementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
 $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_ARRAY);
+$financementFormatter->setDisplayComplement(true);
 $financementsFormatted = $financementFormatter->format($these->getFinancements()->toArray());
 
 ?>

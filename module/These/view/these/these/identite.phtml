@@ -159,6 +159,13 @@ switch ($these->getEtatThese()){
         </h2>
     </div>
     <div class="card-body these-identite-body">
+        <?php if ($canEditThese && !$isImportable): ?>
+            <?php /**  @see \These\Controller\TheseSaisieController::directionAction() */ ?>
+            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-domaine="direction" data-url="<?php echo $this->url('these/modifier/direction', ['these' => $these->getId()], [], true) ?>">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier la direction"); ?>
+            </button>
+        <?php endif ?>
         <?php echo $this->partial('these/these/partial/direction') ?>
     </div>
 </div>
