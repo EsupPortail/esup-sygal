@@ -1,3 +1,7 @@
+--
+-- 8.6.0
+--
+
 -- Changement de la taille de la colonne
 ALTER TABLE admission_etudiant
     ALTER COLUMN adresse_cp_ville_etrangere TYPE VARCHAR(38);
