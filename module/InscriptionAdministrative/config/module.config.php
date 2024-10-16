@@ -49,23 +49,23 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
-                            'inscription-administrative' => [
-                                'label' => 'Inscriptions administratives',
-                                'route' => 'inscription-administrative',
-                                'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'index'),
-                                'order' => 200,
-                                'pages' => [
-                                    'voir' => [
-                                        'label' => 'Détails',
-                                        'route' => 'inscription-administrative/voir',
-                                        'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'voir'),
-                                        'order' => 200,
-                                        'pages' => [
-
-                                        ],
-                                    ],
-                                ],
-                            ],
+//                            'inscription-administrative' => [
+//                                'label' => 'Inscriptions administratives',
+//                                'route' => 'inscription-administrative',
+//                                'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'index'),
+//                                'order' => 200,
+//                                'pages' => [
+//                                    'voir' => [
+//                                        'label' => 'Détails',
+//                                        'route' => 'inscription-administrative/voir',
+//                                        'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'voir'),
+//                                        'order' => 200,
+//                                        'pages' => [
+//
+//                                        ],
+//                                    ],
+//                                ],
+//                            ],
                         ],
                     ],
                 ],
