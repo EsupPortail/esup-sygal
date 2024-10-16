@@ -145,3 +145,14 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
     <?php endif ?>
 
 </fieldset>
+<script>
+    $('select').selectpicker();
+    var codeDeptInput = '#codeDeptTitreAcces'
+    var nomDeptInput = '#nomDeptTitreAcces'
+    //Gestion de la sélection du département
+    initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput)
+    $(nomDeptInput).on('input', function() {
+        $(codeDeptInput).val('');
+    });
+    setupAutocompleteDepartement(nomDeptInput, codeDeptInput);
+</script>

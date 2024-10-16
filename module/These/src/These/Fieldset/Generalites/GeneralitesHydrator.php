@@ -88,10 +88,10 @@ class GeneralitesHydrator extends DoctrineObject
         }
 
         //problème sinon lors de l'hydratation, objet TitreAcces a comme clé "financements" -> gros mystère
-        if (array_key_exists("financements", $data)) {
-            $data["titreAcces"] = $data["financements"];
-            unset($data["financements"]);
-        }
+//        if (array_key_exists("financements", $data)) {
+//            $data["titreAcces"] = $data["financements"];
+//            unset($data["financements"]);
+//        }
 
         return parent::hydrate($data, $object);
     }

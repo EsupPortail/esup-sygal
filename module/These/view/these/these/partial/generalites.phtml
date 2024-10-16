@@ -20,9 +20,11 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 $canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
 $canEditEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
 $canEditEmailContactConsent = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
+
 $emailContactModifiedEvent = 'email-contact-modified-event';
 $emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
-$canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFICATION_DOMAINES_HAL_THESE);
+$modifierGeneralitesEvent = 'event-modifier-generalites';
 ?>
 
 <dl class="row generalites">
@@ -121,10 +123,13 @@ $canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFIC
     <div class="col-md-4">
         <?php if ($canEditThese && !$isImportable): ?>
             <?php /**  @see \These\Controller\TheseSaisieController::generalitesAction() */ ?>
-            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn mb-5" data-domaine="generalites" data-url="<?php echo $this->url('these/modifier/generalites', ['these' => $these->getId()], [], true) ?>">
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="generalites"
+               href="<?php echo $this->url('these/modifier/generalites', ['these' => $these->getId()], [], true) ?>"
+               data-event="<?php echo $modifierGeneralitesEvent ?>"
+            >
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les généralités"); ?>
-            </button>
+            </a>
         <?php endif ?>
 
         <div class="box card float-end" style="width: 100%; box-sizing:border-box">
@@ -216,3 +221,14 @@ $canDomaineHalModifier = $this->isAllowed($these, ThesePrivileges::THESE_MODIFIC
         </div>
     </div>
 </dl>
+
+<script>
+    $(function () {
+        var body = $("body");
+
+        body.on("<?php echo $modifierGeneralitesEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    })
+</script>

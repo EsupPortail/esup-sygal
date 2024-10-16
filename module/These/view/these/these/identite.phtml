@@ -1,18 +1,11 @@
 <?php
 
-use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use Application\Filter\FinancementFormatter;
-use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Depot\Provider\Privilege\DepotPrivileges;
-use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
-use Structure\Entity\Db\EtablissementRattachement;
 use These\Controller\TheseController;
 use These\Entity\Db\These;
-use These\Filter\ActeursFormatter;
-use These\Provider\Privilege\CoEncadrantPrivileges;
 use These\Provider\Privilege\ThesePrivileges;
 
 /**
@@ -39,6 +32,8 @@ $canEditThese = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_SES_
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
 $modifierStructuresEvent = 'event-modifier-structures';
+$modifierDirectionEvent = 'event-modifier-direction';
+$modifierFinancementsEvent = 'event-modifier-financements';
 
 $isImportable = $these->getSource()->getImportable();
 
@@ -57,9 +52,15 @@ switch ($these->getEtatThese()){
         $iconEtatThese = "export";
         break;
     case "S" :
-        $etatTheseClass = $these->getResultat() === 1 ? "admis" : "non-admis";
-        $iconEtatThese = $these->getResultat() === 1 ? "ok" : "ko";
-        $etatTheseTextTooltip = $these->getResultatToString();
+        if(!$these->getResultat()){
+            $etatTheseClass = "";
+            $iconEtatThese = "";
+            $etatTheseTextTooltip = "Résultat inconnu";
+        }else{
+            $etatTheseClass = $these->getResultat() === 1 ? "admis" : "non-admis";
+            $iconEtatThese = $these->getResultat() === 1 ? "ok" : "ko";
+            $etatTheseTextTooltip = $these->getResultatToString();
+        }
         break;
     default:
         $etatTheseClass = "";
@@ -84,7 +85,6 @@ switch ($these->getEtatThese()){
         <div class="col-md-7">
             <?php /**  @see \These\Controller\TheseSaisieController::modifierAction() */ ?>
             <a href="<?php echo $this->url('these/modifier', ['these' => $these->getId()], [], true) ?>"
-               data-event="<?php echo $modifierStructuresEvent ?>"
                class="btn btn-primary">
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier la thèse"); ?>
@@ -100,24 +100,6 @@ switch ($these->getEtatThese()){
          data-bs-toggle="tooltip" data-bs-original-title="<?=$etatTheseTextTooltip?>">
         <span class="icon icon-<?=$iconEtatThese?>"></span>
         <h2><?= $these->getEtatTheseToString(); ?></h2>
-    </div>
-</div>
-
-<div class="modal fade" id="modalModificationThese" tabindex="-1" role="dialog" aria-labelledby="modalModificationTheseLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Modification de la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?></h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body">
-                <div id="modalModificationTheseContent">
-                    <div id="loading-indicator">
-                        <div class="spinner"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -143,10 +125,13 @@ switch ($these->getEtatThese()){
     <div class="card-body these-identite-body">
         <?php if ($canEditThese && !$isImportable): ?>
             <?php /**  @see \These\Controller\TheseSaisieController::structuresAction() */ ?>
-            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-domaine="structures" data-url="<?php echo $this->url('these/modifier/structures', ['these' => $these->getId()], [], true) ?>">
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="structures"
+               href="<?php echo $this->url('these/modifier/structures', ['these' => $these->getId()], [], true) ?>"
+               data-event="<?php echo $modifierStructuresEvent ?>"
+            >
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les structures"); ?>
-            </button>
+            </a>
         <?php endif ?>
         <?php echo $this->partial('these/these/partial/structures') ?>
     </div>
@@ -161,10 +146,13 @@ switch ($these->getEtatThese()){
     <div class="card-body these-identite-body">
         <?php if ($canEditThese && !$isImportable): ?>
             <?php /**  @see \These\Controller\TheseSaisieController::directionAction() */ ?>
-            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-domaine="direction" data-url="<?php echo $this->url('these/modifier/direction', ['these' => $these->getId()], [], true) ?>">
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="direction"
+               href="<?php echo $this->url('these/modifier/direction', ['these' => $these->getId()], [], true) ?>"
+               data-event="<?php echo $modifierDirectionEvent ?>"
+            >
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier la direction"); ?>
-            </button>
+            </a>
         <?php endif ?>
         <?php echo $this->partial('these/these/partial/direction') ?>
     </div>
@@ -190,10 +178,13 @@ switch ($these->getEtatThese()){
     <div class="card-body these-identite-body">
         <?php if ($canEditThese && !$isImportable): ?>
             <?php /**  @see \These\Controller\TheseSaisieController::financementsAction() */ ?>
-            <button type="button" class="btn btn-primary float-end openModalModificationTheseBtn" data-domaine="financements" data-url="<?php echo $this->url('these/modifier/financements', ['these' => $these->getId()], [], true) ?>">
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="financements"
+                    href="<?php echo $this->url('these/modifier/financements', ['these' => $these->getId()], [], true) ?>"
+                    data-event="<?php echo $modifierFinancementsEvent ?>"
+            >
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier les financements"); ?>
-            </button>
+            </a>
         <?php endif ?>
         <?php echo $this->partial('these/these/partial/financements', ["these" => $these, "canEditThese" => $canEditThese, "isImportable" => $isImportable]) ?>
     </div>
@@ -380,6 +371,21 @@ switch ($these->getEtatThese()){
 
     $(function () {
         var body = $("body");
+
+        body.on("<?php echo $modifierStructuresEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        body.on("<?php echo $modifierDirectionEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        body.on("<?php echo $modifierFinancementsEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
 
         body.on("<?php echo $emailContactModifiedEvent ?>", function (event) {
             // L'email de contact vient d'être modifié.

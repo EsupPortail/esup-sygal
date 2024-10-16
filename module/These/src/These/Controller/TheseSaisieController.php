@@ -108,7 +108,7 @@ class TheseSaisieController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
 
-        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+//        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 
     private function getErrorMessages(): array
@@ -182,6 +182,7 @@ class TheseSaisieController extends AbstractController
         $viewModel = new ViewModel([
             'these' => $these,
             'form' => $form,
+            'title' => "Modification de la thèse de ".$these->getDoctorant()
         ]);
         $viewModel->setTemplate("these/these-saisie/partial/$domaine");
 

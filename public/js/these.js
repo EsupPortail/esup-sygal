@@ -66,34 +66,6 @@ $(document).ready(function() {
         });
         setupAutocompleteDepartement(nomDeptInput, codeDeptInput);
     }
-
-    if (url.indexOf('these/identite/') !== -1) {
-        $('.openModalModificationTheseBtn').on('click', function(event) {
-            event.preventDefault()
-            var url = $(this).data('url');
-            var domaine = $(this).data('domaine')
-            $('#modalModificationThese').modal('show');
-            $.ajax({
-                url: url,
-                method: 'GET',
-                success: function(data) {
-                    $('#modalModificationThese .modal-body').css('height', 'auto');
-                    $('#modalModificationTheseContent').html(data);
-                    updateFields()
-                    if(domaine === "generalites") initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput)
-                    $('select').selectpicker("render");
-                },
-                error: function() {
-                    $('#modalModificationTheseContent').html('Erreur lors du chargement du contenu.');
-                }
-            });
-        });
-
-        $('#modalModificationThese').on('hidden.bs.modal', function() {
-            $('#modalModificationThese .modal-body').css('height', '150');
-            $('#modalModificationTheseContent').html('<div id="loading-indicator">\n'+'<div class="spinner"></div>\n'+'</div>');
-        });
-    }
 });
 
 function initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput){
