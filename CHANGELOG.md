@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+8.6.1
+-----
+- [FIX] Notifications de demande d'engagement d'impartialité et d'avis de soutenance : utilisation en priorité du mail de l'acteur.
+
 8.6.0
 -----
 - Possibilité de déclarer un individu apatride (i.e. sans nationalité) ; réorganisation du formulaire.

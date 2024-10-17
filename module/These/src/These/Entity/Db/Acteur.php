@@ -367,4 +367,17 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     {
         return ($this->getEtablissement())?$this->getEtablissement()->getStructure()->getLibelle():"<span style='background:darkred;'>Aucun établissement</span>";
     }
+
+    /**
+     * Retourne l'adresse mail de cet acteur de thèse.
+     *
+     * @param bool $tryMembre Faut-il en dernier ressort retourner l'email de l'eventuel Membre lié ?
+     * @return string|null
+     */
+    public function getEmail(bool $tryMembre = false): ?string
+    {
+        return $this->getIndividu()->getEmailPro() ?:
+            $this->getIndividu()->getEmailUtilisateur() ?:
+                ($tryMembre ? $this->getMembre()?->getEmail() : null);
+    }
 }

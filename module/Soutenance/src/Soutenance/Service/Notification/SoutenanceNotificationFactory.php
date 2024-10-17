@@ -274,7 +274,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $vars['Url'] = $url;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_ENGAGEMENT_IMPARTIALITE, $vars);
-        $mail = $membre->getEmail();
+        $mail = $membre->getActeur()?->getEmail(true);
         if ($mail === null) {
             throw new RuntimeException("Aucun mail trouvé pour le rapporteur");
         }
@@ -451,7 +451,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationDemandeAvisSoutenance(These $these, Membre $rapporteur): Notification
     {
-        $email = $rapporteur->getEmail();
+        $email = $rapporteur->getActeur()?->getEmail(true);
         if ($email === null) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::DEMANDE_PRERAPPORT . "] la thèse {$these->getId()}");
         }

@@ -53,6 +53,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
 
                 <?php
                 $acteur = $rapporteur->getActeur();
+                $emailActeur = $acteur?->getEmail(true);
                 $avi = ($acteur !== null && isset($avis[$acteur->getIndividu()->getId()]))?$avis[$acteur->getIndividu()->getId()]:null;
 
                 ?>
@@ -121,7 +122,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                             <?php if ($canNotifierAvisSoutenance && isset($engagements[$rapporteur->getIndividu()->getId()]) && !isset($avis[$acteur->getIndividu()->getId()])) : ?>
                                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::notifierDemandeAvisSoutenanceAction() */ ?>
                                     href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
-                                    <span class="icon icon-notify"      title="Notifier le rapporteur '<?php echo $rapporteur->getEmail(); ?>'"></span>
+                                    <span class="icon icon-notify"      title="Notifier ce rapporteur (<?php echo $emailActeur ?>)"></span>
                                 </a>
                             <?php else: ?>
                                 <span class="icon icon-notify" title="Notifier le rapporteur" style="color:lightgray;" ></span>
