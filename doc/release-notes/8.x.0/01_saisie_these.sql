@@ -4,6 +4,13 @@
 --
 
 --
+-- Suppression préalable des vues matérialisées d'indicateurs.
+--
+-- Indicateur devenu inutile
+DELETE FROM INDICATEUR where id = 1;
+call unicaen_indicateur_delete_matviews();
+
+--
 -- Table ACTEUR
 --
 
@@ -218,11 +225,11 @@ WHERE ds.libelle = t.lib_disc;
 -- ALTER TABLE these DROP COLUMN lib_disc;
 
 -- Colonnes devenues inutiles
--- Attention certaines colonnes sont utilisées dans des vues (Utiliser le script 03_matviews.sql présent ici : doc/release-notes/8.4.0)
 ALTER TABLE these DROP COLUMN if exists besoin_expurge;
 ALTER TABLE these DROP COLUMN if exists cod_unit_rech;
 ALTER TABLE these DROP COLUMN if exists lib_unit_rech;
 ALTER TABLE these DROP COLUMN if exists source_code_sav;
+
 -- Supprimer la vue utilisant le champ date_autoris_soutenance
 DROP VIEW if exists v_diff_these;
 ALTER TABLE these DROP COLUMN if exists date_autoris_soutenance;
@@ -671,7 +678,7 @@ create table IF NOT EXISTS autorisation_inscription
     histo_modification    timestamp,
     histo_destructeur_id  bigint REFERENCES utilisateur (id),
     histo_destruction     timestamp
-);
+    );
 
 --
 -- Nouvelle catégorie de privilèges : AutorisationInscription.
@@ -750,3 +757,29 @@ where exists (
     where p.code in ('lister-sien', 'telecharger-sien') and categorie_id in (select id from categorie_privilege where code LIKE 'rapport-csi')
       and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
 );
+
+--
+-- Rétablissement des vues matérialisées d'indicateurs.
+--
+create or replace procedure unicaen_indicateur_recreate_matviews()
+    language plpgsql
+as $$declare
+    v_result indicateur;
+    v_name varchar;
+    v_template varchar = 'create materialized view %s as %s';
+begin
+    raise notice '%', 'Création des vues matérialisées manquantes...';
+for v_result in
+select i.* from indicateur i
+                    left join pg_matviews mv on schemaname = 'public' and matviewname = 'mv_indicateur_'||i.id
+where mv.matviewname is null
+order by i.id
+    loop
+            v_name = 'mv_indicateur_'||v_result.id;
+raise notice '%', format('- %s...', v_name);
+execute format(v_template, v_name, v_result.requete);
+end loop;
+    raise notice '%', 'Terminé.';
+end
+$$;
+call unicaen_indicateur_recreate_matviews();

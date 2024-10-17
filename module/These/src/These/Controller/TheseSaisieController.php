@@ -9,6 +9,7 @@ use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Form\FieldsetInterface;
 use Laminas\Form\Form;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use These\Entity\Db\These;
 use These\Form\Direction\DirectionFormAwareTrait;
@@ -57,11 +58,9 @@ class TheseSaisieController extends AbstractController
         $these = $form->getData();
         $individu = $data["generalites"]['doctorant']["id"] ? $this->individuService->getRepository()->find($data["generalites"]['doctorant']["id"]) : null;
         if ($individu) {
-            $doctorant = $this->doctorantService->newDoctorant($individu);
+            $etablissement = $these->getEtablissement();
+            $doctorant = $this->doctorantService->newDoctorant($individu, $etablissement);
             $these->setDoctorant($doctorant);
-            //Ajout du rôle doctorant à l'individu
-            $role = $this->roleService->getRepository()->findByCode(Role::CODE_DOCTORANT);
-            $this->roleService->addRole($individu, $role->getId());
         }
         $this->theseService->saveThese($these);
 
@@ -108,7 +107,7 @@ class TheseSaisieController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
 
-//        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 
     private function getErrorMessages(): array
@@ -153,27 +152,27 @@ class TheseSaisieController extends AbstractController
         return $messages;
     }
 
-    public function generalitesAction()
+    public function generalitesAction(): Response|ViewModel
     {
         return $this->modifierTheseSaisiePart($this->getGeneralitesForm(), 'generalites');
     }
 
-    public function structuresAction()
+    public function structuresAction(): Response|ViewModel
     {
         return $this->modifierTheseSaisiePart($this->getStructuresForm(), 'structures');
     }
 
-    public function directionAction()
+    public function directionAction(): Response|ViewModel
     {
         return $this->modifierTheseSaisiePart($this->getDirectionForm(), 'direction');
     }
 
-    public function financementsAction()
+    public function financementsAction(): Response|ViewModel
     {
         return $this->modifierTheseSaisiePart($this->getFinancementsForm(), 'financements');
     }
 
-    private function modifierTheseSaisiePart(Form $form, string $domaine)
+    private function modifierTheseSaisiePart(Form $form, string $domaine): Response|ViewModel
     {
         $request = $this->getRequest();
         $these = $this->requestedThese();

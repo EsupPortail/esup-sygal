@@ -9,14 +9,12 @@ use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\Repository\DoctorantRepository;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Individu\Entity\Db\Individu;
-use Individu\Service\IndividuServiceAwareTrait;
-use RuntimeException;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 
 class DoctorantService extends BaseService
 {
@@ -116,14 +114,18 @@ class DoctorantService extends BaseService
         try {
             $this->entityManager->persist($doctorant);
             $this->entityManager->flush();
-        } catch (\Doctrine\ORM\Exception\ORMException $e) {
-            throw new \UnicaenApp\Exception\RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
         }
     }
 
-    public function newDoctorant(Individu $individu)
+    public function newDoctorant(Individu $individu, Etablissement $etablissement): Doctorant
     {
-        $etablissement = $this->etablissementService->getRepository()->find(1);
+        try {
+            $etablissement = $this->etablissementService->getRepository()->find($etablissement->getId());
+        } catch (RuntimeException $e) {
+            throw new RuntimeException("Aucun établissement de trouvé avec cet id", null, $e);
+        }
 
         $doctorant = new Doctorant();
         $doctorant->setIndividu($individu);
