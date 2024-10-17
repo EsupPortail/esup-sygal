@@ -38,7 +38,7 @@ class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInt
      */
     public function getInputFilterSpecification(): array
     {
-        return array_merge(parent::getInputFilterSpecification(), [
+        return [
             'code' => [
                 'required' => true, // requis pour le calcul du nom de fichier logo
             ],
@@ -65,6 +65,6 @@ class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInt
                 'name' => 'estFerme',
                 'required' => false,
             ],
-        ]);
+        ];
     }
 }

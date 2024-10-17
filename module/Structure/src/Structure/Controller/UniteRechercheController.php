@@ -89,7 +89,7 @@ class UniteRechercheController extends StructureConcreteController
     /**
      * @return Response|ViewModel
      */
-    public function modifierAction()
+    public function modifierAction(): Response|ViewModel
     {
         $viewModel = parent::modifierAction();
 
@@ -120,7 +120,7 @@ class UniteRechercheController extends StructureConcreteController
     /**
      * @return Response|ViewModel
      */
-    public function ajouterAction()
+    public function ajouterAction(): Response|ViewModel
     {
         $viewModel = parent::ajouterAction();
 
