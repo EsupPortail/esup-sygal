@@ -3,6 +3,7 @@ Journal des modifications
 
 8.6.1
 -----
+- Module Formation : Affichage pour le doctorant de l'objectif et du programme d'une formation (sur la fiche d'une session de formation) 
 - [FIX] Notifications de demande d'engagement d'impartialité et d'avis de soutenance : utilisation en priorité du mail de l'acteur.
 - [FIX] Impossible d'accèder aux pages de consultation/modification d'ED ou d'UR.
 - [FIX] Coquille dans le procès verbal de soutenance (PDF).

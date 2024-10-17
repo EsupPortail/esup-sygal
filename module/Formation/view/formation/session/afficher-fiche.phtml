@@ -44,6 +44,20 @@ $this->headTitle($pageTitle);
             <dd class="col-md-9">
                     <?php echo $formation->getLibelle(); ?>
             </dd>
+            <?php
+            $objectif = trim(strip_tags(str_replace('&nbsp;', '', $formation->getObjectif())));
+            if ($formation->getObjectif() !== null && !empty($objectif)) : ?>
+                <dt class="col-md-3">Objectif </dt>
+                <dd class="col-md-9">
+                    <?php echo $formation->getObjectif(); ?>
+                </dd>
+            <?php endif; ?>
+            <?php if ($formation->getProgramme() !== null) : ?>
+                <dt class="col-md-3">Programme </dt>
+                <dd class="col-md-9">
+                    <?php echo $formation->getProgramme(); ?>
+                </dd>
+            <?php endif; ?>
             <?php if ($session->getDescription() !== null) : ?>
                 <dt class="col-md-3"> Description </dt>
                 <dd class="col-md-9"> <?php echo $session->getDescription(); ?> </dd>
