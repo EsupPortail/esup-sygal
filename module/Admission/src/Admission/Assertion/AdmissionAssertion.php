@@ -270,8 +270,8 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 "Le dossier d'admission doit être en cours de validation / être validé / être rejeté"
             );
         }elseif($codeNatureFichier === NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT_SIGNEE){
-            if(!($this->userContextService->getSelectedIdentityRole()->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT)){
-                throw new FailedAssertionException("Seul le candidat peut gérer ce document");
+            if(!($this->userContextService->getSelectedIdentityRole()->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT || $this->userContextService->getSelectedRoleEcoleDoctorale() || $this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_ADMIN_TECH)){
+                throw new FailedAssertionException("Seul le candidat et le gestionnaire d'ED peut gérer ce document");
             }
         }else{
             $this->assertTrue(

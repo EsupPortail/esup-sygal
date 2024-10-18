@@ -52,27 +52,37 @@ $dejaTeleversee = array_key_exists($natureFichierCharteDoctoratSignee, $document
                             L'étudiant (<?= $admission->getIndividu() ?>) doit lire l'intégralité de cette charte, puis certifier avoir effectivement pris connaissance de son contenu à la fin du document.
                         </p>
                     </div>
-                <?php endif; ?>
-                <?php $class = $dejaTeleversee ? " success" : null; ?>
+                <?php endif;
+                $class = $dejaTeleversee ? " success" : null;
+                $url = $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $natureFichierCharteDoctorat], [],true);
+                if($role->getCode() === Role::CODE_GEST_ED):
+                    $texte =  "Une fois déposée par l'étudiant, vous devrez (gestionnaire de l'ED) <a href='".$url."'>télécharger</a> 
+                    la charte du doctorat afin d'effectuer de façon manuscrite, le circuit de signatures restant (présent à la fin du document).
+                    <br>
+                    Vous pourrez ensuite supprimer l'existante et la téléverser à ";
+                    $class = " info";
+                elseif($role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT):
+                    $texte =  "Une fois signée, vous devrez <a href='".$url."'>télécharger</a> 
+                    la charte du doctorat afin d'effectuer de façon manuscrite, le circuit de signatures jusqu'à la direction de l'unité de recherche (présent à la fin du document).
+                    <br>
+                    Vous pourrez ensuite la téléverser à ";
+                else:
+                    $texte =  "Une fois signée, l'étudiant devra <a href='".$url."'>télécharger</a> 
+                    la charte du doctorat afin d'effectuer de façon manuscrite, le circuit de signatures restant (présent à la fin du document).
+                    <br>
+                    Il pourra ensuite la téléverser à";
+                endif;
+                ?>
                 <div class="precisions-action-container <?= $class ?>">
-                    <?php if($class): ?>
+                    <?php if($class === " success"): ?>
                         <i class="fas fa-check-circle"></i>
-                    <?php else: ?>
+                    <?php elseif($class === " info"): ?>
                         <i class="fas fa-exclamation-circle"></i>
-                    <?php endif;
-                        $texte1 = $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT ? " vous devrez" : " l'étudiant devra";
-                        $texte2 = $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT ? " Vous pourrez ensuite" : " Il pourra ensuite";
-                    ?>
+                    <?php else: ?>
+                        <i class="fas fa-info-circle"></i>
+                    <?php endif; ?>
                     <p>
-                        Une fois signée, <?= $texte1 ?>
-                        <?php if($canTelechargerDocument): ?>
-                            <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $natureFichierCharteDoctorat], [],true) ?>">télécharger</a>
-                        <?php else: ?>
-                            télécharger
-                        <?php endif; ?>
-                        la charte du doctorat afin d'effectuer le circuit de signatures (présent à la fin du document).
-                        <br>
-                        <?= $texte2 ?> la téléverser à
+                        <?= $texte ?>
                         <a type="button" class="acces-charte-doct-signee-btn" data-bs-target="#file-charte-doctorat-signe-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="file-charte-doctorat-signe-container">
                             l'endroit prévu ici.
                         </a>
@@ -86,7 +96,13 @@ $dejaTeleversee = array_key_exists($natureFichierCharteDoctoratSignee, $document
                     <div class="col-lg-9 col-sm-12">
                         <div class="row detail-file-container">
                             <div class="col-lg-7 upload-file">
-                                <?php echo $this->formfile($fieldsetCharteDoctoratSignee->setAttribute('disabled', false)); ?>
+                                <?php
+                                if($role->getCode() === Role::CODE_GEST_ED || $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT):
+                                    echo $this->formfile($fieldsetCharteDoctoratSignee->setAttribute('disabled', false));
+                                else:
+                                    echo $this->formfile($fieldsetCharteDoctoratSignee);
+                                endif;
+                                ?>
                             </div>
                             <?php if($dejaTeleversee): ?>
                                 <div class="col-lg-3 date-televersement-container">

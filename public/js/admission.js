@@ -450,6 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                         icon.classList.add("fa-check-circle")
                                         icon.classList.remove("fa-exclamation-circle")
                                     }
+                                    precisionsContainer.classList.remove("info")
                                     precisionsContainer.classList.add("success")
                                 }
                             }
