@@ -23,3 +23,15 @@ begin
     raise notice '%', 'Terminé.';
 end
 $$;
+
+
+--
+-- On cascade delete => restrict sur des contraintes de référence.
+--
+
+alter table rapport drop constraint rapport_annuel_fichier_fk;
+alter table rapport add constraint rapport_annuel_fichier_fk foreign key (fichier_id) references fichier on delete restrict;
+
+alter table validite_fichier drop constraint validite_fichier_ffk;
+alter table validite_fichier add constraint validite_fichier_ffk foreign key (fichier_id) references fichier on delete restrict;
+
