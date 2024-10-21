@@ -251,7 +251,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
         </div>
     </div>
 
@@ -277,7 +277,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         <div class="card-body">
 
             <div>
-                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
+                <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
             </div>
 
             <div class="row">
@@ -293,7 +293,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     <?php endif; ?>
                 </div>
                 <div class="col-md-9">
-                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance"); ?>
+                    <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance"); ?>
                 </div>
             </div>
 
@@ -347,7 +347,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
             <?php endif; ?>
 
 
-            <?php echo $this->derniersHorodatages($proposition, [
+            <?php echo $this->horodatagesParTypes($proposition, [
                 [HorodatageService::TYPE_ETAT, "Annulation de la soutenance"],
                 [HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance"],
             ]); ?>
@@ -418,7 +418,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     <?php endif; ?>
                 </div>
 
-                <?php echo $this->derniersHorodatages($proposition, [
+                <?php echo $this->horodatagesParTypes($proposition, [
                     [HorodatageService::TYPE_EDITION, "Procès verbal"],
                     [HorodatageService::TYPE_EDITION, "Rapport de soutenance"],
                     [HorodatageService::TYPE_EDITION, "Rapport technique"],
@@ -448,7 +448,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     <?php endif; ?>
                 </div>
 
-                <?php echo $this->derniersHorodatages($proposition, [
+                <?php echo $this->horodatagesParTypes($proposition, [
                     [HorodatageService::TYPE_NOTIFICATION, "Convocations"],
                     [HorodatageService::TYPE_NOTIFICATION, "Transmission des documents"]
                 ]);

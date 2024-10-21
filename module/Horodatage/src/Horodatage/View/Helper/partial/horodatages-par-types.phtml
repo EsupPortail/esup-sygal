@@ -1,0 +1,58 @@
+<?php
+
+use Horodatage\Entity\Db\Horodatage;
+
+/**
+ * @see DernierHorodatageViewHelper
+ * @var Horodatage $horodatage
+ * @var array $options
+ * @var boolean $hasMultipleEvenements
+ */
+?>
+
+<?php if (!empty($horodatages)) :
+    $idCollapseDiv = "";
+    $lastType = array_key_last($horodatages);
+?>
+    <div class="horodatages-historique-container">
+        <div class="alert alert-info alert-horodatage-par-type">
+            <?php foreach ($horodatages as $complement => $horodatage): ?>
+                <b>
+                    <?php echo $horodatage["last"]->getType(); ?>
+                    <?php if ($horodatage["last"]->getComplement()) : ?>
+                        : <?php echo $horodatage["last"]->getComplement(); ?>
+                    <?php endif; ?>
+                </b>
+                &mdash;
+                fait par <?php echo $horodatage["last"]->getUtilisateur()->getDisplayName(); ?>
+                le <?php echo $horodatage["last"]->getDate()->format('d/m/Y'); ?>
+                à <?php echo $horodatage["last"]->getDate()->format('H:i'); ?>
+
+                <?php if($hasMultipleEvenements && $complement === $lastType): ?>
+                    <a class="card-link text-sm" style="margin-left: 1rem;" type="button" data-bs-toggle="collapse"
+                       data-bs-target="#historiqueEvenement-<?= $horodatage["last"]->getId() ?>" aria-expanded="false"
+                       aria-controls="historiqueEvenement-<?= $horodatage["last"]->getId() ?>">
+                        + d'historique
+                    </a>
+                <?php endif; ?>
+                <br>
+                <?php $idCollapseDiv = $horodatage["last"]->getId();
+            endforeach; ?>
+            <div class="collapse historique-horodatages-par-types" id="historiqueEvenement-<?=$idCollapseDiv?>">
+                <h4>Historique des actions effectuées</h4>
+                <div>
+                    <?php foreach ($horodatages as $complement => $horodatage):
+                        if(!empty($horodatage['others'])):?>
+                            <h4 style="margin-left: 1rem;"><?= $complement ?></h4>
+                            <ul>
+                                <?php foreach ($horodatage['others'] as $horo): ?>
+                                    <li><?php echo $this->horodatage($horo); ?> </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

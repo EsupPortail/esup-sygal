@@ -1,0 +1,22 @@
+.horodatages-historique-container{
+  display: flow;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.alert-horodatage-par-type{
+  margin-left: 1rem!important;
+}
+
+.alert-horodatage-par-type > div {
+  //display: flex;
+  align-items: center;
+}
+
+.historique-horodatages-par-types{
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  margin-left: 1rem;
+}

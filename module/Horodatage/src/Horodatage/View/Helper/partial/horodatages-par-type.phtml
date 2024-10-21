@@ -1,0 +1,50 @@
+<?php
+
+use Horodatage\Entity\Db\Horodatage;
+
+/**
+ * @see DernierHorodatageViewHelper
+ * @var Horodatage $horodatage
+ * @var array $options
+ */
+?>
+
+<?php if (!empty($horodatages)) :
+    $horodatage = end($horodatages);
+    $moreHorodatages = count($horodatages) > 1;
+    $complementHorodatage = preg_replace('/\s+/', '', $horodatage->getComplement());
+    ?>
+    <div class="horodatages-historique-container">
+        <div class="alert alert-info alert-horodatage-par-type">
+            <div>
+                <b>
+                    <?php echo $horodatage->getType(); ?>
+                    <?php if ($horodatage->getComplement()) : ?>
+                        : <?php echo $horodatage->getComplement(); ?>
+                    <?php endif; ?>
+                </b>
+                 &mdash;
+                fait par <?php echo $horodatage->getUtilisateur()->getDisplayName(); ?>
+                le <?php echo $horodatage->getDate()->format('d/m/Y'); ?>
+                à <?php echo $horodatage->getDate()->format('H:i'); ?>
+
+                <?php if($moreHorodatages): ?>
+                    <a class="card-link text-sm" style="margin-left: 1rem;" type="button" data-bs-toggle="collapse" data-bs-target="#historiqueEvenement-<?=$horodatage->getId()?>" aria-expanded="false"
+                       aria-controls="historiqueEvenement-<?=$horodatage->getId()?>">
+                        + d'historique
+                    </a>
+                <?php endif; ?>
+            </div>
+            <div class="collapse historique-horodatages-par-types" id="historiqueEvenement-<?=$horodatage->getId()?>">
+                <h4>Historique des actions effectuées</h4>
+                <ul>
+                    <?php array_pop($horodatages);
+                    $horodatages = array_reverse($horodatages);
+                    foreach ($horodatages as $horodatage): ?>
+                        <li><?php echo $this->horodatage($horodatage); ?> </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

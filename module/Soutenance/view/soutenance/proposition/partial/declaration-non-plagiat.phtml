@@ -162,7 +162,7 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
                     </a>
                 </div>
             </div>
-            <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Serment du docteur"); ?>
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_EDITION, "Serment du docteur"); ?>
         </div>
 
     </div>

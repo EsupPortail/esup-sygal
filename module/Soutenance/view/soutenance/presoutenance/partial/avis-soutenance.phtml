@@ -181,7 +181,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
             </div>
         </div>
 
-        <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de rapport de pré-soutenance"); ?>
+        <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de rapport de pré-soutenance"); ?>
 
     </div>
 

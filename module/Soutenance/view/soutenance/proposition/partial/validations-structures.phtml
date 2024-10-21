@@ -100,7 +100,7 @@ $these = $proposition->getThese();
                     </p>
                 <?php endif; ?>
 
-                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance"); ?>
+                <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance"); ?>
 
                 <?php if ($canStructureValider): ?>
                     <p>

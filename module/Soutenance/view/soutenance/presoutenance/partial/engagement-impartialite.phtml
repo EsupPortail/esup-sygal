@@ -177,7 +177,7 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($these, EngagementImpartia
                 <?php endif; ?>
             </div>
 
-            <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité"); ?>
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité"); ?>
         </div>
 
     </div>

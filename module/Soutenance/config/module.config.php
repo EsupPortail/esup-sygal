@@ -231,6 +231,7 @@ return array(
         'inline_scripts' => [
         ],
         'stylesheets' => [
+            '080_soutenance' => '/css/soutenance.css',
         ],
     ],
 );

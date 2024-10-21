@@ -11,10 +11,12 @@ use Horodatage\Entity\Db\Horodatage;
 ?>
 
 <div class="horodatage">
-    <?php echo $horodatage->getType(); ?>
-    <?php if ($horodatage->getComplement()) : ?>
-        : <?php echo $horodatage->getComplement(); ?>
-    <?php endif; ?>
+    <b>
+        <?php echo $horodatage->getType(); ?>
+        <?php if ($horodatage->getComplement()) : ?>
+            : <?php echo $horodatage->getComplement(); ?>
+        <?php endif; ?>
+    </b>
     &mdash;
     fait par <?php echo $horodatage->getUtilisateur()->getDisplayName(); ?>
     le <?php echo $horodatage->getDate()->format('d/m/Y'); ?>

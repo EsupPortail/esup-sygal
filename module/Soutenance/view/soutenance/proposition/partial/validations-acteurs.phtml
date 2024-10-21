@@ -135,7 +135,7 @@ $isAllOk = $hasDeclaration && $hasAttestation && $isDateOk && $isInformationsOk;
                     <?php endif; ?>
                 </a>
 
-                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Sursis"); ?>
+                <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Sursis"); ?>
         <?php endif; ?>
 
     </div>
