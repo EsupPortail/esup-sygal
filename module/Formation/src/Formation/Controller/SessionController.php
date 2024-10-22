@@ -3,9 +3,11 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Search\SearchServiceAwareTrait;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\PersistentCollection;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
+use Formation\Service\Session\Search\SessionSearchServiceAwareTrait;
 use Notification\Exception\ExceptionInterface;
 use Notification\Exception\RuntimeException;
 use These\Entity\Db\These;
@@ -46,6 +48,8 @@ class SessionController extends AbstractController
     use SessionServiceAwareTrait;
     use SessionStructureValideServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
+    use SessionSearchServiceAwareTrait;
+
 
     use SessionFormAwareTrait;
 
@@ -562,5 +566,81 @@ class SessionController extends AbstractController
             'annee' => $annee
         ]);
         $export->exportAll($seances, 'SYGAL_emargement_' . $session->getId() . ".pdf");
+    }
+
+    public function genererExportCsvAction(): Response|CsvModel
+    {
+        $queryParams = array_filter($this->params()->fromQuery(), function($value) {
+            return !is_null($value) && $value !== '';
+        });
+
+        $this->sessionSearchService->init();
+        $this->sessionSearchService->processQueryParams($queryParams);
+        $qb = $this->sessionSearchService->getQueryBuilder();
+        $listing = $qb->getQuery()->getResult();
+        //export
+        $headers = ['Module', 'Formation', 'Établissement organisateur',
+            'Responsable de la formation', 'Formateur(s)', 'État de la session',
+            'Structures valides pour l\'inscription', 'Modalité', 'Nombre d\'heures',
+            'Séance(s)', 'Effectif Liste principale', 'Effectif Liste complémentaire', 'Nombre d\'inscrits',
+            'Nombre d\'inscrits sur liste principale', 'Inscrits sur liste principale'];
+        $records = [];
+        /** @var Session $session */
+        foreach ($listing as $session) {
+            $formation = $session->getFormation();
+
+            $structuresValides = $session->getStructuresValides();
+            $structuresValidesStrings = array_map(function($structureValide) {
+                return $structureValide->getStructure()->getLibelle();
+            }, $structuresValides->toArray());
+
+            $formateurs = $session->getFormateurs();
+            $formateursStrings = array_map(function($formateur) {
+                return $formateur->getIndividu();
+            }, $formateurs->toArray());
+
+            $inscrits = $session->getInscriptions()->toArray();
+            $nbInscrits = count($inscrits);
+            /** @var Seance[] $seances */
+            $seances = $session->getSeances()->toArray();
+            usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+            $seanceStrings = array_map(function($seance) {
+                return $seance->getDebut()->format('d/m/Y');
+            }, $seances);
+
+            $inscritsPrincipale = $session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE);
+            $nbInscritsListePrincipale = count($inscritsPrincipale);
+            $inscritsPrincipaleStrings = array_map(function($inscritPrincipale) {
+                return $inscritPrincipale->getDoctorant()->getIndividu();
+            }, $inscritsPrincipale);
+
+            $entry = [];
+            $entry['Module'] = $formation && $formation->getModule() ? $formation->getModule()->getLibelle() : null;
+            $entry['Formation'] = $formation ? $formation->getLibelle() : null;
+            $entry['Établissement organisateur'] = $session->getSite() ? $session->getSite()->getStructure()->getLibelle() : null;
+            $entry['Responsable de la formation'] = $session->getResponsable() ? $session->getResponsable() : null;
+            $entry['Formateur(s)'] = implode("/", $formateursStrings);;
+            $entry['État de la session'] = $session->getEtat();
+            $entry["Structures valides pour l'inscription"] = implode("/", $structuresValidesStrings);
+            $entry['Modalité'] = $session->getModalite();
+            $entry['Nombre d\'heures'] = (string) $session->getDuree();
+            $entry['Séance(s)'] = implode(' / ', $seanceStrings);
+            $entry['Effectif Liste principale'] = $session->getTailleListePrincipale();
+            $entry['Effectif Liste complémentaire'] = $session->getTailleListeComplementaire();
+            $entry['Nombre d\'inscrits'] = $nbInscrits;
+            $entry['Nombre d\'inscrits sur liste principale'] = $nbInscritsListePrincipale;
+            $entry['Inscrits sur liste principale'] = implode(' / ', $inscritsPrincipaleStrings);;
+
+            $records[] = $entry;
+        }
+        $filename = (new DateTime())->format('Ymd') . '_sessions.csv';
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader($headers);
+        $CSV->setData($records);
+        $CSV->setFilename($filename);
+
+        return $CSV;
     }
 }

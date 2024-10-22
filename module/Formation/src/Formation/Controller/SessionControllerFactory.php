@@ -7,6 +7,7 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Formation\FormationService;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Presence\PresenceService;
+use Formation\Service\Session\Search\SessionSearchService;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -50,6 +51,7 @@ class SessionControllerFactory {
         $sessionService = $container->get(SessionService::class);
         $sessionStructureComplementaireService = $container->get(SessionStructureValideService::class);
         $anneeUnivService = $container->get(AnneeUnivService::class);
+        $searchService = $container->get(SessionSearchService::class);
 
         /**
          * @var SessionForm $sessionForm
@@ -71,6 +73,7 @@ class SessionControllerFactory {
         $controller->setSessionService($sessionService);
         $controller->setSessionStructureValideService($sessionStructureComplementaireService);
         $controller->setAnneeUnivService($anneeUnivService);
+        $controller->setSessionSearchService($searchService);
         /** Form ******************************************************************************************************/
         $controller->setSessionForm($sessionForm);
         /** Autre *****************************************************************************************************/

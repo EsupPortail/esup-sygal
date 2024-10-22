@@ -32,8 +32,8 @@ class ListeDiffusionServiceFactory
         /**
          * @var \Application\Service\ListeDiffusion\Url\UrlService $urlService
          */
-        $urlService = $container->get(UrlService::class);
-        $service->setUrlService($urlService);
+//        $urlService = $container->get(UrlService::class);
+//        $service->setUrlService($urlService);
 
         return $service;
     }

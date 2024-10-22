@@ -2,11 +2,9 @@
 
 namespace Formation\Entity\Db;
 
-use Application\Entity\AnneeUniv;
-use Doctorant\Entity\Db\Doctorant;
-use Individu\Entity\Db\Individu;
 use DateInterval;
 use DateTime;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\Collection;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Interfaces\HasSiteInterface;
@@ -14,6 +12,7 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
+use Individu\Entity\Db\Individu;
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
