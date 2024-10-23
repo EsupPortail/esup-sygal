@@ -86,7 +86,8 @@ class SessionRepository extends DefaultEntityRepository
             ->andWhere('etat.code = :etat')
             ->setParameter('structures', array_unique($structures))
             ->setParameter('etat', $etat)
-            ->orderBy("seance.debut", "DESC");
+            ->addOrderBy('ABS(DATE_DIFF(CURRENT_DATE(), seance.debut))', 'ASC')
+        ;
 
         if ($debut !== null && $fin !== null) {
             $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)

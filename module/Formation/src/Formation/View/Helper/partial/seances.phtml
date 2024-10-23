@@ -27,8 +27,18 @@ $nbSeances = count($seances);
  -
 <?php echo $session->getDuree(); ?> h.
 <ul>
-    <?php foreach ($seances as $seance) : ?>
-    <li>
+    <?php foreach ($seances as $seance) :
+        $class = "seance-non-passee";
+        if($dateFin = $seance->getFin()){
+            $aujourdhui = new DateTime();
+            $dateFinObj = $dateFin;
+            $class= $dateFinObj < $aujourdhui ? "seance-passee" : $class;
+        }
+        if($class === "seance-non-passee"): ?>
+            <li class=<?=$class?>>
+        <?php else: ?>
+            <li class=<?=$class?> data-bs-toggle="tooltip" title="Séance passée">
+        <?php endif; ?>
         <?php echo $seance->getDebut()->format("d/m/Y"); ?>
         <?php echo $seance->getDebut()->format("H:i"); ?>
         &rightarrow;
@@ -36,4 +46,12 @@ $nbSeances = count($seances);
     </li>
     <?php endforeach; ?>
 </ul>
+
+<style>
+    .seance-passee {
+        color: gray; /* Changer la couleur du texte */
+        text-decoration: line-through; /* Barrer le texte pour indiquer qu'il est passé */
+        opacity: 0.7; /* Rendre l'élément un peu transparent */
+    }
+</style>
 
