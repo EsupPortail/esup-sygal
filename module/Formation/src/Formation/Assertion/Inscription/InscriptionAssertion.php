@@ -4,15 +4,18 @@ namespace Formation\Assertion\Inscription;
 
 use Application\Assertion\AbstractAssertion;
 use Application\Entity\Db\Role;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use DateInterval;
 use DateTime;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Exception;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
@@ -23,6 +26,9 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
 {
     use DoctorantServiceAwareTrait;
     use InscriptionServiceAwareTrait;
+    use InscriptionServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
+    use SessionServiceAwareTrait;
 
     private ?int $delaiDescinscription = null;
 
@@ -73,6 +79,22 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
         if($sessionId) $inscription = $this->getInscriptionService()->getRepository()->find($sessionId);
 
         switch($action) {
+            case 'ajouter' :
+                $doctorantId = (($this->getMvcEvent()->getRouteMatch()->getParam('doctorant')));
+                if ($inscription === null && $doctorantId) {
+                    $sessionId = (($this->getMvcEvent()->getRouteMatch()->getParam('session')));
+                    if($sessionId){
+                        $doctorant = $this->doctorantService->getRepository()->find($doctorantId);
+                        $session = $this->sessionService->getRepository()->find($sessionId);
+
+                        $inscription = new Inscription();
+                        $inscription->setDoctorant($doctorant);
+                        $inscription->setSession($session);
+                        return $this->canInscrire($inscription);
+                    }
+                    return false;
+                }
+                return true;
             case 'desinscription' :
                 if ($inscription !== null) {
                     return $this->canDesinscrire($inscription);
@@ -89,11 +111,45 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
             return false;
         }
 
-        switch ($privilege) {
-            case InscriptionPrivileges::INSCRIPTION_AJOUTER :
-                return $this->canDesinscrire($entity);
+        $inscription = $entity;
+
+        if ($privilege == InscriptionPrivileges::INSCRIPTION_AJOUTER) {
+            if ($inscription->getHistoCreateur()) return $this->canDesinscrire($entity);
+            return $this->canInscrire($entity);
         }
 
+        return true;
+    }
+
+    private function canInscrire(?Inscription $inscription): bool
+    {
+        if (!$this->scopeValide($inscription)) return false;
+        $doctorant = $inscription->getDoctorant();
+        $session = $inscription->getSession();
+        $inscriptions = $this->inscriptionService->getRepository()->findInscriptionsByDoctorant($doctorant);
+
+        /** @var Inscription $inscription */
+        foreach ($inscriptions as $inscription) {
+            $sessionInscriptionEnregistree = $inscription->getSession();
+            if (!$sessionInscriptionEnregistree || !$sessionInscriptionEnregistree->getDateDebut()) {
+                continue; // Passe à l'inscription suivante si la session ou la date de début est manquante
+            }
+
+            $premiereAnneeUnivSessionInscription = $this->anneeUnivService->fromDate($sessionInscriptionEnregistree->getDateDebut())->getPremiereAnnee();
+            //si la session demandée possède la même formation qu'une inscription possédée par l'étudiant,
+            //on vérifie que l'année universitaire ne soit pas la même
+            //sinon on refuse l'inscription, car l'étudiant ne peut pas s'inscrire sur une session appartenant à une formation déjà suivie sur la même année universitaire
+            if ($session && $session->getFormation() === $sessionInscriptionEnregistree->getFormation()) {
+                $sessionOuverteDateDebut = $session->getDateDebut();
+                if ($sessionOuverteDateDebut) {
+                    $premiereAnneeUnivSessionOuverte = $this->anneeUnivService->fromDate($sessionOuverteDateDebut)->getPremiereAnnee();
+                    // Si les années universitaires sont identiques, on interdit l'inscription
+                    if ($premiereAnneeUnivSessionOuverte === $premiereAnneeUnivSessionInscription) {
+                        return false;
+                    }
+                }
+            }
+        }
         return true;
     }
 
@@ -125,13 +181,12 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
             return false;
         }
 
-        switch ($role->getRoleId()) {
+        switch ($role->getCode()) {
             case Role::CODE_DOCTORANT :
                 $doctorant = $inscription->getDoctorant();
                 $userDoctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
                 return $doctorant === $userDoctorant;
         }
         return true;
-
     }
 }

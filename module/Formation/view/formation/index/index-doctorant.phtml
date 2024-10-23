@@ -201,18 +201,25 @@ $now = new DateTime();
                            class="ajax-modal">
                             <span class="icon icon-voir"></span> Afficher les informations </a>
                         <br/>
-                        <?php $inscrit = $session->estInscrit($doctorant); ?>
-                        <?php if ($canAjouterInscription and !$inscrit) : ?>
-                            <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-                            <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'preparation'], true)]], true); ?>"
-                            >
-                            <span class="icon icon-ajouter"
-                                  title="M'inscrire" data-bs-toggle="tooltip" data-bs-html="true"
-                            ></span>&nbsp;M'inscrire</a>
-                        <?php endif; ?>
-                        <?php if ($inscrit) : ?>
-                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"> Inscrit·e</span>
-                        <?php endif; ?>
+                        <?php $inscrit = $session->estInscrit($doctorant);
+                        if($inscrit): ?>
+                            <span class="icon icon-ok" style="color:darkgreen;" data-bs-toggle="tooltip" title="Vous êtes déjà inscrit à cette formation"> Inscrit·e</span>
+                        <?php else:
+                            $inscription = new Inscription();
+                            $inscription->setDoctorant($doctorant);
+                            $inscription->setSession($session);
+                            $canAjouterInscription = $this->isAllowed($inscription, InscriptionPrivileges::INSCRIPTION_AJOUTER);
+                            if ($canAjouterInscription) : ?>
+                                <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+                                <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'preparation'], true)]], true); ?>">
+                                    <span class="icon icon-ajouter"
+                                          title="M'inscrire" data-bs-toggle="tooltip" data-bs-html="true"
+                                    ></span>&nbsp;M'inscrire
+                                </a>
+                            <?php else: ?>
+                                <span class="icon icon-unchecked" style="color:darkred;" data-bs-toggle="tooltip" title="Vous suivez déjà (ou avez déjà suivi) cette formation lors de cette année universitaire">&nbsp;Impossible de s'inscrire</span>
+                            <?php endif;
+                        endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -359,9 +366,10 @@ $now = new DateTime();
                                     <span class="icon icon-pdf" title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"></span> Télécharger la convocation
                                 </a>
                             <?php else: ?>
-                                <span class="icon icon-pdf" style="color: lightgrey;"
+                                <span class="icon icon-pdf" style="color: lightgrey;" data-bs-toggle="tooltip"
                                       title="La convocation n'est disponible que pour les inscrits en liste principale">
-                                </span> convocation
+                                    Convocation
+                                </span>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
