@@ -72,7 +72,7 @@ class Individu implements
     /**
      * @var string
      */
-    protected $email;
+    protected $emailPro;
 
     /**
      * @var string
@@ -260,14 +260,14 @@ class Individu implements
     }
 
     /**
-     * Set email
+     * Set emailPro
      *
-     * @param string $email
+     * @param string $emailPro
      * @return self
      */
-    public function setEmailPro(string $email): self
+    public function setEmailPro(string $emailPro): self
     {
-        $this->email = $email;
+        $this->emailPro = $emailPro;
 
         return $this;
     }
@@ -283,7 +283,7 @@ class Individu implements
     {
         $email = $useComplement && $this->getEmailProComplement() ?
             $this->getEmailProComplement() :
-            $this->email;
+            $this->emailPro;
 
         if ($email === null || trim($email) === '') {
             return null;
