@@ -202,7 +202,7 @@ return [
                      */
                     // DEPTH = 1
                     'annuaire' => [
-                        'order' => -50,
+                        'order' => 99,
                         'label' => 'Annuaire des thèses',
                         'route' => 'these',
                         'params' => [],
