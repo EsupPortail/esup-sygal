@@ -170,13 +170,14 @@ function updateDirectionInfosLabels(idNom, idPrenom, nomInput, prenomInput, labe
 }
 
 function updateFinancementOptions() {
-    if ($('input[name="financement[contratDoctoral]"]:checked').val() === '1') {
+    var checkedContratDoctoral = $('input[name="financement[contratDoctoral]"]:checked')
+    if (checkedContratDoctoral.val() === '1') {
         $('input[name="financement[tempsTravail]"][value="1"]').prop('checked', true);
         $('input[name="financement[estSalarie]"][value="1"]').prop('checked', true);
 
         $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', true);
         $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', true);
-    } else {
+    } else if (checkedContratDoctoral.val() === '0') {
         $('input[name="financement[tempsTravail]"][value="2"]').prop('disabled', false);
         $('input[name="financement[estSalarie]"][value="0"]').prop('disabled', false);
     }
