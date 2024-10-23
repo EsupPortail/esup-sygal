@@ -38,6 +38,7 @@ class SessionSearchService extends SearchService
     const NAME_structure = 'structure';
     const NAME_anneeUniv = 'anneeUniv';
     const NAME_type = 'type';
+    const NAME_seances = 'seances';
 
 
     public function init()
@@ -85,6 +86,7 @@ class SessionSearchService extends SearchService
             $this->createResponsableSorter(),
             $this->createEtatSorter(),
             $this->createModaliteSorter(),
+            $this->createSeancesSorter(),
         ]);
 
         //tri descendant par les dates des séances (lorsqu'aucun sorter n'est sélectionné)
@@ -252,5 +254,14 @@ class SessionSearchService extends SearchService
     private function createLibelleSorter(): SearchSorter
     {
         return new SearchSorter("Libellé", self::NAME_libelle);
+    }
+
+    private function createSeancesSorter(): SearchSorter
+    {
+        $sorter = new SearchSorter("Séances", self::NAME_seances);
+        $sorter->setQueryBuilderApplier(function (SearchSorter $sorter, QueryBuilder $qb){
+            $qb->addOrderBy('seance.debut', $sorter->getDirection());
+        });
+        return $sorter;
     }
 }

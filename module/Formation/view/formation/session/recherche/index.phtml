@@ -78,7 +78,12 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <?php echo $this->translate("État") ?>
                 </a> <?php echo $s->icon() ?>
             </th>
-            <th style="min-width: 14rem;">Séances</th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_seances) ?>"
+                   data-bs-toggle="tooltip" title="<?php echo $this->translate("Tri sur la date de début/fin d'une séance") ?> ">
+                    <?php echo $this->translate("Séances") ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
             <th style="min-width: 9rem;">Inscriptions</th>
             <th style="min-width: 4rem;">Action</th>
         </tr>
