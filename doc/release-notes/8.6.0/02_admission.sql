@@ -20,6 +20,9 @@ VALUES ('Url#AccueilAdmission', '<p>Permet de récupérer l''url de l''accueil d
 alter table admission_financement
     ADD column if not exists financement_compl_id bigint REFERENCES origine_financement (id);
 
+-- ajout de la colonne pour référencer le futur doctorant de ce dossier
+alter table admission_admission add column if not exists doctorant_id bigint REFERENCES doctorant (id);
+
 -- déplacement du numero_candidature de admission_etudiant vers admission_admission
 ALTER TABLE admission_admission
     ADD COLUMN numero_candidature VARCHAR(10);

@@ -109,12 +109,27 @@ div.header-admission {
   display: none;
 }
 
+.observations-gestionnaire > div > div > div > .btn::after{
+  font-weight: bolder;
+  margin-left: 10px;
+}
+
+.observations-gestionnaire > div > div > div > .btn-danger.selected {
+  background-color: #bb2d3b;
+  border-color: #b02a37;
+}
+
 .observations-gestionnaire > div > div > div > .btn-danger.selected::after {
   content: "\2715";
 }
 
 .observations-gestionnaire > div > div > div > .btn-success.selected::after {
   content: "\2713";
+}
+
+.observations-gestionnaire > div > div > div > .btn-success.selected {
+  background-color: #157347;
+  border-color: #146c43;
 }
 
 .commentaires-gestionnaire .partie-etudiant {
@@ -740,6 +755,12 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
+}
+
+.precisions-action-container.info{
+  background-color: #fdf2d2;
+  color: #93700f;
+  border: 1px solid #ffe49b;
 }
 
 .admission-informations-container{
