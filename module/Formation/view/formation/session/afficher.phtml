@@ -69,6 +69,12 @@ usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a
 
 <h1 class="page-header">
     <?php echo $pageTitle; ?>
+    <?php if (!$session->estVisible()) : ?>
+        <span class="text-danger" data-bs-toggle="popover" data-bs-content="<span class=&quot;text-danger&quot;>Non visible pour les doctorants jusqu'au <?php echo $session->getDatePublication()->format('d/m/Y'); ?></span>" data-bs-trigger="hover" data-bs-html="true" data-bs-placement="bottom" data-bs-original-title="" title=""><span class="badge bg-danger">
+            NON VISIBLE
+        </span>
+    </span>
+    <?php endif; ?>
 </h1>
 
 <?php
@@ -172,6 +178,12 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <?php if ($session->getDateClotureInscription()) : ?>
             <dt class="col-md-3"> Date de clôture des inscriptions </dt>
             <dd class="col-md-9"> <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?></dd>
+        <?php endif; ?>
+        <?php if ($session->getDatePublication()) : ?>
+            <dt class="col-md-3"> Date de publication
+                <span class="icon icon-info" title="" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="Cette session sera visible pour les doctorants à partir de cette date"></span>
+            </dt>
+            <dd class="col-md-9"> <?php echo $session->getDatePublication()->format('d/m/Y'); ?></dd>
         <?php endif; ?>
     </dl>
     </div>

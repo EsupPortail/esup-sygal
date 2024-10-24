@@ -48,6 +48,7 @@ class Session implements HistoriqueAwareInterface,
     private ?Etat $etat = null;
     private ?string $description = null;
     private ?DateTime $dateClotureInscription = null;
+    private ?DateTime $datePublication = null;
 
     private Collection $structuresValides;
     private Collection $seances;
@@ -199,6 +200,16 @@ class Session implements HistoriqueAwareInterface,
         $this->dateClotureInscription = $dateClotureInscription;
     }
 
+    public function getDatePublication(): ?DateTime
+    {
+        return $this->datePublication;
+    }
+
+    public function setDatePublication(?DateTime $datePublication): void
+    {
+        $this->datePublication = $datePublication;
+    }
+
     public function getDuree() : float
     {
         $somme = new DateTime('00:00');
@@ -298,6 +309,15 @@ class Session implements HistoriqueAwareInterface,
             function (SessionEtatHeurodatage $a, SessionEtatHeurodatage $b) {
                 return $a->getHeurodatage() > $b->getHeurodatage(); });
         return $array;
+    }
+
+    public function estVisible() : bool
+    {
+        $datePublication = $this->getDatePublication();
+        if($datePublication === null) return true;
+
+        $aujourdhui = new \DateTime();
+        return $datePublication && $datePublication <= $aujourdhui;
     }
 
     /** Pour les macros ********************************************************************************/

@@ -29,6 +29,7 @@ echo $this->form()->openTag($form);
 <?php echo $this->formControlGroup($form->get('type_structure')); ?></div>
 <?php echo $this->formControlGroup($form->get('taille_liste_principale')); ?>
 <?php echo $this->formControlGroup($form->get('taille_liste_complementaire')); ?>
+<?php echo $this->formControlGroup($form->get('date_publication')); ?>
 
 <?php echo $this->formControlGroup($form->get('bouton')); ?>
 
@@ -36,9 +37,7 @@ echo $this->form()->openTag($form);
 
 <script>
     function updateType() {
-        console.log('here');
         let val =  $('select#type').val();
-        console.log(val);
         if (val === 'S') {
             $('div#type_structure').show();
         } else {
@@ -72,5 +71,9 @@ echo $this->form()->openTag($form);
             }
         });
         $('select').selectpicker();
+        $('.modal').on('shown.bs.modal', function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+
     });
 </script>

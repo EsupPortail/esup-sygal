@@ -174,8 +174,13 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($sessions as $session) : ?>
-        <tr class="<?php echo $session["anneeUniv"]; ?>">
+    <?php foreach ($sessions as $session) :
+        if($session["session"]->estVisible()) : ?>
+            <tr class="<?php echo $session["anneeUniv"]; ?>">
+        <?php else: ?>
+            <tr class="session-non-visible <?php echo $session["anneeUniv"]; ?>" data-bs-toggle="tooltip"
+            title="Cette session est cachée aux doctorants jusqu'au <?= $session["session"]->getDatePublication()?->format('d/m/Y'); ?>">
+        <?php endif; ?>
             <td>
                 <span class=" <?php if ($session["session"]->estHistorise()) echo "historise text-danger"; ?> ">
                 <?php echo $session["session"]->getIndex(); ?>
@@ -273,5 +278,3 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         $("select#annee").on("change", toggleAnnee).selectpicker();
     });
 </script>
-
-

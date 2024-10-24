@@ -36,7 +36,8 @@ class FormationController extends AbstractController
     public function afficherAction() : ViewModel
     {
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
-        $sessions = $this->getSessionService()->getRepository()->fetchSessionsByFormation($formation, 'id', 'asc', true);
+        $verifierDatePublication = (bool)$this->userContextService->getSelectedRoleDoctorant();
+        $sessions = $this->getSessionService()->getRepository()->fetchSessionsByFormation($formation, 'id', 'asc', true, $verifierDatePublication);
         $anneeUnivCourante = $this->anneeUnivService->courante();
 
         $sessionsAvecAnneeUniv = [];

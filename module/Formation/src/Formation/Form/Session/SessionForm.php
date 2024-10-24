@@ -74,7 +74,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'structure',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -101,7 +101,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'modalite',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -116,7 +116,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'type',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -131,7 +131,7 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'type_structure',
-                'class' => 'show-tick',
+                'class' => 'selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);
@@ -165,7 +165,7 @@ class SessionForm extends Form {
             'name' => 'date_fermeture_inscription',
             'type' => Date::class,
             'options' => [
-                'label' => "Date de fermeture des inscriptions <span class='icon icon-info text-info'  title='La date est seulement informative'></span> :",
+                'label' => "Date de fermeture des inscriptions <span class='icon icon-info text-info' data-bs-toggle='tooltip' data-bs-html='true' title='La date est seulement informative'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
@@ -174,6 +174,23 @@ class SessionForm extends Form {
             ],
             'attributes' => [
                 'id' => 'date_fermeture_inscription',
+                'class' => 'form-control',
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'date_publication',
+            'type' => Date::class,
+            'options' => [
+                'label' => "Date de publication de la session <span class='icon icon-info text-info' data-bs-toggle='tooltip' title='Dans le cas, où vous voulez afficher cette session ultérieurement pour les doctorants'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
+                'label_attributes' => [
+                    'class' => 'control-label',
+                ],
+                'format' => 'd/m/Y',
+            ],
+            'attributes' => [
+                'id' => 'date_publication',
                 'class' => 'form-control',
             ],
         ]);
@@ -206,6 +223,7 @@ class SessionForm extends Form {
             'taille_liste_principale'=> [ 'required' => true, ],
             'taille_liste_complementaire'=> [ 'required' => true, ],
             'date_fermeture_inscription'=> [ 'required' => false, ],
+            'date_publication'=> [ 'required' => false, ],
         ]));
     }
 }

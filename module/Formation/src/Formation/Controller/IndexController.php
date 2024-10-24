@@ -42,8 +42,8 @@ class IndexController extends AbstractController
             $anneeScolaire = $this->anneeUnivService->courante();
             $debut = $this->anneeUnivService->computeDateDebut($anneeScolaire);
             $fin = $this->anneeUnivService->computeDateFin($anneeScolaire);
-            $ouvertes = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_OUVERTE, $debut, $fin);
-            $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION, $debut, $fin);
+            $ouvertes = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_OUVERTE, $debut, $fin, true);
+            $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION, $debut, $fin, true);
             /** @var Inscription[] $inscription */
             $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
         } else {

@@ -83,4 +83,21 @@ table.formation-presence tr td.reponse {
 .table-index-formations td .afficher-formation-btn, .table-index-sessions td .afficher-session-btn, .table-index-modules td .afficher-module-btn {
   margin-right: 10px; }
 
+.session-non-visible {
+  position: relative;
+  opacity: 0.75;
+  background-color: #e3e3e3; }
+
+.session-non-visible::after {
+  content: '\f070';
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: #d23544;
+  pointer-events: none; }
+
 /*# sourceMappingURL=formation.css.map */

@@ -35,3 +35,5 @@ alter table rapport add constraint rapport_annuel_fichier_fk foreign key (fichie
 alter table validite_fichier drop constraint validite_fichier_ffk;
 alter table validite_fichier add constraint validite_fichier_ffk foreign key (fichier_id) references fichier on delete restrict;
 
+ALTER TABLE formation_session
+    ADD COLUMN date_publication timestamp;
