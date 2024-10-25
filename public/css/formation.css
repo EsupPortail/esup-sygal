@@ -100,4 +100,8 @@ table.formation-presence tr td.reponse {
   color: #d23544;
   pointer-events: none; }
 
+.lieu-session-non-visible {
+  filter: blur(8px);
+  cursor: pointer; }
+
 /*# sourceMappingURL=formation.css.map */

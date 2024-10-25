@@ -81,6 +81,15 @@ usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a
 echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 ?>
 
+<?php if ($canIndexSession) : ?>
+    <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
+    <a class="btn btn-primary action"
+       href="<?php echo $this->url('formation/session', [], [], true); ?>"
+    >
+        <span class="icon icon-listing"></span>
+        Retourner à la liste des sessions
+    </a>
+<?php endif;?>
 <?php if ($canModifierSession) : ?>
     <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
     <a class="btn btn-primary action ajax-modal" data-event="modification"
@@ -90,15 +99,6 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         Modifier les informations
     </a>
 <?php endif; ?>
- <?php if ($canIndexSession) : ?>
-            <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
-            <a class="btn btn-primary action"
-               href="<?php echo $this->url('formation/session', [], [], true); ?>"
-            >
-                <span class="icon icon-listing"></span>
-                Retourner à la liste des sessions
-            </a>
-<?php endif;?>
 <?php if ($canModifierSession) : ?>
     <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
     <a class="btn btn-primary action ajax-modal" data-event="modification"

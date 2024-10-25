@@ -36,16 +36,6 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php echo $pageTitle; ?>
 </h1>
 
-<?php if ($canModifierFormation) : ?>
-    <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
-    <a class="btn btn-primary action ajax-modal" data-event="modification"
-       href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
-    >
-        <span class="icon icon-modifier"></span>
-        Modifier les informations
-    </a>
-<?php endif; ?>
-
 <?php if ($canIndexFormation) : ?>
     <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
     <a class="btn btn-primary action"
@@ -53,6 +43,16 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     >
         <span class="icon icon-listing"></span>
         Retourner à la liste des formations
+    </a>
+<?php endif; ?>
+
+<?php if ($canModifierFormation) : ?>
+    <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
+    <a class="btn btn-primary action ajax-modal" data-event="modification"
+       href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
+    >
+        <span class="icon icon-modifier"></span>
+        Modifier les informations
     </a>
 <?php endif; ?>
 

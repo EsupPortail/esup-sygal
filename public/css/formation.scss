@@ -105,6 +105,7 @@ table.formation-presence tr td.reponse {
   opacity: 0.75;
   background-color: #e3e3e3;
 }
+
 .session-non-visible::after {
   content: '\f070';
   font-family: "Font Awesome 5 Free";
@@ -116,4 +117,9 @@ table.formation-presence tr td.reponse {
   font-size: 2rem;
   color: #d23544;
   pointer-events: none;
+}
+
+.lieu-session-non-visible{
+  filter: blur(8px);
+  cursor: pointer;
 }

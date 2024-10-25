@@ -76,13 +76,8 @@ class SessionAssertion extends AbstractAssertion implements  AssertionInterface,
 
         switch ($role->getCode()) {
             case Role::CODE_DOCTORANT :
-                $inscrits = $session->getInscriptions()->toArray();
                 $userDoctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
-                foreach($inscrits as $inscrit){
-                    /** @var Inscription $inscrit */
-                    if($inscrit->getDoctorant() === $userDoctorant) return true;
-                }
-                return false;
+                return $session->estInscrit($userDoctorant);
         }
         return true;
     }

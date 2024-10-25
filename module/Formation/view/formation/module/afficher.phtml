@@ -29,16 +29,6 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
     <?php echo $pageTitle; ?>
 </h1>
 
-<?php if ($canModifierModule) : ?>
-    <?php /** @see \Formation\Controller\FormationController::modifierAction() */ ?>
-    <a class="btn btn-primary action ajax-modal" data-event="modification"
-       href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
-    >
-        <span class="icon icon-modifier"></span>
-        Modifier les informations
-    </a>
-<?php endif; ?>
-
 <?php if ($canIndexModule) : ?>
     <?php /** @see \Formation\Controller\FormationController::indexAction() */ ?>
     <a class="btn btn-primary action"
@@ -46,6 +36,16 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
     >
         <span class="icon icon-listing"></span>
         Retourner à la liste des modules
+    </a>
+<?php endif; ?>
+
+<?php if ($canModifierModule) : ?>
+    <?php /** @see \Formation\Controller\FormationController::modifierAction() */ ?>
+    <a class="btn btn-primary action ajax-modal" data-event="modification"
+       href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
+    >
+        <span class="icon icon-modifier"></span>
+        Modifier les informations
     </a>
 <?php endif; ?>
 
