@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] Impossible d'accèder aux pages de consultation/modification d'ED ou d'UR.
 - [FIX] Coquille dans le procès verbal de soutenance (PDF).
 - [FIX] Modification de l'adresse l'adresse institutionnelle/pro d'un individu non prise en compte
+- [FIX] Avis concernant des propositions historisées qui pouvaient remonter
 
 8.6.0
 -----

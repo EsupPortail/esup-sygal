@@ -170,6 +170,7 @@ class AvisService {
         $qb =$this->createQueryBuilder()
             ->andWhere('avis.histoDestruction is null')
             ->andWhere('proposition.these = :these')
+            ->andWhere('proposition.histoDestruction is null')
             ->setParameter('these', $these)
         ;
         $result = $qb->getQuery()->getResult();
