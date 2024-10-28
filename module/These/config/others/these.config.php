@@ -220,6 +220,7 @@ return [
                     ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'label' => 'Thèse sélectionnée',
                         'route' => 'these/identite',
+                        'order' => -300,
                         'withtarget' => true,
                         'paramsInject' => [
                             'these',
