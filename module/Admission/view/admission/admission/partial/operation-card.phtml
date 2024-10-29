@@ -64,7 +64,14 @@ if ($operation instanceof AdmissionValidation) {
 } ?>
 
 <script>
-    $("body").one("ajout-export-donnees-pegase", function (event) {
+    var body = $("body");
+    body.one("ajout-export-donnees-pegase", function (event) {
+        // Les métadonnées viennent d'être modifiées.
+        event.div.modal('hide'); // ferme la fenêtre modale
+        window.location.reload();
+    });
+
+    body.on("<?= $ajaxModalEvent ?>", function (event) {
         // Les métadonnées viennent d'être modifiées.
         event.div.modal('hide'); // ferme la fenêtre modale
         window.location.reload();

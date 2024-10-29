@@ -143,7 +143,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             <?php echo $this->formControlGroup($fieldset->get('numeroTelephone1')) ?>
         </div>
         <div class="col-lg-3 col-sm-12">
-            <?php echo $this->formControlGroup($fieldset->get('courriel')->setValue($individu->getEmailContact())) ?>
+            <?php echo $this->formControlGroup($fieldset->get('courriel')->setValue($individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur())); ?>
         </div>
     </div>
     <?php echo $this->formControlGroup($fieldset->get('adresseCodeCommune')) ?>
@@ -153,10 +153,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
             <div class="admission-form-checkboxes">
                 <?php echo $this->formControlGroup($fieldset->get('situationHandicap')) ?>
                 <p class="admission-field-information">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
-                    N'hésitez pas à
-                    contacter le Service Universitaire de Médecine Préventive (SUMPPS) <a href="mailto:sumpps@unicaen.fr">sumpps@unicaen.fr</a> ainsi que le
-                    relais
-                    handicap santé (<a href="mailto:deve.accueil.handicap@unicaen.fr">deve.accueil.handicap@unicaen.fr</a>)</p>
+                    N'hésitez pas à contacter le service de médecine ainsi que le service handicap santé de votre établissement.</p>
             </div>
         </div>
     </div>
@@ -190,8 +187,7 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                     </div>
                 </div>
                 <p class="admission-field-information">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
-                    au préalable contacter le
-                    service spécifique : <a href="mailto:vae@unicaen.fr">vae@unicaen.fr</a></p>
+                    au préalable contacter le service spécifique de votre établissement.</p>
             </div>
             <div class="row subfield">
                 <div class="col-sm-12">

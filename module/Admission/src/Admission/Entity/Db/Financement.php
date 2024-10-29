@@ -344,8 +344,8 @@ class Financement implements HistoriqueAwareInterface{
             return "<b>Non renseigné</b>";
         }else{
             if($this->getContratDoctoral()){
-                $financement = $this->getFinancement()->getLibelleLong();
-                $financement .= $this->getFinancementCompl() ? ", ".$this->getFinancementCompl()->getLibelleLong() : "";
+                $financement = $this->getFinancement()?->getLibelleLong();
+                $financement .= $this->getFinancementCompl() ? ", ".$this->getFinancementCompl()?->getLibelleLong() : "";
                 return $this->getFinancement() ?
                         "Oui - ".$financement :
                         'Oui - Aucun employeur choisi';
@@ -359,9 +359,9 @@ class Financement implements HistoriqueAwareInterface{
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
     public function getTempsTravailInformations(){
-        if($this->tempsTravail == 1){
+        if($this->getTempsTravail() === 1){
             return "temps complet";
-        }else if($this->tempsTravail == 2){
+        }else if($this->getTempsTravail() === 2){
             return "temps partiel";
         }else{
             return "<b>Non renseigné</b>";
@@ -372,12 +372,19 @@ class Financement implements HistoriqueAwareInterface{
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
     public function getEstSalarieInfos(){
-        if($this->estSalarie == 1){
+        if($this->getEstSalarie() === 1){
             return "Oui";
-        }else if($this->estSalarie == 2){
+        }else if($this->getEstSalarie() === 0){
             return "Non";
         }else{
             return "<b>Non renseigné</b>";
         }
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getStatutProfessionnelInfos(){
+        return $this->getEstSalarie() == 1 ? "<b>Statut professionnel : ".$this->getStatutProfessionnel() : null;
     }
 }

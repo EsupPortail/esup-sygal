@@ -84,7 +84,7 @@ class ConventionFormationDoctoraleDataTemplate
         $financement = $this->admission->getFinancement()->first() ? $this->admission->getFinancement()->first() : null;
         $estSalarie = $financement && $financement->getEstSalarie() ? $financement->getEstSalarie() : false;
         $etablissementPartenaire = $financement && $financement->getEtablissementPartenaire() ? $financement->getEtablissementPartenaire() : false;
-        return $inscription ? $admissionInscriptionFormatter->htmlifyConventionCollaborationInformations($inscription, $estSalarie, $etablissementPartenaire) : "";
+        return $inscription && $etablissementPartenaire ? $admissionInscriptionFormatter->htmlifyConventionCollaborationInformations($inscription, $estSalarie, $etablissementPartenaire) : "";
     }
 
     public function getConfidentialiteInformationstoHtml(): ?string
