@@ -579,11 +579,11 @@ class SessionController extends AbstractController
         $qb = $this->sessionSearchService->getQueryBuilder();
         $listing = $qb->getQuery()->getResult();
         //export
-        $headers = ['Module', 'Formation', 'Établissement organisateur',
+        $headers = ['Module', 'Formation', 'Type de formation', 'Établissement organisateur',
             'Responsable de la formation', 'Formateur(s)', 'État de la session',
             'Structures valides pour l\'inscription', 'Modalité', 'Nombre d\'heures',
             'Séance(s)', 'Effectif Liste principale', 'Effectif Liste complémentaire', 'Nombre d\'inscrits',
-            'Nombre d\'inscrits sur liste principale', 'Inscrits sur liste principale'];
+            'Nombre d\'inscrits sur liste principale', 'Effectif présents d\'après la liste d\'émargement', 'Inscrits sur liste principale'];
         $records = [];
         /** @var Session $session */
         foreach ($listing as $session) {
@@ -614,9 +614,33 @@ class SessionController extends AbstractController
                 return $inscritPrincipale->getDoctorant()->getIndividu();
             }, $inscritsPrincipale);
 
+            if ($session->getEtat()->getCode() !== Etat::CODE_IMMINENT and $session->getEtat()->getCode() !== Etat::CODE_FERME and $session->getEtat()->getCode() !== Etat::CODE_CLOTURER) {
+                $presences = "Les présences ne peuvent pas être affichées.";
+            } else {
+                $presences = $this->getPresenceService()->getRepository()->findPresencesBySession($session);
+                $dictionnaire = [];
+                foreach ($presences as $presence) {
+                    if($presence->isPresent()) $dictionnaire[$presence->getSeance()->getId()][] = $presence;
+                }
+                $presences = $dictionnaire;
+
+                $presencesStrings = array_map(function ($seance) use ($presences, $session) {
+                    $nbPresencesParSeances = "";
+                    $seanceDate = $seance->getDebut()->format('d/m/Y H:i');
+                    $seanceId = $seance->getId();
+
+                    if (isset($presences[$seanceId])) {
+                        $nbPresencesParSeances = count($presences[$seanceId]);
+                    }
+                    return $nbPresencesParSeances ? $seanceDate . ' : ' . $nbPresencesParSeances : null;
+                }, $seances);
+                $presences = $presencesStrings ? implode(' ; ', $presencesStrings) : null;
+            }
+
             $entry = [];
             $entry['Module'] = $formation && $formation->getModule() ? $formation->getModule()->getLibelle() : null;
             $entry['Formation'] = $formation ? $formation->getLibelle() : null;
+            $entry['Type de formation'] = $formation ? $formation->getType() : null;
             $entry['Établissement organisateur'] = $session->getSite() ? $session->getSite()->getStructure()->getLibelle() : null;
             $entry['Responsable de la formation'] = $session->getResponsable() ? $session->getResponsable() : null;
             $entry['Formateur(s)'] = implode("/", $formateursStrings);;
@@ -629,6 +653,7 @@ class SessionController extends AbstractController
             $entry['Effectif Liste complémentaire'] = $session->getTailleListeComplementaire();
             $entry['Nombre d\'inscrits'] = $nbInscrits;
             $entry['Nombre d\'inscrits sur liste principale'] = $nbInscritsListePrincipale;
+            $entry['Effectif présents d\'après la liste d\'émargement'] = $presences;
             $entry['Inscrits sur liste principale'] = implode(' / ', $inscritsPrincipaleStrings);;
 
             $records[] = $entry;

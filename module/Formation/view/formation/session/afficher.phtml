@@ -314,7 +314,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
     <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
        class="btn btn-primary action <?php if (empty($seances)) echo " disabled "; ?>">
-        <span class="fas fa-list"></span>
+        <span class="icon icon-lister"></span>
         Générer les émargements
     </a>
 <?php endif; ?>
@@ -379,7 +379,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                        class="ajax-modal" data-event="modification"
                        title="Duplication de la séance" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                        <span class="icon icon-refresh"></span>
+                        <span class="icon icon-cloner"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canEmargementSeance) : ?>
@@ -387,7 +387,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <a href="<?php echo $this->url('formation/seance/generer-emargement', ['seance' => $seance->getId()], [], true); ?>" target="_blank"
                        title="Générer l'émargement de la séance" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                        <span class="fas fa-list"></span>
+                        <span class="icon icon-lister"></span>
                     </a>
                 <?php endif; ?>
 
