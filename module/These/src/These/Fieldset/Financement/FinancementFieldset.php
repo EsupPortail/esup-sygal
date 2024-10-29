@@ -63,7 +63,8 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
     {
         $this->add(
             (new Select("annee"))
-                ->setLabel("Année : *")
+                ->setLabel("Année <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true, ])
                 ->setValueOptions($this->generateYearOptions())
                 ->setEmptyOption("Sélectionner une année")
                 ->setAttributes([
@@ -89,7 +90,8 @@ class FinancementFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(
             (new Select("origineFinancement"))
-                ->setLabel("Origine de Financement : *")
+                ->setLabel("Origine de Financement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true, ])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setDisableInArrayValidator(true)
                 ->setAttributes([

@@ -924,7 +924,7 @@ p.avis-complem {
     margin-bottom: 0.5rem; }
 
 .icon::before {
-  vertical-align: text-bottom; }
+  vertical-align: baseline; }
 
 .icon.icon-danger:before {
   content: "\f071"; }

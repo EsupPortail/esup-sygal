@@ -78,7 +78,8 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'type' => ObjectSelect::class,
             'name' => 'etablissement',
             'options' => [
-                'label' => 'Établissement : *',
+                'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => Etablissement::class,
                 'value_options' => $this->etablissements,
             ],
@@ -94,7 +95,8 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'type' => ObjectSelect::class,
             'name' => 'uniteRecherche',
             'options' => [
-                'label' => 'Unité de recherche : *',
+                'label' => "Unité de recherche <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => UniteRecherche::class,
                 'value_options' => UniteRecherche::toValueOptions($this->unitesRecherche),
             ],
@@ -110,7 +112,8 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'type' => ObjectSelect::class,
             'name' => 'ecoleDoctorale',
             'options' => [
-                'label' => 'École doctorale : *',
+                'label' => "École doctorale <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => EcoleDoctorale::class,
                 'value_options' => $this->ecolesDoctorales,
             ],

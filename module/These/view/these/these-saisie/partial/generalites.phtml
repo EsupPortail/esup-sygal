@@ -142,11 +142,16 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
         <?php echo $this->formHidden($form->get('security')); ?>
         <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
+        <script>
+            $('select').selectpicker();
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+            });
+        </script>
     <?php endif ?>
 
 </fieldset>
 <script>
-    $('select').selectpicker();
     var codeDeptInput = '#codeDeptTitreAcces'
     var nomDeptInput = '#nomDeptTitreAcces'
     //Gestion de la sélection du département

@@ -21,7 +21,7 @@ use These\Fieldset\Direction\DirectionFieldset;
     ?>
 
     <div class="mb-3 these-saisie-form-section">
-        <h3 class="these-saisie-title-section">Directeur·trice de thèse <span class="icon icon-information"
+        <h3 class="these-saisie-title-section">Directeur·trice de thèse <span class="icon icon-information" data-bs-toggle="tooltip"
                                                                               title="Un·e seul·e directeur·trice de thèse"></span></h3>
         <div class="row directeur">
             <div class="col-md-4">
@@ -122,14 +122,18 @@ use These\Fieldset\Direction\DirectionFieldset;
         <?php echo $this->formHidden($form->get('security')); ?>
         <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
+        <script>
+             $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+                 $("select").selectpicker();
+             });
+        </script>
     <?php endif ?>
 </fieldset>
 
 
 <script>
     $(function() {
-        $("select").selectpicker();
-
         const updateCodirecteurDiv = function($enabler) {
             const codirId = $enabler.data('codirecteur-id');
             if ($enabler.is(':checked')) {
@@ -163,9 +167,3 @@ use These\Fieldset\Direction\DirectionFieldset;
         });
     });
 </script>
-
-<style>
-    .select2-container {
-        z-index: 9999 !important;
-    }
-</style>

@@ -157,7 +157,10 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
 
     private function _addCommuns(string $prefixe)
     {
-        $individu = new SearchAndSelect($prefixe . '-individu', ['label' => "Individu * :"]);
+        $individu = new SearchAndSelect($prefixe . '-individu', [
+            'label' => "Individu <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+            'label_options' => [ 'disable_html_escape' => true, ]
+        ]);
         $individu
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
             ->setSelectionRequired()
@@ -171,7 +174,8 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => ObjectSelect::class,
             'name' => $prefixe . '-etablissement',
             'options' => [
-                'label' => 'Établissement * :',
+                'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => Etablissement::class,
                 'value_options' => $this->etablissements,
                 'disable_inarray_validator' => true,
@@ -188,7 +192,8 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => ObjectSelect::class,
             'name' => $prefixe . '-uniteRecherche',
             'options' => [
-                'label' => 'Unité de recherche * :',
+                'label' => "Unité de recherche <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => UniteRecherche::class,
                 'value_options' => UniteRecherche::toValueOptions($this->unitesRecherche),
                 'disable_inarray_validator' => true,
@@ -205,7 +210,8 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => ObjectSelect::class,
             'name' => $prefixe . '-ecoleDoctorale',
             'options' => [
-                'label' => 'École doctorale * :',
+                'label' => "École doctorale <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => EcoleDoctorale::class,
                 'value_options' => $this->ecolesDoctorales,
                 'disable_inarray_validator' => true,
@@ -222,7 +228,8 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => Select::class,
             'name' => $prefixe . '-qualite',
             'options' => [
-                'label' => "Qualité * :",
+                'label' => "Qualité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'value_options' => $this->qualiteService->getQualitesAsGroupOptions(),
                 'empty_option' => "Sélectionner une qualité...",
             ],

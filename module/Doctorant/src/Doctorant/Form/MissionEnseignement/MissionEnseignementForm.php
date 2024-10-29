@@ -24,7 +24,7 @@ class MissionEnseignementForm extends Form
             'type' => Select::class,
             'name' => 'annee_univ',
             'options' => [
-                'label' => "Année universitaire <span class='icon icon-obligatoire' title='Donnée obligatoire'></span> :",
+                'label' => "Année universitaire concernée <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'value_options' => $options,
                 'empty_option' => "Sélectionner une année universitaire",
@@ -40,7 +40,7 @@ class MissionEnseignementForm extends Form
             'type' => Button::class,
             'name' => 'bouton',
             'options' => [
-                'label' => '<i class="icon icon-save"></i> Enregistrer',
+                'label' => '<span class="fas fa-save"></span> Enregistrer',
                 'label_options' => [
                     'disable_html_escape' => true,
                 ],

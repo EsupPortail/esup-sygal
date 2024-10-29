@@ -27,9 +27,11 @@ use Laminas\Form\Form;
         <?php echo $this->formHidden($form->get('security')); ?>
         <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
+        <script>
+            $('select').selectpicker();
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+            });
+        </script>
     <?php endif ?>
 </fieldset>
-
-<script>
-    $('select').selectpicker();
-</script>

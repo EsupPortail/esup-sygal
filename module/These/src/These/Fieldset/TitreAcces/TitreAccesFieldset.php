@@ -65,7 +65,8 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
                     'E' => 'Externe',
                     'I' => 'Interne',
                 ])
-                ->setLabel("Accès : *")
+                ->setLabel("Accès <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true, ])
                 ->setAttributes([
                     'class' => 'selectpicker show-tick',
                     'id' => "titreAccesInterneExterne"
@@ -74,14 +75,16 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
 
         $this->add(
             (new Text("libelleTitreAcces"))
-                ->setLabel("Libellé : *")
+                ->setLabel("Libellé <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ")
+                ->setLabelOptions(['disable_html_escape' => true, ])
         );
 
         $this->add([
             'type' => ObjectSelect::class,
             'name' => 'pays',
             'options' => [
-                'label' => "Pays d'obtention : *",
+                'label' => "Pays d'obtention <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => Pays::class,
                 'disable_inarray_validator' => true,
             ],
@@ -112,7 +115,8 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
             'type' => ObjectSelect::class,
             'name' => 'etablissement',
             'options' => [
-                'label' => 'Établissement : *',
+                'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => Etablissement::class,
                 'label_generator' => function($targetEntity) {
                     $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;

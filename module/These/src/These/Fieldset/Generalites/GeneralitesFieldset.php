@@ -74,11 +74,15 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'type' => Textarea::class,
             'name' => 'titre',
             'options' => [
-                'label' => "Titre de la thèse : *",
+                'label' => "Titre de la thèse <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
         ]);
 
-        $doctorant = new SearchAndSelect('doctorant', ['label' => "Doctorant·e : *"]);
+        $doctorant = new SearchAndSelect('doctorant', [
+            'label' => "Doctorant·e <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+            'label_options' => [ 'disable_html_escape' => true, ],
+            ]);
         $doctorant
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
             ->setRequired()
@@ -126,7 +130,8 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'type' => Date::class,
             'name' => 'dateFinConfidentialite',
             'options' => [
-                'label' => "Date de fin de confidentialité : ",
+                'label' => "Date de fin de confidentialité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'fin-confidentialite',
@@ -153,7 +158,8 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'type' => ObjectSelect::class,
             'name' => 'etablissementCoTutelle',
             'options' => [
-                'label' => 'Établissement de cotutelle * :',
+                'label' => "Établissement de cotutelle <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Sélectionnez une option",
                 'target_class' => Etablissement::class,
                 'disable_inarray_validator' => true,
@@ -168,7 +174,8 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
 
         $this->add(
             (new Select("paysCoTutelle"))
-                ->setLabel("Pays de la cotutelle * : ")
+                ->setLabel("Pays de la cotutelle <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ")
+                ->setLabelOptions(['disable_html_escape' => true])
                 ->setOptions(['emptyOption' => 'Choisissez un élément',])
                 ->setAttributes([
                     'class' => 'selectpicker show-tick',
