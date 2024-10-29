@@ -90,7 +90,7 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
                         $inscription = new Inscription();
                         $inscription->setDoctorant($doctorant);
                         $inscription->setSession($session);
-                        return $this->canInscrire($inscription);
+                        return $this->scopeValide($inscription);
                     }
                     return false;
                 }
@@ -115,41 +115,9 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
 
         if ($privilege == InscriptionPrivileges::INSCRIPTION_AJOUTER) {
             if ($inscription->getHistoCreateur()) return $this->canDesinscrire($entity);
-            return $this->canInscrire($entity);
+            return $this->scopeValide($inscription);
         }
 
-        return true;
-    }
-
-    private function canInscrire(?Inscription $inscription): bool
-    {
-        if (!$this->scopeValide($inscription)) return false;
-        $doctorant = $inscription->getDoctorant();
-        $session = $inscription->getSession();
-        $inscriptions = $this->inscriptionService->getRepository()->findInscriptionsByDoctorant($doctorant);
-
-        /** @var Inscription $inscription */
-        foreach ($inscriptions as $inscription) {
-            $sessionInscriptionEnregistree = $inscription->getSession();
-            if (!$sessionInscriptionEnregistree || !$sessionInscriptionEnregistree->getDateDebut()) {
-                continue; // Passe à l'inscription suivante si la session ou la date de début est manquante
-            }
-
-            $premiereAnneeUnivSessionInscription = $this->anneeUnivService->fromDate($sessionInscriptionEnregistree->getDateDebut())->getPremiereAnnee();
-            //si la session demandée possède la même formation qu'une inscription possédée par l'étudiant,
-            //on vérifie que l'année universitaire ne soit pas la même
-            //sinon on refuse l'inscription, car l'étudiant ne peut pas s'inscrire sur une session appartenant à une formation déjà suivie sur la même année universitaire
-            if ($session && $session->getFormation() === $sessionInscriptionEnregistree->getFormation()) {
-                $sessionOuverteDateDebut = $session->getDateDebut();
-                if ($sessionOuverteDateDebut) {
-                    $premiereAnneeUnivSessionOuverte = $this->anneeUnivService->fromDate($sessionOuverteDateDebut)->getPremiereAnnee();
-                    // Si les années universitaires sont identiques, on interdit l'inscription
-                    if ($premiereAnneeUnivSessionOuverte === $premiereAnneeUnivSessionInscription) {
-                        return false;
-                    }
-                }
-            }
-        }
         return true;
     }
 
