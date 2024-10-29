@@ -19,14 +19,14 @@ class SessionStructureValideForm extends Form {
             'type' => Select::class,
             'name' => 'structure',
             'options' => [
-                'label' => "Structure à associé à la session <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Structure à associé à la session <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Aucun établissement",
                 'value_options' => $this->getStructureService()->getStructuresFormationsAsOptions(),
             ],
             'attributes' => [
                 'id' => 'structure',
-                'class' => 'show-tick',
+                'class' => 'bootstrap-selectpicker show-tick',
                 'data-live-search' => 'true',
             ],
         ]);

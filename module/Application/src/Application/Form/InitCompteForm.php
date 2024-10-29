@@ -36,7 +36,10 @@ class InitCompteForm extends Form
             'type' => Text::class,
             'name' => 'username',
             'options' => [
-                'label' => "Identifiant de connexion / Username * :",
+                'label' => "Identifiant de connexion / Username <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'username',
@@ -47,7 +50,10 @@ class InitCompteForm extends Form
             'type' => Password::class,
             'name' => 'password1',
             'options' => [
-                'label' => "Mot de passe / Password * :",
+                'label' => "Mot de passe / Password <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'password1',
@@ -58,7 +64,10 @@ class InitCompteForm extends Form
             'type' => Password::class,
             'name' => 'password2',
             'options' => [
-                'label' => "Confirmation du mot de passe / Password confirmation * :",
+                'label' => "Confirmation du mot de passe / Password confirmation <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'password2',

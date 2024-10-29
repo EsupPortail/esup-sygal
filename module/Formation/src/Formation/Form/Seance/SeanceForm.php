@@ -19,7 +19,7 @@ class SeanceForm extends Form {
             'name' => 'date',
             'type' => Date::class,
             'options' => [
-                'label' => "Date de la séance de formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Date de la séance de formation <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
@@ -36,7 +36,7 @@ class SeanceForm extends Form {
             'name' => 'debut',
             'type' => Time::class,
             'options' => [
-                'label' => "Début de la séance <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Début de la séance <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
@@ -53,7 +53,7 @@ class SeanceForm extends Form {
             'name' => 'fin',
             'type' => Time::class,
             'options' => [
-                'label' => "Fin de la séance <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Fin de la séance <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',

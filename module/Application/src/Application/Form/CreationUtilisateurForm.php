@@ -34,23 +34,28 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Text('nomUsuel'))
-                ->setLabel("Nom d'usage *")
+                ->setLabel("Nom d'usage <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Text('nomPatronymique'))
-            ->setLabel("Nom de famille (patronymique) *")
+            ->setLabel("Nom de famille (patronymique) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Text('prenom'))
-                ->setLabel("Prénom *")
+                ->setLabel("Prénom <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Text('email'))
-                ->setLabel("Adresse électronique (sera votre identifiant de connexion) *")
+                ->setLabel("Adresse électronique (sera votre identifiant de connexion) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Checkbox('individu'))
                 ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='fas fa-exclamation-triangle'></span> Ne pas cocher si pour lier à un individu existant</span>")
+
         );
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")

@@ -26,7 +26,8 @@ class EnqueteReponseForm extends Form
                 'type' => Select::class,
                 'name' => 'select_' . $question->getId(),
                 'options' => [
-                    'label' => "Niveau de satisfaction * :",
+                    'label' => "Niveau de satisfaction <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                    'label_options' => [ 'disable_html_escape' => true, ],
                     'empty_option' => "Choisisser un niveau de satisfaction",
                     'value_options' => EnqueteReponse::NIVEAUX,
                 ],

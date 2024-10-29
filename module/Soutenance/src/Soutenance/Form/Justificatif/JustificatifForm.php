@@ -25,7 +25,8 @@ class JustificatifForm extends Form
             'type' => Select::class,
             'name' => 'nature',
             'options' => [
-                'label' => 'Type de justificatif * :',
+                'label' => "Type de justificatif <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => 'Nature du justificatif',
                 'value_options' => [
                     NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE => NatureFichier::LABEL_FORMATION_INTEGRITE_SCIENTIFIQUE,
@@ -65,7 +66,8 @@ class JustificatifForm extends Form
             'type' => File::class,
             'name' => 'fichier',
             'options' => [
-                'label' => 'Fichier* :',
+                'label' => "Fichier <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
         ]);
         //SUBMIT

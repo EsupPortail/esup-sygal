@@ -23,10 +23,12 @@ class IndividuRoleForm extends Form implements InputFilterProviderInterface
             IndividuRoleEtablissementFieldset::class
         );
 
-        $individu = new Text('individu', ['label' => "Individu * :"]);
+        $individu = new Text('individu', ['label' => "Individu <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :"]);
+        $individu->setLabelOptions(['disable_html_escape' => true,]);
         $this->add($individu);
 
-        $role = new Text('role', ['label' => "Rôle * :"]);
+        $role = new Text('role', ['label' => "Rôle <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :"]);
+        $role->setLabelOptions(['disable_html_escape' => true,]);
         $this->add($role);
 
         $individuRoleEtablissementCollection = new Collection('individuRoleEtablissement');

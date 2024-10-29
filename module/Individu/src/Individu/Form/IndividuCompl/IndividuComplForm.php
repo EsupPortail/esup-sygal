@@ -24,8 +24,9 @@ class IndividuComplForm extends Form implements InputFilterProviderInterface
     public function init(): void
     {
         //sas individu
-        $individu = new SearchAndSelect('individu', ['label' => "Individu * :"]);
+        $individu = new SearchAndSelect('individu', ['label' => "Individu <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :"]);
         $individu
+            ->setLabelOptions([ 'disable_html_escape' => true, ])
             ->setAutocompleteSource($this->urlIndividu)
             ->setSelectionRequired()
             ->setAttributes([
@@ -47,7 +48,8 @@ class IndividuComplForm extends Form implements InputFilterProviderInterface
         ]);
         $this->add(
             (new Email('email'))
-                ->setLabel("Adresse électronique professionnelle de remplacement * :")
+                ->setLabel("Adresse électronique professionnelle de remplacement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
                 ->setAttribute('placeholder' , "Adresse électronique professionnelle")
                 ->setAttribute('required', $this->emailRequired)
                 ->setValidator($mailValidator)

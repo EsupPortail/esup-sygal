@@ -25,7 +25,8 @@ class MembreForm extends Form {
            'type' => Radio::class,
            'name' => 'sexe',
            'options' => [
-               'label' => 'Civilité : ',
+               'label' => "Civilité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+               'label_options' => ['disable_html_escape' => true,],
                'value_options' => [
                    'F' => 'Madame',
                    'H' => 'Monsieur',
@@ -35,13 +36,14 @@ class MembreForm extends Form {
 
         $this->add(
             (new Text('prenom'))
-                ->setLabel("Prénom du membre de jury :")
+                ->setLabel("Prénom du membre de jury <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Text('nom'))
-                ->setLabel("Nom du membre de jury :")
+                ->setLabel("Nom du membre de jury <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
-
 
         $mailValidator = new EmailAddress();
         $mailValidator->setMessages([
@@ -49,7 +51,8 @@ class MembreForm extends Form {
         ]);
         $this->add(
             (new Email('email'))
-                ->setLabel("Adresse électronique :")
+                ->setLabel("Adresse électronique <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
                 ->setValidator($mailValidator)
         );
 
@@ -57,7 +60,8 @@ class MembreForm extends Form {
             'name' => 'qualite',
             'type' => Select::class,
             'options' => [
-                'label' => 'Qualité : ',
+                'label' => "Qualité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+                'label_options' => ['disable_html_escape' => true,],
                 'empty_option' => "Sélectionner une qualité ... ",
                 'value_options' => $this->getQualiteService()->getQualitesAsGroupOptions(),
             ],
@@ -70,25 +74,30 @@ class MembreForm extends Form {
 
         $this->add(
             (new Text('etablissement'))
-                ->setLabel("Université, établissement d'enseignement ou entreprise :")
+                ->setLabel("Université, établissement d'enseignement ou entreprise <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Textarea('adresse'))
-                ->setLabel("Adresse postale complète de la structure renseignée ci-dessus :")
+                ->setLabel("Adresse postale complète de la structure renseignée ci-dessus <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Radio('exterieur'))
-                ->setLabel("Le membre est extérieur (non membre d'un établissement de la COMUE et non membre de l'unité de recherche de la thèse) :")
+                ->setLabel("Le membre est extérieur (non membre d'un établissement de la COMUE et non membre de l'unité de recherche de la thèse) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
                 ->setValueOptions([ 'oui' => 'Oui', 'non' => 'Non'])
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Radio('visio'))
-                ->setLabel("Le membre sera présent en visioconférence :")
+                ->setLabel("Le membre sera présent en visioconférence <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
                 ->setValueOptions([ '1' => 'Oui', '0' => 'Non'])
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
         );
         $this->add(
             (new Radio('role'))
-                ->setLabel("Role dans le jury :")
+                ->setLabel("Role dans le jury <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions([ 'disable_html_escape' => true, ])
                 ->setValueOptions([
                     Membre::RAPPORTEUR_JURY   => 'rapporteur et membre du jury',
                     Membre::RAPPORTEUR_VISIO  => 'rapporteur en visioconférence',

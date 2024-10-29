@@ -189,7 +189,8 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
 
         $this->add(
             (new Select("ecoleDoctorale"))
-                ->setLabel("Ecole doctorale *")
+                ->setLabel("École doctorale <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions(['disable_html_escape' => true])
                 ->setLabelAttributes(['data-after' => " / Doctoral school"])
                 ->setEmptyOption('Sélectionnez une option')
                 ->setAttributes([

@@ -31,6 +31,9 @@ echo $this->form($form);
                 });
             }
         });
-        $('select').selectpicker();
+        $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip({});
+            $("select").selectpicker();
+        });
     });
 </script>

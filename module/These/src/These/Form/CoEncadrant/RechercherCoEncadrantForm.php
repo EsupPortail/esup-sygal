@@ -30,7 +30,10 @@ class RechercherCoEncadrantForm extends Form
         /**
          * SearchAndSelect sur les Individus de la structure fictives
          */
-        $coEncadrant = new SearchAndSelect('co-encadrant', ['label' => "Co-encadrant·e * :"]);
+        $coEncadrant = new SearchAndSelect('co-encadrant', [
+            'label' => "Co-encadrant·e <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+            'label_options' => [ 'disable_html_escape' => true, ]
+        ]);
         $coEncadrant
             ->setAutocompleteSource($this->urlCoEncadrant)
             ->setSelectionRequired(true)

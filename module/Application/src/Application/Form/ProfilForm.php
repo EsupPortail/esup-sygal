@@ -18,7 +18,8 @@ class ProfilForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libelle* :",
+                'label' => "Libelle <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'libelle',
@@ -29,7 +30,8 @@ class ProfilForm extends Form {
             'type' => Text::class,
             'name' => 'code',
             'options' => [
-                'label' => "Code* :",
+                'label' => "Code <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'code',
@@ -40,7 +42,7 @@ class ProfilForm extends Form {
             'type' => Select::class,
             'name' => 'structure',
             'options' => [
-                'label' => "Type de structure* :",
+                'label' => "Type de structure :",
                 'value_options' => [
                     '' => "Aucun",
                     TypeStructure::CODE_ECOLE_DOCTORALE  => 'École doctorale',
@@ -50,6 +52,8 @@ class ProfilForm extends Form {
             ],
             'attributes' => [
                 'id' => 'structure',
+                'class' => 'selectpicker show-menu-arrow',
+                'data-live-search' => 'true',
             ],
         ]);
         //description

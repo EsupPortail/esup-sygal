@@ -40,7 +40,7 @@ class SessionForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Libellé de la formation <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
@@ -67,7 +67,7 @@ class SessionForm extends Form {
             'type' => Select::class,
             'name' => 'site',
             'options' => [
-                'label' => "Site de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Site de la formation <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Aucun établissement",
                 'value_options' => $this->getEtablissementService()->getEtablissementInscriptionAsOption(),
@@ -79,7 +79,7 @@ class SessionForm extends Form {
             ],
         ]);
         //responsable
-        $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :"]);
+        $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :"]);
         $responsable
             ->setAutocompleteSource($this->urlResponsable)
             ->setSelectionRequired()
@@ -94,7 +94,7 @@ class SessionForm extends Form {
             'type' => Select::class,
             'name' => 'modalite',
             'options' => [
-                'label' => "Modalité <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Modalité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Non précisée",
                 'value_options' => HasModaliteInterface::MODALITES,
@@ -140,7 +140,7 @@ class SessionForm extends Form {
             'type' => Number::class,
             'name' => 'taille_liste_principale',
             'options' => [
-                'label' => "Effectif de la liste principale <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Effectif de la liste principale <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
@@ -152,7 +152,7 @@ class SessionForm extends Form {
             'type' => Number::class,
             'name' => 'taille_liste_complementaire',
             'options' => [
-                'label' => "Effectif de la liste complémentaire <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label' => "Effectif de la liste complémentaire <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
