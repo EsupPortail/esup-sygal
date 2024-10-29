@@ -5,7 +5,7 @@ Journal des modifications
 -----
 - Module Admission : Possibilité également pour un gestionnaire de déposer la charte doctorale signée par les parties prenantes
 - Module Formation : Affichage pour le doctorant de l'objectif et du programme d'une formation (sur la fiche d'une session de formation) 
-- Module Soutenances : Affichage de l'historique des actions effectuées (horodatages) en dessous de chacune d'elles 
+  - Module Soutenances : Affichage de l'historique des actions effectuées (horodatages) en dessous de chacune d'elles 
 - [FIX] Notifications de demande d'engagement d'impartialité et d'avis de soutenance : utilisation en priorité du mail de l'acteur.
 - [FIX] Impossible d'accèder aux pages de consultation/modification d'ED ou d'UR.
 - [FIX] Coquille dans le procès verbal de soutenance (PDF).

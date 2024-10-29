@@ -83,6 +83,7 @@ class InscriptionRepository extends EntityRepository
         $qb = $this->createQB('inscription')
             ->andWhere('inscription.doctorant = :doctorant')
             ->setParameter('doctorant', $doctorant)
+            ->andWhere('inscription.histoDestruction IS NULL')
         ;
         $result = $qb->getQuery()->getResult();
 

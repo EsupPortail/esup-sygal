@@ -60,6 +60,15 @@ return [
                 [
                     'controller' => SessionController::class,
                     'action' => [
+                        'generer-export-csv'
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
                         'afficher',
                         'generer-emargements',
                         'generer-export',
@@ -308,6 +317,17 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'generer-emargements',
+                                    ],
+                                ],
+                            ],
+                            'generer-export-csv' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'    => '/generer-export-csv',
+                                    'defaults' => [
+                                        /** @see SessionController::genererExportCsvAction() */
+                                        'controller'    => SessionController::class,
+                                        'action'        => 'generer-export-csv',
                                     ],
                                 ],
                             ],

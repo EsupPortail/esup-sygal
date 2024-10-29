@@ -378,7 +378,6 @@ class InscriptionController extends AbstractController
 
 
     }
-
     public function genererExportCsvAction(): Response|CsvModel
     {
         $queryParams = $this->params()->fromQuery();

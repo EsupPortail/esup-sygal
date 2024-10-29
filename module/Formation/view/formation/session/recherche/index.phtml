@@ -2,13 +2,14 @@
 
 namespace Application;
 
+use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Seance;
 use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\Session\Search\SessionSearchService;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 
 /**
+ * @var PhpRenderer $this
  * @var string $title
  * @var LaminasPaginator $paginator
  * @var string $routeName
@@ -22,6 +23,7 @@ $this->headTitle($this->translate($title));
 $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+$queryParams = $this->queryParams();
 ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>
@@ -207,6 +209,10 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 
     <?php  echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => $routeName]) ?>
 
+    <a class="btn btn-secondary" href="<?php echo $this->url('formation/session/generer-export-csv', [], ['query' => $queryParams]) ?>">
+        <span class="icon icon-export"></span>
+        <?php echo $this->translate("Exporter ces sessions au format CSV"); ?>
+    </a>
 <?php else: ?>
 
     <p>Aucune formation trouvée.</p>

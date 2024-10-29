@@ -171,9 +171,9 @@ $this->headTitle($pageTitle);
     <table class="table table-sm table-hover">
     <thead>
     <tr>
-        <?php if($canVoirLieuSession) : ?>
+<!--        --><?php //if($canVoirLieuSession) : ?>
             <th> Lieu </th>
-        <?php endif; ?>
+<!--        --><?php //endif; ?>
         <th> Jour </th>
         <th> Début </th>
         <th> Fin </th>
@@ -184,18 +184,22 @@ $this->headTitle($pageTitle);
     <?php /** @var Seance $seance */ ?>
     <?php foreach ($seances as $seance) : ?>
         <tr>
-            <?php if($canVoirLieuSession) : ?>
-                <td>
-                        <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
-                            <?php echo $seance->getLieu(); ?>
-                            <?php if ($seance->getDescription() !== null) : ?>
-                                <span class="icon icon-information"
-                                      title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
-                                ></span>
-                            <?php endif; ?>
-                        </span>
-                </td>
-            <?php endif; ?>
+            <td class="<?php echo $canVoirLieuSession ? "" : "lieu-session-non-visible"; ?>">
+                <?php if ($canVoirLieuSession) : ?>
+                    <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
+                <?php else: ?>
+                    <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>"
+                              data-bs-toggle="tooltip"
+                              title="Le lieu sera visible lorsque vous serez inscrit à cette session">
+                <?php endif; ?>
+                <?php echo $canVoirLieuSession ? $seance->getLieu() : "<i>Non visible</i>"; ?>
+                <?php if ($seance->getDescription() !== null) : ?>
+                    <span class="icon icon-information"
+                          title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                    </span>
+                <?php endif; ?>
+                </span>
+            </td>
             <td> <?php echo $seance->getDebut()->format('d/m/Y'); ?> </td>
             <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
             <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>
@@ -206,3 +210,9 @@ $this->headTitle($pageTitle);
 </table>
 <?php endif ?>
 </div>
+
+<script>
+    $('.modal').on('shown.bs.modal', function () {
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+</script>

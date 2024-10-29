@@ -51,6 +51,7 @@
         <field name="tailleListeComplementaire" type="integer"                     column="taille_liste_complementaire"  nullable="true"/>
 
         <field name="dateClotureInscription" type="datetime" column="date_fermeture_inscription" nullable="true"/>
+        <field name="datePublication" type="datetime" column="date_publication" nullable="true"/>
 
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

@@ -89,9 +89,12 @@ class SessionSearchService extends SearchService
             $this->createSeancesSorter(),
         ]);
 
-        //tri descendant par les dates des séances (lorsqu'aucun sorter n'est sélectionné)
-        $this->addInvisibleSort('CASE WHEN seance.fin IS NULL THEN 1 ELSE 0 END', 'ASC');
-        $this->addInvisibleSort('seance.debut', 'DESC');
+        //tri affichant des sessions affichées
+
+        //si la date de la séance est passée, on l'affiche à la fin de la liste
+        $this->addInvisibleSort("CASE WHEN seance.debut >= CURRENT_DATE() THEN 0 ELSE 1 END", 'ASC');
+        //tri ascendant par date de séance la plus proche de la date du jour
+        $this->addInvisibleSort('ABS(DATE_DIFF(CURRENT_DATE(), seance.debut))', 'ASC');
     }
 
     public function createQueryBuilder(): QueryBuilder

@@ -45,7 +45,7 @@ class ModuleRepository extends EntityRepository
         return $result;
     }
 
-    public function getModulesCatalogue(?\DateTime $debut = null, ?\DateTime $fin = null)
+    public function getModulesCatalogue(?\DateTime $debut = null, ?\DateTime $fin = null, bool $verifDatePublication = false)
     {
         $qb = $this->createQB()
             ->join('formation.sessions', 'session')->addSelect('session')
@@ -56,6 +56,17 @@ class ModuleRepository extends EntityRepository
         if ($debut !== null && $fin !== null) {
             $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
                 ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);
+        }
+
+        //Vérifier que la session peut-être visible si c'est un doctorant de connecté
+        if($verifDatePublication){
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->lte('session.datePublication', ':currentDate'),
+                    $qb->expr()->isNull('session.datePublication')
+                )
+            )
+                ->setParameter('currentDate', new \DateTime());
         }
 
         $result = $qb->getQuery()->getResult();

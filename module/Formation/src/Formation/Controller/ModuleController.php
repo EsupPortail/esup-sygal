@@ -133,8 +133,9 @@ class ModuleController extends AbstractController
         $annee = AnneeUniv::fromPremiereAnnee((int)$anneeUniv);
         $debut = $this->anneeUnivService->computeDateDebut($annee);
         $fin = $this->anneeUnivService->computeDateFin($annee);
+        $verifierDatePublication = (bool)$this->userContextService->getSelectedRoleDoctorant();
 
-        $modules = $this->moduleService->getRepository()->getModulesCatalogue($debut, $fin);
+        $modules = $this->moduleService->getRepository()->getModulesCatalogue($debut, $fin, $verifierDatePublication);
 
         // gestion d'anomalies INUTILE !!!!
 //        {

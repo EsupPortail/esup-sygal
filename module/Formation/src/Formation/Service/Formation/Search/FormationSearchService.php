@@ -68,9 +68,12 @@ class FormationSearchService extends SearchService
             $this->createModaliteSorter(),
         ]);
 
-        //tri descendant par les dates des séances (lorsqu'aucun sorter n'est sélectionné)
-        $this->addInvisibleSort('CASE WHEN seance.fin IS NULL THEN 1 ELSE 0 END', 'ASC');
-        $this->addInvisibleSort('seance.debut', 'DESC');
+        //tri affichant des formations affichées
+
+        //si la date des séances sont toutes passées, on affiche la formation à la fin de la liste
+        $this->addInvisibleSort("CASE WHEN seance.debut >= CURRENT_DATE() THEN 0 ELSE 1 END", 'ASC');
+        //tri ascendant par date de séance la plus proche de la date du jour
+        $this->addInvisibleSort('ABS(DATE_DIFF(CURRENT_DATE(), seance.debut))', 'ASC');
     }
 
     public function createQueryBuilder(): QueryBuilder

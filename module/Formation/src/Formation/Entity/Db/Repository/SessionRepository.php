@@ -4,6 +4,7 @@ namespace Formation\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\Query\Expr\Join;
@@ -18,6 +19,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 class SessionRepository extends DefaultEntityRepository
 {
     use EntityManagerAwareTrait;
+    use UserContextServiceAwareTrait;
 
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
@@ -61,7 +63,7 @@ class SessionRepository extends DefaultEntityRepository
      * @param DateTime|null $fin
      * @return Session[]
      */
-    public function findSessionsByDoctorant(Doctorant $doctorant, string $etat, DateTime $debut = null, DateTime $fin = null) : array
+    public function findSessionsByDoctorant(Doctorant $doctorant, string $etat, DateTime $debut = null, DateTime $fin = null, bool $verifDatePublication = false) : array
     {
         $structures = [];
         foreach ($doctorant->getTheses() as $these) {
@@ -86,7 +88,8 @@ class SessionRepository extends DefaultEntityRepository
             ->andWhere('etat.code = :etat')
             ->setParameter('structures', array_unique($structures))
             ->setParameter('etat', $etat)
-            ->orderBy("seance.debut", "DESC");
+            ->addOrderBy('ABS(DATE_DIFF(CURRENT_DATE(), seance.debut))', 'ASC')
+        ;
 
         if ($debut !== null && $fin !== null) {
             $qb->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
@@ -96,6 +99,17 @@ class SessionRepository extends DefaultEntityRepository
             if (! $doctorant->hasMissionEnseignementFor($annee)) {
                 $qb = $qb->andWhere('module.requireMissionEnseignement = :false')->setParameter('false', false);
             }
+        }
+
+        //Vérifier que la session peut-être visible si c'est un doctorant de connecté
+        if($verifDatePublication){
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->lte('session.datePublication', ':currentDate'),
+                    $qb->expr()->isNull('session.datePublication')
+                )
+            )
+                ->setParameter('currentDate', new \DateTime());
         }
 
         $result =  $qb->getQuery()->getResult();
@@ -197,7 +211,7 @@ class SessionRepository extends DefaultEntityRepository
      * @param bool $keep_histo
      * @return array
      */
-    public function fetchSessionsByFormation(?Formation $formation, string $champ='id', string $ordre='ASC', bool $keep_histo = false) : array
+    public function fetchSessionsByFormation(?Formation $formation, string $champ='id', string $ordre='ASC', bool $keep_histo = false, bool $verifierDatePublication = false) : array
     {
         $qb = $this->createQueryBuilder('session')
             ->orderBy('session.' . $champ, $ordre);
@@ -206,6 +220,17 @@ class SessionRepository extends DefaultEntityRepository
         else                      $qb = $qb->andWhere('session.formation IS NULL');
 
         if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
+
+        //Vérifier que la session peut-être visible si c'est un doctorant de connecté
+        if($verifierDatePublication){
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->lte('session.datePublication', ':currentDate'),
+                    $qb->expr()->isNull('session.datePublication')
+                )
+            )
+                ->setParameter('currentDate', new \DateTime());
+        }
 
         return $qb->getQuery()->getResult();
     }

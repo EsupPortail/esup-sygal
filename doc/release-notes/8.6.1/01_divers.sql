@@ -176,3 +176,9 @@ SET document_corps = '<h1 style="text-align: center;">Convention de formation do
 <h2>Validations accordées à la convention de formation doctorale</h2>
 <p>VAR[AdmissionConventionFormationDoctorale#Operations]</p>'
 WHERE code = 'ADMISSION_CONVENTION_FORMATION_DOCTORALE';
+
+--
+-- Formation
+--
+ALTER TABLE formation_session
+    ADD COLUMN date_publication timestamp;

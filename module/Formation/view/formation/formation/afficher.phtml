@@ -36,16 +36,6 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php echo $pageTitle; ?>
 </h1>
 
-<?php if ($canModifierFormation) : ?>
-    <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
-    <a class="btn btn-primary action ajax-modal" data-event="modification"
-       href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
-    >
-        <span class="icon icon-modifier"></span>
-        Modifier les informations
-    </a>
-<?php endif; ?>
-
 <?php if ($canIndexFormation) : ?>
     <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
     <a class="btn btn-primary action"
@@ -53,6 +43,16 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     >
         <span class="icon icon-listing"></span>
         Retourner à la liste des formations
+    </a>
+<?php endif; ?>
+
+<?php if ($canModifierFormation) : ?>
+    <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
+    <a class="btn btn-primary action ajax-modal" data-event="modification"
+       href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
+    >
+        <span class="icon icon-modifier"></span>
+        Modifier les informations
     </a>
 <?php endif; ?>
 
@@ -174,8 +174,13 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($sessions as $session) : ?>
-        <tr class="<?php echo $session["anneeUniv"]; ?>">
+    <?php foreach ($sessions as $session) :
+        if($session["session"]->estVisible()) : ?>
+            <tr class="<?php echo $session["anneeUniv"]; ?>">
+        <?php else: ?>
+            <tr class="session-non-visible <?php echo $session["anneeUniv"]; ?>" data-bs-toggle="tooltip"
+            title="Cette session est cachée aux doctorants jusqu'au <?= $session["session"]->getDatePublication()?->format('d/m/Y'); ?>">
+        <?php endif; ?>
             <td>
                 <span class=" <?php if ($session["session"]->estHistorise()) echo "historise text-danger"; ?> ">
                 <?php echo $session["session"]->getIndex(); ?>
@@ -273,5 +278,3 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         $("select#annee").on("change", toggleAnnee).selectpicker();
     });
 </script>
-
-

@@ -69,12 +69,27 @@ usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a
 
 <h1 class="page-header">
     <?php echo $pageTitle; ?>
+    <?php if (!$session->estVisible()) : ?>
+        <span class="text-danger" data-bs-toggle="popover" data-bs-content="<span class=&quot;text-danger&quot;>Non visible pour les doctorants jusqu'au <?php echo $session->getDatePublication()->format('d/m/Y'); ?></span>" data-bs-trigger="hover" data-bs-html="true" data-bs-placement="bottom" data-bs-original-title="" title=""><span class="badge bg-danger">
+            NON VISIBLE
+        </span>
+    </span>
+    <?php endif; ?>
 </h1>
 
 <?php
 echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 ?>
 
+<?php if ($canIndexSession) : ?>
+    <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
+    <a class="btn btn-primary action"
+       href="<?php echo $this->url('formation/session', [], [], true); ?>"
+    >
+        <span class="icon icon-listing"></span>
+        Retourner à la liste des sessions
+    </a>
+<?php endif;?>
 <?php if ($canModifierSession) : ?>
     <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
     <a class="btn btn-primary action ajax-modal" data-event="modification"
@@ -84,15 +99,6 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         Modifier les informations
     </a>
 <?php endif; ?>
- <?php if ($canIndexSession) : ?>
-            <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
-            <a class="btn btn-primary action"
-               href="<?php echo $this->url('formation/session', [], [], true); ?>"
-            >
-                <span class="icon icon-listing"></span>
-                Retourner à la liste des sessions
-            </a>
-<?php endif;?>
 <?php if ($canModifierSession) : ?>
     <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
     <a class="btn btn-primary action ajax-modal" data-event="modification"
@@ -172,6 +178,12 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <?php if ($session->getDateClotureInscription()) : ?>
             <dt class="col-md-3"> Date de clôture des inscriptions </dt>
             <dd class="col-md-9"> <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?></dd>
+        <?php endif; ?>
+        <?php if ($session->getDatePublication()) : ?>
+            <dt class="col-md-3"> Date de publication
+                <span class="icon icon-info" title="" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="Cette session sera visible pour les doctorants à partir de cette date"></span>
+            </dt>
+            <dd class="col-md-9"> <?php echo $session->getDatePublication()->format('d/m/Y'); ?></dd>
         <?php endif; ?>
     </dl>
     </div>
@@ -302,7 +314,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
     <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
        class="btn btn-primary action <?php if (empty($seances)) echo " disabled "; ?>">
-        <span class="fas fa-list"></span>
+        <span class="icon icon-lister"></span>
         Générer les émargements
     </a>
 <?php endif; ?>
@@ -367,7 +379,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                        class="ajax-modal" data-event="modification"
                        title="Duplication de la séance" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                        <span class="icon icon-refresh"></span>
+                        <span class="icon icon-cloner"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canEmargementSeance) : ?>
@@ -375,7 +387,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <a href="<?php echo $this->url('formation/seance/generer-emargement', ['seance' => $seance->getId()], [], true); ?>" target="_blank"
                        title="Générer l'émargement de la séance" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                        <span class="fas fa-list"></span>
+                        <span class="icon icon-lister"></span>
                     </a>
                 <?php endif; ?>
 

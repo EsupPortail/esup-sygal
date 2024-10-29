@@ -34,6 +34,7 @@ class SessionHydrator implements HydratorInterface {
             'taille_liste_principale' => $object->getTailleListePrincipale(),
             'taille_liste_complementaire' => $object->getTailleListeComplementaire(),
             'date_fermeture_inscription' => $object->getDateClotureInscription(),
+            'date_publication' => $object->getDatePublication(),
         ];
         return $data;
     }
@@ -57,6 +58,7 @@ class SessionHydrator implements HydratorInterface {
         $tailleListePrincipale = (isset($data['taille_liste_principale']) AND trim($data['taille_liste_principale']) !== '')?trim($data['taille_liste_principale']):null;
         $tailleListeComplementaire = (isset($data['taille_liste_complementaire']) AND trim($data['taille_liste_complementaire']) !== '')?trim($data['taille_liste_complementaire']):null;
         $dateFermetureInscription = (isset($data['date_fermeture_inscription']) AND trim($data['date_fermeture_inscription']) !== '')?DateTime::createFromFormat('d/m/Y', $data['date_fermeture_inscription']):null;
+        $datePublication = (isset($data['date_publication']) AND trim($data['date_publication']) !== '')?DateTime::createFromFormat('d/m/Y', $data['date_publication']):null;
 
         $object->setDescription($description);
         $object->setSite($site);
@@ -67,6 +69,7 @@ class SessionHydrator implements HydratorInterface {
         $object->setTailleListePrincipale((int) $tailleListePrincipale);
         $object->setTailleListeComplementaire((int) $tailleListeComplementaire);
         $object->setDateClotureInscription($dateFermetureInscription);
+        $object->setDatePublication($datePublication);
         return $object;
     }
 
