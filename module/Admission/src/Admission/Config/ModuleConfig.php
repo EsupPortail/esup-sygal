@@ -86,9 +86,9 @@ class ModuleConfig
                         $coDirecteur = !$admission->getInscription()->first()->getCoDirection() || $admission->getInscription()->first()->getCoDirecteur();
                     }
 
-                    $transmissionInBdd = $this->transmissionService->getRepository()->findOneBy(["admission" => $admission]);
+//                    $transmissionInBdd = $this->transmissionService->getRepository()->findOneBy(["admission" => $admission]);
 
-                    return $admission->isDossierComplet() && $directeur && $coDirecteur && $transmissionInBdd;
+                    return $admission->isDossierComplet() && $directeur && $coDirecteur;
                 },
                 'enabled' => null,
                 'enabled_as_dql' => null,

@@ -24,13 +24,15 @@ class TransmissionForm extends Form implements InputFilterProviderInterface
 
         $this->add(
             (new Text('codeVoeu'))
-                ->setLabel("Code voeu")
+                ->setLabel("Code voeu <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true,])
                 ->setAttributes( ['class' => 'form-control'])
         );
 
         $this->add(
             (new Text('codePeriode'))
-                ->setLabel("Code période")
+                ->setLabel("Code période <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true,])
                 ->setAttributes( ['class' => 'form-control'])
         );
 

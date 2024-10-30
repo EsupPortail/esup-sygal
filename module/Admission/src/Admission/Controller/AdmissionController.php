@@ -255,7 +255,7 @@ class AdmissionController extends AdmissionAbstractController {
                     $documentsAdmission[$document->getFichier()->getNature()->getCode()] = [
                         'libelle'=>$document->getFichier()->getNomOriginal(),
                         'size' => $document->getFichier()->getTaille(),
-                        'televersement' => $document->getFichier()->getHistoModification()->format('d/m/Y H:i')
+                        'televersement' => $document->getFichier()->getHistoModification()->format('d/m/Y à H:i')." <br>(par <i>".$document->getFichier()->getHistoCreateur()."</i>)"
                     ];
                 }
             }

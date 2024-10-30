@@ -262,7 +262,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
     {
         //Le récapitulatif du dossier d'admission signé est géré seulement par la/le gestionnaire du dossier
         if($codeNatureFichier === "ADMISSION_RECAPITULATIF_DOSSIER_SIGNE"){
-            if(!$this->userContextService->getSelectedRoleEcoleDoctorale()){
+            if(!$this->userContextService->getSelectedRoleEcoleDoctorale() && !($this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_ADMIN_TECH)){
                 throw new FailedAssertionException("Seule la/le gestionnaire du dossier peut gérer ce document");
             }
             $this->assertTrue(

@@ -70,10 +70,11 @@ if ($operation instanceof AdmissionValidation) {
         event.div.modal('hide'); // ferme la fenêtre modale
         window.location.reload();
     });
-
-    body.on("<?= $ajaxModalEvent ?>", function (event) {
-        // Les métadonnées viennent d'être modifiées.
-        event.div.modal('hide'); // ferme la fenêtre modale
-        window.location.reload();
-    });
+    <?php if(isset($ajaxModalEvent)): ?>
+        body.on("<?= $ajaxModalEvent ?>", function (event) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    <?php endif; ?>
 </script>

@@ -61,19 +61,7 @@ $canAjouterDonneesExport = $this->isAllowed($admission, AdmissionPrivileges::ADM
                     //Si le directeur/co-directeur de thèse ne sont pas renseigné, on affiche ce message
                     $message .= !$directeur || !$coDirecteur ? "Le directeur de thèse ainsi que le co-directeur (le cas échéant) doivent-être enregistrés en base de données" : null;
 
-                    if($message === ""):
-                        if($canAjouterDonneesExport): ?>
-                            <a class="btn admission-btn required action ajax-modal" role="button"
-                                href="<?php echo $this->url(
-                                'admission/ajouter-transmission',
-                                ['admission' => $admission->getId()],
-                                [])?>" data-event="ajout-export-donnees-pegase"
-                               data-bs-toggle="tooltip" data-bs-html="true"
-                               title="Données nécessaires pour l'export vers Pégase">
-                                Déclarer le code voeu/période
-                            </a>
-                        <?php endif;
-                    else: ?>
+                    if($message): ?>
                         <span class='icon icon-warning dossier-incomplet-validation-impossible' data-toggle='tooltip'>
                             <span class='tooltip-text'><?= $message ?></span>
                         </span>
@@ -107,6 +95,17 @@ $canAjouterDonneesExport = $this->isAllowed($admission, AdmissionPrivileges::ADM
                     </div>
                 </div>
             </div>
-        <?php endif; ?>
+            <?php if($operation->getTypeValidation()->getCode() === TypeValidation::CODE_VALIDATION_GESTIONNAIRE && $canAjouterDonneesExport): ?>
+                <a class="btn btn-primary action ajax-modal" role="button"
+                   href="<?php echo $this->url(
+                       'admission/ajouter-transmission',
+                       ['admission' => $admission->getId()],
+                       [])?>" data-event="ajout-export-donnees-pegase"
+                   data-bs-toggle="tooltip" data-bs-html="true"
+                   title="Dans le cas où vous utilisez Pégase, ces données seront nécessaires pour l'export vers celui-ci">
+                    Déclarer le code voeu/période
+                </a>
+            <?php endif;
+        endif; ?>
     </div>
 </div>

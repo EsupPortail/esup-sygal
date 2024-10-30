@@ -19,62 +19,64 @@ $admission = $operation->getAdmission();
 $canAjouterDonneesExport = $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_AJOUTER_DONNEES_EXPORT);
 ?>
 <div class="row subfield">
-    <div class="col-lg-2 circle-etape etape-signature-infos-container">
-        <span class="icon icon-checked operation-ok"></span>
-    </div>
-    <div class="col-lg-6 libelle-etape-container etape-signature-infos-container">
-        <label><?php echo $libelleOperation ?: $operation->getTypeValidation()->getLibelle(); ?></label>
-    </div>
-    <div class="col-lg-2 text-sm text-muted info-validation-container etape-signature-infos-container">
-        <p>
-            Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
-            le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(\Application\Constants::DATETIME_FORMAT) ?>
-        </p>
-    </div>
-    <?php
-    if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
-        <div class="col-lg-2 etape-validation-btn-container">
-            <a  class="btn btn-danger access_devalidation_operation" data-operation="DeValidationOperation">Dévalider</a>
+    <div class="col etape-signature-infos-container">
+        <div class="col-lg-2 circle-etape etape-signature-infos-container">
+            <span class="icon icon-checked operation-ok"></span>
         </div>
-        <div class="modal fade" id="modalShowConfirmationDeValidationOperation" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Suppression de l'opération</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Êtes-vous sûr·e de vouloir dévalider cette opération?</p>
-                        <p>Are you sure you want to invalidate this operation?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
-                        <a href="
-                        <?php echo $this->url('admission/devalider', [
-                            'admissionValidation' => $operation->getId(),
-                            'typeValidation' => $operation->getTypeValidation()->getId(),
-                            ], [
-                                'query' => ['redirect' => $returnUrl],
-                            ]) ?>"
-                           class="btn btn-danger collapsable-action validation-operation-btn"
-                           title="Dévalider cette étape du dossier d'admission ?">
-                            Dévalider
-                        </a>
+        <div class="col-lg-6 libelle-etape-container etape-signature-infos-container">
+            <label><?php echo $libelleOperation ?: $operation->getTypeValidation()->getLibelle(); ?></label>
+        </div>
+        <div class="col-lg-2 text-sm text-muted info-validation-container etape-signature-infos-container">
+            <p>
+                Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+                le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(\Application\Constants::DATETIME_FORMAT) ?>
+            </p>
+        </div>
+        <?php
+        if ($canSupprimerOperation && ((isset($showActionButtons) && $showActionButtons))) { ?>
+    <!--        <div class="col-lg-2 etape-validation-btn-container">-->
+                <a  class="btn btn-danger access_devalidation_operation" data-operation="DeValidationOperation">Dévalider</a>
+    <!--        </div>-->
+            <div class="modal fade" id="modalShowConfirmationDeValidationOperation" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Suppression de l'opération</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr·e de vouloir dévalider cette opération?</p>
+                            <p>Are you sure you want to invalidate this operation?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                            <a href="
+                            <?php echo $this->url('admission/devalider', [
+                                'admissionValidation' => $operation->getId(),
+                                'typeValidation' => $operation->getTypeValidation()->getId(),
+                                ], [
+                                    'query' => ['redirect' => $returnUrl],
+                                ]) ?>"
+                               class="btn btn-danger collapsable-action validation-operation-btn"
+                               title="Dévalider cette étape du dossier d'admission ?">
+                                Dévalider
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    <?php } ?>
-    <?php if($operation->getTypeValidation()->getCode() === TypeValidation::CODE_VALIDATION_GESTIONNAIRE &&
-        $canAjouterDonneesExport &&
-        ((isset($showActionButtons) && $showActionButtons))): ?>
-        <a class="btn btn-primary admission-btn action ajax-modal" role="button"
-           href="<?php echo $this->url(
-               'admission/ajouter-transmission',
-               ['admission' => $admission->getId()],
-               [])?>" data-event="ajout-export-donnees-pegase"
-            data-bs-toggle="tooltip" data-bs-html="true"
-            title="Données nécessaires pour l'export vers Pégase">
-            Déclarer le code voeu/période
-        </a>
-    <?php endif; ?>
+        <?php } ?>
+        <?php if($operation->getTypeValidation()->getCode() === TypeValidation::CODE_VALIDATION_GESTIONNAIRE &&
+            $canAjouterDonneesExport &&
+            ((isset($showActionButtons) && $showActionButtons))): ?>
+            <a class="btn btn-primary admission-btn action ajax-modal" role="button"
+               href="<?php echo $this->url(
+                   'admission/ajouter-transmission',
+                   ['admission' => $admission->getId()],
+                   [])?>" data-event="ajout-export-donnees-pegase"
+                data-bs-toggle="tooltip" data-bs-html="true"
+                title="Dans le cas où vous utilisez Pégase, ces données seront nécessaires pour l'export vers celui-ci">
+                Déclarer le code voeu/période
+            </a>
+        <?php endif; ?>
+    </div>
 </div>
