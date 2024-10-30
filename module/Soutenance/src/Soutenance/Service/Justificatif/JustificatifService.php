@@ -161,18 +161,21 @@ class JustificatifService {
         if ($proposition->isExterieur()) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
+                'label' => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
                 'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELOCALISATION_SOUTENANCE, null),
             ];
         }
         if ($proposition->isLabelEuropeen()) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DEMANDE_LABEL,
+                'label' => NatureFichier::LABEL_DEMANDE_LABEL,
                 'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_LABEL, null),
             ];
         }
         if ($proposition->getConfidentialite() !== null) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DEMANDE_CONFIDENT,
+                'label' => NatureFichier::LABEL_DEMANDE_CONFIDENT,
                 'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_CONFIDENT, null),
             ];
         }
@@ -194,6 +197,7 @@ class JustificatifService {
             if ($membre->isVisio() OR $all === true) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_DELEGUATION_SIGNATURE,
+                    'label' => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
                     'membre' => $membre,
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre),
                 ];
@@ -201,6 +205,7 @@ class JustificatifService {
             if ($membre->isExterieur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->isHDR() AND $membre->getQualite()->getJustificatif() !== 'O') {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_HDR,
+                    'label' => NatureFichier::LABEL_JUSTIFICATIF_HDR,
                     'membre' => $membre,
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_HDR, $membre),
                 ];
@@ -208,6 +213,7 @@ class JustificatifService {
             if ($membre->isExterieur() AND $membre->getQualite()->isEmeritat()) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
+                    'label' => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
                     'membre' => $membre,
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_EMERITAT, $membre),
                 ];
@@ -215,14 +221,12 @@ class JustificatifService {
             if ($membre->isExterieur() AND $membre->getQualite()->getJustificatif() === 'O') {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_ETRANGER,
+                    'label' => NatureFichier::LABEL_JUSTIFICATIF_ETRANGER,
                     'membre' => $membre,
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_ETRANGER, $membre),
                 ];
             }
-
-
         }
-
 
         $listes = $proposition->getJustificatifs();
         $listes = array_filter($listes, function (Justificatif $a) { return $a->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS;});

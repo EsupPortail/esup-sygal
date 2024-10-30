@@ -15,6 +15,7 @@ Journal des modifications
 - [FIX] Coquille dans le procès verbal de soutenance (PDF).
 - [FIX] Modification de l'adresse l'adresse institutionnelle/pro d'un individu non prise en compte
 - [FIX] Avis concernant des propositions historisées qui pouvaient remonter
+- [FIX] Certains justificatifs demandés associés à la proposition étaient affichés avec leur codes (et non leur label)
 
 8.6.0
 -----
