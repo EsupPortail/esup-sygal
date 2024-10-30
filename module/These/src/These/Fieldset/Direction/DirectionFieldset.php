@@ -135,6 +135,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
                     'id' => $name,
                     'title' => "Est-il(elle) le co-directeur·trice principal·e ?",
                     'class' => "codirecteur-principal",
+                    'data-bs-toggle' => 'tooltip',
                 ]
             ]);
 
@@ -149,6 +150,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
                         'id' => $name,
                         'title' => "Est-il(elle) extérieur·e ?",
                         'class' => "codirecteur-exterieur",
+                        'data-bs-toggle' => 'tooltip',
                     ]
                 ]);
             }

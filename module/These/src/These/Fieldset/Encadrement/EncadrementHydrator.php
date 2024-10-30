@@ -55,7 +55,7 @@ class EncadrementHydrator extends DoctrineObject
             if ($individuId = $data['coencadrant' . $i . '-individu']['id'] ?? null) {
                 /** @var Individu $individu */
                 $individu = $this->individuService->getRepository()->find($individuId);
-                $acteur = $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $object);
+                $acteur = $object->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $object) : null;
                 $role = $this->roleService->getRepository()->findByCode(Role::CODE_CO_ENCADRANT);
                 if ($acteur === null) {
                     $acteur = $this->acteurService->newActeur($object, $individu, $role);

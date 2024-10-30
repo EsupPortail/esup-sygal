@@ -18,6 +18,12 @@ $form->prepare();
     <?php echo $this->translate("Modification de la thèse de") . " {$these->getDoctorant()}" ?>
 </h1>
 
+<a type="button" class="btn btn-primary mb-4"
+   href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>"
+>
+    <span class="icon icon-retour"></span>
+    <?php echo $this->translate("Retourner à la thèse"); ?>
+</a>
 
 <?php if(isset($errorMessages) && is_array($errorMessages)){ ?>
     <div class="alert alert-danger">
@@ -105,9 +111,3 @@ echo $this->formHidden($form->get('id'));
         cursor: pointer;
     }
 </style>
-<script>
-    $(function () {
-        $('[data-bs-toggle="tooltip"]').tooltip({});
-    });
-    $("select").selectpicker();
-</script>

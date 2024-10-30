@@ -26,7 +26,7 @@ use These\Fieldset\Direction\DirectionFieldset;
         <div class="row directeur">
             <div class="col-md-4">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-10">
                         <?php echo $this->formControlGroup($fs->get('directeur-individu')); ?>
                     </div>
                 </div>
@@ -43,12 +43,12 @@ use These\Fieldset\Direction\DirectionFieldset;
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?>
                 <?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?>
                 <?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
 
             </div>
             <?php if(!$estImportable): ?>
@@ -73,7 +73,7 @@ use These\Fieldset\Direction\DirectionFieldset;
             <div class="row codirecteur codirecteur<?php echo $i ?>">
                 <div class="col-md-4">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-10">
                             <?php
                             echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?>
                         </div>
@@ -96,12 +96,12 @@ use These\Fieldset\Direction\DirectionFieldset;
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?>
                     <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?>
                     <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <?php if ($fs->has($name = 'codirecteur' . $i . '-principal')): ?>
                         <?php echo $this->formControlGroup($fs->get($name)); ?>
                     <?php endif ?>
