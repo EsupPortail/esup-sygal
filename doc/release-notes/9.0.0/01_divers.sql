@@ -1,5 +1,5 @@
 --
--- 8.6.1
+-- 9.0.0
 --
 
 create or replace procedure unicaen_indicateur_recreate_matviews()
