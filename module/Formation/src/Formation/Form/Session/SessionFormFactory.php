@@ -2,6 +2,7 @@
 
 namespace Formation\Form\Session;
 
+use Individu\Controller\IndividuController;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
@@ -27,8 +28,8 @@ class SessionFormFactory {
         /** @var Url $urlManager */
         $pluginManager = $container->get('ViewHelperManager');
         $urlManager = $pluginManager->get('Url');
-        /** @see AgentController::rechercherAction() */
-        $urlResponsable =  $urlManager->__invoke('utilisateur/rechercher-individu', [], [], true);
+        /** @see IndividuController::rechercherAction() */
+        $urlResponsable =  $urlManager->__invoke('individu/rechercher', [], [], true);
         $form->setUrlResponsable($urlResponsable);
         $form->setEtablissementService($etablissementService);
         $form->setStructureService($structureService);

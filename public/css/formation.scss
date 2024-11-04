@@ -30,8 +30,11 @@ span.question-historisee {
 
 
 th.formation-module {
-  background: cornflowerblue;
+  background: var(--primary-color);
   font-size: large;
+  padding: 5px 10px;
+  border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+  color: #fff !important;
 }
 
 tr.formation-vide {

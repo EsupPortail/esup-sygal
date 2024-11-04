@@ -2,26 +2,30 @@
 
 namespace Structure\Controller;
 
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use InvalidArgumentException;
-use Laminas\Http\Response;
-use Laminas\View\Model\JsonModel;
-use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use Laminas\View\Model\JsonModel;
+use UnicaenApp\Exception\RuntimeException;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
+use UnicaenApp\Util;
 
 /**
- * @property \Structure\Form\EtablissementForm $structureForm
+ * Class EtablissementController
  */
 class EtablissementController extends StructureConcreteController
 {
     use EtablissementServiceAwareTrait;
     use RoleServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_ETABLISSEMENT;
 
@@ -88,6 +92,8 @@ class EtablissementController extends StructureConcreteController
         $individus = $this->roleService->findIndividuForStructure($structureConcrete->getStructure());
         $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
+        $variables = $structureConcrete instanceOf Etablissement ? $this->variableService->getRepository()->findAllByEtab($structureConcrete) : [];
+
         foreach ($roles as $role) {
             if (!$role->isTheseDependant()) {
                 $roleListings [$role->getLibelle()] = 0;
@@ -114,6 +120,7 @@ class EtablissementController extends StructureConcreteController
             'individuListing' => $individuListings,
             'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
             'contenus'        => $contenus,
+            'variables' => $variables
         ]);
     }
 
@@ -167,6 +174,7 @@ class EtablissementController extends StructureConcreteController
                     /** Attention à être cohérent avec {@see Etablissement::createSearchFilterValueOption() } */
                     'id' => $etab['id'], // identifiant unique de l'item
                     'label' => $label, // libellé de l'item
+                    'text' => $label, // pour Select2.js
                     'extra' => $etab['structure']['estFermee'] ? 'Fermé' : null, // infos complémentaires (facultatives) sur l'item
                 ];
             }

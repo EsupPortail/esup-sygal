@@ -121,16 +121,6 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
                     >
                                 <?php echo $these->getUniteRecherche()->getStructure()->getLibelle(); ?>
                             </span>
-                <?php else : ?>
-                    <!-- Gestion des unités de recherche -->
-                    <strong style="color:darkred;">
-                        Unité de recherche :
-                        <?php if ($these->getLibelleUniteRecherche() === null) : ?>
-                            Aucune
-                        <?php else : ?>
-                            <?php echo $these->getLibelleUniteRecherche(); ?>
-                        <?php endif; ?>
-                    </strong>
                 <?php endif; ?>
             </td>
             <td>

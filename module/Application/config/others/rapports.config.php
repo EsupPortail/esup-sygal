@@ -80,6 +80,7 @@ return [
                     'controller' => RapportCsiController::class,
                     'action'     => [
                         'consulter',
+                        'autoriser-reinscription' // à modifier ensuite
                     ],
                     'privileges' => [
                         RapportPrivileges::RAPPORT_CSI_LISTER_TOUT,
@@ -307,6 +308,19 @@ return [
                             'defaults'    => [
                                 'action' => 'supprimer',
                                 /* @see RapportCsiController::supprimerAction() */
+                            ],
+                        ],
+                    ],
+                    'autoriser-reinscription' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/autoriser-reinscription/:rapport',
+                            'constraints' => [
+                                'rapport' => '\d+',
+                            ],
+                            'defaults' => [
+                                'controller' => RapportCsiController::class,
+                                'action' => 'autoriser-reinscription',
                             ],
                         ],
                     ],

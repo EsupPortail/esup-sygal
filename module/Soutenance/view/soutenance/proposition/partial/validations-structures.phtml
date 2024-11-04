@@ -30,17 +30,6 @@ $these = $proposition->getThese();
                     <li>
                         <?php if ($these->getUniteRecherche()) : ?>
                             <?php echo $these->getUniteRecherche()->getStructure()->getLibelle(); ?>  (Unité de recherche) <br/>
-                        <?php else: ?>
-                            <strong style="color:darkred;">
-                                Libellé complémentaire :
-                                <?php if ($these->getLibelleUniteRecherche() === null) : ?>
-                                    Aucun
-                                <?php else : ?>
-                                    <?php echo $these->getLibelleUniteRecherche(); ?>
-                                <?php endif; ?>
-                                (Unité de recherche)
-                            </strong>
-                            <br/>
                         <?php endif; ?>
                         <?php if ($validations[Role::CODE_RESP_UR]) : ?>
                             <?php $validation = current($validations[Role::CODE_RESP_UR]); ?>

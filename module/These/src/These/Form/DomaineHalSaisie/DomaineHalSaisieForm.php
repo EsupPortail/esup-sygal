@@ -19,7 +19,7 @@ class DomaineHalSaisieForm extends Form
             'type' => Button::class,
             'name' => 'bouton',
             'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer / Save',
+                'label' => '<span class="fas fa-save"></span> Enregistrer / Save',
                 'label_options' => [
                     'disable_html_escape' => true,
                 ],

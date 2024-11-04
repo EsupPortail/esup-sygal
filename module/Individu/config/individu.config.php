@@ -11,6 +11,8 @@ use Individu\Form\IndividuForm;
 use Individu\Form\IndividuFormFactory;
 use Individu\Hydrator\IndividuHydrator;
 use Individu\Hydrator\IndividuHydratorFactory;
+use Individu\Hydrator\Strategy\IndividuStrategy;
+use Individu\Hydrator\Strategy\IndividuStrategyFactory;
 use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\Service\IndividuService;
 use Individu\Service\IndividuServiceFactory;
@@ -158,6 +160,7 @@ return [
                             'route' => '/rechercher',
                             'defaults' => [
                                 'controller' => IndividuController::class,
+                                /** @see IndividuController::rechercherAction() */
                                 'action' => 'rechercher',
                             ],
                         ],
@@ -176,6 +179,7 @@ return [
             IndividuService::class => IndividuServiceFactory::class,
             IndividuSearchService::class => IndividuSearchServiceFactory::class,
             IndividuAssertion::class => IndividuAssertionFactory::class,
+            IndividuStrategy::class => IndividuStrategyFactory::class,
         ],
         'aliases' => [
             'IndividuService' => IndividuService::class,

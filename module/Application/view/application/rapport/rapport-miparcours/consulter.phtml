@@ -108,8 +108,8 @@ if (!$isTeleversementPossible) {
             <div class="row">
                 <div class="col-md-4">
                     <a href="#" id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
-                       style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
-                        <span class="icon icon-plus"></span> Téléverser un rapport</a>
+                       style="display: <?php echo !$ajouterFormVisible ? 'flex' : 'none' ?>">
+                        <span class="icon icon-televerser"></span> Téléverser un rapport</a>
                 </div>
             </div>
 
@@ -127,16 +127,14 @@ if (!$isTeleversementPossible) {
                         <?php
                         echo $this->formControlGroup($form->get('files'));
                         echo $this->formControlGroup($form->get('security'));
-                        echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
                         ?>
+                    </div>
+                    <div class="col-mb-2">
+                        <?php echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary'])); ?>
+                        <a href="#" id="annulerBtn" class="btn btn-danger me-2" style="margin-top: 16px;">Annuler</a>
                     </div>
                 </div>
                 <?php echo $this->form()->closeTag() ?>
-                <div class="row">
-                    <div class="col-md-3">
-                        <a href="#" id="annulerBtn" class="btn btn-danger">Annuler</a>
-                    </div>
-                </div>
             </div>
         </div>
 

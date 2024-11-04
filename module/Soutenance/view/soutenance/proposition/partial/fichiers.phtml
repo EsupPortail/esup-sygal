@@ -39,6 +39,7 @@ foreach ($proposition->getMembres() as $membre) {
         <?php if ($canModifier) : ?>
             <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-primary ajax-modal" data-event="modification">
+                <span class="icon icon-televerser"></span>
                 Téléversement d'un justificatif
             </a>
         <?php endif; ?>

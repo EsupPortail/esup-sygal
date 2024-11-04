@@ -23,8 +23,11 @@ span.question-historisee {
   text-decoration: line-through; }
 
 th.formation-module {
-  background: cornflowerblue;
-  font-size: large; }
+  background: var(--primary-color);
+  font-size: large;
+  padding: 5px 10px;
+  border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+  color: #fff !important; }
 
 tr.formation-vide {
   font-style: italic;

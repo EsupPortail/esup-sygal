@@ -16,6 +16,7 @@ class FinancementFormatter
     use AuthorizeServiceAwareTrait;
 
     const DISPLAY_AS_HTML_LINES = 'DISPLAY_AS_HTML_LINES';
+    const DISPLAY_AS_ARRAY = 'DISPLAY_AS_ARRAY';
 
     const SORT_BY_DATE = 'SORT_DATE';
     const SORT_BY_ORIGINE = 'SORT_ORIGINE';
@@ -25,6 +26,16 @@ class FinancementFormatter
     private bool $displayComplement = false;
 
     /**
+     * @param bool $displayComplement
+     * @return self
+     */
+    public function setDisplayComplement(bool $displayComplement): self
+    {
+        $this->displayComplement = $displayComplement;
+        return $this;
+    }
+
+    /**
      * @param string $displayAs
      * @return self
      */
@@ -32,6 +43,7 @@ class FinancementFormatter
     {
         Assert::inArray($displayAs, [
             self::DISPLAY_AS_HTML_LINES,
+            self::DISPLAY_AS_ARRAY,
         ]);
         $this->displayAs = $displayAs;
         return $this;
@@ -49,9 +61,9 @@ class FinancementFormatter
 
     /**
      * @param Financement[] $financements
-     * @return string
+     * @return array|string
      */
-    public function doFormat(array $financements): string
+    public function doFormat(array $financements): array|string
     {
         //sorting
         switch($this->sortBy) {
@@ -67,6 +79,28 @@ class FinancementFormatter
                 break;
         }
 
+        switch ($this->displayAs) {
+            case FinancementFormatter::DISPLAY_AS_HTML_LINES :
+                $output = $this->doFormatSeparated($financements);
+                break;
+            case FinancementFormatter::DISPLAY_AS_ARRAY :
+                $output = $this->doFormatArray($financements);
+                break;
+            default:
+                throw new InvalidArgumentException("Option d'affichage imprévue");
+        }
+
+        return $output;
+    }
+
+    /**
+     * This function format an array of acteurs as Separated Values object
+     *
+     * @param  Financement[] $financements
+     * @return string Separated Values object
+     */
+    private function doFormatSeparated(array $financements): string
+    {
         $data = [];
         foreach ($financements as $financement) {
             $infos = [];
@@ -91,19 +125,50 @@ class FinancementFormatter
         }
 
         $output = '';
-
-        switch ($this->displayAs) {
-            case FinancementFormatter::DISPLAY_AS_HTML_LINES :
-                foreach ($data as $infos) {
-                    $line = implode(" ; ", $infos);
-                    $output .= $line . "<br/>";
-                }
-                break;
-            default:
-                throw new InvalidArgumentException("Option d'affichage imprévue");
+        foreach ($data as $infos) {
+            $line = implode(" ; ", $infos);
+            $output .= $line . "<br/>";
         }
-
         return $output;
+    }
+
+    /**
+     * This function format an array of financements as Array.
+     *
+     * @param Financement[] $financements
+     * @return array Array of array with key => value
+     */
+    private function doFormatArray(array $financements): array
+    {
+        $infos = [];
+
+        foreach ($financements as $financement) {
+            $info = [];
+            if ($financement->getAnnee()) {
+                if($financement->getDateDebut() && $financement->getDateFin()  && $financement->getDateFin()){
+                    $annee = $financement->getDateDebut()->format("Y")."/".$financement->getDateFin()->format("Y");
+                }else{
+                    $annee = $financement->getAnnee();
+                }
+                $info["annee"] = $annee;
+            }
+            if ($origine = $financement->getOrigineFinancement()) {
+                if ($this->isOrigineVisible($origine)) {
+                    $info["origine"] = $origine->getLibelleLong();
+                }
+            }
+            if ($this->displayComplement && $financement->getComplementFinancement()) {
+                $info["complement"] = $financement->getComplementFinancement();
+            }
+            if ($financement->getQuotiteFinancement()) {
+                $info["quotite"] = $financement->getQuotiteFinancement();
+            }
+            $info["dates"] = $this->formatDates($financement);
+            $info["typeFinancement"] = $this->formatTypeFinancement($financement);
+
+            $infos[] = $info;
+        }
+        return $infos;
     }
 
     private function isOrigineVisible(OrigineFinancement $origine): bool

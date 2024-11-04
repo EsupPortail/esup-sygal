@@ -21,7 +21,7 @@ class ActeurRepository extends DefaultEntityRepository
     public function findActeurByIndividuAndThese(Individu $individu, These $these): ?Acteur
     {
         $qb = $this->createQueryBuilder('a')
-            ->andWhereNotHistorise()
+            ->andWhereNotHistorise() // indispensable
             ->andWhere('a.individu = :individu')
             ->andWhere('a.these = :these')
             ->setParameter('individu', $individu)
@@ -30,7 +30,7 @@ class ActeurRepository extends DefaultEntityRepository
 
         $acteurs = $qb->getQuery()->getResult();
 
-        return (empty($acteurs))?null:$acteurs[0];
+        return $acteurs[0] ?? null;
     }
 
     /**
@@ -55,7 +55,10 @@ class ActeurRepository extends DefaultEntityRepository
     public function findActeursByTheseAndRole(These $these, $role): array
     {
         $code = $role;
-        if ($role instanceof Role) $code = $role->getCode();
+        if ($role instanceof Role) {
+            $code = $role->getCode();
+        }
+
         $qb = $this->createQueryBuilder('acteur')
             ->addSelect('individu')->join('acteur.individu', 'individu')
             ->addSelect('role')->join('acteur.role', 'role')
@@ -64,7 +67,8 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('code', $code)
             ->andWhere('acteur.these = :these')
             ->setParameter('these', $these)
-            ->andWhere('acteur.histoDestruction is null');
+            ->andWhere('acteur.histoDestruction is null')
+            ->orderBy('acteur.ordre');
 
         return $qb->getQuery()->getResult();
     }

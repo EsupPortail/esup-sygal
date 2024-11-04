@@ -7,6 +7,7 @@ use Doctrine\Inflector\Inflector;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\Persistence\ObjectManager;
 use Individu\Entity\Db\Individu;
+use Soutenance\Entity\Qualite;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use These\Entity\Db\Acteur;
@@ -40,6 +41,7 @@ class ActeurHydrator extends DoctrineObject
         // Select
         $data['role'] = $data['role'] instanceof Role ? $data['role']->getId() : null;
         $data['uniteRecherche'] = $data['uniteRecherche'] instanceof UniteRecherche ? $data['uniteRecherche']->getId() : null;
+        $data['qualite']  = $data['qualite'] instanceof Qualite ? $data['qualite']->getId():null;
 
         return $data;
     }
@@ -50,6 +52,7 @@ class ActeurHydrator extends DoctrineObject
 
         $data['etablissement'] = $data['etablissement']['id'] ?? null;
         $data['etablissementForce'] = $data['etablissementForce']['id'] ?? null;
+        $data['individu'] = $data['individu']['id'] ?? null;
 
         $this->acteurRule->setActeur($object);
         $data = $this->acteurRule->prepareActeurHydratorData($data);

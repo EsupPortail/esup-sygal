@@ -128,6 +128,21 @@ class RapportService extends BaseService
         return $rapport;
     }
 
+    public function updateRapport(Rapport $rapport): Rapport
+    {
+        $this->entityManager->beginTransaction();
+        try {
+            $this->entityManager->persist($rapport);
+            $this->entityManager->flush($rapport);
+            $this->entityManager->commit();
+        } catch (Exception $e) {
+            $this->entityManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement des rapports, rollback!", 0, $e);
+        }
+
+        return $rapport;
+    }
+
     private function computeCodeNatureFichierFromTypeRapport(Rapport $rapport): string
     {
         switch ($rapport->getTypeRapport()->getCode()) {

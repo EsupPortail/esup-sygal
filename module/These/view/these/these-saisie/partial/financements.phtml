@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+?>
+
+<fieldset>
+    <?php
+    $fs = $form->get('financements');
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    ?>
+    <div class="col-6 mb-3 these-saisie-form-section">
+        <h3 class="these-saisie-title-section">Financement(s)</h3>
+        <div class="row">
+            <?php echo $this->formElementCollection($fs); ?>
+        </div>
+    </div>
+    <?php if($form->hasAttribute("formName")): ?>
+        <?php echo $this->formHidden($form->get('security')); ?>
+        <?php echo $this->formControlGroup($form->get('submit')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+        <script>
+            $(document).on('click', '.collection-add-link', function() {
+                $('select').selectpicker();
+            });
+            $('select').selectpicker();
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+            });
+        </script>
+    <?php endif ?>
+</fieldset>

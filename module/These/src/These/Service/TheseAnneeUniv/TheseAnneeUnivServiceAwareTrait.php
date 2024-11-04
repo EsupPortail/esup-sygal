@@ -9,6 +9,11 @@ trait TheseAnneeUnivServiceAwareTrait
      */
     protected $theseAnneeUnivService;
 
+    public function getTheseAnneeUnivService(): TheseAnneeUnivService
+    {
+        return $this->theseAnneeUnivService;
+    }
+
     /**
      * @param TheseAnneeUnivService $service
      */

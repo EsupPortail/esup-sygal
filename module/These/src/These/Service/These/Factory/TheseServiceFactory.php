@@ -2,6 +2,7 @@
 
 namespace These\Service\These\Factory;
 
+use Application\Service\Source\SourceService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
@@ -26,15 +27,18 @@ class TheseServiceFactory
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
-
         /** @var FichierStorageService $fileService */
         $fileService = $container->get(FichierStorageService::class);
+
+        /** @var SourceService $sourceService */
+        $sourceService = $container->get(SourceService::class);
 
         $service = new TheseService();
         $service->setActeurService($acteurService);
         $service->setMembreService($membreService);
         $service->setEtablissementService($etablissementService);
         $service->setFichierStorageService($fileService);
+        $service->setSourceService($sourceService);
 
         return $service;
     }

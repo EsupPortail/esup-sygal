@@ -15,7 +15,8 @@ use UnicaenApp\Form\Element\SearchAndSelect;
     $sas = new SearchAndSelect('individu');
     $sas->setLabel($this->translate("Recherche d'un·e formateur·trice"));
     $sas->setAttribute('class', 'individu-finder');
-    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+    /** @see Uti::rechercherAction() */
+    $sas->setAutocompleteSource($this->url('individu/rechercher', [], [], true));
     echo $this->formControlGroup($sas, 'formSearchAndSelect');
     ?>
 

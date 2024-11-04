@@ -4,6 +4,7 @@ namespace Application\Controller\Rapport;
 
 use Application\Controller\AbstractController;
 use Application\Entity\AnneeUniv;
+use Application\Entity\AnneeUnivInterface;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Rapport;
@@ -22,6 +23,7 @@ use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use These\Entity\Db\TheseAnneeUniv;
 use These\Service\These\TheseServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
@@ -90,7 +92,7 @@ abstract class RapportController extends AbstractController
     /**
      * Années univ proposables.
      *
-     * @var \Application\Entity\AnneeUniv[]
+     * @var TheseAnneeUniv[]|AnneeUniv[]
      */
     protected $anneesUnivs;
 
@@ -100,11 +102,6 @@ abstract class RapportController extends AbstractController
     public function setAnneesUnivs(TheseAnneeUnivService $service): void
     {
         $this->theseAnneeUnivService = $service;
-
-        $this->anneesUnivs = [
-            $this->anneeUnivService->courante(),
-            $this->anneeUnivService->precedente(),
-        ];
     }
 
     /**
@@ -201,7 +198,7 @@ abstract class RapportController extends AbstractController
     {
         $anneesPrises = $this->getAnneesPrises();
 
-        return array_filter($this->anneesUnivs, function(AnneeUniv $annee) use ($anneesPrises) {
+        return array_filter($this->anneesUnivs, function(AnneeUnivInterface $annee) use ($anneesPrises) {
             $utilisee = in_array($annee->getPremiereAnnee(), $anneesPrises);
             return !$utilisee;
         });
@@ -213,7 +210,7 @@ abstract class RapportController extends AbstractController
     public function ajouterAction()
     {
         $this->these = $this->requestedThese();
-
+        $this->anneesUnivs = $this->these->getAnneesUnivInscription()->toArray();
         $this->initForm();
 
         $request = $this->getRequest();

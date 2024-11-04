@@ -44,4 +44,9 @@ class Discipline {
         return $this->libelle;
     }
 
+    public function __toString(): string
+    {
+        return $this->libelle;
+    }
+
 }

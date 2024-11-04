@@ -3,13 +3,22 @@
 namespace Application\Controller\Rapport;
 
 use Application\Provider\Privilege\RapportPrivileges;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
+use Application\Service\AutorisationInscription\AutorisationInscriptionServiceAwareTrait;
+use Application\Service\Source\SourceServiceAwareTrait;
 use ComiteSuiviIndividuel\Service\Membre\MembreServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 
 class RapportCsiController extends RapportController
 {
     use MembreServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
+    use SourceServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use AutorisationInscriptionServiceAwareTrait;
 
 
     protected $routeName = 'rapport-csi';
@@ -41,8 +50,23 @@ class RapportCsiController extends RapportController
             return $result;
         }
 
+        $autorisationsInscription = $this->fetchAutorisationsInscriptionParThese($this->these);
+        foreach ($this->rapportsTeleverses as $rapport) {
+            $matchedAutorisation = null;
+            foreach ($autorisationsInscription as $autorisationInscription) {
+                if ($rapport === $autorisationInscription->getRapport()) {
+                    $matchedAutorisation = $autorisationInscription;
+                    break;
+                }
+            }
+            $rapportsAvecAutorisationInscription[] = [
+                'rapport' => $rapport,
+                'autorisationInscription' => $matchedAutorisation
+            ];
+        }
+
         return new ViewModel([
-            'rapports' => $this->rapportsTeleverses,
+            'rapports' => $rapportsAvecAutorisationInscription ?? $this->rapportsTeleverses,
             'these' => $this->these,
             'form' => $this->form,
             'isTeleversementPossible' => $this->isTeleversementPossible(),
@@ -68,4 +92,8 @@ class RapportCsiController extends RapportController
         ]);
     }
 
+    private function fetchAutorisationsInscriptionParThese(These $these): array
+    {
+        return $this->autorisationInscriptionService->findAutorisationsInscriptionParThese($these);
+    }
 }

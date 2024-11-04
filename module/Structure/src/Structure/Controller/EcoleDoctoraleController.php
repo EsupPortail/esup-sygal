@@ -118,6 +118,7 @@ class EcoleDoctoraleController extends StructureConcreteController
                 $result[] = array(
                     'id' => $unite['id'], // identifiant unique de l'item
                     'label' => sprintf('%s - %s', $unite['structure']['code'], $unite['structure']['libelle']), // libellé de l'item
+                    'text' => $unite['structure']['libelle'], // pour Select2.js
                     'extra' => null, // infos complémentaires (facultatives) sur l'item
                 );
             }

@@ -2,19 +2,36 @@
 
 namespace These;
 
+use These\Assertion\Acteur\ActeurAssertion;
+use These\Assertion\These\TheseAssertion;
 use These\Controller\CoEncadrantController;
 use These\Controller\Factory\CoEncadrantControllerFactory;
 use These\Form\CoEncadrant\RechercherCoEncadrantFormFactory;
 use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use These\Provider\Privilege\CoEncadrantPrivileges;
+use These\Provider\Privilege\ThesePrivileges;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\CoEncadrant\CoEncadrantServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            CoEncadrantPrivileges::COENCADRANT_GERER,
+                        ],
+                        'resources' => ['Acteur'],
+                        'assertion'  => ActeurAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -39,6 +56,7 @@ return [
                     'privileges' => [
                         CoEncadrantPrivileges::COENCADRANT_GERER,
                     ],
+                    'assertion'  => ActeurAssertion::class,
                 ],
             ],
         ],

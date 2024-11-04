@@ -37,7 +37,7 @@ $etablissement = $these->getEtablissement();
 
     <div class="card-header <?php echo ($informationsOk)?'bg-success':'bg-danger'; ?>">
         <h2>
-            Informations sur les intervenants (Directeurs, Responsables d'UR, Responsable d'ED, ...)
+             Informations sur les intervenants (Directeurs, Responsables d'UR, Responsable d'ED, ...)
         </h2>
     </div>
 
@@ -80,7 +80,7 @@ $etablissement = $these->getEtablissement();
                                 <br/>
                                 UR :
                                 <span class="text-structure ur">
-                                    <?php echo $acteur->getUniteRecherche() ?: $these->getUniteRecherche() ?: '<span class="text-danger">Unité de recherche manquante</span>'; ?>
+                                    <?php echo $acteur->getUniteRecherche() ?:  '<span class="text-danger">Unité de recherche manquante</span>'; ?>
                                 </span>
                                 <?php
                                 $canEditActeur =

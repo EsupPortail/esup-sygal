@@ -94,6 +94,7 @@ return [
                     'action' => [
                         'associer-jury',
                         'deassocier-jury',
+                        'associer-jury-these-sygal'
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],
@@ -134,6 +135,7 @@ return [
                             'route' => '/notifier-retard-rapport-presoutenance',
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
+                                /** @see PresoutenanceController::notifierRetardRapportPresoutenanceAction() */
                                 'action' => 'notifier-retard-rapport-presoutenance',
                             ],
                         ],
@@ -311,6 +313,17 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'deassocier-jury',
+                                    ],
+                                ],
+                            ],
+                            'associer-jury-these-sygal' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/associer-jury-these-sygal/:membre',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'associer-jury-these-sygal',
                                     ],
                                 ],
                             ],

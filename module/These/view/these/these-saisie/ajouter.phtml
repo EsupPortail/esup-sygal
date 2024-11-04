@@ -1,0 +1,97 @@
+<?php
+
+/**
+ * @see \These\Controller\TheseSaisieController::ajouterAction()
+ *
+ * @var \Laminas\Form\Form $form
+ * @var ?array $errorMessages
+ */
+
+$title = "Saisie d'une nouvelle thèse";
+$this->headTitle($title);
+
+$form->prepare();
+?>
+
+<h1 class="page-header">
+    <?php echo $title ?>
+</h1>
+
+<?php if(isset($errorMessages) && is_array($errorMessages)){ ?>
+    <div class="alert alert-danger">
+        Certains champ(s) du formulaire n'ont pas pu être validé : <br><br>
+        <ul>
+            <?php
+            foreach ($errorMessages as $key => $messageGroup) { ?>
+                <li>
+                    <ul>
+                        Onglet <?php echo $key; ?> :
+                        <?php foreach ($messageGroup as $name => $errors) { ?>
+
+                            <?php if (is_array($errors)) {
+                                foreach ($errors as $errorKey => $errorMessage) {
+                                    echo "<li><b>'$name'</b> : $errorMessage<br></li>";
+                                }
+                            } ?>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <br>
+            <?php } ?>
+        </ul>
+    </div>
+<?php } ?>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="informations-tab" data-bs-toggle="tab" data-bs-target="#informations" type="button" role="tab" aria-controls="informations" aria-selected="true"><?php echo $form->get("generalites")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="structures-tab" data-bs-toggle="tab" data-bs-target="#structures" type="button" role="tab" aria-controls="structures" aria-selected="false"><?php echo $form->get("structures")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="direction-tab" data-bs-toggle="tab" data-bs-target="#direction" type="button" role="tab" aria-controls="direction" aria-selected="false"><?php echo $form->get("direction")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="financement-tab" data-bs-toggle="tab" data-bs-target="#financements" type="button" role="tab" aria-controls="financement" aria-selected="false">Financement</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="encadrements-tab" data-bs-toggle="tab" data-bs-target="#encadrements" type="button" role="tab" aria-controls="encadrements" aria-selected="false"><?php echo $form->get("encadrements")->getLabel();?></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="specifites-tab" data-bs-toggle="tab" data-bs-target="#specifites" type="button" role="tab" aria-controls="specifites" aria-selected="false">Spécifités envisagées</button>
+    </li>
+</ul>
+
+<?php echo $this->form()->openTag($form); ?>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
+        <?php echo $this->partial('these/these-saisie/partial/generalites'); ?>
+    </div>
+    <div class="tab-pane fade" id="direction" role="tabpanel" aria-labelledby="direction-tab">
+        <?php echo $this->partial('these/these-saisie/partial/direction'); ?>
+    </div>
+    <div class="tab-pane fade" id="structures" role="tabpanel" aria-labelledby="structures-tab">
+        <?php echo $this->partial('these/these-saisie/partial/structures'); ?>
+    </div>
+    <div class="tab-pane fade" id="financements" role="tabpanel" aria-labelledby="financements-tab">
+        <?php echo $this->partial('these/these-saisie/partial/financements'); ?>
+    </div>
+    <div class="tab-pane fade" id="encadrements" role="tabpanel" aria-labelledby="encadrements-tab">
+        <?php echo $this->partial('these/these-saisie/partial/encadrement'); ?>
+    </div>
+    <div class="tab-pane fade" id="specifites" role="tabpanel" aria-labelledby="specifites-tab">
+        <?php echo $this->partial('these/these-saisie/partial/specifites'); ?>
+    </div>
+</div>
+
+<?php echo $this->formHidden($form->get('security')); ?>
+<?php echo $this->formControlGroup($form->get('submit')); ?>
+<?php echo $this->form()->closeTag(); ?>
+
+<style>
+    span.erase-acteur {
+        cursor: pointer;
+    }
+</style>

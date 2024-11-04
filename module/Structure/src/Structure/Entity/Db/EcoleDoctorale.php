@@ -71,12 +71,10 @@ class EcoleDoctorale implements
 
     public function __toString(): string
     {
-        $str = '';
-        if ($sigle = $this->structure->getSigle()) {
-            $str .= "$sigle - ";
-        }
-        $str .= $this->structure->getLibelle();
-        return $str;
+        return implode(' - ', array_filter([
+            $this->structure->getSigle(),
+            $this->structure->getLibelle()
+        ]));
     }
 
     /**

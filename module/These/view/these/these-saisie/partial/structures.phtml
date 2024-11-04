@@ -1,0 +1,37 @@
+<?php
+/**
+ * @var Form $form
+ */
+
+use Laminas\Form\Form;
+
+?>
+
+<fieldset>
+    <?php
+    $fs = $form->get('structures');
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    ?>
+    <div class="col-6 mb-3 these-saisie-form-section">
+        <h3 class="these-saisie-title-section">
+            Structures encadrantes
+        </h3>
+        <?php
+        echo $this->formControlGroup($fs->get('etablissement'));
+        echo $this->formControlGroup($fs->get('ecoleDoctorale'));
+        echo $this->formControlGroup($fs->get('uniteRecherche'));
+        ?>
+    </div>
+    <?php if($fs->useAsBaseFieldset()): ?>
+        <?php echo $this->formHidden($form->get('security')); ?>
+        <?php echo $this->formControlGroup($form->get('submit')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+        <script>
+            $('select').selectpicker();
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+            });
+        </script>
+    <?php endif ?>
+</fieldset>

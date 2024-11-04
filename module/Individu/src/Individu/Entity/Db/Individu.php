@@ -130,11 +130,6 @@ class Individu implements
     private $utilisateurs;
 
     /**
-     * @var string
-     */
-    private $type;
-
-    /**
      * @var \Application\Entity\Db\Pays|null
      */
     private $paysNationalite = null;
@@ -538,7 +533,7 @@ class Individu implements
         return [
             self::CIVILITE_M => 'M',
             self::CIVILITE_MME => 'F',
-        ][$this->getCivilite()];
+        ][$this->getCivilite()] ?? "";
     }
 
     /**
@@ -686,24 +681,6 @@ class Individu implements
     public function getUtilisateurs()
     {
         return $this->utilisateurs->toArray();
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return Individu
-     */
-    public function setType(string $type): Individu
-    {
-        $this->type = $type;
-        return $this;
     }
 
     /**

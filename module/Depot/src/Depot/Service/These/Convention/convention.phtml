@@ -52,8 +52,6 @@ use These\Entity\Db\These;
 
     <?php if ($these->getDateSoutenance()): ?>
         <strong>Date de soutenance :</strong> <?php echo $these->getDateSoutenanceToString() ?><br>
-    <?php else: ?>
-        <strong>Date prévisionnelle de soutenance :</strong> <?php echo $these->getDatePrevisionSoutenanceToString() ?: "" ?><br>
     <?php endif ?>
 
     <?php if ($these->getDateFinConfidentialite() !== null): ?>

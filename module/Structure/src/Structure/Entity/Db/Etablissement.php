@@ -125,7 +125,10 @@ class Etablissement implements
      */
     public function __toString()
     {
-        return $this->structure->getLibelle();
+        return implode(' ', array_filter([
+            $this->structure->getLibelle(),
+            ($sigle = trim($this->structure->getSigle())) ? '(' . $sigle . ')' : null
+        ]));
     }
 
     /**

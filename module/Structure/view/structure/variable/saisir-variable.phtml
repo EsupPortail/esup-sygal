@@ -1,0 +1,52 @@
+<?php
+/**
+ * @var Variable $variable
+ * @var VariableForm $form
+ *
+ * @see \Structure\Controller\VariableController::saisirVariableAction()
+ */
+
+use Application\Entity\Db\Variable;
+use Structure\Form\VariableForm;
+
+$form->prepare();
+?>
+
+<?php $this->headTitle($this->translate($title = "Variable"))
+    ->prepend("Nouvelle variable") ?>
+
+<?php echo $this->form()->openTag($form) ?>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('code')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('description')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('valeur')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('dateDebutValidite')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('dateFinValidite')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <?php
+            echo $this->formHidden($form->get('security'));
+            echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+            ?>
+        </div>
+    </div>
+<?php echo $this->form()->closeTag() ?>

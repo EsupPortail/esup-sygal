@@ -9,7 +9,7 @@
         </id>
 
         <field name="supannId" column="supann_id" nullable="true"/>
-        <field name="type" column="type" nullable="false"/>
+<!--        <field name="type" column="type" nullable="false"/>-->
         <field name="civilite" column="civilite" nullable="true"/>
         <field name="dateNaissance" type="datetime" column="date_naissance"/>
         <field name="nationalite" column="nationalite" nullable="true"/><!-- sera remplacée par "paysNationalite" -->

@@ -8,9 +8,21 @@ $dangerColor: #d23544;
 
 $historiseColor: #d22828;
 
+$navbarBackgroundColor: var(--primary-color);
+
+:root{
+  //--primary-color:#004980;
+  //--secondary-color:#337ab7;
+  --primary-color:#337ab7;
+  --secondary-color:#004980;
+}
 
 h1, h2, h3 {
   font-weight: bold;
+}
+
+h1 small {
+  color: #7f8c8d;
 }
 
 h2 {
@@ -19,6 +31,12 @@ h2 {
 
 h2:nth-of-type(1) {
   margin-top: 20px;
+}
+
+h3 {
+  margin-bottom: 10px;
+  border-left: 4px solid var(--primary-color);
+  padding-left: 10px;
 }
 
 a.anchor {
@@ -65,7 +83,7 @@ h2.modal-title {
   }
 }
 .modal-header {
-  background-color: rgb(51, 122, 183);
+  background-color: var(--primary-color);
   .modal-title {
     color: white;
     background-color: transparent;
@@ -95,6 +113,7 @@ h2.modal-title {
 
 .card.box {
   margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   .card-header {
     padding: 5px 10px;
@@ -348,6 +367,22 @@ li.uploaded-file {
   width: 100px;
 }
 
+button.nav-link {
+  color: var(--primary-color);
+}
+button.nav-link:hover {
+  color: var(--secondary-color);
+}
+
+.page-item.active .page-link{
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.page-link{
+  color: var(--primary-color);
+}
+
 ul.pagination {
   li a {
     padding: 3px 6px;
@@ -372,6 +407,19 @@ a.toggle-details:hover, a.toggle-details:focus {
   text-decoration: none;
 }
 
+.form-check-label{
+  vertical-align: text-top;
+  margin-left: 2px;
+}
+
+.form-check-input:checked{
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.dropdown-item.active{
+  background-color: var(--secondary-color)
+}
 
 
 /** Tabs **/
@@ -494,21 +542,27 @@ input[type="checkbox"] {
 }
 
 .text-structure {
-  border: black 1px dotted;
+  //border: black 1px dotted;
   border-radius: 5px 5px;
-  padding: 0 3px 0 0;
+  padding: 0 4px 4px 4px;
   white-space: nowrap;
+  margin-top: inherit !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 .text-structure:before {
   font-family: "Font Awesome 5 Free", serif;
   content: "\f1ad";
   font-weight: 900;
   font-size: 90%;
-  color: grey;
+  //color: grey;
+  color: white;
   display: inline-block;
   border-right: black 1px dotted;
   padding: 0 3px 0 3px;
   margin-right: 4px;
+  margin-bottom: 5px;
+  background-color: var(--secondary-color);
+  border-radius: inherit;
 }
 .text-structure.etablissement:before {
   content: "\f19c";
@@ -521,10 +575,33 @@ input[type="checkbox"] {
 }
 
 .alert {
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+
   .icon {
     float: left;
     padding-right: 6px;
   }
+}
+
+.alert.alert-info{
+  color: #055160;
+  border-left: 5px solid #055160;
+}
+
+.alert.alert-warning{
+  color: #664d03;
+  border-left: 5px solid #664d03;
+}
+
+.alert.alert-success{
+  color: #0f5132;
+  border-left: 5px solid #0f5132;
+}
+
+.alert.alert-danger{
+  color: #842029;
+  border-left: 5px solid #842029;
 }
 
 .alert.alert-strong {
@@ -543,6 +620,7 @@ input[type="checkbox"] {
 
 div.alert {
   max-width: 75%;
+  width: fit-content;
   //min-width: 450px;
   margin: 5px auto 15px 0;
   background: {
@@ -616,11 +694,13 @@ div.filters {
           padding: 3px 7px;
         }
       }
+
       button.dropdown-toggle {
         padding: 3px 4px 3px 4px;
         height: 20px;
         background-color: #eee;
         border-color: darkgray;
+        border-radius: initial;
       }
       .input-group {
         .input-group-text {
@@ -784,6 +864,12 @@ form.form-retraiter {
   }
 }
 
+@media (max-width: 768px) {
+  .text-structure {
+    text-wrap: wrap;
+  }
+}
+
 @media (min-width: 1100px) {
   .modal-dialog {
     max-width: 1000px;
@@ -804,15 +890,46 @@ form.form-retraiter {
 
 form {
   [type='submit'] {
-    margin-top: 20px;
+    margin-top: 16px;
   }
 }
 
 /******** Boutons ***********/
 
+.btn{
+  border: none;
+  padding: 07px 15px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+  width: fit-content;
+}
+
+.btn > span, .btn > .fas {
+  margin-right:5px;
+}
+
+.btn .icon, .btn .fa, .btn .fas  {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.btn:hover .icon, .btn:hover .fa, .btn:hover .fas {
+  transform: scale(1.2); /* Zoom à 120% */
+}
+
+a.btn > span.icon {
+  color:white;
+}
+
 .btn-info {
   background-color: $infoColor;
   border-color: $infoColor;
+  color: #fff;
+}
+.btn-info:hover {
+  color: white;
 }
 .btn-success {
   background-color: $successColor;
@@ -826,9 +943,32 @@ form {
   background-color: $warningColor;
   border-color: $warningColor;
 }
+.btn-primary {
+  background-color: var(--secondary-color);
+}
+.btn-primary.disabled, .btn-primary:disabled{
+  background-color: var(--secondary-color);
+  opacity:0.55
+}
+.btn-link {
+  color: var(--secondary-color);
+}
+.btn-link:hover {
+  color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: $navbarBackgroundColor;
+}
 
 .box {
-  .btn.btn-primary {
+  .btn.btn-danger {
+    margin-bottom: 10px;
+  }
+}
+
+.box {
+  .btn.btn-primary  {
     margin-bottom: 10px;
     padding: {
       left: 15px;
@@ -869,6 +1009,10 @@ ul.roadmap.pagination {
 
 #navbar .dropdown-item {
   padding: .1rem .5rem;
+}
+
+#navbar .dropdown-item:active {
+  background-color: var(--primary-color)
 }
 
 
@@ -1258,7 +1402,8 @@ p.avis-complem {
 
 // todo: à déplacer dans unicaen-app
 .icon::before {
-  vertical-align: text-bottom;
+  //vertical-align: text-bottom;
+  vertical-align: baseline;
 }
 .icon.icon-danger:before {
   content: "\f071";

@@ -2,6 +2,8 @@
 
 namespace Doctorant\Service;
 
+use Application\Service\Source\SourceService;
+use Individu\Service\IndividuService;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
@@ -28,6 +30,10 @@ class DoctorantServiceFactory
          */
         $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
+
+        /** @var SourceService $sourceService */
+        $sourceService = $container->get(SourceService::class);
+        $service->setSourceService($sourceService);
 
         return $service;
     }

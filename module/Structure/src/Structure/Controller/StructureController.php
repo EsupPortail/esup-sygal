@@ -28,6 +28,7 @@ class StructureController extends AbstractController
     const TAB_membres = 'membres';
     const TAB_docs = 'documents';
     const TAB_coenc = 'coencadrants';
+    const TAB_variables = 'variables';
 
     use RoleServiceAwareTrait;
     use IndividuServiceAwareTrait;

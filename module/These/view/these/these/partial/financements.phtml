@@ -1,0 +1,80 @@
+<?php
+/**
+ * @var \These\Entity\Db\These $these
+ * @var bool $canEditThese
+ * @var bool $isImportable
+ */
+
+use Application\Entity\Db\Financement;
+use Application\Filter\FinancementFormatter;
+
+$financementFormatter = $this->financementFormatter();
+$financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
+$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_ARRAY);
+$financementFormatter->setDisplayComplement(true);
+$financementsFormatted = $financementFormatter->format($these->getFinancements()->toArray());
+
+?>
+
+<dl class="row">
+    <?php if (!$financementsFormatted): ?>
+        <div class="col-md-3">
+            Aucun financement de renseigné
+        </div>
+    <?php else:
+        /** @var Financement $financement */
+        foreach($financementsFormatted as $financement): ?>
+            <dt class="col-md-3">
+                Financement <?php echo $financement["annee"]; ?>
+            </dt>
+            <dd class="col-md-9">
+
+            </dd>
+            <?php if (isset($financement["origine"])): ?>
+                <dt class="col-md-3 ps-4">
+                    Origine
+                </dt>
+                <dd class="col-md-9 ps-4">
+                    <?php echo $financement["origine"]; ?>
+                </dd>
+            <?php endif ?>
+            <?php if (isset($financement["complement"])): ?>
+                <dt class="col-md-3 ps-4">
+                    Complément
+                </dt>
+                <dd class="col-md-9 ps-4">
+                    <?php echo $financement["complement"]; ?>
+                </dd>
+            <?php endif ?>
+
+            <?php if (isset($financement["quotite"])): ?>
+                <dt class="col-md-3 ps-4">
+                    Quotité
+                </dt>
+                <dd class="col-md-9 ps-4">
+                    <?php echo $financement["quotite"]; ?>
+                </dd>
+            <?php endif ?>
+
+            <?php if (isset($financement["dates"])): ?>
+                <dt class="col-md-3 ps-4">
+                    Période
+                </dt>
+                <dd class="col-md-9 ps-4">
+                    <?php echo $financement["dates"]; ?>
+                </dd>
+            <?php endif ?>
+
+            <?php if (isset($financement["typeFinancement"])): ?>
+                <dt class="col-md-3 ps-4">
+                    Type de financement
+                </dt>
+                <dd class="col-md-9 ps-4">
+                    <?php echo $financement["typeFinancement"]; ?>
+                </dd>
+            <?php endif ?>
+    <dl class="row">
+    </dl>
+        <?php endforeach; ?>
+    <?php endif ?>
+</dl>

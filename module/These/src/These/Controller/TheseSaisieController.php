@@ -4,113 +4,203 @@ namespace These\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
-use Individu\Entity\Db\Individu;
+use Application\Service\Role\RoleServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Form\FieldsetInterface;
+use Laminas\Form\Form;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
-use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use Structure\Entity\Db\Etablissement;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
-use These\Form\TheseSaisie\TheseSaisieForm;
+use These\Form\Direction\DirectionFormAwareTrait;
+use These\Form\Financement\FinancementsFormAwareTrait;
+use These\Form\Generalites\GeneralitesFormAwareTrait;
+use These\Form\Structures\StructuresFormAwareTrait;
 use These\Form\TheseSaisie\TheseSaisieFormAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenApp\Form\Element\Collection;
 
-class TheseSaisieController extends AbstractController {
-    use ActeurServiceAwareTrait;
-    use EtablissementServiceAwareTrait;
+class TheseSaisieController extends AbstractController
+{
     use IndividuServiceAwareTrait;
-    use QualiteServiceAwareTrait;
     use TheseServiceAwareTrait;
     use TheseSaisieFormAwareTrait;
-    use SourceAwareTrait;
-    use DomaineHalServiceAwareTrait;
+    use DoctorantServiceAwareTrait;
+    use RoleServiceAwareTrait;
+    use GeneralitesFormAwareTrait;
+    use StructuresFormAwareTrait;
+    use FinancementsFormAwareTrait;
+    use DirectionFormAwareTrait;
 
-    /** FONCTIONS TEMPORAIRES A DEPLACER PLUS TARD */
-    /**
-     * @param These $these
-     * @param Individu $individu
-     * @param string $roleCode
-     * @return string
-     */
-    public function generateCodeSourceActeur(These $these, Individu $individu, string $roleCode) : string
+    public function ajouterAction()
     {
-        $code = $these->getId() . "_". $individu->getId() . "_" . $roleCode;
-        return $code;
-    }
+        $request = $this->getRequest();
+        $form = $this->getTheseSaisieForm();
+        $form->bind($this->theseService->newThese());
 
-    public function saisieAction()
-    {
-        $theseId = $this->params()->fromRoute('these');
-        if ($theseId !== null) {
-            $these = $this->requestedThese();
-        } else {
-            $these = new These();
-            $these->setSource($this->source);
-            $these->setSourceCode(uniqid());
+        $viewModel = new ViewModel([
+            'form' => $form,
+        ]);
+
+        if (!$request->isPost()) {
+            return $viewModel;
         }
 
+        $data = $request->getPost();
+        $form->setData($data);
+        if (!$form->isValid()) {
+            $messages = $this->getErrorMessages();
+            $viewModel->setVariable("errorMessages", $messages);
+            return $viewModel;
+        }
+
+        /** @var These $these */
+        $these = $form->getData();
+        $individu = $data["generalites"]['doctorant']["id"] ? $this->individuService->getRepository()->find($data["generalites"]['doctorant']["id"]) : null;
+        if ($individu) {
+            $etablissement = $these->getEtablissement();
+            $doctorant = $this->doctorantService->newDoctorant($individu, $etablissement);
+            $these->setDoctorant($doctorant);
+        }
+        $this->theseService->saveThese($these);
+
+        $this->flashMessenger()->addSuccessMessage("Thèse créée avec succès.");
+
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+    }
+
+    public function modifierAction()
+    {
         $form = $this->getTheseSaisieForm();
-        $domainesHal = $this->domaineHalService->getDomainesHalAsOptions();
-        $form->get('domaineHal')->setDomainesHal($domainesHal);
+        $request = $this->getRequest();
+        $these = $this->requestedThese();
+
+        $form->setAttribute('action', $this->url()->fromRoute('these/modifier', ['these' => $these->getId()], [], true));
+        $viewModel = new ViewModel([
+            'these' => $these,
+            'form' => $form,
+        ]);
+        $viewModel->setTemplate('these/these-saisie/modifier');
 
         $form->bind($these);
 
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost();
-            //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
-            if (!isset($data['domaineHal'])) {
-                $data['domaineHal'] = array("domaineHal" => array(""));
-            }
-            $form->setData($data);
+        if (!$request->isPost()) {
+            return $viewModel;
+        }
 
-            if ($form->isValid()) {
-                if ($theseId === null) {
-                    $this->getTheseService()->create($these);
-                } else {
-                    $this->getTheseService()->update($these);
-                }
-                //ACTEUR //
-                /** Gestion des acteurs */
-                if ($data['directeur-individu']['id'] and $data['directeur-qualite'] and $data['directeur-etablissement']) {
-                    /** @var Individu $individu */
-                    $individu = $this->getIndividuService()->getRepository()->find($data['directeur-individu']['id']);
-                    $qualite = $this->getQualiteService()->getQualite($data['directeur-qualite']);
-                    /** @var Etablissement $etablissement */
-                    $etablissement = $this->getEtablissementService()->getRepository()->find($data['directeur-etablissement']);
-                    if ($individu and $qualite and $etablissement) {
-                        $this->getActeurService()->creerOrModifierActeur($these, $individu, Role::CODE_DIRECTEUR_THESE, $qualite, $etablissement);
-                    }
-                }
-                $temoins = [];
-                for ($i = 1; $i <= TheseSaisieForm::NBCODIR; $i++) {
-                    if ($data['codirecteur' . $i . '-individu']['id'] and $data['codirecteur' . $i . '-qualite'] and $data['codirecteur' . $i . '-etablissement']) {
-                        /** @var Individu $individu */
-                        $individu = $this->getIndividuService()->getRepository()->find($data['codirecteur' . $i . '-individu']['id']);
-                        $qualite = $this->getQualiteService()->getQualite($data['codirecteur' . $i . '-qualite']);
-                        /** @var Etablissement $etablissement */
-                        $etablissement = $this->getEtablissementService()->getRepository()->find($data['codirecteur' . $i . '-etablissement']);
-                        if ($individu and $qualite and $etablissement) {
-                            $acteur = $this->getActeurService()->creerOrModifierActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE, $qualite, $etablissement);
-                            $temoins[] = $acteur->getId();
+        $data = $request->getPost();
+        //Permet de gérer le cas où aucune sélection n'est effectuée (afin de passer dans l'hydrateur)
+        if (!isset($data["generalites"]['domaineHal'])) {
+            $generalites = $data->get('generalites', []);
+            $generalites['domaineHal'] = ['domaineHal' => ['']];
+            $data->set('generalites', $generalites);
+        }
+
+        $form->setData($data);
+        if (!$form->isValid()) {
+            $messages = $this->getErrorMessages();
+            $viewModel->setVariable("errorMessages", $messages);
+            return $viewModel;
+        }
+
+        $this->theseService->saveThese($these);
+
+        $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
+
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+    }
+
+    private function getErrorMessages(): array
+    {
+        $messages = [];
+
+        // Récupère les messages d'erreur de chaque fieldset
+        foreach ($this->getTheseSaisieForm()->getFieldsets() as $fieldset) {
+            if ($fieldset instanceof Collection) {
+                // Récupère les messages d'erreur de chaque élément du fieldset
+                foreach ($fieldset->getFieldsets() as $f) {
+                    // Récupère les messages d'erreur de chaque élément du fieldset
+                    foreach ($f->getElements() as $element) {
+                        $elementMessages = $element->getMessages();
+                        if (!empty($elementMessages)) {
+                            $messages[$fieldset->getLabel()][$element->getLabel()] = $elementMessages;
                         }
                     }
                 }
-                $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
-                foreach ($codirecteurs as $codirecteur) {
-                    if (array_search($codirecteur->getId(), $temoins) === false) $this->getActeurService()->historise($codirecteur);
+            } else if ($fieldset instanceof FieldsetInterface) {
+                // Récupère les messages d'erreur de chaque élément du fieldset
+                foreach ($fieldset->getElements() as $element) {
+                    $elementMessages = $element->getMessages();
+                    if (!empty($elementMessages)) {
+                        $messages[$fieldset->getLabel()][$element->getLabel()] = $elementMessages;
+                    }
                 }
-
-
-                return $this->redirect()->toRoute('these/saisie', ['these' => $these->getId()], [], true);
+                // Récupère les messages d'erreur des possibles fieldsets présents dans le fieldset
+                if($fieldsetsInFieldset = $fieldset->getFieldsets()){
+                    // Récupère les messages d'erreur de chaque élément du fieldset
+                    foreach ($fieldsetsInFieldset as $fieldsetInFieldset) {
+                        foreach ($fieldsetInFieldset->getElements() as $element) {
+                            $elementMessages = $element->getMessages();
+                            if (!empty($elementMessages)) {
+                                $messages[$fieldset->getLabel()][$element->getLabel()] = $elementMessages;
+                            }
+                        }
+                    }
+                }
             }
         }
+        return $messages;
+    }
 
-        return new ViewModel([
+    public function generalitesAction(): Response|ViewModel
+    {
+        return $this->modifierTheseSaisiePart($this->getGeneralitesForm(), 'generalites');
+    }
+
+    public function structuresAction(): Response|ViewModel
+    {
+        return $this->modifierTheseSaisiePart($this->getStructuresForm(), 'structures');
+    }
+
+    public function directionAction(): Response|ViewModel
+    {
+        return $this->modifierTheseSaisiePart($this->getDirectionForm(), 'direction');
+    }
+
+    public function financementsAction(): Response|ViewModel
+    {
+        return $this->modifierTheseSaisiePart($this->getFinancementsForm(), 'financements');
+    }
+
+    private function modifierTheseSaisiePart(Form $form, string $domaine): Response|ViewModel
+    {
+        $request = $this->getRequest();
+        $these = $this->requestedThese();
+
+        $form->setAttribute('action', $this->url()->fromRoute("these/modifier/$domaine", ['these' => $these->getId()], [], true));
+        $viewModel = new ViewModel([
+            'these' => $these,
             'form' => $form,
+            'title' => "Modification de la thèse de ".$these->getDoctorant()
         ]);
+        $viewModel->setTemplate("these/these-saisie/partial/$domaine");
+
+        $form->bind($these);
+
+        if (!$request->isPost()) {
+            return $viewModel;
+        }
+
+        $form->setData($request->getPost());
+        if (!$form->isValid()) {
+            return $viewModel;
+        }
+
+        /** @var These $these */
+        $these = $form->getData();
+        $this->theseService->saveThese($these);
+
+        $this->flashMessenger()->addSuccessMessage("Thèse modifiée avec succès.");
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 }

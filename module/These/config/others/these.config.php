@@ -18,6 +18,8 @@ use These\Controller\Factory\TheseRechercheControllerFactory;
 use These\Controller\Plugin\Url\UrlThesePluginFactory;
 use These\Controller\TheseController;
 use These\Controller\TheseRechercheController;
+use These\Hydrator\ActeurHydrator;
+use These\Hydrator\ActeurHydratorFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporter;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporterFactory;
@@ -58,8 +60,8 @@ return [
                         'privileges' => [
                             ThesePrivileges::THESE_CONSULTATION_TOUTES_THESES,
                             ThesePrivileges::THESE_CONSULTATION_SES_THESES,
-                            ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
-                            ThesePrivileges::THESE_MODIFICATION_SES_THESES,
+//                            ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
+//                            ThesePrivileges::THESE_MODIFICATION_SES_THESES,
                         ],
                         'resources' => ['These'],
                         'assertion' => TheseAssertion::class,
@@ -366,6 +368,11 @@ return [
             ServiceAwareInitializer::class,
         ]
     ],
+    'hydrators' => array(
+        'factories' => array(
+            ActeurHydrator::class => ActeurHydratorFactory::class,
+        )
+    ),
     'service_manager' => [
         'factories' => [
             UrlTheseService::class => UrlTheseServiceFactory::class,

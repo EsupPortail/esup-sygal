@@ -1,0 +1,163 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+
+use These\Entity\Db\These;
+use These\Fieldset\Generalites\GeneralitesFieldset;
+
+?>
+
+<fieldset>
+    <?php
+        /** @var GeneralitesFieldset $fs */
+        $fs = $form->get('generalites');
+        /** @var These $these */
+        $these = $fs->getObject();
+        $form->prepare();
+        echo $this->form()->openTag($form);
+    ?>
+    <div class="row these-saisie-form-section">
+        <div class="col-6">
+            <h3 class="these-saisie-title-section">
+                Informations générales
+            </h3>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('doctorant')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('titre')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('discipline')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('domaineHal')->get('domaineHal')); ?>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Confidentialité de la thèse
+                </h3>
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9" id="date-fin-confidentialite">
+                    <?php echo $this->formControlGroup($fs->get('dateFinConfidentialite')); ?>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Première inscription
+                </h3>
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('datePremiereInscription')) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Titre d'accès à l'inscription en thèse
+                </h3>
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('titreAccesInterneExterne')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('libelleTitreAcces')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('pays')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('nomDeptTitreAcces')); ?>
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('codeDeptTitreAcces')); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('titreAcces')->get('etablissement')); ?>
+                    <?php if($these->getSource()->getImportable()): ?>
+                        Type d'établissement : <?php echo $these->getTitreAcces()->getLibelleEtabTitreAcces(); ?>
+                        <?php else: ?>
+                        <?php echo $this->formControlGroup($fs->get('titreAcces')->get('typeEtabTitreAcces'));
+                    endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php if($these->getId() !== null && !$these->getSource()->getImportable()): ?>
+        <div class="separator"></div>
+        <div class="row these-saisie-form-section">
+            <div class="row ">
+                <h3 class="these-saisie-title-section">
+                    Gestion de la thèse
+                </h3>
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('dateAbandon')); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('dateTransfert')); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('resultat')); ?>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
+
+    <?php if($fs->useAsBaseFieldset()): ?>
+        <?php echo $this->formHidden($form->get('security')); ?>
+        <?php echo $this->formControlGroup($form->get('submit')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+        <script>
+            $('select').selectpicker();
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+            });
+        </script>
+    <?php endif ?>
+
+</fieldset>
+<script>
+    var codeDeptInput = '#codeDeptTitreAcces'
+    var nomDeptInput = '#nomDeptTitreAcces'
+    //Gestion de la sélection du département
+    initializeAutoCompleteDepartement(codeDeptInput, nomDeptInput)
+    $(nomDeptInput).on('input', function() {
+        $(codeDeptInput).val('');
+    });
+    setupAutocompleteDepartement(nomDeptInput, codeDeptInput);
+</script>

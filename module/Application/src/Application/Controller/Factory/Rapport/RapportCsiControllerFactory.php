@@ -8,7 +8,9 @@ use Application\Entity\Db\TypeValidation;
 use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportCsiForm;
 use Application\Service\AnneeUniv\AnneeUnivService;
+use Application\Service\AutorisationInscription\AutorisationInscriptionService;
 use Application\Service\Rapport\RapportService;
+use Application\Service\Source\SourceService;
 use Application\Service\Validation\ValidationService;
 use ComiteSuiviIndividuel\Service\Membre\MembreService;
 use Fichier\Service\Fichier\FichierService;
@@ -49,6 +51,8 @@ class RapportCsiControllerFactory
         $typeRapport = $rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_CSI);
         $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_CSI);
         $anneeUnivService = $container->get(AnneeUnivService::class);
+        $sourceService = $container->get(SourceService::class);
+        $autorisationInscriptionService = $container->get(AutorisationInscriptionService::class);
 
         $membreService = $container->get(MembreService::class);
 
@@ -65,6 +69,8 @@ class RapportCsiControllerFactory
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
         $controller->setMembreService($membreService);
+        $controller->setSourceService($sourceService);
+        $controller->setAutorisationInscriptionService($autorisationInscriptionService);
 
 //        $theseService->attach($controller->getEventManager());
 

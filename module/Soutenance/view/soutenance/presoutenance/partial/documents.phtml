@@ -36,6 +36,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                 <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAutorisationSoutenanceAction() */ ?>
                 <a href="<?php echo $this->url('soutenance/justificatif/ajouter-autorisation-soutenance', ['these' => $these->getId()], [], true); ?>"
                    class="btn btn-primary ajax-modal" data-event="modification">
+                    <span class="icon icon-televerser"></span>
                     Téléverser l'autorisation de soutenance
                 </a>
             <?php endif; ?>
@@ -51,17 +52,15 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                         <li>
                             <?php echo $this->justificatif()->render($autorisation, $urlFichierThese); ?>
                             <?php if ($canAjouterAutorisation) : ?>
-                                <a href="<?php echo $this->url('soutenance/justificatif/retirer',
+                                <a class="btn btn-danger" href="<?php echo $this->url('soutenance/justificatif/retirer',
                                     ['justificatif' => $autorisation->getId(), 'these' => $these->getId()],
                                     ["query" => [
                                             "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
                                         ]
                                     ],
                                     true); ?>">
-                                    <span class="text-danger">
-                                        <span class="icon icon-unchecked"></span>
-                                        Supprimer
-                                    </span>
+                                    <span class="icon icon-unchecked"></span>
+                                    Supprimer
                                 </a>
                             <?php endif; ?>
                         </li>
@@ -79,6 +78,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                     <?php /** @see \Soutenance\Controller\JustificatifController::ajouterRapportSoutenanceAction() */ ?>
                     <a href="<?php echo $this->url('soutenance/justificatif/ajouter-rapport-soutenance', ['these' => $these->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
+                        <span class="icon icon-televerser"></span>
                         Téléverser rapport de soutenance
                     </a>
                 <?php endif; ?>
@@ -94,17 +94,15 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                         <li>
                             <?php echo $this->justificatif()->render($rapport, $urlFichierThese); ?>
                             <?php if ($canAjouterRapport) : ?>
-                                <a href="<?php echo $this->url('soutenance/justificatif/retirer',
+                                <a class="btn btn-danger" href="<?php echo $this->url('soutenance/justificatif/retirer',
                                     ['justificatif' => $rapport->getId(), 'these' => $these->getId()],
                                     ["query" => [
                                         "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
                                     ]
                                     ],
                                     true); ?>">
-                                    <span class="text-danger">
-                                        <span class="icon icon-unchecked"></span>
-                                        Supprimer
-                                    </span>
+                                    <span class="icon icon-unchecked"></span>
+                                    Supprimer
                                 </a>
                             <?php endif; ?>
                         </li>
@@ -123,6 +121,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                     <?php /** @see \Soutenance\Controller\JustificatifController::ajouterProcesVerbalSoutenanceAction() */ ?>
                     <a href="<?php echo $this->url('soutenance/justificatif/ajouter-proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
+                        <span class="icon icon-televerser"></span>
                         Téléverser le procès-verbal de soutenance
                     </a>
                 <?php endif; ?>
@@ -138,17 +137,15 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                         <li>
                             <?php echo $this->justificatif()->render($pv, $urlFichierThese); ?>
                             <?php if ($canAjouterAutorisation) : ?>
-                                <a href="<?php echo $this->url('soutenance/justificatif/retirer',
+                                <a class="btn btn-danger" href="<?php echo $this->url('soutenance/justificatif/retirer',
                                     ['justificatif' => $pv->getId(), 'these' => $these->getId()],
                                     ["query" => [
                                         "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
                                     ]
                                     ],
                                     true); ?>">
-                                    <span class="text-danger">
-                                        <span class="icon icon-unchecked"></span>
-                                        Supprimer
-                                    </span>
+                                    <span class="icon icon-unchecked"></span>
+                                    Supprimer
                                 </a>
                             <?php endif; ?>
                         </li>

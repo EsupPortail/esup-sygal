@@ -4,9 +4,10 @@ namespace Application\Entity\Db;
 
 use DateTime;
 use These\Entity\Db\These;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Financement {
+class Financement implements HistoriqueAwareInterface{
 
     use HistoriqueAwareTrait;
 

@@ -53,7 +53,7 @@ if (!isset($verbose)) $verbose = false;
         <?php if ($entity->isApatride()): ?>
             Aucune (apatride)
         <?php else: ?>
-            <?php echo $entity->getPaysNationalite()?->getLibelleNationalite() ?:  $entity->getNationalite() ?: "(Non renseignée)" ?>
+            <?php echo ($pays = $entity->getPaysNationalite()) ? $pays->getLibelleNationalite() : "(Non renseignée)" ?>
         <?php endif ?>
     </dd>
 </dl>

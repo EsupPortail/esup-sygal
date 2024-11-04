@@ -1,0 +1,21 @@
+<?php
+
+/* @var $form Application\Form\RoleForm */
+/* @var $errors array */
+
+
+echo $this->form()->openTag($form->prepare());
+
+if ($errors) {
+    echo $this->messenger()->setMessages([UnicaenApp\View\Helper\Messenger::ERROR => $errors]);
+}
+
+echo $this->formControlGroup($form->get('role-id'));
+echo $this->formControlGroup($form->get('parent'));
+echo $this->formControlGroup($form->get('ldap-filter'));
+echo $this->formControlGroup($form->get('accessible-exterieur'));
+echo $this->formRow($form->get('submit'));
+
+echo $this->formHidden($form->get('id'));
+
+echo $this->form()->closeTag();

@@ -4,6 +4,7 @@ namespace Individu\Controller;
 
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Application\Entity\Db\Role;
+use Application\Filter\NomCompletFormatter;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
@@ -180,6 +181,7 @@ class IndividuController extends AbstractActionController implements SearchContr
     {
         /** @var Request $request */
         $request = $this->getRequest();
+        $redirectUrl = $this->params()->fromQuery('redirect');
         if ($request->isPost()) {
             $data = $request->getPost();
             $this->individuForm->setData($data);
@@ -189,6 +191,8 @@ class IndividuController extends AbstractActionController implements SearchContr
                 $this->individuService->saveIndividu($individu);
 
                 $this->flashMessenger()->addSuccessMessage("L'individu &laquo; $individu &raquo; a été créé avec succès.");
+
+                if ($redirectUrl !== null) return $this->redirect()->toUrl($redirectUrl. '&individu=' . $individu->getId());
 
                 // On positionne dans le Header un champ 'individu' pour le cas où l'action est appelée par un autre contrôleur
                 // ayant besoin de connaître l'individu créé :
@@ -203,6 +207,7 @@ class IndividuController extends AbstractActionController implements SearchContr
                 $individu = $this->individuService->newIndividuFromUtilisateur($utilisateur);
                 $this->individuForm->bind($individu);
             }
+            if ($redirectUrl !== null) $this->individuForm->setAttribute('action', $this->url()->fromRoute('individu/ajouter',[],["query" => ["redirect" => $redirectUrl]]));
         }
 
         return (new ViewModel([
@@ -265,22 +270,33 @@ class IndividuController extends AbstractActionController implements SearchContr
         return $this->redirect()->toRoute('individu/voir', ['individu' => $individu->getId()]);
     }
 
-    public function rechercherAction()
+    /**
+     * AJAX.
+     *
+     * Recherche d'un Individu.
+     *
+     * @return JsonModel
+     */
+    public function rechercherAction(): JsonModel
     {
+        $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
-            $individus = $this->getIndividuService()->getRepository()->findByText($term);
-
+            $individus = $this->getIndividuService()->getRepository()->findByText($term, $type);
+            $f = new NomCompletFormatter(true);
             $result = [];
-            foreach ($individus as $xxx =>  $individu) {
-                $result[] = array(
+            foreach ($individus as $individu) {
+                $prenoms23 = implode(' ', array_filter([$individu['prenom2'], $individu['prenom3']]));
+                // mise en forme attendue par l'aide de vue FormSearchAndSelect
+                $label = trim($f->filter($individu) . ' ' . $prenoms23);
+                $extra = $individu['email'] ?: $individu['source_code'];
+                $result[] = [
                     'id' => $individu['id'],
-                    'label' => $individu['prenom1']. " " . $individu['nom_usuel'],
-                    'extra' => $individu['source_code'],
-                );
+                    'label' => $label,
+                    'text' => $label, // pour Select2.js
+                    'extra' => $extra,
+                ];
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
+            usort($result, fn($a, $b) => $a['label'] <=> $b['label']);
 
             return new JsonModel($result);
         }

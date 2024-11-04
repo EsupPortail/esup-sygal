@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var AutorisationInscription $autorisationInscription
+ * @var Form $form
+ */
+
+use Application\Entity\Db\AutorisationInscription;
+use Laminas\Form\Form;
+
+$form->prepare();
+$autorisationInscription = $form->getObject();
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapport CSI"))
+    ->prepend("Autorisation d'inscription")
+    ->prepend($autorisationInscription->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<!--    <h1 class="page-header">Nouvel avis à propos d'un rapport</h1>-->
+<?php echo $this->form()->openTag($form) ?>
+    <div class="row">
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('autorisationInscription')) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <?php
+            echo $this->formControlGroup($form->get('commentaires'));
+            echo $this->formControlGroup($form->get('security'));
+            echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+            ?>
+        </div>
+    </div>
+<?php echo $this->form()->closeTag() ?>

@@ -1,0 +1,131 @@
+@charset "UTF-8";
+/**
+  Identité de la thèse
+*/
+.informations-principales-these-header {
+  display: flex;
+  align-items: center; }
+
+.informations-principales-these-header > div:first-child {
+  width: auto; }
+
+.informations-compl-these-div {
+  margin-top: 5px !important;
+  margin-bottom: 20px;
+  flex-wrap: nowrap !important;
+  gap: 10px; }
+  .informations-compl-these-div .informations-compl-these-card .informations-titre-these-card, .informations-compl-these-div .information-etat-these-card {
+    margin-top: inherit !important;
+    padding: 5px 10px;
+    border-left: 5px solid var(--primary-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-style: italic; }
+  .informations-compl-these-div .informations-titre-these-card {
+    font-size: 16px;
+    font-weight: 450; }
+  .informations-compl-these-div .information-etat-these-card {
+    display: flex;
+    align-items: center;
+    font-style: initial;
+    margin-top: 0 !important;
+    margin-bottom: 25px; }
+    .informations-compl-these-div .information-etat-these-card h2 {
+      font-size: 16px;
+      font-weight: 450;
+      margin: 0; }
+    .informations-compl-these-div .information-etat-these-card span {
+      margin-right: 10px;
+      position: relative; }
+  .informations-compl-these-div .informations-compl-these-card {
+    flex: 0 1 auto; }
+  .informations-compl-these-div .en-cours-etat-these-card {
+    color: #f1732d;
+    border-left: 5px solid #f1732d;
+    min-width: 09%; }
+  .informations-compl-these-div .admis-etat-these-card {
+    color: #2EA662;
+    border-left: 5px solid #2EA662; }
+  .informations-compl-these-div .transferee-etat-these-card {
+    color: grey;
+    border-left: 5px solid grey; }
+  .informations-compl-these-div .abandonnee-etat-these-card, .informations-compl-these-div .non-admis-etat-these-card {
+    color: #d23544;
+    border-left: 5px solid #d23544; }
+
+.informations-compl-these-div > div {
+  width: fit-content; }
+
+.these-card-header {
+  background-color: var(--primary-color) !important; }
+
+.btn-forcage-correction {
+  margin-left: 15px; }
+
+.row .generalites > div > dl, .row .these > div > dl {
+  display: flex; }
+
+@media (max-width: 768px) {
+  .informations-these-header {
+    flex-direction: column;
+    align-items: flex-start; }
+
+  .informations-these-header .btn-edit {
+    width: 100%;
+    margin-top: 15px;
+    text-align: center; }
+
+  .informations-these-header .col-md-7 {
+    text-align: left;
+    margin-top: 15px; }
+
+  .these-identite-body {
+    display: grid; } }
+/**
+  Fin Identité de la thèse
+*/
+/**
+  Form saisie de la thèse
+*/
+.erase-coencadrant-acteur-div {
+  align-content: center; }
+
+span.erase-direction-acteur, span.erase-coencadrant-acteur {
+  cursor: pointer;
+  display: block;
+  height: 06px;
+  color: var(--secondary-color); }
+
+span.erase-direction-acteur:hover, span.erase-coencadrant-acteur:hover {
+  color: var(--primary-color); }
+
+.form-label[for="directeur-qualite"], .form-label[for="codirecteur1-qualite"], .form-label[for="codirecteur2-qualite"] {
+  margin-right: 10px; }
+
+.codirecteur-principal, .codirecteur-exterieur {
+  margin-right: 6px; }
+
+.codirecteur-principal + label, .codirecteur-exterieur + label {
+  margin-top: 2px; }
+
+.these-saisie-form-section {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; }
+
+.separator {
+  width: 50%;
+  height: 2px;
+  background-color: var(--primary-color);
+  margin: 20px auto;
+  border-radius: 2px; }
+
+.these-informations-div {
+  width: fit-content; }
+
+/**
+  Fin Form saisie de la thèse
+*/
+
+/*# sourceMappingURL=these.css.map */

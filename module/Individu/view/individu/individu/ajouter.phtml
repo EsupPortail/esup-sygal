@@ -1,0 +1,63 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var \Individu\Form\IndividuForm $form
+ * @var PhpRenderer $this
+ *
+ * @see \Individu\Controller\IndividuController::ajouterAction()
+ */
+?>
+
+<?php $this->headTitle($this->translate($title = "Création d'un individu")) ?>
+
+<h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+
+<p class="lead text-warning">
+    <strong>Attention !</strong>
+    NB : prenez garde de ne créer un individu que si vous êtres certain·e qu'il n'existe pas déjà.
+    Dédoublonner des individus n'est pas chose facile.
+</p>
+
+<div class="row">
+    <div class="col-6">
+        <?php echo $this->form()->openTag($form) ?>
+        <div class="col-3">
+            <?php echo $this->formControlGroup($form->get('civilite')) ?>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <?php echo $this->formControlGroup($form->get('nomUsuel')) ?>
+            </div>
+            <div class="col-md-6">
+                <?php echo $this->formControlGroup($form->get('nomPatronymique')) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <?php echo $this->formControlGroup($form->get('prenom1')) ?>
+            </div>
+            <div class="col-md-4">
+                <?php echo $this->formControlGroup($form->get('prenom2')) ?>
+            </div>
+            <div class="col-md-4">
+                <?php echo $this->formControlGroup($form->get('prenom3')) ?>
+            </div>
+        </div>
+        <div class="col-6">
+            <?php echo $this->formControlGroup($form->get('email')) ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('dateNaissance')) ?>
+        </div>
+        <div class="col-md-6">
+            <?php echo $this->formControlGroup($form->get('paysNationalite')) ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo $this->formControlGroup($form->get('supannId')) ?>
+        </div>
+        <?php echo $this->formSubmit($form->get('submit')) ?>
+        <?php echo $this->form()->closeTag() ?>
+    </div>
+</div>

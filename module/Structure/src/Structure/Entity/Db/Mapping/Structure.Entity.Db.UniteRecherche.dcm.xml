@@ -7,8 +7,8 @@
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="etablissementsSupport" type="string" column="etab_support" length="500" nullable="true"/>
-    <field name="autresEtablissements" type="string" column="autres_etab" length="500" nullable="true"/>
+<!--    <field name="etablissementsSupport" type="string" column="ETAB_SUPPORT" length="500" nullable="true"/>-->
+<!--    <field name="autresEtablissements" type="string" column="AUTRES_ETAB" length="500" nullable="true"/>-->
 
     <field name="npdForce" type="string" column="npd_force"/>
     <field name="estSubstituantModifiable" type="boolean" column="est_substituant_modifiable"/>

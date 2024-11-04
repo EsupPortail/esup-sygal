@@ -4,6 +4,7 @@ namespace These\Fieldset\Acteur;
 
 use Application\View\Renderer\PhpRenderer;
 use Interop\Container\ContainerInterface;
+use Soutenance\Service\Qualite\QualiteService;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Structure\StructureService;
 
@@ -35,6 +36,10 @@ class ActeurFieldsetFactory
         /** @var ActeurHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get(ActeurHydrator::class);
         $fieldset->setHydrator($hydrator);
+
+        /** @var QualiteService $qualiteService */
+        $qualiteService = $container->get(QualiteService::class);
+        $fieldset->setQualiteService($qualiteService);
 
         return $fieldset;
     }

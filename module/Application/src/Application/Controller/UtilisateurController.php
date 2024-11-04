@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Utilisateur;
+use Application\Filter\NomCompletFormatter;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Process\Utilisateur\UtilisateurProcessAwareTrait;
@@ -20,6 +21,7 @@ use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Controller\IndividuController;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
+use JetBrains\PhpStorm\Deprecated;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Request;
@@ -170,34 +172,30 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
     }
 
-    /**
-     * AJAX.
-     *
-     * Recherche d'un Individu.
-     *
-     * @param string|null $type => permet de spécifier un type d'acteur ...
-     * @return JsonModel
-     */
+    #[Deprecated(
+        reason: 'Utiliser IndividuController::rechercherAction à la place.',
+        replacement: 'IndividuController::rechercherAction')
+    ]
     public function rechercherIndividuAction(?string $type = null) : JsonModel
     {
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $rows = $this->individuService->getRepository()->findByText($term, $type);
+            $f = new NomCompletFormatter(true);
             $result = [];
             foreach ($rows as $row) {
-                $prenoms = implode(' ', array_filter([$row['prenom1'], $row['prenom2'], $row['prenom3']]));
+                $prenoms23 = implode(' ', array_filter([$row['prenom2'], $row['prenom3']]));
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = $row['nom_usuel'] . ' ' . $prenoms;
+                $label = trim($f->filter($row) . ' ' . $prenoms23);
                 $extra = $row['email'] ?: $row['source_code'];
                 $result[] = array(
                     'id' => $row['id'], // identifiant unique de l'item
-                    'label' => $label,     // libellé de l'item
-                    'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
+                    'label' => $label, // libellé de l'item
+                    'text' => $label, // pour Select2.js
+                    'extra' => $extra, // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function ($a, $b) {
-                return strcmp($a['label'], $b['label']);
-            });
+            usort($result, fn($a, $b) => $a['label'] <=> $b['label']);
 
             return new JsonModel($result);
         }

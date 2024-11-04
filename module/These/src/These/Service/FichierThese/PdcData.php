@@ -613,7 +613,11 @@ class PdcData
     public function getSignataires() : array
     {
         $membres = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getMembres());
-        $rapporteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getRapporteurs());
+        //on affiche seulement les rapporteurs qui ne sont pas absent
+        $rapporteurs = array_map(function(Acteur $a) { return $a->getMembre() && $a->getMembre()->estMembre() ? $a->getIndividu() : null;}, $this->getRapporteurs());
+        $rapporteurs = array_filter($rapporteurs, function($value) {
+            return $value !== null;
+        });
         $directeurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getDirecteurs());
         $codirecteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCodirecteurs());
         $coencadrants = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCoencadrants());

@@ -14,6 +14,8 @@ use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
+use Application\Form\Factory\RoleFormFactory;
+use Application\Form\RoleForm;
 use Application\Navigation\NavigationFactoryFactory;
 use Application\ORM\Query\Functions\Npd;
 use Application\ORM\Query\Functions\StrReduce;
@@ -215,7 +217,7 @@ return array(
     'service_manager' => array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
-            RoleService::class => 'RoleService',
+            'RoleService' =>  RoleService::class,
             UserContextService::class => 'UserContextService',
         ),
         'invokables' => array(
@@ -227,7 +229,7 @@ return array(
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
-            'RoleService' => RoleServiceFactory::class,
+            RoleService::class => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
             UserWrapperFactory::class => UserWrapperFactoryFactory::class,
         ),
@@ -307,6 +309,7 @@ return array(
         ],
         'factories' => [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,
+            RoleForm::class => RoleFormFactory::class,
         ],
 //        'initializers' => [
 //            'UnicaenApp\Service\EntityManagerAwareInitializer',
@@ -314,6 +317,8 @@ return array(
     ],
     'public_files' => [
         'head_scripts' => [
+            '050_select2' => "/vendor/select2-4.0.13/dist/js/select2.min.js",
+            '050_select2_fr' => "/vendor/select2-4.0.13/dist/js/i18n/fr.js",
             '060_uploader' => "/vendor/jquery.ui.widget.js",
             '061_uploader' => "/vendor/jquery.iframe-transport.js",
             '062_uploader' => "/vendor/jquery.fileupload.js",
@@ -329,6 +334,7 @@ return array(
             '200_fa' => '/vendor/fontawesome-free-5.12.0-web/css/all.min.css',
             '300_bs' => '/vendor/bootstrap-select-1.14.0-beta3/css/bootstrap-select.min.css',
             '400_faa' => '/vendor/font-awesome-animation.min.css',
+            '500_select2' => "/vendor/select2-4.0.13/dist/css/select2.min.css",
             '900_faa' => '/css/rapport-activite.css',
         ],
         'printable_stylesheets' => [

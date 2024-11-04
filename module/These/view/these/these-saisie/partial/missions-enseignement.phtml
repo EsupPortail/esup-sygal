@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+?>
+
+<fieldset>
+    <?php
+    $fs = $form->get('missionsEnseignement');
+//    echo $this->formHidden($form->get('id'));
+    ?>
+    <div class="row">
+        <div class="col-3">
+            <?php echo $this->formElementCollection($fs); ?>
+        </div>
+    </div>
+</fieldset>
+<script>
+    $(document).on('click', '.collection-add-link', function() {
+        $('select').selectpicker();
+    });
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
+</script>

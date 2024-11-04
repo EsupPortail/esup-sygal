@@ -1,0 +1,122 @@
+<?php
+/**
+ * @var These $these
+ */
+
+use Application\Entity\Db\Role;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use Individu\View\Helper\IndividuUsurpationHelper;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Filter\ActeursFormatter;
+use These\Provider\Privilege\ActeurPrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+$acteursFormatter = new ActeursFormatter();
+$acteursFormatter->paramFilter(["role" => [
+    Role::CODE_DIRECTEUR_THESE,
+    Role::CODE_CODIRECTEUR_THESE,
+    Role::CODE_MEMBRE_JURY,
+    Role::CODE_PRESIDENT_JURY,
+    Role::CODE_RAPPORTEUR_JURY,
+    Role::CODE_RAPPORTEUR_ABSENT,
+]]);
+$acteursFormatter->paramDisplay(["role" => true, "complement" => true, "qualite" => true, "etablissement" => true, "uniteRecherche" => true]);
+$acteursFormatter->asArray(true);
+$acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toArray());
+
+$estImportable = $these?->getSource()->getImportable();
+?>
+
+<dl class="row">
+
+    <?php if ($acteursFormatted): ?>
+        <?php
+        foreach ($acteursFormatted as $role => $acteurs) { ?>
+            <dt class="col-md-3">
+                <?php echo $role ?>
+            </dt>
+            <dd class="col-md-9 acteurs">
+                <table class="table table-extra-condensed">
+                    <?php foreach ($acteurs as $i => $result){
+                        /** @var Acteur $acteur */
+                        $acteur = $result["acteur"]; ?>
+                        <tr>
+                            <td style="width: 30%">
+                                <?php
+                                $ligne = [];
+                                $canVisualiserIndividu = $this->isAllowed($acteur->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+                                $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
+                                if ($canVisualiserIndividu) {
+                                    $identite = " <a href='".$this->url('individu/voir', ['individu' => $acteur->getIndividu()->getId()], [], true) ."'>" .
+                                        "<span title='Accéder à la fiche détaillée de cet individu'>" . $result["nom"] . "</span></a>";
+                                } else {
+                                    $identite = $result["nom"];
+                                }
+                                if ($acteur->getRole()->estUsurpable() && ! isset($result['alerte-supann-id'])) {
+                                    // bouton d'usurpation d'identité
+                                    $individuUsurpationHelper = $this->plugin('individuUsurpation');
+                                    /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+                                    $individuUsurpationHelper->setIndividu($acteur->getIndividu());
+                                    $identite .= $individuUsurpationHelper();
+                                }
+                                $ligne[] = $identite;
+                                if (isset($result["complement"])) {
+                                    $ligne[] = "<strong>" . $result["complement"] . "</strong>";
+                                }
+                                if (isset($result["qualite"]) && trim($result["qualite"]) != "") {
+                                    $ligne[] = $result["qualite"];
+                                }
+                                echo implode('<br>', $ligne);
+                                ?>
+                            </td>
+                            <td style="width: 55%">
+                                <?php
+                                $ligne = [];
+                                if (isset($result["etablissementForce"]) && trim($result["etablissementForce"]) != "") {
+                                    $ligne[] = sprintf("<span class='text-structure etablissement'><em data-bs-toggle='tooltip' data-bs-original-title='Valeur forcée (initialement : %s)'>%s</em></span>",
+                                        $result["etablissement"] ?? 'vide',
+                                        $result["etablissementForce"],
+                                    );
+                                }
+                                elseif (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
+                                    $ligne[] = "<span class='text-structure etablissement' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
+                                }
+
+                                if (isset($result["uniteRecherche"]) && trim($result["uniteRecherche"]) != "") {
+                                    $ligne[] = "<span class='text-structure ur' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
+                                }
+                                echo implode('<br>', $ligne);
+                                ?>
+                            </td>
+                            <?php if($estImportable): ?>
+                                <td>
+                                    <div class="float-end">
+                                        <?php
+                                        $canEditActeur =
+                                            $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES) ||
+                                            $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_SES_THESES);
+                                        ?>
+                                        <?php if ($canEditActeur): ?>
+                                            <a href="<?php echo $this->url('these/acteur/modifier', ['acteur' => $acteur->getId()], [], true) ?>"
+                                               class="ajax-modal" data-event="modification">
+                                                <span class='icon icon-edit iconly' title='Modifier cet acteur'></span></a>
+                                        <?php endif ?>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php } ?>
+                </table>
+            </dd>
+        <?php } ?>
+    <?php else : ?>
+        <dt class="col-md-3">Direction</dt>
+        <dd class="col-md-9">
+        <span class='text-danger'>
+            <span class='fas fa-exclamation-triangle'></span>
+            <?php echo $this->translate("Aucune direction renseignée") ?>
+        </span>
+        </dd>
+    <?php endif ?>
+</dl>

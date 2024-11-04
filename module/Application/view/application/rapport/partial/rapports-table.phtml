@@ -2,20 +2,27 @@
 
 namespace Application;
 
+use Application\Controller\AutorisationInscriptionController;
+use Application\Entity\Db\AutorisationInscription;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use These\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
+use Application\Provider\Privilege\AutorisationInscriptionPrivileges;
+use Application\Service\Rapport\RapportSearchService;
+use Application\View\Renderer\PhpRenderer;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
-use Application\Service\Rapport\RapportSearchService;
-use Application\View\Renderer\PhpRenderer;
+use These\Filter\ActeursFormatter;
 
 /**
  * @var PhpRenderer $this
- * @var Rapport[] $rapports
+ * @var array{
+ *      rapport: Rapport,
+ *      autorisationInscription: AutorisationInscription
+ *  } | array<Rapport> $rapports
+ * @var AutorisationInscription[] $autorisationsInscription
  *
  * @var string $routeName
  * @var TypeValidation $typeValidation
@@ -150,9 +157,10 @@ $acteursFormatterCodirecteurs->asSeparated()
     </thead>
 
     <tbody>
-    <?php foreach ($rapports as $rapport): ?>
+    <?php foreach ($rapports as $ra): ?>
         <tr>
             <?php
+            $rapport = is_array($ra) && $ra["rapport"] ? $ra["rapport"] : $ra;
             $these = $rapport->getThese();
             $rapportValidation = $rapport->getRapportValidation();
             $rapportAvis = $rapport->getRapportAvis();
@@ -308,14 +316,126 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php endif; ?>
 
             <td class="action">
-                <?php if ($canDel): ?>
+                <?php
+                /** @var AutorisationInscription|null $autorisationInscription */
+                if (!(is_array($ra) && $ra["autorisationInscription"])) {
+                    $autorisationInscription = new AutorisationInscription();
+                    $autorisationInscription->setRapport($rapport);
+                } else {
+                    $autorisationInscription = $ra["autorisationInscription"];
+                }
+                $canAjouterAutorisationInscription = $this->isAllowed($autorisationInscription, AutorisationInscriptionPrivileges::AUTORISATION_INSCRIPTION_AJOUTER);
+                if ($canAjouterAutorisationInscription): ?>
+                    <a <?php /**  @see AutorisationInscriptionController::ajouterAction() */ ?>
+                            class="action ajax-modal"
+                            data-event="ajout-autorisation-inscription"
+                            data-bs-toggle="tooltip"
+                            data-bs-html="true"
+                            title="Autoriser la réinscription dans l'année suivante ?"
+                            class="btn btn-success"
+                            href="<?php echo $this->url('autoriser-inscription/ajouter', ['rapport' => $rapport->getId()], [], true); ?>"
+                    >
+                        <span class="fa fa-redo"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($autorisationInscription->getAutorisationInscription() === true) :?>
+                    <div class="alert alert-info" style="margin-left: 1rem;max-width: initial;">
+                        <span class="icon icon-ok"></span>
+                        Autorisé·e à se réinscrire dans l'année
+                        suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
+                        <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
+                            Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>
+                            ,
+                            le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+                        </div>
+                        <?php if ($autorisationInscription->getCommentaires()): ?>
+                            <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                               data-bs-target="#commentairesAutorisationInscrModal">
+                                <span class="fas fa-glasses" title="Voir les commentaires concernant l'autorisation"></span>
+                                Détails
+                            </a>
+                            <div class="log-full-content d-none">
+                                <h3>Commentaires</h3>
+                                <p class="avis-complement">
+                                    <span class="avis-complem-textarea">
+                                        <span class="avis-complem-valeur"><?= $autorisationInscription->getCommentaires() ?></span>
+                                    </span>
+                                </p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php elseif ($autorisationInscription->getAutorisationInscription() === false): ?>
+                    <div class="alert alert-danger" style="margin-left: 1rem;max-width: initial;">
+                        <span class="icon icon-ko"></span>
+                        Non autorisé·e à se réinscrire dans l'année
+                        suivante <?= $autorisationInscription->getAnneeUniv()->getAnneeUnivToString() ?>
+                        <div class="card-subtitle mt-2 mb-2 text-sm text-muted">
+                            Par <?php echo $autorisationInscription->getHistoModificateur() ?: $autorisationInscription->getHistoCreateur() ?>
+                            ,
+                            le <?php echo ($autorisationInscription->getHistoModification() ?: $autorisationInscription->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+                        </div>
+                        <?php if ($autorisationInscription->getCommentaires()): ?>
+                            <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                               data-bs-target="#commentairesAutorisationInscrModal">
+                                <span class="fas fa-glasses" title="Voir le motif de la non-autorisation"></span>
+                                Détails
+                            </a>
+                            <div class="log-full-content d-none">
+                                <h3>Motif de la non-autorisation</h3>
+                                <p class="avis-complement">
+                                    <span class="avis-complem-textarea">
+                                        <span class="avis-complem-valeur"><?= $autorisationInscription->getCommentaires() ?></span>
+                                    </span>
+                                </p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($canDel && !$autorisationInscription->getId()): ?>
                     <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl ?? '']]) ?>"
                        title="Supprimer ce rapport ?"
                        data-bs-toggle="confirmationx"
-                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
+                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="fa fa-trash"></span></a>
                 <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<div class="modal fade" id="commentairesAutorisationInscrModal" tabindex="-1" aria-labelledby="commentairesAutorisationInscrModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentairesAutorisationInscrModalLabel">Détails de l'avis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <!-- rempli dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("ajout-autorisation-inscription", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    })
+
+    $(function() {
+        const avisComplemsModal = document.getElementById('commentairesAutorisationInscrModal')
+        avisComplemsModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const logFullContent = $(button).siblings(".log-full-content").html();
+
+            const modalBody = avisComplemsModal.querySelector('.modal-body');
+            $(modalBody).html(logFullContent);
+        });
+    })
+</script>

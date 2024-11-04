@@ -2,7 +2,8 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Application\Entity\Db\TitreAcces" table="TITRE_ACCES">
+    <entity name="Application\Entity\Db\TitreAcces" table="TITRE_ACCES"
+            repository-class="Application\Entity\Db\Repository\TitreAccesRepository">
         <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
@@ -23,6 +24,18 @@
         <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
                 <join-column name="these_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="etab_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="pays" target-entity="Application\Entity\Db\Pays">
+            <join-columns>
+                <join-column name="pays_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

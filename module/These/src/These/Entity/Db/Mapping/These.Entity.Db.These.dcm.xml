@@ -14,13 +14,12 @@
         <field name="datePremiereInscription" type="datetime" column="date_prem_insc" nullable="true"/>
         <field name="codeSiseDiscipline" type="string" column="code_sise_disc" length="32" nullable="true"/>
         <field name="libelleDiscipline" type="string" column="lib_disc" length="200" nullable="true"/>
-        <field name="datePrevisionSoutenance" type="datetime" column="date_prev_soutenance" nullable="true"/>
         <field name="dateSoutenance" type="datetime" column="date_soutenance" nullable="true"/>
         <field name="dateFinConfidentialite" type="datetime" column="date_fin_confid" nullable="true"/>
         <field name="dateAbandon" type="datetime" column="date_abandon" nullable="true"/>
         <field name="dateTransfert" type="datetime" column="date_transfert" nullable="true"/>
-        <field name="codeUniteRecherche" type="string" column="cod_unit_rech" length="50" nullable="true"/>
-        <field name="libelleUniteRecherche" type="string" column="lib_unit_rech" length="200" nullable="true"/>
+<!--        <field name="codeUniteRecherche" type="string" column="cod_unit_rech" length="50" nullable="true"/>-->
+<!--        <field name="libelleUniteRecherche" type="string" column="lib_unit_rech" length="200" nullable="true"/>-->
         <field name="correctionAutorisee" type="string" column="correc_autorisee" nullable="true"/>
         <field name="correctionAutoriseeForcee" type="string" column="correc_autorisee_forcee" nullable="true"/>
         <field name="dateButoirDepotVersionCorrigeeAvecSursis" type="datetime" column="correc_date_butoir_avec_sursis" nullable="true"/>
@@ -49,9 +48,10 @@
         <one-to-many field="acteurs" target-entity="These\Entity\Db\Acteur" mapped-by="these"/>
         <one-to-many field="rdvBus" target-entity="Depot\Entity\Db\RdvBu" mapped-by="these"/>
         <one-to-many field="validations" target-entity="Application\Entity\Db\Validation" mapped-by="these"/>
-        <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
+        <one-to-one field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
+<!--        <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>-->
         <one-to-many field="anneesUnivInscription" target-entity="These\Entity\Db\TheseAnneeUniv" mapped-by="these"/>
-        <one-to-many field="anneesUniv1ereInscription" target-entity="These\Entity\Db\VTheseAnneeUnivFirst" mapped-by="these"/>
+        <one-to-many field="anneesUniv1ereInscription" target-entity="These\Entity\Db\TheseAnneeUniv" mapped-by="these"/>
         <one-to-many field="rapports" target-entity="Application\Entity\Db\Rapport" mapped-by="these"/>
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
@@ -88,6 +88,24 @@
             </join-table>
         </many-to-many>
 
+        <many-to-one field="discipline" target-entity="Application\Entity\Db\Discipline" fetch="LAZY">
+            <join-columns>
+                <join-column name="discipline_sise_code" referenced-column-name="code"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="etablissementCoTutelle" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="etab_cotut_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="paysCoTutelle" target-entity="Application\Entity\Db\Pays">
+            <join-columns>
+                <join-column name="pays_cotut_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>
                 <join-column name="source_id" referenced-column-name="id"/>
@@ -110,7 +128,7 @@
             </join-columns>
         </many-to-one>
 
-        <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these"/>
+        <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these" orphan-removal="true"/>
         <one-to-many target-entity="Soutenance\Entity\Proposition" field="propositions" mapped-by="these"/>
 
     </entity>

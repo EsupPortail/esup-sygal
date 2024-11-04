@@ -1,0 +1,108 @@
+<?php
+
+use Application\Entity\Db\Variable;
+use Structure\Controller\StructureController;
+use Structure\Entity\Db\Etablissement;
+use Structure\Provider\Privilege\StructurePrivileges;
+
+/**
+ * @var Variable[] $variables
+ * @var Etablissement $etablissement
+ *
+ * @see \Structure\Controller\EtablissementController::indexAction()
+ */
+
+$appName = $this->appInfos()->nom;
+
+$canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+?>
+
+
+<?php $this->headTitle($this->translate("Établissements")) ?>
+
+<h1 class="page-header first">
+    <?php echo $this->translate("Variables") ?>
+    <span class="badge bg-secondary">
+        <?php echo count($variables); ?>
+    </span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<p>
+    <?php if ($canModifier): ?>
+        <a href="<?php echo $this->url('etablissement/saisir-variable', ['etablissement'=> $etablissement->getId()], [], true); ?>"
+           class="btn btn-primary action ajax-modal" data-event="modification"
+        >
+            <span class="icon icon-plus"></span> Ajouter une variable
+        </a>
+    <?php endif ?>
+</p>
+
+<div>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th> Code </th>
+            <th> Description </th>
+            <th> Valeur </th>
+            <th> Date de début de validité </th>
+            <th> Date de fin de validité </th>
+            <th> Actions </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($variables as $variable): ?>
+
+            <?php
+                $historisee = (!$etablissement->estNonHistorise());
+            ?>
+
+            <tr>
+                <td>
+                    <?php echo $variable->getCode(); ?>
+                </td>
+                <td>
+                    <?php echo $variable->getDescription(); ?>
+                </td>
+                <td>
+                    <?php echo $variable->getValeur(); ?>
+                </td>
+                <td>
+                    <?php echo $variable->getDateDebutValidite()?->format('d/m/Y'); ?>
+                </td>
+                <td>
+                    <?php echo $variable->getDateFinValidite()?->format('d/m/Y'); ?>
+                </td>
+                <td>
+                    <?php if ((!$variable->getSource()->getImportable() && $canModifier) && !$historisee) : ?>
+                        <?php
+                        $redirectUrl =  $this->url('etablissement/voir', ['etablissement'=> $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_variables]], true);
+                        ?>
+                        <a  <?php /**  @see \Structure\Controller\VariableController::supprimerAction() */ ?>
+                                data-event="modification" data-toggle="confirmationx"
+                                href="<?php echo $this->url('etablissement/supprimer-variable', ['id' => $variable->getId()], ['query' => ['redirect' => $redirectUrl]], true); ?>"
+                        >
+                                <span class="icon icon-delete iconly float-end" style="color:darkred;"
+                                      title="Supprimer la variable"></span>
+                        </a>
+                        <a  <?php /**  @see \Structure\Controller\VariableController::saisirVariableAction() */ ?>
+                                class="ajax-modal" data-event="modification"
+                                href="<?php echo $this->url('etablissement/saisir-variable', ['id' => $variable->getId(), 'etablissement'=> $etablissement->getId()], [], true); ?>"
+                        >
+                            <span class="icon icon-edit iconly float-end" style="color:darkred;"
+                                  title="Modifier la variable"></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('select').selectpicker();
+    })
+</script>

@@ -21,6 +21,9 @@ return [
                         'index',
                         'incrementer-ordre',
                         'decrementer-ordre',
+                        'ajouter',
+                        'editer',
+                        'supprimer',
                     ],
                     'roles' => [
                         'Administrateur technique'
@@ -78,6 +81,45 @@ return [
                         'action'        => 'index',
                     ],
                 ],
+            ],
+            'role' => [
+                'type'          => 'Segment',
+                'options'       => [
+                    'route'    => '/role',
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'ajouterRole' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/ajouter',
+                            'defaults' => [
+                                'controller'    => RoleController::class,
+                                'action'        => 'ajouter',
+                            ],
+                        ],
+                    ],
+                    'editerRole' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/editer/:role',
+                            'defaults' => [
+                                'controller'    => RoleController::class,
+                                'action'        => 'editer',
+                            ],
+                        ],
+                    ],
+                    'supprimerRole' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/supprimer/:role',
+                            'defaults' => [
+                                'controller'    => RoleController::class,
+                                'action'        => 'supprimer',
+                            ],
+                        ],
+                    ],
+                ]
             ],
             'gestion-privilege' => [
                 'type'          => Literal::class,

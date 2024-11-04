@@ -2,18 +2,16 @@
 
 namespace Application;
 
-use UnicaenApp\Exception\RuntimeException;
 use Interop\Container\ContainerInterface;
+use UnicaenApp\Exception\RuntimeException;
 
 class SourceCodeStringHelperFactory
 {
     /**
-     * Create helper
-     *
-     * @param ContainerInterface $container
-     * @return SourceCodeStringHelper
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): SourceCodeStringHelper
     {
         $config = $container->get('Config');
         $prefix = $this->getDefaultPrefixFromConfig($config);
@@ -28,7 +26,7 @@ class SourceCodeStringHelperFactory
      * @param array $config
      * @return string
      */
-    private function getDefaultPrefixFromConfig(array $config)
+    private function getDefaultPrefixFromConfig(array $config): string
     {
         $key = 'default_prefix_for_source_code';
 

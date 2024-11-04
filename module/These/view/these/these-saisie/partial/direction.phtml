@@ -1,0 +1,169 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+
+use Application\Entity\Db\Role;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Fieldset\Direction\DirectionFieldset;
+
+?>
+
+<fieldset>
+    <?php
+        $fs = $form->get('direction');
+        $form->prepare();
+        /** @var These $these */
+        $these = $fs->getObject();
+        $estImportable = $these?->getSource()->getImportable();
+        echo $this->form()->openTag($form);
+    ?>
+
+    <div class="mb-3 these-saisie-form-section">
+        <h3 class="these-saisie-title-section">Directeur·trice de thèse <span class="icon icon-information" data-bs-toggle="tooltip"
+                                                                              title="Un·e seul·e directeur·trice de thèse"></span></h3>
+        <div class="row directeur">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-10">
+                        <?php echo $this->formControlGroup($fs->get('directeur-individu')); ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <?php if(!$estImportable){ ?>
+                            <?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?>
+                        <?php }else{
+                            /** @var Acteur $directeur */
+                            $directeur = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->first();
+                            echo "Qualité : ";
+                            echo trim($directeur?->getLibelleQualite()) !== null ? $directeur->getLibelleQualite() : "<i>Aucune qualité de renseignée</i>";
+                        } ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <?php echo $this->formControlGroup($fs->get('directeur-etablissement')); ?>
+                <?php echo $this->formControlGroup($fs->get('directeur-ecoleDoctorale')); ?>
+                <?php echo $this->formControlGroup($fs->get('directeur-uniteRecherche')); ?>
+            </div>
+            <div class="col-md-2">
+
+            </div>
+            <?php if(!$estImportable): ?>
+                <div class="col-md-1 pull-right">
+                    <span data-target-id="directeur" class="erase-direction-acteur icon icon-historiser"
+                          title="Vider les champs concernant le directeur"></span>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+
+    <div class="mb-3 these-saisie-form-section">
+        <?php for ($i = 1; $i <= DirectionFieldset::NBCODIR; $i++)  : ?>
+            <?php if($i === 2): ?>
+                <div class="separator"></div>
+            <?php endif ?>
+            <h3 class="these-saisie-title-section">
+                <?php echo $this->formElement($fs->get('codirecteur' . $i . '-enabled')); ?>
+                Codirecteur·trice de thèse n°<?php echo $i ?>
+            </h3>
+
+            <div class="row codirecteur codirecteur<?php echo $i ?>">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?php
+                            echo $this->formControlGroup($fs->get('codirecteur' . $i . '-individu')); ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?php if(!$estImportable){ ?>
+                                <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?>
+                            <?php }else{
+                                $individuId = $fs->get('codirecteur' . $i . '-individu')->getValue();
+                                /** @var Acteur $coDirecteur */
+                                $coDirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+                                foreach($coDirecteurs as $coDirecteur){
+                                    if((int)$individuId === $coDirecteur->getIndividu()->getId()){
+                                        echo "Qualité : ";
+                                        echo trim($coDirecteur->getLibelleQualite()) !== null ? $coDirecteur->getLibelleQualite() : "<i>Aucune qualité de renseignée</i>";
+                                    }
+                                }
+                            } ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-etablissement')); ?>
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-ecoleDoctorale')); ?>
+                    <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-uniteRecherche')); ?>
+                </div>
+                <div class="col-md-2">
+                    <?php if ($fs->has($name = 'codirecteur' . $i . '-principal')): ?>
+                        <?php echo $this->formControlGroup($fs->get($name)); ?>
+                    <?php endif ?>
+                    <?php if ($fs->has($name = 'codirecteur' . $i . '-exterieur')): ?>
+                        <?php echo $this->formControlGroup($fs->get($name)); ?>
+                    <?php endif ?>
+                </div>
+                <?php if(!$estImportable): ?>
+                    <div class="col-md-1 pull-right">
+                        <span data-target-id="codirecteur<?php echo $i; ?>" class="erase-direction-acteur icon icon-historiser"
+                              title="Vider les champs concernant ce codirecteur"></span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endfor; ?>
+    </div>
+    <?php if($fs->useAsBaseFieldset()): ?>
+        <?php echo $this->formHidden($form->get('security')); ?>
+        <?php echo $this->formControlGroup($form->get('submit')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+        <script>
+             $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+                 $("select").selectpicker();
+             });
+        </script>
+    <?php endif ?>
+</fieldset>
+
+
+<script>
+    $(function() {
+        const updateCodirecteurDiv = function($enabler) {
+            const codirId = $enabler.data('codirecteur-id');
+            if ($enabler.is(':checked')) {
+                $("div.codirecteur" + codirId).show();
+                if (codirId === 1) {
+                    // activer le 1er codir redonne la possibilité d'activer le 2nd
+                    $(".codirecteur-enabler").not($enabler).prop('disabled', false);
+                }
+            } else {
+                if (codirId === 1) {
+                    // désactiver le 1er codir désactive et interdit d'activer le 2nd
+                    $("div.codirecteur").hide();
+                    $(".codirecteur-enabler").prop('checked', false);
+                    $(".codirecteur-enabler").not($enabler).prop('disabled', true);
+                } else {
+                    $("div.codirecteur" + codirId).hide();
+                }
+            }
+        };
+        $(".codirecteur-enabler").on('change', function() {
+            updateCodirecteurDiv($(this));
+        });
+        $(".codirecteur-enabler").each(function() {
+            updateCodirecteurDiv($(this));
+        });
+
+        $('.erase-direction-acteur').click(function() {
+            let container = $("div." + $(this).data('target-id'));
+            container.find("input").val('');
+            container.find("select").val(null).trigger('change');
+        });
+    });
+</script>

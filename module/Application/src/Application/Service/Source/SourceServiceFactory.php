@@ -2,6 +2,7 @@
 
 namespace Application\Service\Source;
 
+use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
 /**
@@ -10,17 +11,15 @@ use Interop\Container\ContainerInterface;
 class SourceServiceFactory
 {
     /**
-     * @param ContainerInterface $container
-     * @param string             $requestedName
-     * @param array|null         $options
-     *
-     * @return SourceService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, $options = null)
+    public function __invoke(ContainerInterface $container): SourceService
     {
         $service = new SourceService;
 
-        /* Injectez vos dépendances ICI */
+        $helper = $container->get(SourceCodeStringHelper::class);
+        $service->setSourceCodeStringHelper($helper);
 
         return $service;
     }

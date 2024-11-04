@@ -41,4 +41,9 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'public_files' => [
+        'stylesheets' => [
+            '0120_these' => '/css/these.css',
+        ],
+    ],
 ];

@@ -1,0 +1,40 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+
+use These\Fieldset\Encadrement\EncadrementFieldset;
+
+?>
+
+<fieldset>
+    <?php
+    $fs = $form->get('encadrements');
+//    echo $this->formHidden($fs->get('id'));
+    ?>
+
+    <div class="col-6 mb-3 these-saisie-form-section">
+        <h3 class="these-saisie-title-section">Coencadrant·e de thèse</h3>
+        <?php for ($i = 1; $i <= EncadrementFieldset::NB_COENCADRANTS_MAXI; $i++)  : ?>
+            <div class="row coencadrant<?php echo $i ?>">
+                <div class="col-md-8"><?php echo $this->formControlGroup($fs->get('coencadrant' . $i . '-individu')); ?></div>
+                <div class="col-md-1 pull-right erase-coencadrant-acteur-div">
+                    <span data-target-id="coencadrant<?php echo $i; ?>" class="erase-coencadrant-acteur icon icon-historiser"
+                          title="Remise à zéro"></span>
+                </div>
+            </div>
+        <?php endfor; ?>
+    </div>
+
+</fieldset>
+
+
+<script>
+    $(function() {
+        $('.erase-coencadrant-acteur').click(function() {
+            let container = $("div." + $(this).data('target-id'));
+            container.find("input").val('');
+            container.find("select.selectpicker").selectpicker('val', '');
+        });
+    });
+</script>

@@ -3,11 +3,14 @@
 namespace These\Entity\Db;
 
 use Application\Entity\Db\Role;
+use Closure;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuAwareInterface;
 use Individu\Entity\Db\IndividuRoleAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Qualite;
+use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -68,8 +71,11 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      */
     private $role;
 
-    /** @var string $qualite */
-    private $qualite;
+    private ?string $libelleQualite = null;
+
+    private bool $principal = false;
+    private bool $exterieur = false;
+    private int $ordre = 1;
 
     /**
      * Etablissement auquel appartient l'individu.
@@ -77,7 +83,16 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     private ?Etablissement $etablissement = null;
     private ?Etablissement $etablissementForce = null;
 
+    /**
+     * Ecole Doctorale à laquelle appartient l'individu.
+     */
+    private ?EcoleDoctorale $ecoleDoctorale = null;
+
+    /**
+     * Unité de recherche à laquelle appartient l'individu.
+     */
     private ?UniteRecherche $uniteRecherche = null;
+    private ?Qualite $qualite = null;
 
     /**
      * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur rôle.
@@ -92,6 +107,47 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
                 $a1->getRole()->getOrdreAffichage() . $a1->getIndividu()->getNomUsuel() . $a1->getIndividu()->getPrenom(),
                 $a2->getRole()->getOrdreAffichage() . $a2->getIndividu()->getNomUsuel() . $a2->getIndividu()->getPrenom()
             );
+        };
+    }
+
+
+    /**
+     * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur rôle.
+     * @see usort()
+     *
+     * @return callable
+     */
+    static public function getRoleComparisonFunction()
+    {
+        return function(Acteur $a1, Acteur $a2) {
+            return strcmp(
+                $a1->getRole()->getOrdreAffichage() . $a1->getIndividu()->getNomUsuel() . $a1->getIndividu()->getPrenom(),
+                $a2->getRole()->getOrdreAffichage() . $a2->getIndividu()->getNomUsuel() . $a2->getIndividu()->getPrenom()
+            );
+        };
+    }
+
+    /**
+     * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur ordre.
+     * @see usort()
+     *
+     * @return callable
+     */
+    static public function getOrdreComparisonFunction()
+    {
+        return fn(Acteur $a1, Acteur $a2) => $a1->getOrdre() <=> $a2->getOrdre();
+    }
+
+    /**
+     * Retourne la fonction permettent de filtrer une collection d'acteurs selon qu'ils correspondent
+     * au(x) rôle(s) spécifié(s).
+     *
+     * @param string|string[] $code
+     */
+    static public function getRoleFilterFunction($code): Closure
+    {
+        return function(Acteur $a) use ($code) {
+            return in_array($a->getRole()->getCode(), (array) $code);
         };
     }
 
@@ -257,10 +313,10 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
 
 
     /**
-     * @param string $qualite
+     * @param string|null $qualite
      * @return self
      */
-    public function setQualite($qualite)
+    public function setLibelleQualite(?string $qualite): self
     {
         $this->qualite = $qualite;
 
@@ -270,14 +326,88 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     /**
      * @return string qualite
      */
-    public function getQualite(): string
+    public function getLibelleQualite(): string
     {
-        if ($this->qualite === null) {
+        if ($this->libelleQualite === null) {
             return " ";
 //            return "Qualité non indiquée";
         } else {
-            return $this->qualite;
+            return $this->libelleQualite;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrincipal(): bool
+    {
+        return $this->principal;
+    }
+
+    /**
+     * Get principal.
+     *
+     * @return bool
+     */
+    public function getPrincipal()
+    {
+        return $this->principal;
+    }
+
+    /**
+     * @param bool $principal
+     * @return self
+     */
+    public function setPrincipal(bool $principal = true): self
+    {
+        $this->principal = $principal;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExterieur(): bool
+    {
+        return $this->exterieur;
+    }
+
+    /**
+     * Get exterieur.
+     *
+     * @return bool
+     */
+    public function getExterieur()
+    {
+        return $this->exterieur;
+    }
+
+    /**
+     * @param bool $exterieur
+     * @return self
+     */
+    public function setExterieur(bool $exterieur = true): self
+    {
+        $this->exterieur = $exterieur;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrdre(): int
+    {
+        return $this->ordre;
+    }
+
+    /**
+     * @param int $ordre
+     * @return self
+     */
+    public function setOrdre(int $ordre): self
+    {
+        $this->ordre = $ordre;
+        return $this;
     }
 
     /**
@@ -311,6 +441,25 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     }
 
     /**
+     * @param EcoleDoctorale|null $ecoleDoctorale
+     * @return self
+     */
+    public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale = null): self
+    {
+        $this->ecoleDoctorale = $ecoleDoctorale;
+
+        return $this;
+    }
+
+    /**
+     * Retourne l'éventuelle ED liée.
+     */
+    public function getEcoleDoctorale(): ?EcoleDoctorale
+    {
+        return $this->ecoleDoctorale;
+    }
+
+    /**
      * Retourne l'éventuelle UR liée.
      */
     public function getUniteRecherche(): ?UniteRecherche
@@ -321,6 +470,20 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     public function setUniteRecherche(?UniteRecherche $uniteRecherche): self
     {
         $this->uniteRecherche = $uniteRecherche;
+        return $this;
+    }
+
+    /**
+     * Retourne l'éventuelle qualité liée.
+     */
+    public function getQualite(): ?Qualite
+    {
+        return $this->qualite;
+    }
+
+    public function setQualite(?Qualite $qualite): self
+    {
+        $this->qualite = $qualite;
         return $this;
     }
 
@@ -352,6 +515,32 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     public function getMembre(): ?Membre
     {
         return $this->membre;
+    }
+
+    /**
+     * Set membre.
+     *
+     * @param \Soutenance\Entity\Membre|null $membre
+     *
+     * @return Acteur
+     */
+    public function setMembre(\Soutenance\Entity\Membre $membre = null)
+    {
+        $this->membre = $membre;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGenreFromIndividu(): string
+    {
+        $individu = $this->getIndividu();
+        if($individu && $individu->getCivilite()){
+            return  $individu->estUneFemme() ? "F" : "H";
+        }
+        return "";
     }
 
     /** FONCTION POUR LES MACROS **************************************************************************************/

@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Structure\Entity\Db\Etablissement;
 use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -14,6 +15,12 @@ class TitreAcces implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+
+    const CODE_ACCES_INTERNE = "I";
+    const CODE_ACCES_EXTERNE = "E";
+
+    const LIBELLE_ACCES_INTERNE = "Interne";
+    const LIBELLE_ACCES_EXTERNE = "Externe";
 
     /**
      * @var integer
@@ -61,22 +68,35 @@ class TitreAcces implements HistoriqueAwareInterface
     private $these;
 
     /**
+     * @var Etablissement
+     */
+    private $etablissement;
+
+    /**
+     * @var Pays
+     */
+    private $pays;
+
+    /**
      * @return string
      */
     public function __toString()
     {
         $etab = $this->getTypeEtabTitreAcces();
-        if ($this->getCodePaysTitreAcces()) {
-            $etab .= sprintf("%s, %s",
+        if ($this->getPays()) {
+            $etab .= sprintf(" %s, %s",
                 $this->getCodeDeptTitreAcces(),
-                $this->getCodePaysTitreAcces()
+                $this->getPays()->getLibelle()
             );
         }
 
+        //pour afficher les établissements provenant de thèse d'un SI
+        $etabLibelle = $this->getEtablissement() ?: $this->getLibelleEtabTitreAcces();
+
         return sprintf("%s (%s), %s (%s)",
             $this->getLibelleTitreAcces(),
-            $this->getTitreAccesInterneExterne(),
-            $this->getLibelleEtabTitreAcces(),
+            $this->getTitreAccesInterneExterneToString(),
+            $etabLibelle,
             $etab
         );
     }
@@ -116,9 +136,19 @@ class TitreAcces implements HistoriqueAwareInterface
     /**
      * @return string
      */
+    public function getTitreAccesInterneExterneToString()
+    {
+        return $this->titreAccesInterneExterne ?
+            [self::CODE_ACCES_INTERNE => self::LIBELLE_ACCES_INTERNE, self::CODE_ACCES_EXTERNE => self::LIBELLE_ACCES_EXTERNE][$this->titreAccesInterneExterne] :
+            null;
+    }
+
+    /**
+     * @return string
+     */
     public function getTitreAccesInterneExterne()
     {
-        return ['I' => 'Interne', 'E' => 'Externe'][$this->titreAccesInterneExterne];
+        return $this->titreAccesInterneExterne;
     }
 
     /**
@@ -163,6 +193,7 @@ class TitreAcces implements HistoriqueAwareInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getLibelleEtabTitreAcces()
     {
@@ -171,7 +202,8 @@ class TitreAcces implements HistoriqueAwareInterface
 
     /**
      * @param string $libelleEtabTitreAcces
-     */
+     * @deprecated
+    */
     public function setLibelleEtabTitreAcces($libelleEtabTitreAcces)
     {
         $this->libelleEtabTitreAcces = $libelleEtabTitreAcces;
@@ -195,6 +227,7 @@ class TitreAcces implements HistoriqueAwareInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getCodePaysTitreAcces()
     {
@@ -203,6 +236,7 @@ class TitreAcces implements HistoriqueAwareInterface
 
     /**
      * @param string $codePaysTitreAcces
+     * @deprecated
      */
     public function setCodePaysTitreAcces($codePaysTitreAcces)
     {
@@ -226,5 +260,53 @@ class TitreAcces implements HistoriqueAwareInterface
         $this->these = $these;
 
         return $this;
+    }
+
+    /**
+     * Set etablissement.
+     *
+     * @param Etablissement|null $etablissement
+     *
+     * @return TitreAcces
+     */
+    public function setEtablissement(Etablissement $etablissement = null)
+    {
+        $this->etablissement = $etablissement;
+
+        return $this;
+    }
+
+    /**
+     * Get etablissement.
+     *
+     * @return Etablissement|null
+     */
+    public function getEtablissement()
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * Set pays.
+     *
+     * @param Pays|null $pays
+     *
+     * @return TitreAcces
+     */
+    public function setPays(Pays $pays = null)
+    {
+        $this->pays = $pays;
+
+        return $this;
+    }
+
+    /**
+     * Get pays.
+     *
+     * @return Pays|null
+     */
+    public function getPays()
+    {
+        return $this->pays;
     }
 }

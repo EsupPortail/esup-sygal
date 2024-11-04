@@ -125,9 +125,9 @@ $isAllOk = $hasDeclaration && $hasAttestation && $isDateOk && $isInformationsOk;
 
         <?php if ($canSursis) : ?>
                 <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
-                <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-danger action">
                     <?php if (!$proposition->hasSursis()) : ?>
-                        <span class="icon icon-plus-sign"></span>
+                        <span class="fa fa-clock"></span>
                         Accorder un sursis
                     <?php else : ?>
                         <span class="icon icon-minus"></span>

@@ -492,6 +492,13 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     });
 
     $(function() {
+        $("body").on("modification-association-jury", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function() {
         $("body").on("modification-adresse", function (event) {
             event.div.modal('hide');
             window.location.reload();

@@ -23,7 +23,7 @@ class NomFichierTheseFormatter extends AbstractNomFichierFormatter
 
         $parts = [];
 
-        $date = $fichierThese->getThese()->getDateSoutenance() ?: $fichierThese->getThese()->getDatePrevisionSoutenance();
+        $date = $fichierThese->getThese()->getDateSoutenance() ?: null;
         $parts['annee'] = $date ? $date->format('Y') : date('Y');
 
         $parts['nomDoctorant']    = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());

@@ -117,7 +117,7 @@ $these = $proposition->getThese();
             </div>
         </div>
 
-        <table class="table table-extra-condensed">
+        <table class="table table-extra-condensed table-composition-jury">
             <thead>
             <tr>
                 <th>Civilité</th>
@@ -144,7 +144,13 @@ $these = $proposition->getThese();
             ?>
             <?php foreach($membres as $membre): ?>
                 <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') echo " style='background:lightsalmon;' "; ?>>
-                    <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
+                    <td>
+                        <?php
+                            $civilite = "";
+                            $civilite = $membre->getCivilite();
+                            echo empty($civilite) ? "(Non renseigné)" : $civilite;
+                        ?>
+                    </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
                     <td> <?php echo ($membre->getEmail() !== null)?$membre->getEmail():"<strong><span class='text-danger'><span class='fas fa-exclamation-triangle'></span> AUCUN MAIL</span></strong>"; ?> </td>
@@ -226,5 +232,12 @@ $these = $proposition->getThese();
     }
     div.homme-bar {
         background-color: salmon;
+    }
+    .table-composition-jury{
+        margin-top: 30px;
+        margin-left:10px;
+    }
+    .card-body{
+        max-width:100%;
     }
 </style>
