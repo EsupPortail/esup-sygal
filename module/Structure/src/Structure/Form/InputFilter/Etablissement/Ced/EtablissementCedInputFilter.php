@@ -46,6 +46,10 @@ class EtablissementCedInputFilter extends EtablissementInputFilter implements Et
                 ],
             ],
         ]);
+        $this->add([
+            'name' => 'cheminLogo',
+            'required' => true,
+        ]);
     }
 
     public function prepareForm(EtablissementForm $etablissementForm): void

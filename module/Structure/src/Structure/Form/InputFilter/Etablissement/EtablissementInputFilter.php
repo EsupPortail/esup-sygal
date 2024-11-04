@@ -3,31 +3,28 @@
 namespace Structure\Form\InputFilter\Etablissement;
 
 use Doctrine\ORM\EntityManager;
-use DoctrineModule\Validator\NoObjectExists;
 use DoctrineModule\Validator\UniqueObject;
 use Laminas\Filter\StringToLower;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\ToNull;
+use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\EmailAddress;
+use Laminas\Validator\File\Extension;
+use Laminas\Validator\File\UploadFile;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\Uri;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Structure;
 use Structure\Form\EtablissementForm;
+use Structure\Form\InputFilter\StructureInputFilter;
 
-class EtablissementInputFilter extends InputFilter implements EtablissementInputFilterInterface
+class EtablissementInputFilter extends StructureInputFilter implements EtablissementInputFilterInterface
 {
-    private EntityManager $entityManager;
-
     public function __construct(EntityManager $entityManager)
     {
-        $this->entityManager = $entityManager;
+        parent::__construct($entityManager);
 
-        $this->add([
-            'name' => 'libelle',
-            'required' => true,
-        ]);
         $this->add([
             'name' => 'code',
             'required' => true,
@@ -56,14 +53,10 @@ class EtablissementInputFilter extends InputFilter implements EtablissementInput
         $this->add([
             'name' => 'sourceCode',
             'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
             'validators' => [
                 [
                     'name' => UniqueObject::class,
-                    'priority' => -98, // pour passer en dernier
+                    'priority' => -97, // pour passer juste avant celui déclaré dans la classe mère
                     'options' => [
                         'object_manager' => $this->entityManager,
                         'object_repository' => $this->entityManager->getRepository(Etablissement::class),
@@ -71,19 +64,6 @@ class EtablissementInputFilter extends InputFilter implements EtablissementInput
                         'use_context' => true,
                         'messages' => [
                             UniqueObject::ERROR_OBJECT_NOT_UNIQUE => "Un établissement existant possède déjà ce 'source code'",
-                        ],
-                    ],
-                ],
-                [
-                    'name' => UniqueObject::class,
-                    'priority' => -99, // pour passer en dernier
-                    'options' => [
-                        'object_manager' => $this->entityManager,
-                        'object_repository' => $this->entityManager->getRepository(Structure::class),
-                        'fields' => ['sourceCode'],
-                        'use_context' => true,
-                        'messages' => [
-                            UniqueObject::ERROR_OBJECT_NOT_UNIQUE => "Une structure existante possède déjà ce 'source code'",
                         ],
                     ],
                 ],
@@ -111,41 +91,6 @@ class EtablissementInputFilter extends InputFilter implements EtablissementInput
                         ],
                     ],
                 ],
-            ],
-        ]);
-        $this->add([
-            'name' => 'adresse',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-        ]);
-        $this->add([
-            'name' => 'telephone',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-        ]);
-        $this->add([
-            'name' => 'fax',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-        ]);
-        $this->add([
-            'name' => 'email',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-            'validators' => [
-                ['name' => EmailAddress::class],
             ],
         ]);
         $this->add([
@@ -182,33 +127,6 @@ class EtablissementInputFilter extends InputFilter implements EtablissementInput
             ],
         ]);
         $this->add([
-            'name' => 'siteWeb',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-            'validators' => [
-                ['name' => Uri::class, 'options' => ['allowRelative' => false]],
-            ],
-        ]);
-        $this->add([
-            'name' => 'id_ref',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-        ]);
-        $this->add([
-            'name' => 'id_hal',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-        ]);
-        $this->add([
             'name' => 'estInscription',
             'required' => false,
         ]);
@@ -224,44 +142,17 @@ class EtablissementInputFilter extends InputFilter implements EtablissementInput
             'name' => 'estCed',
             'required' => false,
         ]);
-        $this->add([
-            'name' => 'estFerme',
-            'required' => false,
-        ]);
-        $this->add([
-            'name' => 'cheminLogo',
-            'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-                ['name' => ToNull::class],
-            ],
-//                'validators' => [
-//                    [
-//                        'name' => Extension::class,
-//                        'options' => [
-//                            'extension' => ['bmp', 'png', 'jpg', 'jpeg'],
-//                            'case' => false,
-//                            'break_chain_on_failure' => true,
-//                        ],
-//                    ],
-//                ],
-        ]);
     }
 
-    public function prepareForm(EtablissementForm $etablissementForm): void
+    public function prepareForm(Form $structureConcreteForm): void
     {
-        $etablissementForm->remove('domaine');
-        $etablissementForm->remove('emailAssistance');
-        $etablissementForm->remove('emailBibliotheque');
-        $etablissementForm->remove('emailDoctorat');
-        $etablissementForm->remove('estInscription');
-        $etablissementForm->remove('estCed');
-        if (!$etablissementForm->getObject()->getId()) {
-            $etablissementForm->remove('estFerme');
-        }
+        parent::prepareForm($structureConcreteForm);
 
-        if ($etablissementForm->getObject()->getId()) {
-            $etablissementForm->get('sourceCode')->setAttribute('disabled', 'disabled');
-        }
+        $structureConcreteForm->remove('domaine');
+        $structureConcreteForm->remove('emailAssistance');
+        $structureConcreteForm->remove('emailBibliotheque');
+        $structureConcreteForm->remove('emailDoctorat');
+        $structureConcreteForm->remove('estInscription');
+        $structureConcreteForm->remove('estCed');
     }
 }

@@ -184,6 +184,10 @@ class EtablissementInscriptionInputFilter extends EtablissementInputFilter imple
                 ],
             ],
         ]);
+        $this->add([
+            'name' => 'cheminLogo',
+            'required' => true,
+        ]);
     }
 
     public function prepareForm(EtablissementForm $etablissementForm): void
