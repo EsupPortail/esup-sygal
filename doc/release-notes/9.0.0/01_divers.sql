@@ -2,6 +2,17 @@
 -- 9.0.0
 --
 
+--
+-- Suppression vue abandonnée.
+--
+
+drop view if exists v_these;
+
+
+--
+-- Amélioration de la procédure unicaen_indicateur_recreate_matviews() : voir quelle MV échoue, le cas échéant.
+--
+
 create or replace procedure unicaen_indicateur_recreate_matviews()
     language plpgsql
 as $$declare
