@@ -3,6 +3,7 @@
 namespace Individu\Form;
 
 use Application\Form\Validator\NewEmailValidator;
+use Application\Utils\FormUtils;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
@@ -10,7 +11,6 @@ use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -117,10 +117,7 @@ class IndividuForm extends Form implements InputFilterProviderInterface
             ->setLabel("IdRef :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 
     public function prepare(): self

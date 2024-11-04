@@ -3,10 +3,10 @@
 namespace Application\Form\Rapport;
 
 use Application\Entity\Db\RapportAvis;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -79,13 +79,7 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
 
         $this->add(new Csrf('security'));
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->bind(new RapportAvis());
     }

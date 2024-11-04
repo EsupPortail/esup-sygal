@@ -2,8 +2,8 @@
 
 namespace Depot\Form;
 
+use Application\Utils\FormUtils;
 use Depot\Entity\Db\RdvBu;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
@@ -25,10 +25,7 @@ class RdvBuTheseDoctorantForm extends Form
             ->setLabel("Disponibilités :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'coordDoctorant' => [

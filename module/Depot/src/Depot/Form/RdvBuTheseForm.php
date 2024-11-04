@@ -2,10 +2,10 @@
 
 namespace Depot\Form;
 
+use Application\Utils\FormUtils;
 use Depot\Entity\Db\RdvBu;
 use Depot\Filter\MotsClesFilter;
 use Laminas\Form\Element\Checkbox;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
@@ -135,10 +135,7 @@ class RdvBuTheseForm extends Form
             ],
         ]);
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'coordDoctorant' => [

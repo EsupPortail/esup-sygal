@@ -2,11 +2,11 @@
 
 namespace RapportActivite\Form;
 
+use Application\Utils\FormUtils;
 use Laminas\Filter\StringTrim;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -243,13 +243,7 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
 
         $this->add(new Csrf('security'), ['csrf_options' => ['timeout' => 600]]);
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->bind(new RapportActivite());
     }

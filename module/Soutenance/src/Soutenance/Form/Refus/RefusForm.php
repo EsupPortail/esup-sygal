@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Refus;
 
-use Laminas\Form\Element\Submit;
+use Application\Utils\FormUtils;
 use Laminas\Form\Form;
 
 class RefusForm extends Form {
@@ -23,9 +23,6 @@ class RefusForm extends Form {
             ]
         ]);
 
-        $this->add((new Submit('submit'))
-            ->setValue("Refuser la proposition")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this, "Refuser la proposition");
     }
 }

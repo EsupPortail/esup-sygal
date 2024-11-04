@@ -2,6 +2,7 @@
 
 namespace Depot\Form\Metadonnees;
 
+use Application\Utils\FormUtils;
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Filter\MotsClesFilter;
 use Laminas\Form\Fieldset;
@@ -146,14 +147,7 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type' => 'Hidden',
         ]);
 
-        $this->add([
-            'name'       => 'submit',
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
 

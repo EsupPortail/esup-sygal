@@ -2,12 +2,12 @@
 
 namespace Application\Form;
 
-use Structure\Entity\Db\TypeStructure;
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
+use Structure\Entity\Db\TypeStructure;
 
 class ProfilForm extends Form {
 
@@ -70,21 +70,8 @@ class ProfilForm extends Form {
                 'class' => 'form-control',
             ]
         ]);
-        //button
-        $this->add([
-            'type' => Button::class,
-            'name' => 'creer',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle' => [

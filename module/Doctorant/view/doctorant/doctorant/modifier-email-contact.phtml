@@ -59,6 +59,6 @@ echo $this->form()->openTag($form->prepare()->setAttribute('class', 'mail-confir
     </div>
 </div>
 <?php
-echo $this->formSubmit()->render($form->get('enregistrer'));
+echo $this->formControlGroup()->render($form->get('submit'));
 echo $this->form()->closeTag();
 ?>

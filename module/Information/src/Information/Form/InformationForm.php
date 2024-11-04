@@ -2,8 +2,8 @@
 
 namespace Information\Form;
 
+use Application\Utils\FormUtils;
 use Laminas\Filter\StripTags;
-use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
@@ -77,21 +77,7 @@ class InformationForm extends Form implements InputFilterProviderInterface {
             ]
         ]);
 
-        // button
-        $this->add([
-            'type' => Button::class,
-            'name' => 'creer',
-            'options' => [
-                'label' => 'Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     /**

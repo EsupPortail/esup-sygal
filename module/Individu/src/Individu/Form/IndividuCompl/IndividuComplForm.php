@@ -2,6 +2,7 @@
 
 namespace Individu\Form\IndividuCompl;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Text;
@@ -55,21 +56,8 @@ class IndividuComplForm extends Form implements InputFilterProviderInterface
                 ->setValidator($mailValidator)
         );
 
-        $this->add([
-            'type' => Button::class,
-            'name' => 'enregistrer',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'value' => 'enregistrer',
-                'type' => 'submit',
-                'class' => 'btn btn-success',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
+
         $this->add([
             'type' => Button::class,
             'name' => 'detruire',

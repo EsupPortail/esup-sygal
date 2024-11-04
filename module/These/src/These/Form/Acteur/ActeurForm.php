@@ -2,7 +2,7 @@
 
 namespace These\Form\Acteur;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Form;
 use These\Fieldset\Acteur\ActeurFieldset;
@@ -16,20 +16,7 @@ class ActeurForm extends Form
         $acteurFieldset->setUseAsBaseFieldset(true);
         $this->add($acteurFieldset);
 
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->add(new Csrf('csrf'));
     }

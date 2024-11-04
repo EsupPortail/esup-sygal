@@ -129,8 +129,8 @@ if (!$isTeleversementPossible) {
                         echo $this->formControlGroup($form->get('security'));
                         ?>
                     </div>
-                    <div class="col-mb-2">
-                        <?php echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary'])); ?>
+                    <div class="col-mb-2" style="display: ruby;">
+                        <?php echo $this->formControlGroup($form->get('submit')->setAttributes(['class' => 'btn btn-primary'])); ?>
                         <a href="#" id="annulerBtn" class="btn btn-danger me-2" style="margin-top: 16px;">Annuler</a>
                     </div>
                 </div>

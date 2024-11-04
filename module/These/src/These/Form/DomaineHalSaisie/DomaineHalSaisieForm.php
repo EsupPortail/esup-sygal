@@ -2,7 +2,7 @@
 
 namespace These\Form\DomaineHalSaisie;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Form;
 use These\Form\DomaineHalSaisie\Fieldset\DomaineHalFieldset;
 
@@ -15,19 +15,6 @@ class DomaineHalSaisieForm extends Form
         $domaineHalFieldset->setUseAsBaseFieldset(true);
         $this->add($domaineHalFieldset, ['name' => 'domaineHalFieldset']);
 
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<span class="fas fa-save"></span> Enregistrer / Save',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 }

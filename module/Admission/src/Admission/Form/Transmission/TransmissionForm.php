@@ -2,9 +2,9 @@
 
 namespace Admission\Form\Transmission;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -38,13 +38,7 @@ class TransmissionForm extends Form implements InputFilterProviderInterface
 
         $this->add(new Csrf('security'), ['csrf_options' => ['timeout' => 60]]);
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     /**

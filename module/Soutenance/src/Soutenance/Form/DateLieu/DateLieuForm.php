@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\DateLieu;
 
+use Application\Utils\FormUtils;
 use DateTime as DDateTime;
-use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Text;
@@ -64,21 +64,8 @@ class DateLieuForm extends Form implements InputFilterProviderInterface
                 ],
             ],
         ]);
-        // button
-        $this->add([
-            'type' => Button::class,
-            'name' => 'submit',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+
+        FormUtils::addSaveButton($this);
     }
 
     public function getInputFilterSpecification(): array

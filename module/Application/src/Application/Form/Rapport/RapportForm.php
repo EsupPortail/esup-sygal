@@ -4,12 +4,11 @@ namespace Application\Form\Rapport;
 
 use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Rapport;
-use These\Entity\Db\TheseAnneeUniv;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\InputFilter\FileInput;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -19,6 +18,7 @@ use Laminas\Validator\File\Size;
 use Laminas\Validator\File\UploadFile;
 use Laminas\Validator\InArray;
 use Laminas\Validator\NotEmpty;
+use These\Entity\Db\TheseAnneeUniv;
 
 abstract class RapportForm extends Form implements InputFilterProviderInterface
 {
@@ -96,13 +96,7 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
 
         $this->add(new Csrf('security'));
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Téléverser',
-            ],
-        ]);
+        FormUtils::addUploadButton($this);
 
         $this->bind(new Rapport());
     }

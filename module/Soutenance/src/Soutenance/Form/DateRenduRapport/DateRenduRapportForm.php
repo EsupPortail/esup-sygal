@@ -2,9 +2,9 @@
 
 namespace Soutenance\Form\DateRenduRapport;
 
-use UnicaenApp\Form\Element\Date;
-use Laminas\Form\Element\Submit;
+use Application\Utils\FormUtils;
 use Laminas\Form\Form;
+use UnicaenApp\Form\Element\Date;
 
 class DateRenduRapportForm extends Form {
 
@@ -15,10 +15,7 @@ class DateRenduRapportForm extends Form {
                 ->setLabel("Date de rendu des rapports :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 
 }

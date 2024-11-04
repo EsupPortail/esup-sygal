@@ -2,8 +2,8 @@
 
 namespace StepStar\Form\Envoi;
 
+use Application\Utils\FormUtils;
 use Laminas\Filter\StringTrim;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Validator\Callback;
 
@@ -17,10 +17,7 @@ class EnvoiFichiersForm extends AbstractEnvoiForm
             ->setLabel("Chemin absolu du répertoire contenant les fichiers TEF :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Envoyer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this, "Envoyer");
     }
 
     public function getInputFilterSpecification(): array

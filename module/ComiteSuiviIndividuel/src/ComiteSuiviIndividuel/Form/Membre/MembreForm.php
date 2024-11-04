@@ -2,17 +2,17 @@
 
 namespace ComiteSuiviIndividuel\Form\Membre;
 
+use Application\Utils\FormUtils;
 use ComiteSuiviIndividuel\Entity\Db\Membre;
-use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use Laminas\Validator\EmailAddress;
+use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class MembreForm extends Form {
     use EntityManagerAwareTrait;
@@ -90,10 +90,7 @@ class MembreForm extends Form {
                 ])
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'sexe' => [

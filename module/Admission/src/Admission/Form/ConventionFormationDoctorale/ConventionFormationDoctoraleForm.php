@@ -2,9 +2,9 @@
 
 namespace Admission\Form\ConventionFormationDoctorale;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -75,13 +75,7 @@ class ConventionFormationDoctoraleForm extends Form implements InputFilterProvid
 
         $this->add(new Csrf('security'), ['csrf_options' => ['timeout' => 600]]);
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     /**

@@ -225,8 +225,8 @@ $canModifier = ($privilege_TELEVERSER_SIEN OR $privilege_TELEVERSER_TOUT);
                         echo $this->formControlGroup($form->get('files'));
                         echo $this->formControlGroup($form->get('security'));
                         ?>
-                        <div class="col-mb-2">
-                            <?php echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary'])); ?>
+                        <div class="col-mb-2" style="display: ruby;">
+                            <?php echo $this->formControlGroup($form->get('submit')); ?>
                             <a href="#" id="annulerBtn" class="btn btn-danger me-2" style="margin-top: 16px;">Annuler</a>
                         </div>
                     </div>

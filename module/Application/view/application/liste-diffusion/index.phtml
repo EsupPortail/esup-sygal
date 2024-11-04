@@ -143,8 +143,11 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
                 </ul>
             <?php endforeach; ?>
 
-            <input type="hidden" name="etablissement" value="<?php echo $etablissement->getSourceCode() ?>">
-            <input type="submit" value="Enregistrer" class="btn btn-primary">
+                <input type="hidden" name="etablissement" value="<?php echo $etablissement->getSourceCode() ?>">
+                <button type="submit" name="submit" class="btn btn-primary" value="">
+                    <span class="icon icon-save"></span>
+                    Enregistrer
+                </button>
 
             </form>
         </div>

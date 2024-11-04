@@ -2,6 +2,7 @@
 
 namespace Soutenance\Form\Justificatif;
 
+use Application\Utils\FormUtils;
 use Fichier\Entity\Db\NatureFichier;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\File;
@@ -70,21 +71,8 @@ class JustificatifForm extends Form
                 'label_options' => [ 'disable_html_escape' => true, ],
             ],
         ]);
-        //SUBMIT
-        $this->add([
-            'type' => Button::class,
-            'name' => 'enregistrer',
-            'options' => [
-                'label' => 'Téléverser votre fichier',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-success',
-            ],
-        ]);
+
+        FormUtils::addUploadButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'nature'    => [

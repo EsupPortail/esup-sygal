@@ -2,7 +2,7 @@
 
 namespace These\Form\CoEncadrant;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -53,20 +53,7 @@ class RechercherCoEncadrantForm extends Form
             ]);
         $this->add($coEncadrant);
 
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer / Save',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'co-encadrant' => ['required' => true],

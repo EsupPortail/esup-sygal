@@ -2,7 +2,7 @@
 
 namespace Depot\Form;
 
-use Laminas\Form\Element\Submit;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
@@ -19,10 +19,7 @@ class PointsDeVigilanceForm extends Form
             ->setLabel("Points de vigilance :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'vigilance' => [

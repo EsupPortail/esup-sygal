@@ -2,9 +2,8 @@
 
 namespace These\Form\Direction;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -26,20 +25,8 @@ class DirectionForm extends Form
 
         $this
             ->add($fieldset)
-            ->add(new Csrf('security'))
-            ->add([
-                'type' => Button::class,
-                'name' => 'submit',
-                'options' => [
-                    'label' => '<span class="icon icon-save"></span> Enregistrer',
-                    'label_options' => [
-                        'disable_html_escape' => true,
-                    ],
-                ],
-                'attributes' => [
-                    'type' => 'submit',
-                    'class' => 'btn btn-primary',
-                ],
-            ]);
+            ->add(new Csrf('security'));
+
+        FormUtils::addSaveButton($this);
     }
 }

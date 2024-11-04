@@ -2,12 +2,12 @@
 
 namespace Application\Form;
 
-use Individu\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
+use Application\Utils\FormUtils;
+use Individu\Entity\Db\Individu;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Password;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -45,10 +45,7 @@ class CreationUtilisateurFromIndividuForm extends Form implements InputFilterPro
                 ->setLabel("Confirmation du mot de passe :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 
     /**

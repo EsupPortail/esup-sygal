@@ -2,9 +2,9 @@
 
 namespace Application\Form;
 
+use Application\Utils\FormUtils;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
-use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Text;
@@ -73,21 +73,8 @@ class InitCompteForm extends Form
                 'id' => 'password2',
             ],
         ]);
-        //submit
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer / Save',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+
+        FormUtils::addSaveButton($this);
 
         $this->add(new Csrf('csrf'));
 

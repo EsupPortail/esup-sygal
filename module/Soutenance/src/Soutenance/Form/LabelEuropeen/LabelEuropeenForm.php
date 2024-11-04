@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\LabelEuropeen;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Checkbox;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 
 class LabelEuropeenForm extends Form {
@@ -22,9 +22,6 @@ class LabelEuropeenForm extends Form {
                 ],
             ]
         );
-        $this->add((new Submit('submit'))
-            ->setValue("Enregister")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 }

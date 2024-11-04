@@ -2,15 +2,12 @@
 
 namespace Structure\Form;
 
-use DoctrineModule\Form\Element\ObjectSelect;
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Date;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
-use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 
 class VariableForm extends Form {
@@ -76,9 +73,9 @@ class VariableForm extends Form {
             ]
         ]);
 
-        $this
-            ->add(new Csrf('security'))
-            ->add((new Submit('submit'))->setValue('Enregistrer'));
+        $this->add(new Csrf('security'));
+
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'code' => [

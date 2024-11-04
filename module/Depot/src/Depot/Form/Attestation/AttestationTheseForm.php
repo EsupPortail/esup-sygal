@@ -2,6 +2,7 @@
 
 namespace Depot\Form\Attestation;
 
+use Application\Utils\FormUtils;
 use Depot\Entity\Db\Attestation;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -99,14 +100,7 @@ class AttestationTheseForm extends Form implements InputFilterProviderInterface
             'type' => 'Hidden',
         ]);
 
-        $this->add([
-            'name'       => 'submit',
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     /**

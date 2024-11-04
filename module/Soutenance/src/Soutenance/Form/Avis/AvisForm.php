@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Avis;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Textarea;
@@ -47,21 +47,9 @@ class AvisForm extends Form {
                 'label' => 'Déposez le rapport de soutenance / Upload the PhD report',
             ],
         ]);
-        //SUBMIT
-        $this->add([
-            'type' => Button::class,
-            'name' => 'enregistrer',
-            'options' => [
-                'label' => 'Validation',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-success',
-            ],
-        ]);
+
+        FormUtils::addSaveButton($this);
+
         $this->setInputFilter((new Factory())->createInputFilter([
             'avis' => [
                 'required' => true,
