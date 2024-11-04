@@ -7,8 +7,8 @@
 -- Suppression préalable des vues matérialisées d'indicateurs.
 --
 -- Indicateur devenu inutile
-DELETE FROM INDICATEUR where id = 1;
 call unicaen_indicateur_delete_matviews();
+DELETE FROM INDICATEUR where id = 1;
 
 --
 -- Table ACTEUR

@@ -1,8 +1,10 @@
 Journal des modifications
 =========================
 
-8.6.1
+9.0.0
 -----
+- Nouveau module Saisie de thèse : 
+  - Module permettant de saisir toutes les informations nécessaires (structures, acteurs, financements...) à la création d'une thèse dans SyGAL.
 - Module Admission : Possibilité également pour un gestionnaire de déposer la charte doctorale signée par les parties prenantes
 - Module Formation : Affichage pour le doctorant de l'objectif et du programme d'une formation (sur la fiche d'une session de formation) 
 - Module Formation : Affichage des sessions (sur l'index des gestionnaires et doctorant) en fonction des séances les plus proches
