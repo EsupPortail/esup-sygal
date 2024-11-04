@@ -21,7 +21,6 @@ use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
-use Application\View\Helper\RoleHelper;
 use Individu\View\Helper\IndividuUsurpationHelperFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -325,9 +324,6 @@ return [
         ],
     ],
     'view_helpers'  => [
-        'invokables' => [
-            'role' => RoleHelper::class,
-        ],
         'factories'  => [
             'individuUsurpation' => IndividuUsurpationHelperFactory::class,
         ],

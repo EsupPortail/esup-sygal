@@ -2,13 +2,11 @@
 
 namespace Application;
 
-use Application\View\Renderer\PhpRenderer;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Application\View\Helper\RoleHelper;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -144,7 +142,6 @@ function generateSelect($structures, $id, $roles = null)
 function generateRolesAffectes(\Laminas\View\Renderer\PhpRenderer $renderer, Individu $individu, array $roles, array $individusRoles, bool $canModifier = false): string
 {
     $texte = "";
-    $VH = new RoleHelper();
     foreach ($roles as $role) {
         $individusRolesForRole = array_filter($individusRoles, fn(IndividuRole $ir) => $ir->getRole() === $role);
         $individuRole = reset($individusRolesForRole) ?: null;
@@ -153,7 +150,7 @@ function generateRolesAffectes(\Laminas\View\Renderer\PhpRenderer $renderer, Ind
             $texte .= ' style="display:none;" ';
         }
         $texte .= '>';
-        $texte .= $VH->render($role);
+        $texte .= $role;
         if ($canModifier) {
             $urlPerimetre = $renderer->url('individu-role/modifier', ['individu' => $individu->getId(), 'role' => $role->getId()]);
             $texte .= sprintf('<a href="%s" class="edit-perimetre fas fa-vector-square ajax-modal" data-event-modal-loading="modal-loading" data-event-modal-opened="modal-opened" data-event="modification" title="Modifier le périmètre d\'attribution de ce rôle"></a>', $urlPerimetre);

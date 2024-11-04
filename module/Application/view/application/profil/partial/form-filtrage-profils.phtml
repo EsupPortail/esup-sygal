@@ -1,0 +1,59 @@
+<?php
+
+use Application\Controller\ProfilController;
+use Application\Entity\Db\Profil;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Profil[] $profilsForFilter
+ */
+
+/**
+ * @param string $paramName
+ * @param string $paramValue
+ * @param array  $queryParams
+ * @return string
+ */
+$urlFiltrer = function ($paramName, $paramValue, $queryParams) {
+    $queryParams[$paramName] = $paramValue;
+
+    return $this->url('profil', [], ['query' => $queryParams], true);
+};
+
+echo $this->filterPanel([
+    $this->translate("Périmètre") => [
+        'paramName'   => 'depend',
+        'paramConfig' => [
+            ['value' => '', 'label' => $this->translate("(Peu importe)")],
+            ['value' => $v = ProfilController::PERIMETRE_Aucun, 'label' => $this->translate("Sans périmètre")],
+            ['value' => $v = ProfilController::PERIMETRE_ED, 'label' => $this->translate("École doctorale")],
+            ['value' => $v = ProfilController::PERIMETRE_UR, 'label' => $this->translate("Unité de recherche")],
+            ['value' => $v = ProfilController::PERIMETRE_Etab, 'label' => $this->translate("Établissement")],
+
+        ],
+        'filterUrl'   => $urlFiltrer,
+        'titre'       => "Filtrage par périmètre du profil",
+    ],
+]);
+
+$values = [
+    ['value' => '', 'label' => $this->translate("(Tous)")],
+];
+foreach ($profilsForFilter as $profil) {
+    $values[$profil->getLibelle()] = [
+        'value' => $profil->getLibelle(),
+        'label' => $this->translate($profil->getLibelle()),
+    ];
+}
+
+echo $this->filterPanel([
+    $this->translate("Profil") => [
+        'paramName'   => 'profil',
+        'paramConfig' => $values,
+        'filterUrl'   => $urlFiltrer,
+        'titre'       => "Filtrage par profil",
+    ],
+]);
+
+

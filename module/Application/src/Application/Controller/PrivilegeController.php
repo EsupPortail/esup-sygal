@@ -4,15 +4,16 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
-use Laminas\View\Model\ViewModel;
 
 class PrivilegeController extends AbstractController
 {
@@ -21,6 +22,12 @@ class PrivilegeController extends AbstractController
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use PrivilegeServiceAwareTrait;
+
+    const PERIMETRE_ED = 'ED';
+    const PERIMETRE_UR = 'UR';
+    const PERIMETRE_Etab = 'Etab';
+    const PERIMETRE_These = 'These';
+    const PERIMETRE_Aucun = 'Aucun';
 
     public function indexAction()
     {
@@ -88,14 +95,13 @@ class PrivilegeController extends AbstractController
         $value = null;
 
         // /!\ si le role à un privilège desactivé la modification
-        if (!$role->getProfils()->isEmpty()) {
+        if ($role->getProfil()) {
             if (array_search($role, $privilege->getRole()->toArray()) !== false) {
                 $value = 1;
             } else {
                 $value = 0;
             }
         } else {
-
             if (array_search($role, $privilege->getRole()->toArray()) !== false) {
                 $privilege->removeRole($role);
                 try {
@@ -113,36 +119,35 @@ class PrivilegeController extends AbstractController
                 }
                 $value = 1;
             }
-            // retrait des profils associés à un role
-            $this->getRoleService()->removeProfils($role);
+            // retrait du profil affecté à un role
+            $this->getRoleService()->removeProfil($role);
         }
 
-        return new ViewModel([
+        return new JsonModel([
             'value' => $value,
         ]);
-        //$this->redirect()->toRoute("roles", [], ["query" => $queryParams], true);
     }
 
-    private function applyFilterDependance(QueryBuilder $qb, $depend)
+    private function applyFilterDependance(QueryBuilder $qb, $depend): QueryBuilder
     {
         switch ($depend) {
-            case "ED" :
+            case self::PERIMETRE_ED:
                 $qb->andWhere("r.typeStructureDependant = :type")
                     ->setParameter("type", "2");
                 break;
-            case "UR" :
+            case self::PERIMETRE_UR:
                 $qb->andWhere("r.typeStructureDependant = :type")
                     ->setParameter("type", "3");
                 break;
-            case "Etab" :
+            case self::PERIMETRE_Etab:
                 $qb->andWhere("r.typeStructureDependant = :type")
                     ->setParameter("type", "1");
                 break;
-            case "These" :
+            case self::PERIMETRE_These:
                 $qb->andWhere("r.theseDependant = :value")
                     ->setParameter("value", true);
                 break;
-            case "Aucune" :
+            case self::PERIMETRE_Aucun:
                 $qb->andWhere("r.theseDependant = :value")
                     ->andWhere("r.typeStructureDependant IS NULL")
                     ->setParameter("value", false);
@@ -154,7 +159,7 @@ class PrivilegeController extends AbstractController
         return $qb;
     }
 
-    private function applyFilterCategorie(QueryBuilder $qb, $categorie)
+    private function applyFilterCategorie(QueryBuilder $qb, $categorie): QueryBuilder
     {
         $qb->leftJoin('p.categorie', "cp");
         if ($categorie !== null && $categorie !== "") {
@@ -166,7 +171,7 @@ class PrivilegeController extends AbstractController
         return $qb;
     }
 
-    private function applyFilterRole(QueryBuilder $qb, $role)
+    private function applyFilterRole(QueryBuilder $qb, $role): QueryBuilder
     {
         if ($role !== null && $role !== "") {
             $qb

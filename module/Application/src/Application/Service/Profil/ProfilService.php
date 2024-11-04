@@ -4,16 +4,24 @@ namespace Application\Service\Profil;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
+use Application\Entity\Db\Repository\ProfilRepository;
 use Application\Entity\Db\Role;
+use Application\Service\BaseService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
 
-class ProfilService {
+class ProfilService extends BaseService
+{
     use EntityManagerAwareTrait;
     use PrivilegeServiceAwareTrait;
+
+    public function getRepository(): ProfilRepository
+    {
+        return $this->entityManager->getRepository(Profil::class);
+    }
 
     /**
      * @return Profil[]
@@ -21,7 +29,7 @@ class ProfilService {
     public function getProfils()
     {
         $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
-            ->orderBy('profil.ordre, profil.structureType, profil.libelle')
+            ->orderBy('profil.structureType, profil.libelle')
         ;
         $result = $qb->getQuery()->getResult();
         return $result;

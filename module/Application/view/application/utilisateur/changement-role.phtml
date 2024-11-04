@@ -2,7 +2,6 @@
 
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\View\Helper\RoleHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -13,7 +12,6 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 $appName = $this->appInfos()->nom;
-$vh = new RoleHelper();
 ?>
 
 <p>
@@ -25,12 +23,12 @@ $vh = new RoleHelper();
 
 <?php if ($type === "ajout"): ?>
     <p>
-        Vous venez de recevoir le rôle <?php echo $vh->render($role); ?> dans l'application <?php echo $appName ?>.
+        Vous venez de recevoir le rôle <?php echo $role ?> dans l'application <?php echo $appName ?>.
     </p>
 <?php endif; ?>
 
 <?php if ($type === "retrait"): ?>
     <p>
-        Vous venez de perdre le rôle <?php echo $vh->render($role); ?> dans l'application <?php echo $appName ?>.
+        Vous venez de perdre le rôle <?php echo $role ?> dans l'application <?php echo $appName ?>.
     </p>
 <?php endif; ?>

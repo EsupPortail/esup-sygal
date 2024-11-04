@@ -9,17 +9,25 @@ use Application\Form\ProfilForm;
 use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
+use Doctrine\ORM\QueryBuilder;
 use Laminas\Http\Request;
+use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
 
-class ProfilController extends AbstractActionController {
+class ProfilController extends AbstractActionController
+{
     use PrivilegeServiceAwareTrait;
     use ProfilServiceAwareTrait;
     use RoleServiceAwareTrait;
+
+    const PERIMETRE_ED = "ED";
+    const PERIMETRE_UR = "UR";
+    const PERIMETRE_Etab = "Etab";
+    const PERIMETRE_Aucun = "Aucun";
 
     /**
      * @var ProfilForm
@@ -34,15 +42,95 @@ class ProfilController extends AbstractActionController {
         $this->profilForm = $profilForm;
     }
 
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
-        $profils = $this->getProfilService()->getProfils();
-        $privileges = $this->getServicePrivilege()->getRepo()->findBy([], ['categorie' => 'ASC', 'ordre' => 'ASC']);
+        $depend = $this->params()->fromQuery("depend");
+        $categorie = $this->params()->fromQuery("categorie");
+        $profil = $this->params()->fromQuery("profil");
+        
+        $qbProfils = $this->profilService->getRepository()->createQueryBuilder("profil");
+        $qbProfils
+            ->addSelect('ts')->leftJoin('profil.structureType', 'ts')
+            ->orderBy("profil.structureType, profil.libelle", 'asc');
+        $this->applyFilterDependance($qbProfils, $depend);
+        $this->applyFilterProfil($qbProfils, $profil);
+        /** @var Profil[] $profils */
+        $profils = $qbProfils->getQuery()->execute();
+
+        $qbPrivileges = $this->getServicePrivilege()->getRepo()->createQueryBuilder("p");
+        $qbPrivileges
+            ->addSelect('profil')->leftJoin('p.profils', 'profil')
+            ->orderBy("p.categorie, p.ordre", "ASC");
+        $this->applyFilterCategorie($qbPrivileges, $categorie);
+        /** @var Privilege[] $privileges */
+        $privileges = $qbPrivileges->getQuery()->execute();
 
         return new ViewModel([
             'profils' => $profils,
             'privileges' => $privileges,
+            'profilsForFilter' => $this->fetchProfilsForFilter($depend),
+            'params' => $this->params()->fromQuery(),
         ]);
+    }
+
+    private function applyFilterDependance(QueryBuilder $qb, $depend): QueryBuilder
+    {
+        switch ($depend) {
+            case self::PERIMETRE_ED:
+                $qb->andWhere("profil.structureType = :type")->setParameter("type", "2");
+                break;
+            case self::PERIMETRE_UR:
+                $qb->andWhere("profil.structureType = :type")->setParameter("type", "3");
+                break;
+            case self::PERIMETRE_Etab:
+                $qb->andWhere("profil.structureType = :type")->setParameter("type", "1");
+                break;
+            case self::PERIMETRE_Aucun:
+                $qb->andWhere("profil.structureType IS NULL");
+                break;
+            default:
+                break;
+        }
+
+        return $qb;
+    }
+
+    private function applyFilterCategorie(QueryBuilder $qb, $categorie): QueryBuilder
+    {
+        $qb->leftJoin('p.categorie', "cp");
+        if ($categorie !== null && $categorie !== "") {
+            $qb
+                ->andWhere("cp.code = :type")
+                ->setParameter("type", $categorie);
+        }
+
+        return $qb;
+    }
+
+    private function applyFilterProfil(QueryBuilder $qb, $profil): QueryBuilder
+    {
+        if ($profil !== null && $profil !== "") {
+            $qb
+                ->andWhere("profil.libelle = :profil")
+                ->setParameter("profil", $profil);
+        }
+
+        return $qb;
+    }
+
+    private function fetchProfilsForFilter($depend): array
+    {
+        // pour filtre par (libellé de) rôle
+        $qb = $this->profilService->getRepository()->createQueryBuilder("profil");
+        $qb
+            ->orderBy('profil.libelle');
+
+        $this->applyFilterDependance($qb, $depend);
+
+        /** @var Profil[] $profils */
+        $profils = $qb->getQuery()->getResult();
+
+        return $profils;
     }
 
     public function editerAction() {
@@ -120,7 +208,7 @@ class ProfilController extends AbstractActionController {
         ]);
     }
 
-    public function gererRolesAction()
+    public function gererRolesAction(): ViewModel
     {
         /** @var Profil $profil */
         $profilId   = $this->params()->fromRoute('profil');
@@ -134,7 +222,7 @@ class ProfilController extends AbstractActionController {
         ]);
     }
 
-    public function ajouterRoleAction()
+    public function ajouterRoleAction(): Response
     {
         /** @var Profil $profil */
         $profilId = $this->params()->fromRoute('profil');
@@ -145,17 +233,19 @@ class ProfilController extends AbstractActionController {
         if ($request->isPost()) {
             $data = $request->getPost();
             /** @var Role $role */
-            $roleId = $data['role'];
-            $role = $this->getRoleService()->getRepository()->find($roleId);
+            $roleId = $data['role'] ?? null;
+            if ($roleId) {
+                $role = $this->getRoleService()->getRepository()->find($roleId);
 
-            if (! $profil->hasRole($role)) {
-                $profil->addRole($role);
-                $this->getProfilService()->update($profil);
-                $this->getProfilService()->applyProfilToRole($profil, $role);
+                if (!$profil->hasRole($role)) {
+                    $profil->addRole($role);
+                    $this->getProfilService()->update($profil);
+                    $this->getProfilService()->applyProfilToRole($profil, $role);
+                }
             }
         }
 
-        $this->redirect()->toRoute('profil/gerer-roles', ['profil' => $profil->getId()], [], true);
+        return $this->redirect()->toRoute('profil/gerer-roles', ['profil' => $profil->getId()], [], true);
     }
 
     public function retirerRoleAction()

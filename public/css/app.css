@@ -360,10 +360,10 @@ input[type="checkbox"] {
 .text-structure.etablissement:before {
   content: "\f19c"; }
 
-.text-structure.ed:before {
+.text-structure.ed:before, .text-structure.ecole-doctorale:before {
   content: "\f549"; }
 
-.text-structure.ur:before {
+.text-structure.ur:before, .text-structure.unite-recherche:before {
   content: "\f0c3"; }
 
 .alert {
@@ -420,25 +420,32 @@ td.acteurs ul {
 div.filters {
   margin-top: 1em;
   margin-bottom: 1em; }
-  div.filters table td,
-  div.filters table th {
-    border-left: none !important;
-    border-right: none !important;
-    padding-top: 4px !important;
-    padding-bottom: 6px !important; }
+  div.filters table {
+    margin-bottom: 0; }
+    div.filters table td,
+    div.filters table th {
+      border-left: none !important;
+      border-right: none !important;
+      padding-top: 4px !important;
+      padding-bottom: 6px !important; }
   div.filters .card-header {
     padding: 5px 10px; }
   div.filters .card-body {
-    background-color: white; }
+    background-color: white;
+    line-height: 1.3; }
   div.filters span.filter {
     padding-right: 5px; }
     div.filters span.filter span,
     div.filters span.filter a {
       font-size: 90%; }
+    div.filters span.filter a:hover {
+      text-decoration: underline; }
+    div.filters span.filter .badge {
+      padding: .2em .5em; }
   div.filters .filter-option-inner-inner {
     padding-right: 3px; }
   div.filters form {
-    padding: 10px; }
+    padding: 5px; }
     div.filters form * {
       font-size: 11px;
       line-height: 1.15; }

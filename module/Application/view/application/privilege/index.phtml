@@ -10,122 +10,156 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
 
 
 /**
- * Provenant du controleur
  * @var Role[]          $roles
  * @var Privilege[]     $privileges
  * @var Etablissement[] $etablissements
- *
- * Utilisée couramment
- * @var Role            $role
- * @var Privilege       $privilege
  */
 ?>
 
 <?php $this->headTitle("Rôles/Privilèges") ?>
+
 <h1 class="page-header first">
-    <?php echo $this->translate("Rôles/Privilèges") ?>
+    <?php echo $this->translate("Rôles et privilèges") ?>
 </h1>
 
+<p class="lead">
+    Cette page est consacrée aux <em>rôles</em> et à leur attribution directe de privilèges. <br>
+    NB : si un rôle s'est vu affecter un profil, vous ne pourrez pas attribuer de privilèges sur ce rôle directement,
+    vous devrez le faire sur le profil en vous rendant sur
+    <a href="<?php echo $this->url('profil', [], [], true);?>">cette page</a>.
+</p>
+
+<p>
+    <?php echo count($roles); ?> rôle·s trouvé·s avec les filtres sélectionnés.
+</p>
+
 <div class="row">
-    <div class="float-start">
+    <div class="col-md-3">
         <?php echo $this->partial('partial/form-filtrage') ?>
+    </div>
+
+    <div class="col-md-9">
+        <table class="table table-condensed table-bordered table-hover">
+            <thead>
+            <tr>
+                <th></th>
+                <?php foreach ($roles as $role) : ?>
+                    <th class="role">
+                        <?php
+                        $depend = "";
+                        if ($role->isTheseDependant()) {
+                            $depend = "these";
+                        } elseif ($role->isStructureDependant()) {
+                            if ($role->getStructure() === null) {
+                                $sigleStructure = "structure manquante";
+                            } else {
+                                $depend = $role->getStructure()->getTypeStructure()->getCode();
+                            }
+                        }
+
+                        $sigleStructure = "";
+                        if ($role->isStructureDependant()) {
+                            if ($role->getStructure() === null) {
+                                $sigleStructure = "structure manquante";
+                            } elseif (!$role->getStructure()->getSigle()) {
+                                $sigleStructure = "sigle manquant";
+                            } else {
+                                $sigleStructure = $role->getStructure()->getSigle();
+                            }
+                        }
+                        ?>
+                        <div class="rotated">
+                            <?php echo $role->getLibelle(); ?>
+                            <span class="depend <?php echo $depend; ?> "> <?php echo $sigleStructure; ?> </span>
+                        </div>
+                        <div>
+                            <?php if ($profil = $role->getProfil()): ?>
+                                <span class="fas fa-exclamation-triangle text-warning"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-html="true"
+                                      title="Le profil <strong><?php echo $profil->getLibelle() ?></strong> a été affecté à ce rôle. <br>
+                                             Par conséquent, vous ne pouvez pas attribuer les privilèges sur ce rôle directement (sur cette page),
+                                             vous devez le faire <strong>sur le profil</strong> (sur la page dédiée aux profils)."></span>
+                            <?php else : ?>
+                                <span class="fas fa-info-circle text-info"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-html="true"
+                                      title="Aucun profil n'a été affecté à ce rôle. <br>
+                                             Par conséquent, vous pouvez attribuer les privilèges directement sur le rôle (sur cette page)."></span>
+                            <?php endif; ?>
+                        </div>
+                    </th>
+                <?php endforeach; ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php $previous_categorie = null; ?>
+            <?php foreach ($privileges as $privilege) : ?>
+                <?php
+                $privilegeRoles = $privilege->getRole()->toArray();
+                ?>
+                <?php if ($previous_categorie !== $privilege->getCategorie()) : ?>
+                    <tr>
+                        <td colspan="<?php echo count($roles) + 1; ?>" class="categorie">
+                            <h3><?php echo $privilege->getCategorie()->getLibelle(); ?></h3>
+                        </td>
+                    </tr>
+                    <?php $previous_categorie = $privilege->getCategorie(); ?>
+                <?php endif; ?>
+                <tr data-legend="<?php echo $privilege->getLibelle() ?>">
+                    <th class="privilege"> <?php echo $privilege->getLibelle(); ?> </th>
+                    <?php foreach ($roles as $role) : ?>
+                        <?php
+                        $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : '';
+                        $title = $role->getLibelle() . ' - ' . $code . " \n " . $privilege->getLibelle();
+                        $id = $privilege->getId() . '_' . $role->getId();
+                        ?>
+                        <td data-legend="<?php echo $role->getLibelle() ?>"
+                            class="droit <?php echo $role->getTypeStructureDependant()?->getCode() ?: "aucun" ?>" id="<?php echo $id; ?>" title="<?php echo $title; ?>">
+                            <?php if (in_array($role, $privilegeRoles)) : ?>
+                                <span class="fa fa-check faa-spin faa-fast text-success checkable" title="Cliquer pour retirer le privilège"></span>
+                            <?php else: ?>
+                                <span class="fa fa-ban faa-spin faa-fast text-danger checkable" title="Cliquer pour ajouter le privilège"></span>
+                            <?php endif; ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
 
-<table id='mytable' class='mytable table-bordered'>
-    <thead>
-    <tr>
-        <th></th>
-        <! -- //empty first cell -->
-        <?php foreach ($roles as $role) : ?>
-            <th class="role">
-                <?php
-                $depend = "";
-                if ($role->isTheseDependant()) {
-                    $depend = "these";
-                } elseif ($role->isStructureDependant()) {
-                    if ($role->getStructure() === null) {
-                        $sigleStructure = "structure manquante";
-                    } else {
-                        $depend = $role->getStructure()->getTypeStructure()->getCode();
-                    }
-                }
-
-                $sigleStructure = "";
-                if ($role->isStructureDependant()) {
-                    if ($role->getStructure() === null) {
-                        $sigleStructure = "structure manquante";
-                    } elseif (!$role->getStructure()->getSigle()) {
-                        $sigleStructure = "sigle manquant";
-                    } else {
-                        $sigleStructure = $role->getStructure()->getSigle();
-                    }
-                }
-                ?>
-                <?php echo $role->getLibelle(); ?>
-                <?php if (!$role->getProfils()->isEmpty()): ?>
-                    <span class="fas fa-info-circle text-info"
-                          title="<?php foreach ($role->getProfils() as $profil) {
-                              echo "[" . $profil->getLibelle() . "] ";
-                          } ?>"></span>
-                <?php else : ?>
-                    <span class="fas fa-exclamation-triangle text-warning"
-                          title="Aucun profil assigné à ce rôle"></span>
-                <?php endif; ?>
-
-                <br/>
-                <span class="depend <?php echo $depend; ?> "> <?php echo $sigleStructure; ?> </span>
-            </th>
-        <?php endforeach; ?>
-    </tr>
-    </thead>
-    <tbody>
-    <?php $previous_categorie = null; ?>
-    <?php foreach ($privileges as $privilege) : ?>
-        <?php
-        $privilegeRoles = $privilege->getRole()->toArray();
-        ?>
-        <?php if ($previous_categorie !== $privilege->getCategorie()) : ?>
-            <tr>
-                <th colspan="<?php echo count($roles) + 1; ?>" class="categorie">
-                    <?php echo $privilege->getCategorie()->getLibelle(); ?>
-                </th>
-            </tr>
-            <?php $previous_categorie = $privilege->getCategorie(); ?>
-        <?php endif; ?>
-        <tr>
-            <th class="privilege"> <?php echo $privilege->getLibelle(); ?> </th>
-            <?php foreach ($roles as $role) : ?>
-                <?php
-                $code = ($role->getStructure() !== null) ? $role->getStructure()->getSigle() : '';
-                $title = $role->getLibelle() . ' - ' . $code . " \n " . $privilege->getLibelle();
-                $id = $privilege->getId() . '_' . $role->getId();
-                ?>
-                <td class="droit" id="<?php echo $id; ?>" title="<?php echo $title; ?>">
-                    <?php if (array_search($role, $privilegeRoles) !== false) : ?>
-                        <span class="icon icon-checked text-success"></span>
-                    <?php else: ?>
-                        <span class="icon icon-unchecked iconly text-danger"></span>
-                    <?php endif; ?>
-                </td>
-            <?php endforeach; ?>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-
 <script>
-    $(document).ready(function () {
-        $("td").on("click", function () {
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+        $(".checkable").each(function() {
+            installTooltipOnCheckable($(this));
+        });
+    });
 
-            var canModifier = Boolean(<?php echo $canModifier; ?>);
+    function installTooltipOnCheckable($checkable) {
+        var role = $checkable.parent("td").data("legend");
+        var privilege = $checkable.parent("td").parent("tr").data("legend");
+        var title = $checkable.attr("title") + " <strong>" + privilege + "</strong><br>au rôle<br><strong>" + role + "</strong>";
+        $checkable.attr("title", title).tooltip({trigger: "hover", html: true, placement: "bottom", container: "body"});
+    }
+
+    $(document).ready(function() {
+        $("td").on("click", function() {
+            var canModifier =  Boolean(<?php echo $canModifier; ?>);
             if (!canModifier) {
                 alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
                 return;
             }
 
-            var id = $(this).attr("id");
+            var $td = $(this);
+            var $checkable = $(this).find(".checkable");
+            var id = $td.attr("id");
             var splits = id.split("_");
             var role = splits[1];
             var privilege = splits[0];
@@ -133,68 +167,66 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
 
             $.ajax({
                 type: "POST",
-                url: url,
+                url : url,
                 beforeSend:
                     function () {
-                        document.getElementById(id).innerHTML = "<img style='height:40px;' src='css/loading.gif'/>";
+                        $checkable.tooltip("dispose");
+                        $checkable.addClass("animated");
                     },
                 success:
-                    function (retour) {
-                        var texte = "";
-                        if (retour == 1) texte = "<span class='icon icon-checked text-success'></span>";
-                        else var texte = "<span class='icon icon-unchecked iconly text-danger'></span>";
-                        document.getElementById(id).innerHTML = texte;
+                    function(retour){
+                        if (retour["value"] == 1) texte = "<span class='fa fa-check faa-spin faa-fast text-success checkable' title='Cliquer pour retirer le privilège'></span>";
+                        else var texte = "<span class='fa fa-ban faa-spin faa-fast text-danger checkable' title='Cliquer pour ajouter le privilège'></span>";
+                        $td.html(texte);
+                        installTooltipOnCheckable($td.find(".checkable"))
+                    },
+                error:
+                    function() {
+                        $checkable.removeClass("animated");
                     }
             });
-
-
         });
     });
 </script>
 
 
-
 <style>
-    table.mytable {
-        background-color: white;
-    }
-
-    th.categorie {
-        font-style: italic;
-        font-size: 12pt;
-        margin-left: 15px;
-        background-color: lightgoldenrodyellow;
+    div.tooltip {
+        font-size: 100%;
     }
 
     th.privilege {
-        height: 50px;
+        min-width: 400px;
+        font-weight: 400;
     }
-
     th.role {
-        min-width: 50px;
-        writing-mode: vertical-lr;
-        text-align: left;
-        vertical-align: top;
+        vertical-align: bottom;
+    }
+    th.role .rotated {
+        /*left: calc(50% - .5rem);*/
+        line-height: 1;
+        padding-top: .5rem;
+        position: relative;
+        transform: rotate(180deg);
+        white-space: nowrap;
+        writing-mode: vertical-rl;
     }
 
-    .depend {
-    / / text-orientation: upright;
+    td.categorie h3 {
+        margin: .5rem 0 0;
     }
 
-    .ecole-doctorale {
-        color: #5B2268;
+    td.aucun {
+        background-color: rgba(250, 250, 210, 0.75);
     }
-
-    .unite-recherche {
-        color: #0a3783;
+    td.ecole-doctorale {
+        background-color: rgba(241, 206, 255, 0.75);
     }
-
-    .etablissement {
-        color: #870a0a;
+    td.unite-recherche {
+        background-color: rgba(200, 231, 255, 0.75);
     }
-
-    .these {
-        color: #004602;
+    td.etablissement {
+        background-color: rgba(220, 255, 233, 0.75);
     }
 
     td.droit {
@@ -202,7 +234,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
         text-align: center;
     }
 
-    td.droit :hover {
+    span.checkable {
         cursor: pointer;
     }
 </style>

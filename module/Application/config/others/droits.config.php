@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\ProfilController;
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -88,17 +89,19 @@ return [
                                         'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'roles'),
                                         'withtarget' => true,
                                     ],
-                                    'privileges' => [
-                                        'label'      => "Privilèges",
-                                        'title'      => "Gestion des privilèges",
-                                        'route'      => 'gestion-privilege',
+                                    'profil' => [
+                                        'label'      => "Profils et privilèges",
+                                        'title'      => "Profils et privilèges",
+                                        'route'      => 'profil',
+                                        'query'      => ['depend' => ProfilController::PERIMETRE_Aucun],
                                         'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
                                         'withtarget' => true,
                                     ],
-                                    'profil' => [
-                                        'label'      => "Profils",
-                                        'title'      => "Gestion des profils",
-                                        'route'      => 'profil',
+                                    'privileges' => [
+                                        'label'      => "Rôles et privilèges",
+                                        'title'      => "Rôles et privilèges",
+                                        'route'      => 'gestion-privilege',
+                                        'query'      => ['depend' => \Application\Controller\PrivilegeController::PERIMETRE_Aucun],
                                         'resource'   => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'privileges'),
                                         'withtarget' => true,
                                     ],

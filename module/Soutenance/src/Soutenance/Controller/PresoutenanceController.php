@@ -208,22 +208,22 @@ class PresoutenanceController extends AbstractController
             case Membre::RAPPORTEUR_VISIO :
                 $acteurs = array_filter($acteurs, function (Acteur $a) {
                     /** @var Profil $profil */
-                    $profil = ($a->getRole()->getProfils()->first());
-                    return ($profil !== false AND $profil->getRoleCode() === 'R');
+                    $profil = $a->getRole()->getProfil();
+                    return $profil?->getRoleCode() === 'R';
                 });
                 break;
             case Membre::RAPPORTEUR_ABSENT :
                 $acteurs = array_filter($acteurs, function (Acteur $a) {
                     /** @var Profil $profil */
-                    $profil = ($a->getRole()->getProfils()->first());
-                    return ($profil !== false AND $profil->getRoleCode() === 'R');
+                    $profil = $a->getRole()->getProfil();
+                    return $profil?->getRoleCode() === 'R';
                 });
                 break;
             case Membre::MEMBRE_JURY :
                 $acteurs = array_filter($acteurs, function (Acteur $a) {
                     /** @var Profil $profil */
-                    $profil = ($a->getRole()->getProfils()->first());
-                    return ($profil !== false AND $profil->getRoleCode() === 'M');
+                    $profil = $a->getRole()->getProfil();
+                    return $profil?->getRoleCode() === 'M';
                 });
                 break;
         }

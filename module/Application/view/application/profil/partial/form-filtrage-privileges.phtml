@@ -1,13 +1,12 @@
 <?php
 
-use Application\Controller\PrivilegeController;
-use Application\Entity\Db\Role;
+use Application\Entity\Db\Profil;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
  * @var string      $text
- * @var Role[]      $rolesForFilter
+ * @var Profil[]      $profilsForFilter
  */
 
 /**
@@ -19,25 +18,8 @@ use Application\View\Renderer\PhpRenderer;
 $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     $queryParams[$paramName] = $paramValue;
 
-    return $this->url('gestion-privilege', [], ['query' => $queryParams], true);
+    return $this->url('profil', [], ['query' => $queryParams], true);
 };
-
-echo $this->filterPanel([
-    $this->translate("Périmètre") => [
-        'paramName'   => 'depend',
-        'paramConfig' => [
-            ['value' => '', 'label' => $this->translate("(Peu importe)")],
-            ['value' => $v = PrivilegeController::PERIMETRE_Aucun, 'label' => $this->translate("Sans périmètre")],
-            ['value' => $v = PrivilegeController::PERIMETRE_ED, 'label' => $this->translate("École doctorale")],
-            ['value' => $v = PrivilegeController::PERIMETRE_UR, 'label' => $this->translate("Unité de recherche")],
-            ['value' => $v = PrivilegeController::PERIMETRE_Etab, 'label' => $this->translate("Établissement")],
-            ['value' => $v = PrivilegeController::PERIMETRE_These, 'label' => $this->translate("Thèse")],
-
-        ],
-        'filterUrl'   => $urlFiltrer,
-        'titre'       => "Filtrage en fonction du périmètre du rôle",
-    ],
-]);
 
 echo $this->filterPanel([
     $this->translate("Catégorie") => [
@@ -61,27 +43,6 @@ echo $this->filterPanel([
 
         ],
         'filterUrl'   => $urlFiltrer,
-        'titre'       => "Filtrage en fonction de la catégorie du priviliège",
+        'titre'       => "Filtrage en fonction de la catégorie du privilège",
     ],
 ]);
-
-$values = [
-    ['value' => '', 'label' => $this->translate("(Tous)")],
-];
-foreach ($rolesForFilter as $role) {
-    $values[$role->getLibelle()] = [
-        'value' => $role->getLibelle(),
-        'label' => $this->translate($role->getLibelle()),
-    ];
-}
-
-echo $this->filterPanel([
-    $this->translate("Rôle") => [
-        'paramName'   => 'role',
-        'paramConfig' => $values,
-        'filterUrl'   => $urlFiltrer,
-        'titre'       => "Filtrage par rôle",
-    ],
-]);
-
-

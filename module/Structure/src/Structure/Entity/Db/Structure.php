@@ -297,10 +297,11 @@ class Structure implements
 
     /**
      * Retourne la Structure "concrète" correspondant à cette Structure "abstraite".
+     * Si toutes les structures concrètes pointant sur cette structure abstraite sont historisées, `null` est retourné.
      *
-     * @return \Structure\Entity\Db\StructureConcreteInterface
+     * @return \Structure\Entity\Db\StructureConcreteInterface|null
      */
-    public function getStructureConcrete(): StructureConcreteInterface
+    public function getStructureConcrete(): ?StructureConcreteInterface
     {
         return match (true) {
             $this->typeStructure->isEtablissement() => $this->getEtablissement(),

@@ -33,15 +33,17 @@ if (isset($config)) {
 ?>
 
 <div class="card filters">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header">
         <span class="icon icon-filter"></span> <?php echo $titre; ?>
     </div>
-    <table class="table table-bordered">
+    <table class="table table-borderless card-body">
         <?php foreach ($config as $label => $data): ?>
         <tr>
-            <th>
-                <?php if ($titre === "Filtres") echo $label; ?>
-            </th>
+            <?php if ($titre === "Filtres"): ?>
+                <th>
+                    <?php echo $label ?>
+                </th>
+            <?php endif ?>
             <td>
                 <?php $data['queryParams'] = $this->queryParams(); ?>
                 <?php echo $this->partial('filter-form-item', $data) ?>

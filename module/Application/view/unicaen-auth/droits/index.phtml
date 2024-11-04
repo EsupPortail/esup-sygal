@@ -11,25 +11,23 @@ $canViewProfils = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_P
 
 <dl>
     <?php if ($canViewRoles): ?>
-        <dt><a href="<?php echo $this->url('droits/roles') ?>">Gestion des rôles</a></dt>
+        <dt><a href="<?php echo $this->url('droits/roles') ?>">Rôles</a></dt>
         <dd>
-            Permet de visualiser les rôles existants. Permet également de les modifier,
-            d'en ajouter ou d'en supprimer si vous avez les droits requis pour cela.
-        </dd>
-    <?php endif; ?>
-
-    <?php if ($canViewPrivileges): ?>
-        <dt><a href="<?php echo $this->url('gestion-privilege') ?>">Gestion des privilèges</a></dt>
-        <dd>
-            Tableau de bord listant, par rôle, les privilèges qui lui sont accordés.
-            Le tableau permet également, si vous en avez le droit, de modifier les privilèges accordés par rôle.
+            Page consacrée aux différents <em>rôles</em> existants.
         </dd>
     <?php endif; ?>
 
     <?php if ($canViewProfils): ?>
-        <dt><a href="<?php echo $this->url('profil') ?>">Gestion des profils de rôles</a></dt>
+        <dt><a href="<?php echo $this->url('profil') ?>">Profils et privilèges</a></dt>
         <dd>
-            Outils permettant de g'rer les profils associés aux rôles, ainsi que de gérer les privilèges associés à chaque profil.
+            Page consacrée aux <em>profils</em> et à leur attribution de privilèges.
+        </dd>
+    <?php endif; ?>
+
+    <?php if ($canViewPrivileges): ?>
+        <dt><a href="<?php echo $this->url('gestion-privilege') ?>">Rôles et privilèges</a></dt>
+        <dd>
+            Page consacrées à l'attribution directe de privilèges aux rôles n'étant liés à aucun profil.
         </dd>
     <?php endif; ?>
 </dl>

@@ -567,10 +567,10 @@ input[type="checkbox"] {
 .text-structure.etablissement:before {
   content: "\f19c";
 }
-.text-structure.ed:before {
+.text-structure.ed:before, .text-structure.ecole-doctorale:before {
   content: "\f549";
 }
-.text-structure.ur:before {
+.text-structure.ur:before, .text-structure.unite-recherche:before {
   content: "\f0c3";
 }
 
@@ -649,6 +649,7 @@ div.filters {
   margin-top: 1em;
   margin-bottom: 1em;
   table {
+    margin-bottom: 0;
     td,
     th {
       border: {
@@ -666,6 +667,7 @@ div.filters {
   }
   .card-body {
     background-color: white;
+    line-height: 1.3;
   }
   span.filter {
     padding-right: 5px;
@@ -673,13 +675,19 @@ div.filters {
     a {
       font-size: 90%;
     }
+    a:hover {
+      text-decoration: underline;
+    }
+    .badge {
+      padding: .2em .5em;
+    }
   }
   .filter-option-inner-inner {
     padding-right: 3px
   }
 
   form {
-    padding: 10px;
+    padding: 5px;
     //.form-group {
       * {
         font-size: $filterFontSize;

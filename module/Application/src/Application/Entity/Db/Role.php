@@ -3,6 +3,8 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\StructureAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -114,8 +116,10 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
      */
     private $ordreAffichage;
 
-    /** @var ArrayCollection */
-    private $profils;
+    /**
+     * Profils affectés à ce rôle : relation one-to-many gérée comme un one-to-one.
+     */
+    private Collection $profils;
 
     public function __construct()
     {
@@ -336,53 +340,34 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $str = $this->getLibelle();
 
-        if ($this->getStructure() !== null) {
-            $str .= " " . $this->getStructure()->getSigle();
+        if ($structureConcrete = $this->getStructure()?->getStructureConcrete()) {
+            if ($structureConcrete instanceof Etablissement) {
+                $complement = $structureConcrete->estInscription() ? $structureConcrete->getSourceCode() : $structureConcrete->getCode();
+            } else {
+                $complement = $structureConcrete->getCode();
+            }
+            $str .= " " . $complement;
         }
 
         return $str;
     }
 
-    /** return ArrayCollection */
-    public function getProfils()
+    public function getProfil(): ?Profil
     {
-        return $this->profils;
+        return $this->profils->first() ?: null;
     }
 
-    /**
-     * @param Profil $profil
-     * @return Role
-     */
-    public function addProfil($profil)
+    public function setProfil(?Profil $profil): static
     {
-        $this->profils->add($profil);
+        $this->profils->clear();
+        if ($profil !== null) {
+            $this->profils->add($profil);
+        }
         return $this;
-    }
-
-    /**
-     * @param Profil $profil
-     * @return Role
-     */
-    public function removeProfil($profil)
-    {
-        $this->profils->removeElement($profil);
-        return $this;
-    }
-
-    /**
-     * @param Profil $profil
-     * @return boolean
-     */
-    public function hasProfil($profil)
-    {
-        return $this->profils->contains($profil);
     }
 
     public function estUsurpable(): bool

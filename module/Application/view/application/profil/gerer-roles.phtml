@@ -3,16 +3,17 @@
 /**
  * @var \Application\Entity\Db\Profil $profil
  * @var \Application\Entity\Db\Role[] $rolesDisponibles
- * @var $form
+ *
+ * @see \Application\Controller\ProfilController::gererRolesAction()
  */
 
 ?>
 
 <h1>
-    Gestion des rôles associées au profil
+    Affectation du profil  &laquo; <?php echo $profil->getLibelle() ?> &raquo; à des rôles
 </h1>
 
-<a href="<?php echo $this->url('profil', [], [], true); ?>" class="btn btn-info">
+<a href="<?php echo $this->url('profil', [], [], true); ?>" class="">
     <span class="fas fa-chevron-left"></span>
     Retour à la gestion des profils
 </a>
@@ -20,55 +21,73 @@
 <br/>
 <br/>
 
-<div class="card">
-    <div class="card-header bg-dark text-white">
-        Information sur le profil sélectionné
-    </div>
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-md-4"> Libellé </dt>
-            <dd class="col-md-4"> <?php echo $profil->getLibelle(); ?> </dd>
-            <dt class="col-md-4"> Code </dt>
-            <dd class="col-md-4"> <?php echo $profil->getRoleCode(); ?> </dd>
-            <dt class="col-md-4"> Nombre d'affectation</dt>
-            <dd class="col-md-4"> <?php echo count($profil->getRoles()); ?> </dd>
-        </dl>
-    </div>
-</div>
-
 <div class="row">
-    <div class="col-md-6">
-        <table class="table table-sm">
-            <tr>
-                <th> Libelle du rôle </th>
-                <th> Actions </th>
-            </tr>
-            <?php foreach ($profil->getRoles() as $role) : ?>
-                <tr>
-                    <td>
-                        <?php echo $this->role()->render($role); ?>
-                    </td>
-                    <td>
-                        <a href="<?php echo $this->url('profil/gerer-roles/retirer', ['profil' => $profil->getId(), 'role' => $role->getId()], [], true); ?>">
-                            <span class="icon icon-delete iconly"></span>
-                        </a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                Détails du profil
+            </div>
+            <div class="card-body">
+                <dl>
+                    <dt> Libellé </dt>
+                    <dd> <?php echo $profil->getLibelle(); ?> </dd>
+                    <dt> Code </dt>
+                    <dd> <?php echo $profil->getRoleCode(); ?> </dd>
+                    <dt> Nombre de rôles affectés</dt>
+                    <dd> <?php echo count($profil->getRoles()); ?> </dd>
+                </dl>
+            </div>
+        </div>
     </div>
-    <div class="col-md-6">
-        <form method="POST" action="<?php echo $this->url('profil/gerer-roles/ajouter', ['profil' => $profil->getId()], [], true); ?>">
-            <select name="role">
-                <?php foreach ($rolesDisponibles as $role) : ?>
-                    <option value="<?php echo $role->getId(); ?>">
-                        <?php echo $this->role()->render($role); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <br/>
-            <input type="submit" class="btn btn-primary" value="Ajouter un rôle"/>
-        </form>
 
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                Rôles déjà affectés au profil
+                <span class="badge bg-secondary"><?php echo count($profil->getRoles()) ?></span>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <th> Libelle du rôle </th>
+                        <th> Actions </th>
+                    </tr>
+                    <?php foreach ($profil->getRoles() as $role) : ?>
+                        <tr>
+                            <td>
+                                <?php echo $role ?>
+                            </td>
+                            <td>
+                                <a href="<?php echo $this->url('profil/gerer-roles/retirer', ['profil' => $profil->getId(), 'role' => $role->getId()], [], true); ?>">
+                                    <span class="icon icon-delete iconly"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Sélection d'un rôle à ajouter
+            </div>
+            <div class="card-body">
+                <form method="POST" action="<?php echo $this->url('profil/gerer-roles/ajouter', ['profil' => $profil->getId()], [], true); ?>">
+                    <select name="role">
+                        <option value="">(Sélectionnez un rôle...)</option>
+                        <?php foreach ($rolesDisponibles as $role) : ?>
+                            <option value="<?php echo $role->getId(); ?>">
+                                <?php echo $role ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <br/>
+                    <input type="submit" class="btn btn-primary" value="Affecter le profil au rôle sélectionné"/>
+                </form>
+            </div>
+        </div>
     </div>
 </div>

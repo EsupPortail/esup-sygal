@@ -261,7 +261,7 @@ class RoleService extends BaseService
             $role->setRoleId($roleId);
             $role->setTypeStructureDependant($type);
             $role->setStructure($structure->getStructure());
-            $role->addProfil($profil);
+            $role->setProfil($profil);
             try {
                 $this->entityManager->flush($role);
             } catch (ORMException $e) {
@@ -416,23 +416,19 @@ class RoleService extends BaseService
         $qb = $this->getEntityManager()->getRepository(Role::class)->createQueryBuilder('role')
             ->leftJoin('role.profils', 'profil')
             ->andWhere('profil.id IS NULL')
+            ->andWhere('role.histoDestruction IS NULL')
             ->orderBy('role.roleId', 'ASC');
 
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param Role $role
-     */
-    public function removeProfils(Role $role)
+    public function removeProfil(Role $role): void
     {
-        foreach ($role->getProfils() as $profil) {
-            $role->removeProfil($profil);
-            try {
-                $this->getEntityManager()->flush($role);
-            } catch (ORMException $e) {
-                throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.", null, $e);
-            }
+        $role->setProfil(null);
+        try {
+            $this->getEntityManager()->flush($role);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.", null, $e);
         }
     }
 

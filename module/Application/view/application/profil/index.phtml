@@ -6,7 +6,7 @@
  *
  * @see \Application\Controller\ProfilController::indexAction()
  */
-$this->headTitle("Profils");
+$this->headTitle("Profils/Privilèges");
 
 $canEdit = true;
 $canDelete = true;
@@ -14,138 +14,150 @@ $canManage = true;
 $canChangePrivilege = true;
 ?>
 
-<a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary float-end ajax-modal" data-event="modification">
-    <span class="icon icon-plus"></span> Ajouter un nouveau profil
-</a>
+<!--<a href="--><?php //echo $this->url('profil/editer', [], [], true); ?><!--" class="btn btn-primary float-end ajax-modal" data-event="modification">-->
+<!--    <span class="icon icon-plus"></span> Ajouter un nouveau profil-->
+<!--</a>-->
 
 <h1 class="page-header">
-    Profils
-    <span class="badge bg-secondary">
-        <?php echo count($profils); ?>
-    </span>
+    <?php echo $this->translate("Profils et privilèges") ?>
 </h1>
 
-<table class="table table-sm">
-    <thead>
-    <tr>
-        <th> Code </th>
-        <th> Libellé </th>
-        <th> Structure dépendant </th>
-        <th> Nombre de rôles ayant le profil </th>
-        <th> Action </th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($profils as $profil) : ?>
-        <tr>
-            <td> <?php echo $profil->getRoleCode(); ?> </td>
-            <td> <?php echo $profil->getLibelle(); ?></td>
-            <td> <?php echo $profil->getStructureType(); ?></td>
-            <td> <?php echo count($profil->getRoles()); ?></td>
-            <td>
-                <?php if ($canEdit) : ?>
-                    <a href="<?php echo $this->url('profil/editer', ['profil' => $profil->getId()], [], true);?>" class="ajax-modal" data-event="modification">
-                        <span class="icon icon-edit" title="Éditer les informations du profil"></span>
-                    </a>
-                <?php endif; ?>
-                <?php if ($canEdit) : ?>
-                    <a class="ajax-modal" data-event="modification" href="<?php echo $this->url('profil/dupliquer', ['profil' => $profil->getId()], [], true);?>">
-                        <span class="fas fa-paste" title="Recopier privilèges d'une autre profil"></span>
-                    </a>
-                <?php endif; ?>
-                <?php if ($canDelete) : ?>
-                    <a href="<?php echo $this->url('profil/supprimer', ['profil' => $profil->getId()], [], true);?>">
-                        <span class="icon icon-delete iconly" title="Supprimer le profil"></span>
-                    </a>
-                <?php endif; ?>
-                <?php if ($canManage) : ?>
-                    <a href="<?php echo $this->url('profil/gerer-roles', ['profil' => $profil->getId()], [], true);?>">
-                        <span class="fas fa-link" title="Gérer les rôles associés au profil" ></span>
-                    </a>
-                <?php endif; ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+<p class="lead">
+    Cette page est consacrée aux <em>profils</em> et à leur attribution de privilèges. <br>
+    Un <em>profil</em> est affecté à des rôles pour "appliquer" à ces derniers un même ensemble de privilèges
+    automatiquement. Autrement dit, les privilèges que vous accorderez (ou retirerez) à un profil seront
+    accordés (ou retirés) automatiquement à chacun des rôles auxquels est affecté le profil en question. <br>
+    NB : un rôle n'a pas forcément vocation à se voir affecter un profil. Si vous souhaitez accorder/retirer
+    des privilèges à un rôle auquel aucun profil n'est affecté, rendez-vous sur
+    <a href="<?php echo $this->url('droits/privileges', [], [], true);?>">cette page</a>.
+</p>
 
-<h2> Privilèges accordés aux profils </h2>
+<h2>Profils</h2>
 
-<table class="table table-extra-condensed">
-    <thead>
-    <tr>
-        <th> Privilège </th>
-        <?php foreach ($profils as $profil) : ?>
-            <th> <?php echo $profil; ?> </th>
-        <?php endforeach; ?>
-    </tr>
-    </thead>
-    <tbody>
-    <?php $previous = "" ?>
-    <?php foreach ($privileges as $privilege) : ?>
-        <?php if ($previous != $privilege->getCategorie()): ?>
+<p>
+    <?php echo count($profils); ?> profil·s trouvé·s avec les filtres sélectionnés.
+</p>
+
+<div class="row">
+    <div class="col-md-3">
+        <?php echo $this->partial('partial/form-filtrage-profils') ?>
+    </div>
+
+    <div class="col-md-9">
+        <table class="table table-sm">
+            <thead>
             <tr>
-                <?php $previous = $privilege->getCategorie(); ?>
-                <td class="categorie" colspan="<?php echo (1 + count($profils)); ?>">
-                    <?php $id = $privilege->getCategorie()->getCode() ?>
-                    <a id="<?php echo $id ?>" class="anchor" href="#<?php echo $id ?>"></a>
-                    <a href="#<?php echo $id ?>" class="anchored">
-                        <h3 title="<?php echo $previous->getCode() ?>"><?php echo $previous ?></h3>
-                    </a>
-                </td>
+                <th> Code du profil </th>
+                <th> Libellé </th>
+                <th> Périmètre </th>
+                <th> <abbr title="Nombre de rôles auxquels est affecté le profil">Nb de rôles</abbr> </th>
+                <th> Action </th>
             </tr>
-        <?php endif; ?>
-        <tr data-legend="<?php echo $privilege->getLibelle() ?>">
-            <th class="privilege">
-                <?php $id = $privilege->getCategorie()->getCode() . '-' . $privilege->getCode() ?>
-                <a id="<?php echo $id ?>" class="anchor" href="#<?php echo $id ?>"></a>
-                <a href="#<?php echo $id ?>" class="anchored">
-                    <span title="<?php echo $privilege->getCode() ?>"><?php echo $privilege ?></span>
-                </a>
-            </th>
+            </thead>
+            <tbody>
             <?php foreach ($profils as $profil) : ?>
-                <td class="<?php echo ($profil->getStructureType())?$profil->getStructureType()->getCode():"aucun"; ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>"
-                    data-legend="<?php echo $profil->getLibelle() ?>">
-                    <?php if ($profil->hasPrivilege($privilege)) : ?>
-                        <span class="fa fa-check faa-spin faa-fast text-success checkable" title="Cliquer pour retirer le privilège"></span>
-                    <?php else: ?>
-                        <span class="fa fa-ban faa-spin faa-fast text-danger checkable" title="Cliquer pour ajouter le privilège"></span>
-                    <?php endif; ?>
-                </td>
+                <tr>
+                    <td> <?php echo $profil->getRoleCode(); ?> </td>
+                    <td> <?php echo $profil->getLibelle(); ?></td>
+                    <td>
+                        <?php if ($profil->getStructureType()): ?>
+                            <span class="text-structure <?php echo $profil->getStructureType()?->getCode() ?>">
+                        <?php echo $profil->getStructureType() ?>
+                    </span>
+                        <?php else: ?>
+                            <span class="text-muted">Aucun</span>
+                        <?php endif; ?>
+                    </td>
+                    <td> <?php echo count($profil->getRoles()); ?></td>
+                    <td>
+                        <?php if ($canEdit) : ?>
+                            <a href="<?php echo $this->url('profil/editer', ['profil' => $profil->getId()], [], true);?>" class="ajax-modal" data-event="modification">
+                                <span class="icon icon-edit" title="Éditer les informations du profil"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($canEdit) : ?>
+                            <a class="ajax-modal" data-event="modification" href="<?php echo $this->url('profil/dupliquer', ['profil' => $profil->getId()], [], true);?>">
+                                <span class="fas fa-paste" title="Recopier privilèges d'une autre profil"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($canDelete) : ?>
+                            <a href="<?php echo $this->url('profil/supprimer', ['profil' => $profil->getId()], [], true);?>"
+                               data-toggle="confirmationx">
+                                <span class="icon icon-delete iconly" title="Supprimer le profil"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($canManage) : ?>
+                            <a href="<?php echo $this->url('profil/gerer-roles', ['profil' => $profil->getId()], [], true);?>">
+                                <span class="fas fa-link" title="Affectation du profil à des rôles" ></span>
+                            </a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
             <?php endforeach; ?>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
-<style>
-    td.categorie h3 {
-        margin: .5rem 0 0;
-    }
-    th.privilege {
-        font-weight: 400;
-    }
+<h2> Attribution de privilèges aux profils </h2>
 
-    td.aucun {
-        background-color: rgba(250, 250, 210, 0.75);
-    }
+<div class="row">
+    <div class="col-md-3">
+        <?php echo $this->partial('partial/form-filtrage-privileges') ?>
+    </div>
 
-    td.ecole-doctorale {
-        background-color: rgba(241, 206, 255, 0.75);
-    }
-    td.unite-recherche {
-        background-color: rgba(200, 231, 255, 0.75);
-    }
-    td.etablissement {
-        background-color: rgba(220, 255, 233, 0.75);
-    }
+    <div class="col-md-9">
+        <table class="table table-condensed table-bordered table-hover">
+            <thead>
+            <tr>
+                <th> Privilèges </th>
+                <th class="profil"> <div class="rotated">Profils</div> </th>
+                <?php foreach ($profils as $profil) : ?>
+                    <th class="profil"> <div class="rotated"><?php echo $profil; ?></div> </th>
+                <?php endforeach; ?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php $previous = "" ?>
+            <?php foreach ($privileges as $privilege) : ?>
+                <?php if ($previous != $privilege->getCategorie()): ?>
+                    <tr>
+                        <?php $previous = $privilege->getCategorie(); ?>
+                        <td class="categorie" colspan="<?php echo (1 + 1 + count($profils)); ?>">
+                            <?php $id = $privilege->getCategorie()->getCode() ?>
+                            <a id="<?php echo $id ?>" class="anchor" href="#<?php echo $id ?>"></a>
+                            <a href="#<?php echo $id ?>" class="anchored">
+                                <h3 title="<?php echo $previous->getCode() ?>"><?php echo $previous ?></h3>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                <tr data-legend="<?php echo $privilege->getLibelle() ?>">
+                    <th class="privilege" colspan="2">
+                        <?php $id = $privilege->getCategorie()->getCode() . '-' . $privilege->getCode() ?>
+                        <a id="<?php echo $id ?>" class="anchor" href="#<?php echo $id ?>"></a>
+                        <a href="#<?php echo $id ?>" class="anchored">
+                            <span title="<?php echo $privilege->getCode() ?>"><?php echo $privilege ?></span>
+                        </a>
+                    </th>
+                    <?php foreach ($profils as $profil) : ?>
+                        <td class="droit <?php echo $profil->getStructureType()?->getCode() ?: "aucun" ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>"
+                            data-legend="<?php echo $profil->getLibelle() ?>">
+                            <?php if ($profil->hasPrivilege($privilege)) : ?>
+                                <span class="fa fa-check faa-spin faa-fast text-success checkable" title="Cliquer pour retirer le privilège"></span>
+                            <?php else: ?>
+                                <span class="fa fa-ban faa-spin faa-fast text-danger checkable" title="Cliquer pour ajouter le privilège"></span>
+                            <?php endif; ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    span.checkable {
-        cursor: pointer;
-    }
-
-</style>
 
 <script>
     $(function() {
@@ -167,7 +179,6 @@ $canChangePrivilege = true;
 
     $(document).ready(function() {
         $("td").on("click", function() {
-
             var canModifier =  Boolean(<?php echo $canChangePrivilege; ?>);
             if (!canModifier) {
                 alert("Vous n'êtes pas autorisé à modifier les privilèges associés à un rôle.");
@@ -205,3 +216,54 @@ $canChangePrivilege = true;
         });
     });
 </script>
+
+
+<style>
+    div.tooltip {
+        font-size: 100%;
+    }
+
+    th.privilege {
+        min-width: 400px;
+        font-weight: 400;
+    }
+    th.profil {
+        vertical-align: bottom;
+    }
+    th.profil .rotated {
+        /*left: calc(50% - .5rem);*/
+        line-height: 1;
+        /*padding-top: .5rem;*/
+        position: relative;
+        transform: rotate(180deg);
+        white-space: nowrap;
+        writing-mode: vertical-rl;
+    }
+
+    td.categorie h3 {
+        margin: .5rem 0 0;
+    }
+
+    td.aucun {
+        background-color: rgba(250, 250, 210, 0.75);
+    }
+    td.ecole-doctorale {
+        background-color: rgba(241, 206, 255, 0.75);
+    }
+    td.unite-recherche {
+        background-color: rgba(200, 231, 255, 0.75);
+    }
+    td.etablissement {
+        background-color: rgba(220, 255, 233, 0.75);
+    }
+
+    td.droit {
+        vertical-align: center;
+        text-align: center;
+    }
+
+    span.checkable {
+        cursor: pointer;
+    }
+
+</style>
