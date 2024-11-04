@@ -29,6 +29,8 @@ select
 
 --
 -- 2/ ETABLISSEMENT
+--    NB : un trigger sur cette table déclenche la création des rôles associés à l'établissement (parce qu'il s'agit
+--    d'un établissement d'inscription).
 --
 insert into etablissement (id, structure_id, domaine, source_code, source_id,
                            est_comue, est_membre, est_etab_inscription,
