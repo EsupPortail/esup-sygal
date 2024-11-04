@@ -32,7 +32,10 @@ $this->headTitle("Substitution par " . $substituant->getId());
 <?php if ($canEdit): ?>
     <a href="<?php echo $this->url('substitution/substitution/voir/modifier', ['type' => $type, 'id' => $substitution['to_id']]) ?>"
        title="Modifier cette substitution"
-       class="btn btn-primary float-end">Modifier cette substitution</span></a>
+       class="btn btn-primary float-end">
+        <span class="icon icon-modifier"></span>
+        Modifier cette substitution
+    </a>
 <?php endif; ?>
 
 <h1 class="page-header">

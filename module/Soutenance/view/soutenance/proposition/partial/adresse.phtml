@@ -36,7 +36,7 @@ $adresse = $proposition->getAdresseActive();
                     <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
                     <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
-                        <span class="icon icon-ajouter"></span>
+                        <span class="icon icon-modifier"></span>
                         Modifier l'adresse
                     </a>
                     <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>

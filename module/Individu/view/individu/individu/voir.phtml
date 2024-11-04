@@ -41,7 +41,9 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
                 <?php if ($canModifier && !$individu->estHistorise()): ?>
                     <a href="<?php echo $this->url('individu/modifier', ['individu' => $individu->getId()]) ?>"
                        class="btn btn-primary"
-                       title="Accéder à la page de modification de cet individu">Modifier l'individu</a>
+                       title="Accéder à la page de modification de cet individu">
+                        <span class="icon icon-modifier"></span>
+                        Modifier l'individu</a>
                 <?php endif ?>
                 <?php if ($canSupprimer): ?>
                     <?php if ($individu->estHistorise()): ?>
