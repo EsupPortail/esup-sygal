@@ -206,7 +206,7 @@ switch ($these->getEtatThese()){
                         <dt class="col-md-3">
                             Mission·s d'enseignement
                         </dt>
-                        <?php if ($canMissionGerer) : ?>
+                        <?php if ($canMissionGerer && $canEditThese) : ?>
                             <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::ajouterAction() */ ?>
                                     class="icon icon-plus iconly ajax-modal float-end" data-event="modification"
                                     href="<?php echo $this->url('doctorant/mission-enseignement/ajouter', ['doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
@@ -219,7 +219,7 @@ switch ($these->getEtatThese()){
                                 <ul>
                                     <?php foreach ($missions as $mission) : ?>
                                         <li>Mission d'enseignement pour l'année <?php echo $mission->getAnneeUniversitaire(); ?>/<?php echo ($mission->getAnneeUniversitaire()+1); ?>
-                                        <?php if ($canMissionGerer) : ?>
+                                        <?php if ($canMissionGerer && $canEditThese) : ?>
                                             <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::retirerAction() */ ?>
                                                     class="ajax-modal" data-event="modification"
                                                     data-toggle="confirmationx" data-message="Êtes-vous sûr·e de vouloir retirer cette mission d'enseignement ?"
@@ -318,7 +318,7 @@ switch ($these->getEtatThese()){
                     <dd class="col-md-9 <?php echo $class ?>">
                         <p>
                             <?php echo $reponse ?>
-                            <?php if ($canEditForcageCorrectionAutorisee): ?>
+                            <?php if ($canEditForcageCorrectionAutorisee && $canEditThese): ?>
                                 <?php if ($these->isCorrectionAutoriseeForcee()): ?>
                                     <em>Cette valeur est forcée.</em>
                                 <?php endif ?>

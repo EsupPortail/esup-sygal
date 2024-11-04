@@ -2,6 +2,7 @@
 
 namespace Soutenance\Form\Membre;
 
+use Laminas\Form\Element\Button;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -106,9 +107,15 @@ class MembreForm extends Form {
                 ])
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
+        $this->add((new Button('submit'))
+            ->setLabel('<span class="icon icon-save"></span> Enregistrer')
+            ->setLabelOptions([
+                'disable_html_escape' => true,
+            ])
+            ->setAttributes([
+                'type' => 'submit',
+                'class' => 'btn btn-primary',
+            ])
         );
 
         $this->setInputFilter((new Factory())->createInputFilter([

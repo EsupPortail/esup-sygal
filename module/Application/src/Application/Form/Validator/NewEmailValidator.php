@@ -40,7 +40,7 @@ class NewEmailValidator extends AbstractValidator
             }
         }
         if (in_array('individu', $perimetre)) {
-            if ($this->entityManager->getRepository(Individu::class)->findOneBy(['email' => $value]) !== null) {
+            if ($this->entityManager->getRepository(Individu::class)->findOneBy(['emailPro' => $value]) !== null) {
                 $this->error(self::INDIVIDU);
                 $nb_pb++;
             }
