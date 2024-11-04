@@ -55,7 +55,10 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
                         <a href="<?php echo $this->url('individu/supprimer', ['individu' => $individu->getId()]) ?>"
                            class="btn btn-danger float-end"
                            title="Supprimer (historiser) cet individu"
-                           data-toggle="confirmationx">Supprimer l'individu</a>
+                           data-toggle="confirmationx">
+                            <span class="icon icon-delete"></span>
+                            Supprimer l'individu
+                        </a>
                     <?php endif ?>
                 <?php endif ?>
             </div>

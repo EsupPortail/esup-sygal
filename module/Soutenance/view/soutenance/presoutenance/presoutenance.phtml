@@ -81,7 +81,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     echo $this->messenger()->addMessagesFromFlashMessenger();
 ?>
 
-<?php if (! $validationBDD) : ?>
+<?php if ( $validationBDD) : ?>
 
     <p class="lead text-danger">
         La proposition de soutenance n'a pas encore été validée.
@@ -93,12 +93,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         <div>
             <?php /** @see \Soutenance\Controller\PresoutenanceController::genererSimulationAction() */ ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/generer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
-                Simulation de la remonter SI
+                Simulation de la remontée SI
             </a>
 
             <?php /** @see \Soutenance\Controller\PresoutenanceController::nettoyerSimulationAction() */ ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/nettoyer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
-                Nettoyer simulation
+                Nettoyer la simulation de la remontée SI
             </a>
             <br/>
             <br/>

@@ -79,9 +79,12 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
                 <?php if ($canEdit): ?>
                     <form method="post" action="<?php echo $this->url('utilisateur/supprimer', ['utilisateur' => $utilisateur->getId()]) ?>">
                         <input type="hidden" name="utilisateur" value="<?php echo $utilisateur->getId() ?>">
-                        <input type="submit" value="<?php echo $this->translate("Supprimer ce compte utilisateur") ?>"
+                        <button type="submit" value="<?php echo $this->translate("Supprimer ce compte utilisateur") ?>"
                                onclick="return confirm('Êtes-vous certain·e de vouloir supprimer ce compte utilisateur ?')"
-                               class="btn btn-danger float-end"/>
+                               class="btn btn-danger float-end">
+                            <span class="icon icon-delete"></span>
+                            <?php echo $this->translate("Supprimer ce compte utilisateur") ?>
+                        </button>
                     </form>
                 <?php endif ?>
             </div>
