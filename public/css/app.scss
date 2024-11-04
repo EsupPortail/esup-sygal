@@ -962,7 +962,13 @@ a.btn > span.icon {
 }
 
 .box {
-  .btn.btn-primary, .btn.btn-danger  {
+  .btn.btn-danger {
+    margin-bottom: 10px;
+  }
+}
+
+.box {
+  .btn.btn-primary  {
     margin-bottom: 10px;
     padding: {
       left: 15px;

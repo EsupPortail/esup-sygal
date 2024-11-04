@@ -206,13 +206,13 @@ switch ($these->getEtatThese()){
                         <dt class="col-md-3">
                             Mission·s d'enseignement
                         </dt>
+                        <?php if ($canMissionGerer) : ?>
+                            <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::ajouterAction() */ ?>
+                                    class="icon icon-plus iconly ajax-modal float-end" data-event="modification"
+                                    href="<?php echo $this->url('doctorant/mission-enseignement/ajouter', ['doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
+                                    title="Ajouter une mission d'enseignement"></a>
+                        <?php endif; ?>
                         <dd class="col-md-6">
-                            <?php if ($canMissionGerer) : ?>
-                                <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::ajouterAction() */ ?>
-                                        class="icon icon-plus iconly ajax-modal float-end" data-event="modification"
-                                        href="<?php echo $this->url('doctorant/mission-enseignement/ajouter', ['doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
-                                        title="Ajouter une mission d'enseignement"></a>
-                            <?php endif; ?>
                             <?php if (empty($missions)) : ?>
                                 (Aucune mission renseignée)
                             <?php else: ?>

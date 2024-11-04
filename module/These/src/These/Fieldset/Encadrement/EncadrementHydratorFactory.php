@@ -22,8 +22,6 @@ class EncadrementHydratorFactory
         $entityManager = $container->get('Doctrine\ORM\EntityManager');
         $hydrator = new EncadrementHydrator($entityManager);
 
-//        $hydrator = new EncadrementHydrator();
-
         /** @var \Individu\Service\IndividuService $individuService */
         $individuService = $container->get(IndividuService::class);
         $hydrator->setIndividuService($individuService);
