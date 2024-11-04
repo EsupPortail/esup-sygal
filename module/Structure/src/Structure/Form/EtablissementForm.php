@@ -12,14 +12,11 @@ use Structure\Form\InputFilter\Etablissement\Inscription\EtablissementInscriptio
 use Webmozart\Assert\Assert;
 
 /**
- * @property \Structure\Form\InputFilter\Etablissement\EtablissementInputFilterInterface $filter
+ * @property \Structure\Form\InputFilter\StructureInputFilterInterface $filter
  * @method Etablissement getObject()
  */
 class EtablissementForm extends StructureForm
 {
-    /**
-     * NB: hydrateur injecté par la factory
-     */
     public function init(): void
     {
         parent::init();

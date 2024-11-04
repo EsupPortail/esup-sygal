@@ -30,6 +30,8 @@ class Structure implements
     use HistoriqueAwareTrait;
     use SubstitutionAwareEntityTrait;
 
+    const LOGO_ALLOWED_FILE_EXTENSIONS = ['bmp', 'png', 'jpg', 'jpeg'];
+
     /**
      * @var string $id
      * @var string $sigle

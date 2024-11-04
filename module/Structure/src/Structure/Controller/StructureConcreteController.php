@@ -6,6 +6,7 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
+use Fichier\Service\Storage\Adapter\Exception\FileNotFoundInStorageException;
 use Individu\Entity\Db\IndividuRole;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -145,16 +146,18 @@ abstract class StructureConcreteController extends AbstractController
 
         if ($request->isPost()) {
             // récupération des données et des fichiers
-            $data = $request->getPost()->toArray();
-            $file = $request->getFiles()->toArray();
+            $data = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
 
             // action de modification
             $cheminLogo = $structureConcrete->getStructure()->getCheminLogo();
             $this->structureForm->setData($data);
             if ($this->structureForm->isValid()) {
                 // sauvegarde du logo si fourni
-                if ($file['cheminLogo']['tmp_name'] !== '') {
-                    $this->ajouterLogoStructure($file['cheminLogo']['tmp_name'], $structureConcrete);
+                if ($data['cheminLogo']['tmp_name'] !== '') {
+                    $this->ajouterLogoStructure($data['cheminLogo']['tmp_name'], $structureConcrete);
                 } else {
                     $structureConcrete->getStructure()->setCheminLogo($cheminLogo);
                 }
@@ -194,8 +197,10 @@ abstract class StructureConcreteController extends AbstractController
 
         if ($request->isPost()) {
             // récupération des données et des fichiers
-            $data = $request->getPost()->toArray();
-            $file = $request->getFiles()->toArray();
+            $data = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
 
             $this->structureForm->setData($data);
             if ($this->structureForm->isValid()) {
@@ -204,8 +209,8 @@ abstract class StructureConcreteController extends AbstractController
                 $structureConcrete = $this->getStructureConcreteService()->create($structureConcrete, $this->userContextService->getIdentityDb());
 
                 // sauvegarde du logo si fourni
-                if ($file['cheminLogo']['tmp_name'] !== '') {
-                    $this->ajouterLogoStructure($file['cheminLogo']['tmp_name'], $structureConcrete);
+                if ($data['cheminLogo']['tmp_name'] !== '') {
+                    $this->ajouterLogoStructure($data['cheminLogo']['tmp_name'], $structureConcrete);
                 }
 
                 $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' créée avec succès");
@@ -231,7 +236,7 @@ abstract class StructureConcreteController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' supprimée avec succès");
 
-        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
+        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureConcrete->getId()]], true);
     }
 
     /**
@@ -247,10 +252,7 @@ abstract class StructureConcreteController extends AbstractController
         return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureConcrete->getId()]], true);
     }
 
-    /**
-     * @return Response
-     */
-    public function supprimerLogoAction()
+    public function supprimerLogoAction(): Response
     {
         $structureConcrete = $this->getRequestedStructureConcrete();
         $this->supprimerLogoStructure($structureConcrete);

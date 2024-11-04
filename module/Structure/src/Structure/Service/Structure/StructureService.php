@@ -5,11 +5,13 @@ namespace Structure\Service\Structure;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\FileNotFoundInStorageException;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Structure\Entity\Db\ComposanteEnseignement;
@@ -139,7 +141,7 @@ class StructureService extends BaseService
         try {
             $this->entityManager->persist($structure);
             $this->entityManager->flush();
-        } catch (\Doctrine\ORM\Exception\ORMException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de la structure", null, $e);
         }
     }
@@ -292,6 +294,8 @@ class StructureService extends BaseService
 
         try {
             $this->fichierStorageService->deleteFileForLogoStructure($structure);
+        } catch (FileNotFoundInStorageException $e) {
+            // c'est une anomalie, mais pas grave puisqu'on veut supprimer le logo de la structure !
         } catch (StorageAdapterException $e) {
             throw new RuntimeException("Erreur lors de la suppression du logo de la structure. " . $e->getMessage(), null, $e);
         }
@@ -318,7 +322,11 @@ class StructureService extends BaseService
             throw new RuntimeException("Chemin du fichier logo uploadé invalide.");
         }
 
-        $logoFilepath = FileUtils::convertLogoFileToPNG($uploadedFilePath);
+        try {
+            $logoFilepath = FileUtils::convertLogoFileToPNG($uploadedFilePath);
+        } catch (RuntimeException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de la conversion de l'image. " . $e->getMessage(), null, $e);
+        }
 
         // Suppression du logo existant
         $this->entityManager->beginTransaction();

@@ -130,24 +130,22 @@ class FileUtils
 
         $runner = new ShellCommandRunner();
         $runner->setCommand($command);
-        try {
-            $result = $runner->runCommand();
+        $result = $runner->runCommand();
 
-            if (!$result->isSuccessfull()) {
-                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
-                    $command->getName(),
-                    $result->getReturnCode()
-                );
-                if ($output = $result->getOutput()) {
-                    $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
-                }
-                throw new RuntimeException($message);
+        if (!$result->isSuccessfull()) {
+            $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
+                $command->getName(),
+                $result->getReturnCode()
+            );
+            if ($output = $result->getOutput()) {
+                $message .= "Voici la sortie de la commande : " . implode(PHP_EOL, $output);
+            } else {
+                $message .= "(La commande n'a produit aucune sortie)";
             }
-        } catch (RuntimeException $rte) {
             throw new RuntimeException(
-                "Une erreur est survenue lors de l'exécution de la commande " . $command->getName(),
-                0,
-                $rte);
+                "Une erreur est survenue lors de l'exécution de la commande '" . $command->getName() . "' : " .
+                $message
+            );
         }
 
         return $logoFilepath;

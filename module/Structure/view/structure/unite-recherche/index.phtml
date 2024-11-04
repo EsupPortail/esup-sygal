@@ -21,7 +21,7 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
     <span class="badge bg-secondary"><?php echo count($unites); ?></span>
 </h1>
 
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+<?php echo $this->alertes()->addAlertesFromFlashMessenger()->renderAsBootstrapToasts() ?>
 
 <p>
     <?php if ($canAjouter): ?>

@@ -2,6 +2,7 @@
 
 namespace Fichier\Service\Storage\Adapter;
 
+use Fichier\Service\Storage\Adapter\Exception\FileNotFoundInStorageException;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -77,7 +78,7 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
         $filePath = $this->assemblePath($dirPath, $fileName);
 
         if (! file_exists($filePath)) {
-            throw (new StorageAdapterException("Le fichier suivant est introuvable : " . $filePath))
+            throw (new FileNotFoundInStorageException("Le fichier suivant est introuvable : " . $filePath))
                 ->setDirPath($dirPath)
                 ->setFileName($fileName);
         }

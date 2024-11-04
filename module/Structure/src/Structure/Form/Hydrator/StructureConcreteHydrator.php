@@ -35,6 +35,9 @@ abstract class StructureConcreteHydrator extends DoctrineObject
      */
     public function hydrate(array $data, $object): StructureConcreteInterface
     {
+        // la gestion du logo ne peut pas être faite ici
+        unset($data['cheminLogo']);
+
         /** @var StructureConcreteInterface $object */
         $object = parent::hydrate($data, $object);
 
@@ -58,7 +61,6 @@ abstract class StructureConcreteHydrator extends DoctrineObject
 
         $structure->setIdRef($data['id_ref'] ?? null);
         $structure->setIdHal($data['id_hal'] ?? null);
-        $structure->setCheminLogo($data['cheminLogo'] ?? null);
         $structure->setEstFermee(isset($data['estFerme']) and $data['estFerme'] === "1");
 
         return $object;

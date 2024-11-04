@@ -7,19 +7,13 @@ use DoctrineModule\Validator\UniqueObject;
 use Laminas\Filter\StringToLower;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\ToNull;
-use Laminas\Form\Form;
-use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\EmailAddress;
-use Laminas\Validator\File\Extension;
-use Laminas\Validator\File\UploadFile;
 use Laminas\Validator\NotEmpty;
-use Laminas\Validator\Uri;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
-use Structure\Form\EtablissementForm;
 use Structure\Form\InputFilter\StructureInputFilter;
+use Structure\Form\StructureForm;
 
-class EtablissementInputFilter extends StructureInputFilter implements EtablissementInputFilterInterface
+class EtablissementInputFilter extends StructureInputFilter
 {
     public function __construct(EntityManager $entityManager)
     {
@@ -28,9 +22,6 @@ class EtablissementInputFilter extends StructureInputFilter implements Etablisse
         $this->add([
             'name' => 'code',
             'required' => true,
-            'filters' => [
-                ['name' => StringTrim::class],
-            ],
             'validators' => [
                 [
                     'name' => NotEmpty::class,
@@ -46,9 +37,6 @@ class EtablissementInputFilter extends StructureInputFilter implements Etablisse
         $this->add([
             'name' => 'sigle',
             'required' => false,
-            'filters' => [
-                ['name' => StringTrim::class],
-            ],
         ]);
         $this->add([
             'name' => 'sourceCode',
@@ -144,15 +132,15 @@ class EtablissementInputFilter extends StructureInputFilter implements Etablisse
         ]);
     }
 
-    public function prepareForm(Form $structureConcreteForm): void
+    public function prepareForm(StructureForm $structureForm): void
     {
-        parent::prepareForm($structureConcreteForm);
+        parent::prepareForm($structureForm);
 
-        $structureConcreteForm->remove('domaine');
-        $structureConcreteForm->remove('emailAssistance');
-        $structureConcreteForm->remove('emailBibliotheque');
-        $structureConcreteForm->remove('emailDoctorat');
-        $structureConcreteForm->remove('estInscription');
-        $structureConcreteForm->remove('estCed');
+        $structureForm->remove('domaine');
+        $structureForm->remove('emailAssistance');
+        $structureForm->remove('emailBibliotheque');
+        $structureForm->remove('emailDoctorat');
+        $structureForm->remove('estInscription');
+        $structureForm->remove('estCed');
     }
 }

@@ -2,6 +2,7 @@
 
 use Structure\Controller\EtablissementController;
 use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
 use Structure\Form\EtablissementForm;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Form\View\Helper\FormControlGroup;
@@ -160,7 +161,6 @@ $this->headTitle(($isNew ? "Création" : "Modif.") . " établissemnt " . $etabli
             <?php if ($form->has('estFerme')) : ?>
                 <?php echo $fcg($form->get('estFerme')) ?>
             <?php endif ?>
-
         </fieldset>
 
         <fieldset id="logo-div">
@@ -168,59 +168,43 @@ $this->headTitle(($isNew ? "Création" : "Modif.") . " établissemnt " . $etabli
             <?php
             /** @var \Laminas\Form\Element\File $logoFile */
             $logoFile = $form->get('cheminLogo');
-            echo $this->formLabel($logoFile);
-            ?>
 
-            <?php
             $content = $logoContent;
             if ($content === null) {
                 $form->getObject()->getStructure()->setCheminLogo(null);
             }
             ?>
-            <table>
-                <tr>
-                    <td>
-                        <?php if ($logoContent): ?>
-                        <img
-                                id="logo"
-                            style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
-                        />
-                        <?php else: ?>
-                            <strong>Aucun logo défini.</strong>
-                        <?php endif; ?>
-                    </td>
-                    <td style="padding:20px;">
-                        <?php
-                        echo $this->formFile($logoFile);
-                        echo $this->formElementErrors($logoFile);
-                        ?>
-                        <br/>
-                        <?php if($form->getObject()->getId()): ?>
-                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["etablissement" => $form->getObject()->getId()], [], true); ?>">
-                            <span class="icon icon-delete"></span>
-                            Supprimer le logo
-                        </a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </table>
-
-            <div class="alert alert-warning">
-                <small>
+            <div>
+                <?php if ($logoContent): ?>
+                <img
+                        id="logo"
+                    style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                    src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
+                />
+                <?php else: ?>
+                    Aucun logo défini.
+                <?php endif; ?>
+            </div>
+            <div style="padding:20px;">
+                <?php echo $this->formControlGroup($logoFile) ?>
+                <div class="alert alert-warning text-md">
                     <span class="icon icon-warning"></span>
-                    Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
-                    <ul>
-                        <li>.bmp</li>
-                        <li>.jpg, .jpeg</li>
-                        <li>.png</li>
-                    </ul>
-                </small>
+                    Le logo de la structure doit être fourni dans l'un des formats suivants :
+                    <?php echo implode(', ', Structure::LOGO_ALLOWED_FILE_EXTENSIONS) ?>.
+                </div>
+                <?php if ($form->getObject()->getId()): ?>
+                    <a data-toggle="confirmationx" id="supprimer-logo" class="btn btn-danger"
+                       href="<?php echo $this->url('etablissement/supprimer-logo', ["etablissement" => $form->getObject()->getId()], [], true); ?>">
+                        <span class="icon icon-delete"></span>
+                        Supprimer le logo
+                    </a>
+                <?php endif; ?>
             </div>
         </fieldset>
     </div>
 
 </div>
+
 <?php echo $this->formHidden($form->get('id')) ?>
 <?php echo $this->formHidden($form->get('csrf')) ?>
 <?php echo $this->formElement($form->get('submit')) ?>

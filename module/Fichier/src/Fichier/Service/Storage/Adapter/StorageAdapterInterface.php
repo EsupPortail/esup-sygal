@@ -13,7 +13,8 @@ interface StorageAdapterInterface
     /**
      * @param string $dirPath
      * @param string $fileName
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
+     * @throws \Fichier\Service\Storage\Adapter\Exception\FileNotFoundInStorageException Fichier introuvable
+     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Autre erreur
      */
     public function deleteFile(string $dirPath, string $fileName);
 

@@ -7,6 +7,8 @@ use Structure\Controller\Factory\UniteRechercheControllerFactory;
 use Structure\Controller\UniteRechercheController;
 use Structure\Form\Factory\UniteRechercheFormFactory;
 use Structure\Form\Factory\UniteRechercheHydratorFactory;
+use Structure\Form\InputFilter\UniteRecherche\UniteRechercheInputFilterFactory;
+use Structure\Form\InputFilter\UniteRecherche\UniteRechercheInputFilter;
 use Structure\Hydrator\Strategy\UniteRechercheStrategy;
 use Structure\Hydrator\Strategy\UniteRechercheStrategyFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
@@ -282,6 +284,11 @@ return [
         ],
         'factories' => [
             'UniteRechercheForm' => UniteRechercheFormFactory::class,
+        ],
+    ],
+    'input_filters' => [
+        'factories' => [
+            UniteRechercheInputFilter::class => UniteRechercheInputFilterFactory::class,
         ],
     ],
     'hydrators' => [

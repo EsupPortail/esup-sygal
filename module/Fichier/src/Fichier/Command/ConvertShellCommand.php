@@ -21,7 +21,7 @@ class ConvertShellCommand extends ShellCommand
      */
     public function generateCommandLine()
     {
-        $command = $this->executable . sprintf(" '%s' '%s'", $this->inputFilePath, $this->outputFilePath);
+        $command = $this->executable . sprintf(" '%s' '%s' 2>&1", $this->inputFilePath, $this->outputFilePath);
 
         $this->commandLine = $command;
     }

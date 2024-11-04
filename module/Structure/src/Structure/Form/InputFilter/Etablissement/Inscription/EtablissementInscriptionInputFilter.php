@@ -5,12 +5,11 @@ namespace Structure\Form\InputFilter\Etablissement\Inscription;
 use Doctrine\ORM\EntityManager;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\Regex;
-use Structure\Form\EtablissementForm;
 use Structure\Form\InputFilter\Etablissement\EtablissementInputFilter;
-use Structure\Form\InputFilter\Etablissement\EtablissementInputFilterInterface;
+use Structure\Form\StructureForm;
 use Webmozart\Assert\Assert;
 
-class EtablissementInscriptionInputFilter extends EtablissementInputFilter implements EtablissementInputFilterInterface
+class EtablissementInscriptionInputFilter extends EtablissementInputFilter
 {
     public function __construct(EntityManager $entityManager)
     {
@@ -190,20 +189,20 @@ class EtablissementInscriptionInputFilter extends EtablissementInputFilter imple
         ]);
     }
 
-    public function prepareForm(EtablissementForm $etablissementForm): void
+    public function prepareForm(StructureForm $structureForm): void
     {
-        Assert::true($etablissementForm->getObject()->estInscription(), "L'établissement bindé n'est pas valide");
+        Assert::true($structureForm->getObject()->estInscription(), "L'établissement bindé n'est pas valide");
 
-        $etablissementForm->get('code')->setLabel("Code UAI (RNE)");
-        $etablissementForm->get('sourceCode')->setAttribute('placeholder', "Ex : UCN");
-        $etablissementForm->get('estInscription')->setAttribute('disabled', 'disabled');
-        $etablissementForm->remove('estMembre');
-        $etablissementForm->remove('estAssocie');
-        $etablissementForm->remove('estCed');
-        $etablissementForm->remove('estFerme');
+        $structureForm->get('code')->setLabel("Code UAI (RNE)");
+        $structureForm->get('sourceCode')->setAttribute('placeholder', "Ex : UCN");
+        $structureForm->get('estInscription')->setAttribute('disabled', 'disabled');
+        $structureForm->remove('estMembre');
+        $structureForm->remove('estAssocie');
+        $structureForm->remove('estCed');
+        $structureForm->remove('estFerme');
 
-        if ($etablissementForm->getObject()->getId()) {
-            $etablissementForm->get('sourceCode')->setAttribute('disabled', 'disabled');
+        if ($structureForm->getObject()->getId()) {
+            $structureForm->get('sourceCode')->setAttribute('disabled', 'disabled');
         }
     }
 }

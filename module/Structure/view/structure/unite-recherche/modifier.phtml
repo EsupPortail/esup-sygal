@@ -3,6 +3,7 @@
 use Application\Entity\Db\DomaineScientifique;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\EtablissementRattachement;
+use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Form\UniteRechercheForm;
 use Application\View\Helper\SelectHelper;
@@ -97,7 +98,11 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
     <div class="col-md-6">
         <fieldset>
             <legend><h2>Étiquettes associées</h2></legend>
-            <?php echo $fcg($form->get('estFerme')) ?>
+            <?php if ($form->has('estFerme')) : ?>
+                <?php echo $fcg($form->get('estFerme')) ?>
+            <?php else: ?>
+                Aucune.
+            <?php endif ?>
         </fieldset>
 
         <fieldset id="logo-div">
@@ -105,63 +110,46 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
             <?php
             /** @var \Laminas\Form\Element\File $logoFile */
             $logoFile = $form->get('cheminLogo');
-            echo $this->formLabel($logoFile);
 
             $content = $logoContent;
             if ($content === null) {
                 $unite->getStructure()->setCheminLogo(null);
             }
             ?>
-            <table>
-                <tr>
-                    <td>
-                        <?php if ($logoContent): ?>
-                        <img
-                                id="logo"
-                                alt="Logo de la structure"
-                                style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                                src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
-                        />
-                        <?php else: ?>
-                            <strong>Aucun logo défini.</strong>
-                        <?php endif; ?>
-                    </td>
-                    <td style="padding:20px;">
-                        <?php
-                        echo $this->formFile($logoFile);
-                        echo $this->formElementErrors($logoFile);
-                        ?>
-                        <br/>
-                        <?php if ($unite->getId()): ?>
-                            <a
-                                    id="supprimer-logo"
-                                    class="btn btn-danger"
-                                    href="<?php echo $this->url('unite-recherche/supprimer-logo', ["unite-recherche" => $unite->getId()]); ?>"
-                            >
-                                <span class="icon icon-delete"></span>
-                                Supprimer le logo
-                            </a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </table>
-
-            <div class="alert alert-warning">
-                <small>
+            <div>
+                <?php if ($logoContent): ?>
+                <img
+                        id="logo"
+                        alt="Logo de la structure"
+                        style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                        src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
+                />
+                <?php else: ?>
+                    Aucun logo défini.
+                <?php endif; ?>
+            </div>
+            <div style="padding:20px;">
+                <?php echo $this->formControlGroup($logoFile) ?>
+                <div class="alert alert-warning text-md">
                     <span class="icon icon-warning"></span>
-                    Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
-                    <ul>
-                        <li>.bmp</li>
-                        <li>.jpg, .jpeg</li>
-                        <li>.png</li>
-                    </ul>
-                </small>
+                    Le logo de la structure doit être fourni dans l'un des formats suivants :
+                    <?php echo implode(', ', Structure::LOGO_ALLOWED_FILE_EXTENSIONS) ?>.
+                </div>
+                <?php if ($unite->getId()): ?>
+                    <a data-toggle="confirmationx" id="supprimer-logo" class="btn btn-danger"
+                       href="<?php echo $this->url('unite-recherche/supprimer-logo', ["unite-recherche" => $unite->getId()]); ?>">
+                        <span class="icon icon-delete"></span>
+                        Supprimer le logo
+                    </a>
+                <?php endif; ?>
             </div>
         </fieldset>
     </div>
 
 </div>
 
+<?php echo $this->formHidden($form->get('id')) ?>
+<?php echo $this->formHidden($form->get('csrf')) ?>
 <?php echo $this->formElement($form->get('submit')) ?>
 <?php echo $this->form()->closeTag() ?>
 
@@ -173,7 +161,7 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
 <h2> Établissements de rattachement </h2>
 
 <?php if(!$structure): ?>
-    <p> Les établissements de rattachement ne peuvent être ajoutés que lors que l'établissement est créé.</p>
+    <p> Les établissements de rattachement ne peuvent être ajoutés qu'après l'enregistrement de l'unité de recherche.</p>
 <?php else : ?>
     <div class="row">
 
@@ -249,7 +237,7 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
 <h2> Domaines scientifiques</h2>
 
 <?php if(!$structure): ?>
-    <p> Les domaines scientifiques ne peuvent être ajoutés que lors que l'établissement est créé.</p>
+    <p> Les domaines scientifiques ne peuvent être ajoutés qu'après l'enregistrement de l'unité de recherche.</p>
 <?php else : ?>
 <div class="row">
     <div class="col-md-6">

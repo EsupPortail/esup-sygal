@@ -2,17 +2,15 @@
 
 namespace Structure\Form;
 
-use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
-use Laminas\InputFilter\InputFilterProviderInterface;
 use Structure\Entity\Db\UniteRecherche;
 
-class UniteRechercheForm extends StructureForm implements InputFilterProviderInterface
+/**
+ * @property \Structure\Form\InputFilter\StructureInputFilterInterface $filter
+ */
+class UniteRechercheForm extends StructureForm
 {
-    /**
-     * NB: hydrateur injecté par la factory
-     */
     public function init(): void
     {
         parent::init();
@@ -28,23 +26,12 @@ class UniteRechercheForm extends StructureForm implements InputFilterProviderInt
         );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInputFilterSpecification(): array
+    public function prepare(): self
     {
-        return [
-            'code' => [
-                'required' => true, // requis pour le calcul du nom de fichier logo
-            ],
-            'RNSR' => [
-                'name' => 'RNSR',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                    ['name' => ToNull::class],
-                ],
-            ],
-        ];
+        parent::prepare();
+
+        $this->filter->prepareForm($this);
+
+        return $this;
     }
 }

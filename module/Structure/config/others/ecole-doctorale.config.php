@@ -6,6 +6,8 @@ use Structure\Controller\EcoleDoctoraleController;
 use Structure\Controller\Factory\EcoleDoctoraleControllerFactory;
 use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use Structure\Form\Factory\EcoleDoctoraleHydratorFactory;
+use Structure\Form\InputFilter\EcoleDoctorale\EcoleDoctoraleInputFilter;
+use Structure\Form\InputFilter\EcoleDoctorale\EcoleDoctoraleInputFilterFactory;
 use Structure\Hydrator\Strategy\EcoleDoctoraleStrategy;
 use Structure\Hydrator\Strategy\EcoleDoctoraleStrategyFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
@@ -222,6 +224,11 @@ return [
         ],
         'factories' => [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,
+        ],
+    ],
+    'input_filters' => [
+        'factories' => [
+            EcoleDoctoraleInputFilter::class => EcoleDoctoraleInputFilterFactory::class,
         ],
     ],
     'hydrators' => [

@@ -318,7 +318,8 @@ class FichierStorageService
      * Supprime le fichier physique du logo existant d'une structure.
      *
      * @param \Structure\Entity\Db\StructureInterface $structure
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
+     * @throws \Fichier\Service\Storage\Adapter\Exception\FileNotFoundInStorageException Fichier introuvable
+     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Autre erreur
      */
     public function deleteFileForLogoStructure(StructureInterface $structure): void
     {

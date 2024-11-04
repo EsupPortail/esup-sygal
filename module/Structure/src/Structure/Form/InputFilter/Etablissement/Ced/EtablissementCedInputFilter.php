@@ -3,13 +3,12 @@
 namespace Structure\Form\InputFilter\Etablissement\Ced;
 
 use Doctrine\ORM\EntityManager;
+use Laminas\Form\Form;
 use Laminas\Validator\NotEmpty;
-use Structure\Form\EtablissementForm;
 use Structure\Form\InputFilter\Etablissement\EtablissementInputFilter;
-use Structure\Form\InputFilter\Etablissement\EtablissementInputFilterInterface;
 use Webmozart\Assert\Assert;
 
-class EtablissementCedInputFilter extends EtablissementInputFilter implements EtablissementInputFilterInterface
+class EtablissementCedInputFilter extends EtablissementInputFilter
 {
     public function __construct(EntityManager $entityManager)
     {
@@ -52,31 +51,29 @@ class EtablissementCedInputFilter extends EtablissementInputFilter implements Et
         ]);
     }
 
-    public function prepareForm(EtablissementForm $etablissementForm): void
+    public function prepareForm(Form $structureForm): void
     {
-        Assert::true($etablissementForm->getObject()->estCed(), "L'établissement bindé n'est pas valide");
+        parent::prepareForm($structureForm);
 
-        $etablissementForm->get('libelle')->setAttribute('disabled', 'disabled');
-        $etablissementForm->get('code')->setAttribute('disabled', 'disabled');
-        $etablissementForm->get('sigle')->setAttribute('disabled', 'disabled');
-        $etablissementForm->get('sourceCode')->setAttribute('disabled', 'disabled');
-        $etablissementForm->remove('domaine');
+        Assert::true($structureForm->getObject()->estCed(), "L'établissement bindé n'est pas valide");
 
-        $etablissementForm->remove('estInscription');
-        $etablissementForm->get('estCed')->setAttribute('disabled', 'disabled');
-        $etablissementForm->remove('estMembre');
-        $etablissementForm->remove('estAssocie');
-        $etablissementForm->remove('estFerme');
+        $structureForm->get('libelle')->setAttribute('disabled', 'disabled');
+        $structureForm->get('code')->setAttribute('disabled', 'disabled');
+        $structureForm->get('sigle')->setAttribute('disabled', 'disabled');
+        $structureForm->get('sourceCode')->setAttribute('disabled', 'disabled');
+        $structureForm->remove('domaine');
 
-        $etablissementForm->remove('emailAssistance');
-        $etablissementForm->remove('emailBibliotheque');
-        $etablissementForm->remove('emailDoctorat');
+        $structureForm->remove('estInscription');
+        $structureForm->get('estCed')->setAttribute('disabled', 'disabled');
+        $structureForm->remove('estMembre');
+        $structureForm->remove('estAssocie');
+        $structureForm->remove('estFerme');
 
-        $etablissementForm->remove('id_ref');
-        $etablissementForm->remove('id_hal');
+        $structureForm->remove('emailAssistance');
+        $structureForm->remove('emailBibliotheque');
+        $structureForm->remove('emailDoctorat');
 
-        if ($etablissementForm->getObject()->getId()) {
-            $etablissementForm->get('sourceCode')->setAttribute('disabled', 'disabled');
-        }
+        $structureForm->remove('id_ref');
+        $structureForm->remove('id_hal');
     }
 }

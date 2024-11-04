@@ -2,23 +2,24 @@
 
 namespace Structure\Form;
 
-use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
-use Laminas\InputFilter\InputFilterProviderInterface;
-use Laminas\Validator\Uri;
 use Structure\Entity\Db\EcoleDoctorale;
 
-class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInterface
+/**
+ * @property \Structure\Form\InputFilter\StructureInputFilterInterface $filter
+ */
+class EcoleDoctoraleForm extends StructureForm
 {
-    /**
-     * NB: hydrateur injecté par la factory
-     */
     public function init(): void
     {
         parent::init();
 
         $this->setObject(new EcoleDoctorale());
+
+        $this->add((new Text('sourceCode'))
+            ->setLabel("Source Code")
+        );
 
         $this->add((new Text('theme'))
             ->setLabel("Thème :")
@@ -33,38 +34,12 @@ class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInt
         );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInputFilterSpecification(): array
+    public function prepare(): self
     {
-        return [
-            'code' => [
-                'required' => true, // requis pour le calcul du nom de fichier logo
-            ],
-            'theme' => [
-                'name' => 'theme',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                    ['name' => ToNull::class],
-                ],
-            ],
-            'offre-these' => [
-                'name' => 'offre-these',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                    ['name' => ToNull::class],
-                ],
-                'validators' => [
-                    ['name' => Uri::class, 'options' => ['allowRelative' => false]],
-                ],
-            ],
-            'estFerme' => [
-                'name' => 'estFerme',
-                'required' => false,
-            ],
-        ];
+        parent::prepare();
+
+        $this->filter->prepareForm($this);
+
+        return $this;
     }
 }
