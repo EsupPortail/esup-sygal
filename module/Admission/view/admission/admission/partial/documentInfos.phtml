@@ -219,7 +219,10 @@ if ($canVerifierAdmission) { ?>
     <?php
     if($canNotifierDossierIncomplet && !$admission->isDossierComplet()){
         //Permettre aux gestionnaires de notifier l'étudiant que son dossier est incomplet ?>
-        <a class="btn access-notification-dossier-incomplet-btn required" data-operation="NotificationDossierIncomplet">Notifier l'étudiant que son dossier est incomplet</a>
+        <a class="btn access-notification-dossier-incomplet-btn required" data-operation="NotificationDossierIncomplet">
+            <span class="icon icon-notify"></span>
+            Notifier l'étudiant que son dossier est incomplet
+        </a>
         <div class="modal fade" id="modalShowConfirmationNotificationDossierIncomplet" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

@@ -602,7 +602,7 @@ form [type='submit'] {
 a.btn > span.icon {
   color: white; }
 
-.btn-info {
+.btn-info, .btn-info.disabled {
   background-color: #009ce4;
   border-color: #009ce4;
   color: #fff; }

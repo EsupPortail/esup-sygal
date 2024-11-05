@@ -92,7 +92,7 @@ $this->headTitle($this->translate($title));
 
     <?php if ($canDlZip): ?>
         <?php $queryParams['redirect'] = $this->url($routeName . '/recherche/index', [], ['query' => $queryParams], true); ?>
-        <a class="btn btn-secondary" href="<?php echo $this->url($routeName . '/recherche/telecharger-zip', [], ['query' => $queryParams]) ?>"
+        <a class="btn btn-primary" href="<?php echo $this->url($routeName . '/recherche/telecharger-zip', [], ['query' => $queryParams]) ?>"
            title="Télécharger tous ces rapports sous la forme d'une archive compressée (.zip)">
             <span class="icon icon-export"></span>
             <?php echo $this->translate("Télécharger les rapports"); ?>

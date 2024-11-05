@@ -47,7 +47,9 @@ use These\Entity\Db\These;
                             <?php endif; ?>
                         <td>
                             <?php /** @see \Soutenance\Controller\AvisController::telechargerAction() ?> */?>
-                            <a href="<?php echo $this->url('soutenance/avis-soutenance/telecharger', ['these' => $these->getId(), 'rapporteur' => $avi->getMembre()->getId()]); ?>">
+                            <a href="<?php echo $this->url('soutenance/avis-soutenance/telecharger', ['these' => $these->getId(), 'rapporteur' => $avi->getMembre()->getId()]); ?>"
+                            class="btn btn-primary"
+                            >
                                 <span class="icon icon-pdf"></span> Télécharger le pré-rapport
                             </a>
                         </td>

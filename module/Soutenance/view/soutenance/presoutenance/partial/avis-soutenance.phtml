@@ -154,9 +154,11 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                 <?php if($canNotifierAvisSoutenance): ?>
                     <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::notifierDemandeAvisSoutenanceAction() */ ?>
                         class="btn btn-info <?php echo ($tousLesEngagements)?'':'disabled'; ?>"
+                        data-bs-toggle="tooltip"
+                        title="Ce rappel sera seulement envoyé aux rapporteurs n'ayant pas encore téléverser leur rapport"
                         href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId()], [], true); ?>"
                     >
-                        <span class="icon icon-notify"></span> Envoyer des demandes d'avis de soutenance
+                        <span class="icon icon-notify"></span> Envoyer un rappel pour le retour des avis de soutenance
                     </a>
                 <?php endif; ?>
             </div>

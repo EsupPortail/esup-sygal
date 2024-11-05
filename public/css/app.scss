@@ -931,7 +931,7 @@ a.btn > span.icon {
   color:white;
 }
 
-.btn-info {
+.btn-info, .btn-info.disabled {
   background-color: $infoColor;
   border-color: $infoColor;
   color: #fff;
