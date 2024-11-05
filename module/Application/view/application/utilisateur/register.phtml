@@ -22,9 +22,11 @@ use Application\Controller\UtilisateurController;
         Votre compte utilisateur local <strong><?php echo $utilisateur->getUsername() ?></strong> a été créé avec succès. <br>
         Un mail vous a été envoyé pour vous indiquer comment initialiser votre compte.
     </p>
-    <p>
-        <a href="<?php echo $this->url('home') ?>">< Retour à l'accueil</a>
-    </p>
+    <a href="<?php echo $this->url('home') ?>"
+       class="btn btn-primary">
+        <span class="icon icon-retour"></span>
+        Retour à l'accueil
+    </a>
 
 <?php else: ?>
 

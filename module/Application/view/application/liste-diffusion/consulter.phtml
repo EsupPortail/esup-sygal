@@ -23,8 +23,9 @@ use Application\Entity\Db\ListeDiffusion;
     <?php echo $this->translate("Liste ") ?> <code><?php echo $liste ?></code>
 </h1>
 
-<a href="<?php echo $url = $this->url('liste-diffusion') ?>">
-    Retour à l'index
+<a href="<?php echo $this->url('liste-diffusion'); ?>" class="btn btn-primary">
+    <span class="icon icon-retour"></span>
+    Retour à la gestion des profils
 </a>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
