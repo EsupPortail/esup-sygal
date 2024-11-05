@@ -4,44 +4,39 @@ namespace Structure\Controller;
 
 use Application\Entity\Db\Variable;
 use Application\Service\Variable\VariableServiceAwareTrait;
-use Laminas\Http\Request;
+use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Etablissement;
 use Structure\Form\VariableForm;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 
-class VariableController extends AbstractActionController {
+class VariableController extends AbstractActionController
+{
     use EtablissementServiceAwareTrait;
-    use StructureServiceAwareTrait;
     use VariableServiceAwareTrait;
-    /**
-     * @var VariableForm
-     */
-    private $variableForm;
 
-    /**
-     * @param VariableForm $variableForm
-     */
-    public function setVariableForm(VariableForm $variableForm)
+    private VariableForm $variableForm;
+
+    public function setVariableForm(VariableForm $variableForm): void
     {
         $this->variableForm = $variableForm;
     }
 
-    public function saisirVariableAction() {
-        /** @var VariableForm $form */
+    public function saisirVariableAction(): Response|ViewModel
+    {
         $form = $this->variableForm;
 
         $etabId = $this->params()->fromRoute('etablissement');
         /** @var Etablissement $etablissement */
         $etablissement = $this->etablissementService->getRepository()->find($etabId);
         if ($etablissement === null) {
-            throw new \InvalidArgumentException("Etablissement introuvable avec cet id");
+            throw new InvalidArgumentException("Etablissement introuvable avec cet id");
         }
 
-        $form->setAttribute('action', $this->url()->fromRoute('etablissement/saisir-variable', ['etablissement'=> $etablissement->getId()], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('etablissement/saisir-variable', ['etablissement' => $etablissement->getId()], [], true));
+        $form->bind($this->variableService->newVariable($etablissement));
 
         $vm = new ViewModel([
             'form' => $form,
@@ -50,32 +45,36 @@ class VariableController extends AbstractActionController {
 
         $variableId = $this->params()->fromRoute('id');
         $variable = null;
-        if($variableId) {
+        if ($variableId) {
             /** @var Variable $variable */
             $variable = $this->variableService->getRepository()->find($variableId);
             if ($variable === null) {
-                throw new \InvalidArgumentException("Variable introuvable avec cet id");
+                throw new InvalidArgumentException("Variable introuvable avec cet id");
             }
             $form->bind($variable);
-            $vm->setVariable('title', "Modification de la variable ".$variable->getCode());
+            $vm->setVariable('title', "Modification de la variable " . $variable->getCode());
         }
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $form->setData($data);
-            if(!$variable){
+            if (!$variable) {
                 $variable = $form->getObject();
                 $variable->setEtablissement($etablissement);
             }
             if ($form->isValid()) {
-                if ($variable->getId() !== null){
+                if ($variable->getId() !== null) {
                     $this->variableService->update($variable);
-                }else{
+                } else {
                     $this->variableService->create($variable);
                 }
-                return $this->redirect()->toRoute('etablissement/voir', ['etablissement'=> $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_variables]], true);
+                return $this->redirect()->toRoute(
+                    'etablissement/voir',
+                    ['etablissement' => $etablissement->getId()],
+                    ['query' => ['tab' => StructureController::TAB_variables]],
+                    true
+                );
             }
         }
 
@@ -88,7 +87,7 @@ class VariableController extends AbstractActionController {
         if($variableId){
             $variable = $this->variableService->getRepository()->find($variableId);
             if ($variable === null) {
-                throw new \InvalidArgumentException("Variable introuvable avec cet id");
+                throw new InvalidArgumentException("Variable introuvable avec cet id");
             }
             $this->variableService->delete($variable);
         }

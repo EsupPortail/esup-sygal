@@ -2,28 +2,34 @@
 
 namespace Structure\Form;
 
-use DoctrineModule\Form\Element\ObjectSelect;
-use Laminas\Form\Element\Button;
+use Application\Entity\Db\Variable;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Date;
+use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
-use Laminas\InputFilter\Factory;
-use Structure\Entity\Db\Etablissement;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Callback;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 
-class VariableForm extends Form {
-
+/**
+ * @@property Variable $object
+ */
+class VariableForm extends Form implements InputFilterProviderInterface
+{
+    use VariableServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
-    public function init()
+    public function init(): void
     {
         $this->add([
-            'type' => Text::class,
+            'type' => Select::class,
             'name' => 'code',
             'options' => [
                 'label' => "Code * :",
+                'value_options' => array_combine(Variable::CODES, Variable::CODES),
             ],
             'attributes' => [
                 'id' => 'code',
@@ -56,11 +62,10 @@ class VariableForm extends Form {
             'type' => Date::class,
             'name' => 'dateDebutValidite',
             'options' => [
-                'label' => "Date de début de validité :",
+                'label' => "Début de validité :",
             ],
             'attributes' => [
                 'readonly' => 'true',
-                'value' => date_create()
             ]
         ]);
 
@@ -68,34 +73,51 @@ class VariableForm extends Form {
             'type' => Date::class,
             'name' => 'dateFinValidite',
             'options' => [
-                'label' => "Date de fin de validité :",
+                'label' => "Fin de validité :",
             ],
             'attributes' => [
                 'readonly' => 'true',
-                'value' => date_create()->modify('+10 years')
             ]
         ]);
 
         $this
             ->add(new Csrf('security'))
             ->add((new Submit('submit'))->setValue('Enregistrer'));
+    }
 
-        $this->setInputFilter((new Factory())->createInputFilter([
+    public function getInputFilterSpecification(): array
+    {
+        return [
             'code' => [
                 'required' => true,
+                'validators' => [
+                    [
+                        'name' => Callback::class,
+                        'options' => [
+                            'callback' => fn (string $code) =>
+                                $this->variableService->getRepository()->findOneBy([
+                                    'code' => $code,
+                                    'etablissement' => $this->object->getEtablissement(),
+                                ]) === null,
+                            'messages' => [
+                                Callback::INVALID_VALUE => "Pour cet établissement, une variable existe déjà avec ce code"
+                            ],
+                        ],
+                    ],
+                ]
             ],
             'description' => [
+                'required' => true,
+            ],
+            'valeur' => [
                 'required' => true,
             ],
             'dateDebutValidite' => [
                 'required' => false,
             ],
-            'valeur' => [
-                'required' => false,
-            ],
             'dateFinValidite' => [
                 'required' => false,
             ],
-        ]));
+        ];
     }
 }

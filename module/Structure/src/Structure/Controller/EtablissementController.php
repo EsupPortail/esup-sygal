@@ -80,6 +80,9 @@ class EtablissementController extends StructureConcreteController
             ->setTemplate('structure/etablissement/information');
     }
 
+    /**
+     * @param Etablissement $structureConcrete
+     */
     protected function loadInformationForStructure(StructureConcreteInterface $structureConcrete): array
     {
         $vars = parent::loadInformationForStructure($structureConcrete);
@@ -92,7 +95,7 @@ class EtablissementController extends StructureConcreteController
         $individus = $this->roleService->findIndividuForStructure($structureConcrete->getStructure());
         $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
-        $variables = $structureConcrete instanceOf Etablissement ? $this->variableService->getRepository()->findAllByEtab($structureConcrete) : [];
+        $variables = $structureConcrete->estInscription() ? $this->variableService->getRepository()->findAllByEtab($structureConcrete) : [];
 
         foreach ($roles as $role) {
             if (!$role->isTheseDependant()) {

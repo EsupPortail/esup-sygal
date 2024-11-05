@@ -6,7 +6,8 @@ use Application\Entity\Db\Repository\VariableRepository;
 use Application\Entity\Db\Variable;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Exception\ORMException;
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -15,10 +16,8 @@ use UnicaenApp\Exception\RuntimeException;
 class VariableService extends BaseService
 {
     use SourceServiceAwareTrait;
-    /**
-     * @return VariableRepository
-     */
-    public function getRepository()
+
+    public function getRepository(): VariableRepository
     {
         /** @var VariableRepository $repo */
         $repo = $this->entityManager->getRepository(Variable::class);
@@ -26,58 +25,47 @@ class VariableService extends BaseService
         return $repo;
     }
 
-    /**
-     * @param Variable $profil
-     * @return  Variable
-     */
-    public function create($variable)
+    public function create(Variable $variable): Variable
     {
-        $this->getEntityManager()->persist($variable);
         try {
+            $this->getEntityManager()->persist($variable);
             $this->getEntityManager()->flush($variable);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la création d'une Variable", $e);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la création de la Variable", $e);
         }
+
         return $variable;
     }
 
-    /**
-     * @param Variable $variable
-     * @return  Variable
-     */
-    public function update($variable)
+    public function update(Variable $variable): Variable
     {
         try {
             $this->getEntityManager()->flush($variable);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la mise à jour d'une Variable", $e);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la mise à jour de la Variable", $e);
         }
+
         return $variable;
     }
 
-    /**
-     * @param Variable $variable
-     */
-    public function delete($variable)
+    public function delete(Variable $variable): void
     {
-        $this->getEntityManager()->remove($variable);
         try {
+            $this->getEntityManager()->remove($variable);
             $this->getEntityManager()->flush();
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème s'est produit lors de la suppression d'une Variable", $e);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème s'est produit lors de la suppression de la Variable", null, $e);
         }
     }
 
-    /**
-     * @return Variable
-     */
-    public function newVariable(): Variable
+    public function newVariable(Etablissement $etablissement): Variable
     {
         $variable  = new Variable();
         $variable->setDateDebutValidite(date_create());
         $variable->setDateFinValidite(date_create()->modify('+10 years'));
         $variable->setSource($this->sourceService->fetchApplicationSource());
         $variable->setSourceCode($this->sourceService->genereateSourceCode());
+        $variable->setEtablissement($etablissement);
 
         return $variable;
     }

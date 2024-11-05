@@ -6,6 +6,8 @@ use Laminas\Router\Http\Segment;
 use Structure\Controller\Factory\VariableControllerFactory;
 use Structure\Controller\VariableController;
 use Structure\Form\Factory\VariableFormFactory;
+use Structure\Form\Factory\VariableHydratorFactory;
+use Structure\Form\Hydrator\VariableHydrator;
 use Structure\Form\VariableForm;
 use UnicaenAuth\Guard\PrivilegeController;
 
@@ -66,6 +68,7 @@ return [
     ],
     'hydrators' => [
         'factories' => [
+            VariableHydrator::class => VariableHydratorFactory::class,
         ]
     ],
     'service_manager' => [

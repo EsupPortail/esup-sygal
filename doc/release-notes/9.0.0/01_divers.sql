@@ -3,6 +3,14 @@
 --
 
 --
+-- Suppression de variables abandonnées.
+--
+
+delete from variable where code in ('EMAIL_BDD', 'EMAIL_BU', 'TRIBUNAL_COMPETENT');
+delete from variable where code is null;
+
+
+--
 -- Suppression vue abandonnée.
 --
 

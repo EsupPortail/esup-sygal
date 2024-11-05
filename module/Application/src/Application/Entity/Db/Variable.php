@@ -20,6 +20,13 @@ class Variable implements HistoriqueAwareInterface
     const CODE_ETB_LIB                       = 'ETB_LIB';           // Ex: "Université de Caen Normandie"
     const CODE_ETB_LIB_TIT_RESP              = 'ETB_LIB_TIT_RESP';  // Ex: "Le Président"
     const CODE_ETB_LIB_NOM_RESP              = 'ETB_LIB_NOM_RESP';  // Ex: "Pierre Denise"
+    const CODES = [
+        self::CODE_EMAIL_ASSISTANCE,
+        self::CODE_ETB_ART_ETB_LIB,
+        self::CODE_ETB_LIB,
+        self::CODE_ETB_LIB_TIT_RESP,
+        self::CODE_ETB_LIB_NOM_RESP,
+    ];
 
     /**
      * @var string

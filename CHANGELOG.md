@@ -14,6 +14,7 @@ Journal des modifications
 - Module Soutenances : Affichage de l'historique des actions effectuées (horodatages) en dessous de chacune d'elles 
 - Amélioration de la page consacrée aux profils (filtrage, explications, esthétique) et harmonisation de la page Rôles et privilèges.
 - Création/modif d'établissement d'inscription, d'ED/UR : obligation de fournir un logo ; harmonisation des formulaires de création/modif d'ED/UR.
+- Variables d'établissement : améliorations de la création/modif de variable (notamment choix du 'code' parmi une liste fermée).
 - [FIX] Notifications de demande d'engagement d'impartialité et d'avis de soutenance : utilisation en priorité du mail de l'acteur.
 - [FIX] Impossible d'accèder aux pages de consultation/modification d'ED ou d'UR.
 - [FIX] Coquille dans le procès verbal de soutenance (PDF).

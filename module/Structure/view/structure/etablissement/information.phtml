@@ -9,6 +9,7 @@
  * @var string $logoContent
  * @var string $signatureConvocation
  * @var string[] $contenus
+ * @var \Application\Entity\Db\Variable[] $variables
  */
 
 use Structure\Controller\StructureController;
@@ -188,15 +189,17 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php endif; ?>
 </div>
 
-<div class="tab-content <?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
+<?php if ($etablissement->estInscription()): ?>
+    <div class="tab-content <?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
 
-    <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
+        <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
 
-</div>
+    </div>
+<?php endif; ?>
 
 <div class="tab-content <?php echo $tab === StructureController::TAB_variables ? '' : 'd-none' ?>" id="variables">
 
-    <?php echo $this->partial('structure/variable/index', ['etablissement' => $etablissement->getStructure(), 'variables' => $variables]); ?>
+    <?php echo $this->partial('structure/variable/index', ['etablissement' => $etablissement, 'variables' => $variables]); ?>
 
 </div>
 

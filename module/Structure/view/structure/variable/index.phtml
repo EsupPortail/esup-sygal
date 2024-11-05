@@ -18,14 +18,14 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
 ?>
 
 
-<?php $this->headTitle($this->translate("Établissements")) ?>
+<?php $this->headTitle($this->translate("Variables")) ?>
 
-<h1 class="page-header first">
+<h2>
     <?php echo $this->translate("Variables") ?>
     <span class="badge bg-secondary">
         <?php echo count($variables); ?>
     </span>
-</h1>
+</h2>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
@@ -43,11 +43,12 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
     <table class="table table-sm">
         <thead>
         <tr>
+            <th> Source </th>
             <th> Code </th>
             <th> Description </th>
             <th> Valeur </th>
-            <th> Date de début de validité </th>
-            <th> Date de fin de validité </th>
+            <th> Sébut de validité </th>
+            <th> Fin de validité </th>
             <th> Actions </th>
         </tr>
         </thead>
@@ -59,6 +60,9 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
             ?>
 
             <tr>
+                <td>
+                    <?php echo $variable->getSource(); ?>
+                </td>
                 <td>
                     <?php echo $variable->getCode(); ?>
                 </td>
@@ -79,19 +83,15 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
                         <?php
                         $redirectUrl =  $this->url('etablissement/voir', ['etablissement'=> $etablissement->getId()], ['query' => ['tab' => StructureController::TAB_variables]], true);
                         ?>
-                        <a  <?php /**  @see \Structure\Controller\VariableController::supprimerAction() */ ?>
-                                data-event="modification" data-toggle="confirmationx"
-                                href="<?php echo $this->url('etablissement/supprimer-variable', ['id' => $variable->getId()], ['query' => ['redirect' => $redirectUrl]], true); ?>"
-                        >
-                                <span class="icon icon-delete iconly float-end" style="color:darkred;"
-                                      title="Supprimer la variable"></span>
-                        </a>
                         <a  <?php /**  @see \Structure\Controller\VariableController::saisirVariableAction() */ ?>
                                 class="ajax-modal" data-event="modification"
-                                href="<?php echo $this->url('etablissement/saisir-variable', ['id' => $variable->getId(), 'etablissement'=> $etablissement->getId()], [], true); ?>"
-                        >
-                            <span class="icon icon-edit iconly float-end" style="color:darkred;"
-                                  title="Modifier la variable"></span>
+                                href="<?php echo $this->url('etablissement/saisir-variable', ['id' => $variable->getId(), 'etablissement'=> $etablissement->getId()], [], true); ?>">
+                            <span class="icon icon-edit iconly" title="Modifier la variable"></span>
+                        </a>
+                        <a  <?php /**  @see \Structure\Controller\VariableController::supprimerAction() */ ?>
+                                data-event="modification" data-toggle="confirmationx"
+                                href="<?php echo $this->url('etablissement/supprimer-variable', ['id' => $variable->getId()], ['query' => ['redirect' => $redirectUrl]], true); ?>">
+                                <span class="icon icon-delete iconly text-danger" title="Supprimer la variable"></span>
                         </a>
                     <?php endif; ?>
                 </td>
@@ -100,9 +100,3 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
         </tbody>
     </table>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('select').selectpicker();
-    })
-</script>
