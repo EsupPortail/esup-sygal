@@ -14,10 +14,18 @@ use Soutenance\Service\Horodatage\HorodatageService;
 
 $these = $proposition->getThese();
 
+$hasValidationUR = !empty($validations[Role::CODE_RESP_UR]);
+$hasValidationED = !empty($validations[Role::CODE_RESP_ED]);
+$hasValidationEtab = !empty($validations[Role::CODE_BDD]);
+$isAllOk = $hasValidationUR && $hasValidationED && $hasValidationEtab;
+
+$cssClass = "";
+if ($isAllOk === true) $cssClass = "bg-success";
+if ($isAllOk === false) $cssClass = "bg-danger";
 ?>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header <?php echo $cssClass; ?>">
         <h2> Validation par les structures encadrant la thèse </h2>
     </div>
     <div class="card-body">
@@ -84,7 +92,7 @@ $these = $proposition->getThese();
                             class="btn btn-primary action"
                             target="_blank"
                         >
-                            <span class="fas fa-list-alt"></span>Générer document pour signature
+                            <span class="icon icon-pdf"></span>Générer document pour signature
                         </a>
                     </p>
                 <?php endif; ?>

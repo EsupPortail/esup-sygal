@@ -58,7 +58,10 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
             <?php if ($attestationsIntegriteScientifique === []) : ?>
                 <div class="row">
                     <div class="col-md-8">
-                        <p> Veuillez déposer ici une attestation de suivi pour cette formation. </p>
+                        <div class="alert alert-warning">
+                            <span class="icon icon-info"></span>
+                            Veuillez déposer ici une attestation de suivi pour cette formation.
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <?php if ($canModifier) : ?>

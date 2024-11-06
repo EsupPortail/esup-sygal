@@ -188,7 +188,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
     <div class="card-header <?php echo ($engagement !== null)?"bg-info":"bg-warning"; ?>">
         <h2> Avis de soutenance / Notification on the PhD defense </h2>
     </div>
-    <div class="row card-body">
+    <div class="card-body">
     <?php if ($engagement !== null) : ?>
             <?php if ($avis !== null) : ?>
                 Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.

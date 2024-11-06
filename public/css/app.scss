@@ -109,6 +109,9 @@ h2.modal-title {
   .card-header.bg-danger {
     color: white;
   }
+  .card-header.bg-warning {
+    color: white;
+  }
 }
 
 .card.box {
@@ -120,6 +123,7 @@ h2.modal-title {
     h2 {
       font-size: 150%;
       margin: 0;
+      color:white;
     }
     .icon {
       margin-right: 5px;
@@ -590,8 +594,12 @@ input[type="checkbox"] {
 }
 
 .alert.alert-warning{
-  color: #664d03;
-  border-left: 5px solid #664d03;
+  color: #bd7732;
+  border-left: 5px solid #D9822B;
+}
+
+.alert-warning{
+  border-color: #f7cfa8;
 }
 
 .alert.alert-success{

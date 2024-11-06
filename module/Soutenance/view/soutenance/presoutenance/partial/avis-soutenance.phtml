@@ -25,11 +25,12 @@ $canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResou
 
 $tousLesEngagements = count($rapporteurs) === count($engagements) ;
 $tousLesAvis = count($rapporteurs) === count($avis) ;
+$tousLesAvisSontFavorables = count(array_filter($avis, fn($avis) => $avis->getAvis() === 'Favorable')) === count($avis);
 ?>
 
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header <?= $tousLesAvis && $tousLesAvisSontFavorables ? "bg-success" : "bg-danger";?>">
         <h2> Avis de soutenance</h2>
     </div>
     <div class="card-body">
@@ -161,25 +162,6 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         <span class="icon icon-notify"></span> Envoyer un rappel pour le retour des avis de soutenance
                     </a>
                 <?php endif; ?>
-            </div>
-
-            <div class="col-md-8">
-                <?php if ($tousLesAvis) : ?>
-                    <div class="card">
-                        <div class="card-header bg-success">
-                            <span class="icon icon-ok"></span>
-                            Tous les rapports et avis ont été fournis.
-                        </div>
-                    </div>
-                <?php else : ?>
-                    <div class="card">
-                        <div class="card-header bg-warning">
-                            <span class="fas fa-exclamation-triangle"></span>
-                            Tous les rapports et avis n'ont pas été fournis.
-                        </div>
-                    </div>
-                <?php endif; ?>
-
             </div>
         </div>
 
