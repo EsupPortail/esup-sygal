@@ -1,5 +1,3 @@
-image: localhost:5000/unicaen-dev-php7.3-apache
-
 stages:
   - prepare
   - release
