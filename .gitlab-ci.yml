@@ -1,16 +1,31 @@
 image: localhost:5000/unicaen-dev-php7.3-apache
 
 stages:
+  - prepare
   - release
+
+prepare_job:
+  stage: prepare  # This stage must run before the release stage
+  rules:
+    - if: $CI_COMMIT_TAG  # Run this job when a tag is created manually
+  script:
+    - echo "VERSION_DIR=v$(echo $CI_COMMIT_TAG | cut -f1 -d'.')" >> variables.env  # Generate the VERSION_DIR environment variable and append to the variables.env file
+  artifacts:
+    reports:
+      dotenv: variables.env  # Use artifacts:reports:dotenv to expose the variables to other jobs
 
 release_job:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: prepare_job
+      artifacts: true
   rules:
     - if: $CI_COMMIT_TAG  # Run this job when a tag is created manually
-  script: echo "Creation de la release $CI_COMMIT_TAG..."
+  script:
+    - echo "Inscription de la release $CI_COMMIT_TAG..."
   release:
     name: '$CI_COMMIT_TAG'
     tag_name: '$CI_COMMIT_TAG'
     ref: '$CI_COMMIT_TAG'
-    description: 'Cf. [CHANGELOG](CHANGELOG.md) et [Release notes](doc/release-notes/v$CI_COMMIT_TAG.md)'
+    description: 'Cf. [CHANGELOG](CHANGELOG.md) et [Release notes](doc/release-notes/$VERSION_DIR/$CI_COMMIT_TAG.md)'
