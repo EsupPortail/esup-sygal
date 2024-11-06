@@ -22,14 +22,10 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     use HistoriqueAwareTrait;
     use StructureAwareTrait;
 
-    // Memento: (&(eduPersonAffiliation=member)(eduPersonAffiliation=student)(eduPersonAffiliation=researcher))
-
+    //
+    // rôles thèse-dépendants
+    //
     const CODE_DOCTORANT = 'DOCTORANT';
-    const CODE_ADMIN = 'ADMIN';
-    const CODE_ADMIN_TECH = 'ADMIN_TECH';
-    const CODE_BU = 'BU';
-    const CODE_BDD = 'BDD';
-
     const CODE_DIRECTEUR_THESE = 'D';
     const CODE_CODIRECTEUR_THESE = 'K';
     const CODE_MEMBRE_JURY = 'M';
@@ -37,33 +33,39 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const CODE_RAPPORTEUR_JURY = 'R';
     const CODE_RAPPORTEUR_ABSENT = 'A';
     const CODE_CO_ENCADRANT = 'B';
+
+    //
+    // rôles établissement-dépendants
+    //
+    const CODE_ADMIN = 'ADMIN';
+    const CODE_BU = 'BU';
+    const CODE_BDD = 'BDD'; // maison du doctorat
+    const CODE_OBSERVATEUR = "Observateur";
+
+    //
+    // rôles ED/UR-dépendants
+    //
     const CODE_RESP_ED = 'RESP_ED';
     const CODE_GEST_ED = 'GEST_ED';
     const CODE_RESP_UR = 'RESP_UR';
     const CODE_GEST_UR = 'GEST_UR';
 
+    //
+    // rôles sans dépendance
+    //
+    const CODE_ADMIN_TECH = 'ADMIN_TECH';
     const CODE_FORMATEUR = 'FORMATEUR';
-    const CODE_OBSERVATEUR_COMUE = "OBSERV";
-
+    //
     const ROLE_ID_USER = 'user'; // ROLE_ID du rôle correspondant à un utilisateur authentifié avec succès.
-
-    // @todo NB: maintenant il y le code étab concaténé au "role_id"
-    const ROLE_ID_DOCTORANT = "Doctorant";
-    const ROLE_ID_BUREAU_DES_DOCTORATS = "Maison du doctorat";
-    const ROLE_ID_BIBLIO_UNIV = "Bibliothèque universitaire";
-
-    const ROLE_ID_ECOLE_DOCT = "École doctorale";
-    const ROLE_ID_UNITE_RECH = "Unité de recherche";
-    const LIBELLE_PRESIDENT = "Président du jury";
-    const CODE_OBSERVATEUR = "Observateur";
-
-    const ROLE_ID_ADMISSION_CANDIDAT = "Candidat";
+    //
+    const ROLE_ID_ADMISSION_CANDIDAT = "Candidat"; // todo : utiliser le CODE à la place
     const CODE_ADMISSION_CANDIDAT = "ADMISSION_CANDIDAT";
-    const ROLE_ID_ADMISSION_DIRECTEUR_THESE = "Potentiel directeur de thèse";
+    const ROLE_ID_ADMISSION_DIRECTEUR_THESE = "Potentiel directeur de thèse"; // todo : utiliser le CODE à la place
     const CODE_ADMISSION_DIRECTEUR_THESE = "ADMISSION_DIRECTEUR_THESE";
-
-    const ROLE_ID_ADMISSION_CODIRECTEUR_THESE = "Potentiel co-directeur de thèse";
+    //
+    const ROLE_ID_ADMISSION_CODIRECTEUR_THESE = "Potentiel co-directeur de thèse"; // todo : utiliser le CODE à la place
     const CODE_ADMISSION_CODIRECTEUR_THESE = "ADMISSION_CODIRECTEUR_THESE";
+
 
     /**
      * Convertit la collection d'entités spécifiée en un tableau d'options injectable dans un <select>.
