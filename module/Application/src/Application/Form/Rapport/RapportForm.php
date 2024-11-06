@@ -69,9 +69,12 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
             'type' => Select::class,
             'name' => 'anneeUniv',
             'options' => [
-                'label' => 'Année universitaire :',
+                'label' => "Année universitaire <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
                 'empty_option' => "Sélectionner...",
                 'disable_inarray_validator' => true,
@@ -86,7 +89,10 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
             'name' => 'files',
             'type' => File::class,
             'options' => [
-                'label' => "Document à joindre :",
+                'label' => "Document à joindre <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'files',

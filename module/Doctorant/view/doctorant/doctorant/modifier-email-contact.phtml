@@ -62,3 +62,9 @@ echo $this->form()->openTag($form->prepare()->setAttribute('class', 'mail-confir
 echo $this->formControlGroup()->render($form->get('submit'));
 echo $this->form()->closeTag();
 ?>
+
+<script>
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
+</script>

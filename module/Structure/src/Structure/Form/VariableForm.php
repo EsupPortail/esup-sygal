@@ -20,7 +20,10 @@ class VariableForm extends Form {
             'type' => Text::class,
             'name' => 'code',
             'options' => [
-                'label' => "Code * :",
+                'label' => "Code <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'code',
@@ -31,7 +34,10 @@ class VariableForm extends Form {
             'type' => Text::class,
             'name' => 'description',
             'options' => [
-                'label' => "Description * :",
+                'label' => "Description <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'description',
@@ -42,7 +48,10 @@ class VariableForm extends Form {
             'type' => Text::class,
             'name' => 'valeur',
             'options' => [
-                'label' => "Valeur * :",
+                'label' => "Valeur <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'valeur',

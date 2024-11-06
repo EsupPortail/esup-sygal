@@ -15,7 +15,6 @@ $autorisationInscription = $form->getObject();
     ->prepend("Autorisation d'inscription")
     ->prepend($autorisationInscription->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
-<!--    <h1 class="page-header">Nouvel avis à propos d'un rapport</h1>-->
 <?php echo $this->form()->openTag($form) ?>
     <div class="row">
         <div class="col-md-4">
@@ -32,3 +31,8 @@ $autorisationInscription = $form->getObject();
         </div>
     </div>
 <?php echo $this->form()->closeTag() ?>
+<script>
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
+</script>

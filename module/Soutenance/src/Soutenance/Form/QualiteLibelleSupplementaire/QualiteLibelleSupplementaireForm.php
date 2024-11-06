@@ -16,7 +16,10 @@ class QualiteLibelleSupplementaireForm extends Form {
             'type' => Text::class,
             'name' => 'qualite',
             'options' => [
-                'label' => "Qualité :",
+                'label' => "Qualité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'qualite',
@@ -28,7 +31,10 @@ class QualiteLibelleSupplementaireForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libelle supplémentaire :",
+                'label' => "Libelle supplémentaire <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'libelle',

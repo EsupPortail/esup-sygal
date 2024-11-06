@@ -37,12 +37,14 @@ class CreationUtilisateurFromIndividuForm extends Form implements InputFilterPro
 
         $this->add(
             (new Password('password'))
-                ->setLabel("Mot de passe :")
+                ->setLabel("Mot de passe <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true,])
         );
 
         $this->add(
             (new Password('passwordbis'))
-                ->setLabel("Confirmation du mot de passe :")
+                ->setLabel("Confirmation du mot de passe <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true,])
         );
 
         FormUtils::addSaveButton($this);

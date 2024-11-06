@@ -41,7 +41,10 @@ class EnqueteCategorieForm extends Form {
             'type' => Text::class,
             'name' => 'ordre',
             'options' => [
-                'label' => "Ordre de la catégorie *:",
+                'label' => "Ordre de la catégorie  <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'ordre',

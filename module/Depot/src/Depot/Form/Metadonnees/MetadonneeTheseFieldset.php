@@ -59,8 +59,11 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type'       => 'Select',
             'name'       => 'langue',
             'options'    => [
-                'label'         => 'Langue de la thèse',
+                'label'         => "Langue de la thèse <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>",
                 'value_options' => MetadonneeThese::$langues,
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'title' => "",
@@ -71,7 +74,10 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type'       => 'Textarea',
             'name'       => 'titreAutreLangue',
             'options'    => [
-                'label' => 'Titre en anglais',
+                'label' => "Titre en anglais <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'rows' => 3,
@@ -83,7 +89,7 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type'       => 'Textarea',
             'name'       => $name = 'resume',
             'options'    => [
-                'label' => "Résumé en <u>français</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris)",
+                'label' => "Résumé en <u>français</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>",
                 'label_options' => [
                     'disable_html_escape' => true,
                 ]
@@ -99,7 +105,7 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type'       => 'Textarea',
             'name'       => $name = 'resumeAnglais',
             'options'    => [
-                'label' => "Résumé en <u>anglais</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris)",
+                'label' => "Résumé en <u>anglais</u> (" . ($ml = $this->resumeMaxlength[$name]) . " caractères maximum, espaces compris) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>",
                 'label_options' => [
                     'disable_html_escape' => true,
                 ]
@@ -115,7 +121,10 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type'       => 'Text',
             'name'       => 'motsClesLibresFrancais',
             'options'    => [
-                'label' => 'Proposition de mots-clés en français',
+                'label' => "Proposition de mots-clés en français <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'title' => sprintf("Mots-clés séparés par le caractère %s (%s)",
@@ -128,7 +137,10 @@ class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInt
             'type'       => 'Text',
             'name'       => 'motsClesLibresAnglais',
             'options'    => [
-                'label' => 'Proposition de mots-clés en anglais',
+                'label' => "Proposition de mots-clés en anglais <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'title' => sprintf("Mots-clés séparés par le caractère %s (%s)",

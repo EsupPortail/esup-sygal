@@ -24,12 +24,18 @@ class DateLieuForm extends Form implements InputFilterProviderInterface
 
     public function init(): void
     {
+        $required = "";
+        if($this->dateHeureRequired) $required = "<span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> ";
+
         $this->add([
             'name' => 'date',
             'type' => Date::class,
             'options' => [
-                'label' => 'Date de la soutenance : ',
+                'label' => 'Date de la soutenance '.$required.': ',
                 'format' => 'Y-m-d',
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 //'min'  => $twomonth->format('Y-m-d'),
@@ -40,8 +46,11 @@ class DateLieuForm extends Form implements InputFilterProviderInterface
             'name' => 'heure',
             'type' => Time::class,
             'options' => [
-                'label' => 'Heure de la soutenance : ',
+                'label' => 'Heure de la soutenance '.$required.': ',
                 'format' => 'H:i',
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
         ]);
 
@@ -49,7 +58,10 @@ class DateLieuForm extends Form implements InputFilterProviderInterface
             'name' => 'lieu',
             'type' => Text::class,
             'options' => [
-                'label' => 'Lieu de la soutenance : ',
+                'label' => "Lieu de la soutenance <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> : ",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
         ]);
 
@@ -57,10 +69,13 @@ class DateLieuForm extends Form implements InputFilterProviderInterface
             'name' => 'exterieur',
             'type' => Radio::class,
             'options' => [
-                'label' => 'La soutenance aura lieu :',
+                'label' => "La soutenance aura lieu <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'value_options' => [
                     '0' => 'dans l\'établissement d\'encadrement',
                     '1' => 'hors l\'établissement d\'encadrement',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
         ]);

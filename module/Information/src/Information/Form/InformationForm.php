@@ -19,7 +19,10 @@ class InformationForm extends Form implements InputFilterProviderInterface {
             'type' => Text::class,
             'name' => 'titre',
             'options' => [
-                'label' => "Titre :",
+                'label' => "Titre <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'titre',
@@ -43,10 +46,13 @@ class InformationForm extends Form implements InputFilterProviderInterface {
             'type' => Select::class,
             'name' => 'langue',
             'options' => [
-                'label' => 'Langue de la page :',
+                'label' => "Langue de la page <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'value_options' => [
                     'FR' => 'Français',
                     'EN' => 'English',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
         ]);

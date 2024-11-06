@@ -25,7 +25,8 @@ class AutorisationInscriptionForm extends Form implements InputFilterProviderInt
                     0 => "Non",
                 ])
                 ->setAttributes(['id' => 'autorisationInscription'])
-                ->setLabel("Autorisez-vous l'inscription dans l'année suivante ?")
+                ->setLabel("Autorisez-vous l'inscription dans l'année suivante ? <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions(['disable_html_escape' => true,])
         );
 
         $this->add(

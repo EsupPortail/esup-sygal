@@ -13,7 +13,8 @@ class AdresseMailForm extends Form {
 
         $this->add(
             (new Text('email'))
-                ->setLabel("Adresse électronique (identifiant de connexion) :")
+                ->setLabel("Adresse électronique (identifiant de connexion) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabelOptions(['disable_html_escape' => true,])
         );
 
         FormUtils::addSaveButton($this);

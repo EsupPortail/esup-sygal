@@ -60,7 +60,10 @@ class EnqueteQuestionForm extends Form {
             'type' => Text::class,
             'name' => 'ordre',
             'options' => [
-                'label' => "Ordre de la question *:",
+                'label' => "Ordre de la question <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'ordre',

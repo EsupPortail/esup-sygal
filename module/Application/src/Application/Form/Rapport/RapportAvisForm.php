@@ -53,9 +53,12 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
             'type' => Radio::class,
             'name' => 'avis',
             'options' => [
-                'label' => 'Avis :',
+                'label' => "Avis <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
                 'empty_option' => "Sélectionner...",
                 'disable_inarray_validator' => true,
@@ -70,7 +73,10 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
             'name' => 'commentaires',
             'type' => Textarea::class,
             'options' => [
-                'label' => "Commentaires :",
+                'label' => "Commentaires <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'commentaires',
