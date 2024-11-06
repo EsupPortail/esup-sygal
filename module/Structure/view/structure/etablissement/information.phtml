@@ -8,14 +8,16 @@
  * @var array $individuListing (string => string[])
  * @var string $logoContent
  * @var string $signatureConvocation
- * @var string[] $contenus
+ * @var string[] $contenusFichiers
  * @var \Application\Entity\Db\Variable[] $variables
  */
 
+use Individu\Provider\Privilege\IndividuPrivileges;
 use Structure\Controller\StructureController;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
 
 $this->headTitle("Établissement '{$etablissement->getStructure()->getLibelle()}'");
 
@@ -41,6 +43,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
 
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item">
@@ -83,7 +86,10 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     </li>
 </ul>
 
+
+
 <div class="tab-content <?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
+
     <div class="row">
         <div class="col-md-4">
             <?php echo $this->partial('structure/etablissement/partial/information', ['entity' => $etablissement]) ?>
@@ -149,30 +155,49 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
             <span class="icon icon-restaurer"></span> Restaurer cet établissement
         </a>
     <?php endif; ?>
+
 </div>
+
+
 
 <div class="tab-content <?php echo $tab === StructureController::TAB_membres ? '' : 'd-none' ?>" id="membres">
 
-<h2>
-    Rôles et membres
-</h2>
+    <h2 class="first">
+        Rôles et membres
+    </h2>
+
+    <p class="lead">
+        Voici les <em>rôles liés à cet établissement</em> et les individus auxquels ont été attribués ces rôles. <br>
+        NB : les rôles comme "Doctorant" ou "Directeur de thèse" ne sont pas liés à un établissement mais à une
+        thèse donc ne peuvent figurer sur cette page. <br>
+        <?php
+        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_LISTER));
+        if ($canVisualiserIndividu): ?>
+            L'attribution d'un rôle à un quelqu'un n'est pas possible ici, vous devez le faire sur la fiche de l'individu
+            (rendez-vous sur la <a href="<?php echo $this->url('individu') ?>">page de recherche d'individu</a>).
+        <?php endif ?>
+    </p>
+
     <div class="row">
         <?php foreach ($roleListing as $roleId => $count) :?>
-        <div class="col-md-4">
+        <div class="col-3 mb-4">
             <h3>
                 <?php echo $roleId; ?>
                 <span class="badge bg-secondary"><?php echo $count; ?></span>
             </h3>
-
-            <ul>
-            <?php foreach($individuListing as $denomination => $roles): ?>
-                <?php foreach($roles as $role): ?>
-                    <?php if ($role === $roleId) : ?>
-                        <li><?php echo $denomination; ?></li>
-                        <?php endif; ?>
+            <?php if ($count): ?>
+                <ul>
+                <?php foreach($individuListing as $denomination => $roles): ?>
+                    <?php foreach($roles as $role): ?>
+                        <?php if ($role === $roleId) : ?>
+                            <li><?php echo $denomination; ?></li>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     <?php endforeach; ?>
-                <?php endforeach; ?>
-            </ul>
+                </ul>
+            <?php else: ?>
+                Personne.
+            <?php endif; ?>
         </div>
         <?php endforeach; ?>
     </div>
@@ -187,15 +212,20 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
             Générer rôles par défaut
         </a>
     <?php endif; ?>
+
 </div>
+
+
 
 <?php if ($etablissement->estInscription()): ?>
     <div class="tab-content <?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
 
-        <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
+        <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenusFichiers' => $contenusFichiers]); ?>
 
     </div>
 <?php endif; ?>
+
+
 
 <div class="tab-content <?php echo $tab === StructureController::TAB_variables ? '' : 'd-none' ?>" id="variables">
 

@@ -2,7 +2,7 @@
 
 /**
  * @var Structure $structure
- * @var string[] $contenus
+ * @var string[] $contenusFichiers
  */
 
 use Structure\Entity\Db\Etablissement;
@@ -10,8 +10,7 @@ use Structure\Entity\Db\Structure;
 
 ?>
 
-<h2> Documents liés à la structure </h2>
-<p>
+<p class="float-end">
     <?php
     $televerserUrlOptions = ['structure' => $structure->getId()];
     if ($structure instanceof Etablissement) {
@@ -25,6 +24,8 @@ use Structure\Entity\Db\Structure;
         Téléverser un document
     </a>
 </p>
+
+<h2 class="first"> Documents liés à la structure </h2>
 
 <table class="table table-hover">
     <thead>
@@ -53,7 +54,7 @@ use Structure\Entity\Db\Structure;
                 </td>
             <?php endif ?>
             <td>
-                <img class="signature" src="data:image/*;base64,<?php echo base64_encode($contenus[$document->getId()]); ?>"/>
+                <img class="signature" src="data:image/*;base64,<?php echo base64_encode($contenusFichiers[$document->getId()]); ?>"/>
 
                 <?php /** @see \Structure\Controller\StructureController::supprimerDocumentAction() */ ?>
                 <a href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>">

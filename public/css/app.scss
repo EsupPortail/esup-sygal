@@ -21,6 +21,10 @@ h1, h2, h3 {
   font-weight: bold;
 }
 
+h1.first, h2.first, h3.first, h4.first {
+  margin-top: 0;
+}
+
 h1 small {
   color: #7f8c8d;
 }
@@ -29,9 +33,9 @@ h2 {
   margin-top: 35px;
 }
 
-h2:nth-of-type(1) {
-  margin-top: 20px;
-}
+//h2:nth-of-type(1) {
+//  margin-top: 20px;
+//}
 
 h3 {
   margin-bottom: 10px;
@@ -133,9 +137,6 @@ h2.modal-title {
       //border-bottom: #ddd dotted 1px;
     }
     h3:nth-of-type(1) {
-      margin-top: 0;
-    }
-    h1.first, h2.first, h3.first, h4.first {
       margin-top: 0;
     }
 

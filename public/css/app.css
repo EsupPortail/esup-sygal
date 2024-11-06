@@ -6,14 +6,14 @@
 h1, h2, h3 {
   font-weight: bold; }
 
+h1.first, h2.first, h3.first, h4.first {
+  margin-top: 0; }
+
 h1 small {
   color: #7f8c8d; }
 
 h2 {
   margin-top: 35px; }
-
-h2:nth-of-type(1) {
-  margin-top: 20px; }
 
 h3 {
   margin-bottom: 10px;
@@ -85,8 +85,6 @@ h2.modal-title {
   .card.box .card-body h3 {
     font-weight: bold; }
   .card.box .card-body h3:nth-of-type(1) {
-    margin-top: 0; }
-  .card.box .card-body h1.first, .card.box .card-body h2.first, .card.box .card-body h3.first, .card.box .card-body h4.first {
     margin-top: 0; }
   .card.box .card-body div.messenger.alert {
     width: 33%;

@@ -295,7 +295,7 @@ class TheseService extends BaseService
                     $acteurData->setRole("Rapporteur non membre du jury");
                 }
             } else {
-                $acteurData->setRole(Role::LIBELLE_PRESIDENT);
+                $acteurData->setRole("Président du jury");
             }
 
             /** GESTION DES QUALITES **********************************************************************************/

@@ -2,6 +2,7 @@
 
 namespace Structure\Controller;
 
+use Application\Entity\Db\Role;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use InvalidArgumentException;
 use Structure\Entity\Db\Etablissement;
@@ -87,7 +88,7 @@ class EtablissementController extends StructureConcreteController
     {
         $vars = parent::loadInformationForStructure($structureConcrete);
 
-        $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
+        $contenusFichiers = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $roleListings = [];
         $individuListings = [];
@@ -122,7 +123,7 @@ class EtablissementController extends StructureConcreteController
             'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
             'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
-            'contenus'        => $contenus,
+            'contenusFichiers' => $contenusFichiers,
             'variables' => $variables
         ]);
     }
