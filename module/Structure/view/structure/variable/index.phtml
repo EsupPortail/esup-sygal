@@ -20,16 +20,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
 
 <?php $this->headTitle($this->translate("Variables")) ?>
 
-<h2>
-    <?php echo $this->translate("Variables") ?>
-    <span class="badge bg-secondary">
-        <?php echo count($variables); ?>
-    </span>
-</h2>
-
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
-
-<p>
+<p class="float-end">
     <?php if ($canModifier): ?>
         <a href="<?php echo $this->url('etablissement/saisir-variable', ['etablissement'=> $etablissement->getId()], [], true); ?>"
            class="btn btn-primary action ajax-modal" data-event="modification"
@@ -39,6 +30,15 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
     <?php endif ?>
 </p>
 
+<h2 class="first">
+    <?php echo $this->translate("Variables") ?>
+    <span class="badge bg-secondary">
+        <?php echo count($variables); ?>
+    </span>
+</h2>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
 <div>
     <table class="table table-sm">
         <thead>
@@ -47,7 +47,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
             <th> Code </th>
             <th> Description </th>
             <th> Valeur </th>
-            <th> Sébut de validité </th>
+            <th> Début de validité </th>
             <th> Fin de validité </th>
             <th> Actions </th>
         </tr>
