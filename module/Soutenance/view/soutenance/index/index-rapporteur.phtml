@@ -87,8 +87,8 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
     <div class="card-body">
         <?php if ($proposition !== null) : ?>
             <h3> Date et lieu </h3>
-            La soutenance est prévue pour le <strong><?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?></strong>
-            dans <strong><?php echo $proposition->getLieu(); ?></strong>.
+            <p>La soutenance est prévue pour le <strong><?php echo $proposition->getDate()?->format(Constants::DATETIME_FORMAT); ?></strong>
+                dans <strong><?php echo $proposition->getLieu(); ?></strong>.</p>
 
             <h3> Jury </h3>
             <table class="table table-sm">
@@ -119,7 +119,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 </div>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header <?php echo ($engagement !== null)?"bg-dark":"bg-warning"; ?> text-white">
         <h2> Engagement d'impartialité / Impartiality Commitement </h2>
     </div>
     <div class="card-body">
@@ -137,6 +137,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
                 </div>
             </div>
         <?php else : ?>
+            <span class="fas fa-exclamation-triangle"></span>
             Pour être enregistré comme rapporteur de thèse, vous devez signer l'engagement d'impartialité. <br/>
             To be registered as external referee you must sign the impartiality commitment
 
@@ -157,7 +158,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 </div>
 
 <div class="box card">
-    <div class="card-header <?php echo ($depot !== null)?"bg-info":"bg-warning"; ?>">
+    <div class="card-header <?php echo ($depot !== null)?"bg-dark":"bg-warning"; ?>">
         <h2> Téléchargement de la thèse / Downloading the manuscrit </h2>
     </div>
     <div class="card-body">
@@ -185,7 +186,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 </div>
 
 <div class="box card">
-    <div class="card-header <?php echo ($engagement !== null)?"bg-info":"bg-warning"; ?>">
+    <div class="card-header <?php echo ($engagement !== null)?"bg-dark":"bg-warning"; ?>">
         <h2> Avis de soutenance / Notification on the PhD defense </h2>
     </div>
     <div class="card-body">
