@@ -87,9 +87,13 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
     <div class="card-body">
         <?php if ($proposition !== null) : ?>
             <h3> Date et lieu </h3>
-            La soutenance est prévue pour le <strong><?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?></strong>
-            dans <strong><?php echo $proposition->getLieu(); ?></strong>.
-
+            <?php if($proposition->getDate()): ?>
+                La soutenance est prévue pour le <strong><?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?></strong>
+                dans <strong><?php echo $proposition->getLieu(); ?></strong>.
+            <?php else: ?>
+                <span class="icon icon-warning"></span>
+                Aucune date n'a encore été renseignée dans la proposition.
+            <?php endif; ?>
             <h3> Jury </h3>
             <table class="table table-sm">
                 <thead>
