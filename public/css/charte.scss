@@ -173,11 +173,15 @@ textarea.form-control {
 .jumbotron p {
   font-weight: normal;
 }
+html,
+body {
+  height: 100%;
+}
 
 #footer {
   padding-top: 10px;
-  margin-bottom: 0;
-  background-color: $navbarBackgroundColor;
+  background-color: #004980;
+  width: 100%;
 }
 #footer ul {
   width: 100%;

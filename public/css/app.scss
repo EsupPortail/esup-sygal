@@ -325,7 +325,8 @@ span.ballot-box {
 }
 
 div#contenu-principal {
-  min-height: 500px;
+  flex: 1 0 auto;
+  min-height: calc(100vh - 169px);
 }
 
 .page-header:nth-of-type(1) {
