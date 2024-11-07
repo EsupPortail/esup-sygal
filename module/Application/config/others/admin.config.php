@@ -131,39 +131,6 @@ return [
                     ],
                 ],
             ],
-            'role-ordre' => [
-                'type'          => Literal::class,
-                'options'       => [
-                    'route'    => '/role-ordre',
-                    'defaults' => [
-                        'controller'    => RoleController::class,
-                        'action'        => 'index',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'incrementer' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'    => '/incrementer/:role',
-                            'defaults' => [
-                                'controller'    => RoleController::class,
-                                'action'        => 'incrementer-ordre',
-                            ],
-                        ],
-                    ],
-                    'decrementer' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'    => '/decrementer/:role',
-                            'defaults' => [
-                                'controller'    => RoleController::class,
-                                'action'        => 'decrementer-ordre',
-                            ],
-                        ],
-                    ],
-                ]
-            ],
             'modifier-privilege' => [
                 'type'          => Segment::class,
                 'options'       => [
