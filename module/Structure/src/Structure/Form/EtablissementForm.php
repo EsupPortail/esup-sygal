@@ -70,9 +70,6 @@ class EtablissementForm extends StructureForm
             ->setLabel("Site internet")
         );
 
-        $this->add((new Checkbox('estMembre'))
-            ->setLabel("Établissement membre")
-        );
         $this->add((new Checkbox('estAssocie'))
             ->setLabel("Établissement associé")
         );

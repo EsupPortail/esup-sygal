@@ -152,7 +152,7 @@ class IndexController extends AbstractController
             'ecoleDoctoraleId' => $ecoleDoctoraleId,
             'uniteRechercheId' => $uniteRechercheId,
             'etatId' => $etatId,
-            'etablissements' => $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres(),
+            'etablissements' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
             'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(),
             'unites' => $this->getUniteRechercheService()->getRepository()->findAll(),
             'etats' =>  $this->getPropositionService()->findPropositionEtats(),

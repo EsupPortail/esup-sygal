@@ -1581,7 +1581,6 @@ CREATE TABLE public.etablissement (
     domaine character varying(50),
     source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    est_membre boolean DEFAULT false NOT NULL,
     est_associe boolean DEFAULT false NOT NULL,
     est_comue boolean DEFAULT false NOT NULL,
     est_etab_inscription boolean DEFAULT false NOT NULL,

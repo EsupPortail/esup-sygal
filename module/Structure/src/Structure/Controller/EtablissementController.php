@@ -47,16 +47,16 @@ class EtablissementController extends StructureConcreteController
 
         $etablissements = $viewModel->getVariable('structures');
 
-        $etablissementsMembres = array_filter($etablissements, fn(Etablissement $e) =>$e->estMembre());
+        $etablissementsInscrs = array_filter($etablissements, fn(Etablissement $e) =>$e->estInscription());
         $etablissementsCeds = array_filter($etablissements, fn(Etablissement $e) => $e->estCed());
-        $etablissementsAutres = array_filter($etablissements, fn(Etablissement $e) => !$e->estMembre() && !$e->estCed());
+        $etablissementsAutres = array_filter($etablissements, fn(Etablissement $e) => !$e->estInscription() && !$e->estCed());
 
         if (count($etablissementsCeds) > 1) {
             throw new \RuntimeException("Anomalie rencontrée : il existe plusieurs établissements CED");
         }
 
         return new ViewModel([
-            'etablissementsMembres' => $etablissementsMembres,
+            'etablissementsInscrs' => $etablissementsInscrs,
             'etablissementsCeds' => $etablissementsCeds,
             'etablissementsAutres' => $etablissementsAutres,
         ]);

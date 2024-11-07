@@ -31,12 +31,12 @@ select
 -- 2/ ETABLISSEMENT
 --
 insert into etablissement (id, structure_id, domaine, source_code, source_id,
-                           est_comue, est_membre, est_etab_inscription,
+                           est_comue, est_etab_inscription,
                            email_assistance, email_bibliotheque, email_doctorat,
                            histo_createur_id, histo_modificateur_id)
 select
     nextval('etablissement_id_seq'), s.id, '{ETAB_DOMAINE}', '{ETAB_CODE}', 1,
-    false, true, true,
+    false, true,
     '{EMAIL_ASSISTANCE}', '{EMAIL_BIBLIOTHEQUE}', '{EMAIL_DOCTORAT}',
     1, 1
 from structure s

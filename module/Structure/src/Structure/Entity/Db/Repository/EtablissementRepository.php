@@ -166,18 +166,6 @@ class EtablissementRepository extends DefaultEntityRepository
     }
 
     /**
-     * @return Etablissement[]
-     */
-    public function findAllEtablissementsMembres(): array
-    {
-        $qb = $this->createQueryBuilder("e")
-            ->andWhere("e.estMembre = true")
-            ->orderBy('structure.libelle');
-
-        return  $qb->getQuery()->getResult();
-    }
-
-    /**
      * @param bool $cacheable
      * @return Etablissement[]
      */

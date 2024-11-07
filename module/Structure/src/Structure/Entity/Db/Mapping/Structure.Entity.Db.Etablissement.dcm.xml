@@ -13,7 +13,6 @@
         <field name="emailBibliotheque" type="string" column="email_bibliotheque" length="256" nullable="true"/>
         <field name="emailDoctorat" type="string" column="email_doctorat" length="256" nullable="true"/>
         <field name="domaine"   type="string"   length="50"  column="domaine"   nullable="true"/>
-        <field name="estMembre"  type="boolean" column="est_membre" nullable="false"/>
         <field name="estAssocie" type="boolean" column="est_associe" nullable="false"/>
         <field name="estInscription" type="boolean" column="est_etab_inscription" nullable="false"/>
         <field name="estComue" type="boolean" column="est_comue"/>

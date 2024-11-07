@@ -69,11 +69,6 @@ class Etablissement implements
     /**
      * @var bool
      */
-    protected $estMembre = false;
-
-    /**
-     * @var bool
-     */
     protected $estAssocie = false;
 
     protected bool $estInscription = false;
@@ -245,14 +240,12 @@ class Etablissement implements
         switch ($type) {
             case Etablissement::TYPE_INSCRIPTION:
                 $this->setEstInscription(true);
-                $this->setEstMembre(true);
                 $this->setEstCed(false);
                 $this->setEstAssocie(false);
                 $this->setEstComue(false);
                 break;
             case Etablissement::TYPE_COLLEGE_ED:
                 $this->setEstInscription(false);
-                $this->setEstMembre(false);
                 $this->setEstCed(true);
                 $this->setEstAssocie(false);
                 $this->setEstComue(false);
@@ -260,7 +253,6 @@ class Etablissement implements
             case Etablissement::TYPE_AUTRE:
             default:
                 $this->setEstInscription(false);
-                $this->setEstMembre(false);
                 $this->setEstCed(false);
                 $this->setEstAssocie(false);
                 $this->setEstComue(false);
@@ -285,25 +277,6 @@ class Etablissement implements
         }
 
         return self::TYPE_AUTRE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function estMembre()
-    {
-        return $this->estMembre;
-    }
-
-    /**
-     * @param bool $estMembre
-     * @return Etablissement
-     */
-    public function setEstMembre($estMembre)
-    {
-        $this->estMembre = $estMembre;
-
-        return $this;
     }
 
     /**

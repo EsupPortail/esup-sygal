@@ -196,7 +196,6 @@ class EtablissementInscriptionInputFilter extends EtablissementInputFilter
         $structureForm->get('code')->setLabel("Code UAI (RNE)");
         $structureForm->get('sourceCode')->setAttribute('placeholder', "Ex : UCN");
         $structureForm->get('estInscription')->setAttribute('disabled', 'disabled');
-        $structureForm->remove('estMembre');
         $structureForm->remove('estAssocie');
         $structureForm->remove('estCed');
         $structureForm->remove('estFerme');

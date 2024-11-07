@@ -65,7 +65,6 @@ class EtablissementCedInputFilter extends EtablissementInputFilter
 
         $structureForm->remove('estInscription');
         $structureForm->get('estCed')->setAttribute('disabled', 'disabled');
-        $structureForm->remove('estMembre');
         $structureForm->remove('estAssocie');
         $structureForm->remove('estFerme');
 

@@ -152,9 +152,6 @@ $this->headTitle(($isNew ? "Création" : "Modif.") . " établissemnt " . $etabli
             <?php if ($form->has('estInscription')) : ?>
                 <?php echo $fcg($form->get('estInscription')) ?>
             <?php endif; ?>
-            <?php if ($form->has('estMembre')) : ?>
-                <?php echo $fcg($form->get('estMembre')) ?>
-            <?php endif ?>
             <?php if ($form->has('estAssocie')) : ?>
                 <?php echo $fcg($form->get('estAssocie')) ?>
             <?php endif ?>

@@ -119,10 +119,6 @@ class EtablissementInputFilter extends StructureInputFilter
             'required' => false,
         ]);
         $this->add([
-            'name' => 'estMembre',
-            'required' => false,
-        ]);
-        $this->add([
             'name' => 'estAssocie',
             'required' => false,
         ]);

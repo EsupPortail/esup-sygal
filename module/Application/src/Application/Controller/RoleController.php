@@ -19,15 +19,15 @@ class RoleController extends AbstractController
 
     public function indexAction()
     {
-        $etablissementsMembres = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
+        $etablissementsInscrs = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
 
         $mappedRoles = [];
-        foreach ($etablissementsMembres as $etablissement) {
+        foreach ($etablissementsInscrs as $etablissement) {
             $roles = $this->getRoleService()->getRepository()->findAllRolesTheseDependantForStructureConcrete($etablissement);
             $mappedRoles[$etablissement->getStructure()->getCode()] = $roles;
         }
         return new ViewModel([
-            'etablissements' => $etablissementsMembres,
+            'etablissements' => $etablissementsInscrs,
             'mappedRoles' => $mappedRoles,
         ]);
     }

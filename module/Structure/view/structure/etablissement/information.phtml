@@ -99,9 +99,6 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
                 Étiquettes
             </h3>
             <p>
-                <?php if ($etablissement->estMembre()): ?>
-                    <span class="badge bg-primary">Membre</span>
-                <?php endif ?>
                 <?php if ($etablissement->estAssocie()): ?>
                     <span class="badge bg-info">Associé</span>
                 <?php endif ?>

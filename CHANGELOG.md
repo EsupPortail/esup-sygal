@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+9.1.0
+-----
+- Etablissements : suppression du témoin 'est établissement membre' non pertnient en cas d'absence de COMUE et redondant avec 'est établissement d'inscription'.
+
 9.0.1
 -----
 - Individu : remplacement des usages de getCiviliteToString() par getCivilite() qui faisait la même chose ; puis modif de getCiviliteToString() pour retourner la civilité au format long.

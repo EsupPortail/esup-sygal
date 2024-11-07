@@ -14,7 +14,6 @@ class EtablissementHydrator extends StructureConcreteHydrator
     {
         $data = parent::extract($object);
 
-        $data['estMembre'] = $object->estMembre();
         $data['estAssocie'] = $object->estAssocie();
         $data['estInscription'] = $object->estInscription();
         $data['estCed'] = $object->estCed();
