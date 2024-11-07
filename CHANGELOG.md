@@ -1,5 +1,9 @@
 Journal des modifications
 =========================
+9.0.1
+-----
+- [FIX] Génération de la page de couverture impossible : PageDeCouverturePdfExporter ne doit pas être un singleton afin d'éviter des erreurs de chemins de templates
+- [FIX] Qualité d'un Acteur provenant de SI n'était plus affichée dans certains cas (page de couverture...)
 
 9.0.0
 -----

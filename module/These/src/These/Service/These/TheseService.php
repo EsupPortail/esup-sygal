@@ -299,8 +299,9 @@ class TheseService extends BaseService
             }
 
             /** GESTION DES QUALITES **********************************************************************************/
-            if ($acteur->getQualite() && trim($acteur->getQualite()) !== '') {
-                $acteurData->setQualite($acteur->getQualite());
+            $qualite = $acteur->getLibelleQualite();
+            if ($qualite && trim($qualite) !== '') {
+                $acteurData->setQualite($qualite);
             } else {
                 foreach ($acteursLies as $acteurLie) {
                     $membre = $this->getMembreService()->getMembreByActeur($acteurLie);

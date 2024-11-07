@@ -235,7 +235,7 @@ class MembreService {
      */
     public function createMembre(Proposition $proposition, Acteur $acteur) : Membre
     {
-        $qualite = $this->qualiteService->getQualiteByLibelle($acteur->getQualite()) ?:
+        $qualite = $this->qualiteService->getQualiteByLibelle($acteur->getLibelleQualite()) ?:
             $this->qualiteService->getQualiteParDefaut();
 
         $membre = new Membre();

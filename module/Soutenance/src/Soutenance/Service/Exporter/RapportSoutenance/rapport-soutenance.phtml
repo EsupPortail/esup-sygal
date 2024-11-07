@@ -254,7 +254,7 @@ use Soutenance\Entity\Proposition;
                 <?php
                     $first = false;
                     $denomination = $directeur->getIndividu()->getNomComplet(true, true, false, true);
-                    $qualite = $directeur->getQualite();
+                    $qualite = $directeur->getLibelleQualite();
                 ?>
                 <?php echo  $denomination . ", ".$qualite; ?>
             <?php endforeach; ?>
@@ -272,7 +272,7 @@ use Soutenance\Entity\Proposition;
                 <?php
                 $first = false;
                 $denomination = $directeur->getIndividu()->getNomComplet(true, true, false, true);
-                $qualite = $directeur->getQualite();
+                $qualite = $directeur->getLibelleQualite();
                 ?>
                 <?php echo  $denomination . ", ".$qualite; ?>
             <?php endforeach; ?>
