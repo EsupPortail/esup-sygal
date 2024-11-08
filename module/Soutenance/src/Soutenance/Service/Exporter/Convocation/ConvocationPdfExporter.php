@@ -32,25 +32,22 @@ class ConvocationPdfExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
-//        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
-
 
         $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
         $this->addBodyScript('empty.phtml');
 
         /** @var These $these */
         $these = $this->vars["these"];
-        /** @var Membre[] $jury */
+        /** @var \These\Entity\Db\Acteur[] $jury */
         $jury = $these->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
 
-        foreach ($jury as $membre) {
-            $this->vars["membre"] = $membre;
+        foreach ($jury as $acteur) {
+            $this->vars["acteur"] = $acteur;
             $this->addBodyScript('convocation_membre.phtml', true, $this->vars);
             $this->addBodyScript('empty.phtml');
         }
-
 
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }

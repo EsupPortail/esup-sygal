@@ -1,10 +1,10 @@
 <?php
 
-use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use These\Service\FichierThese\PdcData;
 use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
+use These\Service\FichierThese\PdcData;
 
 /**
  * @var PhpRenderer             $this
@@ -18,12 +18,13 @@ use Soutenance\Entity\Proposition;
  * @var DateTime $date
  * @var string $ville
  * @var string $signature
+ *
+ * @see \Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter::export()
  */
 
 $date = new DateTime();
 
-$civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Monsieur":"Madame";
-
+$civilite = $these->getDoctorant()->getIndividu()->getCiviliteToString() ?: null;
 ?>
 
 <style>
@@ -77,7 +78,7 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 <p>
     <?php echo $civilite ?> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>, <br/>
 </p>
-
+<p>
     Par décision en date du
     <?php if ($date): ?>
         <?php echo $date->format('d/m/Y'); ?>,
@@ -86,7 +87,8 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
                 Date manquante
         </span>
     <?php endif; ?>
-    vous avez été autorisé<?php if($civilite==="Madame") echo "e"; ?> à présenter en soutenance
+    vous avez été autorisé<?php echo ($civilite === "Madame" ? 'e' : ($civilite === "Monsieur" ? '' : '·e')) ?>
+    à présenter en soutenance
     vos travaux en vue de l'obtention du diplôme : <br/>
     Doctorat en <?php echo $these->getDiscipline(); ?>.
 </p>
@@ -100,6 +102,8 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
                 Date manquante,
         </span>
     <?php endif; ?> à l'adresse suivante : <br/>
+</p>
+<p style="margin-left: 3cm">
     <?php if ($proposition->getAdresseActive() !== null): ?>
         <?php echo $proposition->getAdresseActive()->format(); ?>
     <?php else : ?>
@@ -127,7 +131,7 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 </p>
 
 <p>
-    Je vous prie d'agréer, <?php echo $civilite; ?>, l'expression de mes salutations distinguées.
+    Je vous prie d'agréer, <?php echo $civilite ?: "Madame, Monsieur" ?>, l'expression de mes salutations distinguées.
 </p>
 
 <br/>

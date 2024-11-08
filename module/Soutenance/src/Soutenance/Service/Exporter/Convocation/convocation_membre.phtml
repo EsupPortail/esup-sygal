@@ -1,11 +1,10 @@
 <?php
 
-use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use These\Service\FichierThese\PdcData;
 use Application\View\Renderer\PhpRenderer;
-use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
+use These\Service\FichierThese\PdcData;
 
 /**
  * @var PhpRenderer             $this
@@ -18,17 +17,18 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var DateTime $date
  * @var string $ville
- * @var Membre $membre
  * @var string $signature
- * @see
+ * @var \These\Entity\Db\Acteur $acteur
+ *
+ * @see \Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter::export()
  */
-
 
 $date = new DateTime();
 
+$civilite = $acteur->getIndividu()?->getCiviliteToString() ?: null;
+$denomination = $acteur->getIndividu()?->getNomComplet() ?: $acteur->getDenomination();
+
 $civilite = null;
-$civilite = $membre->getCivilite();
-$denomination = $membre->getIndividu() ? $membre->getIndividu()->getNomComplet() : $membre->getDenomination();
 ?>
 
 <style>
@@ -83,10 +83,11 @@ $denomination = $membre->getIndividu() ? $membre->getIndividu()->getNomComplet()
 
 <?php if ($civilite !== null OR $denomination !== null) : ?>
 <p>
-    <?php echo $civilite ?>  <?php echo $denomination; ?>, <br/>
+    <?php echo $civilite ?> <?php echo $denomination; ?>, <br/>
 </p>
 <?php endif; ?>
 
+<p>
 Par décision en date du
 <?php if ($date): ?>
     <?php echo $date->format('d/m/Y'); ?>,
@@ -95,7 +96,8 @@ Par décision en date du
                 Date manquante,
         </span>
 <?php endif; ?>
-le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
+le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure()->getLibelle(); ?> vous a
+désigné<?php echo ($civilite === "Madame" ? 'e' : ($civilite === "Monsieur" ? '' : '·e')) ?>
  pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
  en vue de l'obtention du diplôme : <br/>
 Doctorat en <?php echo $these->getDiscipline(); ?>.
@@ -150,7 +152,7 @@ $texte_directeur = implode(" et ", $encadrement);
 </p>
 
 <p>
-    Je vous prie d'agréer, <?php echo $civilite; ?>, l'expression de mes salutations distinguées.
+    Je vous prie d'agréer, <?php echo $civilite ?: "Madame, Monsieur" ?>, l'expression de mes salutations distinguées.
 </p>
 
 <br/>
