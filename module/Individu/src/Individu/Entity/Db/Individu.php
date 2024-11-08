@@ -493,12 +493,8 @@ class Individu implements
 
     /**
      * Set civilite
-     *
-     * @param string|null $civilite
-     *
-     * @return self
      */
-    public function setCivilite(?string $civilite)
+    public function setCivilite(?string $civilite): static
     {
         $this->civilite = $civilite;
 
@@ -506,47 +502,32 @@ class Individu implements
     }
 
     /**
-     * Get civilite
-     *
-     * @return string|null
+     * Retourne "Mme" ou "M.", ou `null`.
      */
-    public function getCivilite()
+    public function getCivilite(): ?string
     {
         return $this->civilite;
     }
 
     /**
-     * Get civilite
-     *
-     * @return string
+     * Retourne "Madame" ou "Monsieur", ou `null`.
      */
-    public function getCiviliteToString()
+    public function getCiviliteToString(): ?string
     {
-        return $this->getCivilite();
+        if (!$this->civilite) {
+            return null;
+        }
+
+        return $this->estUneFemme() ? "Madame" : "Monsieur";
     }
 
     /**
-     * @return string 'F' ou 'M'
+     * Retourn `true` si cet individu a une civilité correspondant à une femme.
      */
-    public function getCiviliteAsLetter(): string
+    public function estUneFemme(): bool
     {
-        return [
-            self::CIVILITE_M => 'M',
-            self::CIVILITE_MME => 'F',
-        ][$this->getCivilite()] ?? "";
+        return self::CIVILITE_MME === $this->civilite;
     }
-
-    /**
-     * Get estUneFemme
-     *
-     * @return bool
-     */
-    public function estUneFemme()
-    {
-        return 'Mme' === $this->getCivilite();
-    }
-
-
 
     /**
      * Retourne la représentation littérale de cet objet.

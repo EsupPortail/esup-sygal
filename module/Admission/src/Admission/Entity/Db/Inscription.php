@@ -954,7 +954,7 @@ class Inscription implements HistoriqueAwareInterface{
         }else{
             if($this->getCoDirection()) {
                 $coDirecteur = $this->getCoDirecteur() ?
-                    $this->getCoDirecteur()->getCiviliteToString() . " " . $this->getCoDirecteur()->getNomComplet() :
+                    $this->getCoDirecteur()->getCivilite() . " " . $this->getCoDirecteur()->getNomComplet() :
                     $this->getNomCodirecteurThese() . " " . $this->getPrenomCodirecteurThese();
                 return $coDirecteur;
             }else{

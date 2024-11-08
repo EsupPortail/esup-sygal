@@ -290,17 +290,6 @@ class Doctorant implements
     }
 
     /**
-     * Get civilite
-     *
-     * @return string
-     * @deprecated Passe par getIndividu() toi-même !
-     */
-    public function getCiviliteToString()
-    {
-        return $this->getIndividu()->getCiviliteToString();
-    }
-
-    /**
      * Get estUneFemme
      *
      * @return bool
