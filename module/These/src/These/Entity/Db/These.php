@@ -1176,7 +1176,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getLibelleEtabCotutelle()
     {
-        return $this->libelleEtabCotutelle;
+        $estImportable = $this->getSource()->getImportable();
+        return $estImportable ? $this->libelleEtabCotutelle : $this->getEtablissementCoTutelle();
     }
 
     /**
@@ -1195,7 +1196,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getLibellePaysCotutelle()
     {
-        return $this->libellePaysCotutelle;
+        $estImportable = $this->getSource()->getImportable();
+
+        return $estImportable ? $this->libellePaysCotutelle : $this->getPaysCoTutelle();
     }
 
     /**

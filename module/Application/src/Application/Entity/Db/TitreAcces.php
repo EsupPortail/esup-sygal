@@ -197,7 +197,8 @@ class TitreAcces implements HistoriqueAwareInterface
      */
     public function getLibelleEtabTitreAcces()
     {
-        return $this->libelleEtabTitreAcces;
+        $estImportable = $this->getSource()->getImportable();
+        return $estImportable ? $this->libelleEtabTitreAcces : $this->getEtablissement();
     }
 
     /**
