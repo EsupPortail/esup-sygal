@@ -81,7 +81,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     echo $this->messenger()->addMessagesFromFlashMessenger();
 ?>
 
-<?php if (! $validationBDD) : ?>
+<?php if ( $validationBDD) : ?>
 
     <p class="lead text-danger">
         La proposition de soutenance n'a pas encore été validée.
@@ -132,7 +132,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     <?php foreach ($justificatifs as $justificatif) : ?>
                         <?php if($justificatif['justificatif'] === null) : ?>
                             <li>
-                                <?php echo $justificatif['type'] ?>
+                                <?php echo $justificatif['label'] ?>
                                 <?php if (isset($justificatif['membre'])) : ?>
                                     -
                                     <?php

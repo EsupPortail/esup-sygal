@@ -123,11 +123,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var DateTime
      */
-    protected $datePrevisionSoutenance;
-
-    /**
-     * @var DateTime
-     */
     protected $dateSoutenance;
 
     /**
@@ -144,16 +139,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var DateTime|null
      */
     protected $dateTransfert;
-
-    /**
-     * @var string
-     */
-    private $codeUniteRecherche;
-
-    /**
-     * @var string
-     */
-    private $libelleUniteRecherche;
 
     /**
      * @var string
@@ -394,6 +379,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getCodeSiseDiscipline()
     {
@@ -403,6 +389,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @param string $codeSiseDiscipline
      * @return self
+     * @deprecated
      */
     public function setCodeSiseDiscipline($codeSiseDiscipline): self
     {
@@ -583,25 +570,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setDateTransfert(DateTime $dateTransfert = null): These
     {
         $this->dateTransfert = $dateTransfert;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCodeUniteRecherche()
-    {
-        return $this->codeUniteRecherche;
-    }
-
-    /**
-     * @param string $codeUniteRecherche
-     * @return self
-     */
-    public function setCodeUniteRecherche($codeUniteRecherche)
-    {
-        $this->codeUniteRecherche = $codeUniteRecherche;
 
         return $this;
     }

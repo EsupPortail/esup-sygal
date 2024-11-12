@@ -21,7 +21,7 @@ $acteursFormatter->paramFilter(["role" => [
     Role::CODE_RAPPORTEUR_JURY,
     Role::CODE_RAPPORTEUR_ABSENT,
 ]]);
-$acteursFormatter->paramDisplay(["role" => true, "complement" => true, "qualite" => true, "etablissement" => true, "uniteRecherche" => true]);
+$acteursFormatter->paramDisplay(["role" => true, "qualite" => true, "etablissement" => true, "uniteRecherche" => true]);
 $acteursFormatter->asArray(true);
 $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toArray());
 

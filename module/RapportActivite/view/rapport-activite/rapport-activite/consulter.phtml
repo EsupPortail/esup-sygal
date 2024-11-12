@@ -22,15 +22,15 @@ use These\Filter\ActeursFormatter;
 
 $acteursFormatterDirecteurs = new ActeursFormatter();
 $acteursFormatterDirecteurs->asSeparated()
-    ->paramDisplay(['role' => false, 'complement' => true, "qualite" => true, "etablissement" => true,])
+    ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
 $acteursFormatterCodirecteurs = new ActeursFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
-    ->paramDisplay(['role' => false, 'complement' => true, "qualite" => true, "etablissement" => true,])
+    ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
 $acteursFormatterCoencadrants = new ActeursFormatter();
 $acteursFormatterCoencadrants->asSeparated()
-    ->paramDisplay(['role' => false, 'complement' => true, "qualite" => true, "etablissement" => true,])
+    ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_CO_ENCADRANT]));
 
 $financementFormatter = $this->financementFormatter();

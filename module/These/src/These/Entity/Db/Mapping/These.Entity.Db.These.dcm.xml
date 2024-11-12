@@ -18,8 +18,6 @@
         <field name="dateFinConfidentialite" type="datetime" column="date_fin_confid" nullable="true"/>
         <field name="dateAbandon" type="datetime" column="date_abandon" nullable="true"/>
         <field name="dateTransfert" type="datetime" column="date_transfert" nullable="true"/>
-<!--        <field name="codeUniteRecherche" type="string" column="cod_unit_rech" length="50" nullable="true"/>-->
-<!--        <field name="libelleUniteRecherche" type="string" column="lib_unit_rech" length="200" nullable="true"/>-->
         <field name="correctionAutorisee" type="string" column="correc_autorisee" nullable="true"/>
         <field name="correctionAutoriseeForcee" type="string" column="correc_autorisee_forcee" nullable="true"/>
         <field name="dateButoirDepotVersionCorrigeeAvecSursis" type="datetime" column="correc_date_butoir_avec_sursis" nullable="true"/>

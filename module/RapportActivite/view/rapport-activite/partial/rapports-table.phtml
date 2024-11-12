@@ -35,11 +35,11 @@ use These\Filter\ActeursFormatter;
 
 $acteursFormatterDirecteurs = new ActeursFormatter();
 $acteursFormatterDirecteurs->asSeparated()
-    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
 $acteursFormatterCodirecteurs = new ActeursFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
-    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
 
 $ajaxModalEvent = 'EVENT_AVIS_SAISI';

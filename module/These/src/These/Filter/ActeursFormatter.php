@@ -23,14 +23,12 @@ class ActeursFormatter extends AbstractFilter {
 
     private bool $displayRole = false;
     private bool $displayRoleLibelle = false;
-    private bool $displayRoleComplement = false;
     private bool $displayQualite = false;
     private bool $displayEtablissement = false;
     private bool $displayUniteRecherche = false;
 
     private $contrainteRole = null;
     private $contrainteRoleLibelle = null;
-    private $contrainteRoleComplement = null;
     private $contrainteQualite = null;
     private $contrainteEtablissement = null;
     private $contrainteUniteRecherche = null;
@@ -86,8 +84,6 @@ class ActeursFormatter extends AbstractFilter {
                 case "role": $this->displayRole = $value;
                     break;
                 case "roleLibelle": $this->displayRoleLibelle = $value;
-                    break;
-                case "complement": $this->displayRoleComplement = $value;
                     break;
                 case "qualite": $this->displayQualite = $value;
                     break;
@@ -173,9 +169,6 @@ class ActeursFormatter extends AbstractFilter {
             if ($this->displayRole === true) {
                 $result["role"] = $acteur->getRole()->getRoleId();
             }
-            if ($this->displayRoleComplement === true && trim($acteur->getLibelleRoleComplement())) {
-                $result["complement"] = $acteur->getLibelleRoleComplement();
-            }
             if ($this->displayQualite === true && trim($acteur->getLibelleQualite())) {
                 $result["qualite"] = $acteur->getLibelleQualite();
             }
@@ -193,7 +186,7 @@ class ActeursFormatter extends AbstractFilter {
                     $acteur->getIndividu()->getSourceCode());
             }
 
-            if ($this->indexedByRole) {
+            if ($this->indexedByRole && $this->displayRole === true) {
                 $results[$result["role"]] = $results[$result["role"]] ?? [];
                 $results[$result["role"]][] = $result;
             } else {
@@ -210,9 +203,6 @@ class ActeursFormatter extends AbstractFilter {
 
         if ($this->displayRole) {
             $str .= " <b>" . $a->getRole()->getRoleId() . "</b>";
-        }
-        if ($this->displayRoleComplement && $a->getLibelleRoleComplement() && trim($a->getLibelleRoleComplement())) {
-            $str .= " (" . $a->getLibelleRoleComplement() . ")";
         }
         if ($this->displayQualite && $a->getLibelleQualite() && trim($a->getLibelleQualite())) {
             $str .= ", " . $a->getLibelleQualite();
@@ -241,8 +231,6 @@ class ActeursFormatter extends AbstractFilter {
                     break;
                     case "roleLibelle": $this->contrainteRoleLibelle = $value;
                     break;
-                case "complement": $this->contrainteRoleComplement = $value;
-                    break;
                 case "qualite": $this->contrainteQualite = $value;
                     break;
                 case "etablissement": $this->contrainteEtablissement = $value;
@@ -265,7 +253,6 @@ class ActeursFormatter extends AbstractFilter {
             $keep = true;
             if ($keep && $this->contrainteRole != null && !in_array($acteur->getRole()->getCode(), (array)$this->contrainteRole)) $keep = false;
             if ($keep && $this->contrainteRoleLibelle != null && $acteur->getRole()->getLibelle() != $this->contrainteRoleLibelle) $keep = false;
-            if ($keep && $this->contrainteRoleComplement != null && $acteur->getLibelleRoleComplement() != $this->contrainteRoleComplement) $keep = false;
             if ($keep && $this->contrainteQualite != null && $acteur->getLibelleQualite() != $this->contrainteQualite) $keep = false;
             if ($keep && $this->contrainteEtablissement != null && (! $etab || $etab->getStructure()->getLibelle() != $this->contrainteEtablissement)) $keep = false;
             if ($keep && $this->contrainteUniteRecherche != null && (! ($ur = $acteur->getUniteRecherche()) || $ur->getStructure()->getLibelle() != $this->contrainteUniteRecherche)) $keep = false;

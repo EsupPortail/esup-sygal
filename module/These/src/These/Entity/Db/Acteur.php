@@ -22,7 +22,6 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
  *
  * @var integer  $id                    un identifiant unique servant de clef
  * @var string   $sourceCode            liens vers apogée
- * @var string   $libelleRoleComplement Complément de rôle (p.e. Co-encadrement, Président de Jury ...)
  * @var These    $these                 Information sur l'etat de la thèse et des acteurs de la thèse
  * @var Individu $individu              Information sur la personne (p.e. Nom, Mail, ...)
  * @var Role     $role                  Role de l'acteur (p.e. directeur de thèse)
@@ -45,11 +44,6 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      * @var string
      */
     private $sourceCode;
-
-    /**
-     * @var string
-     */
-    private $libelleRoleComplement;
 
     /**
      * @var These
@@ -245,25 +239,6 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     public function getSourceCode()
     {
         return $this->sourceCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLibelleRoleComplement()
-    {
-        return $this->libelleRoleComplement;
-    }
-
-    /**
-     * @param string $libelleRoleComplement
-     * @return Acteur
-     */
-    public function setLibelleRoleComplement($libelleRoleComplement)
-    {
-        $this->libelleRoleComplement = $libelleRoleComplement;
-
-        return $this;
     }
 
     /**
