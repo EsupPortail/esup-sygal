@@ -33,7 +33,7 @@ class ActeurRule implements RuleInterface
         if ($this->acteurImporte) {
             $fieldset->get('individu')->setAttribute('disabled', true);
             $fieldset->get('etablissement')->setAttribute('disabled', true);
-            $fieldset->get('qualite')->setAttribute('disabled', true);
+            $fieldset->remove('qualite');
         } else {
             $fieldset->remove('etablissementForce');
         }

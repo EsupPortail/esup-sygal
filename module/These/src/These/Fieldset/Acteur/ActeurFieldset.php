@@ -131,16 +131,16 @@ class ActeurFieldset extends Fieldset implements InputFilterProviderInterface
             ],
         ]);
 
-//        $this->add([
-//            'type' => Text::class,
-//            'name' => 'qualite',
-//            'options' => [
-//                'label' => "Qualité :",
-//            ],
-//            'attributes' => [
-//                'id' => 'qualite',
-//            ]
-//        ]);
+        $this->add([
+            'type' => Text::class,
+            'name' => 'qualite',
+            'options' => [
+                'label' => "Qualité :",
+            ],
+            'attributes' => [
+                'id' => 'qualite',
+            ]
+        ]);
         $this->add([
             'type' => Select::class,
             'name' => 'qualite',

@@ -6,9 +6,15 @@
  * @var string $returnUrl
  */
 
+use These\Entity\Db\Acteur;
+
 $this->headTitle()->append("Acteur");
 
 $fieldset = $form->get('acteur');
+
+/** @var Acteur $acteur */
+$acteur = $form->getObject();
+$estImporte = $acteur->getSource()->getImportable();
 ?>
 
 <h1 class="page-header">
@@ -38,7 +44,12 @@ $fieldset = $form->get('acteur');
         <?php echo $this->formControlGroup($fieldset->get('individu')); ?>
     </div>
     <div class="col-md-4">
-        <?php echo $this->formControlGroup($fieldset->get('qualite')); ?>
+        <?php if ($fieldset->has('qualite')): ?>
+            <?php echo $this->formControlGroup($fieldset->get('qualite')); ?>
+        <?php elseif($estImporte): ?>
+            Qualité : <br>
+            <?php echo $acteur->getLibelleQualite(); ?>
+        <?php endif; ?>
     </div>
 </div>
 <div class="row">
@@ -85,7 +96,7 @@ $fieldset = $form->get('acteur');
 
 <style>
     .forcage .trigger.forcer {
-        margin-top: 2em;
+        margin-top: 1.45em;
     }
     .forcage .trigger.deforcer {
         float: right;
