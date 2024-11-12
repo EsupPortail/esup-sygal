@@ -6,6 +6,7 @@ Journal des modifications
 - Etablissements : suppression du témoin 'est établissement membre' non pertnient en cas d'absence de COMUE et redondant avec 'est établissement d'inscription'.
 - [FIX] : Modification de la requête présente dans 9.0.0/03_saisie_these.sql, afin d'associer le nouveau champ pays_id (table titre_acces) aux bons pays
 - [FIX] .gitlab-ci : correction des URL générées dans la release.
+- [FIX] Contrainte de référence ajoutée récemment à tort (empêche la suppression d'un manuscrit de thèse déposé).
 
 9.0.1
 -----
