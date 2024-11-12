@@ -18,7 +18,7 @@ class ActeurHydrator extends AbstractHydrator
      */
     public function extract(object $object): array
     {
-        $qualite = $object->getQualite() ? $this->qualiteService->findQualiteByLibelle($object->getQualite()) : null;
+        $qualite = $object->getLibelleQualite() ? $this->qualiteService->findQualiteByLibelle($object->getLibelleQualite()) : null;
 
         $data = [];
         $data['individu'] = $object->getIndividu() ? $this->extractValue('individu', $object->getIndividu()) : null;

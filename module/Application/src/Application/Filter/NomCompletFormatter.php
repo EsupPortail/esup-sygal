@@ -62,13 +62,13 @@ class NomCompletFormatter extends AbstractFilter
             $nomUsuel = $value->getNomUsuel();
             $nomPatro = $value->getNomPatronymique();
             $prenom   = $value->getPrenom($this->tousLesPrenoms);
-            $civilite = $value->getCiviliteToString();
+            $civilite = $value->getCivilite();
         }
         elseif ($value instanceof Doctorant) {
             $nomUsuel = $value->getIndividu()->getNomUsuel();
             $nomPatro = $value->getIndividu()->getNomPatronymique();
             $prenom   = $value->getIndividu()->getPrenom($this->tousLesPrenoms);
-            $civilite = $value->getIndividu()->getCiviliteToString();
+            $civilite = $value->getIndividu()->getCivilite();
         }
         elseif ($value instanceof People) {
             /* @var $value People */

@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+9.0.1
+-----
+- Individu : remplacement des usages de getCiviliteToString() par getCivilite() qui faisait la même chose ; puis modif de getCiviliteToString() pour retourner la civilité au format long.
+- [FIX] Génération de la page de couverture impossible : PageDeCouverturePdfExporter ne doit pas être un singleton afin d'éviter des erreurs de chemins de templates
+- [FIX] Qualité d'un Acteur provenant de SI n'était plus affichée dans certains cas (page de couverture...)
+- [FIX] Plantage de la génération des convocations sur la page Préparation de la soutenance : 'Call to undefined method These\Entity\Db\Acteur::getCivilite()'.
+
 9.0.0
 -----
 - Nouveau module Saisie de thèse : 

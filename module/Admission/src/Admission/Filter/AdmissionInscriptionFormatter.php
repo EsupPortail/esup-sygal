@@ -17,7 +17,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
     public function htmlifyDiplomeIntituleInformations(Inscription $inscription){
         if ($inscription->getCoDirection()) {
             if($inscription->getCoDirecteur()){
-                $nomPrenom = $inscription->getCoDirecteur()->getCiviliteToString() . " " .$inscription->getCoDirecteur()->getNomComplet();
+                $nomPrenom = $inscription->getCoDirecteur()->getCivilite() . " " .$inscription->getCoDirecteur()->getNomComplet();
             }else{
                 $nomPrenom = $inscription->getNomCodirecteurThese() . " " . $inscription->getPrenomCodirecteurThese();
             }

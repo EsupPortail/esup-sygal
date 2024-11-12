@@ -328,11 +328,11 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      */
     public function getLibelleQualite(): string
     {
-        if ($this->libelleQualite === null) {
-            return " ";
-//            return "Qualité non indiquée";
-        } else {
-            return $this->libelleQualite;
+        $estImportable = $this->getSource()->getImportable();
+        if($estImportable){
+            return $this->libelleQualite === null ? " " : $this->libelleQualite;
+        }else{
+            return $this->qualite;
         }
     }
 
@@ -478,6 +478,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      */
     public function getQualite(): ?Qualite
     {
+
         return $this->qualite;
     }
 

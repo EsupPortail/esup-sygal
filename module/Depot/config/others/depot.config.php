@@ -1012,6 +1012,10 @@ return [
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
         ],
+        //PageDeCouverturePdfExporter ne doit pas être un singleton afin d'éviter des erreurs de chemins de templates
+        'shared' => [
+            PageDeCouverturePdfExporter::class => false,
+        ],
     ],
     'controllers' => [
         'factories' => [

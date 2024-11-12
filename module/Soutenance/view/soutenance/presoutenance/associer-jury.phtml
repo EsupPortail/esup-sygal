@@ -21,7 +21,7 @@ use Soutenance\Entity\Membre;
                 <span class="badge bg-secondary"> <?php echo $acteur->getRole()->getLibelle(); ?> </span>
 <!--                --><?php //echo $acteur->getIndividu()->getNomComplet(false,false,false, true); ?>
                 <?php echo $acteur->getIndividu()->getNomComplet(false,false,false, true); ?>
-                <?php echo $acteur->getQualite(); ?>
+                <?php echo $acteur->getLibelleQualite(); ?>
                 <?php echo ($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Établissement inconnu"; ?>
             </option>
         <?php endforeach; ?>
