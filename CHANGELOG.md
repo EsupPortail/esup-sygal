@@ -4,6 +4,7 @@ Journal des modifications
 9.1.0
 -----
 - Etablissements : suppression du témoin 'est établissement membre' non pertnient en cas d'absence de COMUE et redondant avec 'est établissement d'inscription'.
+- [FIX] : Modification de la requête présente dans 9.0.0/03_saisie_these.sql, afin d'associer le nouveau champ pays_id (table titre_acces) aux bons pays
 
 9.0.1
 -----
