@@ -3,6 +3,7 @@ Journal des modifications
 
 9.1.0
 -----
+- Recherche de thèse : Remplacement de la vue matérialisée mv_recherche_these par une simple vue 'these_rech' pour ne plus avoir de pb de recherche de thèse infructueuse nécessitant un refresh.
 - Etablissements : suppression du témoin 'est établissement membre' non pertnient en cas d'absence de COMUE et redondant avec 'est établissement d'inscription'.
 - [FIX] : Modification de la requête présente dans 9.0.0/03_saisie_these.sql, afin d'associer le nouveau champ pays_id (table titre_acces) aux bons pays
 - [FIX] .gitlab-ci : correction des URL générées dans la release.

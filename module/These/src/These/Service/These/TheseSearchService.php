@@ -352,7 +352,7 @@ class TheseSearchService extends SearchService
 
         $sql = <<<EOS
 SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, HAYSTACK 
-FROM MV_RECHERCHE_THESE MV 
+FROM these_rech MV 
 WHERE (
 $orc
 )
