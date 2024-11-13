@@ -7,6 +7,7 @@ use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
+use These\Entity\Db\VTheseAnneeUnivFirst;
 
 class GeneralitesHydrator extends DoctrineObject
 {
@@ -61,25 +62,16 @@ class GeneralitesHydrator extends DoctrineObject
         }
 
         $date = (isset($data['datePremiereInscription'])) ? \DateTime::createFromFormat('Y-m-d', $data['datePremiereInscription']) : null;
-        $anneeUnivPremiereInscription = $date ? $this->anneeUnivService->fromDate($date) : null;
+        $anneeUnivDatePremiereInscription = $date ? $this->anneeUnivService->fromDate($date) : null;
 
-        //si une première année d'inscription est déjà renseignée, on lui ajoute les données
-        if ($object->getAnneeUniv1ereInscription()) {
-            $theseAnneeUnivPremiereInscription = $object->getAnneeUniv1ereInscription();
-            if ($anneeUnivPremiereInscription) {
-                $theseAnneeUnivPremiereInscription->setAnneeUniv($anneeUnivPremiereInscription->getPremiereAnnee());
-            } else {
-                $object->removeAnneesUniv1ereInscription($object->getAnneeUniv1ereInscription());
-            }
-        } else if ($date) {
+        //si une date de première inscription est saisie
+        if ($anneeUnivDatePremiereInscription) {
             $theseAnneeUnivPremiereInscription = new TheseAnneeUniv();
-            if ($anneeUnivPremiereInscription) {
-                $theseAnneeUnivPremiereInscription->setAnneeUniv($anneeUnivPremiereInscription->getPremiereAnnee());
-                $theseAnneeUnivPremiereInscription->setThese($object);
-                $theseAnneeUnivPremiereInscription->setSource($this->sourceService->fetchApplicationSource());
-                $theseAnneeUnivPremiereInscription->setSourceCode($this->sourceService->genereateSourceCode());
-                $object->addAnneesUnivInscription($theseAnneeUnivPremiereInscription);
-            }
+            $theseAnneeUnivPremiereInscription->setAnneeUniv($anneeUnivDatePremiereInscription->getPremiereAnnee());
+            $theseAnneeUnivPremiereInscription->setThese($object);
+            $theseAnneeUnivPremiereInscription->setSource($this->sourceService->fetchApplicationSource());
+            $theseAnneeUnivPremiereInscription->setSourceCode($this->sourceService->genereateSourceCode());
+            $object->addAnneesUnivInscription($theseAnneeUnivPremiereInscription);
         }
 
         if(!isset($data['cotutelle']) || !$data['cotutelle']) {

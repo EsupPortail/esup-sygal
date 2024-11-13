@@ -46,13 +46,13 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
         /** @var These $these */
         $these = $this->getObject();
         $estModifiable = !$these->getSource()->getImportable();
-        
+
         $this->get('doctorant')->setAttribute('readonly', !$estModifiable || $these->getDoctorant());
         $this->get('titre')->setAttribute('readonly', !$estModifiable);
         $this->get('discipline')->setAttribute('disabled', !$estModifiable);
         $this->get('confidentialite')->setAttribute('disabled', !$estModifiable);
         $this->get('dateFinConfidentialite')->setAttribute('disabled', !$estModifiable);
-        $this->get('datePremiereInscription')->setAttribute('disabled', !$estModifiable);
+        $this->get('datePremiereInscription')->setAttribute('disabled', !$these->getSource()->getImportable() && !empty($this->get('datePremiereInscription')->getValue()));
         $this->get('dateAbandon')->setAttribute('readonly', !$estModifiable);
         $this->get('dateTransfert')->setAttribute('readonly', !$estModifiable);
         $this->get('resultat')->setAttribute('disabled', !$estModifiable);

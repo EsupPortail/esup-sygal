@@ -1647,11 +1647,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove anneesUnivInscription.
      *
-     * @param VTheseAnneeUnivFirst $anneesUnivInscription
+     * @param TheseAnneeUniv $anneesUnivInscription
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeAnneesUnivInscription(VTheseAnneeUnivFirst $anneesUnivInscription)
+    public function removeAnneesUnivInscription(TheseAnneeUniv $anneesUnivInscription)
     {
         return $this->anneesUnivInscription->removeElement($anneesUnivInscription);
     }

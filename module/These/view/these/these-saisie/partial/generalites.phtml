@@ -68,6 +68,11 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
             <div class="row">
                 <h3 class="these-saisie-title-section">
                     Première inscription
+                    <?php if(empty($fs->get('datePremiereInscription')->getValue())): ?>
+                        <span class="icon icon-info" data-bs-toggle="tooltip" title="Lorsque ce champ sera renseigné, il ne sera plus possible de le modifier"></span>
+                    <?php else: ?>
+                        <span class="icon icon-info" data-bs-toggle="tooltip" title="Ce champ est lié à la première année universitaire d'inscription, vous ne pouvez donc plus le modifier"></span>
+                    <?php endif; ?>
                 </h3>
                 <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('datePremiereInscription')) ?>

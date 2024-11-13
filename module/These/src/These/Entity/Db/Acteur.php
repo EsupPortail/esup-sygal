@@ -307,7 +307,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
         if($estImportable){
             return $this->libelleQualite === null ? " " : $this->libelleQualite;
         }else{
-            return $this->qualite;
+            return $this->qualite ?: "";
         }
     }
 
