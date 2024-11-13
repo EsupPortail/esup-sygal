@@ -78,7 +78,7 @@ class GeneralitesHydrator extends DoctrineObject
                 $theseAnneeUnivPremiereInscription->setThese($object);
                 $theseAnneeUnivPremiereInscription->setSource($this->sourceService->fetchApplicationSource());
                 $theseAnneeUnivPremiereInscription->setSourceCode($this->sourceService->genereateSourceCode());
-                $object->addAnneesUniv1ereInscription($theseAnneeUnivPremiereInscription);
+                $object->addAnneesUnivInscription($theseAnneeUnivPremiereInscription);
             }
         }
 

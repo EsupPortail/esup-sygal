@@ -1647,11 +1647,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove anneesUnivInscription.
      *
-     * @param \These\Entity\Db\TheseAnneeUniv $anneesUnivInscription
+     * @param VTheseAnneeUnivFirst $anneesUnivInscription
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeAnneesUnivInscription(\These\Entity\Db\TheseAnneeUniv $anneesUnivInscription)
+    public function removeAnneesUnivInscription(VTheseAnneeUnivFirst $anneesUnivInscription)
     {
         return $this->anneesUnivInscription->removeElement($anneesUnivInscription);
     }
@@ -1659,11 +1659,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Add anneesUniv1ereInscription.
      *
-     * @param VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription
+     * @param VTheseAnneeUnivFirst $anneesUniv1ereInscription
      *
      * @return These
      */
-    public function addAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription)
+    public function addAnneesUniv1ereInscription(VTheseAnneeUnivFirst $anneesUniv1ereInscription)
     {
         $this->anneesUniv1ereInscription[] = $anneesUniv1ereInscription;
 
@@ -1673,11 +1673,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Remove anneesUniv1ereInscription.
      *
-     * @param VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription
+     * @param VTheseAnneeUnivFirst $anneesUniv1ereInscription
      *
      * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
      */
-    public function removeAnneesUniv1ereInscription(\These\Entity\Db\VTheseAnneeUnivFirst|TheseAnneeUniv $anneesUniv1ereInscription)
+    public function removeAnneesUniv1ereInscription(VTheseAnneeUnivFirst $anneesUniv1ereInscription)
     {
         return $this->anneesUniv1ereInscription->removeElement($anneesUniv1ereInscription);
     }

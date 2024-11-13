@@ -93,7 +93,7 @@ class TheseService extends BaseService
             }
         }
 
-        $theseAnneesUniv = $these->getAnneesUniv1ereInscription();
+        $theseAnneesUniv = $these->getAnneesUnivInscription();
         if($theseAnneesUniv){
             foreach ($theseAnneesUniv as $theseAnneeUniv) {
                 try {

@@ -45,8 +45,8 @@ class AutorisationInscriptionController extends AbstractController
                 $autorisationInscription = $form->getData();
 
                 if($autorisationInscription->getThese() && $autorisationInscription->getAutorisationInscription() === true){
-                    $theseAnneeUnivPremiereInscription = $this->theseAnneeUnivService->initFromAutorisationInscription($autorisationInscription);
-                    $these->addAnneesUniv1ereInscription($theseAnneeUnivPremiereInscription);
+                    $theseAnneeUnivInscription = $this->theseAnneeUnivService->initFromAutorisationInscription($autorisationInscription);
+                    $these->addAnneesUnivInscription($theseAnneeUnivInscription);
                     $this->theseService->saveThese($these);
                 }
 
