@@ -20,6 +20,8 @@ WHERE CAST (p.code_pays_apogee AS bigint) = CAST (t.code_pays_titre_acces AS BIG
 -- Contrainte de référence modifiée récemment à tort (empêche la suppression d'un manuscrit déposé).
 --
 
+delete from validite_fichier where not exists (select * from fichier f where f.id = fichier_id);
+
 alter table validite_fichier drop constraint validite_fichier_ffk;
 alter table validite_fichier add constraint validite_fichier_ffk foreign key (fichier_id) references fichier on delete cascade;
 
