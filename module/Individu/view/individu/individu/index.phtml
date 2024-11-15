@@ -30,7 +30,10 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
     <?php if ($canAjouter): ?>
         <a class="btn btn-primary float-end"
            title="Création d'un nouvel individu..."
-           href="<?php echo $this->url('individu/ajouter') ?>"><?php echo $this->translate("Nouvel individu...") ?></a>
+           href="<?php echo $this->url('individu/ajouter') ?>">
+            <span class="icon icon-ajouter"></span>
+            <?php echo $this->translate("Nouvel individu...") ?>
+        </a>
     <?php endif ?>
 </h1>
 

@@ -2,6 +2,7 @@
 
 namespace Formation\Form\EnqueteReponse;
 
+use Application\Utils\FormUtils;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -50,20 +51,8 @@ class EnqueteReponseForm extends Form
                 ],
             ]);
         }
-        $this->add([
-            'type' => Button::class,
-            'name' => 'enregistrer',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+
+        FormUtils::addSaveButton($this);
 
         $this->add([
             'type' => Button::class,

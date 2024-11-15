@@ -2,6 +2,7 @@
 
 namespace Fichier\Controller\Plugin\Uploader;
 
+use Application\Utils\FormUtils;
 use UnicaenApp\Filter\BytesFormatter;
 use UnicaenApp\Util;
 use Laminas\Form\Element\Csrf;
@@ -78,16 +79,7 @@ class UploadForm extends Form
 
     private function addSubmitButton()
     {
-        $this->add([
-            'name' => 'submit',
-            'type' => 'Submit',
-            'options' => [
-                'label' => "Téléverser",
-            ],
-            'attributes' => [
-                'class' => 'upload-file',
-            ],
-        ]);
+        FormUtils::addUploadButton($this);
     }
 
     /**

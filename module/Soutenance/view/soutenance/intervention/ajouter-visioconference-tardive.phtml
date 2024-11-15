@@ -12,7 +12,9 @@ use Soutenance\Entity\Membre;
 ?>
 
 <form method="post" action="<?php echo $this->url('soutenance/intervention/ajouter-visioconference-tardive', ['these' => $these->getId()], [], true); ?>">
-    <label for="membre">Membre du jury en visioconférence : </label>
+    <label for="membre">
+        Membre du jury en visioconférence <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :
+    </label>
     <select id="membre" name="membre" class="selectpicker" data-live-search="true">
         <option>Sélectionner un membre du jury ... </option>
         <?php foreach ($membres as $membre) : ?>
@@ -24,13 +26,20 @@ use Soutenance\Entity\Membre;
 
     <br/>
 
-    <label for="justificatif">Justificatif signé de délégation de signature : </label>
-    <input type="file" id="justificatif" name="justificatif">
+    <label for="justificatif">
+        Justificatif signé de délégation de signature
+        <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :
+    </label>
+    <input type="file" id="justificatif" name="justificatif" required>
 
-    <input type="submit" class="btn btn-primary" value="Finaliser la déclaration">
+    <button type="submit" class="btn btn-primary" value="Finaliser la déclaration">
+        <span class="icon icon-save"></span>
+        Finaliser la déclaration
+    </button>
 
 </form>
 
 <script>
     $('select').selectpicker();
+    $('[data-bs-toggle="tooltip"]').tooltip({});
 </script>

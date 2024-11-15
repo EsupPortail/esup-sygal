@@ -2,13 +2,13 @@
 
 namespace Soutenance\Form\Confidentialite;
 
+use Application\Utils\FormUtils;
 use DateInterval;
 use DateTime;
-use Soutenance\Validator\DateLesserThan;
 use Laminas\Form\Element\Checkbox;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
+use Soutenance\Validator\DateLesserThan;
 
 class ConfidentialiteForm extends Form
 {
@@ -43,10 +43,7 @@ class ConfidentialiteForm extends Form
             ]
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregister")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'date' => [

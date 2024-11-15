@@ -71,7 +71,7 @@ $this->headTitle("Proposition de soutenance");
 </p>
 <div class="alert alert-warning">
     <span class="icon icon-attention"></span>
-    En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau
+    En cas de modification de la proposition, toutes les validations seront annulées et la proposition devra être à nouveau
     être validée.
 </div>
 
@@ -312,8 +312,8 @@ if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and
                 //});
 
                 window.location.reload();
-                let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
-                window.scrollTo(0, top);
+                // let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
+                // window.scrollTo(0, top);
             },
             "edition-confidentialite": function (event) {
                 event.div.modal('hide');

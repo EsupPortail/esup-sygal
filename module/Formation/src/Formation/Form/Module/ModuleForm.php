@@ -2,7 +2,7 @@
 
 namespace Formation\Form\Module;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
@@ -62,20 +62,7 @@ class ModuleForm extends Form {
             ],
         ]);
 
-        //submit
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [ 'disable_html_escape' => true, ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle'       => [ 'required' => true, ],

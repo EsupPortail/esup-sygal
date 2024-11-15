@@ -13,17 +13,19 @@ $adresse = $proposition->getAdresseActive();
 ?>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header <?= $adresse !== null ? "bg-success" : "bg-danger";?>">
         <h2>Adresse exacte du lieu de soutenance</h2>
     </div>
     <div class="card-body">
-        <div class="alert alert-info">
-            <p><strong>Cette adresse exacte figurera sur les convocations et autres documents officiels.</strong></p>
-
-            <p>Vous pouvez modifier celle-ci sans annulation du dossier tant que les convocations non pas été éditées.</p>
-        </div>
-
         <div>
+            <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS) : ?>
+                <div class="alert alert-info">
+                    <span class="icon icon-info"></span>
+                    <p><strong>Cette adresse exacte figurera sur les convocations et autres documents officiels.</strong></p>
+
+                    <p>Vous pouvez modifier celle-ci sans annulation du dossier tant que les convocations non pas été éditées.</p>
+                </div>
+            <?php endif; ?>
             <?php if ($proposition->getEtat()->getCode() !== Etat::VALIDEE) : ?>
                 <?php if ($adresse === null) : ?>
                     <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
@@ -36,7 +38,7 @@ $adresse = $proposition->getAdresseActive();
                     <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
                     <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
-                        <span class="icon icon-ajouter"></span>
+                        <span class="icon icon-modifier"></span>
                         Modifier l'adresse
                     </a>
                     <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
@@ -52,10 +54,10 @@ $adresse = $proposition->getAdresseActive();
         <?php if ($adresse !== null) : ?>
             <?php echo $adresse->format(); ?>
         <?php else: ?>
-            <span class="text-warning">
+            <div class="alert alert-danger">
                 <span class="icon icon-attention"></span>
                 Aucune adresse de renseignée !
-            </span>
+            </div>
         <?php endif; ?>
     </div>
 </div>

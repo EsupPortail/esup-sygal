@@ -2,6 +2,7 @@
 
 namespace Depot\Form\Description;
 
+use Application\Utils\FormUtils;
 use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
 use Laminas\Form\Form;
 use These\Form\DomaineHalSaisie\Fieldset\DomaineHalFieldset;
@@ -21,13 +22,6 @@ class DescriptionTheseForm extends Form
 
         $this->add($domainesHalFieldset);
 
-        $this->add([
-            'name'       => 'submit',
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 }

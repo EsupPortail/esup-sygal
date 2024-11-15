@@ -2,9 +2,9 @@
 
 namespace Indicateur\Form;
 
+use Application\Utils\FormUtils;
 use Indicateur\Model\Indicateur;
 use Laminas\Form\Element\Select;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
@@ -65,11 +65,6 @@ class IndicateurForm extends Form {
             ],
         ]);
 
-        $this
-            ->add((
-            new Submit('submit'))
-                ->setValue("Enregistrer")
-                ->setAttribute('class', 'btn btn-primary')
-            );
+        FormUtils::addSaveButton($this);
     }
 }

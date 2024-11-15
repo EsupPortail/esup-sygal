@@ -28,9 +28,12 @@ class FormationFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => Text::class,
             'name' => 'intitule',
             'options' => [
-                'label' => "Intitule / Description :",
+                'label' => "Intitule / Description <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
             'attributes' => [
@@ -42,9 +45,12 @@ class FormationFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => Number::class,
             'name' => 'temps',
             'options' => [
-                'label' => "Volume horaire / Number of hours :",
+                'label' => "Volume horaire / Number of hours <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
             'attributes' => [

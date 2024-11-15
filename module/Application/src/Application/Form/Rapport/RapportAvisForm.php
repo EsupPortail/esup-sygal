@@ -3,10 +3,10 @@
 namespace Application\Form\Rapport;
 
 use Application\Entity\Db\RapportAvis;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -53,9 +53,12 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
             'type' => Radio::class,
             'name' => 'avis',
             'options' => [
-                'label' => 'Avis :',
+                'label' => "Avis <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
                 'empty_option' => "Sélectionner...",
                 'disable_inarray_validator' => true,
@@ -70,7 +73,10 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
             'name' => 'commentaires',
             'type' => Textarea::class,
             'options' => [
-                'label' => "Commentaires :",
+                'label' => "Commentaires <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'commentaires',
@@ -79,13 +85,7 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
 
         $this->add(new Csrf('security'));
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->bind(new RapportAvis());
     }

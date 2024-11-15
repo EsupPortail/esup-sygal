@@ -25,7 +25,10 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
     <?php if ($canAjouter): ?>
         <a class="btn btn-primary float-end"
            title="Création d'un nouveau doctorant..."
-           href="<?php echo $this->url('doctorant/ajouter') ?>"><?php echo $this->translate("Nouveau doctorant...") ?></a>
+           href="<?php echo $this->url('doctorant/ajouter') ?>">
+            <span class="icon icon-ajouter"></span>
+            <?php echo $this->translate("Nouveau doctorant...") ?>
+        </a>
     <?php endif ?>
 </h1>
 

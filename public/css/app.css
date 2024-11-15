@@ -71,6 +71,8 @@ h2.modal-title {
   color: white; }
 .card .card-header.bg-danger {
   color: white; }
+.card .card-header.bg-warning {
+  color: white; }
 
 .card.box {
   margin-bottom: 10px;
@@ -79,7 +81,8 @@ h2.modal-title {
     padding: 5px 10px; }
     .card.box .card-header h2 {
       font-size: 150%;
-      margin: 0; }
+      margin: 0;
+      color: white; }
     .card.box .card-header .icon {
       margin-right: 5px; }
   .card.box .card-body h3 {
@@ -192,7 +195,8 @@ span.ballot-box {
   margin-bottom: 30px; }
 
 div#contenu-principal {
-  min-height: 500px; }
+  flex: 1 0 auto;
+  min-height: calc(100vh - 169px); }
 
 .page-header:nth-of-type(1) {
   margin-top: 10px; }
@@ -376,8 +380,11 @@ input[type="checkbox"] {
   border-left: 5px solid #055160; }
 
 .alert.alert-warning {
-  color: #664d03;
-  border-left: 5px solid #664d03; }
+  color: #bd7732;
+  border-left: 5px solid #D9822B; }
+
+.alert-warning {
+  border-color: #f7cfa8; }
 
 .alert.alert-success {
   color: #0f5132;
@@ -600,7 +607,7 @@ form [type='submit'] {
 a.btn > span.icon {
   color: white; }
 
-.btn-info {
+.btn-info, .btn-info.disabled {
   background-color: #009ce4;
   border-color: #009ce4;
   color: #fff; }

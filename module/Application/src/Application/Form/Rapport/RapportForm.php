@@ -4,12 +4,11 @@ namespace Application\Form\Rapport;
 
 use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Rapport;
-use These\Entity\Db\TheseAnneeUniv;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\InputFilter\FileInput;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -19,6 +18,7 @@ use Laminas\Validator\File\Size;
 use Laminas\Validator\File\UploadFile;
 use Laminas\Validator\InArray;
 use Laminas\Validator\NotEmpty;
+use These\Entity\Db\TheseAnneeUniv;
 
 abstract class RapportForm extends Form implements InputFilterProviderInterface
 {
@@ -69,9 +69,12 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
             'type' => Select::class,
             'name' => 'anneeUniv',
             'options' => [
-                'label' => 'Année universitaire :',
+                'label' => "Année universitaire <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
                 'empty_option' => "Sélectionner...",
                 'disable_inarray_validator' => true,
@@ -86,7 +89,10 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
             'name' => 'files',
             'type' => File::class,
             'options' => [
-                'label' => "Document à joindre :",
+                'label' => "Document à joindre <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'files',
@@ -96,13 +102,7 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
 
         $this->add(new Csrf('security'));
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'submit',
-            'attributes' => [
-                'value' => 'Téléverser',
-            ],
-        ]);
+        FormUtils::addUploadButton($this);
 
         $this->bind(new Rapport());
     }

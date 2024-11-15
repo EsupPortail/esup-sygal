@@ -3,6 +3,7 @@
 namespace Depot\Form\Diffusion;
 
 use Application\Service\Message\DiffusionMessages;
+use Application\Utils\FormUtils;
 use Depot\Entity\Db\Diffusion;
 use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -248,14 +249,7 @@ class DiffusionTheseForm extends Form
             'type' => 'Hidden',
         ]);
 
-        $this->add([
-            'name'       => 'submit',
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     /**

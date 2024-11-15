@@ -342,7 +342,7 @@ class PropositionController extends AbstractController
         $vm = new ViewModel();
         $vm->setTemplate('soutenance/default/default-form');
         $vm->setVariables([
-            'title' => 'Renseignement d\'un label europeen',
+            'title' => 'Renseignement d\'un label européen',
             'form' => $form,
         ]);
         return $vm;

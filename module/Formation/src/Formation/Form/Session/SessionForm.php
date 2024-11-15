@@ -2,19 +2,18 @@
 
 namespace Formation\Form\Session;
 
+use Application\Utils\FormUtils;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
-use Laminas\Form\Element\DateTime;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
-use UnicaenApp\Form\Element\Date;
-use UnicaenApp\Form\Element\SearchAndSelect;
-use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Number;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenApp\Form\Element\Date;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 class SessionForm extends Form {
     use EtablissementServiceAwareTrait;
@@ -195,22 +194,7 @@ class SessionForm extends Form {
             ],
         ]);
 
-        //submit
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle'       => [ 'required' => true, ],

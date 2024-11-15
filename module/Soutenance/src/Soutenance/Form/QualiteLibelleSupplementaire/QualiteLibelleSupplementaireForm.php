@@ -2,6 +2,7 @@
 
 namespace Soutenance\Form\QualiteLibelleSupplementaire;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
@@ -15,7 +16,10 @@ class QualiteLibelleSupplementaireForm extends Form {
             'type' => Text::class,
             'name' => 'qualite',
             'options' => [
-                'label' => "Qualité :",
+                'label' => "Qualité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'qualite',
@@ -27,21 +31,17 @@ class QualiteLibelleSupplementaireForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libelle supplémentaire :",
+                'label' => "Libelle supplémentaire <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'libelle',
             ],
         ]);
-        //submit
-        $this->add([
-            'name'       => 'submit',
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Enregistrer',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'qualite' => [

@@ -2,6 +2,7 @@
 
 namespace Formation\Form\EnqueteQuestion;
 
+use Application\Utils\FormUtils;
 use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Select;
@@ -59,29 +60,18 @@ class EnqueteQuestionForm extends Form {
             'type' => Text::class,
             'name' => 'ordre',
             'options' => [
-                'label' => "Ordre de la question *:",
+                'label' => "Ordre de la question <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'ordre',
                 'class' => 'required',
             ],
         ]);
-        //submit
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
 
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle'       => [ 'required' => true, ],

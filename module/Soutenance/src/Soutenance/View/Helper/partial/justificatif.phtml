@@ -33,7 +33,7 @@ $membre = $justificatif->getMembre();
         $label .= "</strong>";
     }
     if ($justificatif->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS) {
-        $label .= "'".$justificatif->getFichier()->getFichier()->getNomOriginal()."'";
+        $label .= $justificatif->getFichier()->getFichier()->getNomOriginal();
     }
 ?>
 

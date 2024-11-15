@@ -1,16 +1,13 @@
 <?php
 namespace Application\Form;
 
-use Laminas\Filter\StringTrim;
-use Laminas\Filter\StripTags;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
-use Laminas\Validator\Callback;
 
 class AutorisationInscriptionForm extends Form implements InputFilterProviderInterface
 {
@@ -28,7 +25,8 @@ class AutorisationInscriptionForm extends Form implements InputFilterProviderInt
                     0 => "Non",
                 ])
                 ->setAttributes(['id' => 'autorisationInscription'])
-                ->setLabel("Autorisez-vous l'inscription dans l'année suivante ?")
+                ->setLabel("Autorisez-vous l'inscription dans l'année suivante ? <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+                ->setLabelOptions(['disable_html_escape' => true,])
         );
 
         $this->add(
@@ -55,10 +53,7 @@ class AutorisationInscriptionForm extends Form implements InputFilterProviderInt
 
         $this->add(new Csrf('security'), ['csrf_options' => ['timeout' => 600]]);
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 
     public function getInputFilterSpecification(): array

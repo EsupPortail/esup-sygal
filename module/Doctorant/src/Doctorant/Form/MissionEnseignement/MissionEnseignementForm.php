@@ -2,8 +2,8 @@
 
 namespace Doctorant\Form\MissionEnseignement;
 
+use Application\Utils\FormUtils;
 use DateTime;
-use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
@@ -36,20 +36,7 @@ class MissionEnseignementForm extends Form
             ]
         ]);
 
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<span class="fas fa-save"></span> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'annee_univ' => [ 'required' => true, ],

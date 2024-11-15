@@ -4,7 +4,6 @@ namespace Depot\Controller;
 
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
-use Application\Entity\Db\DomaineHal;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -16,6 +15,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Application\Utils\FormUtils;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\FichierThese;
@@ -47,7 +47,6 @@ use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\EventManager\Event;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\Http\Response;
 use Laminas\InputFilter\InputFilter;
@@ -549,7 +548,7 @@ class DepotController extends AbstractController
         $form = new Form('correctionAutoriseeForcee');
         $form->setLabel($message);
         $form->add($radio);
-        $form->add((new Submit('submit'))->setValue("Enregistrer"));
+        FormUtils::addSaveButton($form);
 
         $form->setInputFilter((new InputFilter())->getFactory()->createInputFilter([
             'forcage' => [

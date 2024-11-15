@@ -26,7 +26,10 @@ use Laminas\Paginator\Paginator;
     <?php echo $this->translate("Comptes utilisateurs"); ?>
     <a class="btn btn-primary float-end"
        title="Création d'un nouvel utilisateur..."
-       href="<?php echo $this->url('utilisateur/ajouter') ?>"><?php echo $this->translate("Nouveau compte utilisateur...") ?></a>
+       href="<?php echo $this->url('utilisateur/ajouter') ?>">
+        <span class="icon icon-ajouter"></span>
+        <?php echo $this->translate("Nouveau compte utilisateur...") ?>
+    </a>
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>

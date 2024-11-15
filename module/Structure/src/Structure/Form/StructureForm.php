@@ -2,6 +2,7 @@
 
 namespace Structure\Form;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Hidden;
@@ -49,9 +50,6 @@ abstract class StructureForm extends Form
 
         $this->add(new Csrf('csrf'));
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Formation\Form\SessionStructureValide;
 
-use Laminas\Form\Element\Button;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
@@ -41,22 +41,8 @@ class SessionStructureValideForm extends Form {
                 'id' => 'lieu',
             ],
         ]);
-        //submit
-        $this->add([
-            'type' => Button::class,
-            'name' => 'bouton',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
 
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'structure'     => [ 'required' => true, ],

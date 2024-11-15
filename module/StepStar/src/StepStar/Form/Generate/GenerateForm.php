@@ -2,8 +2,8 @@
 
 namespace StepStar\Form\Generate;
 
+use Application\Utils\FormUtils;
 use Laminas\Filter\StringTrim;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -18,10 +18,7 @@ class GenerateForm extends Form implements InputFilterProviderInterface
             ->setLabel("Numéros de thèses (séparés par une virgule) :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Générer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this, "Générer");
     }
 
     /**

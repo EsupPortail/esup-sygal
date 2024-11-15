@@ -2,11 +2,11 @@
 
 namespace UnicaenAvis\Form;
 
+use Application\Utils\FormUtils;
 use InvalidArgumentException;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\Form;
@@ -232,10 +232,7 @@ class AvisForm extends Form implements InputFilterProviderInterface
      */
     public function init()
     {
-        $this->add((new Submit('submit'))
-            ->setValue("Enregister")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->add(new Csrf('csrf'));
     }

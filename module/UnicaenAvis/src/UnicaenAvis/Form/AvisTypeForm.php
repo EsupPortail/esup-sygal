@@ -2,9 +2,9 @@
 
 namespace UnicaenAvis\Form;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -48,10 +48,7 @@ class AvisTypeForm extends Form implements InputFilterProviderInterface
         $avisTypeFieldset->setUseAsBaseFieldset(true);
         $this->add($avisTypeFieldset, ['name' => 'avisTypeFieldset']);
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregister")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->add(new Csrf('csrf'));
     }

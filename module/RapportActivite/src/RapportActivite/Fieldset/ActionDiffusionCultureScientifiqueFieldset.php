@@ -31,9 +31,12 @@ class ActionDiffusionCultureScientifiqueFieldset extends Fieldset implements Inp
             'type' => Text::class,
             'name' => 'nature',
             'options' => [
-                'label' => "Nature / Description :",
+                'label' => "Nature / Description <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
             'attributes' => [
@@ -45,9 +48,12 @@ class ActionDiffusionCultureScientifiqueFieldset extends Fieldset implements Inp
             'type' => Text::class,
             'name' => 'public',
             'options' => [
-                'label' => "Public concerné / Audience :",
+                'label' => "Public concerné / Audience <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
             'attributes' => [
@@ -59,9 +65,12 @@ class ActionDiffusionCultureScientifiqueFieldset extends Fieldset implements Inp
             'type' => Number::class,
             'name' => 'temps',
             'options' => [
-                'label' => "Temps consacré (en heures) / Time invested (in hours) :",
+                'label' => "Temps consacré (en heures) / Time invested (in hours) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
             'attributes' => [
@@ -74,9 +83,12 @@ class ActionDiffusionCultureScientifiqueFieldset extends Fieldset implements Inp
             'type' => Date::class,
             'name' => 'date',
             'options' => [
-                'label' => "Date :",
+                'label' => "Date <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_attributes' => [
                     'class' => 'required',
+                ],
+                'label_options' => [
+                    'disable_html_escape' => true,
                 ],
             ],
             'attributes' => [

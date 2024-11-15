@@ -2,10 +2,10 @@
 
 namespace Doctorant\Form;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -47,13 +47,7 @@ class MailConsentementForm extends Form implements InputFilterProviderInterface
             ],
         ]);
 
-        $this->add([
-            'type' => Submit::class,
-            'name' => 'enregistrer',
-            'attributes' => [
-                'value' => 'Enregistrer',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     public function prepare(): self

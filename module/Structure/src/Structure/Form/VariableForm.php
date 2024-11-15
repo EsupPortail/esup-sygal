@@ -4,6 +4,7 @@ namespace Structure\Form;
 
 use Application\Entity\Db\Variable;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Select;
@@ -28,8 +29,11 @@ class VariableForm extends Form implements InputFilterProviderInterface
             'type' => Select::class,
             'name' => 'code',
             'options' => [
-                'label' => "Code * :",
+                'label' => "Code <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'value_options' => array_combine(Variable::CODES, Variable::CODES),
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'code',
@@ -40,7 +44,10 @@ class VariableForm extends Form implements InputFilterProviderInterface
             'type' => Text::class,
             'name' => 'description',
             'options' => [
-                'label' => "Description * :",
+                'label' => "Description <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'description',
@@ -51,7 +58,10 @@ class VariableForm extends Form implements InputFilterProviderInterface
             'type' => Text::class,
             'name' => 'valeur',
             'options' => [
-                'label' => "Valeur * :",
+                'label' => "Valeur <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
             ],
             'attributes' => [
                 'id' => 'valeur',
@@ -80,9 +90,9 @@ class VariableForm extends Form implements InputFilterProviderInterface
             ]
         ]);
 
-        $this
-            ->add(new Csrf('security'))
-            ->add((new Submit('submit'))->setValue('Enregistrer'));
+        $this->add(new Csrf('security'));
+
+        FormUtils::addSaveButton($this);
     }
 
     public function getInputFilterSpecification(): array

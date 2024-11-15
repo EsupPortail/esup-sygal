@@ -32,7 +32,7 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($these, EngagementImpartia
 ?>
 
 <div class="box card">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header <?= $tousLesEngagements ? "bg-success" : "bg-danger"?>">
         <h2> Engagements d'impartialité</h2>
     </div>
     <div class="card-body">
@@ -113,7 +113,8 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($these, EngagementImpartia
                                 <?php else: ?>
                                     <a
                                         <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
-                                            href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                            href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true); ?>"
+                                    >
                                         <span class="icon icon-notify"
                                               title="Notifier ce rapporteur (<?php echo $emailActeur; ?>)"></span>
                                     </a>
@@ -166,16 +167,16 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($these, EngagementImpartia
                 <br/>
             </div>
 
-            <div class="col-md-8">
-                <?php if (!$tousLesEngagements) : ?>
-                    <div class="card">
-                        <div class="card-header bg-warning">
-                            <span class="fas fa-exclamation-triangle"></span>
-                            Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
+<!--            <div class="col-md-8">-->
+<!--                --><?php //if (!$tousLesEngagements) : ?>
+<!--                    <div class="card">-->
+<!--                        <div class="card-header bg-warning">-->
+<!--                            <span class="fas fa-exclamation-triangle"></span>-->
+<!--                            Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                --><?php //endif; ?>
+<!--            </div>-->
 
             <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité"); ?>
         </div>

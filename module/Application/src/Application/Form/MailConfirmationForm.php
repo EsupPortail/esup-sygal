@@ -3,10 +3,10 @@
 namespace Application\Form;
 
 use Application\Entity\Db\MailConfirmation;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
@@ -28,19 +28,18 @@ class MailConfirmationForm extends Form
         $this->add(new Hidden('id'));
         $this->add(new Hidden('idIndividu'));
         $this->add((new Text('individu'))
-            ->setLabel("Votre identité :")
+            ->setLabel("Votre identité <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+            ->setLabelOptions(['disable_html_escape' => true,])
             ->setAttribute('readonly', 'readonly')
         );
         $this->add((new Text('email'))
-            ->setLabel("Votre adresse électronique :")
+            ->setLabel("Votre adresse électronique <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+            ->setLabelOptions(['disable_html_escape' => true,])
         );
         $this->add((new Checkbox('refusListeDiff'))
             ->setLabel("Je refuse de recevoir sur cette adresse les messages des listes de diffusion ?")
         );
-        $this->add((new Submit('enregistrer'))
-            ->setValue('Enregister')
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'individu' => [

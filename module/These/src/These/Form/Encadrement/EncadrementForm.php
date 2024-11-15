@@ -2,8 +2,8 @@
 
 namespace These\Form\Encadrement;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Csrf;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -24,7 +24,8 @@ class EncadrementForm extends Form
 
         $this
             ->add($fieldset)
-            ->add(new Csrf('security'))
-            ->add((new Submit('submit'))->setValue('Enregistrer'));
+            ->add(new Csrf('security'));
+
+        FormUtils::addSaveButton($this);
     }
 }

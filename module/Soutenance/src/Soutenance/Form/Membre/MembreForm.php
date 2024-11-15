@@ -2,6 +2,7 @@
 
 namespace Soutenance\Form\Membre;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Button;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
@@ -107,16 +108,7 @@ class MembreForm extends Form {
                 ])
         );
 
-        $this->add((new Button('submit'))
-            ->setLabel('<span class="icon icon-save"></span> Enregistrer')
-            ->setLabelOptions([
-                'disable_html_escape' => true,
-            ])
-            ->setAttributes([
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ])
-        );
+        FormUtils::addSaveButton($this);
 
         $this->setInputFilter((new Factory())->createInputFilter([
             'sexe' => [

@@ -81,7 +81,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     echo $this->messenger()->addMessagesFromFlashMessenger();
 ?>
 
-<?php if ( $validationBDD) : ?>
+<?php if (! $validationBDD) : ?>
 
     <p class="lead text-danger">
         La proposition de soutenance n'a pas encore été validée.
@@ -93,12 +93,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         <div>
             <?php /** @see \Soutenance\Controller\PresoutenanceController::genererSimulationAction() */ ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/generer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
-                Simulation de la remonter SI
+                Simulation de la remontée SI
             </a>
 
             <?php /** @see \Soutenance\Controller\PresoutenanceController::nettoyerSimulationAction() */ ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/nettoyer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
-                Nettoyer simulation
+                Nettoyer la simulation
             </a>
             <br/>
             <br/>
@@ -159,31 +159,34 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
 
     <div class="box card">
-        <div class="card-header bg-dark text-white">
+        <?php
+        $ok_rapporteurs = false;
+        $tousLesRapporteurs = true;
+        foreach ($rapporteurs as $rapporteur) {
+            if ($rapporteur->getActeur() === null) {
+                $tousLesRapporteurs = false;
+                break;
+            }
+        }
+        $tousLesEngagements = count($rapporteurs) === count($engagements) ;
+        ?>
+        <div class="card-header <?= $tousLesEngagements ? "bg-success" : "bg-danger"?>">
             <h2>Validation de la page de couverture</h2>
         </div>
         <div class="card-body">
-            <?php
-                $ok_rapporteurs = false;
-                $tousLesRapporteurs = true;
-                foreach ($rapporteurs as $rapporteur) {
-                    if ($rapporteur->getActeur() === null) {
-                        $tousLesRapporteurs = false;
-                        break;
-                    }
-            }
-            $tousLesEngagements = count($rapporteurs) === count($engagements) ;
-            ?>
             <?php if ($tousLesEngagements) : ?>
                 <?php if (current($validationPDC) !== null AND current($validationPDC) !== false) : ?>
                     <?php
                         /** @var Validation $validation_pdc */
                         $validation_pdc = current($validationPDC);
                     ?>
-                    La page de couverture a été validée le
-                    <?php echo $validation_pdc->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
-                    par
-                    <?php echo $validation_pdc->getHistoModificateur()->getDisplayName(); ?>.
+                    <div class="alert alert-info">
+                        <span class="icon icon-ok"></span>
+                        La page de couverture a été validée le
+                        <?php echo $validation_pdc->getHistoModification()->format(Constants::DATETIME_FORMAT); ?>
+                        par
+                        <?php echo $validation_pdc->getHistoModificateur()->getDisplayName(); ?>.
+                    </div>
                 <?php else : ?>
                     <div class="row">
                         <div class="col-md-8">
@@ -199,7 +202,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     </div>
                 <?php endif; ?>
             <?php else : ?>
-                    Tous les engagments d'impartialité n'ont pas encore été signés.
+                <div class="col-md-8">
+                    <div class="alert alert-danger">
+                        <span class="icon icon-attention"></span>
+                        Tous les engagements d'impartialité n'ont pas encore été signés.
+                    </div>
+                </div>
             <?php endif; ?>
         </div>
     </div>
@@ -222,11 +230,9 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     }
 ?>
 
-<?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) :?>
-<?php endif; ?>
     <div class="box card">
         <div class="card-header <?php echo $bgcolor; ?> text-white">
-            <h2>  Complétion du dossier et validation de l'établissement </h2>
+            <h2>Complétion du dossier et validation de l'établissement</h2>
         </div>
         <div class="card-body">
             <?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
@@ -249,6 +255,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         Dossier complet
                     </a>
                 <?php endif; ?>
+
+            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS): ?>
+                <div class="alert alert-warning">
+                    <span class="icon icon-info"></span>
+                    La direction de l'établissement n'a pas encore validé la proposition de soutenance
+                </div>
             <?php endif; ?>
 
             <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
@@ -259,11 +271,10 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
     <?php if (true): ?>
     <div class="box card">
-        <div class="card-header bg-dark text-white">
+        <div class="card-header <?= $proposition->getAdresseActive() ? "bg-success" : "bg-dark"; ?>">
             <h2>  Adresse exacte de la soutenance</h2>
         </div>
         <div class="card-body">
-
             <?php echo $this->partial('partial/adresse', ['these' => $these, 'proposition' => $proposition]); ?>
         </div>
     </div>
@@ -288,7 +299,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                             class="btn btn-primary action"
                             target="_blank"
                         >
-                            <span class="fas fa-list-alt"></span>Générer l'avis de soutenance
+                            <span class="icon icon-pdf"></span>Générer l'avis de soutenance
                         </a>
                     <?php endif; ?>
                 </div>
@@ -382,7 +393,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                             class="btn btn-primary action"
                             target="_blank"
                         >
-                            <span class="fas fa-list-alt"></span>
+                            <span class="icon icon-pdf"></span>
                             Générer le procès verbal
                         </a>
                     <?php endif; ?>
@@ -393,7 +404,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                                 class="btn btn-primary action"
                                 target="_blank"
                         >
-                            <span class="fas fa-list-alt"></span>Générer le rapport de soutenance
+                            <span class="icon icon-pdf"></span>Générer le rapport de soutenance
                         </a>
                     <?php endif; ?>
 
@@ -403,7 +414,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                              class="btn btn-primary action"
                              target="_blank"
                      >
-                         <span class="fas fa-list-alt"></span>Générer le rapport technique
+                         <span class="icon icon-pdf"></span>Générer le rapport technique
                      </a>
                     <?php endif; ?>
 
@@ -413,7 +424,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                                     class="btn btn-primary action"
                                     target="_blank"
                             >
-                                <span class="fas fa-list-alt"></span>Générer les convocations
+                                <span class="icon icon-pdf"></span>Générer les convocations
                         </a>
                     <?php endif; ?>
                 </div>

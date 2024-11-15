@@ -143,7 +143,7 @@ $form->prepare();
         <div class="col-md-7">
             <?php
             echo $this->formControlGroup($form->get('security'));
-            echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+            echo $this->formControlGroup($form->get('submit'));
             ?>
         </div>
     </div>

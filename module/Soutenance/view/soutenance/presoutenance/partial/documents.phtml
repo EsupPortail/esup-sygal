@@ -23,14 +23,12 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
         <h2> Documents liés à la soutenance</h2>
     </div>
     <div class="card-body">
-
         <p class="lead">
         Dépôt des fichiers liés à la soutenance : autorisation de soutenance, rapport de soutenance
         </p>
         <!--todo JP: section qui se repete completeement par manque de temps (faire aide de vue ou partial ) -->
-
+        <h3>Autorisation de soutenance</h3>
         <div class="row">
-            <h3>Autorisation de soutenance</h3>
             <div class="col-md-4">
             <?php if ($autorisation === null AND $canAjouterAutorisation) : ?>
                 <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAutorisationSoutenanceAction() */ ?>
@@ -59,7 +57,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                                         ]
                                     ],
                                     true); ?>">
-                                    <span class="icon icon-unchecked"></span>
+                                    <span class="icon icon-delete"></span>
                                     Supprimer
                                 </a>
                             <?php endif; ?>
@@ -71,8 +69,8 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
 
         <br/>
 
+        <h3>Rapport de soutenance</h3>
         <div class="row">
-            <h3>Rapport de soutenance</h3>
             <div class="col-md-4">
                 <?php if ($rapport === null AND $canAjouterRapport) : ?>
                     <?php /** @see \Soutenance\Controller\JustificatifController::ajouterRapportSoutenanceAction() */ ?>
@@ -101,7 +99,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                                     ]
                                     ],
                                     true); ?>">
-                                    <span class="icon icon-unchecked"></span>
+                                    <span class="icon icon-delete"></span>
                                     Supprimer
                                 </a>
                             <?php endif; ?>
@@ -113,9 +111,8 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
 
         <br/>
 
+        <h3>Procès-verbal de soutenance</h3>
         <div class="row">
-            <h3>Procès-verbal de soutenance</h3>
-
             <div class="col-md-4">
                 <?php if ($pv === null AND $canAjouterAutorisation) : ?>
                     <?php /** @see \Soutenance\Controller\JustificatifController::ajouterProcesVerbalSoutenanceAction() */ ?>
@@ -144,7 +141,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                                     ]
                                     ],
                                     true); ?>">
-                                    <span class="icon icon-unchecked"></span>
+                                    <span class="icon icon-delete"></span>
                                     Supprimer
                                 </a>
                             <?php endif; ?>

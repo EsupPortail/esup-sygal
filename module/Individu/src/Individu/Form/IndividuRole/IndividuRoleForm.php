@@ -2,8 +2,8 @@
 
 namespace Individu\Form\IndividuRole;
 
+use Application\Utils\FormUtils;
 use Individu\Fieldset\IndividuRoleEtablissement\IndividuRoleEtablissementFieldset;
-use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
@@ -47,20 +47,7 @@ class IndividuRoleForm extends Form implements InputFilterProviderInterface
             ]);
         $this->add($individuRoleEtablissementCollection);
 
-        $this->add([
-            'type' => Button::class,
-            'name' => 'enregistrer',
-            'options' => [
-                'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
-            ],
-            'attributes' => [
-                'type' => 'submit',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
+        FormUtils::addSaveButton($this);
     }
 
     public function bind(object $object, int $flags = FormInterface::VALUES_NORMALIZED): static

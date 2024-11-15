@@ -62,10 +62,10 @@ th {
   background-color: #009CE4 !important; }
 
 .bg-warning {
-  background-color: #F1732D !important; }
+  background-color: #D9822B !important; }
 
 .bg-danger {
-  background-color: #d9534f !important; }
+  background-color: #CE4946 !important; }
 
 .popover,
 .popover-title {
@@ -139,10 +139,14 @@ textarea.form-control {
 .jumbotron p {
   font-weight: normal; }
 
+html,
+body {
+  height: 100%; }
+
 #footer {
   padding-top: 10px;
-  margin-bottom: 0;
-  background-color: #004980; }
+  background-color: #004980;
+  width: 100%; }
 
 #footer ul {
   width: 100%; }

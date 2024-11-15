@@ -54,6 +54,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
 
     <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
     <div class="alert alert-info">
+        <span class="icon icon-info"></span>
         Vous pouvez télécharger les formulaires de délégation grâce au lien suivant :
         <strong><u>
                 <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
@@ -74,9 +75,9 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
         }
     }
     ?>
-    <div class="card">
+    <div class="box card">
         <div class="card-header <?php echo $classe_distanciel; ?>">
-            Déclaration du président du jury en distanciel
+            <h2>Déclaration du président du jury en distanciel</h2>
         </div>
         <div class="card-body">
 
@@ -91,7 +92,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                         par <?php echo $distanciel->getHistoCreateur()->getDisplayName(); ?>.
                     </div>
                     <?php if ($canModifier) : ?>
-                        <div class="float-end" style="margin-right: 1rem;">
+                        <div class="float-end" style="margin-right: 1rem; margin-top:10px">
                             <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                     href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
                                 <span class="icon icon-minus"></span> Président en distanciel
@@ -141,7 +142,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                         Vous pouvez déclarer ici que le président du jury examinera la soutenance en distanciel.
                     </div>
                     <?php if ($canModifier) : ?>
-                    <div class="float-end" style="margin-right: 1rem;">
+                    <div class="float-end" style="margin-right: 1rem; margin-top:10px;">
                         <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                 href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
                             <span class="icon icon-plus"></span> Président en distanciel
@@ -157,9 +158,11 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
         </div>
     </div>
 
-    <div class="card bg-default">
-        <div class="card-header">
-            Déclaration tardive de membre en visio-conférence
+    <br/>
+
+    <div class="box card">
+        <div class="card-header bg-dark text-white">
+            <h2>Déclaration tardive de membre en visio-conférence</h2>
         </div>
         <div class="card-body">
             <div class="row">
@@ -191,7 +194,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                                 <?php if ($canModifier) : ?>
                                     <?php /** @see \Soutenance\Controller\InterventionController::supprimerVisioconferenceTardiveAction() */ ?>
                                     <a href="<?php echo $this->url('soutenance/intervention/supprimer-visioconference-tardive', ['these' => $these->getId(), 'intervention' => $visio->getId()], [], true); ?>">
-                                        <span class="icon icon-supprimer">Supprimer la déclaration</span>
+                                        <span class="icon icon-supprimer"></span>
                                     </a>
                                 <?php endif; ?>
                             </li>

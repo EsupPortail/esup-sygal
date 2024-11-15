@@ -3,12 +3,12 @@
 namespace Application\Form;
 
 use Application\Form\Validator\NewEmailValidator;
+use Application\Utils\FormUtils;
 use Individu\Entity\Db\Individu;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -57,10 +57,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
                 ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='fas fa-exclamation-triangle'></span> Ne pas cocher si pour lier à un individu existant</span>")
 
         );
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 
     public function getInputFilterSpecification(): array

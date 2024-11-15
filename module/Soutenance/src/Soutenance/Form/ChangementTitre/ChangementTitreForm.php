@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\ChangementTitre;
 
-use Laminas\Form\Element\Submit;
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 
@@ -15,9 +15,6 @@ class ChangementTitreForm extends Form {
                 ->setLabel("Nouveau titre :")
         );
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregistrer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 }

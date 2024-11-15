@@ -2,7 +2,7 @@
 
 namespace StepStar\Form\Envoi;
 
-use Laminas\Form\Element\Submit;
+use Application\Utils\FormUtils;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
 
@@ -12,10 +12,7 @@ abstract class AbstractEnvoiForm extends Form implements InputFilterProviderInte
     {
         parent::init();
 
-        $this->add((new Submit('submit'))
-            ->setValue("Envoyer")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this, "Envoyer");
     }
 
     /**

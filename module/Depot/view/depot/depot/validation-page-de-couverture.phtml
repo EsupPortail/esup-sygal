@@ -51,7 +51,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             en mesure de générer automatiquement en l'état actuel des informations dont elle dispose.
         </p>
         <p>
-            <a class="btn btn-info ajax-modal"
+            <a class="btn btn-primary ajax-modal"
                href="<?php echo $apercevoirPdcUrl ?>"
                title="Cliquez pour afficher un aperçu de la page de couverture"
             ><span class="icon icon-voir"></span> Visualiser la page de couverture</a>
@@ -95,10 +95,10 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
                 les informations nécessaires à la génération de la page de couverture :
             </p>
             <p>
-                <a class="btn btn-secondary btn-sm"
+                <a class="btn btn-primary"
                    id="refresh-these-button"
                    href="<?php echo $refreshTheseUrl ?>"
-                ><span class="icon icon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                ><span class="icon icon-import"></span> <strong>Mettre à jour</strong>&nbsp; la thèse à partir de
                     <?php echo $these->getSource() ?></a>
             </p>
             <p class="small">

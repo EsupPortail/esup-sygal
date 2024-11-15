@@ -58,7 +58,10 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
             <?php if ($attestationsIntegriteScientifique === []) : ?>
                 <div class="row">
                     <div class="col-md-8">
-                        <p> Veuillez déposer ici une attestation de suivi pour cette formation. </p>
+                        <div class="alert alert-warning">
+                            <span class="icon icon-info"></span>
+                            Veuillez déposer ici une attestation de suivi pour cette formation.
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <?php if ($canModifier) : ?>
@@ -66,7 +69,7 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
                             <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId(), 'nature' => NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE], [], true); ?>"
                                class="btn btn-primary ajax-modal" data-event="modification">
                                 <span class="icon icon-televerser"></span>
-                                Téléversement une attestation
+                                Téléverser une attestation
                             </a>
                         <?php endif; ?>
                     </div>
@@ -156,7 +159,7 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
                 </div>
                 <div class="col-md-4">
                     <?php /** @see \Soutenance\Controller\PropositionController::genererSermentAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/generer-serment', ['these' => $these->getId()], [], true); ?>" class="btn btn-secondary" target="_blank">
+                    <a href="<?php echo $this->url('soutenance/proposition/generer-serment', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary" target="_blank">
                         <span class="icon icon-pdf"></span>
                         Télécharger le serment du docteur
                     </a>

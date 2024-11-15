@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\QualiteEdition;
 
+use Application\Utils\FormUtils;
 use Laminas\Form\Element\Radio;
-use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 
@@ -40,9 +40,6 @@ class QualiteEditionForm extends Form {
                 ->setValueOptions(['O' => 'Oui', 'N' => 'Non']))
         ;
 
-        $this->add((new Submit('submit'))
-            ->setValue("Enregister")
-            ->setAttribute('class', 'btn btn-primary')
-        );
+        FormUtils::addSaveButton($this);
     }
 }
