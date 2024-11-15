@@ -17,7 +17,16 @@ WHERE CAST (p.code_pays_apogee AS bigint) = CAST (t.code_pays_titre_acces AS BIG
 
 
 --
--- Contrainte de référence ajoutée récemment à tort (empêche la suppression d'un manuscrit déposé).
+-- Contrainte de référence modifiée récemment à tort (empêche la suppression d'un manuscrit déposé).
 --
 
 alter table validite_fichier drop constraint validite_fichier_ffk;
+alter table validite_fichier add constraint validite_fichier_ffk foreign key (fichier_id) references fichier on delete cascade;
+
+
+--
+-- Contrainte de référence modifiée récemment à tort (empêche la suppression d'un rapport CSI).
+--
+
+alter table rapport drop constraint rapport_annuel_fichier_fk;
+alter table rapport add constraint rapport_annuel_fichier_fk foreign key (fichier_id) references fichier on delete cascade;
