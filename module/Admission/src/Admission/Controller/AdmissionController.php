@@ -378,6 +378,11 @@ class AdmissionController extends AdmissionAbstractController {
                 $admission = $this->admissionForm->getObject();
                 $admission->setIndividu($individu);
 
+                if($individu && isset($data["etudiant"]["dateNaissance"])){
+                    $individu->setDateNaissance(new DateTime($data["etudiant"]["dateNaissance"]));
+                    $this->individuService->saveIndividu($individu);
+                }
+
                 /** @var Etat $enCours */
                 $enCours = $this->entityManager->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
                 $admission->setEtat($enCours);
@@ -804,12 +809,16 @@ class AdmissionController extends AdmissionAbstractController {
         /** @var Inscription $inscription */
         $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
         $logos = [];
+        $logos['comue'] = null;
+        $logos['site'] = null;
+
         try {
             $site = $inscription && $inscription->getEtablissementInscription() ? $inscription->getEtablissementInscription()->getStructure() : null;
             $logos['site'] = $site ? $this->fichierStorageService->getFileForLogoStructure($site) : null;
         } catch (StorageAdapterException) {
             $logos['site'] = null;
         }
+
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             try {
                 $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());

@@ -127,7 +127,6 @@ class EtudiantFieldset extends AdmissionBaseFieldset implements InputFilterProvi
             (new Date('dateNaissance'))
                 ->setLabel("Date de naissance")
                 ->setLabelAttributes(['data-after' => " / Birth date"])
-                ->setAttributes(['readonly' => true])
         );
 
         $this->add(

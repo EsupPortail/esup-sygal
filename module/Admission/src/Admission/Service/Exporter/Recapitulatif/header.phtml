@@ -1,6 +1,10 @@
-<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
-    <img src="<?php echo $ETAB; ?>" style='max-width:4cm;max-height:4cm;' alt="Logo de la comue"/>
-</div>
-<div style="width:25%; float:right; position:absolute; top: 20px; right: 10px">
-    <img src="<?php echo $COMUE; ?>" style='max-width:4cm;max-height:4cm;' alt="Logo de l'établissement"/>
-</div>
+<?php if($ETAB): ?>
+    <div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+        <img src="<?php echo $ETAB; ?>" style='max-width:4cm;max-height:4cm;' alt="Logo de l'établissement"/>
+    </div>
+<?php endif; ?>
+<?php if($COMUE): ?>
+    <div style="width:25%; float:right; position:absolute; top: 20px; right: 10px">
+        <img src="<?php echo $COMUE; ?>" style='max-width:4cm;max-height:4cm;' alt="Logo de la comue"/>
+    </div>
+<?php endif; ?>

@@ -31,7 +31,8 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="admission-informations-container">
             <i class="fas fa-info-circle"></i>
             <p>
-                Si certaines informations concernant l'identité de l'individu sont manquantes, renseignez-les directement dans <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()]) ?>">sa fiche</a>
+                Si certaines informations concernant l'identité de l'individu sont manquantes, renseignez-les directement dans
+                <a class="action ajax-modal" data-event="modification-individu" href="<?php echo $this->url('individu/modifier', ['individu' => $individu->getId()], ["query" => ["inModal" => true]], true) ?>">sa fiche</a>
             </p>
         </div>
     <?php } ?>
@@ -272,3 +273,12 @@ if($canAccederCommentaires) {
         </div>
     </div>
 </div>
+
+<script>
+    $(function() {
+        $("body").on("modification-individu", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

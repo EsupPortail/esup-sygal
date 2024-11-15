@@ -280,10 +280,11 @@ if ($canVerifierAdmission) { ?>
         $recapSigneDejaTeleverse = isset($documents[$fieldset->get('recapitulatifDossierSigne')->getAttribute('id')]);
         if($canGererRecapitulatifSigne || $recapSigneDejaTeleverse){ ?>
             <a class="btn btn-primary access-recap-signe-btn" role="button" data-bs-toggle="collapse" href="#file-recap-signe-container" aria-expanded="false" aria-controls="file-recap-signe-container">
-                <span class="icon icon-pdf" title="Télécharger le récapitulatif"></span>
                 <?php if ($canGererRecapitulatifSigne && !$recapSigneDejaTeleverse) { ?>
+                    <span class="icon icon-televerser" title="Télécharger le récapitulatif"></span>
                     Téléverser le récapitulatif signé
                 <?php } else { ?>
+                    <span class="icon icon-voir" title="Télécharger le récapitulatif"></span>
                     Accéder au récapitulatif signé
                 <?php } ?>
             </a>

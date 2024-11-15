@@ -109,8 +109,10 @@ class ConventionFormationDoctoraleController extends AbstractActionController
         $conventionFormationDoctorale = $this->conventionFormationDoctoraleService->getRepository()->findOneBy(["admission" => $admission]);
         /** @var Inscription $inscription */
         $inscription = $admission->getInscription()->first() ? $admission->getInscription()->first() : null;
-
         $logos = [];
+        $logos['comue'] = null;
+        $logos['site'] = null;
+
         try {
             $site = $inscription && $inscription->getEtablissementInscription() ? $inscription->getEtablissementInscription()->getStructure() : null;
             $logos['site'] = $site ? $this->fichierStorageService->getFileForLogoStructure($site) : null;

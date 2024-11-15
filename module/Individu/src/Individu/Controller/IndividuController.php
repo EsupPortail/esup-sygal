@@ -225,6 +225,9 @@ class IndividuController extends AbstractActionController implements SearchContr
 
         /** @var Request $request */
         $request = $this->getRequest();
+        $inModal = $this->params()->fromQuery('inModal');
+        $this->individuForm->setAttribute('action', $this->url()->fromRoute('individu/modifier', ['individu' => $individu->getId()], ["query" => ["inModal" => $inModal]]));
+
         if ($request->isPost()) {
             $data = $request->getPost();
             $this->individuForm->setData($data);
@@ -235,12 +238,15 @@ class IndividuController extends AbstractActionController implements SearchContr
 
                 $this->flashMessenger()->addSuccessMessage("L'individu &laquo; $individu &raquo; a été modifié avec succès.");
 
-                return $this->redirect()->toRoute('individu/voir', ['individu' => $individu->getId()]);
+                if ($inModal === null) {
+                    return $this->redirect()->toRoute('individu/voir', ['individu' => $individu->getId()]);
+                }
             }
         }
 
         return new ViewModel([
             'form' => $this->individuForm,
+            'title' => "Modification des informations de ".$individu
         ]);
     }
 
