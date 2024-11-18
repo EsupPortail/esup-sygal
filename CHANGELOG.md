@@ -13,6 +13,7 @@ Journal des modifications
 - [FIX] .gitlab-ci : correction des URL générées dans la release.
 - [FIX] Contrainte de référence ajoutée récemment à tort (empêche la suppression d'un manuscrit de thèse déposé).
 - [FIX] Modification du mapping de Thèse : la relation "anneesUniv1ereInscription" ne pointait plus vers un VTheseAnneeUnivFirst
+- [FIX] Lien d'une séance non visible pour un doctorant lors de l'affichage de la fiche d'une session de formation
 
 9.0.1
 -----

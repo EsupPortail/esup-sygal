@@ -1,6 +1,7 @@
 <?php
 
 use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Entity\Db\SessionStructureValide;
@@ -185,20 +186,40 @@ $this->headTitle($pageTitle);
     <?php foreach ($seances as $seance) : ?>
         <tr>
             <td class="<?php echo $canVoirLieuSession ? "" : "lieu-session-non-visible"; ?>">
-                <?php if ($canVoirLieuSession) : ?>
+                <?php if($canVoirLieuSession): ?>
                     <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
+                        <?php if ($seance->getLieu() && $seance->getLien()):
+                            echo $seance->getLieu(); ?>
+                            <br>
+                            <a href="<?php echo $seance->getLien(); ?>"><?php echo $seance->getLien(); ?></a>
+                                <?php if ($seance->getMotDePasse()) echo " (Mot de passe:" . $seance->getMotDePasse() . ")"; ?>
+                        <?php else:
+                            if ($seance->getLien() !== null): ?>
+                                <a href="<?php echo $seance->getLien(); ?>"><?php echo $seance->getLien(); ?></a>
+                                <?php if ($seance->getMotDePasse()) echo " (Mot de passe:" . $seance->getMotDePasse() . ")"; ?>
+                            <?php elseif($seance->getLieu() !== null):
+                                echo $seance->getLieu();
+                            else:
+                                if($session->getModalite() === HasModaliteInterface::MODALITE_PRESENTIEL): ?>
+                                    <em>Lieu non renseigné</em>
+                                <?php else: ?>
+                                    <em>Lien non renseigné</em>
+                                <?php endif;
+                            endif;
+                        endif;
+                        if ($seance->getDescription() !== null) : ?>
+                            <span class="icon icon-information"
+                                  title="<?php echo htmlspecialchars($seance->getDescription(), ENT_QUOTES, 'UTF-8'); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                            </span>
+                        <?php endif; ?>
+                    </span>
                 <?php else: ?>
                     <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>"
-                              data-bs-toggle="tooltip"
-                              title="Le lieu sera visible lorsque vous serez inscrit à cette session">
-                <?php endif; ?>
-                <?php echo $canVoirLieuSession ? $seance->getLieu() : "<i>Non visible</i>"; ?>
-                <?php if ($seance->getDescription() !== null) : ?>
-                    <span class="icon icon-information"
-                          title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                      data-bs-toggle="tooltip"
+                      title="Le lieu sera visible lorsque vous serez inscrit à cette session">
+                        <i>Non visible</i>
                     </span>
                 <?php endif; ?>
-                </span>
             </td>
             <td> <?php echo $seance->getDebut()->format('d/m/Y'); ?> </td>
             <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>

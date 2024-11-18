@@ -353,12 +353,25 @@ class Session implements HistoriqueAwareInterface,
             $texte .= '<td>'.$seance->getFin()->format('H:i').'</td>';
             $texte .= '<td>';
             if ($seance->getLieu() !== null) {
-                $texte .= $seance->getLieu();
+                if ($seance->getLien() !== null){
+                    $texte .= $seance->getLieu();
+                    $texte .= "<br>";
+                    $texte .= '<a href="'.$seance->getLien().'">'.$seance->getLien().'</a>';
+                    if ($seance->getMotDePasse()) $texte .= " (Mot de passe:" . $seance->getMotDePasse() . ")";
+                }else{
+                    $texte .= $seance->getLieu();
+                }
             } else {
                 if ($this->getModalite() === self::MODALITE_PRESENTIEL) {
                     $texte .= "<em> Lieu non renseigné </em>";
                 } else {
-                    $texte .= "Distanciel";
+                    if($seance->getLien() !== null){
+                        $texte .= "Distanciel (lien : 
+                        <a href=".$seance->getLien().">".$seance->getLien()."</a>";
+                        $texte .= $seance->getMotDePasse() ? " (Mot de passe:".$seance->getMotDePasse().")" : "";
+                    }else{
+                        $texte .= "Distanciel <em>(lien non renseigné)</em>";
+                    }
                 }
             }
             $texte .='</td>';
