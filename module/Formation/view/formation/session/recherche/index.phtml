@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
 use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\Session\Search\SessionSearchService;
 use Laminas\Paginator\Paginator as LaminasPaginator;
@@ -44,7 +45,7 @@ $queryParams = $this->queryParams();
 <?php if (count($paginator) > 0): ?>
 
     <p>
-        <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("formation·s trouvée·s.") ?>
+        <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("session·s trouvée·s.") ?>
     </p>
 
     <table class="table table-sm table-index-sessions">
@@ -130,8 +131,11 @@ $queryParams = $this->queryParams();
                 <td> <?php echo $this->type($session); ?> </td>
                 <td> <?php echo $this->etat($session); ?> </td>
                 <td style="min-width: 17rem;"> <!-- Seances ----------------------------------------------------------------------------------------->
-                    <?php echo count($session->getSeances()); ?>
-                    séance<?php if (count($session->getSeances())>1) echo "s"; ?>
+                    <?php
+                    $seances = $session->getSeances()->toArray();
+                    $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
+                    echo count($seances); ?>
+                    séance<?php if (count($seances)>1) echo "s"; ?>
                     (<?php echo $session->getDuree(); ?> h.)
                     <br>
                     <strong>Période :</strong>

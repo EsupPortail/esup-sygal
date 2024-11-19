@@ -16,6 +16,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
 
 /** @var Seance[] $seances */
 $seances = $session->getSeances()->toArray();
+$seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
 usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
 /** @var Inscription[] $inscriptions */
 $inscriptions = $session->getListePrincipale();

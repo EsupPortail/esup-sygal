@@ -380,7 +380,9 @@ class InscriptionController extends AbstractController
     }
     public function genererExportCsvAction(): Response|CsvModel
     {
-        $queryParams = $this->params()->fromQuery();
+        $queryParams = array_filter($this->params()->fromQuery(), function($value) {
+            return !is_null($value) && $value !== '';
+        });
 
         $this->inscriptionSearchService->init();
         $this->inscriptionSearchService->processQueryParams($queryParams);
@@ -389,7 +391,7 @@ class InscriptionController extends AbstractController
 
         //export
         $headers = ['Civilité', 'Nom', 'Prénom', 'Email', 'Année de thèse', 'Établissement', 'École doctorale',	'Unité de recherche', 'Type de formation',
-            'Intitulé', 'Date(s) de formation',	'État de la formation',	"Nombre d'heure(s)", 'Statut de suivi de la formation'
+            'Intitulé', 'Date(s) de formation',	'État de la formation',	"Nombre d'heure(s)", 'Statut de suivi de la formation', 'Motif d\'absence/désistement du doctorant'
         ];
         $records = [];
         /** @var Inscription $inscription */
@@ -397,7 +399,7 @@ class InscriptionController extends AbstractController
             $session = $inscription->getSession();
             $doctorant = $inscription->getDoctorant() ? $inscription->getDoctorant() : null;
             $individu = $doctorant ? $doctorant->getIndividu() : null;
-            $theses = array_filter($doctorant->getTheses(), function (These $t) { return ($t->getEtatThese() === These::ETAT_EN_COURS AND $t->estNonHistorise());});
+            $theses = array_filter($doctorant->getTheses(), function (These $t) { return (in_array($t->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]) AND $t->estNonHistorise());});
             /** @var These $these */
             $these = (!empty($theses))?current($theses):null;
             $anneeThese = ($these)?$these->getNbInscription():null;
@@ -407,6 +409,7 @@ class InscriptionController extends AbstractController
 
             /** @var Seance[] $seances */
             $seances = $session->getSeances()->toArray();
+            $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
             usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
             $seanceStrings = array_map(function($seance) {
                 return $seance->getDebut()->format('d/m/Y');
@@ -422,26 +425,30 @@ class InscriptionController extends AbstractController
                 }
                 $presences = $dictionnaire;
 
-                $presencesStrings = array_map(function ($seance) use ($presences, $inscription, $session) {
+                $presencesArray = array_map(function ($seance) use ($presences, $inscription, $session) {
                     $presenceStatus = "";
                     $seanceDate = $seance->getDebut()->format('d/m/Y');
                     $seanceId = $seance->getId();
                     $inscriptionId = $inscription->getId();
 
-                    $motif = $inscription->getDescription() ? " : ".$inscription->getDescription() : null;
-                    if (isset($presences[$seanceId][$inscriptionId]) && $presences[$seanceId][$inscriptionId]->isPresent()) {
-                        $presenceStatus = "Présent";
-                    }else{
-                        if(!$inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
-                            $presenceStatus = "Absent" . $motif;
-                        }else if($inscription->estHistorise() && !in_array($inscription, $session->getListePrincipale()) ||
-                            $inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
-                            $presenceStatus = "Désistement" . $motif;
+                    $now = new DateTime();
+                    if($now > $seance->getDebut()){
+                        if (isset($presences[$seanceId][$inscriptionId]) && $presences[$seanceId][$inscriptionId]->isPresent()) {
+                            $presenceStatus = "Présent";
+                        }else{
+                            if(!$inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
+                                $presenceStatus = "Absent";
+                            }else if($inscription->estHistorise() && !in_array($inscription, $session->getListePrincipale()) ||
+                                $inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
+                                $presenceStatus = "Désistement";
+                            }
                         }
+                        return $presenceStatus ? $seanceDate . ' (' . $presenceStatus . ')' : null;
+                    }else{
+                        return $seanceDate;
                     }
-                    return $presenceStatus ? $seanceDate . ' (' . $presenceStatus . ')' : null;
                 }, $seances);
-                $presences = $presencesStrings ? implode(' ; ', $presencesStrings) : null;
+                $presences = count(array_filter($presencesArray)) >= 1 ? implode(' ; ', $presencesArray) : null;
             }
 
             $entry = [];
@@ -457,8 +464,9 @@ class InscriptionController extends AbstractController
             $entry['Intitulé'] = $session->getFormation()->getLibelle();
             $entry['Date(s) de formation'] = implode(' ; ', $seanceStrings);
             $entry['État de la formation'] = $session->getEtat()->getCode();
-            $entry["Nombre d'heure(s)"] = $session->getDuree();
+            $entry["Nombre d'heure(s)"] = (string) $session->getDuree();
             $entry['Statut de suivi de la formation'] = $presences;
+            $entry['Motif d\'absence/désistement du doctorant'] = strip_tags($inscription->getDescription());
             $records[] = $entry;
         }
         $filename = (new DateTime())->format('Ymd') . '_inscriptions.csv';

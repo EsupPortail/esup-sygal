@@ -70,7 +70,7 @@ class SessionController extends AbstractController
         $presences = $this->getPresenceService()->getRepository()->findPresencesBySession($session);
         $dictionnaire = [];
         foreach ($presences as $presence) {
-            $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
+            if($presence->getSeance()->estNonHistorise()) $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
         }
 
         $anneeUniv = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut()) : $this->anneeUnivService->courante();
@@ -603,6 +603,7 @@ class SessionController extends AbstractController
             $nbInscrits = count($inscrits);
             /** @var Seance[] $seances */
             $seances = $session->getSeances()->toArray();
+            $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
             usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
             $seanceStrings = array_map(function($seance) {
                 return $seance->getDebut()->format('d/m/Y');

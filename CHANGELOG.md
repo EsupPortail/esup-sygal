@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+9.2.0
+-----
+- Amélioration de l'écran Inscriptions :
+    - Ajout de plusieurs filtres : Site organisateur, Structure associée (ED), année universitaire
+    - Ajout d'un sorter permettant de trier par les séances de l'inscription
+- Module Formations : Si la séance est historisée, celle-ci n'est pas disponible dans le tableau (présent dans la fiche d'une session) pour renseigner les présences
+
 9.1.1
 -----
 - [FIX] Bug "Entity of type 'Application\Entity\Db\Discipline' for IDs code(4100108) was not found"

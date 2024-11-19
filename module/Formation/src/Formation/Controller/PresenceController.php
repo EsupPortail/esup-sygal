@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Formation\Entity\Db\Presence;
+use Formation\Entity\Db\Seance;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Formation\Service\Seance\SeanceServiceAwareTrait;
@@ -75,7 +76,8 @@ class PresenceController extends AbstractController {
         $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         $session = $inscription->getSession();
-        $seances = $session->getSeances();
+        $seances = $session->getSeances()->toArray();
+        $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
 
         /** @var  Presence $presence */
         foreach ($seances as $seance) {
