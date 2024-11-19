@@ -68,6 +68,7 @@ class SessionAssertion extends AbstractAssertion implements  AssertionInterface,
 
     private function canVoirLieuSession(?Session $session): bool
     {
+        if(!$session) return false;
         $individu = $this->userContextService->getIdentityIndividu();
         $role = $this->userContextService->getSelectedIdentityRole();
         if (!$role) {
@@ -77,7 +78,10 @@ class SessionAssertion extends AbstractAssertion implements  AssertionInterface,
         switch ($role->getCode()) {
             case Role::CODE_DOCTORANT :
                 $userDoctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
-                return $session->estInscrit($userDoctorant);
+                $inscritsPrincipale = $session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE);
+                /** @var Inscription $inscription */
+                $doctorantInListePrincipale = array_filter($inscritsPrincipale, fn($inscription) => $inscription->getDoctorant()->getIndividu() === $individu);
+                return $session->estInscrit($userDoctorant) && $doctorantInListePrincipale;
         }
         return true;
     }

@@ -354,10 +354,10 @@ class Session implements HistoriqueAwareInterface,
             $texte .= '<td>';
             if ($seance->getLieu() !== null) {
                 if ($seance->getLien() !== null){
-                    $texte .= $seance->getLieu();
+                    $texte .= "Lieu :".$seance->getLieu();
                     $texte .= "<br>";
                     $texte .= '<a href="'.$seance->getLien().'">'.$seance->getLien().'</a>';
-                    if ($seance->getMotDePasse()) $texte .= " (Mot de passe:" . $seance->getMotDePasse() . ")";
+                    if ($seance->getMotDePasse()) $texte .= " (Mot de passe: " . $seance->getMotDePasse() . ")";
                 }else{
                     $texte .= $seance->getLieu();
                 }
@@ -366,15 +366,42 @@ class Session implements HistoriqueAwareInterface,
                     $texte .= "<em> Lieu non renseigné </em>";
                 } else {
                     if($seance->getLien() !== null){
-                        $texte .= "Distanciel (lien : 
-                        <a href=".$seance->getLien().">".$seance->getLien()."</a>";
-                        $texte .= $seance->getMotDePasse() ? " (Mot de passe:".$seance->getMotDePasse().")" : "";
+                        $texte .= "Distanciel (lien : <a href=".$seance->getLien().">".$seance->getLien()."</a>";
+                        $texte .= $seance->getMotDePasse() ? " (Mot de passe: ".$seance->getMotDePasse().")" : "";
                     }else{
                         $texte .= "Distanciel <em>(lien non renseigné)</em>";
                     }
                 }
             }
             $texte .='</td>';
+            $texte .= '</tr>';
+        }
+        $texte .= '</tbody>';
+        $texte .= '</table>';
+        return $texte;
+    }
+
+    /** @noinspection PhpUnused */
+    public function getSeancesSansLieuAsTable() : string
+    {
+        $seances = $this->getSeances()->toArray();
+        $seances = array_filter($seances, function(Seance $a) { return $a->estNonHistorise();});
+        usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut(); });
+
+        if (empty($seances)) return "Aucune séance d'associée à cette session de formation.";
+
+        $texte  = '<table>';
+        $texte .= '<thead><tr>';
+        $texte .= '<th> Jour de la séance </th><th> Heure de début </th><th> Heure de fin </th><th> Lieu </th>';
+        $texte .= '</tr></thead>';
+        $texte .= '<tbody>';
+        /** @var Seance $seance */
+        foreach ($seances as $seance) {
+            $texte .= '<tr>';
+            $texte .= '<td>'.$seance->getDebut()->format('d/m/Y').'</td>';
+            $texte .= '<td>'.$seance->getDebut()->format('H:i').'</td>';
+            $texte .= '<td>'.$seance->getFin()->format('H:i').'</td>';
+            $texte .= '<td><em> Lieu/lien non visible </em></td>';
             $texte .= '</tr>';
         }
         $texte .= '</tbody>';
