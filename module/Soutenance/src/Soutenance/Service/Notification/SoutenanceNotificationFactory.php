@@ -135,7 +135,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour l'école doctorale de la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'ecole-doctorale' => $these->getEcoleDoctorale()];
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'ecole-doctorale' => $these->getEcoleDoctorale(), 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 
@@ -181,7 +181,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse électronique trouvée pour la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 
@@ -408,7 +408,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_AVIS_FAVORABLE . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement()];
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 
@@ -433,7 +433,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_AVIS_DEFAVORABLE . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement()];
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 
@@ -482,7 +482,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_FEU_VERT . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $these->getDoctorant()];
+        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
 

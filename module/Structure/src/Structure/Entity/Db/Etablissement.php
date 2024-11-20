@@ -400,4 +400,14 @@ class Etablissement implements
     {
         return 'etablissement';
     }
+
+    /** Pour macro ****************************************************************************************************/
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getSigle(): string
+    {
+        return $this->structure->getSigle() ? $this->structure->getSigle() : "";
+    }
 }

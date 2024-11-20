@@ -7,6 +7,7 @@ Journal des modifications
     - Ajout de plusieurs filtres : Site organisateur, Structure associée (ED), année universitaire
     - Ajout d'un sorter permettant de trier par les séances de l'inscription
 - Module Formations : Si la séance est historisée, celle-ci n'est pas disponible dans le tableau (présent dans la fiche d'une session) pour renseigner les présences
+- Ajout de l'UR et de l'établissement du doctorant dans certains templates du module rapport d'activité et soutenances
 
 9.1.1
 -----

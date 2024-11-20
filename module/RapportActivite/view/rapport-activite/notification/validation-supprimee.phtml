@@ -9,6 +9,11 @@
 use Application\Constants;
 
 $rapport = $rapportActiviteValidation->getRapportActivite();
+$these = $rapport->getThese();
+$etab = $these?->getEtablissement();
+$ur = $these?->getUniteRecherche();
+$unite = $ur?->getStructure()->getSigle();
+$etablissement = $etab?->getStructure()->getSigle();
 
 $precisionDestructeur = '';
 if (($rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValidation->getHistoCreateur()) ===
@@ -25,7 +30,7 @@ if (($rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValid
 <p>
     La <strong><?php echo lcfirst($rapportActiviteValidation->getTypeValidation()) ?></strong>
     du <strong><?php echo lcfirst($rapport) ?></strong>
-    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong>
+    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong> (<?php if($unite) echo $unite; ?>, <?php if($etablissement) echo $etablissement; ?>)
     datant du
     <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     a été <strong>annulée</strong><?php echo $precisionDestructeur ?>.

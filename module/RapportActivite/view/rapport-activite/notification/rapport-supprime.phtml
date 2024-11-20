@@ -4,6 +4,12 @@
  *
  * @see \RapportActivite\Notification\RapportActiviteSupprimeNotification
  */
+
+$these = $rapportActivite->getThese();
+$etab = $these?->getEtablissement();
+$ur = $these?->getUniteRecherche();
+$unite = $ur?->getStructure()->getSigle();
+$etablissement = $etab?->getStructure()->getSigle();
 ?>
 <p>
     Bonjour,
@@ -12,7 +18,7 @@
     Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?> à propos
     du rapport d'activité &laquo; <?php echo $rapportActivite->getAnneeUniv()->toString() ?> -
     <?php echo $rapportActivite->getEstFinContratToString() ?> &raquo; de
-    <?php echo $rapportActivite->getThese()->getDoctorant() ?>.
+    <?php echo $rapportActivite->getThese()->getDoctorant() ?> (<?php if($unite) echo $unite; ?>, <?php if($etablissement) echo $etablissement; ?>).
 </p>
 <p>
     Ce rapport d'activité a été supprimé par <?php echo $rapportActivite->getHistoDestructeur() ?>,

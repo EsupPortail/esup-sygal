@@ -11,6 +11,10 @@ use Application\Constants;
 
 $rapport = $operationAttendue->getRapportActivite();
 $these = $rapport->getThese();
+$etab = $these->getEtablissement();
+$ur = $these->getUniteRecherche();
+$unite = $ur?->getStructure()->getSigle();
+$etablissement = $etab?->getStructure()->getSigle();
 ?>
 <p>
     Bonjour,
@@ -25,7 +29,7 @@ $these = $rapport->getThese();
 <?php endif ?>
 <p>
     Le <strong><?php echo lcfirst($rapport) ?></strong>
-    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong>
+    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong> (<?php if($unite) echo $unite; ?>, <?php if($etablissement) echo $etablissement; ?>)
     complété à la date du
     <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     est en attente de l'opération suivante de votre part :
