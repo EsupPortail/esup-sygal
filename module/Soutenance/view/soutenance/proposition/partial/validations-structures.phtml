@@ -99,7 +99,7 @@ if ($isAllOk === false) $cssClass = "bg-danger";
 
                 <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance"); ?>
 
-<!--                --><?php //if ($canStructureValider): ?>
+                <?php if ($canStructureValider): ?>
                     <p>
                         <a <?php /** @see \Soutenance\Controller\PropositionController::validerStructureAction(); */ ?>
                            href="<?php echo $this->url('soutenance/proposition/valider-structure', ['these' => $these->getId()], [], true); ?>"
@@ -116,7 +116,7 @@ if ($isAllOk === false) $cssClass = "bg-danger";
                             <span class="icon icon-delete"></span> Refuser la proposition de soutenance
                         </a>
                     </p>
-<!--                --><?php //endif; ?>
+                <?php endif; ?>
 
                 <?php if ($canStructureRevoquer): ?>
                     <p>
