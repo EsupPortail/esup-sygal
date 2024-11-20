@@ -357,7 +357,7 @@ class Session implements HistoriqueAwareInterface,
                     $texte .= "Lieu :".$seance->getLieu();
                     $texte .= "<br>";
                     $texte .= '<a href="'.$seance->getLien().'">'.$seance->getLien().'</a>';
-                    if ($seance->getMotDePasse()) $texte .= " (Mot de passe: " . $seance->getMotDePasse() . ")";
+                    if ($seance->getMotDePasse()) $texte .= "<br> (mot de passe: " . $seance->getMotDePasse() . ")";
                 }else{
                     $texte .= $seance->getLieu();
                 }
@@ -366,8 +366,8 @@ class Session implements HistoriqueAwareInterface,
                     $texte .= "<em> Lieu non renseigné </em>";
                 } else {
                     if($seance->getLien() !== null){
-                        $texte .= "Distanciel (lien : <a href=".$seance->getLien().">".$seance->getLien()."</a>";
-                        $texte .= $seance->getMotDePasse() ? " (Mot de passe: ".$seance->getMotDePasse().")" : "";
+                        $texte .= "Distanciel (lien : <a href=".$seance->getLien().">".$seance->getLien()."</a>)";
+                        $texte .= $seance->getMotDePasse() ? "<br> (mot de passe: ".$seance->getMotDePasse().")" : "";
                     }else{
                         $texte .= "Distanciel <em>(lien non renseigné)</em>";
                     }
@@ -401,7 +401,7 @@ class Session implements HistoriqueAwareInterface,
             $texte .= '<td>'.$seance->getDebut()->format('d/m/Y').'</td>';
             $texte .= '<td>'.$seance->getDebut()->format('H:i').'</td>';
             $texte .= '<td>'.$seance->getFin()->format('H:i').'</td>';
-            $texte .= '<td><em> Lieu/lien non visible </em></td>';
+            $texte .= '<td><em> Non visible </em></td>';
             $texte .= '</tr>';
         }
         $texte .= '</tbody>';
