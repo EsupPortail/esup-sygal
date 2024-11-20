@@ -104,11 +104,18 @@ class VariableForm extends Form implements InputFilterProviderInterface
                     [
                         'name' => Callback::class,
                         'options' => [
-                            'callback' => fn (string $code) =>
-                                $this->variableService->getRepository()->findOneBy([
+                            'callback' => function (string $code) {
+                                $existingVariable = $this->variableService->getRepository()->findOneBy([
                                     'code' => $code,
                                     'etablissement' => $this->object->getEtablissement(),
-                                ]) === null,
+                                ]);
+                                // Si aucune variable avec ce code n'existe, autoriser la création
+                                if ($existingVariable === null) {
+                                    return true;
+                                }
+                                // Si une variable existe, vérifier si c'est une mise à jour (l'objet actuel a un ID)
+                                return $this->object->getId() !== null;
+                            },
                             'messages' => [
                                 Callback::INVALID_VALUE => "Pour cet établissement, une variable existe déjà avec ce code"
                             ],
