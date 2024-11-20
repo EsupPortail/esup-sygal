@@ -99,3 +99,20 @@ SET document_corps = '<p>Bonjour,</p>
 </li>
 </ul>'
 WHERE code = 'VALIDATION_SOUTENANCE_AVANT_PRESOUTENANCE';
+
+-- Mise à jour de la vue src_domaine_hal
+create or replace view src_domaine_hal(id, source_code, source_id, docid, havenext_bool, code_s, fr_domain_s, en_domain_s, level_i, parent_id) as
+SELECT NULL::bigint AS id,
+        tmp.source_code,
+       src.id AS source_id,
+       tmp.docid,
+       tmp.havenext_bool,
+       tmp.code_s,
+       tmp.fr_domain_s,
+       tmp.en_domain_s,
+       tmp.level_i,
+       tmp_parent.id as parent_id
+FROM tmp_domaine_hal tmp
+         JOIN source src ON src.id = tmp.source_id
+         left join tmp_domaine_hal tmp_parent on tmp_parent.docid = tmp.parent_id
+order by tmp.level_i;
