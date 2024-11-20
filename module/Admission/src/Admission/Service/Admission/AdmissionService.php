@@ -13,11 +13,12 @@ use Admission\Entity\Db\Inscription;
 use Admission\Entity\Db\Repository\AdmissionRepository;
 use Admission\Entity\Db\TypeValidation;
 use Admission\Entity\Db\Verification;
+use Admission\Provider\Template\TexteTemplates;
 use Admission\Service\Avis\AdmissionAvisServiceAwareTrait;
 use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleServiceAwareTrait;
 use Admission\Service\Document\DocumentServiceAwareTrait;
-use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Etudiant\EtudiantServiceAwareTrait;
+use Admission\Service\Financement\FinancementServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
@@ -26,8 +27,11 @@ use Application\Service\BaseService;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
-use UnicaenApp\Exception\RuntimeException;
 use InvalidArgumentException;
+use Structure\Entity\Db\Etablissement;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenRenderer\Entity\Db\Template;
+use UnicaenRenderer\Service\Template\TemplateServiceAwareTrait;
 
 class AdmissionService extends BaseService
 {
@@ -40,6 +44,7 @@ class AdmissionService extends BaseService
     use VariableServiceAwareTrait;
     use ConventionFormationDoctoraleServiceAwareTrait;
     use VerificationServiceAwareTrait;
+    use TemplateServiceAwareTrait;
 
     const ADMISSION__AJOUTE__EVENT = 'ADMISSION__AJOUTE__EVENT';
     const ADMISSION__SUPPRIME__EVENT = 'ADMISSION__SUPPRIME__EVENT';
@@ -305,5 +310,19 @@ class AdmissionService extends BaseService
         $id = $admission->getId();
         $formattedId = str_pad($id, 2, '0', STR_PAD_LEFT);
         return self::DEFAULT_SOURCE_CODE.$currentYear.$formattedId;
+    }
+
+    public function createTemplatesForEtablissement(Etablissement $etablissement): void
+    {
+        $codes = TexteTemplates::CODES;
+        foreach($codes as $code){
+            $template = clone $this->templateService->getTemplateByCode($code);
+            $templateForEtab = $template;
+            $templateForEtab->setCode($code."_".$etablissement->getStructure()->getSigle());
+
+            $isNew = !$this->templateService->getTemplateByCode($templateForEtab->getCode());
+            //Si le template n'existe pas encore, on le crée
+            if($isNew) $this->templateService->create($templateForEtab);
+        }
     }
 }

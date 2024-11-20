@@ -8,6 +8,8 @@ use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
+use UnicaenRenderer\Entity\Db\Rendu;
+use UnicaenRenderer\Provider\Privilege\DocumenttemplatePrivileges;
 
 /**
  * @var EtudiantFieldset $fieldset
@@ -16,13 +18,18 @@ use Individu\Entity\Db\Individu;
  * @var Admission $admission
  * @var Individu $individu
  * @var Role $role
+ * @var Rendu $texteHandicap
+ * @var Rendu $texteVae
  *
  * @see \Admission\Controller\AdmissionController::etudiantAction()
  */
 
 $form->prepare();
 
-$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
+$canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(DocumenttemplatePrivileges::DOCUMENTTEMPLATE_MODIFIER));
+
+?>
 <div class="admission-section-form">
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Étudiant<label class="admission-section-title-en">&nbsp; / Student</label></h2>
@@ -153,8 +160,25 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
         <div class="col">
             <div class="admission-form-checkboxes">
                 <?php echo $this->formControlGroup($fieldset->get('situationHandicap')) ?>
-                <p class="admission-field-information">Si oui, vous pouvez bénéficier d'un accompagnement au cours de votre cursus :
-                    N'hésitez pas à contacter le service de médecine ainsi que le service handicap santé de votre établissement.</p>
+                <?php
+                $texteHandicapCorps = preg_replace('/<\/?p>/', '', $texteHandicap->getCorps());
+                if($role->getCode() === Role::CODE_GEST_ED): ?>
+                    <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Ce champ est personnalisable en fonction de l'établissement d'inscription. Pour le modifier, vous devez être Administrateur technique" style="cursor:default;">
+                        <?= $texteHandicapCorps ?>
+                        <span class="icon icon-modifier edit-icon"></span>
+                    </p>
+                <?php elseif($role->getCode() === Role::CODE_ADMIN_TECH):
+                    /** @see TemplateController::modifierAction */
+                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteHandicap->getTemplate()->getId()], [], true) : "#"; ?>
+                    <a href="<?php echo $lien; ?>" class="ajax-modal" data-event="modification-template">
+                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Modifier ce champ">
+                            <?= $texteHandicapCorps ?>
+                            <span class="icon icon-modifier edit-icon"></span>
+                        </p>
+                    </a>
+                <?php else: ?>
+                    <p class="admission-field-information"><?= $texteHandicapCorps ?></p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -187,8 +211,25 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                         <?php echo $this->formControlGroup($fieldset->get('typeDiplomeAutre')) ?>
                     </div>
                 </div>
-                <p class="admission-field-information">Si une Validation des Acquis de l'Expérience (V.A.E) est souhaitée, vous devez
-                    au préalable contacter le service spécifique de votre établissement.</p>
+                <?php
+                $texteVaeCorps = preg_replace('/<\/?p>/', '', $texteVae->getCorps());
+                if($role->getCode() === Role::CODE_GEST_ED): ?>
+                    <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Ce champ est personnalisable en fonction de l'établissement d'inscription. Pour le modifier, vous devez être Administrateur technique" style="cursor:default;">
+                        <?= $texteVaeCorps ?>
+                        <span class="icon icon-modifier edit-icon"></span>
+                    </p>
+                <?php elseif($role->getCode() === Role::CODE_ADMIN_TECH):
+                    /** @see TemplateController::modifierAction */
+                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteVae->getTemplate()->getId()], [], true) : "#"; ?>
+                    <a href="<?php echo $lien; ?>" class="ajax-modal" data-event="modification-template">
+                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Modifier ce champ">
+                            <?= $texteVaeCorps ?>
+                            <span class="icon icon-modifier edit-icon"></span>
+                        </p>
+                    </a>
+                <?php else: ?>
+                    <p class="admission-field-information"><?= $texteVaeCorps ?></p>
+                <?php endif; ?>
             </div>
             <div class="row subfield">
                 <div class="col-sm-12">
@@ -276,7 +317,12 @@ if($canAccederCommentaires) {
 
 <script>
     $(function() {
-        $("body").on("modification-individu", function (event) {
+        var body = $("body");
+        body.on("modification-individu", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+        body.on("modification-template", function (event) {
             event.div.modal('hide');
             window.location.reload();
         });

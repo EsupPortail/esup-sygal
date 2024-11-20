@@ -14,6 +14,7 @@ use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use UnicaenRenderer\Service\Template\TemplateService;
 
 class AdmissionServiceFactory {
 
@@ -32,6 +33,7 @@ class AdmissionServiceFactory {
         $variableService = $container->get(VariableService::class);
         $conventionFormationDoctoraleService = $container->get(ConventionFormationDoctoraleService::class);
         $verificationService = $container->get(VerificationService::class);
+        $templateService = $container->get(TemplateService::class);
 
         $service = new AdmissionService();
         $service->setEtudiantService($etudiantService);
@@ -43,6 +45,7 @@ class AdmissionServiceFactory {
         $service->setVariableService($variableService);
         $service->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
         $service->setVerificationService($verificationService);
+        $service->setTemplateService($templateService);
 
         return $service;
     }

@@ -4,9 +4,12 @@ use Admission\Entity\Db\Admission;
 use Admission\Form\Admission\AdmissionForm;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Laminas\Form\Element\Select;
 use UnicaenApp\Form\Element\SearchAndSelect;
+use UnicaenRenderer\Entity\Db\Rendu;
+use UnicaenRenderer\Provider\Privilege\DocumenttemplatePrivileges;
 
 /**
  * @var PhpRenderer         $this
@@ -14,10 +17,16 @@ use UnicaenApp\Form\Element\SearchAndSelect;
  * @var AdmissionForm $form
  * @var Admission $admission
  * @var string              $error
+ * @var Rendu              $texteCotutelle
+ * @var Rendu              $texteCoencadrement
+ * @var Role $role
  *
  */
 $form->prepare();
-$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES); ?>
+$canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_ACCEDER_COMMENTAIRES);
+$canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(DocumenttemplatePrivileges::DOCUMENTTEMPLATE_MODIFIER));
+
+?>
 <div class="admission-section-form">
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Inscription demandée<label class="admission-section-title-en">&nbsp; /  Application for registration</label></h2>
@@ -152,7 +161,25 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                             <?php echo $this->formControlGroup($fieldset->get('paysCoTutelle')) ?>
                         </div>
                         <div class="col-lg-6 col-sm-12">
-                            <p class="admission-field-information">Attention, il est <b>OBLIGATOIRE</b> d'en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne sur le site internet de votre établissement d'inscription.</p>
+                            <?php
+                            $texteCotutelleCorps = preg_replace('/<\/?p>/', '', $texteCotutelle->getCorps());
+                            if($role->getCode() === Role::CODE_GEST_ED): ?>
+                                <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Ce champ est personnalisable en fonction de l'établissement d'inscription. Pour le modifier, vous devez être Administrateur technique" style="cursor:default;">
+                                    <?= $texteCotutelleCorps ?>
+                                    <span class="icon icon-modifier edit-icon"></span>
+                                </p>
+                            <?php elseif($role->getCode() === Role::CODE_ADMIN_TECH):
+                                /** @see TemplateController::modifierAction */
+                                $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteCotutelle->getTemplate()->getId()], [], true) : "#"; ?>
+                                <a href="<?php echo $lien; ?>" class="ajax-modal" data-event="modification-template">
+                                    <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Modifier ce champ">
+                                        <?= $texteCotutelleCorps ?>
+                                        <span class="icon icon-modifier edit-icon"></span>
+                                    </p>
+                                </a>
+                            <?php else: ?>
+                                <p class="admission-field-information"><?= $texteCotutelleCorps ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -216,7 +243,25 @@ $canAccederCommentaires = $this->isAllowed($admission,AdmissionPrivileges::ADMIS
                 </div>
             </div>
             <div class="col-lg-9 col-sm-12">
-                <p class="admission-field-information">Retrouvez toutes les informations et le formulaire en ligne sur le site internet de votre établissement d'inscription.</p>
+                <?php
+                $texteCoencadrementCorps = preg_replace('/<\/?p>/', '', $texteCoencadrement->getCorps());
+                if($role->getCode() === Role::CODE_GEST_ED): ?>
+                    <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Ce champ est personnalisable en fonction de l'établissement d'inscription. Pour le modifier, vous devez être Administrateur technique" style="cursor:default;">
+                        <?= $texteCoencadrementCorps ?>
+                        <span class="icon icon-modifier edit-icon"></span>
+                    </p>
+                <?php elseif($role->getCode() === Role::CODE_ADMIN_TECH):
+                    /** @see TemplateController::modifierAction */
+                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteCoencadrement->getTemplate()->getId()], [], true) : "#"; ?>
+                    <a href="<?php echo $lien; ?>" class="ajax-modal" data-event="modification-template">
+                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Modifier ce champ">
+                            <?= $texteCoencadrementCorps ?>
+                            <span class="icon icon-modifier edit-icon"></span>
+                        </p>
+                    </a>
+                <?php else: ?>
+                    <p class="admission-field-information"><?= $texteCoencadrementCorps ?></p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -232,3 +277,12 @@ if($canAccederCommentaires) {
     ]);
 }
 ?>
+<script>
+    $(function() {
+        var body = $("body");
+        body.on("modification-template", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

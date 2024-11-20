@@ -26,6 +26,7 @@ use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
+use UnicaenRenderer\Service\Rendu\RenduService;
 
 class AdmissionControllerFactory implements FactoryInterface
 {
@@ -64,6 +65,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $admissionExporter = $container->get(AdmissionExporter::class);
         $admissionTypeValidationService = $container->get(TypeValidationService::class);
         $admissionValidationService = $container->get(AdmissionValidationService::class);
+        $renduService = $container->get(RenduService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -97,6 +99,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setAdmissionExporter($admissionExporter);
         $controller->setTypeValidationService($admissionTypeValidationService);
         $controller->setAdmissionValidationService($admissionValidationService);
+        $controller->setRenduService($renduService);
 
         return $controller;
     }

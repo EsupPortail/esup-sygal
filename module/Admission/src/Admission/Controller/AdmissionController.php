@@ -17,6 +17,7 @@ use Admission\Form\Fieldset\Financement\FinancementFieldset;
 use Admission\Form\Fieldset\Inscription\InscriptionFieldset;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Provider\Template\MailTemplates;
+use Admission\Provider\Template\TexteTemplates;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Admission\Service\Admission\AdmissionRechercheServiceAwareTrait;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
@@ -38,7 +39,6 @@ use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -54,6 +54,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenApp\Form\Fieldset\MultipageFormNavFieldset;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class AdmissionController extends AdmissionAbstractController {
 
@@ -80,6 +81,7 @@ class AdmissionController extends AdmissionAbstractController {
     use AdmissionExporterAwareTrait;
     use TypeValidationServiceAwareTrait;
     use AdmissionValidationServiceAwareTrait;
+    use RenduServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -92,24 +94,31 @@ class AdmissionController extends AdmissionAbstractController {
         $this->isUserDifferentFromUserInSession();
 
         $response = $this->processMultipageForm($this->admissionForm);
-        if ($response instanceof Response) {
-            return $response;
-        }
+        if ($response instanceof Response) return $response;
 
-        $etudiant = $this->admissionForm->get('etudiant');
-
+        //Récupération des textes dynamiques en fonction de l'établissement
+        $texteHandicap = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_HANDICAP);
+        $texteVae = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_VAE);
         //Récupération de l'objet Admission en BDD
         $admission = $this->getAdmission();
         if(!empty($admission)) {
+            $etudiant = $this->admissionForm->get('etudiant');
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
             $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
-            if(!$canModifierAdmission){
-                $etudiant->disableModificationFieldset();
-            }
-            if($data['_fieldset'] == "inscription"){
-                //Enregistrement des informations de l'inscription
-                $this->enregistrerInscription($data, $admission);
+
+            if(!$canModifierAdmission) $etudiant->disableModificationFieldset();
+            //Enregistrement des informations de l'inscription
+            if($data['_fieldset'] == "inscription") $this->enregistrerInscription($data, $admission);
+
+            /** @var Inscription $inscription */
+            $inscription = $admission->getInscription()->first();
+            $etablissementInscription = $inscription?->getEtablissementInscription();
+            if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
+                //Enregistrement des templates si l'établissement ne les possèdes pas encore
+                $this->admissionService->createTemplatesForEtablissement($etablissementInscription);
+                $texteHandicap = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_HANDICAP."_".$etablissementInscription->getStructure()->getSigle());
+                $texteVae = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_VAE."_".$etablissementInscription->getStructure()->getSigle());
             }
         }
 
@@ -118,6 +127,8 @@ class AdmissionController extends AdmissionAbstractController {
         $response->setVariable('admission', $admission);
         $response->setVariable('individu', $individu);
         $response->setVariable('role', $this->userContextService->getSelectedIdentityRole());
+        $response->setVariable('texteHandicap', $texteHandicap);
+        $response->setVariable('texteVae', $texteVae);
         $response->setTemplate('admission/ajouter-etudiant');
 
         return $response;
@@ -128,10 +139,11 @@ class AdmissionController extends AdmissionAbstractController {
         //Vide la session, si l'utilisateur demandé est différent de celui en session
         $this->isUserDifferentFromUserInSession();
 
+        $texteCotutelle = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COTUTELLE);
+        $texteCoencadrement = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COENCADREMENT);
         //Récupération de l'objet Admission en BDD
         /** @var Admission $admission */
         $admission = $this->getAdmission();
-
         if(!empty($admission)){
             $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);
             if(!$canModifierAdmission){
@@ -141,6 +153,13 @@ class AdmissionController extends AdmissionAbstractController {
                 //permet de rendre le champ ecoleDoctorale non requis lorsque l'utilisateur connecté n'a pas le privilège de modifier le dossier d'admission
                 $inputFilter = $this->admissionForm->getInputFilter()->get('inscription');
                 $inputFilter->get('ecoleDoctorale')->setRequired(false);
+            }
+            /** @var Inscription $inscription */
+            $inscription = $admission->getInscription()->first();
+            $etablissementInscription = $inscription?->getEtablissementInscription();
+            if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
+                $texteCotutelle = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COTUTELLE."_".$etablissementInscription->getStructure()->getSigle());
+                $texteCoencadrement = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COENCADREMENT."_".$etablissementInscription->getStructure()->getSigle());
             }
         }
 
@@ -160,6 +179,9 @@ class AdmissionController extends AdmissionAbstractController {
         }
 
         $response->setVariable('admission', $admission);
+        $response->setVariable('texteCotutelle', $texteCotutelle);
+        $response->setVariable('texteCoencadrement', $texteCoencadrement);
+        $response->setVariable('role', $this->userContextService->getSelectedIdentityRole());
         $response->setTemplate('admission/ajouter-inscription');
         return $response;
     }
@@ -193,6 +215,13 @@ class AdmissionController extends AdmissionAbstractController {
             }else if($data['_fieldset'] == "document"){
                 //Enregistrement des informations de financement
                 $this->enregistrerDocument($data, $admission);
+            }
+            /** @var Inscription $inscription */
+            $inscription = $admission->getInscription()->first();
+            $etablissementInscription = $inscription?->getEtablissementInscription();
+            if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
+                //Enregistrement des templates si l'établissement ne les possèdes pas encore
+                $this->admissionService->createTemplatesForEtablissement($etablissementInscription);
             }
         }
 
@@ -818,7 +847,6 @@ class AdmissionController extends AdmissionAbstractController {
         } catch (StorageAdapterException) {
             $logos['site'] = null;
         }
-
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             try {
                 $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
