@@ -9,6 +9,7 @@ Journal des modifications
 - Module Formations : Si la séance est historisée, celle-ci n'est pas disponible dans le tableau (présent dans la fiche d'une session) pour renseigner les présences
 - Module Admission : Rendre les informations à côté de certains champs du formulaire personnalisables en utilisant Renderer
 - Ajout de l'UR et de l'établissement du doctorant dans certains templates du module rapport d'activité et soutenances
+- Abandon de la bibliothèque unicaen/auth et migration vers unicaen/authentification, utilisateur, privilege.
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 
 9.1.1
