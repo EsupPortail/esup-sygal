@@ -3,7 +3,7 @@
 namespace RapportActivite\Entity;
 
 use RapportActivite\Entity\Db\RapportActivite;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 
 interface RapportActiviteOperationInterface extends HistoriqueAwareInterface
 {

@@ -9,8 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Fichier\FileUtils;
 use Ramsey\Uuid\Uuid;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenApp\Filter\BytesFormatter;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
@@ -484,10 +484,8 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
 
     /**
      * Get histoModification
-     *
-     * @return \DateTime
      */
-    public function getHistoModification()
+    public function getHistoModification(): ?DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
     }

@@ -3,8 +3,8 @@ namespace Admission\Entity\Db;
 
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class AdmissionValidation implements HistoriqueAwareInterface, AdmissionOperationInterface, ResourceInterface {
 

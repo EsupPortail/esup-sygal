@@ -8,8 +8,8 @@ use DateTime;
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use RapportActivite\Entity\RapportActiviteOperationInterface;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class RapportActiviteValidation implements HistoriqueAwareInterface, ResourceInterface, RapportActiviteOperationInterface
 {

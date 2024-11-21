@@ -7,8 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Notification\Exception\RuntimeException;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenAvis\Entity\Db\AvisType;
 
 class Admission implements HistoriqueAwareInterface, ResourceInterface{
@@ -537,5 +537,10 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
     public function getConventionFormationDoctorale()
     {
         return $this->conventionFormationDoctorale;
+    }
+
+    public function derniereModification(): string
+    {
+        // TODO: Implement derniereModification() method.
     }
 }

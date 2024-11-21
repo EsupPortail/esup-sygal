@@ -3,7 +3,7 @@
 namespace These\Entity\Db;
 
 use Application\Entity\AnneeUnivInterface;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 
 /**
  * TheseAnneeUniv

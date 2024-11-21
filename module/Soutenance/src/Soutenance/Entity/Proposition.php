@@ -10,8 +10,8 @@ use JetBrains\PhpStorm\Pure;
 use These\Entity\Db\These;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     use HistoriqueAwareTrait;

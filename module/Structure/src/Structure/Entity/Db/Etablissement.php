@@ -8,8 +8,8 @@ use Individu\Entity\Db\IndividuRole;
 use Doctrine\Common\Collections\ArrayCollection;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 

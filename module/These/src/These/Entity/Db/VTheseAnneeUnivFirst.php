@@ -2,7 +2,7 @@
 
 namespace These\Entity\Db;
 
-use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 
 /**
  * VTheseAnneeUnivFirst

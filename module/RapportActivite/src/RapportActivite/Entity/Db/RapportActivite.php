@@ -16,8 +16,8 @@ use RapportActivite\Entity\Formation;
 use RapportActivite\Entity\RapportActiviteOperationInterface;
 use RuntimeException;
 use These\Entity\Db\These;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenAvis\Entity\Db\AvisType;
 use Webmozart\Assert\Assert;
 

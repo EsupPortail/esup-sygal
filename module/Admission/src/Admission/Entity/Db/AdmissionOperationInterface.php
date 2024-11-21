@@ -2,7 +2,7 @@
 
 namespace Admission\Entity\Db;
 
-use UnicaenApp\Entity\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 
 interface AdmissionOperationInterface extends HistoriqueAwareInterface
 {

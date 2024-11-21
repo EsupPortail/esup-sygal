@@ -5,8 +5,8 @@ namespace Depot\Entity\Db;
 use Application\Constants;
 use Depot\Rule\AutorisationDiffusionRule;
 use These\Entity\Db\These;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 /**
  * Diffusion

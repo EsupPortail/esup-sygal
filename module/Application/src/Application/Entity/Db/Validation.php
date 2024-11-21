@@ -3,10 +3,11 @@
 namespace Application\Entity\Db;
 
 use Application\Constants;
+use DateTime;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -66,10 +67,8 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * Get histoModification
-     *
-     * @return \DateTime
      */
-    public function getHistoModification()
+    public function getHistoModification(): ?DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
     }

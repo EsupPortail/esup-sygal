@@ -7,8 +7,8 @@ use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\Fichier;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Avis implements HistoriqueAwareInterface
 {

@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Fichier\Entity\Db\Fichier;
 use These\Entity\Db\These;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 class Rapport implements ResourceInterface, HistoriqueAwareInterface

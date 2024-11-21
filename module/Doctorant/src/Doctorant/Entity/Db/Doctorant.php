@@ -11,8 +11,8 @@ use Structure\Entity\Db\Etablissement;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use These\Entity\Db\These;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**

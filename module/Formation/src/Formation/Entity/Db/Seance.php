@@ -3,8 +3,8 @@
 namespace Formation\Entity\Db;
 
 use DateTime;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Seance implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;

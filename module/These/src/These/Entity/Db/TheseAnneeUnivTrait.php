@@ -2,7 +2,7 @@
 
 namespace These\Entity\Db;
 
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 trait TheseAnneeUnivTrait

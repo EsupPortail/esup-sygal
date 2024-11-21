@@ -7,14 +7,15 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Pays;
 use Application\Entity\Db\Role;
 use Application\Filter\NomCompletFormatter;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
@@ -170,10 +171,8 @@ class Individu implements
 
     /**
      * Get histoModification
-     *
-     * @return \DateTime
      */
-    public function getHistoModification()
+    public function getHistoModification(): ?DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
     }

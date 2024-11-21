@@ -3,8 +3,8 @@
 namespace Formation\Entity\Db;
 
 use Structure\Entity\Db\StructureAwareTrait;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class SessionStructureValide implements HistoriqueAwareInterface
 {

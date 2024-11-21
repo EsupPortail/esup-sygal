@@ -7,8 +7,8 @@ use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Structure\Entity\Db\EcoleDoctorale;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInterface

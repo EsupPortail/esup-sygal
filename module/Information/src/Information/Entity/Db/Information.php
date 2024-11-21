@@ -2,8 +2,9 @@
 
 namespace Information\Entity\Db;
 
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use DateTime;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 /**
  * --- Class Information ---
@@ -41,10 +42,8 @@ class Information implements HistoriqueAwareInterface
 
     /**
      * Get histoModification
-     *
-     * @return \DateTime
      */
-    public function getHistoModification()
+    public function getHistoModification(): ?DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
     }

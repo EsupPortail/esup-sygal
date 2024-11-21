@@ -6,8 +6,8 @@ use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\Collection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Inscription implements HistoriqueAwareInterface, ResourceInterface {
     use HistoriqueAwareTrait;

@@ -2,9 +2,10 @@
 
 namespace Application\Entity\Db;
 
+use DateTime;
 use Fichier\Entity\Db\Fichier;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 /**
  * Classe d'entité se voulant générique.
@@ -54,10 +55,8 @@ class ValiditeFichier implements HistoriqueAwareInterface
 
     /**
      * Get histoModification
-     *
-     * @return \DateTime
      */
-    public function getHistoModification()
+    public function getHistoModification(): ?DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
     }

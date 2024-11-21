@@ -15,8 +15,8 @@ use Formation\Entity\Db\Traits\HasTypeTrait;
 use Individu\Entity\Db\Individu;
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Session implements HistoriqueAwareInterface,
     HasSiteInterface, HasModaliteInterface, HasTypeInterface, ResourceInterface {

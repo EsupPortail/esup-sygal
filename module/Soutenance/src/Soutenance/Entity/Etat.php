@@ -3,8 +3,8 @@
 namespace Soutenance\Entity;
 
 use Application\Search\Filter\SearchFilterValueInterface;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
 {

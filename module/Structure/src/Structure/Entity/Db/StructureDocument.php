@@ -4,8 +4,8 @@ namespace Structure\Entity\Db;
 
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class StructureDocument implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;

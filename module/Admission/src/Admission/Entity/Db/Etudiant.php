@@ -4,8 +4,8 @@ namespace Admission\Entity\Db;
 use Application\Entity\Db\Pays;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Etudiant implements HistoriqueAwareInterface{
     use HistoriqueAwareTrait;

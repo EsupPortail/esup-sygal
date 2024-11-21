@@ -4,8 +4,8 @@ namespace Doctorant\Entity\Db;
 
 use Doctorant\Entity\Db\Interface\HasDoctorantInterface;
 use Doctorant\Entity\Db\Trait\HasDoctorantTrait;
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class MissionEnseignement implements HasDoctorantInterface, HistoriqueAwareInterface {
     use HasDoctorantTrait;

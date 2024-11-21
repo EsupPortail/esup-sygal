@@ -3,7 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Search\Filter\SearchFilterValueInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 class OrigineFinancement implements ResourceInterface, SearchFilterValueInterface
