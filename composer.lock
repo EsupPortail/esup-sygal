@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1796c025e3a024fc0fc0f23865ae9a20",
+    "content-hash": "3d9bb0a5dae8cdb0a93edaf643fd6c1c",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11919,11 +11919,11 @@
         },
         {
             "name": "unicaen/sygal-api",
-            "version": "dev-master",
+            "version": "dev-wip_reception_flux_ia",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/open-source/sygal-api.git",
-                "reference": "973b46de1f7f3f3060f3ca4f0fe80685a4f86a52"
+                "reference": "5773439f1987766c494c4a420936d1cf7474af58"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.0",
@@ -11948,7 +11948,7 @@
                 ]
             },
             "description": "API SyGAL",
-            "time": "2024-10-07T07:44:19+00:00"
+            "time": "2024-11-15T15:11:34+00:00"
         },
         {
             "name": "unicaen/utilisateur",
