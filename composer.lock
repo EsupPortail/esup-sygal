@@ -2005,16 +2005,16 @@
         },
         {
             "name": "fakerphp/faker",
-            "version": "v1.24.0",
+            "version": "v1.24.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FakerPHP/Faker.git",
-                "reference": "a136842a532bac9ecd8a1c723852b09915d7db50"
+                "reference": "e0ee18eb1e6dc3cda3ce9fd97e5a0689a88a64b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/a136842a532bac9ecd8a1c723852b09915d7db50",
-                "reference": "a136842a532bac9ecd8a1c723852b09915d7db50",
+                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/e0ee18eb1e6dc3cda3ce9fd97e5a0689a88a64b5",
+                "reference": "e0ee18eb1e6dc3cda3ce9fd97e5a0689a88a64b5",
                 "shasum": ""
             },
             "require": {
@@ -2062,9 +2062,9 @@
             ],
             "support": {
                 "issues": "https://github.com/FakerPHP/Faker/issues",
-                "source": "https://github.com/FakerPHP/Faker/tree/v1.24.0"
+                "source": "https://github.com/FakerPHP/Faker/tree/v1.24.1"
             },
-            "time": "2024-11-07T15:11:20+00:00"
+            "time": "2024-11-21T13:46:39+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -11359,7 +11359,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "1829fefbbb63e9e8ebff5da4acef77b23602e44c"
+                "reference": "a8252f3d6980b9880372053c3bd55002dfcbac0d"
             },
             "require": {
                 "apereo/phpcas": "1.5.*",
@@ -11381,7 +11381,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen - Version Laminas",
-            "time": "2024-11-20T11:04:01+00:00"
+            "time": "2024-11-21T13:55:28+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -11923,7 +11923,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/open-source/sygal-api.git",
-                "reference": "5773439f1987766c494c4a420936d1cf7474af58"
+                "reference": "4f1ed0bf6df23fe6f8931aee60bef772ce6134cd"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.0",
@@ -11956,7 +11956,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/utilisateur.git",
-                "reference": "1d1259eb94eebff419f907ec8016f865d6913e0d"
+                "reference": "061566bde317ec8b23fff392f7445a68e12a042f"
             },
             "require": {
                 "unicaen/app": "^6.1",
@@ -11979,7 +11979,7 @@
                 ]
             },
             "description": "Module reprenant la gestion des utilisateurs, privileges et roles - Version laminas",
-            "time": "2024-11-20T10:58:55+00:00"
+            "time": "2024-11-21T13:50:55+00:00"
         },
         {
             "name": "unicaen/zfc-user",
