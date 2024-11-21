@@ -26,11 +26,11 @@ use These\Service\Acteur\ActeurService;
 use UnicaenAuthentification\Options\ModuleOptions;
 use UnicaenAuthentification\Service\ShibService;
 use UnicaenAuthentification\Service\User as AuthentificationUserService;
+use UnicaenAuthentification\Service\User as UserService;
 use UnicaenAuthentification\Service\UserContext;
+use UnicaenAuthentification\Service\UserMapper;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenService;
-use UnicaenAuthentification\Service\User as UserService;
-use ZfcUser\Mapper\UserInterface;
 
 class UtilisateurControllerFactory
 {
@@ -57,7 +57,7 @@ class UtilisateurControllerFactory
          * @var UserService $userService
          * @var AuthentificationUserService $authentificationUserService
          * @var UtilisateurSearchService $utilisateurSearchService
-         * @var UserInterface $mapper
+         * @var UserMapper $userMapper
          * @var SessionService $sessionService
          */
         $acteurService = $container->get(ActeurService::class);
@@ -74,7 +74,7 @@ class UtilisateurControllerFactory
         $userService = $container->get(UserService::class);
         $authentificationUserService = $container->get(AuthentificationUserService::class);
         $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
-//        $userMapper = $container->get('zfcuser_user_mapper');
+        $userMapper = $container->get('zfcuser_user_mapper');
         $sessionService = $container->get(SessionService::class);
 
         /**
@@ -116,7 +116,7 @@ class UtilisateurControllerFactory
 //        $controller->setOptions($authModuleOptions); // requis
         $controller->setAuthModuleOptions($authModuleOptions);
         $controller->setSearchService($utilisateurSearchService);
-//        $controller->setUserMapper($userMapper);
+        $controller->setUserMapper($userMapper);
         $controller->setSessionService($sessionService);
 
         /** @var UtilisateurProcess $utilisateurProcess */

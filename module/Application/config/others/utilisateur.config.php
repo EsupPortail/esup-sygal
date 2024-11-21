@@ -31,7 +31,7 @@ return [
         'guards' => [
             'BjyAuthorize\Guard\Controller' => [
 //                ['controller' => 'UnicaenAuthentification\Controller\Utilisateur', 'action' => 'selectionner-profil', 'roles' => []],
-//                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => 'guest'],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => 'guest'],
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'stopper-usurpation', 'roles' => 'guest'],
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-individu', 'roles' => 'guest'],
             ],
