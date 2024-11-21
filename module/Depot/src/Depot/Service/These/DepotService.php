@@ -88,13 +88,23 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         return $this;
     }
 
-    public function getResaisirAutorisationDiffusionVersionCorrigee(): bool
+    public function getResaisirAutorisationDiffusionVersionCorrigeeForThese(These $these): bool
     {
+        // il peut y avoir un forçage au niveau de la thèse
+        if (($forcage = $these->getResaisirAutorisationDiffusionDepotVersionCorrigee()) !== null) {
+            return $forcage;
+        }
+
         return $this->resaisirAutorisationDiffusionVersionCorrigee;
     }
 
-    public function getResaisirAttestationsVersionCorrigee(): bool
+    public function getResaisirAttestationsVersionCorrigeeForThese(These $these): bool
     {
+        // il peut y avoir un forçage au niveau de la thèse
+        if (($forcage = $these->getResaisirAttestationsDepotVersionCorrigee()) !== null) {
+            return $forcage;
+        }
+
         return $this->resaisirAttestationsVersionCorrigee;
     }
 
@@ -313,7 +323,7 @@ class DepotService extends BaseService implements ListenerAggregateInterface
      * @param Diffusion      $diffusion
      * @param VersionFichier $version
      */
-    public function updateDiffusion(These $these, Diffusion $diffusion, VersionFichier $version)
+    public function updateDiffusion(These $these, Diffusion $diffusion, VersionFichier $version): void
     {
         $isUpdate = $diffusion->getId() !== null;
 

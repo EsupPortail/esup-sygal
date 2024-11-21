@@ -116,3 +116,11 @@ FROM tmp_domaine_hal tmp
          JOIN source src ON src.id = tmp.source_id
          left join tmp_domaine_hal tmp_parent on tmp_parent.docid = tmp.parent_id
 order by tmp.level_i;
+
+
+--
+-- Nouvelles colonnes dans THESE.
+--
+
+alter table these add resaisir_autorisation_diffusion_depot_version_corrigee boolean;
+alter table these add resaisir_attestations_depot_version_corrigee boolean;

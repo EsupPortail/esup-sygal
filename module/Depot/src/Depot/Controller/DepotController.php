@@ -1159,7 +1159,7 @@ class DepotController extends AbstractController
             'form'                   => $this->getAttestationTheseForm($version), // les labels des cases à cocher sont affichés
             'modifierAttestationUrl' => $this->urlDepot()->modifierAttestationUrl($these, $version),
             'hasFichierThese'        => $hasFichierThese,
-            'resaisirAttestationsVersionCorrigee' => $this->depotService->getResaisirAttestationsVersionCorrigee(),
+            'resaisirAttestationsVersionCorrigee' => $this->depotService->getResaisirAttestationsVersionCorrigeeForThese($these),
         ]);
         $view->setTemplate('depot/depot/attestation');
 
@@ -1283,7 +1283,7 @@ class DepotController extends AbstractController
             'modifierDiffusionUrl'         => $this->urlDepot()->modifierDiffusionUrl($these, $version),
             'exporterConventionMelUrl'     => $this->urlDepot()->exporterConventionMiseEnLigneUrl($these, $version),
             'hasFichierThese'              => $hasFichierThese,
-            'resaisirAutorisationDiffusionVersionCorrigee' => $this->depotService->getResaisirAutorisationDiffusionVersionCorrigee(),
+            'resaisirAutorisationDiffusionVersionCorrigee' => $this->depotService->getResaisirAutorisationDiffusionVersionCorrigeeForThese($these),
         ]);
         $view->setTemplate('depot/depot/diffusion');
 

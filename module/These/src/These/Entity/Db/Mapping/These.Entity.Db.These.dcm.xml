@@ -25,6 +25,8 @@
         <field name="libelleEtabCotutelle" type="string" column="lib_etab_cotut" nullable="true"/>
         <field name="libellePaysCotutelle" type="string" column="lib_pays_cotut" nullable="true"/>
         <field name="soutenanceAutorisee" type="string" column="soutenance_autoris" nullable="false"/>
+        <field name="resaisirAutorisationDiffusionDepotVersionCorrigee" type="boolean" column="resaisir_autorisation_diffusion_depot_version_corrigee" nullable="true"/>
+        <field name="resaisirAttestationsDepotVersionCorrigee" type="boolean" column="resaisir_attestations_depot_version_corrigee" nullable="true"/>
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
         <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>

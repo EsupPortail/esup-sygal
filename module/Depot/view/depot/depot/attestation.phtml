@@ -1,12 +1,11 @@
 <?php
 
-use These\Controller\TheseController;
+use Application\View\Renderer\PhpRenderer;
 use Depot\Entity\Db\Attestation;
-use These\Entity\Db\These;
-use Fichier\Entity\Db\VersionFichier;
 use Depot\Form\Attestation\AttestationTheseForm;
 use Depot\Provider\Privilege\DepotPrivileges;
-use Application\View\Renderer\PhpRenderer;
+use Fichier\Entity\Db\VersionFichier;
+use These\Entity\Db\These;
 
 /**
  * @var PhpRenderer          $this
@@ -18,7 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var bool                 $resaisirAttestationsVersionCorrigee
  * @var bool                 $hasFichierThese
  *
- * @see TheseController::attestationAction()
+ * @see \Depot\Controller\DepotController::attestationAction()
  */
 
 $privilege = DepotPrivileges::THESE_SAISIE_ATTESTATIONS_($version);
@@ -31,18 +30,30 @@ if ($version->estVersionCorrigee() && ! $resaisirAttestationsVersionCorrigee) {
 <div class="box card">
 
     <div class="card-header bg-dark text-white">
-        <h2>Attestation
-            <?php if ($attestation && $attestation->estCreationAuto()): ?><span>(Rappel)</span><?php endif ?></h2>
+        <h2>
+            Attestation
+            <?php if ($attestation && $attestation->estCreationAuto() && !$resaisirAttestationsVersionCorrigee): ?>
+                <span>(Rappel)</span>
+            <?php endif ?>
+        </h2>
     </div>
 
     <div class="card-body">
         <?php if ($hasFichierThese): ?>
 
             <?php if ($attestation): ?>
+                <?php echo $this->partial('depot/depot/partial/attestation') ?>
                 <?php
-                // NB: les réponses aux attestations ne sont pas modifiables
-                echo $this->partial('depot/depot/partial/attestation');
-                ?>
+                // NB : modifier les réponses existantes aux attestations n'a pas de sens puisque ce sont des cases
+                // qu'il faut obligatoirement cocher. (Par contre, elles peuvent être supprimées selon les réponses
+                // au formulaire d'autorisation de diffusion.)
+                // Donc théoriquement, le bouton "Modifier" ci-après n'apparaît jamais (cf. assertion), mais on le
+                // laisse quand même, si un jour la logique change.
+                if ($canEdit): ?>
+                    <p><a href="<?php echo $modifierAttestationUrl ?>"
+                          class="btn btn-secondary ajax-modal"
+                          data-event="event-attestation-modified"><span class="icon icon-edit"></span> Modifier</a></p>
+                <?php endif ?>
             <?php else: ?>
                 <?php if ($canEdit): ?>
                     <p><a href="<?php echo $modifierAttestationUrl ?>"

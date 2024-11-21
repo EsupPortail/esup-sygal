@@ -156,6 +156,18 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $soutenanceAutorisee;
 
     /**
+     * Eventuel forçage *pour cette thèse en particulier* du paramètre global
+     * {@see \Depot\Service\These\DepotService::$resaisirAutorisationDiffusionVersionCorrigee}.
+     */
+    private ?bool $resaisirAutorisationDiffusionDepotVersionCorrigee = null;
+
+    /**
+     * Eventuel forçage *pour cette thèse en particulier* du paramètre global
+     * {@see \Depot\Service\These\DepotService::$resaisirAttestationsVersionCorrigee}.
+     */
+    private ?bool $resaisirAttestationsDepotVersionCorrigee = null;
+
+    /**
      * @var Doctorant
      */
     private $doctorant;
@@ -584,6 +596,28 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function setSoutenanceAutorisee($soutenanceAutorisee)
     {
         $this->soutenanceAutorisee = $soutenanceAutorisee;
+    }
+
+    public function getResaisirAutorisationDiffusionDepotVersionCorrigee(): ?bool
+    {
+        return $this->resaisirAutorisationDiffusionDepotVersionCorrigee;
+    }
+
+    public function setResaisirAutorisationDiffusionDepotVersionCorrigee(?bool $resaisirAutorisationDiffusionDepotVersionCorrigee): self
+    {
+        $this->resaisirAutorisationDiffusionDepotVersionCorrigee = $resaisirAutorisationDiffusionDepotVersionCorrigee;
+        return $this;
+    }
+
+    public function getResaisirAttestationsDepotVersionCorrigee(): ?bool
+    {
+        return $this->resaisirAttestationsDepotVersionCorrigee;
+    }
+
+    public function setResaisirAttestationsDepotVersionCorrigee(?bool $resaisirAttestationsDepotVersionCorrigee): self
+    {
+        $this->resaisirAttestationsDepotVersionCorrigee = $resaisirAttestationsDepotVersionCorrigee;
+        return $this;
     }
 
     /**
