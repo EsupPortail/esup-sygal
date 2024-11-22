@@ -13,6 +13,7 @@ Journal des modifications
 - Dépôt d'une version corrigée de la thèse : possibilité de forcer pour une thèse en particulier les paramètres de config 'depot_version_corrigee.resaisir_autorisation_diffusion' et 'resaisir_attestations' (pas d'UI pour l'instant). 
 - Réorganisation du menu Administration
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
+- [FIX] Index de la gestion des co-encadrants inaccessible
 
 9.1.1
 -----

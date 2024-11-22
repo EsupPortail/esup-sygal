@@ -57,7 +57,7 @@ class CoEncadrantController extends AbstractActionController
         /** @see CoEncadrantController::rechercherCoEncadrantAction() */
         $form->setUrlCoEncadrant($this->url()->fromRoute('co-encadrant/rechercher-co-encadrant', [], [], true));
         $form->setUrlEtablisssement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
-        $form->get('bouton')->setLabel("Afficher l'historique de co-encadrement");
+        $form->get('submit')->setLabel("Afficher l'historique de co-encadrement");
 
         $request = $this->getRequest();
         if ($request->isPost()) {
