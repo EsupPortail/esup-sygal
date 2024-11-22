@@ -5,13 +5,12 @@ namespace Application\Entity;
 use Application\Entity\Db\Utilisateur;
 use Individu\Entity\Db\Individu;
 use Laminas\Ldap\Exception\LdapException;
-use Exception;
-use UnicaenAuthentification\Entity\Ldap\People as UnicaenAuthPeople;
+use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenUtilisateur\Entity\Db\AbstractUser;
 use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
 use UnicaenLdap\Entity\People as UnicaenLdapPeople;
+use UnicaenUtilisateur\Entity\Db\AbstractUser;
 use ZfcUser\Entity\UserInterface;
 
 /**
