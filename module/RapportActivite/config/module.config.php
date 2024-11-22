@@ -666,18 +666,12 @@ return [
 
                     'admin' => [
                         'pages' => [
-                            '-----------' => [
-                                'label' => null,
-                                'order' => 99,
-                                'uri' => '',
-                                'class' => 'divider',
-                                'separator' => true,
-                            ],
                             'rapport-activite' => [
                                 'label' => "Rapports d'activité",
                                 'route' => 'rapport-activite/recherche/index',
                                 'order' => 100,
                                 'resource' => PrivilegeController::getResourceId(RapportActiviteRechercheController::class, 'index'),
+                                'icon' => 'fas fa-file-alt',
                                 'privilege' => [
                                     RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
                                     RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,

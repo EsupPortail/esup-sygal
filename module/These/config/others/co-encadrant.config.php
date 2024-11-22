@@ -157,8 +157,8 @@ return [
                                 'label'    => 'Co-encadrant',
                                 'route'    => 'co-encadrant',
                                 'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'index'),
-
-                                'order'    => 300,
+                                'icon' => 'fas fa-user-friends',
+                                'order'    => 1060,
 //                                'pages' => [
 //                                    'historique' => [
 //                                        'label'    => 'Historique',

@@ -214,6 +214,7 @@ return [
                                 'route' => 'fichier/deposes',
                                 'order' => 600,
                                 'resource' => PrivilegeController::getResourceId(FichierTheseController::class, 'deposes'),
+                                'icon' => 'fas fa-file'
                             ],
                         ],
                     ],

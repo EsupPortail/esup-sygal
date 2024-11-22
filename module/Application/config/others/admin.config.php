@@ -177,9 +177,16 @@ return [
                             'test-envoi-mail' => [
                                 'label'    => 'Test envoi mail',
                                 'route'    => 'test-envoi-mail',
-                                'icon'     => 'icon icon-notifier',
+                                'icon'     => 'fas fa-envelope',
                                 'resource' => PrivilegeController::getResourceId('UnicaenApp\Controller\Application', 'test-envoi-mail'),
-                                'order' => 10000,
+                                'order' => 820,
+                            ],
+                            '----------mails-divider' => [
+                                'label' => null,
+                                'order' => 830,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
                             ],
                         ],
                     ],

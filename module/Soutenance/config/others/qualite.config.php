@@ -60,11 +60,18 @@ return array(
                     'admin' => [
                         'pages' => [
                             'qualite' => [
-                                'label'    => 'Qualités',
+                                'label'    => 'Qualités du jury',
                                 'route'    => 'qualite',
                                 'resource' => PrivilegeController::getResourceId(QualiteController::class, 'index'),
                                 'icon'     => 'fas fa-user-astronaut',
-                                'order'    => 600,
+                                'order'    => 121,
+                            ],
+                            '--------soutenance-divider' => [
+                                'label' => null,
+                                'order' => 123,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
                             ],
                         ],
                     ],

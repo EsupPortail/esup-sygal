@@ -473,6 +473,7 @@ return [
                                 'route'    => 'rapport-csi/recherche/index',
                                 'order'    => 101,
                                 'resource' => PrivilegeController::getResourceId(RapportCsiRechercheController::class, 'index'),
+                                'icon' => 'fas fa-file-alt',
                                 'privilege' => [
                                     RapportPrivileges::RAPPORT_CSI_RECHERCHER_TOUT,
                                     RapportPrivileges::RAPPORT_CSI_RECHERCHER_SIEN,
@@ -484,6 +485,7 @@ return [
                                 'route'    => 'rapport-miparcours/recherche/index',
                                 'order'    => 102,
                                 'resource' => PrivilegeController::getResourceId(RapportMiparcoursRechercheController::class, 'index'),
+                                'icon' => 'fas fa-file-alt',
                                 'privilege' => [
                                     RapportPrivileges::RAPPORT_MIPARCOURS_RECHERCHER_TOUT,
                                     RapportPrivileges::RAPPORT_MIPARCOURS_RECHERCHER_SIEN,

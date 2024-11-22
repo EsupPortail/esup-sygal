@@ -441,12 +441,19 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
+                            '-----------substitution-divider' => [
+                                'label' => null,
+                                'order' => 69,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
+                            ],
                             'substitution' => [
                                 'label' => 'Module Substitutions',
                                 'route' => 'substitution',
                                 'icon' => 'fas fa-object-group',
                                 'resource' => PrivilegeController::getResourceId(SubstitutionController::class, 'accueil'),
-                                'order' => 105,
+                                'order' => 70,
                                 'pages' => [
                                     'substitution' => [
                                         'label' => 'Substitutions existantes',

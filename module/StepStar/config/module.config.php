@@ -319,7 +319,8 @@ return [
                                 'label' => 'STEP-STAR',
                                 'route' => 'step-star/infos',
                                 'resource' => PrivilegeController::getResourceId(IndexController::class, 'index'),
-                                'order' => 200,
+                                'icon' => 'fas fa-book',
+                                'order' => 1050,
                                 'pages' => [
                                     'infos' => [
                                         'label' => "Infos",

@@ -213,10 +213,10 @@ return [
                     'admin' => [
                         'pages' => [
                             'information' => [
-                                'order'    => 600,
+                                'order'    => 1100,
                                 'label'    => 'Pages d\'information',
                                 'route'    => 'informations',
-                                //'icon'     => 'icon icon-notifier',
+                                'icon'     => 'fas fa-info-circle',
                                 'resource' => InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER),
                             ],
                         ],

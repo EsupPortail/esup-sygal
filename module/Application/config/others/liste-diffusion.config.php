@@ -116,11 +116,18 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
+                            '-----------mails-divider' => [
+                                'label' => null,
+                                'order' => 800,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
+                            ],
                             'liste-diffusion' => [
                                 'label'    => 'Listes de diffusion',
                                 'route'    => 'liste-diffusion',
-                                'icon'     => 'icon icon-notifier',
-                                'order'    => 106,
+                                'icon'     => 'fas fa-envelope',
+                                'order'    => 810,
                                 'resource' => PrivilegeController::getResourceId(ListeDiffusionController::class, 'index'),
                             ],
                         ],

@@ -11,6 +11,7 @@ Journal des modifications
 - Ajout de l'UR et de l'établissement du doctorant dans certains templates du module rapport d'activité et soutenances
 - Abandon de la bibliothèque unicaen/auth et migration vers unicaen/authentification, utilisateur, privilege.
 - Dépôt d'une version corrigée de la thèse : possibilité de forcer pour une thèse en particulier les paramètres de config 'depot_version_corrigee.resaisir_autorisation_diffusion' et 'resaisir_attestations' (pas d'UI pour l'instant). 
+- Réorganisation du menu Administration
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 
 9.1.1

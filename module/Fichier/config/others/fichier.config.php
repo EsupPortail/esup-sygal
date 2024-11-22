@@ -204,8 +204,9 @@ return [
                             'fichiers-communs' => [
                                 'label' => 'Fichiers communs',
                                 'route' => 'fichier/lister-fichiers-communs',
-                                'order' => 200,
+                                'order' => 599,
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Fichier', 'lister-fichiers-communs'),
+                                'icon' => 'fas fa-file'
                             ],
                         ],
                     ],
