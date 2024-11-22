@@ -4,6 +4,11 @@ RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
+# Si c'est un .css ou .js qui est requêté, on le sert directement.
+# Ainsi, si les css/js des bibliothèques Unicaen n'ont pas été copiés (cf. "post-install-cmd" du composer.json)
+# par exemple, cela évite que le moteur MVC de Laminas se mette en branle pour rien et retourne une 404.
+RewriteCond %{REQUEST_URI} \.(css|js)$
+RewriteRule ^.*$ - [NC,L]
 # The following rewrites all other queries to index.php. The
 # condition ensures that if you are using Apache aliases to do
 # mass virtual hosting, the base path will be prepended to
