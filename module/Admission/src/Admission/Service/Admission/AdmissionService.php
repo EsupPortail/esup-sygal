@@ -318,7 +318,7 @@ class AdmissionService extends BaseService
         foreach($codes as $code){
             $template = clone $this->templateService->getTemplateByCode($code);
             $templateForEtab = $template;
-            $templateForEtab->setCode($code."_".$etablissement->getStructure()->getSigle());
+            $templateForEtab->setCode($code."/".$etablissement->getStructure()->getSigle());
 
             $isNew = !$this->templateService->getTemplateByCode($templateForEtab->getCode());
             //Si le template n'existe pas encore, on le crée

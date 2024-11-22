@@ -653,6 +653,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   align-items: center;
   width: auto;
   padding-left: unset;
+  flex-wrap: wrap;
 }
 
 .etape-signature-infos-container > label {

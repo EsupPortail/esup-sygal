@@ -523,7 +523,8 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   display: flex;
   align-items: center;
   width: auto;
-  padding-left: unset; }
+  padding-left: unset;
+  flex-wrap: wrap; }
 
 .etape-signature-infos-container > label {
   color: #707070;
