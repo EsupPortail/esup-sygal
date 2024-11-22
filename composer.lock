@@ -11359,7 +11359,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "a8252f3d6980b9880372053c3bd55002dfcbac0d"
+                "reference": "ec6cfc778969139862a0b04e986092487b3a0fb5"
             },
             "require": {
                 "apereo/phpcas": "1.5.*",
