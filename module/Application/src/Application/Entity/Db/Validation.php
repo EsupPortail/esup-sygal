@@ -171,7 +171,7 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getAuteurToString() : string
     {
-        $displayname = $this->getIndividu()->getNomComplet(false, false, false, true);
+        $displayname = $this->getIndividu()->getNomComplet();
         return $displayname;
     }
     /**

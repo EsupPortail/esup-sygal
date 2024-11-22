@@ -18,7 +18,7 @@ $theseActeurs = $these->getActeurs();
     <tr>
         <th>Doctorant</th>
         <td>
-            <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true) ?>
+            <?php echo $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecAutresPrenoms()->avecNomUsage()->f() ?>
             (<?php echo $these->getDoctorant()->getIndividu()->getDateNaissanceToString() ?>) <br>
             N°<?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
             Nationalité: <?php echo $these->getDoctorant()->getIndividu()?->getPaysNationalite()->getLibelleNationalite() ?>

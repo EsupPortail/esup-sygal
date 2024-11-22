@@ -198,7 +198,7 @@ class TheseService extends BaseService
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
         }
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant(mb_strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true)));
+            $pdcData->setDoctorant(mb_strtoupper($these->getDoctorant()->getIndividu()->getNomComplet()));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
@@ -279,8 +279,7 @@ class TheseService extends BaseService
             $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
 
             $acteurData = new MembreData();
-            $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true)));
-
+            $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomCompletFormatter()->avecCivilite()->f()));
 
             $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
 
@@ -329,13 +328,13 @@ class TheseService extends BaseService
         /** Directeurs de thèses */
         $listing = [];
         foreach ($directeurs as $directeur) {
-            $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
+            $current = mb_strtoupper($directeur->getIndividu()->getNomComplet());
             $structure = $directeur->getUniteRecherche() ?: $these->getUniteRecherche();
             if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
             $listing[] = ['individu' => $current, 'structure' => $structure];
         }
         foreach ($codirecteurs as $directeur) {
-            $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
+            $current = mb_strtoupper($directeur->getIndividu()->getNomComplet());
             $structure = $directeur->getUniteRecherche() ?: $directeur->getEtablissementForce() ?: $directeur->getEtablissement();
             if ($structure !== null) $structure = $structure->getStructure()->getLibelle();
             $listing[] = ['individu' => $current, 'structure' => $structure];

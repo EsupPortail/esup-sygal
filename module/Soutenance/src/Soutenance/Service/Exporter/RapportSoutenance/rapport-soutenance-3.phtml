@@ -18,7 +18,7 @@ Fait à ........................................, le ...........................
     <tr>
         <?php foreach ($membres as $membre) : ?>
         <td style="width:<?php echo $width; ?>%">
-            <?php echo $membre->getIndividu()->getNomComplet(true, true, false, true); ?><br/>
+            <?php echo $membre->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?><br/>
             <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>&nbsp; <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;
             <?php $position += 1; ?>
         </td>

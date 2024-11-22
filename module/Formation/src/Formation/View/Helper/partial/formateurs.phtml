@@ -24,12 +24,12 @@ usort($formateurs, function(Formateur $a, Formateur $b) { return $a->getIndividu
         <ul>
             <?php foreach ($formateurs as $formateur) : ?>
             <li>
-                <?php echo $formateur->getIndividu()->getNomComplet(false, false, false, false, true); ?>
+                <?php echo $formateur->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
             </li>
             <?php endforeach; ?>
         </ul>
     <?php else : ?>
-        <?php $array = []; foreach ($formateurs as $formateur) { $array[] = $formateur->getIndividu()->getNomComplet(false, false, false, false, true);} ?>
+        <?php $array = []; foreach ($formateurs as $formateur) { $array[] = $formateur->getIndividu()->getNomComplet();} ?>
         <?php echo implode('<br/>', $array); ?>
     <?php endif; ?>
 <?php else : ?>

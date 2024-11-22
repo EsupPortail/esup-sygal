@@ -154,7 +154,7 @@ $this->headTitle($pageTitle);
             <ul>
             <?php foreach ($formateurs as $formateur) : ?>
                 <li>
-                    <?php echo $formateur->getIndividu()->getNomComplet(false, false, false, false, true); ?>
+                    <?php echo $formateur->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
                 </li>
             <?php endforeach; ?>
             </ul>

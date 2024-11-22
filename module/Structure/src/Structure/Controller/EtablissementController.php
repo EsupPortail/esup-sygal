@@ -105,13 +105,13 @@ class EtablissementController extends StructureConcreteController
         }
 
         foreach ($individus as $individu) {
-            $denomination = $individu->getNomComplet(false, false, false, true);
+            $denomination = $individu->getNomComplet();
             $individuListings[$denomination] = [];
         }
 
         foreach ($individuRoles as $individuRole) {
             if (!$individuRole->getRole()->isTheseDependant()) {
-                $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true);
+                $denomination = $individuRole->getIndividu()->getNomComplet();
                 $role = $individuRole->getRole()->getLibelle();
                 $individuListings[$denomination][] = $role;
                 $roleListings[$role]++;

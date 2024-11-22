@@ -143,7 +143,7 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <?php
-                        $nomComplet = $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true);
+                        $nomComplet = $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->avecAutresPrenoms()->avecNomUsage()->f();
                         $dateNaissance = $these->getDoctorant()->getIndividu()->getDateNaissanceToString();
                         echo !empty($dateNaissance) ? sprintf("%s (%s)", $nomComplet, $dateNaissance) : $nomComplet;
                         ?>

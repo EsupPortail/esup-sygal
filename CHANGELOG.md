@@ -3,6 +3,7 @@ Journal des modifications
 
 9.2.0
 -----
+- Affichage de l'identité d'un individu : le format privilégé est désormais NOMPATRONYMIQUE Prénom.
 - Amélioration de l'écran Inscriptions :
     - Ajout de plusieurs filtres : Site organisateur, Structure associée (ED), année universitaire
     - Ajout d'un sorter permettant de trier par les séances de l'inscription

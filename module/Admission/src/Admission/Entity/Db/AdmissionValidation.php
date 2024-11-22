@@ -152,7 +152,7 @@ class AdmissionValidation implements HistoriqueAwareInterface, AdmissionOperatio
      */
     public function getAuteurToString() : string
     {
-        $displayname = $this->getIndividu()->getNomComplet(false, false, false, true);
+        $displayname = $this->getIndividu()->getNomComplet();
         return $displayname;
     }
     /**

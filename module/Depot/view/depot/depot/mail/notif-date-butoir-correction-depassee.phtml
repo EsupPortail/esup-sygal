@@ -19,7 +19,7 @@ use Application\View\Renderer\PhpRenderer;
 
     <p>
         Le délai de <?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> accordé au doctorant
-        <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true) ?> pour corriger sa thèse est dépassé.
+        <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?> pour corriger sa thèse est dépassé.
     </p>
     <p>
         Vous pouvez saisir l’admission dans Apogée si le PV et le rapport de soutenance (les originaux) ont été transmis.
@@ -29,7 +29,7 @@ use Application\View\Renderer\PhpRenderer;
 
     <p>
         Le délai de <?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> accordé au doctorant
-        <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true) ?> pour corriger sa thèse est dépassé.
+        <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?> pour corriger sa thèse est dépassé.
     </p>
     <p>
         Vous pouvez saisir l’ajournement dans Apogée si le PV et le rapport de soutenance (les originaux) ont été transmis.

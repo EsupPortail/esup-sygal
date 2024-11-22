@@ -288,7 +288,7 @@ class IndividuController extends AbstractActionController implements SearchContr
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $individus = $this->getIndividuService()->getRepository()->findByText($term, $type);
-            $f = new NomCompletFormatter(true);
+            $f = new NomCompletFormatter();
             $result = [];
             foreach ($individus as $individu) {
                 $prenoms23 = implode(' ', array_filter([$individu['prenom2'], $individu['prenom3']]));

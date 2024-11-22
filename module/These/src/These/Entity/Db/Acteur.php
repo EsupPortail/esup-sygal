@@ -524,7 +524,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
     /** @noinspection PhpUnused */
     public function getDenomination(): string
     {
-        return $this->getIndividu()->getNomComplet(false, false, false, true);
+        return $this->getIndividu()->getNomComplet();
     }
 
     /** @noinspection PhpUnused */

@@ -187,7 +187,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $rows = $this->individuService->getRepository()->findByText($term, $type);
-            $f = new NomCompletFormatter(true);
+            $f = new NomCompletFormatter();
             $result = [];
             foreach ($rows as $row) {
                 $prenoms23 = implode(' ', array_filter([$row['prenom2'], $row['prenom3']]));

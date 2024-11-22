@@ -301,38 +301,13 @@ class Doctorant implements
     }
 
     /**
-     * Retourne la représentation littérale de cet objet.
+     * Retourne le nom complet *au format par défaut (recommandé)* de l'individu lié.
      *
-     * @return string
+     * @see Individu::__toString()
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getIndividu()->__toString();
-    }
-
-    /**
-     * Get nomUsuel
-     *
-     * @param bool $avecCivilite
-     * @param bool $avecNomPatro
-     * @param bool $prenoms
-     * @return string
-     * @deprecated Passe par getIndividu() toi-même !
-     */
-    public function getNomComplet($avecCivilite = false, $avecNomPatro = false, $prenoms = false)
-    {
-        return $this->getIndividu()->getNomComplet($avecCivilite, $avecNomPatro, $prenoms);
-    }
-
-    /**
-     * Get dateNaissance
-     *
-     * @return string
-     * @deprecated Passe par getIndividu() toi-même !
-     */
-    public function getDateNaissanceToString()
-    {
-        return $this->getIndividu()->getDateNaissanceToString();
     }
 
     public function getIndividu(): ?Individu
@@ -395,15 +370,15 @@ class Doctorant implements
     {
         return 'doctorant';
     }
+
     /**
      * Retourne la dénomination du doctorant (civilité+nom Patronymique+prénom)
      *
-     * @return string
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
-    public function getDenominationPatronymique()
+    public function getDenominationPatronymique(): string
     {
-        return $this->getIndividu()->getNomComplet(true, false, false, false, true);
+        return $this->getIndividu()->getNomCompletFormatter()->avecCivilite()->f();
     }
 
 }

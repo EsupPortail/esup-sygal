@@ -266,7 +266,7 @@ use These\Service\FichierThese\PdcData;
     <?php endif; ?>
 
         <td>
-            <?php echo $signataire->getNomComplet(true, true, false, true); ?>
+            <?php echo $signataire->getNomCompletFormatter()->avecCivilite()->f(); ?>
             <br/>
             <br/>
             <br/>

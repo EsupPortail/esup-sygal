@@ -20,7 +20,7 @@ use Soutenance\Provider\Privilege\InterventionPrivileges;
  * @var UrlFichierThese $urlFichierThese
  */
 
-$this->headTitle("Intervention sur la soutenance de thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true));
+$this->headTitle("Intervention sur la soutenance de thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet());
 
 
 function getJustificatif(array $justificatifs, string $type, Membre $membre) {
@@ -41,13 +41,13 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
 ?>
 
 <h1 class="page-header">
-    Intervention sur la soutenance de thèse de <?php echo  $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true); ?>
+    Intervention sur la soutenance de thèse de <?php echo  $these->getDoctorant()->getIndividu()->getNomComplet(); ?>
 </h1>
 
 <?php if (!$canAfficher) : ?>
     <div class="alert alert-danger">
         <p class="lead">
-            Vous n'êtes pas habilité&middot;e à afficher la liste des interventions sur la soutenance de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true); ?>
+            Vous n'êtes pas habilité&middot;e à afficher la liste des interventions sur la soutenance de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>
         </p>
     </div>
 <?php else : ?>

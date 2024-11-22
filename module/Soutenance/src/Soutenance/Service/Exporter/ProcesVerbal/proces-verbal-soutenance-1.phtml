@@ -263,7 +263,7 @@ use Soutenance\Entity\Proposition;
                 <?php endif; ?>
                 <?php
                     $first = false;
-                    $denomination = $directeur->getIndividu()->getNomComplet(true, true, false, true);
+                    $denomination = $directeur->getIndividu()->getNomCompletFormatter()->avecCivilite()->f();
                     $qualite = $directeur->getLibelleQualite();
                 ?>
                 <?php echo  $denomination . ", ".$qualite; ?>
@@ -281,7 +281,7 @@ use Soutenance\Entity\Proposition;
                 <?php endif; ?>
                 <?php
                 $first = false;
-                $denomination = $directeur->getIndividu()->getNomComplet(true, true, false, true);
+                $denomination = $directeur->getIndividu()->getNomCompletFormatter()->avecCivilite()->f();
                 $qualite = $directeur->getLibelleQualite();
                 ?>
                 <?php echo  $denomination . ", ".$qualite; ?>

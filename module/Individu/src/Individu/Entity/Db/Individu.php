@@ -150,7 +150,7 @@ class Individu implements
     {
         $valuesOptions = [];
         foreach ($individus as $i) {
-            $valuesOptions[$i->getId()] = $i->getNomComplet(false);
+            $valuesOptions[$i->getId()] = $i->getNomComplet();
         }
 
         return $valuesOptions;
@@ -529,37 +529,34 @@ class Individu implements
     }
 
     /**
-     * Retourne la représentation littérale de cet objet.
+     * Retourne le nom complet *au format par défaut (recommandé)*.
      *
-     * @return string
+     * @see getNomComplet()
      */
-    public function __toString()
+    public function __toString(): string
     {
-        $f = new NomCompletFormatter(true, true);
-
-        return $f->filter($this);
+        return $this->getNomComplet();
     }
 
     /**
-     * Get nomUsuel
+     * Retourne le nom complet *au format par défaut (recommandé)*.
      *
-     * @param bool $avecCivilite
-     * @param bool $avecNomUsuelEtPatro
-     * @param bool $prenoms
-     * @param bool $prenomfirst
-     * @param bool $avecNomPatroSeul
-     * @return string
+     * @see getNomCompletFormatter() pour avoir accès aux autres formats.
      */
-    public function getNomComplet(
-        bool $avecCivilite = false,
-        bool $avecNomUsuelEtPatro = false,
-        bool $prenoms = false,
-        bool $prenomfirst = false,
-        bool $avecNomPatroSeul = false): string
+    public function getNomComplet(): string
     {
-        $f = new NomCompletFormatter(true, $avecCivilite, $avecNomUsuelEtPatro, $prenomfirst, $prenoms, $avecNomPatroSeul);
+        return $this->getNomCompletFormatter()->f();
+    }
 
-        return $f->filter($this);
+    /**
+     * Retourne une instance du formatteur de nom complet pour cet individu.
+     */
+    public function getNomCompletFormatter(): NomCompletFormatter
+    {
+        $formatter = new NomCompletFormatter();
+        $formatter->setValue($this);
+
+        return $formatter;
     }
 
     /**
