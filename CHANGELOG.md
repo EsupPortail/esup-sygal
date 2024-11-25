@@ -14,6 +14,7 @@ Journal des modifications
 - Réorganisation du menu Administration
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
+- [FIX] Vue de synchronisation src_these erronée.
 
 9.1.1
 -----
