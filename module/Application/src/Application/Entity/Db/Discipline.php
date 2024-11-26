@@ -4,6 +4,7 @@ namespace Application\Entity\Db;
 
 class Discipline {
 
+    private int $id;
     private string $code;
     private string $libelle;
 

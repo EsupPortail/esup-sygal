@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+9.1.1
+-----
+- [FIX] Bug "Entity of type 'Application\Entity\Db\Discipline' for IDs code(4100108) was not found"
+
 9.1.0
 -----
 - Recherche de thèse : Remplacement de la vue matérialisée mv_recherche_these par une simple vue 'these_rech' pour ne plus avoir de pb de recherche de thèse infructueuse nécessitant un refresh.

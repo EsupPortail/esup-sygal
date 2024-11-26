@@ -65,7 +65,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
                         <br/>
                     <?php endforeach; ?>
                 <dt class="col-md-5"> Discipline </dt>
-                <dd class="col-md-5"> <?php echo $these->getDiscipline(); ?> </dd>
+                <dd class="col-md-5"> <?php echo $these->getLibelleDiscipline(); ?> </dd>
                 <dt class="col-md-5"> Date de la soutenance </dt>
                 <dd class="col-md-5"> <?php echo $proposition->getDate()->format("d/m/Y"); ?> </dd>
                 <dt class="col-md-5"> Lieu de la soutenance </dt>

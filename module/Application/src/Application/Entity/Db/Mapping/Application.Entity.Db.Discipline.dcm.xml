@@ -2,8 +2,11 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity name="Application\Entity\Db\Discipline" table="discipline_sise">
 
-    <id name="code" type="string" length="64" column="code">
+    <id name="id" type="integer" column="id">
+      <generator strategy="SEQUENCE"/>
     </id>
+
+    <field name="code" type="string" length="64" column="code"/>
 
     <field name="libelle" type="string" length="1024" column="libelle" />
   </entity>

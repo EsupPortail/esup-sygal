@@ -193,7 +193,7 @@ class TheseService extends BaseService
         $titre = trim($these->getTitre());
         $titre = str_replace("\n",' ', $titre);
         $pdcData->setTitre($titre);
-        $pdcData->setSpecialite($these->getDiscipline());
+        $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) {
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
         }

@@ -254,10 +254,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var ArrayCollection
      */
     private $domainesHal;
-    /**
-     * @var Discipline
-     */
-    private $discipline;
+
+    private ?Discipline $discipline = null;
 
     /**
      * @var Etablissement
@@ -404,7 +402,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      *
      * @return These
      */
-    public function setDiscipline(Discipline $discipline = null)
+    public function setDiscipline(Discipline $discipline = null): static
     {
         $this->discipline = $discipline;
 
@@ -416,7 +414,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      *
      * @return Discipline|null
      */
-    public function getDiscipline()
+    public function getDiscipline(): ?Discipline
     {
         return $this->discipline;
     }
@@ -435,11 +433,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * @return string
-     * @deprecated
+     * @deprecated Remise en service suite au bug "Entity of type 'Application\Entity\Db\Discipline' for IDs code(4100108) was not found"
      */
     public function getLibelleDiscipline()
     {
-        return $this->libelleDiscipline;
+        return $this->getDiscipline()?->__toString() ?: $this->libelleDiscipline;
     }
 
     /**so
