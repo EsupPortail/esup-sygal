@@ -2,19 +2,15 @@
 
 /**
  * @var These $these
- * @var Justificatif $autorisation
- * @var Justificatif $rapport
- * @var Justificatif $pv
+ * @var array $documentsLiesSoutenance
  * @var UrlFichierThese $urlFichierThese
  */
 
 use Depot\Controller\Plugin\UrlFichierThese;
-use Soutenance\Entity\Justificatif;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use These\Entity\Db\These;
 
-$canAjouterAutorisation         = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
-$canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
+$canGererDocument             = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
 
 ?>
 
@@ -26,130 +22,52 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
         <p class="lead">
         Dépôt des fichiers liés à la soutenance : autorisation de soutenance, rapport de soutenance
         </p>
-        <!--todo JP: section qui se repete completeement par manque de temps (faire aide de vue ou partial ) -->
-        <h3>Autorisation de soutenance</h3>
-        <div class="row">
-            <div class="col-md-4">
-            <?php if ($autorisation === null AND $canAjouterAutorisation) : ?>
-                <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAutorisationSoutenanceAction() */ ?>
-                <a href="<?php echo $this->url('soutenance/justificatif/ajouter-autorisation-soutenance', ['these' => $these->getId()], [], true); ?>"
-                   class="btn btn-primary ajax-modal" data-event="modification">
-                    <span class="icon icon-televerser"></span>
-                    Téléverser l'autorisation de soutenance
-                </a>
-            <?php endif; ?>
-            </div>
-            <div class="col-md-8">
-                <?php if ($autorisation === null) : ?>
-                    <div class="card-header bg-warning">
-                        <span class="icon icon-attention"></span>
-                        Aucune autorisation de soutenance déposée.
-                    </div>
-                <?php else : ?>
-                    <ul>
-                        <li>
-                            <?php echo $this->justificatif()->render($autorisation, $urlFichierThese); ?>
-                            <?php if ($canAjouterAutorisation) : ?>
-                                <a class="btn btn-danger" href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                    ['justificatif' => $autorisation->getId(), 'these' => $these->getId()],
-                                    ["query" => [
-                                            "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
-                                        ]
-                                    ],
-                                    true); ?>">
-                                    <span class="icon icon-delete"></span>
-                                    Supprimer
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    </ul>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <br/>
-
-        <h3>Rapport de soutenance</h3>
-        <div class="row">
-            <div class="col-md-4">
-                <?php if ($rapport === null AND $canAjouterRapport) : ?>
-                    <?php /** @see \Soutenance\Controller\JustificatifController::ajouterRapportSoutenanceAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/justificatif/ajouter-rapport-soutenance', ['these' => $these->getId()], [], true); ?>"
+        <?php foreach ($documentsLiesSoutenance as $document) : ?>
+            <h3><?= $document["label"] ?></h3>
+            <div class="row">
+                <div class="col-md-4">
+                <?php if ($document["justificatif"] === null && $canGererDocument) : ?>
+                    <?php /** @see \Soutenance\Controller\JustificatifController::ajouterDocumentLieSoutenanceAction() */?>
+                    <a href="<?php echo $this->url("soutenance/justificatif/ajouter-document-lie-soutenance", ['these' => $these?->getId()], ["query" => [
+                        "nature" => $document["type"],
+                        "label" => $document["label"]
+                    ]], true) ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
                         <span class="icon icon-televerser"></span>
-                        Téléverser rapport de soutenance
+                        Téléverser <?= strtolower($document["label"]) ?>
                     </a>
                 <?php endif; ?>
+                </div>
+                <div class="col-md-8">
+                    <?php if (empty($document["justificatif"])) : ?>
+                        <div class="card-header bg-warning">
+                            <span class="icon icon-attention"></span>
+                            Aucun(e) <?= strtolower($document["label"]) ?> déposé(e).
+                        </div>
+                    <?php else : ?>
+                        <ul>
+                            <li>
+                                <?php echo $this->justificatif()->render($document["justificatif"], $urlFichierThese); ?>
+                                <?php if ($canGererDocument) : ?>
+                                    <a href="<?php echo $this->url('soutenance/justificatif/retirer',
+                                        ['justificatif' => $document["justificatif"]->getId(), 'these' => $these->getId()],
+                                        ["query" => [
+                                                "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
+                                            ]
+                                        ],
+                                        true); ?>"
+                                       data-toggle="confirmationx"
+                                       data-message="Êtes-vous sûr de vouloir supprimer ce document ?">
+                                        <span style='color:darkred;' class="icon icon-delete iconly" data-bs-toggle="tooltip" title="Supprimer le document"></span>
+                                    </a>
+                                <?php endif; ?>
+                            </li>
+                        </ul>
+                    <?php endif; ?>
+                </div>
             </div>
-            <div class="col-md-8">
-                <?php if ($rapport === null or empty($rapport)) : ?>
-                    <div class="card-header bg-warning">
-                        <span class="icon icon-attention"></span>
-                        Aucune rapport de soutenance déposé.
-                    </div>
-                <?php else: ?>
-                    <ul>
-                        <li>
-                            <?php echo $this->justificatif()->render($rapport, $urlFichierThese); ?>
-                            <?php if ($canAjouterRapport) : ?>
-                                <a class="btn btn-danger" href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                    ['justificatif' => $rapport->getId(), 'these' => $these->getId()],
-                                    ["query" => [
-                                        "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
-                                    ]
-                                    ],
-                                    true); ?>">
-                                    <span class="icon icon-delete"></span>
-                                    Supprimer
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    </ul>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <br/>
-
-        <h3>Procès-verbal de soutenance</h3>
-        <div class="row">
-            <div class="col-md-4">
-                <?php if ($pv === null AND $canAjouterAutorisation) : ?>
-                    <?php /** @see \Soutenance\Controller\JustificatifController::ajouterProcesVerbalSoutenanceAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/justificatif/ajouter-proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
-                       class="btn btn-primary ajax-modal" data-event="modification">
-                        <span class="icon icon-televerser"></span>
-                        Téléverser le procès-verbal de soutenance
-                    </a>
-                <?php endif; ?>
-            </div>
-            <div class="col-md-8">
-                <?php if ($pv === null) : ?>
-                    <div class="card-header bg-warning">
-                        <span class="icon icon-attention"></span>
-                        Aucun procès-verbal de soutenance déposé.
-                    </div>
-                <?php else : ?>
-                    <ul>
-                        <li>
-                            <?php echo $this->justificatif()->render($pv, $urlFichierThese); ?>
-                            <?php if ($canAjouterAutorisation) : ?>
-                                <a class="btn btn-danger" href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                    ['justificatif' => $pv->getId(), 'these' => $these->getId()],
-                                    ["query" => [
-                                        "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
-                                    ]
-                                    ],
-                                    true); ?>">
-                                    <span class="icon icon-delete"></span>
-                                    Supprimer
-                                </a>
-                            <?php endif; ?>
-                        </li>
-                    </ul>
-                <?php endif; ?>
-            </div>
-        </div>
+            <br/>
+        <?php endforeach; ?>
     </div>
 </div>
 

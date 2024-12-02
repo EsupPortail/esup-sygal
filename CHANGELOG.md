@@ -12,6 +12,7 @@ Journal des modifications
 - Abandon de la bibliothèque unicaen/auth et migration vers unicaen/authentification, utilisateur, privilege.
 - Dépôt d'une version corrigée de la thèse : possibilité de forcer pour une thèse en particulier les paramètres de config 'depot_version_corrigee.resaisir_autorisation_diffusion' et 'resaisir_attestations' (pas d'UI pour l'instant). 
 - Réorganisation du menu Administration
+- Nouveau document lié à la soutenance : Rapport technique de soutenance
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.

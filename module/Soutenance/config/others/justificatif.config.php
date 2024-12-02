@@ -71,9 +71,7 @@ return [
                 [
                     'controller' => JustificatifController::class,
                     'action' => [
-                        'ajouter-autorisation-soutenance',
-                        'ajouter-rapport-soutenance',
-                        'ajouter-proces-verbal-soutenance',
+                        'ajouter-document-lie-soutenance',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
                 ],
@@ -123,36 +121,14 @@ return [
                                     ],
                                 ],
                             ],
-                            'ajouter-autorisation-soutenance' => [
+                            'ajouter-document-lie-soutenance' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/ajouter-autorisation-soutenance',
+                                    'route' => '/ajouter-document-lie-soutenance',
                                     'defaults' => [
-                                        /** @see JustificatifController::ajouterAutorisationSoutenanceAction() */
+                                        /** @see JustificatifController::ajouterDocumentLieSoutenanceAction() */
                                         'controller' => JustificatifController::class,
-                                        'action' => 'ajouter-autorisation-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'ajouter-rapport-soutenance' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/ajouter-rapport-soutenance',
-                                    'defaults' => [
-                                        /** @see JustificatifController::ajouterRapportSoutenanceAction() */
-                                        'controller' => JustificatifController::class,
-                                        'action' => 'ajouter-rapport-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'ajouter-proces-verbal-soutenance' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route' => '/ajouter-proces-verbal-soutenance',
-                                    'defaults' => [
-                                        /** @see JustificatifController::ajouterProcesVerbalAction() */
-                                        'controller' => JustificatifController::class,
-                                        'action' => 'ajouter-proces-verbal-soutenance',
+                                        'action' => 'ajouter-document-lie-soutenance',
                                     ],
                                 ],
                             ],

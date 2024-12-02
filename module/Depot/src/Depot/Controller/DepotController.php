@@ -341,6 +341,7 @@ class DepotController extends AbstractController
             'these' => $these,
             'pvSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
             'rapportSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
+            'rapportTechniqueSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_RAPPORT_TECHNIQUE_SOUTENANCE),
             'preRapportSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
             'demandeConfidentUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_DEMANDE_CONFIDENT),
             'prolongConfidentUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
@@ -888,6 +889,25 @@ class DepotController extends AbstractController
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_SOUTENANCE);
+        $view->setVariable('readonly', true);
+        $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        if (!$dateSoutenanceDepassee) {
+            $view->setVariable('message', "Non pertinent avant la soutenance.");
+        }
+        $view->setTemplate('depot/depot/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotRapportTechniqueSoutenanceAction(): ViewModel
+    {
+        $these = $this->requestedThese();
+        $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
+
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_TECHNIQUE_SOUTENANCE);
         $view->setVariable('readonly', true);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
         if (!$dateSoutenanceDepassee) {

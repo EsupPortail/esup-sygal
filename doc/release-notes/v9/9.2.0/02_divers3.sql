@@ -124,3 +124,11 @@ order by tmp.level_i;
 
 alter table these add resaisir_autorisation_diffusion_depot_version_corrigee boolean;
 alter table these add resaisir_attestations_depot_version_corrigee boolean;
+
+--
+-- Nouvelle nature de fichier pour la soutenance
+--
+INSERT INTO nature_fichier (id, code, libelle) VALUES (300,'RAPPORT_TECHNIQUE_SOUTENANCE', 'Rapport technique de soutenance');
+
+--MAJ du libellé du fichier Autorisation de soutenance
+UPDATE nature_fichier set libelle = 'Autorisation de soutenance' where code = 'AUTORISATION_SOUTENANCE'

@@ -14,9 +14,7 @@
  * @var array $justificatifs
  * @var UrlFichierThese $urlFichierThese
  *
- * @var Justificatif $autorisation
- * @var Justificatif $pv
- * @var Justificatif $rapport
+ * @var array $documentsLiesSoutenance
  */
 
 use Application\Constants;
@@ -472,9 +470,8 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/documents',
         [
-            'these' => $these, 'autorisation' => $autorisation, 'rapport' => $rapport, 'pv' => $pv,
+            'these' => $these, 'documentsLiesSoutenance' => $documentsLiesSoutenance,
             'urlFichierThese' => $urlFichierThese
-
         ]
     ); ?>
 

@@ -112,9 +112,7 @@ class PresoutenanceController extends AbstractController
         $justificatifs = $this->justificatifService->generateListeJustificatif($proposition);
         $justificatifsOk = $this->justificatifService->isJustificatifsOk($proposition, $justificatifs);
 
-        $autorisation = $proposition->getJustificatif(NatureFichier::CODE_AUTORISATION_SOUTENANCE);
-        $rapport = $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_SOUTENANCE);
-        $pv = $proposition->getJustificatif(NatureFichier::CODE_PV_SOUTENANCE);
+        $documentsLiesSoutenance = $this->justificatifService->generateListeDocumentsLiesSoutenance($proposition);
 
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->engagementImpartialiteService->getEngagmentsImpartialiteByThese($these, $rapporteurs);
@@ -147,9 +145,7 @@ class PresoutenanceController extends AbstractController
 
             'deadline' => $deadline,
 
-            'autorisation' => $autorisation,
-            'pv' => $pv,
-            'rapport' => $rapport,
+            'documentsLiesSoutenance' => $documentsLiesSoutenance,
         ]);
     }
 

@@ -20,6 +20,7 @@ class NatureFichier
     const CODE_CONV_MISE_EN_LIGNE_AVENANT = 'CONV_MISE_EN_LIGNE_AVENANT';
     const CODE_PRE_RAPPORT_SOUTENANCE = 'PRE_RAPPORT_SOUTENANCE';
     const CODE_RAPPORT_SOUTENANCE = 'RAPPORT_SOUTENANCE';
+    const CODE_RAPPORT_TECHNIQUE_SOUTENANCE = 'RAPPORT_TECHNIQUE_SOUTENANCE';
     const CODE_CONV_FORMATION_DOCTORALE = 'CONV_FORMATION_DOCTORALE';
     const CODE_CONV_FORMATION_DOCTORALE_AVENANT = 'CONV_FORMATION_DOCTORALE_AVENANT';
     const CODE_CHARTE_DOCTORAT = 'CHARTE_DOCTORAT';
@@ -32,6 +33,7 @@ class NatureFichier
         self::CODE_CONV_MISE_EN_LIGNE_AVENANT,
         self::CODE_PRE_RAPPORT_SOUTENANCE,
         self::CODE_RAPPORT_SOUTENANCE,
+        self::CODE_RAPPORT_TECHNIQUE_SOUTENANCE,
         self::CODE_CONV_FORMATION_DOCTORALE,
         self::CODE_CONV_FORMATION_DOCTORALE_AVENANT,
         self::CODE_CHARTE_DOCTORAT,
@@ -66,6 +68,11 @@ class NatureFichier
     const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
     const LABEL_DEMANDE_CONFIDENT = "Formulaire de demande de confidentialité";
     const LABEL_AUTRES_JUSTIFICATIFS = "Autres justificatifs concernant la soutenance";
+    const LABEL_AUTORISATION_SOUTENANCE = 'Autorisation de soutenance';
+    const LABEL_PV_SOUTENANCE = 'Procès-verbal de soutenance';
+    const LABEL_RAPPORT_SOUTENANCE = 'Rapport de soutenance';
+    const LABEL_RAPPORT_TECHNIQUE_SOUTENANCE = 'Rapport technique de soutenance';
+
 
     //Admission
     const CODE_ADMISSION_CHARTE_DOCTORAT = "ADMISSION_CHARTE_DOCTORAT";

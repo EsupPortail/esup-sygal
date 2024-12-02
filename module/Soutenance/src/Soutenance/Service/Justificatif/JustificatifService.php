@@ -2,22 +2,23 @@
 
 namespace Soutenance\Service\Justificatif;
 
-use Fichier\Entity\Db\NatureFichier;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Fichier\Entity\Db\NatureFichier;
+use Laminas\Mvc\Controller\AbstractActionController;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
 
-class JustificatifService {
+class JustificatifService
+{
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
+
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -25,7 +26,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function create(Justificatif $justificatif) : Justificatif
+    public function create(Justificatif $justificatif): Justificatif
     {
         try {
             $this->getEntityManager()->persist($justificatif);
@@ -40,7 +41,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function update(Justificatif $justificatif) : Justificatif
+    public function update(Justificatif $justificatif): Justificatif
     {
         try {
             $this->getEntityManager()->flush($justificatif);
@@ -54,7 +55,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function historise(Justificatif $justificatif) : Justificatif
+    public function historise(Justificatif $justificatif): Justificatif
     {
         try {
             $justificatif->historiser();
@@ -69,7 +70,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function restore(Justificatif $justificatif) : Justificatif
+    public function restore(Justificatif $justificatif): Justificatif
     {
         try {
             $justificatif->dehistoriser();
@@ -84,7 +85,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function delete(Justificatif $justificatif) : Justificatif
+    public function delete(Justificatif $justificatif): Justificatif
     {
         try {
             $this->getEntityManager()->remove($justificatif->getFichier());
@@ -101,15 +102,14 @@ class JustificatifService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder() : QueryBuilder
+    public function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
             ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
             ->addSelect('fichierthese')->join('justificatif.fichier', 'fichierthese')
             ->addSelect('fichier')->join('fichierthese.fichier', 'fichier')
             ->addSelect('nature')->join('fichier.nature', 'nature')
-            ->addSelect('membre')->leftJoin('justificatif.membre', 'membre')
-        ;
+            ->addSelect('membre')->leftJoin('justificatif.membre', 'membre');
         return $qb;
     }
 
@@ -117,13 +117,12 @@ class JustificatifService {
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('justificatif.id = :id')
-            ->setParameter('id', $id)
-        ;
+            ->setParameter('id', $id);
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs Justificatif partagent le même identifiant [".$id."].", $e);
+            throw new RuntimeException("Plusieurs Justificatif partagent le même identifiant [" . $id . "].", $e);
         }
         return $result;
     }
@@ -133,7 +132,7 @@ class JustificatifService {
      * @param string $paramName
      * @return Justificatif|null
      */
-    public function getRequestedJustificatif(AbstractActionController $controller, string $paramName = 'justificatif') : ?Justificatif
+    public function getRequestedJustificatif(AbstractActionController $controller, string $paramName = 'justificatif'): ?Justificatif
     {
         $id = $controller->params()->fromRoute($paramName);
         $justificatif = $this->getJustificatif($id);
@@ -194,7 +193,7 @@ class JustificatifService {
          * @var Membre $membre
          */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->isVisio() OR $all === true) {
+            if ($membre->isVisio() or $all === true) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_DELEGUATION_SIGNATURE,
                     'label' => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
@@ -202,7 +201,7 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre),
                 ];
             }
-            if ($membre->isExterieur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->isHDR() AND $membre->getQualite()->getJustificatif() !== 'O') {
+            if ($membre->isExterieur() and $membre->getQualite()->isRangB() and $membre->getQualite()->isHDR() and $membre->getQualite()->getJustificatif() !== 'O') {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_HDR,
                     'label' => NatureFichier::LABEL_JUSTIFICATIF_HDR,
@@ -210,7 +209,7 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_HDR, $membre),
                 ];
             }
-            if ($membre->isExterieur() AND $membre->getQualite()->isEmeritat()) {
+            if ($membre->isExterieur() and $membre->getQualite()->isEmeritat()) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_EMERITAT,
                     'label' => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
@@ -218,7 +217,7 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_EMERITAT, $membre),
                 ];
             }
-            if ($membre->isExterieur() AND $membre->getQualite()->getJustificatif() === 'O') {
+            if ($membre->isExterieur() and $membre->getQualite()->getJustificatif() === 'O') {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_ETRANGER,
                     'label' => NatureFichier::LABEL_JUSTIFICATIF_ETRANGER,
@@ -229,7 +228,9 @@ class JustificatifService {
         }
 
         $listes = $proposition->getJustificatifs();
-        $listes = array_filter($listes, function (Justificatif $a) { return $a->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS;});
+        $listes = array_filter($listes, function (Justificatif $a) {
+            return $a->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS;
+        });
         foreach ($listes as $element) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_AUTRES_JUSTIFICATIFS,
@@ -241,10 +242,54 @@ class JustificatifService {
 
     /**
      * @param Proposition $proposition
+     * @param bool $all
+     * @return array
+     */
+    public function generateListeDocumentsLiesSoutenance($proposition, bool $all = false)
+    {
+        $documents = [];
+        if ($proposition === null) return $documents;
+
+        /**
+         * Justificatifs liés à la soutenance :
+         * - NatureFichier::CODE_AUTORISATION_SOUTENANCE,
+         * - NatureFichier::CODE_RAPPORT_SOUTENANCE,
+         * - NatureFichier::CODE_RAPPORT_TECHNIQUE_SOUTENANCE,
+         * - NatureFichier::CODE_PV_SOUTENANCE,
+         */
+        $documents[] = [
+            'type' => NatureFichier::CODE_AUTORISATION_SOUTENANCE,
+            'label' => NatureFichier::LABEL_AUTORISATION_SOUTENANCE,
+            'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_AUTORISATION_SOUTENANCE),
+        ];
+
+        $documents[] = [
+            'type' => NatureFichier::CODE_RAPPORT_SOUTENANCE,
+            'label' => NatureFichier::LABEL_RAPPORT_SOUTENANCE,
+            'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_SOUTENANCE),
+        ];
+
+        $documents[] = [
+            'type' => NatureFichier::CODE_RAPPORT_TECHNIQUE_SOUTENANCE,
+            'label' => NatureFichier::LABEL_RAPPORT_TECHNIQUE_SOUTENANCE,
+            'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_TECHNIQUE_SOUTENANCE),
+        ];
+
+        $documents[] = [
+            'type' => NatureFichier::CODE_PV_SOUTENANCE,
+            'label' => NatureFichier::LABEL_PV_SOUTENANCE,
+            'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_PV_SOUTENANCE),
+        ];
+
+        return $documents;
+    }
+
+    /**
+     * @param Proposition $proposition
      * @param array $justificatifs
      * @return boolean|null
      */
-    public function isJustificatifsOk(Proposition $proposition, array $justificatifs = []) : ?bool
+    public function isJustificatifsOk(Proposition $proposition, array $justificatifs = []): ?bool
     {
         $non_bloquant = ['DELEGUATION_SIGNATURE', 'DEMANDE_LABEL_EUROPEEN'];
 
@@ -267,13 +312,12 @@ class JustificatifService {
     }
 
     /** @return Justificatif[] */
-    public function getJustificatifsByPropositionAndNature(Proposition $proposition, string $natureCode, bool $histo = false) : array
+    public function getJustificatifsByPropositionAndNature(Proposition $proposition, string $natureCode, bool $histo = false): array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('justificatif.proposition = :proposition')->setParameter('proposition', $proposition)
             ->andWhere('nature.code = :nature')->setParameter('nature', $natureCode)
-            ->orderBy('justificatif.histoCreation', 'DESC')
-        ;
+            ->orderBy('justificatif.histoCreation', 'DESC');
         if (!$histo) $qb = $qb->andWhere('justificatif.histoDestruction IS NULL');
 
         $result = $qb->getQuery()->getResult();

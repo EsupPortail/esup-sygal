@@ -11,6 +11,7 @@ use These\Entity\Db\These;
  * @var These $these
  * @var string $pvSoutenanceUrl
  * @var string $rapportSoutenanceUrl
+ * @var string $rapportTechniqueSoutenanceUrl
  * @var string $preRapportSoutenanceUrl
  * @var string $demandeConfidentUrl
  * @var string $prolongConfidentUrl
@@ -109,6 +110,12 @@ use These\Entity\Db\These;
                 <!-- màj via ajax -->
             </div>
         </div>
+
+        <div class="col-md-4">
+            <div id="rapportTechniqueSoutenanceDiv" class="" data-url="<?php echo $rapportTechniqueSoutenanceUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
     </div>
 
     <h2>Mise en ligne</h2>
@@ -146,6 +153,7 @@ use These\Entity\Db\These;
 
         var pvSoutenanceLoader = loaderFactory("pvSoutenanceDiv");
         var rapportSoutenanceLoader = loaderFactory("rapportSoutenanceDiv");
+        var rapportTechniqueSoutenanceLoader = loaderFactory("rapportTechniqueSoutenanceDiv");
         var preRapportSoutenanceLoader = loaderFactory("preRapportSoutenanceDiv");
 
         var demandeConfidentLoader = loaderFactory("demandeConfidentDiv");
@@ -174,6 +182,7 @@ use These\Entity\Db\These;
             pvSoutenanceLoader,
             preRapportSoutenanceLoader,
             rapportSoutenanceLoader,
+            rapportTechniqueSoutenanceLoader,
 
             convMiseEnLigneLoader,
             convMiseEnLigneAvenantLoader,
