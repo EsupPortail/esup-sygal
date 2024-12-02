@@ -113,12 +113,12 @@ class AdmissionController extends AdmissionAbstractController {
 
             /** @var Inscription $inscription */
             $inscription = $admission->getInscription()->first();
-            $etablissementInscription = $inscription?->getEtablissementInscription();
+            $etablissementInscription = $inscription instanceof Inscription ? $inscription->getEtablissementInscription() : null;
             if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
                 //Enregistrement des templates si l'établissement ne les possèdes pas encore
                 $this->admissionService->createTemplatesForEtablissement($etablissementInscription);
-                $texteHandicap = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_HANDICAP."_".$etablissementInscription->getStructure()->getSigle());
-                $texteVae = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_VAE."_".$etablissementInscription->getStructure()->getSigle());
+                $texteHandicap = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_HANDICAP."/".$etablissementInscription->getStructure()->getSigle());
+                $texteVae = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_VAE."/".$etablissementInscription->getStructure()->getSigle());
             }
         }
 
@@ -156,10 +156,10 @@ class AdmissionController extends AdmissionAbstractController {
             }
             /** @var Inscription $inscription */
             $inscription = $admission->getInscription()->first();
-            $etablissementInscription = $inscription?->getEtablissementInscription();
+            $etablissementInscription = $inscription instanceof Inscription ? $inscription?->getEtablissementInscription() : null;
             if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
-                $texteCotutelle = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COTUTELLE."_".$etablissementInscription->getStructure()->getSigle());
-                $texteCoencadrement = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COENCADREMENT."_".$etablissementInscription->getStructure()->getSigle());
+                $texteCotutelle = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COTUTELLE."/".$etablissementInscription->getStructure()->getSigle());
+                $texteCoencadrement = $this->contenuService->generateRenduByTemplateCode(TexteTemplates::ADMISSION_INFO_COENCADREMENT."/".$etablissementInscription->getStructure()->getSigle());
             }
         }
 
@@ -200,7 +200,7 @@ class AdmissionController extends AdmissionAbstractController {
         /** @var Admission $admission */
         $admission = $this->getAdmission();
 
-        if(!empty($admission)) {
+            if(!empty($admission)) {
             $data = $this->multipageForm($this->admissionForm)->getFormSessionData();
             $this->admissionForm->bind($admission);
             $canModifierAdmission  = $this->isAllowed($admission,AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION) || $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION);

@@ -169,9 +169,13 @@ $canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(Docume
                     </p>
                 <?php elseif($role->getCode() === Role::CODE_ADMIN_TECH):
                     /** @see TemplateController::modifierAction */
-                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteHandicap->getTemplate()->getId()], [], true) : "#"; ?>
+                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteHandicap->getTemplate()->getId()], [], true) : "#";
+                    $texteToggle = $admission?->getInscription()->first() && ($etablissementInscription = $admission?->getInscription()->first()->getEtablissementInscription()) ?
+                        "Personnaliser ce texte pour l'établissement d'inscription renseigné (".$etablissementInscription->getSigle().")"
+                        : "Modifier ce texte";
+                    ?>
                     <a href="<?php echo $lien; ?>" class="ajax-modal" data-event="modification-template">
-                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Modifier ce champ">
+                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="<?= $texteToggle ?>">
                             <?= $texteHandicapCorps ?>
                             <span class="icon icon-modifier edit-icon"></span>
                         </p>
@@ -220,9 +224,13 @@ $canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(Docume
                     </p>
                 <?php elseif($role->getCode() === Role::CODE_ADMIN_TECH):
                     /** @see TemplateController::modifierAction */
-                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteVae->getTemplate()->getId()], [], true) : "#"; ?>
+                    $lien = $canModifier ? $this->url('contenu/template/modifier', ['template' => $texteVae->getTemplate()->getId()], [], true) : "#";
+                    $texteToggle = $admission?->getInscription()->first() && ($etablissementInscription = $admission?->getInscription()->first()->getEtablissementInscription()) ?
+                        "Personnaliser ce texte pour l'établissement d'inscription renseigné (".$etablissementInscription->getSigle().")"
+                        : "Modifier ce texte";
+                    ?>
                     <a href="<?php echo $lien; ?>" class="ajax-modal" data-event="modification-template">
-                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="Modifier ce champ">
+                        <p class="admission-field-information information-modifiable" data-bs-toggle="tooltip" title="<?= $texteToggle ?>">
                             <?= $texteVaeCorps ?>
                             <span class="icon icon-modifier edit-icon"></span>
                         </p>
