@@ -3,3 +3,9 @@ INSERT INTO unicaen_renderer_template (code, description, document_type, documen
 INSERT INTO unicaen_renderer_template (code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES ( 'ADMISSION_INFO_VAE', '<p>Texte affiché dans le module admission</p>', 'texte', 'Informations concernant la VAE', '<p>Si une Validation des Acquis de l''Expérience (V.A.E) est souhaitée, vous devez au préalable contacter le service spécifique de votre établissement.</p>', null, 'Admission\Provider\Template');
 INSERT INTO unicaen_renderer_template (code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES ( 'ADMISSION_INFO_COTUTELLE', '<p>Texte affiché dans le module admission</p>', 'texte', 'Informations concernant la co-tutelle', '<p>Attention, il est <strong>OBLIGATOIRE</strong> d''en faire la demande officielle via le formulaire spécifique. Retrouvez toutes les informations en ligne sur le site internet de votre établissement d''inscription.</p>', null, 'Admission\Provider\Template');
 INSERT INTO unicaen_renderer_template (code, description, document_type, document_sujet, document_corps, document_css, namespace) VALUES ( 'ADMISSION_INFO_COENCADREMENT', '<p>Texte affiché dans le module admission</p>', 'texte', 'Informations concernant le co-encadrement', '<p>Retrouvez toutes les informations et le formulaire en ligne sur le site internet de votre établissement d''inscription.</p>', null, 'Admission\Provider\Template');
+
+--Mise à jour des des specialités suite aux modifications faîtes pour la table discipline
+UPDATE admission_inscription ai
+SET specialite_doctorat = ds.id
+    FROM discipline_sise ds
+WHERE ds.code = ai.specialite_doctorat;

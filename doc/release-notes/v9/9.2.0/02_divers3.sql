@@ -132,3 +132,9 @@ INSERT INTO nature_fichier (id, code, libelle) VALUES (300,'RAPPORT_TECHNIQUE_SO
 
 --MAJ du libellé du fichier Autorisation de soutenance
 UPDATE nature_fichier set libelle = 'Autorisation de soutenance' where code = 'AUTORISATION_SOUTENANCE'
+
+-- MAJ des disciplines de thèse suite aux modifications faites pour la table discipline
+UPDATE these t
+SET discipline_sise_id = ds.id
+    FROM discipline_sise ds
+WHERE ds.code = t.discipline_sise_code;

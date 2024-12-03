@@ -16,6 +16,7 @@ Journal des modifications
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.
+- [FIX] Module Admission inaccessible suite au bug de l'entité Discipline
 
 9.1.1
 -----

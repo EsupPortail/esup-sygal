@@ -40,7 +40,7 @@
         </many-to-one>
         <many-to-one field="specialiteDoctorat" target-entity="Application\Entity\Db\Discipline">
             <join-columns>
-                <join-column name="specialite_doctorat" referenced-column-name="code"/>
+                <join-column name="specialite_doctorat" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="composanteDoctorat" target-entity="Structure\Entity\Db\ComposanteEnseignement">

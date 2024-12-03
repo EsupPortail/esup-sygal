@@ -98,7 +98,7 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'name' => 'discipline',
             'options' => [
                 'label' => "Discipline :",
-                'value_options' => $this->disciplineService->getDisciplinesAsOptions("code", "ASC", "code"),
+                'value_options' => $this->disciplineService->getDisciplinesAsOptions("libelle", "ASC", "id"),
                 'empty_option' => "Sélectionner une discipline",
             ],
             'attributes' => [

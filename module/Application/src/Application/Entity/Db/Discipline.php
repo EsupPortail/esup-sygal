@@ -9,6 +9,14 @@ class Discipline {
     private string $libelle;
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Convertit la collection d'entités spécifiée en un tableau d'options injectable dans un <select>.
      *
      * @param \Application\Entity\Db\Discipline[] $entities
@@ -23,6 +31,8 @@ class Discipline {
                 $options[$e->getLibelle()] = $e->getLibelle();
             } elseif ($attributeForKeys === 'code') {
                 $options[$e->getCode()] = $e->getLibelle();
+            } elseif ($attributeForKeys === 'id') {
+                $options[$e->getId()] = $e->getLibelle();
             }
         }
 

@@ -32,7 +32,7 @@ class InscriptionFieldsetFactory
         $fieldset->setObject(new Inscription());
 
         $disciplineService = $container->get(DisciplineService::class);
-        $disciplines = $disciplineService->getDisciplinesAsOptions('code','ASC','code');
+        $disciplines = $disciplineService->getDisciplinesAsOptions('libelle','ASC','id');
         $fieldset->setSpecialites($disciplines);
 
         $structureService = $container->get(StructureService::class);

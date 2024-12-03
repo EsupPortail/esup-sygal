@@ -643,7 +643,7 @@ a.btn > span.icon {
 .btn-primary:hover, .btn-primary:focus {
   background-color: var(--primary-color); }
 
-.box .btn.btn-danger {
+.box .btn.btn-danger, .box .btn.btn-success {
   margin-bottom: 10px; }
 
 .box .btn.btn-primary {

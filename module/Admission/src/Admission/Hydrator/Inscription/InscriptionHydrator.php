@@ -78,7 +78,7 @@ class InscriptionHydrator extends DoctrineObject
         }
 
         if (array_key_exists($key = 'specialiteDoctorat', $data) && $data[$key] instanceof Discipline) {
-            $data["specialiteDoctorat"] = $data["specialiteDoctorat"]->getCode();
+            $data["specialiteDoctorat"] = $data["specialiteDoctorat"]->getId();
         }
 
         $data['verificationInscription'] = $object->getVerificationInscription()->first();
