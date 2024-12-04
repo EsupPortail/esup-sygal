@@ -342,8 +342,8 @@ Dans le fichier de config `{dev|test|prod}.secret.local.php` :
 - Idem dans la config des imports/synchros juste après :
 
 ```php
-        'imports' => \Application\generateConfigImportsForEtabs($etabs = ['UCN']), // <<<<<<<< remplacer 'UCN' par votre code établissement
-        'synchros' => \Application\generateConfigSynchrosForEtabs($etabs),
+        'imports' => \Application\Config::generateConfigImportsForEtabs($etabs = ['UCN']), // <<<<<<<< remplacer 'UCN' par votre code établissement
+        'synchros' => \Application\Config::generateConfigSynchrosForEtabs($etabs),
 ```
 
 - La config de connexion au WS doit être complétée :

@@ -17,6 +17,8 @@ Journal des modifications
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.
 - [FIX] Module Admission inaccessible suite au bug de l'entité Discipline
+- [FIX] Module Admission inaccessible suite au bug de l'entité Discipline
+- [FIX] Config : plus de fonctions directement dans des fichiers de config, ça vilain et ça complique les tests fonctionnels
 
 9.1.1
 -----

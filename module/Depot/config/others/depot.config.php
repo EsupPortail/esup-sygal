@@ -49,7 +49,7 @@ use These\Provider\Privilege\ThesePrivileges;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
-$depotFichierDiversRoutesConfig = generateDepotFichierDiversRoutesConfig();
+$depotFichierDiversRoutesConfig = Config::generateDepotFichierDiversRoutesConfig();
 
 return [
     'bjyauthorize' => [
@@ -1295,23 +1295,3 @@ return [
         ],
     ],
 ];
-
-
-function generateDepotFichierDiversRoutesConfig(): array
-{
-    $config = [];
-    foreach (NatureFichier::CODES_FICHIERS_DIVERS as $code) {
-        $key = (new NatureFichier())->setCode($code)->getCodeToLowerAndDash();
-        $config[$key] = [
-            'type' => 'Literal',
-            'options' => [
-                'route' => '/' . $key,
-                'defaults' => [
-                    'action' => 'depot-' . $key,
-                ],
-            ],
-        ];
-    }
-
-    return $config;
-}

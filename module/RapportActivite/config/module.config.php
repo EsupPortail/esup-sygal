@@ -64,14 +64,6 @@ use RapportActivite\Service\Validation\RapportActiviteValidationServiceFactory;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
-const VALIDATION_DOCTORANT = 'VALIDATION_DOCTORANT';
-const AVIS_GEST = 'AVIS_GEST';
-const AVIS_DIR_THESE = 'AVIS_DIR_THESE';
-const AVIS_CODIR_THESE = 'AVIS_CODIR_THESE';
-const AVIS_DIR_UR = 'AVIS_DIR_UR';
-const AVIS_DIR_ED = 'AVIS_DIR_ED';
-const VALIDATION_AUTO = 'VALIDATION_AUTO';
-
 return [
     // Options concernant les rapports d'activité
     'rapport-activite' => [
