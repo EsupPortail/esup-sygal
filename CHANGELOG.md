@@ -13,6 +13,9 @@ Journal des modifications
 - Dépôt d'une version corrigée de la thèse : possibilité de forcer pour une thèse en particulier les paramètres de config 'depot_version_corrigee.resaisir_autorisation_diffusion' et 'resaisir_attestations' (pas d'UI pour l'instant). 
 - Réorganisation du menu Administration
 - Nouveau document lié à la soutenance : Rapport technique de soutenance
+- Formulaire de saisie d'une qualité de membre du jury : possibilité de spécifier 'aucun rang' (ex : émérites).
+- Validité du jury de soutenance : nouvelle contrainte sur le nombre maximum d'émérites possibles (nouveau paramètre) ; 
+infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites > 25%).
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.
