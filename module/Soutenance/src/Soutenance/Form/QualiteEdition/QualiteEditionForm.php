@@ -6,9 +6,11 @@ use Application\Utils\FormUtils;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
+use Laminas\InputFilter\InputProviderInterface;
+use Soutenance\Entity\Qualite;
 
-class QualiteEditionForm extends Form {
-
+class QualiteEditionForm extends Form implements InputProviderInterface
+{
     public function init()
     {
         $this->add(
@@ -19,7 +21,7 @@ class QualiteEditionForm extends Form {
         $this->add(
             (new Radio('rang'))
                 ->setLabel("Rang :")
-                ->setValueOptions(['A' => 'A', 'B' => 'B']))
+                ->setValueOptions(['A' => 'A', 'B' => 'B', 'aucun' => Qualite::RANG_LIBELLE_AUCUN]))
         ;
 
         $this->add(
@@ -41,5 +43,26 @@ class QualiteEditionForm extends Form {
         ;
 
         FormUtils::addSaveButton($this);
+    }
+
+    public function getInputSpecification(): array
+    {
+        return [
+            'libelle' => [
+                'required' => true,
+            ],
+            'rang' => [
+                'required' => true,
+            ],
+            'hdr' => [
+                'required' => true,
+            ],
+            'emeritat' => [
+                'required' => true,
+            ],
+            'justificatif' => [
+                'required' => true,
+            ],
+        ];
     }
 }

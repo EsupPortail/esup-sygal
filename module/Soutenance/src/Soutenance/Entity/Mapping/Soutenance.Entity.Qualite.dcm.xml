@@ -8,7 +8,7 @@
         </id>
 
         <field name="libelle"           type="string"       length="128"        column="libelle"        nullable="false"/>
-        <field name="rang"              type="string"       length="1"          column="rang"           nullable="false"/>
+        <field name="rang"              type="string"       length="1"          column="rang"           nullable="true"/>
         <field name="hdr"               type="string"       length="1"          column="hdr"            nullable="false"/>
         <field name="emeritat"          type="string"       length="1"          column="emeritat"       nullable="false"/>
         <field name="justificatif"      type="string"       length="1"          column="justificatif"   nullable="false"/>

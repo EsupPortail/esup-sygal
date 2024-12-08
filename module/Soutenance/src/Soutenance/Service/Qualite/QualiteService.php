@@ -204,7 +204,7 @@ class QualiteService extends BaseService
         $listings = [];
         $qualites = $this->getQualites();
         foreach ($qualites as $qualite) {
-            $listings[$qualite->getRang()][] = $qualite;
+            $listings[$qualite->getRang() ?: Qualite::RANG_LIBELLE_AUCUN][] = $qualite;
         }
 
         $result = [];

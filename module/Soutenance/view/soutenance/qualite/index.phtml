@@ -47,7 +47,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
     <tbody>
         <?php foreach ($qualites as $qualite): ?>
         <tr>
-            <td> <?php echo $qualite->getRang(); ?> </td>
+            <td> <?php echo $qualite->getRang() ?: '-'; ?> </td>
             <td>
                     <div class="toggle" id="_<?php echo $qualite->getId(); ?>">
                     <?php

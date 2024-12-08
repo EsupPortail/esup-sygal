@@ -109,6 +109,18 @@ class Membre implements HistoriqueAwareInterface {
         return $civilite;
     }
 
+    public function getCiviliteCourte(): string
+    {
+        if ($this->getIndividu()) {
+            return $this->getIndividu()->getCivilite() ?: '-';
+        }
+
+        if ($this->getGenre() === 'F') return "Mme";
+        if ($this->getGenre() === 'H') return "M.";
+
+        return '-';
+    }
+
     /**
      * @return string
      */
@@ -168,10 +180,7 @@ class Membre implements HistoriqueAwareInterface {
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRang()
+    public function getRang(): ?string
     {
         if ($this->getQualite() === null) {
             throw new RuntimeException("Pas de qualité associé au membre de jury [".$this->getDenomination()."].");

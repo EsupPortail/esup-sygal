@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\QualiteEdition;
 
-use Soutenance\Entity\Qualite;
 use Laminas\Hydrator\HydratorInterface;
+use Soutenance\Entity\Qualite;
 
 class QualiteEditiontHydrator implements HydratorInterface
 {
@@ -12,9 +12,11 @@ class QualiteEditiontHydrator implements HydratorInterface
      * @param Qualite $qualite
      * @return Qualite
      */
-    public function hydrate(array $data, $qualite) {
+    public function hydrate(array $data, $qualite): Qualite
+    {
+        $data['rang'] = $data['rang'] ?? null;
 
-        $qualite->setRang($data['rang']);
+        $qualite->setRang($data['rang'] === 'aucun' ? null : $data['rang']);
         $qualite->setLibelle($data['libelle']);
         $qualite->setHdr($data['hdr']);
         $qualite->setEmeritat($data['emeritat']);
@@ -27,8 +29,8 @@ class QualiteEditiontHydrator implements HydratorInterface
      * @param Qualite $qualite
      * @return array
      */
-    public function extract($qualite): array {
-
+    public function extract($qualite): array
+    {
         $data = [];
         $data['libelle']         = $qualite->getLibelle();
         $data['rang']            = $qualite->getRang();

@@ -12,12 +12,13 @@ class Qualite implements HistoriqueAwareInterface
 
     const ID_QUALITE_PAR_DEFAUT = 1;
 
+    const RANG_LIBELLE_AUCUN = "Aucun";
+
     /** @var int */
     private $id;
     /** @var string */
     private $libelle;
-    /** @var string */
-    private $rang;
+    private ?string $rang = null;
     /** @var string */
     private $hdr;
     /** @var string */
@@ -56,35 +57,17 @@ class Qualite implements HistoriqueAwareInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRang()
+    public function getRang(): ?string
     {
         return $this->rang;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRangA()
-    {
-        return $this->rang === 'A';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRangB()
+    public function isRangB(): bool
     {
         return $this->rang === 'B';
     }
 
-    /**
-     * @param string $rang
-     * @return Qualite
-     */
-    public function setRang($rang)
+    public function setRang(?string $rang): static
     {
         $this->rang = $rang;
         return $this;
