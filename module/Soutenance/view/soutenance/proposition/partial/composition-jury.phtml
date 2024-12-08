@@ -20,104 +20,156 @@ $these = $proposition->getThese();
             Composition du jury
         </h2>
     </div>
-    <div class="row card-body">
+    <div class="card-body">
 
-        <div class="col-md-4">
-            <h5>
-                Équilibre Femme/Homme
-            </h5>
-            <div class="progress">
-                <div class="progress-bar femme-bar" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;">
-                    Femme
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Équilibre Femme/Homme</strong>
+                </p>
+                <div class="progress">
+                    <div class="progress-bar femme-bar" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;">
+                        Femme
+                    </div>
+                    <div class="progress-bar homme-bar"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;">
+                        Homme
+                    </div>
                 </div>
-                <div class="progress-bar homme-bar"  style="width:<?php echo $indicateurs["parité"]["Homme"]*100; ?>%;">
-                    Homme
+            </div>
+
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Nombre de membres</strong>
+                    <?php if ($indicateurs["membre"]["valide"]):?>
+                        <span class="badge bg-success"> Valide </span>
+                    <?php else: ?>
+                        <span class="badge bg-danger">
+                            Non valide
+                            <?php if ($alerte = $indicateurs['membre']['alerte'] ?? null): ?>
+                                <span class="fa fa-info-circle" data-toggle="tooltip" title="<?php echo $alerte ?>"></span>
+                            <?php endif ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["membre"]["Ratio"]*100; ?>%; <?php if ($indicateurs["membre"]["valide"] !== true) echo "background-color:darkred;"; ?>" >
+                        <?php echo $indicateurs["membre"]["Nombre"]; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Nombre de rapporteurs</strong>
+                    <?php if ($indicateurs["rapporteur"]["valide"]):?>
+                        <span class="badge bg-success"> Valide </span>
+                    <?php else: ?>
+                        <span class="badge bg-danger">
+                            Non valide
+                            <?php if ($alerte = $indicateurs['rapporteur']['alerte'] ?? null): ?>
+                                <span class="fa fa-info-circle" data-toggle="tooltip" title="<?php echo $alerte ?>"></span>
+                            <?php endif ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rapporteur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
+                        <?php echo $indicateurs["rapporteur"]["Nombre"]; ?>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <h5>
-                Nombre de membres
-                <?php if ($indicateurs["membre"]["valide"]):?>
-                    <span class="badge bg-success"> Valide </span>
-                <?php else: ?>
-                    <span class="badge bg-error"> Non valide </span>
-                <?php endif; ?>
-            </h5>
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Nombre de rang A</strong>
+                    <?php if ($indicateurs["rang A"]["valide"]):?>
+                        <span class="badge bg-success"> Valide </span>
+                    <?php else: ?>
+                        <span class="badge bg-danger">
+                            Non valide
+                            <?php if ($alerte = $indicateurs['rang A']['alerte'] ?? null): ?>
+                                <span class="fa fa-info-circle" data-toggle="tooltip" title="<?php echo $alerte ?>"></span>
+                            <?php endif ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
+                        <?php echo $indicateurs["rang A"]["Nombre"]; ?>
+                    </div>
+                </div>
+            </div>
 
-            <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["membre"]["Ratio"]*100; ?>%; <?php if ($indicateurs["membre"]["valide"] !== true) echo "background-color:darkred;"; ?>" >
-                    <?php echo $indicateurs["membre"]["Nombre"]; ?>
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Nombre d'extérieurs</strong>
+                    <?php if ($indicateurs["exterieur"]["valide"]):?>
+                        <span class="badge bg-success"> Valide </span>
+                    <?php else: ?>
+                        <span class="badge bg-danger">
+                            Non valide
+                            <?php if ($alerte = $indicateurs['exterieur']['alerte'] ?? null): ?>
+                                <span class="fa fa-info-circle" data-toggle="tooltip" title="<?php echo $alerte ?>"></span>
+                            <?php endif ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["exterieur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["exterieur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
+                        <?php echo $indicateurs["exterieur"]["Nombre"]; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Rapporteurs non valides</strong>
+                    <?php if ($indicateurs["bad-rapporteur"]["valide"]):?>
+                        <span class="badge bg-success"> Valide </span>
+                    <?php else: ?>
+                        <span class="badge bg-danger">
+                            Non valide
+                            <?php if ($alerte = $indicateurs['bad-rapporteur']['alerte'] ?? null): ?>
+                                <span class="fa fa-info-circle" data-toggle="tooltip" title="<?php echo $alerte ?>"></span>
+                            <?php endif ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-danger" style="width:<?php echo $indicateurs["bad-rapporteur"]["Nombre"]/(max(1,$indicateurs["rapporteur"]["Nombre"]))*100; ?>%; ">
+                        <?php echo $indicateurs["bad-rapporteur"]["Nombre"]; ?>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <h5>
-                Nombre de rapporteurs
-                <?php if ($indicateurs["rapporteur"]["valide"]):?>
-                    <span class="badge bg-success"> Valide </span>
-                <?php else: ?>
-                    <span class="badge bg-error"> Non valide </span>
-                <?php endif; ?>
-            </h5>
-            <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rapporteur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rapporteur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
-                    <?php echo $indicateurs["rapporteur"]["Nombre"]; ?>
+        <div class="row">
+            <div class="col-md-4">
+                <p class="mb-1">
+                    <strong>Nombre d'émérites</strong>
+                    <?php if ($indicateurs["emerites"]["valide"]):?>
+                        <span class="badge bg-success"> Valide </span>
+                    <?php else: ?>
+                        <span class="badge bg-danger">
+                            Non valide
+                            <?php if ($alerte = $indicateurs['emerites']['alerte'] ?? null): ?>
+                                <span class="fa fa-info-circle" data-toggle="tooltip" title="<?php echo $alerte ?>"></span>
+                            <?php endif ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["emerites"]["Ratio"]*100; ?>%; <?php if ($indicateurs["emerites"]["valide"] !== true) echo "background-color:darkred;"; ?>">
+                        <?php echo $indicateurs["emerites"]["Nombre"]; ?>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <h5>
-                Nombre de rang A
-                <?php if ($indicateurs["rang A"]["valide"]):?>
-                    <span class="badge bg-success"> Valide </span>
-                <?php else: ?>
-                    <span class="badge bg-danger"> Non valide </span>
-                <?php endif; ?>
-            </h5>
-            <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
-                    <?php echo $indicateurs["rang A"]["Nombre"]; ?>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <h5>
-                Nombre d'extérieurs
-                <?php if ($indicateurs["exterieur"]["valide"]):?>
-                    <span class="badge bg-success"> Valide </span>
-                <?php else: ?>
-                    <span class="badge bg-error"> Non valide </span>
-                <?php endif; ?>
-            </h5>
-            <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["exterieur"]["Ratio"]*100; ?>%; <?php if ($indicateurs["exterieur"]["valide"] !== true) echo "background-color:darkred;"; ?>">
-                    <?php echo $indicateurs["exterieur"]["Nombre"]; ?>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <h5>
-                Rapporteurs non valides
-                <?php if ($indicateurs["bad-rapporteur"]["valide"]):?>
-                    <span class="badge bg-success"> Valide </span>
-                <?php else: ?>
-                    <span class="badge bg-error"> Non valide </span>
-                <?php endif; ?>
-            </h5>
-            <div class="progress">
-                <div class="progress-bar progress-bar-danger" style="width:<?php echo $indicateurs["bad-rapporteur"]["Nombre"]/(max(1,$indicateurs["rapporteur"]["Nombre"]))*100; ?>%; ">
-                    <?php echo $indicateurs["bad-rapporteur"]["Nombre"]; ?>
-                </div>
-            </div>
-        </div>
-
-        <table class="table table-extra-condensed table-composition-jury">
+        <table class="table table-extra-condensed table-hover table-composition-jury">
             <thead>
             <tr>
                 <th>Civilité</th>
@@ -143,14 +195,8 @@ $these = $proposition->getThese();
                 usort($membres, function (Membre $a, Membre $b) { return $a->getNom() . " " . $a->getPrenom() > $b->getNom() . " " . $b->getPrenom();});
             ?>
             <?php foreach($membres as $membre): ?>
-                <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') echo " style='background:lightsalmon;' "; ?>>
-                    <td>
-                        <?php
-                            $civilite = "";
-                            $civilite = $membre->getCivilite();
-                            echo empty($civilite) ? "(Non renseigné)" : $civilite;
-                        ?>
-                    </td>
+                <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->getHdr() !== 'O') echo " style='background:lightsalmon;' "; ?>>
+                    <td> <?php echo $membre->getCiviliteCourte(); ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
                     <td> <?php echo ($membre->getEmail() !== null)?$membre->getEmail():"<strong><span class='text-danger'><span class='fas fa-exclamation-triangle'></span> AUCUN MAIL</span></strong>"; ?> </td>
@@ -234,8 +280,7 @@ $these = $proposition->getThese();
         background-color: salmon;
     }
     .table-composition-jury{
-        margin-top: 30px;
-        margin-left:10px;
+        margin-top: 15px;
     }
     .card-body{
         max-width:100%;

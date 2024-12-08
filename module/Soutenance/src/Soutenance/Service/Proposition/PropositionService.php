@@ -284,6 +284,7 @@ class PropositionService extends BaseService
         $nbHomme        = 0;
         $nbRangA        = 0;
         $nbExterieur    = 0;
+        $nbEmerites     = 0;
         $nbRapporteur   = 0;
 
         $membre_min     =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY);
@@ -291,6 +292,7 @@ class PropositionService extends BaseService
         $rapporteur_min =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR);
         $rangA_min      =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A));
         $exterieur_min  =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR));
+        $emerites_max   =  (float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MAX_EMERITES);
         $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::EQUILIBRE_FEMME_HOMME));
 
         /** @var Membre $membre */
@@ -299,19 +301,26 @@ class PropositionService extends BaseService
             if ($membre->getGenre() === "F") $nbFemme++; else $nbHomme++;
             if ($membre->getRang() === "A") $nbRangA++;
             if ($membre->isExterieur()) $nbExterieur++;
+            if ($membre->getQualite()->isEmeritat()) $nbEmerites++;
             if ($membre->estRapporteur()) $nbRapporteur++;
         }
 
         $indicateurs = [];
 
         /** Bad rapporteur */
-        $indicateurs["bad-rapporteur"]["Nombre"] = 0;
+        $nbRapporteursBad = 10;
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') {
-                $indicateurs["bad-rapporteur"]["Nombre"]++;
+            if ($membre->estRapporteur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->getHdr() !== 'O') {
+                $nbRapporteursBad++;
             }
         }
-        $indicateurs["bad-rapporteur"]["valide"] = ($indicateurs["bad-rapporteur"]["Nombre"] === 0);
+        if ($nbRapporteursBad > 0) {
+            $indicateurs["bad-rapporteur"]["valide"] = false;
+            $indicateurs["bad-rapporteur"]["alerte"] = "Des rapporteurs de rang B ne sont pas titulaires d'une HDR";
+        } else {
+            $indicateurs["bad-rapporteur"]["valide"] = true;
+        }
+        $indicateurs["bad-rapporteur"]["Nombre"] = $nbRapporteursBad;
 
         /**  Il faut essayer de maintenir la parité Homme/Femme*/
         $ratioFemme = ($nbMembre)?$nbFemme / $nbMembre:0;
@@ -319,6 +328,7 @@ class PropositionService extends BaseService
         $indicateurs["parité"]      = ["Femme" => $ratioFemme, "Homme" => $ratioHomme];
         if (min($ratioFemme,$ratioHomme) < $parite_min) {
             $indicateurs["parité"]["valide"]    = false;
+            $indicateurs["parité"]["alerte"] = "La parité n'est pas respectée";
         } else {
             $indicateurs["parité"]["valide"]    = true;
         }
@@ -328,6 +338,7 @@ class PropositionService extends BaseService
 
         if ($nbMembre < $membre_min OR $nbMembre > $membre_max) {
             $indicateurs["membre"]["valide"]    = false;
+            $indicateurs["membre"]["alerte"] = "Le jury doit être composé de $membre_min à $membre_max personnes";
         } else {
             $indicateurs["membre"]["valide"]    = true;
         }
@@ -337,6 +348,7 @@ class PropositionService extends BaseService
 
         if ($nbRapporteur < $rapporteur_min) {
             $indicateurs["rapporteur"]["valide"]    = false;
+            $indicateurs["rapporteur"]["alerte"] = "Le nombre minimum de rapporteurs attendu est de $rapporteur_min";
         } else {
             $indicateurs["rapporteur"]["valide"]    = true;
         }
@@ -346,6 +358,7 @@ class PropositionService extends BaseService
         $indicateurs["rang A"]      = ["Nombre" => $nbRangA, "Ratio" => $ratioRangA];
         if ($ratioRangA < $rangA_min || !$nbMembre)  {
             $indicateurs["rang A"]["valide"]    = false;
+            $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au minimum " . ($ratioRangA*100) . '%';
         } else {
             $indicateurs["rang A"]["valide"]    = true;
         }
@@ -355,12 +368,24 @@ class PropositionService extends BaseService
         $indicateurs["exterieur"]      = ["Nombre" => $nbExterieur, "Ratio" => $ratioExterieur];
         if ($ratioExterieur < $exterieur_min || !$nbMembre)  {
             $indicateurs["exterieur"]["valide"]    = false;
+            $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au minimum " . ($ratioRangA*100) . '%';
         } else {
             $indicateurs["exterieur"]["valide"]    = true;
         }
 
+        /** ratio minimum d'émérites */
+        $ratioEmerites = $nbMembre ? ($nbEmerites / $nbMembre) : 0;
+        $indicateurs["emerites"] = ["Nombre" => $nbEmerites, "Ratio" => $ratioEmerites];
+        if ($ratioEmerites > $emerites_max) {
+            $indicateurs["emerites"]["valide"] = false;
+            $indicateurs["emerites"]["alerte"] = "Le nombre d'émérites ne doit pas dépasser " . ($emerites_max * 100.0) . '%';
+        } else {
+            $indicateurs["emerites"]["valide"] = true;
+        }
+
         $valide = $indicateurs["parité"]["valide"] && $indicateurs["membre"]["valide"] && $indicateurs["rapporteur"]["valide"]
-            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"] && $indicateurs["bad-rapporteur"]["valide"] ;
+            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"] && $indicateurs["bad-rapporteur"]["valide"]
+            && $indicateurs["emerites"]["valide"];
 
         $indicateurs["valide"] = $valide;
 
