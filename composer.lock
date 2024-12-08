@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d9bb0a5dae8cdb0a93edaf643fd6c1c",
+    "content-hash": "a431aca2fb4fbb53783c7618517bdd92",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11834,14 +11834,16 @@
         },
         {
             "name": "unicaen/renderer",
-            "version": "6.1.7",
+            "version": "7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/renderer.git",
-                "reference": "ff7b51fff2e9385ef1d26131225dafe66b183870"
+                "reference": "7487d78f27b4415ff4d53ab64050fb2f2aa407b0"
             },
             "require": {
+                "laminas/laminas-view": "^2.27",
                 "php": "^8.0",
+                "twig/twig": "^3.8",
                 "unicaen/privilege": "^6.0"
             },
             "type": "library",
@@ -11851,7 +11853,7 @@
                 ]
             },
             "description": "Module de rendu de texte avec templates et macros",
-            "time": "2024-08-23T06:26:35+00:00"
+            "time": "2024-12-08T15:28:37+00:00"
         },
         {
             "name": "unicaen/shell",

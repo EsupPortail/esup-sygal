@@ -72,7 +72,7 @@
         "unicaen/livelog": "^4.0",
         "unicaen/parametre": "^6.0",
         "unicaen/pdf": "^6.1",
-        "unicaen/renderer": "^6.0",
+        "unicaen/renderer": "^7.0",
         "unicaen/sql": "dev-master",
         "unicaen/sygal-api": "dev-wip_reception_flux_ia"
     },
