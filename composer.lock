@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a431aca2fb4fbb53783c7618517bdd92",
+    "content-hash": "dfb8947fe4d3c5e85a723ded4be2fc75",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11355,18 +11355,18 @@
         },
         {
             "name": "unicaen/authentification",
-            "version": "dev-release_6.3.0",
+            "version": "6.3.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "ec6cfc778969139862a0b04e986092487b3a0fb5"
+                "reference": "759a53c633c91023ffbc56bd6792c8360eb4365c"
             },
             "require": {
                 "apereo/phpcas": "1.5.*",
                 "ramsey/uuid": "^3.7",
                 "unicaen/app": ">=6.0",
                 "unicaen/bjy-authorize": "^6.0",
-                "unicaen/utilisateur": "dev-release_6.3.0"
+                "unicaen/utilisateur": "^6.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.6"
@@ -11381,7 +11381,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen - Version Laminas",
-            "time": "2024-11-21T13:55:28+00:00"
+            "time": "2024-12-09T14:49:24+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -11954,11 +11954,11 @@
         },
         {
             "name": "unicaen/utilisateur",
-            "version": "dev-release_6.3.0",
+            "version": "6.3.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/utilisateur.git",
-                "reference": "061566bde317ec8b23fff392f7445a68e12a042f"
+                "reference": "c37bca2b4d3d54f771c1f6bfc28812794d6b0739"
             },
             "require": {
                 "unicaen/app": "^6.1",
@@ -14673,19 +14673,11 @@
             "time": "2024-11-20T13:36:08+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "unicaen/authentification",
-            "version": "dev-release_6.3.0",
-            "alias": "6.2.1",
-            "alias_normalized": "6.2.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "laminas-api-tools/api-tools-doctrine": 20,
         "laminas-api-tools/api-tools-doctrine-querybuilder": 20,
-        "unicaen/authentification": 20,
         "unicaen/sql": 20,
         "unicaen/sygal-api": 20
     },
