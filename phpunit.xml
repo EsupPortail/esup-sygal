@@ -28,11 +28,12 @@
 
     <source>
         <include>
-            <directory suffix=".php">./module/Application</directory>
-            <directory suffix=".php">./module/Retraitement</directory>
-            <directory suffix=".php">./module/Import</directory>
-            <directory suffix=".php">./module/SygalApiImpl</directory>
-            <directory suffix=".php">./module/InscriptionAdministrative</directory>
+            <directory suffix=".php">./module/Depot/src</directory>
+            <directory suffix=".php">./module/Application/src</directory>
+            <directory suffix=".php">./module/Retraitement/src</directory>
+            <directory suffix=".php">./module/Import/src</directory>
+            <directory suffix=".php">./module/SygalApiImpl/src</directory>
+            <directory suffix=".php">./module/InscriptionAdministrative/src</directory>
         </include>
     </source>
 

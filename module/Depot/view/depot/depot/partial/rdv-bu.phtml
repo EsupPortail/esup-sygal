@@ -1,6 +1,7 @@
 <?php
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Entity\Db\RdvBu;
+use Depot\Rule\Result\RemiseExemplairePapierRequiredResult;
 use These\Entity\Db\These;
 use Depot\Entity\Db\FichierThese;
 use Depot\Filter\MotsClesFormatter;
@@ -11,7 +12,9 @@ use Depot\Filter\MotsClesFormatter;
  * @var These $these
  * @var FichierThese $versionArchivable
  * @var bool $pageCouvValidee
- * @var bool $isExemplPapierFourniPertinent
+ * @var RemiseExemplairePapierRequiredResult $remiseExemplairePapierRequiredResult
+ *
+ * @see \Depot\Controller\DepotController::detailRdvBuAction()
  */
 
 $rdvBu = $these->getRdvBu();
@@ -59,10 +62,15 @@ $ddPageCouv = $pageCouvValidee ? $checked : $unchecked;
     <?php $class = ($ok = $rdvBu->getConventionMelSignee()) ? '' : 'text-danger' ?>
     <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
 
-    <?php if ($isExemplPapierFourniPertinent || $rdvBu->getExemplPapierFourni()): ?>
-    <dt>Exemplaire papier fourni :</dt>
-    <?php $class = ($ok = $rdvBu->getExemplPapierFourni()) ? '' : 'text-danger' ?>
-    <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+    <?php if ($remiseExemplairePapierRequiredResult->isRequired || $rdvBu->getExemplPapierFourni()): ?>
+        <dt>Exemplaire papier fourni :</dt>
+        <?php $class = ($ok = $rdvBu->getExemplPapierFourni()) ? '' : 'text-danger' ?>
+        <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+    <?php endif ?>
+    <?php if ($message = $remiseExemplairePapierRequiredResult->message): ?>
+        <div class="alert alert-info alert-sm"><span class="icon icon-info"></span>
+            <?= $message ?>
+        </div>
     <?php endif ?>
 
     <dt>Points de vigilance :</dt>

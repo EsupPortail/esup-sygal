@@ -3,9 +3,9 @@
 namespace DepotUnitTest\Assertion\TheseEntityAssertion;
 
 use Application\Assertion\Exception\FailedAssertionException;
+use DepotUnitTest\TheseProphetTrait;
 use These\Assertion\These\TheseEntityAssertion;
 use Depot\Provider\Privilege\DepotPrivileges;
-use ApplicationUnitTest\TheseProphetTrait;
 use ApplicationUnitTest\UserContextServiceProphetTrait;
 use Prophecy\Prophet;
 

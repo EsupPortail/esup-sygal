@@ -6,13 +6,24 @@ use Application\Filter\NomCompletFormatter;
 use Individu\Entity\Db\Individu;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
 
+/**
+ * @property Individu $target
+ */
 class IndividuTemplateVariable extends AbstractTemplateVariable
 {
-    private Individu $individu;
-
     public function setIndividu(Individu $individu): void
     {
-        $this->individu = $individu;
+        $this->setTarget($individu);
+    }
+
+    public function getNomPatronymique(): string
+    {
+        return $this->target->getNomPatronymique();
+    }
+
+    public function getPrenom(): string
+    {
+        return $this->target->getPrenom();
     }
 
     public function getNomComplet(): string
@@ -20,6 +31,6 @@ class IndividuTemplateVariable extends AbstractTemplateVariable
         $f = new NomCompletFormatter();
         $f->avecCivilite();
 
-        return $f->filter($this->individu);
+        return $f->filter($this->target);
     }
 }

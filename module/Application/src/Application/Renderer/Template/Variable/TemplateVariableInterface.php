@@ -2,6 +2,8 @@
 
 namespace Application\Renderer\Template\Variable;
 
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
+
 /**
  * Interface des "variables de template" transmises à un template, afin d'alimenter des macros.
  *
@@ -10,6 +12,18 @@ namespace Application\Renderer\Template\Variable;
  */
 interface TemplateVariableInterface
 {
+    /**
+     * Transmission du plugin manager à cette instance.
+     */
+    public function setPluginManager(TemplateVariablePluginManager $pluginManager): void;
+
+    /**
+     * Spécifie l'instance métier "cible" (centrale) de cette variable de template.
+     * Exemple : ce serait typiquement une instance de These pour une variable de template de type
+     * TheseTemplateVariable.
+     */
+    public function setTarget(object $target): void;
+
     /**
      * Transmission de contexte sous la forme d'un tableau associatif.
      * **NB : Vous êtes plutôt encouragés à créer des setter explicites !**

@@ -2,10 +2,12 @@
 
 namespace Depot\Controller\Factory;
 
+use Application\Rule\PluginManager\RulePluginManager;
 use Application\Service\DomaineHal\DomaineHalService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
+use Depot\Rule\RemiseExemplairePapierRule;
 use Validation\Service\ValidationThese\ValidationTheseService;
 use Application\Service\Variable\VariableService;
 use Depot\Controller\DepotController;
@@ -138,6 +140,10 @@ class DepotControllerFactory
         // gestion d'événements : DepotService écoute certains événement de FichierTheseController
         $controller->setEventManager($eventManager);
         $depotService->attach($eventManager);
+
+        /** @var RemiseExemplairePapierRule $autorisationDiffusionRule */
+        $autorisationDiffusionRule = $container->get(RulePluginManager::class)->get(RemiseExemplairePapierRule::class);
+        $controller->setRemiseExemplairePapierRule($autorisationDiffusionRule);
 
         return $controller;
     }

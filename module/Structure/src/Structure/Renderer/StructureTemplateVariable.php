@@ -2,27 +2,34 @@
 
 namespace Structure\Renderer;
 
-use Structure\Entity\Db\StructureConcreteInterface;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
+use Structure\Entity\Db\StructureConcreteInterface;
 
+/**
+ * @property StructureConcreteInterface $target
+ */
 class StructureTemplateVariable extends AbstractTemplateVariable
 {
-    protected StructureConcreteInterface $structureConcrete;
-
     public function setStructureConcrete(StructureConcreteInterface $structureConcrete): void
     {
-        $this->structureConcrete = $structureConcrete;
+        $this->setTarget($structureConcrete);
     }
 
     /** @noinspection PhpUnused */
     public function getSigle(): string
     {
-        return $this->structureConcrete->getStructure()->getSigle() ?? "";
+        return $this->target->getStructure()->getSigle() ?? "";
+    }
+
+    /** @noinspection PhpUnused */
+    public function getLibelle(): string
+    {
+        return $this->target->getStructure()->getLibelle();
     }
 
     /** @noinspection PhpUnused */
     public function __toString(): string
     {
-        return $this->structureConcrete->__toString();
+        return $this->target->__toString();
     }
 }

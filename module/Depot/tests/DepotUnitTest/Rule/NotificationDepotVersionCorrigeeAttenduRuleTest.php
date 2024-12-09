@@ -1,12 +1,12 @@
 <?php
 
-namespace ApplicationTest\Rule;
+namespace DepotUnitTest\Rule;
 
-use These\Entity\Db\These;
-use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use DateTime;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
+use These\Entity\Db\These;
 
 class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit\Framework\TestCase
 {

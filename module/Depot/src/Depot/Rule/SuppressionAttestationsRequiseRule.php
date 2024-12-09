@@ -2,7 +2,7 @@
 
 namespace Depot\Rule;
 
-use Application\Rule\RuleInterface;
+use Application\Rule\AbstractRule;
 use Fichier\Entity\Db\VersionFichier;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\LogicException;
@@ -12,55 +12,79 @@ use UnicaenApp\Exception\LogicException;
  * à l'autorisation de diffusion.
  *
  * Supprimer les réponses aux attestations permet de redemander à l'utilisateur d'y répondre à nouveau.
- *
- * @author Unicaen
  */
-class SuppressionAttestationsRequiseRule implements RuleInterface
+class SuppressionAttestationsRequiseRule extends AbstractRule
 {
+    use RemiseExemplairePapierRuleAwareTrait;
+
     private These $these;
     private VersionFichier $versionFichier;
 
-    public function __construct(These $these, VersionFichier $versionFichier)
+    public function __construct(array $options = [])
     {
-        $this->these = $these;
-        $this->versionFichier = $versionFichier;
+        parent::__construct($options);
+
+        if (isset($options['these'])) {
+            $this->setThese($options['these']);
+        }
+        if (isset($options['versionFichier'])) {
+            $this->setVersionFichier($options['versionFichier']);
+        }
     }
 
-    public function execute(): bool
+    public function setThese(These $these): static
     {
-        return $this->computeSuppressionAttestationEstRequise();
+        $this->these = $these;
+        return $this;
+    }
+
+    public function setVersionFichier(VersionFichier $versionFichier): static
+    {
+        $this->versionFichier = $versionFichier;
+        return $this;
+    }
+
+    public function execute(): static
+    {
+        return $this;
     }
 
     /**
      * Calcule s'il est nécessaire de supprimer les réponses aux "attestations".
      */
-    private function computeSuppressionAttestationEstRequise(): bool
+    public function isSuppressionAttestationRequired(): bool
     {
         $attestation = $this->these->getAttestationForVersion($this->versionFichier);
-
         if ($attestation === null) {
             // aucune attestation remplie : suppression inutile
             return false;
         }
 
         $diffusion = $this->these->getDiffusionForVersion($this->versionFichier);
-
         if ($diffusion === null) {
             throw new LogicException("Appel de méthode prématuré : autorisation de diffusion introuvable pour la $this->versionFichier");
         }
 
-        if ($diffusion->isRemiseExemplairePapierRequise()) {
+        // d'après la réponse à l'autorisation de MEL, la remise d'un exemplaire papier est-elle requise ?
+        $this->remiseExemplairePapierRule->setDiffusion($diffusion);
+        $dateObservation = $diffusion->getHistoModification() ?: $diffusion->getHistoCreation();
+        $remiseExemplairePapierEstRequise = $this->remiseExemplairePapierRule->isRemiseExemplairePapierRequired($dateObservation);
+
+        if ($remiseExemplairePapierEstRequise) {
             if (! $attestation->getExemplaireImprimeConformeAVersionDeposee()) {
-                // la question "exemplaire papier conforme" n'a pas été posée, il faudra la poser : suppression
+                // la question "exemplaire papier conforme" n'avait pas été posée (null ou false), il faudra la poser :
+                // suppression de l'attestation
                 return true;
             }
         } else {
             if ($attestation->getExemplaireImprimeConformeAVersionDeposee()) {
-                // la question "exemplaire papier conforme" a été posée, ce n'est plus pertinent : suppression
+                // la question "exemplaire papier conforme" avait été posée (true), ce n'est plus pertinent :
+                // suppression de l'attestation
                 return true;
             }
         }
 
+        // sinon, pas de suppression de l'attetestation
         return false;
     }
 }

@@ -2,20 +2,21 @@
 
 namespace Doctorant\Renderer;
 
-use Doctorant\Entity\Db\Doctorant;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
+use Doctorant\Entity\Db\Doctorant;
+use Individu\Renderer\IndividuTemplateVariable;
 
 /**
  * Méthodes utiles seulement dans le cadre de macros de unicaen/renderer, pour ne pas polluer la classe métier
  * {@see \Doctorant\Entity\Db\Doctorant} avec des choses orientées "affichage".
+ *
+ * @property Doctorant $target
  */
 class DoctorantTemplateVariable extends AbstractTemplateVariable
 {
-    private Doctorant $doctorant;
-
     public function setDoctorant(Doctorant $doctorant): void
     {
-        $this->doctorant = $doctorant;
+        $this->setTarget($doctorant);
     }
 
     /**
@@ -26,7 +27,7 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function __toString(): string
     {
-        return (string) $this->doctorant;
+        return (string) $this->target;
     }
 
     /**
@@ -34,7 +35,7 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function getPrenom(): string
     {
-        return $this->doctorant->getIndividu()->getPrenom();
+        return $this->target->getIndividu()->getPrenom();
     }
 
     /**
@@ -42,7 +43,7 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function getNomUsuel(): string
     {
-        return $this->doctorant->getIndividu()->getNomUsuel();
+        return $this->target->getIndividu()->getNomUsuel();
     }
 
     /**
@@ -50,7 +51,7 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function getNomPatronymique(): string
     {
-        return $this->doctorant->getIndividu()->getNomPatronymique();
+        return $this->target->getIndividu()->getNomPatronymique();
     }
 
     /**
@@ -58,7 +59,7 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function getCivilite(): string
     {
-        return $this->doctorant->getIndividu()->getCivilite();
+        return $this->target->getIndividu()->getCivilite();
     }
 
     /**
@@ -68,7 +69,15 @@ class DoctorantTemplateVariable extends AbstractTemplateVariable
      */
     public function getDenominationPatronymique(): string
     {
-        return $this->doctorant->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f();
+        return $this->target->getIndividu()->getNomCompletFormatter()->avecNomPatronymique()->f();
     }
 
+    public function getIndividu(): IndividuTemplateVariable
+    {
+        /** @var IndividuTemplateVariable $templateVariable */
+        $templateVariable = $this->pluginManager->get(IndividuTemplateVariable::class);
+        $templateVariable->setIndividu($this->target->getIndividu());
+
+        return $templateVariable;
+    }
 }

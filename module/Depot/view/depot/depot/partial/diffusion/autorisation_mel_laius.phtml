@@ -1,0 +1,28 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \Depot\Entity\Db\Diffusion $diffusion
+ */
+
+use Depot\Entity\Db\Diffusion;
+?>
+
+<?php if ($diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_IMMEDIAT): ?>
+
+
+
+<?php elseif ($diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_EMBARGO || $diffusion->getAutorisMel() === Diffusion::AUTORISATION_NON): ?>
+
+    <p>
+        La thèse est disponible en version imprimée au service de documentation de l’établissement d’accueil et en PDF
+        pour l'ensemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre
+        Bibliothèques).
+    </p>
+
+<?php endif ?>
+
+<p>
+    La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout
+    contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de
+    préparation du doctorat a son siège.
+</p>

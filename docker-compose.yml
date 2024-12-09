@@ -49,6 +49,8 @@ services:
      - $HOME/.cache/composer:/root/.cache/composer
      - $HOME/.config/composer/auth.json:/root/.config/composer/auth.json
      - ../sygal-pegase-connect/vendor/unicaen/sygal-api:/sygal-api
+     - ./docker/configs/php/fpm/conf.d/99-sygal.ini:/etc/php/8.2/fpm/conf.d/99-sygal.ini
+     - ./docker/configs/php/cli/conf.d/99-sygal.ini:/etc/php/8.2/cli/conf.d/99-sygal.ini
      - ./docker/configs/apache/conf-available/api.conf:/etc/apache2/conf-available/api.conf
      - ./docker/configs/apache/conf-available/livelog.conf:/etc/apache2/conf-available/livelog.conf
      - ./docker/configs/apache/conf-available/security.conf:/etc/apache2/conf-available/security.conf

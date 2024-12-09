@@ -2,6 +2,7 @@
 
 namespace Depot\Service\ConventionDeMiseEnLigne\Exporter;
 
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 use Fichier\Service\Url\UrlService;
 use Psr\Container\ContainerInterface;
 use Structure\Service\Etablissement\EtablissementService;
@@ -31,6 +32,10 @@ class ConventionDeMiseEnLigneExporterFactory
         /** @var \Fichier\Service\Url\UrlService $urlService */
         $urlService = $container->get(UrlService::class);
         $exporter->setUrlFichierService($urlService);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $exporter->setTemplateVariablePluginManager($rapm);
 
         return $exporter;
     }

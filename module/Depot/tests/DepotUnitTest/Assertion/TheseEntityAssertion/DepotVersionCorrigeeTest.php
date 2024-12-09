@@ -3,7 +3,7 @@
 namespace DepotUnitTest\Assertion\TheseEntityAssertion;
 
 use These\Assertion\These\TheseEntityAssertion;
-use ApplicationUnitTest\TheseProphetTrait;
+use DepotUnitTest\TheseProphetTrait;
 use ApplicationUnitTest\UserContextServiceProphetTrait;
 use Prophecy\Prophet;
 

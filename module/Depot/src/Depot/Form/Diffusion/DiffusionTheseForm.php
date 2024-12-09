@@ -2,7 +2,6 @@
 
 namespace Depot\Form\Diffusion;
 
-use Application\Service\Message\DiffusionMessages;
 use Application\Utils\FormUtils;
 use Depot\Entity\Db\Diffusion;
 use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
@@ -24,16 +23,9 @@ class DiffusionTheseForm extends Form
     use MessageServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
 
-    /**
-     * @var VersionFichier
-     */
-    protected $versionFichier;
+    protected VersionFichier $versionFichier;
 
-    /**
-     * @param VersionFichier $versionFichier
-     * @return DiffusionTheseForm
-     */
-    public function setVersionFichier(VersionFichier $versionFichier)
+    public function setVersionFichier(VersionFichier $versionFichier): static
     {
         $this->versionFichier = $versionFichier;
 
@@ -43,7 +35,7 @@ class DiffusionTheseForm extends Form
     /**
      * NB: hydrateur injecté par la factory
      */
-    public function init()
+    public function init(): void
     {
         $this->setObject(new Diffusion());
 
@@ -92,30 +84,31 @@ class DiffusionTheseForm extends Form
         ]);
 
         $this->add([
-            'type'       => 'Radio',
-            'name'       => 'droitAuteurOk',
-            'options'    => [
-                'label'              => $this->messageService->render(DiffusionMessages::DROITS_AUTEUR_OK_FORM_LABEL),
-                'value_options'      => [
+            'type' => 'Radio',
+            'name' => 'droitAuteurOk',
+            'options' => [
+                'label' => "L'auteur garantit que tous les documents de la thèse sont libres de droits " .
+                    "ou qu'il a les droits afférents pour la reproduction et la représentation sur tous supports",
+                'value_options' => [
                     [
-                        'value'      => $value = Diffusion::DROIT_AUTEUR_OK_OUI,
-                        'label'      => $this->messageService->render(DiffusionMessages::DROITS_AUTEUR_OK_FORM_VALUE, [], $value),
+                        'value' => Diffusion::DROIT_AUTEUR_OK_OUI,
+                        'label' => "Oui",
                         'attributes' => [
-                            'id'    => 'oui',
+                            'id' => 'oui',
                             'class' => 'droitAuteur',
                         ],
                     ],
                     [
-                        'value'      => $value = Diffusion::DROIT_AUTEUR_OK_NON,
-                        'label'      => $this->messageService->render(DiffusionMessages::DROITS_AUTEUR_OK_FORM_VALUE, [], $value),
+                        'value' => Diffusion::DROIT_AUTEUR_OK_NON,
+                        'label' => "Non, à défaut il fournit une version numérique spécifique excluant ces oeuvres tierces (version de diffusion)...",
                         'attributes' => [
-                            'id'    => 'non',
+                            'id' => 'non',
                             'class' => 'droitAuteur',
                         ],
                     ],
                 ],
                 'use_hidden_element' => true,
-                'unchecked_value'    => '',
+                'unchecked_value' => '',
             ],
             'attributes' => [
                 'title' => "",
@@ -136,38 +129,38 @@ class DiffusionTheseForm extends Form
 //        ]);
 
         $this->add([
-            'type'       => 'Radio',
-            'name'       => 'autorisMel',
-            'options'    => [
-                'label'              => "(initialisé lors du bind)",
-                'value_options'      => [
+            'type' => 'Radio',
+            'name' => 'autorisMel',
+            'options' => [
+                'label' => "(initialisé lors du bind)",
+                'value_options' => [
                     [
-                        'value'      => $value = Diffusion::AUTORISATION_OUI_IMMEDIAT,
-                        'label'      => $this->messageService->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_VALUE, [], $value),
+                        'value' => Diffusion::AUTORISATION_OUI_IMMEDIAT,
+                        'label' => "Oui, immédiatement",
                         'attributes' => [
-                            'id'    => 'ouiImmediat',
+                            'id' => 'ouiImmediat',
                             'class' => 'autoris',
                         ],
                     ],
                     [
-                        'value'      => $value = Diffusion::AUTORISATION_OUI_EMBARGO,
-                        'label'      => $this->messageService->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_VALUE, [], $value),
+                        'value' => Diffusion::AUTORISATION_OUI_EMBARGO,
+                        'label' => "Oui, avec embargo après soutenance d'une durée de...",
                         'attributes' => [
-                            'id'    => 'ouiEmbargo',
+                            'id' => 'ouiEmbargo',
                             'class' => 'autoris',
                         ],
                     ],
                     [
-                        'value'      => $value = Diffusion::AUTORISATION_NON,
-                        'label'      => $this->messageService->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_VALUE, [], $value),
+                        'value' => Diffusion::AUTORISATION_NON,
+                        'label' => "Non",
                         'attributes' => [
-                            'id'    => 'non',
+                            'id' => 'non',
                             'class' => 'autoris',
                         ],
                     ],
                 ],
                 'use_hidden_element' => true,
-                'unchecked_value'    => '',
+                'unchecked_value' => '',
             ],
             'attributes' => [
                 'title' => "",
@@ -198,6 +191,25 @@ class DiffusionTheseForm extends Form
             'name'       => 'autorisMotif',
             'options'    => [
                 'label' => 'Motif',
+            ],
+            'attributes' => [
+                'title' => "",
+            ],
+        ]);
+
+        $this->add([
+            'type' => 'Radio',
+            'name' => 'autorisPretPapier',
+            'options' => [
+                'label' => "J'autorise le prêt du fichier papier de ma thèse dans les établissements d'enseignement supérieur en dehors de la France :",
+                'value_options' => [
+                    Diffusion::AUTORISATION_PRET_PAPIER_OUI =>
+                        "Oui (en cliquant sur Oui, vous acceptez également que la BU imprime un exemplaire papier pour permettre le prêt)",
+                    Diffusion::AUTORISATION_PRET_PAPIER_NON =>
+                        "Non",
+                ],
+                'use_hidden_element' => true,
+                'unchecked_value' => '',
             ],
             'attributes' => [
                 'title' => "",
@@ -253,27 +265,27 @@ class DiffusionTheseForm extends Form
     }
 
     /**
-     * @param Diffusion $diffusion
-     * @param int    $flags
+     * @param Diffusion $object
+     * @param int $flags
      * @return static
      */
-    public function bind($diffusion, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind($object, int $flags = FormInterface::VALUES_NORMALIZED): static
     {
-        parent::bind($diffusion, $flags);
+        parent::bind($object, $flags);
 
         /**
          * Le label de l'autorisation de diffusion dépnd de la confidentialité.
          */
-        $label = $this->messageService->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LABEL, [], $this->get('confidentielle')->getValue());
-        $this->get('autorisMel')->setLabel($label);
+        $labels = [
+            Diffusion::CONFIDENTIELLE_NON => "L'auteur autorise la diffusion de sa thèse",
+            Diffusion::CONFIDENTIELLE_OUI => "L'auteur autorise la diffusion de sa thèse à l'issue de la période de confidentialité",
+        ];
+        $this->get('autorisMel')->setLabel($labels[$this->get('confidentielle')->getValue()]);
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         $required = [];
 
@@ -286,14 +298,17 @@ class DiffusionTheseForm extends Form
             case Diffusion::AUTORISATION_OUI_IMMEDIAT:
                 $required['autorisEmbargoDuree'] = false;
                 $required['autorisMotif'] = false;
+                $required['autorisPretPapier'] = false;
                 break;
             case Diffusion::AUTORISATION_OUI_EMBARGO:
                 $required['autorisEmbargoDuree'] = true;
                 $required['autorisMotif'] = true;
+                $required['autorisPretPapier'] = true;
                 break;
             case Diffusion::AUTORISATION_NON:
                 $required['autorisEmbargoDuree'] = false;
                 $required['autorisMotif'] = true;
+                $required['autorisPretPapier'] = true;
                 break;
         }
 
@@ -416,6 +431,17 @@ class DiffusionTheseForm extends Form
                         'name'    => 'NotEmpty',
                         'options' => [
                             'messages' => ['isEmpty' => "Vous devez renseigner le motif"],
+                        ],
+                    ],
+                ],
+            ],
+            $name = 'autorisPretPapier' => [
+                'required' => $required[$name],
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => ['isEmpty' => "Vous devez répondre à cette question"],
                         ],
                     ],
                 ],

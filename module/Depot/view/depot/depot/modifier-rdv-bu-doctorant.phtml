@@ -1,16 +1,16 @@
 <?php
 
-use These\Entity\Db\These;
-use Depot\Form\RdvBuTheseDoctorantForm;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Form\RdvBuTheseDoctorantForm;
+use These\Entity\Db\These;
 
 /**
- * @var                    $this PhpRenderer
- * @var These              $these
- * @var string             $title
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var string $title
  * @var RdvBuTheseDoctorantForm $form
  *
- * @method string formControlGroup()
+ * @see \Depot\Controller\DepotController::modifierRdvBuAction()
  */
 
 $fcg = $this->formControlGroup();

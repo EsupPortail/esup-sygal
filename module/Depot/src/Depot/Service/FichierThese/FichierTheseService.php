@@ -204,22 +204,25 @@ class FichierTheseService extends BaseService
         try {
             $estArchivable = $this->fichierCinesValidator->isValid($filePath);
             $message = $estArchivable ? "Le fichier est archivable" : current($this->fichierCinesValidator->getMessages());
+            $result = $this->fichierCinesValidator->getResult();
         }
         catch (CinesErrorException $cee) { // erreur possible à identifier
             $estArchivable = null;
             $message = $cee->getMessage();
             $exceptionThrown = $cee;
+            $result = $this->fichierCinesValidator->getResult();
         }
         catch (RuntimeException $re) { // erreur non identifiée
             $estArchivable = null;
             $message = "Le test d'archivabilité a rencontré un problème : " . $re->getMessage();
             $exceptionThrown = $re;
+            $result = 'Aucun résultat';
         }
 
         $resultat = [
             'estValide' => $estArchivable,
-            'resultat'      => $this->fichierCinesValidator->getResult(),
-            'message'       => $message,
+            'resultat' => $result,
+            'message' => $message,
         ];
 
         $this->validiteFichierService->clearValiditesFichier($fichierThese);

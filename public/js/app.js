@@ -274,6 +274,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
                 this.getExplicOuiImmediat().show();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().hide();
+                this.getInputDivPretPapier().hide();
                 break;
             case "1": // oui avec embargo
                 this.getInputDivEmbargoDuree().show(effect, {direction: "left"}).find(':input').prop('disabled', false);
@@ -282,6 +283,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().show();
                 this.getExplicNon().hide();
+                this.getInputDivPretPapier().show();
                 break;
             case "0": // non
                 this.getInputDivEmbargoDuree().hide(effect, {direction: "left"}).find(':input').prop('disabled', 'disabled');
@@ -290,6 +292,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().show();
+                this.getInputDivPretPapier().show();
                 break;
             default:
                 this.getInputDivEmbargoDuree().hide();
@@ -298,6 +301,7 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().hide();
+                this.getInputDivPretPapier().hide();
         }
     },
 
@@ -314,6 +318,9 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
     },
     getInputDivMotif: function () {
         return this.element.find(".motif");
+    },
+    getInputDivPretPapier: function () {
+        return this.element.find(".pretPapier");
     },
     getInputDivAuteur: function () {
         return this.element.find(".auteur");

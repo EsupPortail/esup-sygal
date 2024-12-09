@@ -1,10 +1,9 @@
 <?php
 
-use Depot\Entity\Db\Diffusion;
-use These\Entity\Db\These;
-use Depot\Form\Diffusion\DiffusionTheseForm;
-use Application\Service\Message\DiffusionMessages;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Entity\Db\Diffusion;
+use Depot\Form\Diffusion\DiffusionTheseForm;
+use These\Entity\Db\These;
 
 /**
  * @var PhpRenderer        $this
@@ -15,6 +14,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var DiffusionTheseForm $form
  * @var string             $theseUrl
  * @var string             $annexesUrl
+ * @var \Structure\Entity\Db\Etablissement|null $comue
  *
  * @method string formControlGroup()
  */
@@ -46,11 +46,12 @@ $protoDiffusion = new Diffusion();
     </div>
     <div id="explicConfidentialiteOui" class="alert alert-md alert-info" style="display: none">
         <span class="fas fa-info-circle"></span>
-        <?php echo $this->message()->render(DiffusionMessages::CONFIDENTIALITE_LAIUS, [], Diffusion::CONFIDENTIELLE_OUI) ?>
+        La mise en ligne sera ensuite effectuée automatiquement le jour même de l'expiration du délai, sans préavis.
+        Une demande de prolongation auprès du Chef d'établissement est possible, mais doit anticiper
+        le délai de traitement de la demande.
     </div>
     <div id="explicConfidentialiteNon" class="alert alert-md alert-info" style="display: none">
-        <span class="fas fa-info-circle"></span>
-        <?php echo $this->message()->render(DiffusionMessages::CONFIDENTIALITE_LAIUS, [], Diffusion::CONFIDENTIELLE_NON) ?>
+        <!--RAS-->
     </div>
 </div>
 <?php endif ?>
@@ -93,15 +94,63 @@ Cliquez sur <a href="<?php echo $this->url('fichier/telecharger-permanent', ['id
     </div>
     <div id="explicOuiImmediat" class="alert alert-md alert-info" style="display: none">
         <span class="fas fa-info-circle"></span>
-        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
+        <p>
+            La thèse est consultable sur le réseau international internet via le portail national des thèses
+            (www.theses.fr), sans authentification. La thèse peut également être accessible depuis des
+            plateformes de diffusion choisies par
+            <?php if ($comue !== null): ?>
+                <?= $comue->getStructure()->getLibelle() ?> et les établissements co-accrédités
+            <?php else: ?>
+                <?= $these->getEtablissement()->getStructure()->getLibelleAvecArticleDefini() ?>.
+            <?php endif; ?>
+            dans le cadre de sa politique de valorisation scientifique
+            (exemple : <a href=\"https://theses.hal.science\">https://theses.hal.science</a>).
+        </p>
     </div>
     <div id="explicOuiEmbargo" class="alert alert-md alert-info" style="display: none">
         <span class="fas fa-info-circle"></span>
-        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
+        <p>
+            Pendant cette période, conformément à l’Arrêté du 25 mai 2016 modifié le 26 août 2022, le
+            manuscrit de thèse est obligatoirement accessible à l’ensemble de la communauté universitaire
+            française.
+            <?php if ($comue !== null): ?>
+                    <?= $comue->getStructure()->getLibelle() ?> et les établissements co-accrédités remplissent
+            <?php else: ?>
+                    <?= $these->getEtablissement()->getStructure()->getLibelleAvecArticleDefini() ?> remplit
+            <?php endif; ?>
+            cette obligation en rendant accessible le manuscrit au format PDF sur l’intranet de
+            l’Agence bibliographique de l’enseignement supérieur (Abes, <a href=\"https://abes.fr\">https://abes.fr</a>) disponible
+            depuis le site theses.fr.
+            L’accès à cet intranet est possible uniquement après une authentification Renater
+            (<a href=\"https://www.renater.fr\">https://www.renater.fr</a>).
+        </p>
+        <p>
+            La diffusion en ligne sur le réseau international internet de la thèse est ensuite effectuée
+            automatiquement le lendemain de l’expiration du délai, sans préavis. Une demande de prolongation
+            de l’embargo auprès du service de documentation concerné est possible, mais doit anticiper
+            le délai de traitement de la demande (un mois, hors périodes de fermeture).
+        </p>
     </div>
     <div id="explicNon" class="alert alert-md alert-info" style="display: none">
         <span class="fas fa-info-circle"></span>
-        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
+        <p>
+            En cas de refus, la thèse n’est pas diffusée sur le réseau international internet. Cependant,
+            conformément à l’Arrêté du 25 mai 2016 modifié le modifié le 26 août 2022, le manuscrit de thèse
+            est obligatoirement accessible à l’ensemble de la communauté universitaire française.
+            <?php if ($comue !== null): ?>
+                <?= $comue->getStructure()->getLibelle() ?> et les établissements co-accrédités remplissent
+            <?php else: ?>
+                <?= $these->getEtablissement()->getStructure()->getLibelleAvecArticleDefini() ?> remplit
+            <?php endif; ?>
+            cette obligation en rendant accessible le manuscrit au format PDF sur l’intranet de
+            l’Agence bibliographique de l’enseignement supérieur (Abes, <a href=\"https://abes.fr\">https://abes.fr</a>/) disponible
+            depuis le site theses.fr.
+            L’accès à cet intranet est possible uniquement après une authentification Renater
+            (<a href=\"https://www.renater.fr\">https://www.renater.fr</a>).
+        </p>
+    </div>
+    <div class="pretPapier" style="display: none">
+        <?php echo $fcg($form->get('autorisPretPapier')) ?>
     </div>
     <div class="row auteur" style="display: none">
         <div class="col-sm-7 col-md-4">

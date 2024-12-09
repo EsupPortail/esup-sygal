@@ -136,7 +136,7 @@ class EntityAsset
 
         $e
             ->setThese($these)
-            ->setExemplaireImprimeConformeAVersionDeposee(true)
+//            ->setExemplaireImprimeConformeAVersionDeposee(true)
             ->setVersionDeposeeEstVersionRef(true);
 
         return $e;

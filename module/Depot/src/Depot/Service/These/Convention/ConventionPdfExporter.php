@@ -8,6 +8,9 @@ use Laminas\View\Resolver\TemplatePathStack;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 
+/**
+ * @deprecated Remplacé par {@see \Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporter}
+ */
 class ConventionPdfExporter extends PdfExporter
 {
     /**

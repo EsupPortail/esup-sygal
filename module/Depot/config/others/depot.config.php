@@ -8,7 +8,6 @@ use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Navigation\ApplicationNavigationFactory;
-use Application\Service\Message\DiffusionMessages;
 use Depot\Assertion\These\TheseAssertion;
 use Depot\Assertion\These\TheseAssertionFactory;
 use Depot\Assertion\These\TheseEntityAssertion;
@@ -20,8 +19,9 @@ use Depot\Controller\Factory\DepotControllerFactory;
 use Depot\Controller\Factory\ObserverControllerFactory;
 use Depot\Controller\ObserverController;
 use Depot\Controller\Plugin\Url\UrlDepotPluginFactory;
-use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\WfEtape;
+use Depot\Feature\Features;
+use Depot\Feature\FournirExemplairePapierTheseFeature;
 use Depot\Form\Attestation\AttestationHydratorFactory;
 use Depot\Form\Attestation\AttestationTheseFormFactory;
 use Depot\Form\Description\DescriptionTheseForm;
@@ -35,6 +35,10 @@ use Depot\Form\Metadonnees\MetadonneesTheseHydratorFactory;
 use Depot\Form\Metadonnees\MetadonneeTheseFieldset;
 use Depot\Form\Metadonnees\MetadonneeTheseFieldsetFactory;
 use Depot\Provider\Privilege\DepotPrivileges;
+use Depot\Rule\RemiseExemplairePapierRule;
+use Depot\Rule\RemiseExemplairePapierRuleFactory;
+use Depot\Rule\SuppressionAttestationsRequiseRule;
+use Depot\Rule\SuppressionAttestationsRequiseRuleFactory;
 use Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporter;
 use Depot\Service\ConventionDeMiseEnLigne\Exporter\ConventionDeMiseEnLigneExporterFactory;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
@@ -46,7 +50,7 @@ use Depot\Service\These\TheseObserverService;
 use Depot\Service\Url\UrlDepotService;
 use Depot\Service\Url\UrlDepotServiceFactory;
 use Depot\View\Helper\Url\UrlDepotHelperFactory;
-use Fichier\Entity\Db\NatureFichier;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
@@ -54,6 +58,68 @@ use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 $depotFichierDiversRoutesConfig = Config::generateDepotFichierDiversRoutesConfig();
 
 return [
+    /**
+     * Fonctionnalités.
+     */
+    'features' => [
+        'config' => [
+            // Feature/fonctionnalité : Déposer un exemplaire papier de la thèse,
+            // existante en bdd (table "feature").
+            FournirExemplairePapierTheseFeature::class => [], // il s'agit d'un adpater
+            // Autre format pour déclarer une feature avec adapter :
+            //Features::FournirExemplairePapierTheseFeature => [
+            //    // adapter optionnel permettant de mieux identifier la feature
+            //    'adapter' => FournirExemplairePapierTheseFeature::class,
+            //],
+        ],
+        'factories' => [
+            Features::class => InvokableFactory::class,
+        ],
+    ],
+
+    /**
+     * Règles métier.
+     */
+    'rules' => [
+        'factories' => [
+            RemiseExemplairePapierRule::class => RemiseExemplairePapierRuleFactory::class,
+            SuppressionAttestationsRequiseRule::class => SuppressionAttestationsRequiseRuleFactory::class,
+        ],
+        'config' => [
+            RemiseExemplairePapierRule::class => [
+                'features' => [
+                    // Format :
+                    // code en bdd ou classe d'adapter ou service => config
+                    FournirExemplairePapierTheseFeature::class => [],
+                    // Si autre format utilisé pour déclarer une feature avec adapter :
+                    //Features::FournirExemplairePapierTheseFeature => [],
+                ],
+                'options' => [
+                    // options de la rule
+                ],
+            ],
+
+        ]
+    ],
+    'depot' => [
+        'diffusion' => [
+            'rules' => [
+                RemiseExemplairePapierRule::class => [
+                    'features' => [
+                        Features::class => [
+                            // éventuelles options écrasant/complétant les options globales
+                        ],
+                    ],
+                    'options' => [
+                        // options de la Rule
+                    ],
+                    // Activation ou non de la fonctionnalité "Déposer un exemplaire papier".
+                    'feature_deposer_exemplaire_papier' => false,
+                ],
+            ],
+        ],
+    ],
+
     'bjyauthorize' => [
         'rule_providers' => [
             PrivilegeRuleProvider::class => [
@@ -649,6 +715,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see DepotController::modifierAttestationAction() */
                                 'controller' => DepotController::class,
                                 'action' => 'modifier-attestation',
                             ],
@@ -662,6 +729,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see DepotController::modifierDiffusionAction() */
                                 'controller' => DepotController::class,
                                 'action' => 'modifier-diffusion',
                             ],
@@ -1016,6 +1084,9 @@ return [
             ConventionDeMiseEnLigneExporter::class => ConventionDeMiseEnLigneExporterFactory::class,
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
+            // rules
+            RemiseExemplairePapierRule::class => RemiseExemplairePapierRuleFactory::class,
+            SuppressionAttestationsRequiseRule::class => SuppressionAttestationsRequiseRuleFactory::class,
         ],
         //PageDeCouverturePdfExporter ne doit pas être un singleton afin d'éviter des erreurs de chemins de templates
         'shared' => [
@@ -1044,265 +1115,305 @@ return [
 
     'message' => [
         'messages' => [
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::CONFIDENTIALITE_LAIUS,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "La mise en ligne sera ensuite effectuée automatiquement le jour même de l'expiration du délai, sans préavis. " .
-                    "Une demande de prolongation auprès du Président de l'université est possible, mais doit anticiper " .
-                    "le délai de traitement de la demande." => Diffusion::CONFIDENTIELLE_OUI,
-                    "" => Diffusion::CONFIDENTIELLE_NON,
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_DIFFUSION_FORM_LABEL,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "L'auteur autorise la diffusion de sa thèse" => Diffusion::CONFIDENTIELLE_NON,
-                    "L'auteur autorise la diffusion de sa thèse à l'issue de la période de confidentialité" => Diffusion::CONFIDENTIELLE_OUI,
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_DIFFUSION_FORM_VALUE,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "Oui, immédiatement" => Diffusion::AUTORISATION_OUI_IMMEDIAT,
-                    "Oui, avec embargo après soutenance d'une durée de..." => Diffusion::AUTORISATION_OUI_EMBARGO,
-                    "Non" => Diffusion::AUTORISATION_NON,
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === null;
-                        },
-
-                    "<p>La thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
-                    "sans authentification. La thèse peut également être accessible depuis des plateformes de diffusion choisies par " .
-                    "l'établissement d'inscription dans le cadre de sa politique de valorisation scientifique " .
-                    "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
-                        },
-
-                    "<p>Pendant cette période, la diffusion de la thèse est uniquement assurée dans l’établissement de préparation du Doctorat et au sein de l’ensemble de la communauté universitaire, sans mise en ligne sur internet. Un exemplaire imprimé ou une version numérique en PDF est accessible dans toute bibliothèque, en faisant la demande dans le cadre du prêt entre bibliothèques. La consultation est alors uniquement ouverte à une personne appartenant à la communauté universitaire, avec engagement de ne pas rediffuser la thèse à des tiers non membres de la communauté universitaire.</p>" .
-                    "<p>La diffusion en ligne de la thèse est ensuite effectuée automatiquement le lendemain de l’expiration du délai, sans préavis. Une demande de prolongation de l’embargo auprès du service de documentation concerné est possible, mais doit anticiper le délai de traitement de la demande (un mois, hors périodes de fermeture).</p>" =>
-                        function (Diffusion $d) {
-                            return
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
-                        },
-
-                    "<p>La diffusion de la thèse est uniquement assurée dans l’établissement de préparation du doctorat et au sein de l’ensemble de la communauté universitaire, sans mise en ligne sur internet. L’auteur peut toutefois revenir sur sa décision à tout moment par avenant à la présente convention.</p>" .
-                    "<p>Dans tous les cas, un exemplaire imprimé ou une version numérique en PDF est accessible dans toute bibliothèque, en faisant la demande dans le cadre du prêt entre bibliothèques. La consultation est alors uniquement ouverte à une personne appartenant à la communauté universitaire, avec engagement de ne pas rediffuser la thèse à des tiers non membres de la communauté universitaire.</p>" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
-                        },
-                ],
-            ],
-
-            [
-                // todo : supprimer
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_QUESTION,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "L’auteur autorise la mise en ligne de la version de diffusion de la thèse sur Internet (après, le cas échéant, la fin de la période de confidentialité décidée par l’établissement) :" =>
-                        function (Diffusion $d) {
-                            return
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT ||
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
-                        },
-                    "L'auteur n'autorise pas la mise en ligne de la version de diffusion de la thèse sur Internet." =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
-                        },
-                ],
-            ],
-
-            [
-                // todo : supprimer
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_REPONSE,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "☑ &nbsp;&nbsp; Oui, immédiatement" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
-                        },
-
-                    "☑ &nbsp; Oui, avec embargo après soutenance d'une durée de : {duree} " .
-                    "<div class='autoris-diffusion-motif-div'>Motif :</div>" .
-                    "<div class='autoris-diffusion-motif-div'><p class='autoris-diffusion-motif'>{motif}</p></div>" =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            $sentBackData['duree'] = $d->getAutorisEmbargoDuree();
-                            $sentBackData['motif'] = $d->getAutorisMotif();
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
-                        },
-
-                    "<div class='autoris-diffusion-motif-div'><p>Motif :</p><p class=\"autoris-diffusion-motif\">{motif}</p></div>" =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            $sentBackData['motif'] = $d->getAutorisMotif();
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
-                        },
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_PHRASE,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "L'auteur autorise la diffusion de sa thèse <em>immédiatement</em>." =>
-                        function (Diffusion $d) {
-                            return
-                                $d->getConfidentielle() === false &&
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
-                        },
-                    "L'auteur autorise la diffusion de sa thèse <em>avec embargo après soutenance d'une durée de</em> {duree}. <p>Motif : </p>" .
-                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            $sentBackData['duree'] = $d->getAutorisEmbargoDuree();
-                            $sentBackData['motif'] = $d->getAutorisMotif();
-                            return
-                                $d->getConfidentielle() === false &&
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
-                        },
-                    "L'auteur n'autorise <em>pas</em> la diffusion de sa thèse. <p>Motif : </p>" .
-                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            $sentBackData['motif'] = $d->getAutorisMotif();
-                            return
-                                $d->getConfidentielle() === false &&
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
-                        },
-                    "L'auteur autorise la diffusion de sa thèse <em>immédiatement</em>, à l'issue de la période de confidentialité." =>
-                        function (Diffusion $d) {
-                            return
-                                $d->getConfidentielle() === true &&
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
-                        },
-                    "L'auteur autorise la diffusion de sa thèse à l'issue de la période de confidentialité <em>avec embargo après soutenance d'une durée de</em> {duree}. <p>Motif : </p>" .
-                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            $sentBackData['duree'] = $d->getAutorisEmbargoDuree();
-                            $sentBackData['motif'] = $d->getAutorisMotif();
-                            return
-                                $d->getConfidentielle() === true &&
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
-                        },
-                    "L'auteur n'autorise <em>pas</em> la diffusion de sa thèse à l'issue de la période de confidentialité. <p>Motif : </p>" .
-                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
-                        function (Diffusion $d, array &$sentBackData = []) {
-                            $sentBackData['motif'] = $d->getAutorisMotif();
-                            return
-                                $d->getConfidentielle() === true &&
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
-                        },
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_LAIUS,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === null;
-                        },
-
-                    "<p>La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de préparation du doctorat a son siège.</p>" =>
-                        function (Diffusion $d) {
-                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
-                        },
-
-                    "<p>La thèse est disponible en version imprimée au service de documentation de l’établissement d’accueil et en PDF pour l'ensemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre Bibliothèques).</p>" .
-                    "<p>La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de préparation du doctorat a son siège.</p>" =>
-                        function (Diffusion $d) {
-                            return
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO ||
-                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
-                        },
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::DROITS_AUTEUR_OK_FORM_LABEL,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "L'auteur garantit que tous les documents de la thèse sont libres de droits " .
-                    "ou qu'il a les droits afférents pour la reproduction et la représentation sur tous supports" =>
-                        true,
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::DROITS_AUTEUR_OK_FORM_VALUE,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "Oui" =>
-                        Diffusion::DROIT_AUTEUR_OK_OUI,
-                    "Non, à défaut il fournit une version numérique spécifique excluant ces oeuvres tierces (version de diffusion)..." =>
-                        Diffusion::DROIT_AUTEUR_OK_NON,
-                ],
-            ],
-
-            [
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::DROITS_AUTEUR_OK_PHRASE,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "L'auteur garantit que tous les documents de la thèse sont libres de droits ou " .
-                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.</p> " =>
-                        function (Diffusion $d) {
-                            return $d->getDroitAuteurOk() === true;
-                        },
-                    "L'auteur ne garantit pas que tous les documents de la thèse sont libres de droits ou " .
-                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports. <br>" .
-                    "À défaut, l'auteur fournit une version numérique spécifique excluant ces oeuvres tierces (version expurgée)." =>
-                        function (Diffusion $d) {
-                            return $d->getDroitAuteurOk() === false;
-                        },
-                ],
-            ],
-
-            [
-                // todo : supprimer
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'id' => DiffusionMessages::DROITS_AUTEUR_OK_PHRASE_CONV,
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                'data' => [
-                    "<p>☑ &nbsp;&nbsp; L'auteur garantit que tous les documents de la thèse sont libres de droits ou " .
-                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.</p> " .
-                    "<p>☐ &nbsp;&nbsp; À défaut, l'auteur déclare fournir en outre lors du dépôt une version numérique " .
-                    "spécifique excluant ces oeuvres tierces (version de diffusion).</p>" =>
-                        function (Diffusion $d) {
-                            return $d->getDroitAuteurOk() === true;
-                        },
-                    "<p>☐ &nbsp;&nbsp; L'auteur garantit que tous les documents de la thèse sont libres de droits ou " .
-                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.</p>" .
-                    "<p>☑ &nbsp;&nbsp; À défaut, l'auteur déclare fournir en outre lors du dépôt une version numérique " .
-                    "spécifique excluant ces oeuvres tierces (version de diffusion).</p>" =>
-                        function (Diffusion $d) {
-                            return $d->getDroitAuteurOk() === false;
-                        },
-                ],
-            ],
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::CONFIDENTIALITE_LAIUS,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "La mise en ligne sera ensuite effectuée automatiquement le jour même de l'expiration du délai, sans préavis. " .
+//                    "Une demande de prolongation auprès du Président de l'université est possible, mais doit anticiper " .
+//                    "le délai de traitement de la demande." => Diffusion::CONFIDENTIELLE_OUI,
+//                    "" => Diffusion::CONFIDENTIELLE_NON,
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_DIFFUSION_FORM_LABEL,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "L'auteur autorise la diffusion de sa thèse" => Diffusion::CONFIDENTIELLE_NON,
+//                    "L'auteur autorise la diffusion de sa thèse à l'issue de la période de confidentialité" => Diffusion::CONFIDENTIELLE_OUI,
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_DIFFUSION_FORM_VALUE,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "Oui, immédiatement" => Diffusion::AUTORISATION_OUI_IMMEDIAT,
+//                    "Oui, avec embargo après soutenance d'une durée de..." => Diffusion::AUTORISATION_OUI_EMBARGO,
+//                    "Non" => Diffusion::AUTORISATION_NON,
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "" =>
+//                        function (Diffusion $d) {
+//                            return $d->getAutorisMel() === null;
+//                        },
+//
+//                    "<p>
+//                        La thèse est consultable sur le réseau international internet via le portail national des thèses
+//                        (www.theses.fr), sans authentification. La thèse peut également être accessible depuis des
+//                        plateformes de diffusion choisies par
+//                        {% if comue %}
+//                            {{ comue.libelle }} et les établissements co-accrédités
+//                        {% else %}
+//                            l'{{ these.etablissement.libelle }}.
+//                        {% endif %}
+//                        dans le cadre de sa politique de valorisation scientifique
+//                        (exemple : <a href=\"https://theses.hal.science\">https://theses.hal.science</a>).
+//                    </p>" =>
+//                        function (Diffusion $d) {
+//                            return $d->getAutorisMel() === Diffusion::AUTORISATION_OUI_IMMEDIAT;
+//                        },
+//
+//                    "<p>
+//                        Pendant cette période, conformément à l’Arrêté du 25 mai 2016 modifié le 26 août 2022, le
+//                        manuscrit de thèse est obligatoirement accessible à l’ensemble de la communauté universitaire
+//                        française.
+//                        {% if comue %}
+//                            {{ comue.libelle }} et les établissements co-accrédités remplissent
+//                        {% else %}
+//                            l'{{ these.etablissement.libelle }} remplit
+//                        {% endif %}
+//                        cette obligation en rendant accessible le manuscrit au format PDF sur l’intranet de
+//                        l’Agence bibliographique de l’enseignement supérieur (Abes, <a href=\"https://abes.fr\">https://abes.fr</a>) disponible
+//                        depuis le site theses.fr.
+//                        L’accès à cet intranet est possible uniquement après une authentification Renater
+//                        (<a href=\"https://www.renater.fr\">https://www.renater.fr</a>).
+//                    </p>
+//                    <p>
+//                        La diffusion en ligne sur le réseau international internet de la thèse est ensuite effectuée
+//                        automatiquement le lendemain de l’expiration du délai, sans préavis. Une demande de prolongation
+//                        de l’embargo auprès du service de documentation concerné est possible, mais doit anticiper
+//                        le délai de traitement de la demande (un mois, hors périodes de fermeture).
+//                    </p>" =>
+//                        function (Diffusion $d) {
+//                            return
+//                                $d->getAutorisMel() === Diffusion::AUTORISATION_OUI_EMBARGO;
+//                        },
+//
+//                    "<p>
+//                        En cas de refus, la thèse n’est pas diffusée sur le réseau international internet. Cependant,
+//                        conformément à l’Arrêté du 25 mai 2016 modifié le modifié le 26 août 2022, le manuscrit de thèse
+//                        est obligatoirement accessible à l’ensemble de la communauté universitaire française.
+//                        {% if comue %}
+//                            {{ comue.libelle }} et les établissements co-accrédités remplissent
+//                        {% else %}
+//                            l'{{ these.etablissement.libelle }} remplit
+//                        {% endif %}
+//                        cette obligation en rendant accessible le manuscrit au format PDF sur l’intranet de
+//                        l’Agence bibliographique de l’enseignement supérieur (Abes, <a href=\"https://abes.fr\">https://abes.fr</a>/) disponible
+//                        depuis le site theses.fr.
+//                        L’accès à cet intranet est possible uniquement après une authentification Renater
+//                        (<a href=\"https://www.renater.fr\">https://www.renater.fr</a>).
+//                </p>" =>
+//                        function (Diffusion $d) {
+//                            return $d->getAutorisMel() === Diffusion::AUTORISATION_NON;
+//                        },
+//                ],
+//            ],
+//
+//            [
+//                // todo : supprimer
+//
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_QUESTION,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "L’auteur autorise la mise en ligne de la version de diffusion de la thèse sur Internet (après, le cas échéant, la fin de la période de confidentialité décidée par l’établissement) :" =>
+//                        function (Diffusion $d) {
+//                            return
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT ||
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
+//                        },
+//                    "L'auteur n'autorise pas la mise en ligne de la version de diffusion de la thèse sur Internet." =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+//                        },
+//                ],
+//            ],
+//
+//            [
+//                // todo : supprimer
+//
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_REPONSE,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "☑ &nbsp;&nbsp; Oui, immédiatement" =>
+//                        function (Diffusion $d) {
+//                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
+//                        },
+//
+//                    "☑ &nbsp; Oui, avec embargo après soutenance d'une durée de : {duree} " .
+//                    "<div class='autoris-diffusion-motif-div'>Motif :</div>" .
+//                    "<div class='autoris-diffusion-motif-div'><p class='autoris-diffusion-motif'>{motif}</p></div>" =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            $sentBackData['duree'] = $d->getAutorisEmbargoDuree();
+//                            $sentBackData['motif'] = $d->getAutorisMotif();
+//                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
+//                        },
+//
+//                    "<div class='autoris-diffusion-motif-div'><p>Motif :</p><p class=\"autoris-diffusion-motif\">{motif}</p></div>" =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            $sentBackData['motif'] = $d->getAutorisMotif();
+//                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+//                        },
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_PHRASE,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "L'auteur autorise la diffusion de sa thèse <em>immédiatement</em>." =>
+//                        function (Diffusion $d) {
+//                            return
+//                                $d->getConfidentielle() === false &&
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
+//                        },
+//                    "L'auteur autorise la diffusion de sa thèse <em>avec embargo après soutenance d'une durée de</em> {duree}. <p>Motif : </p>" .
+//                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            $sentBackData['duree'] = $d->getAutorisEmbargoDuree();
+//                            $sentBackData['motif'] = $d->getAutorisMotif();
+//                            return
+//                                $d->getConfidentielle() === false &&
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
+//                        },
+//                    "L'auteur n'autorise <em>pas</em> la diffusion de sa thèse. <p>Motif : </p>" .
+//                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            $sentBackData['motif'] = $d->getAutorisMotif();
+//                            return
+//                                $d->getConfidentielle() === false &&
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+//                        },
+//                    "L'auteur autorise la diffusion de sa thèse <em>immédiatement</em>, à l'issue de la période de confidentialité." =>
+//                        function (Diffusion $d) {
+//                            return
+//                                $d->getConfidentielle() === true &&
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
+//                        },
+//                    "L'auteur autorise la diffusion de sa thèse à l'issue de la période de confidentialité <em>avec embargo après soutenance d'une durée de</em> {duree}. <p>Motif : </p>" .
+//                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            $sentBackData['duree'] = $d->getAutorisEmbargoDuree();
+//                            $sentBackData['motif'] = $d->getAutorisMotif();
+//                            return
+//                                $d->getConfidentielle() === true &&
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO;
+//                        },
+//                    "L'auteur n'autorise <em>pas</em> la diffusion de sa thèse à l'issue de la période de confidentialité. <p>Motif : </p>" .
+//                    "<p class=\"autoris-diffusion-motif pre-scrollable\">{motif}</p>" =>
+//                        function (Diffusion $d, array &$sentBackData = []) {
+//                            $sentBackData['motif'] = $d->getAutorisMotif();
+//                            return
+//                                $d->getConfidentielle() === true &&
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+//                        },
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::AUTORIS_MISE_EN_LIGNE_LAIUS,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "" =>
+//                        function (Diffusion $d) {
+//                            return $d->getAutorisMel() === null;
+//                        },
+//
+//                    "<p>La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de préparation du doctorat a son siège.</p>" =>
+//                        function (Diffusion $d) {
+//                            return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;
+//                        },
+//
+//                    "<p>La thèse est disponible en version imprimée au service de documentation de l’établissement d’accueil et en PDF pour l'ensemble de la communauté universitaire (en intranet ou dans le cadre du Prêt Entre Bibliothèques).</p>" .
+//                    "<p>La loi applicable à cette présente convention est la loi française. Le tribunal compétent pour juger de tout contentieux lié au présent contrat est le tribunal administratif dans le ressort duquel l'établissement de préparation du doctorat a son siège.</p>" =>
+//                        function (Diffusion $d) {
+//                            return
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_EMBARGO ||
+//                                $d->getAutorisMel() === (int)Diffusion::AUTORISATION_NON;
+//                        },
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::DROITS_AUTEUR_OK_FORM_LABEL,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "L'auteur garantit que tous les documents de la thèse sont libres de droits " .
+//                    "ou qu'il a les droits afférents pour la reproduction et la représentation sur tous supports" =>
+//                        true,
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::DROITS_AUTEUR_OK_FORM_VALUE,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "Oui" =>
+//                        Diffusion::DROIT_AUTEUR_OK_OUI,
+//                    "Non, à défaut il fournit une version numérique spécifique excluant ces oeuvres tierces (version de diffusion)..." =>
+//                        Diffusion::DROIT_AUTEUR_OK_NON,
+//                ],
+//            ],
+//
+//            [
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::DROITS_AUTEUR_OK_PHRASE,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "L'auteur garantit que tous les documents de la thèse sont libres de droits ou " .
+//                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.</p> " =>
+//                        function (Diffusion $d) {
+//                            return $d->getDroitAuteurOk() === true;
+//                        },
+//                    "L'auteur ne garantit pas que tous les documents de la thèse sont libres de droits ou " .
+//                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports. <br>" .
+//                    "À défaut, l'auteur fournit une version numérique spécifique excluant ces oeuvres tierces (version expurgée)." =>
+//                        function (Diffusion $d) {
+//                            return $d->getDroitAuteurOk() === false;
+//                        },
+//                ],
+//            ],
+//
+//            [
+//                // todo : supprimer
+//
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'id' => DiffusionMessages::DROITS_AUTEUR_OK_PHRASE_CONV,
+//                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                'data' => [
+//                    "<p>☑ &nbsp;&nbsp; L'auteur garantit que tous les documents de la thèse sont libres de droits ou " .
+//                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.</p> " .
+//                    "<p>☐ &nbsp;&nbsp; À défaut, l'auteur déclare fournir en outre lors du dépôt une version numérique " .
+//                    "spécifique excluant ces oeuvres tierces (version de diffusion).</p>" =>
+//                        function (Diffusion $d) {
+//                            return $d->getDroitAuteurOk() === true;
+//                        },
+//                    "<p>☐ &nbsp;&nbsp; L'auteur garantit que tous les documents de la thèse sont libres de droits ou " .
+//                    "qu'il a acquis les droits afférents pour la reproduction et la représentation sur tous supports.</p>" .
+//                    "<p>☑ &nbsp;&nbsp; À défaut, l'auteur déclare fournir en outre lors du dépôt une version numérique " .
+//                    "spécifique excluant ces oeuvres tierces (version de diffusion).</p>" =>
+//                        function (Diffusion $d) {
+//                            return $d->getDroitAuteurOk() === false;
+//                        },
+//                ],
+//            ],
         ],
     ],
 ];

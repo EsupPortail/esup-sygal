@@ -3,7 +3,7 @@
 namespace Depot\Entity\Db;
 
 use Application\Constants;
-use Depot\Rule\AutorisationDiffusionRule;
+use Application\Entity\Db\Interfaces\ProvidesEntityChangeSet;
 use These\Entity\Db\These;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
@@ -14,6 +14,7 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 class Diffusion implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
+    use ProvidesEntityChangeSet;
 
     public const CONFIDENTIELLE_OUI = '1';
     public const CONFIDENTIELLE_NON = '0';
@@ -33,6 +34,9 @@ class Diffusion implements HistoriqueAwareInterface
         self::EMBARGO_DUREE_2_ANS => 'P2Y',
         self::EMBARGO_DUREE_5_ANS => 'P5Y',
     ];
+
+    public const AUTORISATION_PRET_PAPIER_OUI = '1';
+    public const AUTORISATION_PRET_PAPIER_NON = '0';
 
     public const DROIT_AUTEUR_OK_OUI = '1';
     public const DROIT_AUTEUR_OK_NON = '0';
@@ -76,6 +80,8 @@ class Diffusion implements HistoriqueAwareInterface
      * @var string
      */
     private $autorisMotif;
+
+    private ?bool $autorisPretPapier = null;
 
     /**
      * @var string
@@ -170,7 +176,7 @@ class Diffusion implements HistoriqueAwareInterface
     }
 
     /**
-     * @param \DateTime $dateFinConfidentialite
+     * @param \DateTime|null $dateFinConfidentialite
      * @return self
      */
     public function setDateFinConfidentialite($dateFinConfidentialite)
@@ -295,6 +301,17 @@ class Diffusion implements HistoriqueAwareInterface
         return $this->autorisMotif;
     }
 
+    public function getAutorisPretPapier(): ?bool
+    {
+        return $this->autorisPretPapier;
+    }
+
+    public function setAutorisPretPapier(?bool $autorisPretPapier): self
+    {
+        $this->autorisPretPapier = $autorisPretPapier;
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -402,19 +419,6 @@ class Diffusion implements HistoriqueAwareInterface
     {
         $this->nnt = $nnt;
         return $this;
-    }
-
-    /**
-     * Teste si l'exemplaire papier de la thèse est requis, d'après la réponse à l'autorisation de diffusion.
-     *
-     * @return bool
-     */
-    public function isRemiseExemplairePapierRequise()
-    {
-        $rule = new AutorisationDiffusionRule();
-        $rule->setDiffusion($this);
-
-        return $rule->computeRemiseExemplairePapierEstRequise();
     }
 }
 

@@ -1,0 +1,43 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \Depot\Entity\Db\Diffusion $diffusion
+ */
+
+use Depot\Entity\Db\Diffusion;
+?>
+
+<?php if ($diffusion->getConfidentielle() === false && $diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_IMMEDIAT): ?>
+
+    L'auteur autorise la diffusion de sa thèse <em>immédiatement</em>.
+
+<?php elseif ($diffusion->getConfidentielle() === false && $diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_EMBARGO): ?>
+
+    L'auteur autorise la diffusion de sa thèse <em>avec embargo après soutenance d'une durée
+        de</em> <?= $diffusion->getAutorisEmbargoDuree() ?>.
+    <p>Motif : </p>
+    <p class="autoris-diffusion-motif pre-scrollable"><?= $diffusion->getAutorisMotif() ?></p>
+
+<?php elseif ($diffusion->getConfidentielle() === false && $diffusion->getAutorisMel() === Diffusion::AUTORISATION_NON): ?>
+
+    L'auteur n'autorise <em>pas</em> la diffusion de sa thèse. <p>Motif : </p>
+    <p class="autoris-diffusion-motif pre-scrollable"><?= $diffusion->getAutorisMotif() ?></p>
+
+<?php elseif ($diffusion->getConfidentielle() === true && $diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_IMMEDIAT): ?>
+
+    L'auteur autorise la diffusion de sa thèse <em>immédiatement</em>, à l'issue de la période de confidentialité.
+
+<?php elseif ($diffusion->getConfidentielle() === true && $diffusion->getAutorisMel() === Diffusion::AUTORISATION_OUI_EMBARGO): ?>
+
+    L'auteur autorise la diffusion de sa thèse à l'issue de la période de confidentialité <em>avec embargo après
+        soutenance d'une durée de</em> <?= $diffusion->getAutorisEmbargoDuree() ?>.
+    <p>Motif : </p>
+    <p class="autoris-diffusion-motif pre-scrollable"><?= $diffusion->getAutorisMotif() ?></p>
+
+<?php elseif ($diffusion->getConfidentielle() === true && $diffusion->getAutorisMel() === Diffusion::AUTORISATION_NON): ?>
+
+    L'auteur n'autorise <em>pas</em> la diffusion de sa thèse à l'issue de la période de confidentialité.
+    <p>Motif : </p>
+    <p class="autoris-diffusion-motif pre-scrollable"><?= $diffusion->getAutorisMotif() ?></p>
+
+<?php endif ?>
