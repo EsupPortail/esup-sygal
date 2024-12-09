@@ -16,6 +16,7 @@ Journal des modifications
 - Formulaire de saisie d'une qualité de membre du jury : possibilité de spécifier 'aucun rang' (ex : émérites).
 - Validité du jury de soutenance : nouvelle contrainte sur le nombre maximum d'émérites possibles (nouveau paramètre) ; 
 infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites > 25%).
+- Soutenance : mention des personnes pouvant être Président du jury dans la notification 'Convocation des membres du jury'
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.
