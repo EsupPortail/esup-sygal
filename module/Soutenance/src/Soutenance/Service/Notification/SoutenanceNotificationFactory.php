@@ -5,11 +5,13 @@ namespace Soutenance\Service\Notification;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
+use Application\Renderer\ValidationRendererAdapter;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Renderer\DoctorantRendererAdapter;
 use Individu\Entity\Db\Individu;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
@@ -18,12 +20,15 @@ use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Template\MailTemplates;
+use Soutenance\Renderer\MembreSoutenanceRendererAdapter;
+use Soutenance\Renderer\PropositionSoutenanceRendererAdapter;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Url\UrlServiceAwareTrait;
+use Structure\Renderer\StructureRendererAdpater;
 use These\Entity\Db\These;
+use These\Renderer\TheseRendererAdapter;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenUtilisateur\Entity\Db\RoleInterface;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /** Todo à déplacer dans UnicaenRenderer dans les prochaines versions */
@@ -615,9 +620,34 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune validation de trouvée");
         }
 
-        $vars = ['soutenance' => $proposition, 'doctorant' => $doctorant, 'these' => $proposition->getThese(), 'membre' => $membre, 'validation' => $validation[0], 'etablissement' => $proposition->getThese()->getEtablissement()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $theseAdapter = new TheseRendererAdapter($proposition->getThese());
+        $doctorantAdapter = new DoctorantRendererAdapter($doctorant);
+        $validationAdapter = new ValidationRendererAdapter($validation[0]);
+        $structureAdapter = new StructureRendererAdpater($proposition->getThese()->getEtablissement());
+        $propositionSoutenanceAdapter = new PropositionSoutenanceRendererAdapter($proposition);
+        $membreSoutenanceAdapter = new MembreSoutenanceRendererAdapter($membre);
+        $membreSoutenanceAdapter->setMembresPouvantEtrePresidentDuJury(
+            $this->membreService->findAllMembresPouvantEtrePresidentDuJury($proposition)
+        );
+
+        $urlService = $this->getUrlService()->setVariables([
+            'soutenance' => $proposition,
+            'doctorant' => $doctorant,
+            'these' => $proposition->getThese(),
+            'membre' => $membre,
+            'validation' => $validation[0],
+            'etablissement' => $proposition->getThese()->getEtablissement(),
+        ]);
+
+        $vars = [
+            'soutenance' => $propositionSoutenanceAdapter,
+            'doctorant' => $doctorantAdapter,
+            'these' => $theseAdapter,
+            'membre' => $membreSoutenanceAdapter,
+            'validation' => $validationAdapter,
+            'etablissement' => $structureAdapter,
+            'Url' => $urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_CONVOCATION_MEMBRE, $vars);
 

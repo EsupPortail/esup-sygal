@@ -1539,7 +1539,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /** Fonctions pour macros *****************************************************************************************/
 
-    /** @noinspection PhpUnused */
+    /**
+     * @noinspection PhpUnused
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseRendererAdapter}
+     */
     public function toStringEncadrement() : string {
         /** @var Individu[] $encadrement */
         $encadrement = $this->getEncadrements(true);

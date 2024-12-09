@@ -167,6 +167,7 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @noinspection
      * @return string
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Application\Renderer\ValidationRendererAdapter}
      */
     public function getAuteurToString() : string
     {
@@ -176,6 +177,7 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @noinspection
      * @return string
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Application\Renderer\ValidationRendererAdapter}
      */
     public function getDateToString() : string
     {

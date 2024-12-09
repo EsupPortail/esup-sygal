@@ -408,7 +408,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
 
     /** FONCTIONS POUR LES MACROS *************************************************************************************/
 
-    /** @noinspection  PhpUnused */
+    /** @noinspection  PhpUnused
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseRendererAdapter} */
     public function toStringDateRetourRapport() : string
     {
         $date = $this->getRenduRapport();
@@ -416,7 +417,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
     }
 
-    /** @noinspection  PhpUnused */
+    /** @noinspection  PhpUnused
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter} */
     public function toStringDateSoutenance() : string
     {
         $date = $this->getDate();
@@ -424,7 +426,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
     }
 
-    /** @noinspection  PhpUnused */
+    /** @noinspection  PhpUnused
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter} */
     #[Pure] public function toStringLieu() : string
     {
         $lieu = $this->getLieu();
@@ -432,7 +435,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return "<span style='color:darkorange;'>Aucun lieu de précisé</span>";
     }
 
-    /** @noinspection  PhpUnused Utilisé par la macro Soutenance#Adresse  */
+    /** @noinspection  PhpUnused Utilisé par la macro Soutenance#Adresse
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter} */
     #[Pure] public function toStringAdresse() : string
     {
         $lieu = $this->getAdresseActive();
@@ -440,7 +444,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return "<span style='color:darkorange;'>Aucune adresse de précisée</span>";
     }
 
-    /** @noinspection  PhpUnused */
+    /** @noinspection  PhpUnused
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter}*/
     #[Pure] public function toStringPublicOuHuisClos() : string
     {
         $mode = $this->isHuitClos();

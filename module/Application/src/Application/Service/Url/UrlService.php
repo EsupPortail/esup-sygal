@@ -4,43 +4,24 @@ namespace Application\Service\Url;
 
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
-use Traversable;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Router\RouteStackInterface;
+use Traversable;
+use UnicaenApp\Exception\RuntimeException;
 
 abstract class UrlService
 {
     use IdifyFilterAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected RouteStackInterface $router;
+    protected ?RouteMatch $routeMatch = null;
+    protected array $options = [];
 
-    /**
-     * @param array $options
-     * @return self
-     */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): static
     {
         $this->options = $options;
         return $this;
     }
-
-    /**
-     * RouteStackInterface instance.
-     *
-     * @var RouteStackInterface
-     */
-    protected $router;
-
-    /**
-     * RouteInterface match returned by the router.
-     *
-     * @var RouteMatch
-     */
-    protected $routeMatch;
 
     /**
      * Generates a url given the name of a route.
@@ -51,13 +32,9 @@ abstract class UrlService
      * @param  bool                 $reuseMatchedParams Whether to reuse matched parameters
      * @return string Url                         For the link href attribute
      */
-    public function fromRoute($name = null, $params = array(), $options = array(), $reuseMatchedParams = false)
+    public function fromRoute($name = null, $params = array(), $options = array(), $reuseMatchedParams = false): string
     {
         $options = array_merge($this->options, $options);
-
-        if (null === $this->router) {
-            throw new RuntimeException('No RouteStackInterface instance provided');
-        }
 
         if (3 == func_num_args() && is_bool($options)) {
             $reuseMatchedParams = $options;
@@ -111,7 +88,7 @@ abstract class UrlService
      * @param RouteStackInterface $router
      * @return self
      */
-    public function setRouter(RouteStackInterface $router)
+    public function setRouter(RouteStackInterface $router): static
     {
         $this->router = $router;
         return $this;
@@ -123,7 +100,7 @@ abstract class UrlService
      * @param  RouteMatch $routeMatch
      * @return self
      */
-    public function setRouteMatch(RouteMatch $routeMatch)
+    public function setRouteMatch(RouteMatch $routeMatch): static
     {
         $this->routeMatch = $routeMatch;
         return $this;

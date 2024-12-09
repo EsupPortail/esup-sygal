@@ -139,13 +139,3 @@ SET discipline_sise_id = ds.id
     FROM discipline_sise ds
 WHERE ds.code = t.discipline_sise_code;
 
-
---
--- Emérites dans le jury de soutenance
---
-alter table soutenance_qualite alter column rang drop not null;
-update soutenance_qualite set rang = null where rang not in ('A', 'B');
-update soutenance_qualite set rang = null where emeritat = 'O';
-INSERT INTO unicaen_parametre_parametre (categorie_id, code, libelle, valeurs_possibles, valeur, ordre)
-select cat.id, 'RATIO_MAX_EMERITES', 'Ratio maximal d''émérites', 'String', '0.25', 600
-from unicaen_parametre_categorie cat where cat.code = 'SOUTENANCE';

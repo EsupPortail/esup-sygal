@@ -226,6 +226,20 @@ class MembreService {
         return $result;
     }
 
+    /**
+     * @return Membre[]
+     */
+    public function findAllMembresPouvantEtrePresidentDuJury(Proposition $proposition) : array
+    {
+        // peuvent être président du jury les membres de rang A
+        $qb = $this->createQueryBuilder()
+            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
+            ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
+            ->addOrderBy('membre.nom', 'ASC');
+
+        return  $qb->getQuery()->getResult();
+    }
+
     /** FACADE ********************************************************************************************************/
 
     /**
