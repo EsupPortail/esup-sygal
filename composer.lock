@@ -11359,7 +11359,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "759a53c633c91023ffbc56bd6792c8360eb4365c"
+                "reference": "0d51a14bec6074c7f4c4b73213df9451801f9067"
             },
             "require": {
                 "apereo/phpcas": "1.5.*",
@@ -11381,7 +11381,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen - Version Laminas",
-            "time": "2024-12-09T14:49:24+00:00"
+            "time": "2024-12-10T08:33:42+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -11958,7 +11958,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/utilisateur.git",
-                "reference": "c37bca2b4d3d54f771c1f6bfc28812794d6b0739"
+                "reference": "9ffaa6060fac416813dbfad8f2295bc8126396cd"
             },
             "require": {
                 "unicaen/app": "^6.1",
@@ -11981,7 +11981,7 @@
                 ]
             },
             "description": "Module reprenant la gestion des utilisateurs, privileges et roles - Version laminas",
-            "time": "2024-11-21T13:50:55+00:00"
+            "time": "2024-12-10T16:00:41+00:00"
         },
         {
             "name": "unicaen/zfc-user",
