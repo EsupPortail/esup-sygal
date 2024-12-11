@@ -11925,7 +11925,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/open-source/sygal-api.git",
-                "reference": "4f1ed0bf6df23fe6f8931aee60bef772ce6134cd"
+                "reference": "3df9ba6e31fccc5656298bf785d3b53d363038d4"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.0",
@@ -11950,7 +11950,7 @@
                 ]
             },
             "description": "API SyGAL",
-            "time": "2024-11-15T15:11:34+00:00"
+            "time": "2024-12-04T15:58:59+00:00"
         },
         {
             "name": "unicaen/utilisateur",
