@@ -117,7 +117,7 @@ class PresoutenanceController extends AbstractController
         $pv = $proposition->getJustificatif(NatureFichier::CODE_PV_SOUTENANCE);
 
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
-        $engagements = $this->engagementImpartialiteService->getEngagmentsImpartialiteByThese($these);
+        $engagements = $this->engagementImpartialiteService->getEngagmentsImpartialiteByThese($these, $rapporteurs);
         $avis = $this->avisService->getAvisByThese($these);
 
         $validationBDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);

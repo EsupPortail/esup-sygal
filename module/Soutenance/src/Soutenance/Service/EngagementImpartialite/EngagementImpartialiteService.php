@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\EngagementImpartialite;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
@@ -76,15 +77,25 @@ class EngagementImpartialiteService {
 
     /**
      * @param These $these
+     * @param Membre[] $rapporteurs
      * @return Validation[] ==> clef: id de l'individu ayant validé <==
      */
-    public function getEngagmentsImpartialiteByThese(These $these)
+    public function getEngagmentsImpartialiteByThese(These $these, array $rapporteurs): array
     {
-        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these);
+        $rapporteursIndividuIds = array_map(fn(Membre $m) => $m->getActeur()?->getIndividu()?->getId(), $rapporteurs);
+
+        $qb = $this->getValidationService()->getRepository()->createQueryBuilder('v')
+            ->andWhere('i IN (:individuIds)')->setParameter('individuIds', $rapporteursIndividuIds)
+            ->andWhere('t = :these')->setParameter('these', $these)
+            ->andWhere('tv.code = :code')->setParameter('code', TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE)
+            ->andWhereNotHistorise('v');
+        $validations = $qb->getQuery()->getResult();
+
         $engagements = [];
         foreach ($validations as $validation) {
             $engagements[$validation->getIndividu()->getId()] = $validation;
         }
+
         return $engagements;
     }
 
