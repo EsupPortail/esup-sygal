@@ -24,6 +24,7 @@ infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites
 - [FIX] Module Admission inaccessible suite au bug de l'entité Discipline
 - [FIX] Module Admission inaccessible suite au bug de l'entité Discipline
 - [FIX] Config : plus de fonctions directement dans des fichiers de config, ça vilain et ça complique les tests fonctionnels
+- [FIX] Recherche des engagements d'impartialité existants : ajout de la jointure sur Individu il peut rester des engagements non supprimés !
 
 9.1.1
 -----
