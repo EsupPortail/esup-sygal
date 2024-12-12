@@ -14,13 +14,27 @@ class UrlService extends \Application\Service\Url\UrlService
 {
     use MembreServiceAwareTrait;
 
-    protected array $variables;
+    protected ?array $allowedVariables = [
+        'these',
+        'doctorant',
+        'etablissement',
+        'rapporteur',
+        'avis',
+        'membre',
+        'soutenance',
+        'validation',
+    ];
 
-    public function setVariables(array $variables): UrlService
-    {
-        $this->variables = $variables;
-        return $this;
-    }
+//    public function setVariables(array $variables): UrlService
+//    {
+//        if ($this->allowedVariables !== null && ($diff = array_diff_key($variables, $this->allowedVariables))) {
+//            throw new InvalidArgumentException(
+//                "Les valiables suivantes ne sont pas autorisées explicitement : " . implode(', ', array_keys($diff))
+//            );
+//        }
+//        $this->variables = $variables;
+//        return $this;
+//    }
 
     /**
      * @noinspection

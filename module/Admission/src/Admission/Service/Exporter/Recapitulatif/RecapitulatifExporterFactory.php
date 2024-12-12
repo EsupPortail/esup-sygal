@@ -3,14 +3,15 @@
 namespace Admission\Service\Exporter\Recapitulatif;
 
 use Admission\Service\Admission\AdmissionService;
-use Fichier\Service\Fichier\FichierStorageService;
 use Admission\Service\Url\UrlService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use UnicaenRenderer\Service\Rendu\RenduService;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 
 class RecapitulatifExporterFactory {
 
@@ -42,6 +43,11 @@ class RecapitulatifExporterFactory {
         $exporter->setStructureService($structureService);
         $exporter->setUrlService($urlService);
         $exporter->setAdmissionService($admissionService);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $exporter->setTemplateVariablePluginManager($rapm);
+
         return $exporter;
     }
 }

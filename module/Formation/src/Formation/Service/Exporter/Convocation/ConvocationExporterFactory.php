@@ -10,6 +10,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use UnicaenRenderer\Service\Rendu\RenduService;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 
 class ConvocationExporterFactory {
 
@@ -39,6 +40,11 @@ class ConvocationExporterFactory {
         $exporter->setRenduService($renduService);
         $exporter->setStructureService($structureService);
         $exporter->setUrlService($urlService);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $exporter->setTemplateVariablePluginManager($rapm);
+
         return $exporter;
     }
 }

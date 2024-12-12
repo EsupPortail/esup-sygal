@@ -2,14 +2,13 @@
 
 namespace Soutenance\Entity;
 
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Horodatage\Entity\Interfaces\HasHorodatagesInterface;
 use Horodatage\Entity\Traits\HasHorodatagesTrait;
 use RuntimeException;
-use JetBrains\PhpStorm\Pure;
 use These\Entity\Db\These;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
@@ -404,53 +403,5 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
             }
         }
         return $result;
-    }
-
-    /** FONCTIONS POUR LES MACROS *************************************************************************************/
-
-    /** @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseRendererAdapter} */
-    public function toStringDateRetourRapport() : string
-    {
-        $date = $this->getRenduRapport();
-        if ($date) return $date->format('d/m/Y');
-        return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
-    }
-
-    /** @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter} */
-    public function toStringDateSoutenance() : string
-    {
-        $date = $this->getDate();
-        if ($date) return $date->format('d/m/Y à H:i');
-        return "<span style='color:darkorange;'>Aucune date de rendu de précisée</span>";
-    }
-
-    /** @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter} */
-    #[Pure] public function toStringLieu() : string
-    {
-        $lieu = $this->getLieu();
-        if ($lieu) return $lieu;
-        return "<span style='color:darkorange;'>Aucun lieu de précisé</span>";
-    }
-
-    /** @noinspection  PhpUnused Utilisé par la macro Soutenance#Adresse
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter} */
-    #[Pure] public function toStringAdresse() : string
-    {
-        $lieu = $this->getAdresseActive();
-        if ($lieu) return $lieu->format();
-        return "<span style='color:darkorange;'>Aucune adresse de précisée</span>";
-    }
-
-    /** @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter}*/
-    #[Pure] public function toStringPublicOuHuisClos() : string
-    {
-        $mode = $this->isHuitClos();
-        if ($mode === false) return " sera publique ";
-        if ($mode === true) return " se déroulera en huis clos";
-        return "<span style='color:darkorange;'>Aucun mode de déclaré</span>";
     }
 }

@@ -5,13 +5,12 @@ namespace Soutenance\Service\Notification;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
-use Application\Renderer\ValidationRendererAdapter;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
-use Doctorant\Renderer\DoctorantRendererAdapter;
 use Individu\Entity\Db\Individu;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
@@ -20,13 +19,9 @@ use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Template\MailTemplates;
-use Soutenance\Renderer\MembreSoutenanceRendererAdapter;
-use Soutenance\Renderer\PropositionSoutenanceRendererAdapter;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Url\UrlServiceAwareTrait;
-use Structure\Renderer\StructureRendererAdpater;
 use These\Entity\Db\These;
-use These\Renderer\TheseRendererAdapter;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
@@ -59,12 +54,25 @@ class SoutenanceNotificationFactory extends NotificationFactory
     use RenduServiceAwareTrait;
     use UrlServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
 
     public function createNotificationDevalidationProposition(These $these, Validation $validation): Notification
     {
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'validation' => $validation];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'validation' => $validation
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $validationTemplateVariable = $this->getValidationTemplateVariable($validation);
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'validation' => $validationTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_ANNULEE, $vars);
         $mail = $validation->getIndividu()->getEmailUtilisateur();
@@ -90,9 +98,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour les acteurs directs de la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'validation' => $validation];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'validation' => $validation
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $validationTemplateVariable = $this->getValidationTemplateVariable($validation);
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'validation' => $validationTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_ACTEUR_DIRECT, $vars);
         $notif = new Notification();
@@ -119,9 +139,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour l'unité de recherche de la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'unite-recherche' => $these->getUniteRecherche()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'unite-recherche' => $these->getUniteRecherche()
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $uniteRechercheTemplateVariable = $this->getStructureTemplateVariable($these->getUniteRecherche());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'unite-recherche' => $uniteRechercheTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_DEMANDE_UR, $vars);
         $notif = new Notification();
@@ -141,9 +173,27 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour l'école doctorale de la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'ecole-doctorale' => $these->getEcoleDoctorale(), 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'etablissement' => $these->getEtablissement(),
+            'unite-recherche' => $these->getUniteRecherche(),
+            'ecole-doctorale' => $these->getEcoleDoctorale(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $uniteRechercheTemplateVariable = $this->getStructureTemplateVariable($these->getUniteRecherche());
+        $ecoleDoctoraleTemplateVariable = $this->getStructureTemplateVariable($these->getEcoleDoctorale());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'ecole-doctorale' => $ecoleDoctoraleTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'unite-recherche' => $uniteRechercheTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_DEMANDE_ED, $vars);
         $notif = new Notification();
@@ -158,9 +208,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $emails = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'etablissement' => $these->getEtablissement(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_DEMANDE_ETAB, $vars);
         $notif = new Notification();
@@ -187,9 +249,22 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse électronique trouvée pour la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'etablissement' => $these->getEtablissement(),
+            'unite-recherche' => $these->getUniteRecherche(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SOUTENANCE_AVANT_PRESOUTENANCE, $vars);
         $notif = new Notification();
@@ -214,9 +289,18 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour les acteurs directs de la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::PROPOSITION_SUPPRESSION, $vars);
         $notif = new Notification();
@@ -227,7 +311,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    public function createNotificationPresoutenance($these): Notification
+    public function createNotificationPresoutenance(These $these): Notification
     {
         $emails = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
@@ -235,9 +319,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la maison du doctorat de la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'etablissement' => $these->getEtablissement(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SOUTENANCE_ENVOI_PRESOUTENANCE, $vars);
         $notif = new Notification();
@@ -258,9 +354,30 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $refus = new StringElement();
         $refus->texte = $motif;
-        $vars = ['individu' => $currentUser, 'role' => $currentRole, 'etablissement' => $currentRole->getStructure(), 'stringelement' => $refus, 'these' => $these, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+
+        $this->urlService->setVariables([
+            'individu' => $currentUser,
+            'role' => $currentRole,
+            'etablissement' => $currentRole->getStructure(),
+            'stringelement' => $refus,
+            'these' => $these,
+            'doctorant' => $these->getDoctorant()
+        ]);
+        
+        $individuTemplateVariable = $this->getIndividuTemplateVariable($currentUser);
+        $roleTemplateVariable = $this->getRoleTemplateVariable($currentRole);
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $vars = [
+            'individu' => $individuTemplateVariable,
+            'role' => $roleTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'stringelement' => $refus,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::PROPOSITION_REFUS, $vars);
         $notif = new Notification();
@@ -275,9 +392,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationDemandeSignatureEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'rapporteur' => $membre];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'rapporteur' => $membre,
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenanceMembre = $this->getSoutenanceMembreTemplateVariable($membre);
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembre,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_ENGAGEMENT_IMPARTIALITE, $vars);
         $mail = $membre->getActeur()?->getEmail(true);
@@ -295,9 +424,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationSignatureEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $membre];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'membre' => $membre,
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenanceMembre = $this->getSoutenanceMembreTemplateVariable($membre);
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembre,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SIGNATURE_ENGAGEMENT_IMPARTIALITE, $vars);
         $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
@@ -315,9 +456,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationRefusEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $membre];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'membre' => $membre,
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenanceMembre = $this->getSoutenanceMembreTemplateVariable($membre);
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembre,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::REFUS_ENGAGEMENT_IMPARTIALITE, $vars);
 
@@ -338,9 +491,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationAnnulationEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $membre];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'membre' => $membre,
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::ANNULATION_ENGAGEMENT_IMPARTIALITE, $vars);
 
@@ -367,9 +532,18 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse électronique trouvée pour les aspects doctorales");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_TOUS_AVIS_RENDUS, $vars);
 
@@ -388,9 +562,18 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse électronique trouvée pour les encadrants de la thèse");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_TOUS_AVIS_RENDUS_DIRECTION, $vars);
 
@@ -414,9 +597,32 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_AVIS_FAVORABLE . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'membre' => $avis->getMembre(),
+            'acteur' => $avis->getRapporteur(),
+            'avis' => $avis,
+            'etablissement' => $these->getEtablissement(),
+            'unite-recherche' => $these->getUniteRecherche()
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($avis->getMembre());
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $acteurTemplateVariable = $this->getActeurTemplateVariable($avis->getRapporteur());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $uniteRechercheTemplateVariable = $this->getStructureTemplateVariable($these->getUniteRecherche());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'acteur' => $acteurTemplateVariable,
+//            'avis' => $avis, // enlevé car aucune macro utilisant une variable 'avis'
+            'etablissement' => $etablissementTemplateVariable,
+            'unite-recherche' => $uniteRechercheTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_AVIS_FAVORABLE, $vars);
         $notif = new Notification();
@@ -439,9 +645,33 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_AVIS_DEFAVORABLE . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $avis->getMembre(), 'acteur' => $avis->getRapporteur(), 'avis' => $avis, 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'membre' => $avis->getMembre(),
+            'acteur' => $avis->getRapporteur(),
+            'avis' => $avis,
+            'etablissement' => $these->getEtablissement(),
+            'unite-recherche' => $these->getUniteRecherche()
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($avis->getMembre());
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $acteurTemplateVariable = $this->getActeurTemplateVariable($avis->getRapporteur());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $uniteRechercheTemplateVariable = $this->getStructureTemplateVariable($these->getUniteRecherche());
+
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'acteur' => $acteurTemplateVariable,
+//            'avis' => $avis, // enlevé car aucune macro utilisant une variable 'avis'
+            'etablissement' => $etablissementTemplateVariable,
+            'unite-recherche' => $uniteRechercheTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_AVIS_DEFAVORABLE, $vars);
         $notif = new Notification();
@@ -462,9 +692,22 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::DEMANDE_PRERAPPORT . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'rapporteur' => $rapporteur];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'membre' => $rapporteur,
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($rapporteur);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_PRERAPPORT, $vars);
         $notif = new Notification();
@@ -488,9 +731,27 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_FEU_VERT . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement(), 'unite-recherche' => $these->getUniteRecherche()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'soutenance' => $proposition,
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'etablissement' => $these->getEtablissement(),
+            'unite-recherche' => $these->getUniteRecherche(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $uniteRechercheTemplateVariable = $this->getStructureTemplateVariable($these->getUniteRecherche());
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $vars = [
+            'soutenance' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'unite-recherche' => $uniteRechercheTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_FEU_VERT, $vars);
         $notif = new Notification();
@@ -512,9 +773,18 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune adresse mail trouvée pour la notification [" . MailTemplates::SOUTENANCE_STOP_DEMARCHE . "] la thèse {$these->getId()}");
         }
 
-        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_STOP_DEMARCHE, $vars);
         $notif = new Notification();
@@ -535,12 +805,28 @@ class SoutenanceNotificationFactory extends NotificationFactory
         }
 
         $these = $proposition->getThese();
-        $doctorant = $these->getDoctorant();
-        $etablissement = $these->getEtablissement();
 
-        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $doctorant, 'rapporteur' => $rapporteur, 'etablissement' => $etablissement];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'soutenance' => $proposition,
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'rapporteur' => $rapporteur,
+            'etablissement' => $these->getEtablissement(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($rapporteur);
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $vars = [
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::CONNEXION_RAPPORTEUR, $vars);
 
@@ -564,12 +850,28 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $proposition = $membre->getProposition();
         $these = $proposition->getThese();
-        $doctorant = $these->getDoctorant();
-        $etablissement = $these->getEtablissement();
 
-        $vars = ['soutenance' => $proposition, 'these' => $these, 'doctorant' => $doctorant, 'rapporteur' => $membre, 'etablissement' => $etablissement];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'soutenance' => $proposition,
+            'these' => $these,
+            'doctorant' => $these->getDoctorant(),
+            'rapporteur' => $membre,
+            'etablissement' => $these->getEtablissement(),
+            'Url' => $this->urlService,
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $vars = [
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_RAPPORT_SOUTENANCE, $vars);
 
@@ -594,9 +896,24 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune validation de trouvée");
         }
 
-        $vars = ['soutenance' => $proposition, 'these' => $proposition->getThese(), 'doctorant' => $doctorant, 'validation' => $validation[0]];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'soutenance' => $proposition,
+            'these' => $proposition->getThese(),
+            'doctorant' => $doctorant,
+            'validation' => $validation[0]
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($proposition->getThese());
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($doctorant);
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $validationTemplateVariable = $this->getValidationTemplateVariable($validation[0]);
+        $vars = [
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'validation' => $validationTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_CONVOCATION_DOCTORANT, $vars);
 
@@ -620,17 +937,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucune validation de trouvée");
         }
 
-        $theseAdapter = new TheseRendererAdapter($proposition->getThese());
-        $doctorantAdapter = new DoctorantRendererAdapter($doctorant);
-        $validationAdapter = new ValidationRendererAdapter($validation[0]);
-        $structureAdapter = new StructureRendererAdpater($proposition->getThese()->getEtablissement());
-        $propositionSoutenanceAdapter = new PropositionSoutenanceRendererAdapter($proposition);
-        $membreSoutenanceAdapter = new MembreSoutenanceRendererAdapter($membre);
-        $membreSoutenanceAdapter->setMembresPouvantEtrePresidentDuJury(
-            $this->membreService->findAllMembresPouvantEtrePresidentDuJury($proposition)
-        );
-
-        $urlService = $this->getUrlService()->setVariables([
+        $this->urlService->setVariables([
             'soutenance' => $proposition,
             'doctorant' => $doctorant,
             'these' => $proposition->getThese(),
@@ -639,14 +946,23 @@ class SoutenanceNotificationFactory extends NotificationFactory
             'etablissement' => $proposition->getThese()->getEtablissement(),
         ]);
 
+        $theseTemplateVariable = $this->getTheseTemplateVariable($proposition->getThese());
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($doctorant);
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($proposition->getThese()->getEtablissement());
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $validationTemplateVariable = $this->getValidationTemplateVariable($validation[0]);
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
+        $soutenanceMembreTemplateVariable->setMembresPouvantEtrePresidentDuJury(
+            $this->membreService->findAllMembresPouvantEtrePresidentDuJury($proposition)
+        );
         $vars = [
-            'soutenance' => $propositionSoutenanceAdapter,
-            'doctorant' => $doctorantAdapter,
-            'these' => $theseAdapter,
-            'membre' => $membreSoutenanceAdapter,
-            'validation' => $validationAdapter,
-            'etablissement' => $structureAdapter,
-            'Url' => $urlService,
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+            'validation' => $validationTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_CONVOCATION_MEMBRE, $vars);
@@ -661,9 +977,23 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationTransmettreDocumentsDirectionThese(These $these, Proposition $proposition): Notification
     {
-        $vars = ['these' => $these, 'proposition' => $proposition, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+        $this->urlService->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'doctorant' => $these->getDoctorant(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($proposition->getThese());
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $etablissementTemplateVariable = $this->getStructureTemplateVariable($these->getEtablissement());
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $vars = [
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::TRANSMETTRE_DOCUMENTS_DIRECTION, $vars);
         $mail = array_merge($these->getDirecteursTheseEmails(), $these->getCoDirecteursTheseEmails());
@@ -683,9 +1013,22 @@ class SoutenanceNotificationFactory extends NotificationFactory
     public function createNotificationDemandeAdresse(?Proposition $proposition): Notification
     {
         $these = $proposition->getThese();
-        $vars = ['these' => $these, 'proposition' => $proposition, 'doctorant' => $these->getDoctorant()];
-        $url = $this->getUrlService()->setVariables($vars);
-        $vars['Url'] = $url;
+
+        $this->urlService->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'doctorant' => $these->getDoctorant(),
+        ]);
+
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+        $vars = [
+            'these' => $theseTemplateVariable,
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+            'Url' => $this->urlService,
+        ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_ADRESSE_EXACTE, $vars);
         $emails = $this->emailTheseService->fetchEmailActeursDirects($these);

@@ -1,6 +1,7 @@
 <?php
 namespace Admission\Entity\Db;
 
+use Application\Entity\Db\Validation;
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
@@ -29,6 +30,22 @@ class AdmissionValidation implements HistoriqueAwareInterface, AdmissionOperatio
         if ($individu !== null) {
             $this->setIndividu($individu);
         }
+    }
+
+    /**
+     * Instancie une {@see \Application\Entity\Db\Validation} à partir de cette instance.
+     * **NB : à supprimer lorsque la table 'validation' ne sera plus liée directement à une thèse et qu'on
+     * pourra donc ajouter une colonne 'validation_id' dans la table 'admission_validation'.**
+     */
+    public function asValidation(): Validation
+    {
+        $validation = new Validation($this->typeValidation, null, $this->individu);
+        $validation->setHistoCreateur($this->getHistoCreateur());
+        $validation->setHistoCreation($this->getHistoCreation());
+        $validation->setHistoModificateur($this->getHistoModificateur());
+        $validation->setHistoModification($this->getHistoModification());
+
+        return $validation;
     }
 
     public function __toString(): string
@@ -142,35 +159,5 @@ class AdmissionValidation implements HistoriqueAwareInterface, AdmissionOperatio
     public function getResourceId()
     {
         return "AdmissionValidation";
-    }
-
-    /** Fonction pour les macros du module UnicaenRenderer ************************************************************/
-
-    /**
-     * @noinspection
-     * @return string
-     */
-    public function getAuteurToString() : string
-    {
-        $displayname = $this->getIndividu()->getNomComplet();
-        return $displayname;
-    }
-    /**
-     * @noinspection
-     * @return string
-     */
-    public function getDateToString() : string
-    {
-        $date = $this->getHistoCreation()->format('d/m/Y à H:i');
-        return $date;
-    }
-
-    /**
-     * @noinspection
-     * @return string
-     */
-    public function getDestructeurToString() : string
-    {
-        return "par ".$this->getHistoDestructeur();
     }
 }

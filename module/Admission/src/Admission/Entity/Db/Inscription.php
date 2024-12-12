@@ -879,90 +879,6 @@ class Inscription implements HistoriqueAwareInterface{
         return $this->fonctionCoDirecteurThese;
     }
 
-    /** Pour macro ****************************************************************************************************/
-
-    public function getSpecialiteDoctoratLibelle(): ?string
-    {
-        return $this->getSpecialiteDoctorat() ? $this->getSpecialiteDoctorat()->getLibelle() : null;
-    }
-    public function getComposanteRattachementLibelle(): ?string
-    {
-        return $this->getComposanteDoctorat() ? $this->getComposanteDoctorat()->getStructure()->getLibelle() : null;
-    }
-
-    public function getEcoleDoctoraleLibelle(): ?string
-    {
-        return $this->getEcoleDoctorale() ? $this->getEcoleDoctorale()->getStructure()->getLibelle() : null;
-    }
-
-    public function getUniteRechercheLibelle(): ?string
-    {
-        return $this->getUniteRecherche() ? $this->getUniteRecherche()->getStructure()->getLibelle() : "<b>Non renseigné</b>";
-    }
-
-    public function getEtablissementInscriptionLibelle(): ?string
-    {
-        return $this->getEtablissementInscription()?->getStructure()->getLibelle();
-    }
-
-    public function getDenominationDirecteurThese() : ?string
-    {
-        return ($this->getNomDirecteurThese() || $this->getPrenomDirecteurThese()) ? $this->getNomDirecteurThese()." ".$this->getPrenomDirecteurThese() : null;
-    }
-
-    /**
-     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     */
-    public function getConfidentialiteSouhaiteeLibelle(): string
-    {
-        if($this->getConfidentialite() === null){
-            return "<b>Non renseigné</b>";
-        }else{
-            if($this->getConfidentialite()){
-                $dateConfidentialite = $this->getDateConfidentialite() ? $this->getDateConfidentialite()->format("d/m/Y") : null;
-                return "Oui <br> <ul><li><b>Date de fin de confidentialité souhaitée (limitée à 10 ans) : </b>".$dateConfidentialite."</li></ul>";
-            }else{
-                return "Non";
-            }
-        }
-    }
-
-    /**
-     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     */
-    public function getCotutelleEnvisageeLibelle(): string
-    {
-        if($this->getCoTutelle() === null){
-            return "<b>Non renseigné</b>";
-        }else{
-            if($this->getCoTutelle()){
-                $pays = $this->getPaysCoTutelle() ? $this->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
-                return "Oui <br> <ul><li><b>Pays concerné : </b>".$pays."</li></ul>";
-            }else{
-                return "Non";
-            }
-        }
-    }
-
-    /**
-     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     */
-    public function getCoDirectionDemandeeLibelle()
-    {
-        if($this->getCoDirection() === null){
-            return "<b>Non renseigné</b>";
-        }else{
-            if($this->getCoDirection()) {
-                $coDirecteur = $this->getCoDirecteur() ?
-                    $this->getCoDirecteur()->getCivilite() . " " . $this->getCoDirecteur()->getNomComplet() :
-                    $this->getNomCodirecteurThese() . " " . $this->getPrenomCodirecteurThese();
-                return $coDirecteur;
-            }else{
-                return "Non";
-            }
-        }
-    }
-
     public function getUniteRechercheCoDirecteurLibelle()
     {
         return $this->getUniteRechercheCoDirecteur()?->getStructure()->getLibelle();
@@ -981,14 +897,5 @@ class Inscription implements HistoriqueAwareInterface{
     public function getFonctionCoDirecteurLibelle(): ?string
     {
         return $this->getFonctionCoDirecteurThese()?->getLibelle();
-    }
-
-    public function getCoEncadrementLibelle()
-    {
-        if($this->getCoEncadrement() === null){
-            return "<b>Non renseigné</b>";
-        }else{
-            return $this->getCoEncadrement() ? "Oui" : "Non";
-        }
     }
 }

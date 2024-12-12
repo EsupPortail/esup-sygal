@@ -8,6 +8,9 @@ use Admission\Entity\Db\AdmissionValidation;
 use Admission\Filter\AdmissionEtudiantFormatter;
 use Admission\Filter\AdmissionOperationsFormatter;
 
+/**
+ * @deprecated
+ */
 class AdmissionRecapitulatifDataTemplate
 {
     private Admission $admission;

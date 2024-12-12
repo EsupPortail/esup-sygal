@@ -7,10 +7,11 @@ use Admission\Service\Url\UrlService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
+use Notification\Factory\NotificationFactoryFactory as NFF;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use UnicaenRenderer\Service\Rendu\RenduService;
-use Notification\Factory\NotificationFactoryFactory as NFF;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 
 /**
  * @author Unicaen
@@ -51,6 +52,10 @@ class NotificationFactoryFactory extends NFF
         /** @var ExtractionEmailRule $extractionEmailRule */
         $extractionEmailRule = $container->get(ExtractionEmailRule::class);
         $factory->setExtractionEmailRule($extractionEmailRule);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $factory->setTemplateVariablePluginManager($rapm);
 
         return $factory;
     }

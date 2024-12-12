@@ -6,6 +6,7 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Exception;
@@ -53,7 +54,6 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenUtilisateur\Entity\Db\RoleInterface;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
@@ -78,6 +78,7 @@ class PropositionController extends AbstractController
     use UserContextServiceAwareTrait;
     use RenduServiceAwareTrait;
     use ValidatationServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
 
     use AdresseSoutenanceFormAwareTrait;
     use DateLieuFormAwareTrait;
@@ -1022,10 +1023,14 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $theseTemplateVariable = $this->getTheseTemplateVariable($these);
+        $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
+
         $vars = [
-            'doctorant' => $these->getDoctorant(),
-            'proposition' => $proposition,
-            'these' => $these,
+            'doctorant' => $doctorantTemplateVariable,
+            'soutenanceProposition' => $soutenancePropositionTemplateVariable,
+            'these' => $theseTemplateVariable,
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::SERMENT_DU_DOCTEUR, $vars);
         $comue = $this->etablissementService->fetchEtablissementComue();

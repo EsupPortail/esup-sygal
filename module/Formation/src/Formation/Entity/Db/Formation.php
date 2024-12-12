@@ -2,7 +2,6 @@
 
 namespace Formation\Entity\Db;
 
-use Individu\Entity\Db\Individu;
 use Doctrine\Common\Collections\Collection;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Interfaces\HasSiteInterface;
@@ -10,6 +9,7 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
+use Individu\Entity\Db\Individu;
 use JetBrains\PhpStorm\Pure;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
@@ -207,15 +207,4 @@ class Formation implements HistoriqueAwareInterface,
         $module = $this->getModule();
         return 'M'.$module->getId() . 'F'.$this->getId();
     }
-
-    /** FONCTION POUR MACRO *******************************************************************************************/
-
-    /** @noinspection  PhpUnused */
-    public function toStringResponsable() : string
-    {
-        if ($this->getResponsable() === null) return "Aucun responsable de nommé·e pour cette formation";
-        return $this->getResponsable()->getNomComplet();
-    }
-
-
 }

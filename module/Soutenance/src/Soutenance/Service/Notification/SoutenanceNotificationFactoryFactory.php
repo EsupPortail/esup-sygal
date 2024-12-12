@@ -16,6 +16,7 @@ use Application\Service\Validation\ValidationService;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
 use UnicaenRenderer\Service\Rendu\RenduService;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 
 /**
  * @author Unicaen
@@ -67,6 +68,10 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
         /** @var UrlService $urlService */
         $urlService = $container->get(UrlService::class);
         $factory->setUrlService($urlService);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $factory->setTemplateVariablePluginManager($rapm);
 
         return $factory;
     }

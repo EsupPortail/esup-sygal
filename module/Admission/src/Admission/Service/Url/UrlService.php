@@ -30,16 +30,6 @@ class UrlService {
     }
 
     /**
-     * @param string
-     * @return mixed
-     */
-    public function getVariable(string $key)
-    {
-        if (! isset($this->variables[$key])) return null;
-        return $this->variables[$key];
-    }
-
-    /**
      * @noinspection
      * @return string
      */

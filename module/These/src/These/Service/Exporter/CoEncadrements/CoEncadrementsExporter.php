@@ -2,6 +2,7 @@
 
 namespace These\Service\Exporter\CoEncadrements;
 
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
@@ -13,6 +14,8 @@ class CoEncadrementsExporter extends PdfExporter
 {
     use RenduServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
+
     private $vars;
 
     public function setVars(array $vars)
@@ -34,8 +37,13 @@ class CoEncadrementsExporter extends PdfExporter
     {
         $logos = $this->vars['logos'];
         $listing = $this->vars["listing"];
+
+        /** @var \These\Entity\Db\Acteur $acteur */
+        $acteur = $this->vars['acteur'];
+
+        $acteurTemplateVariable = $this->getActeurTemplateVariable($acteur);
         $vars = [
-            'acteur' => $this->vars['acteur'],
+            'acteur' => $acteurTemplateVariable,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::COENCADREMENTS_JUSTIFICATIF, $vars);

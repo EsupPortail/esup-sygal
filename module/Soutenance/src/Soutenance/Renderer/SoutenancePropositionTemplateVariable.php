@@ -2,21 +2,21 @@
 
 namespace Soutenance\Renderer;
 
-use Application\Renderer\AbtractRendererAdapter;
 use Soutenance\Entity\Proposition;
+use Application\Renderer\Template\Variable\AbstractTemplateVariable;
 
-class PropositionSoutenanceRendererAdapter extends AbtractRendererAdapter
+class SoutenancePropositionTemplateVariable extends AbstractTemplateVariable
 {
     private Proposition $proposition;
 
-    public function __construct(Proposition $proposition)
+    public function setProposition(Proposition $proposition): void
     {
         $this->proposition = $proposition;
     }
 
     /**
      * @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseRendererAdapter}
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseTemplateVariable}
      */
     public function toStringDateRetourRapport(): string
     {
@@ -27,7 +27,7 @@ class PropositionSoutenanceRendererAdapter extends AbtractRendererAdapter
 
     /**
      * @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter}
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\SoutenancePropositionTemplateVariable}
      */
     public function toStringDateSoutenance(): string
     {
@@ -38,7 +38,7 @@ class PropositionSoutenanceRendererAdapter extends AbtractRendererAdapter
 
     /**
      * @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter}
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\SoutenancePropositionTemplateVariable}
      */
     public function toStringLieu(): string
     {
@@ -49,7 +49,7 @@ class PropositionSoutenanceRendererAdapter extends AbtractRendererAdapter
 
     /**
      * @noinspection  PhpUnused Utilisé par la macro Soutenance#Adresse
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter}
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\SoutenancePropositionTemplateVariable}
      */
     public function toStringAdresse(): string
     {
@@ -60,7 +60,7 @@ class PropositionSoutenanceRendererAdapter extends AbtractRendererAdapter
 
     /**
      * @noinspection  PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\PropositionSoutenanceRendererAdapter}
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \Soutenance\Renderer\SoutenancePropositionTemplateVariable}
      */
     public function toStringPublicOuHuisClos(): string
     {

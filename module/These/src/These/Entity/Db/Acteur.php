@@ -5,7 +5,6 @@ namespace These\Entity\Db;
 use Application\Entity\Db\Role;
 use Closure;
 use Individu\Entity\Db\Individu;
-use Individu\Entity\Db\IndividuAwareInterface;
 use Individu\Entity\Db\IndividuRoleAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Soutenance\Entity\Membre;
@@ -13,9 +12,9 @@ use Soutenance\Entity\Qualite;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * --- Class Acteur ---
@@ -519,18 +518,9 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
         return "";
     }
 
-    /** FONCTION POUR LES MACROS **************************************************************************************/
-
-    /** @noinspection PhpUnused */
     public function getDenomination(): string
     {
         return $this->getIndividu()->getNomComplet();
-    }
-
-    /** @noinspection PhpUnused */
-    public function getEtablissementAsLibelle(): string
-    {
-        return ($this->getEtablissement())?$this->getEtablissement()->getStructure()->getLibelle():"<span style='background:darkred;'>Aucun établissement</span>";
     }
 
     /**

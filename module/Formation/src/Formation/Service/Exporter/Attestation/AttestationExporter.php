@@ -2,17 +2,16 @@
 
 namespace Formation\Service\Exporter\Attestation;
 
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\Template\PdfTemplates;
 use Formation\Service\Url\UrlServiceAwareTrait;
-use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
-use Laminas\View\Renderer\PhpRenderer;
-use Laminas\View\Resolver\TemplatePathStack;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class AttestationExporter extends PdfExporter
@@ -22,6 +21,7 @@ class AttestationExporter extends PdfExporter
     use RenduServiceAwareTrait;
     use StructureServiceAwareTrait;
     use UrlServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
 
     private $vars;
 
@@ -42,22 +42,11 @@ class AttestationExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
-
         /** @var Inscription $inscription */
         $inscription = $this->vars['inscription'];
         $session = $inscription->getSession();
-        $doctorant = $inscription->getDoctorant();
 
-        $urlService = $this->urlService;
-        $urlService->setVariables(['etablissement' => $doctorant->getEtablissement()]);
-
-        $vars = [
-            'doctorant' => $doctorant,
-            'session' => $session,
-            'formation' => $session->getFormation(),
-            'inscription' => $inscription,
-            'Url' => $urlService,
-        ];
+        $vars = $this->createTemplateVars($inscription);
 
         $comue = $this->etablissementService->fetchEtablissementComue();
         $ced = $this->etablissementService->fetchEtablissementCed();
@@ -81,5 +70,28 @@ class AttestationExporter extends PdfExporter
         ini_set("pcre.backtrack_limit", "5000000");
 
         return PdfExporter::export($filename, $destination, $memoryLimit);
+    }
+
+    private function createTemplateVars(Inscription $inscription): array
+    {
+        $session = $inscription->getSession();
+        $doctorant = $inscription->getDoctorant();
+
+        $this->urlService->setVariables([
+            'etablissement' => $doctorant->getEtablissement()
+        ]);
+
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($doctorant);
+        $formationTemplateVariable = $this->getFormationTemplateVariable($session->getFormation());
+        $formationSessionTemplateVariable = $this->getFormationSessionTemplateVariable($session);
+        $formationInscriptionTemplateVariable = $this->getFormationInscriptionTemplateVariable($inscription);
+
+        return [
+            'doctorant' => $doctorantTemplateVariable,
+            'session' => $formationSessionTemplateVariable,
+            'formation' => $formationTemplateVariable,
+            'inscription' => $formationInscriptionTemplateVariable,
+            'Url' => $this->urlService,
+        ];
     }
 }

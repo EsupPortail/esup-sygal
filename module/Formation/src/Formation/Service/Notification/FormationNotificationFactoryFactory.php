@@ -7,6 +7,7 @@ use Application\Service\Role\RoleService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
 use UnicaenRenderer\Service\Rendu\RenduService;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 
 /**
  * @author Unicaen
@@ -39,6 +40,10 @@ class FormationNotificationFactoryFactory extends NotificationFactoryFactory
 
         $roleService = $container->get(RoleService::class);
         $factory->setApplicationRoleService($roleService);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $factory->setTemplateVariablePluginManager($rapm);
 
         return $factory;
     }

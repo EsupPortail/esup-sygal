@@ -2,18 +2,18 @@
 
 namespace Admission\Service\Exporter\Recapitulatif;
 
-use Admission\Entity\AdmissionRecapitulatifDataTemplate;
 use Admission\Entity\Db\Admission;
-use Admission\Service\Admission\AdmissionServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Admission\Provider\Template\PdfTemplates;
+use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Admission\Service\Url\UrlServiceAwareTrait;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 use Soutenance\Service\Notification\StringElement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
-use Laminas\View\Renderer\PhpRenderer;
-use Laminas\View\Resolver\TemplatePathStack;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class RecapitulatifExporter extends PdfExporter
@@ -24,6 +24,8 @@ class RecapitulatifExporter extends PdfExporter
     use StructureServiceAwareTrait;
     use UrlServiceAwareTrait;
     use AdmissionServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
+
     private $vars;
 
     public function setVars(array $vars)
@@ -43,38 +45,48 @@ class RecapitulatifExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
-
-        /** @var Admission $admission */
-        $admission = $this->vars['admission'];
-        $individu = $admission->getIndividu();
-
-        $operations = $this->vars['operations'];
-        $admissionRecapitulatif = new AdmissionRecapitulatifDataTemplate();
-        $admissionRecapitulatif->setAdmission($admission);
-
-        $libelleSignature = new StringElement();
-        $libelleSignature->texte = $this->admissionService->generateLibelleSignaturePresidenceForAdmission($admission);
-
-        $admissionRecapitulatif->setOperations($operations);
-        $vars = [
-            'admission' => $admission,
-            'admissionEtudiant' => $admission->getEtudiant()->first(),
-            'admissionInscription' => $admission->getInscription()->first(),
-            'admissionFinancement' => $admission->getFinancement()->first(),
-            'stringelement' => $libelleSignature,
-            'individu' => $individu,
-            'admissionRecapitulatif' => $admissionRecapitulatif,
-        ];
+        $vars = $this->createTemplateVariables();
 
         $logos = [
             "COMUE" => $this->vars['logos']["comue"],
             "ETAB" => $this->vars['logos']["site"],
         ];
+
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::ADMISSION_RECAPITULATIF, $vars);
+
         $this->getMpdf()->SetMargins(0,0,60);
         $this->setHeaderScript('header.phtml', null, $logos);
         $this->setFooterScript('footer.phtml');
         $this->addBodyHtml($rendu->getCorps());
+
         return PdfExporter::export($filename, $destination, $memoryLimit);
+    }
+
+    private function createTemplateVariables(): array
+    {
+        /** @var Admission $admission */
+        $admission = $this->vars['admission'];
+        $individu = $admission->getIndividu();
+        $operations = $this->vars['operations'];
+
+        $libelleSignature = new StringElement();
+        $libelleSignature->texte = $this->admissionService->generateLibelleSignaturePresidenceForAdmission($admission);
+
+        $admissionAdmissionTemplateVariable = $this->getAdmissionAdmissionTemplateVariable($admission);
+        $admissionAdmissionTemplateVariable->setOperations($operations);
+        $admissionEtudiantTemplateVariable = $this->getAdmissionEtudiantTemplateVariable($admission->getEtudiant()->first());
+        $admissionInscriptionTemplateVariable = $this->getAdmissionInscriptionTemplateVariable($admission->getInscription()->first());
+        $admissionFinancementTemplateVariable = $this->getAdmissionFinancementTemplateVariable($admission->getFinancement()->first());
+        $individuTemplateVariable = $this->getIndividuTemplateVariable($individu);
+
+        return [
+            'admission' => $admissionAdmissionTemplateVariable,
+            'admissionEtudiant' => $admissionEtudiantTemplateVariable,
+            'admissionInscription' => $admissionInscriptionTemplateVariable,
+            'admissionFinancement' => $admissionFinancementTemplateVariable,
+            'stringelement' => $libelleSignature,
+            'individu' => $individuTemplateVariable,
+//            'admissionRecapitulatif' => $admissionRecapitulatif, // cf. $admissionAdmissionTemplateVariable
+        ];
     }
 }

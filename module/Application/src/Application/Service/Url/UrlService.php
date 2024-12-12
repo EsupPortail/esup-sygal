@@ -4,6 +4,7 @@ namespace Application\Service\Url;
 
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
+use InvalidArgumentException;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Router\RouteStackInterface;
 use Traversable;
@@ -17,9 +18,25 @@ abstract class UrlService
     protected ?RouteMatch $routeMatch = null;
     protected array $options = [];
 
+    protected ?array $allowedVariables = null;
+    protected array $variables;
+
     public function setOptions(array $options = []): static
     {
         $this->options = $options;
+        return $this;
+    }
+
+    public function setVariables(array $variables): static
+    {
+        if ($this->allowedVariables !== null && ($diff = array_diff(array_keys($variables), $this->allowedVariables))) {
+            throw new InvalidArgumentException(
+                "Les variables suivantes ne sont pas autorisées explicitement : " . implode(', ', $diff)
+            );
+        }
+
+        $this->variables = $variables;
+
         return $this;
     }
 

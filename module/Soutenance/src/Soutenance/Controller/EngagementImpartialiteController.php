@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
@@ -33,6 +34,7 @@ class EngagementImpartialiteController extends AbstractController
     use SoutenanceNotificationFactoryAwareTrait;
     use PropositionServiceAwareTrait;
     use RenduServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
 
     public function engagementImpartialiteAction() : ViewModel
     {
@@ -40,7 +42,13 @@ class EngagementImpartialiteController extends AbstractController
         $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $vars = [ 'membre' => $membre, 'doctorant' => $these->getDoctorant() ];
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
+        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
+
+        $vars = [
+            'membre' => $soutenanceMembreTemplateVariable,
+            'doctorant' => $doctorantTemplateVariable,
+        ];
         $texteEngagnement = $this->getRenduService()->generateRenduByTemplateCode(TexteTemplates::SOUTENANCE_ENGAGEMENT_IMPARTIALITE, $vars);
 
         /** @var Validation $validation */

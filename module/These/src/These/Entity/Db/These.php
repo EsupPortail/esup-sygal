@@ -1541,7 +1541,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * @noinspection PhpUnused
-     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseRendererAdapter}
+     * @deprecated A supprimer lorqu'aura été généralisée l'utilisation de {@see \These\Renderer\TheseTemplateVariable}
      */
     public function toStringEncadrement() : string {
         /** @var Individu[] $encadrement */

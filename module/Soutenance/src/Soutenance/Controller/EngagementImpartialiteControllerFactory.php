@@ -13,6 +13,7 @@ use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use These\Service\Acteur\ActeurService;
 use UnicaenRenderer\Service\Rendu\RenduService;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 
 class EngagementImpartialiteControllerFactory
 {
@@ -53,6 +54,10 @@ class EngagementImpartialiteControllerFactory
         /** @var SoutenanceNotificationFactory $soutenanceNotificationFactory */
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
+
+        /** @var TemplateVariablePluginManager $rapm */
+        $rapm = $container->get(TemplateVariablePluginManager::class);
+        $controller->setTemplateVariablePluginManager($rapm);
 
         return $controller;
     }

@@ -87,7 +87,7 @@ class RapportAvisForm extends Form implements InputFilterProviderInterface
 
         FormUtils::addSaveButton($this);
 
-        $this->bind(new RapportAvis());
+        $this->setObject(new RapportAvis());
     }
 
     /**

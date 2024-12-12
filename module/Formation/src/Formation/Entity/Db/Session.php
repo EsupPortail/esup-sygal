@@ -320,107 +320,10 @@ class Session implements HistoriqueAwareInterface,
         return $datePublication && $datePublication <= $aujourdhui;
     }
 
-    /** Pour les macros ********************************************************************************/
-
-    /** @noinspection PhpUnused */
-    public function getPeriode() : string {
-        $jour_debut = $this->getDateDebut()->format('d/m/Y');
-        $jour_fin = $this->getDateFin()->format('d/m/Y');
-
-        if ($jour_debut === $jour_fin) return $jour_debut;
-        return $jour_debut." au ".$jour_fin;
-    }
-
-    /** @noinspection PhpUnused */
-    public function getSeancesAsTable() : string
-    {
-        $seances = $this->getSeances()->toArray();
-        $seances = array_filter($seances, function(Seance $a) { return $a->estNonHistorise();});
-        usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut(); });
-
-        if (empty($seances)) return "Aucune séance d'associée à cette session de formation.";
-
-        $texte  = '<table>';
-        $texte .= '<thead><tr>';
-        $texte .= '<th> Jour de la séance </th><th> Heure de début </th><th> Heure de fin </th><th> Lieu </th>';
-        $texte .= '</tr></thead>';
-        $texte .= '<tbody>';
-        /** @var Seance $seance */
-        foreach ($seances as $seance) {
-            $texte .= '<tr>';
-            $texte .= '<td>'.$seance->getDebut()->format('d/m/Y').'</td>';
-            $texte .= '<td>'.$seance->getDebut()->format('H:i').'</td>';
-            $texte .= '<td>'.$seance->getFin()->format('H:i').'</td>';
-            $texte .= '<td>';
-            if ($seance->getLieu() !== null) {
-                if ($seance->getLien() !== null){
-                    $texte .= "Lieu :".$seance->getLieu();
-                    $texte .= "<br>";
-                    $texte .= '<a href="'.$seance->getLien().'">'.$seance->getLien().'</a>';
-                    if ($seance->getMotDePasse()) $texte .= "<br> (mot de passe: " . $seance->getMotDePasse() . ")";
-                }else{
-                    $texte .= $seance->getLieu();
-                }
-            } else {
-                if ($this->getModalite() === self::MODALITE_PRESENTIEL) {
-                    $texte .= "<em> Lieu non renseigné </em>";
-                } else {
-                    if($seance->getLien() !== null){
-                        $texte .= "Distanciel (lien : <a href=".$seance->getLien().">".$seance->getLien()."</a>)";
-                        $texte .= $seance->getMotDePasse() ? "<br> (mot de passe: ".$seance->getMotDePasse().")" : "";
-                    }else{
-                        $texte .= "Distanciel <em>(lien non renseigné)</em>";
-                    }
-                }
-            }
-            $texte .='</td>';
-            $texte .= '</tr>';
-        }
-        $texte .= '</tbody>';
-        $texte .= '</table>';
-        return $texte;
-    }
-
-    /** @noinspection PhpUnused */
-    public function getSeancesSansLieuAsTable() : string
-    {
-        $seances = $this->getSeances()->toArray();
-        $seances = array_filter($seances, function(Seance $a) { return $a->estNonHistorise();});
-        usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut(); });
-
-        if (empty($seances)) return "Aucune séance d'associée à cette session de formation.";
-
-        $texte  = '<table>';
-        $texte .= '<thead><tr>';
-        $texte .= '<th> Jour de la séance </th><th> Heure de début </th><th> Heure de fin </th><th> Lieu </th>';
-        $texte .= '</tr></thead>';
-        $texte .= '<tbody>';
-        /** @var Seance $seance */
-        foreach ($seances as $seance) {
-            $texte .= '<tr>';
-            $texte .= '<td>'.$seance->getDebut()->format('d/m/Y').'</td>';
-            $texte .= '<td>'.$seance->getDebut()->format('H:i').'</td>';
-            $texte .= '<td>'.$seance->getFin()->format('H:i').'</td>';
-            $texte .= '<td><em> Non visible </em></td>';
-            $texte .= '</tr>';
-        }
-        $texte .= '</tbody>';
-        $texte .= '</table>';
-        return $texte;
-    }
-
-    /** @noinspection PhpUnused */
     #[Pure] public function isFinInscription() : bool
     {
         $etatCode = $this->getEtat()->getCode();
         return ($etatCode === Session::ETAT_INSCRIPTION_CLOSE OR $etatCode === Session::ETAT_IMMINENTE);
-    }
-
-    /** @noinspection PhpUnused */
-    public function getDenominationResponsable() : string
-    {
-        $responsable = $this->getResponsable();
-        return $responsable?$responsable->getNomComplet():"Aucun responsable de désigner pour cette session";
     }
 
     public function getResourceId()

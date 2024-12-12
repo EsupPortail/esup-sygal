@@ -2,22 +2,15 @@
 
 namespace Soutenance\Renderer;
 
-use Application\Renderer\AbtractRendererAdapter;
 use Soutenance\Entity\Membre;
+use Application\Renderer\Template\Variable\AbstractTemplateVariable;
 
-class MembreSoutenanceRendererAdapter extends AbtractRendererAdapter
+class SoutenanceMembreTemplateVariable extends AbstractTemplateVariable
 {
-    private ?Membre $membre;
+    private Membre $membre;
 
     /** @var Membre[] */
     private array $membresPouvantEtrePresidentDuJury;
-
-    public function __construct(?Membre $membre = null)
-    {
-        if ($membre !== null) {
-            $this->setMembre($membre);
-        }
-    }
 
     public function setMembre(Membre $membre): void
     {

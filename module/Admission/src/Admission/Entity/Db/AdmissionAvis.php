@@ -111,38 +111,4 @@ class AdmissionAvis implements HistoriqueAwareInterface, ResourceInterface, Admi
         return self::RESOURCE_ID;
     }
 
-    /** Fonction pour les macros du module UnicaenRenderer ************************************************************/
-
-    /**
-     * @noinspection
-     * @return string
-     */
-    public function getAuteurToString() : string
-    {
-        $displayname = $this->getHistoModificateur() ?: $this->getHistoCreateur();
-        return $displayname;
-    }
-    /**
-     * @noinspection
-     * @return string
-     */
-    public function getDateToString() : string
-    {
-        $date = $this->getHistoModification() ?: $this->getHistoCreation();
-        return $date->format('d/m/Y à H:i');
-    }
-
-    /**
-     * @noinspection
-     * @return string
-     */
-    public function getDestructeurToString() : string
-    {
-        return "par ".$this->getHistoDestructeur();
-    }
-
-    public function getModificateurToString() : string
-    {
-        return "par ".$this->getHistoModificateur();
-    }
 }

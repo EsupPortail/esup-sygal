@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller;
 
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -145,6 +146,10 @@ class PropositionControllerFactory
         /** @var SoutenanceNotificationFactory $soutenanceNotificationFactory */
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
+
+        /** @var TemplateVariablePluginManager $templateVariablePluginManager */
+        $templateVariablePluginManager = $container->get(TemplateVariablePluginManager::class);
+        $controller->setTemplateVariablePluginManager($templateVariablePluginManager);
 
         return $controller;
     }

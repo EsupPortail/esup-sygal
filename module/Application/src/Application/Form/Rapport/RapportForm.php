@@ -104,7 +104,7 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
 
         FormUtils::addUploadButton($this);
 
-        $this->bind(new Rapport());
+        $this->setObject(new Rapport());
     }
 
     /**

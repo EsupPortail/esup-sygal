@@ -9,6 +9,9 @@ use Admission\Entity\Db\Financement;
 use Admission\Filter\AdmissionInscriptionFormatter;
 use Admission\Filter\AdmissionOperationsFormatter;
 
+/**
+ * @deprecated
+ */
 class ConventionFormationDoctoraleDataTemplate
 {
     private Admission $admission;

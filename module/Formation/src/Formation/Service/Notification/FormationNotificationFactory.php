@@ -3,6 +3,7 @@
 namespace Formation\Service\Notification;
 
 use Application\Entity\Db\Role;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
@@ -14,7 +15,6 @@ use Formation\Provider\Template\MailTemplates;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
-use Structure\Entity\Db\Structure;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /**
@@ -27,16 +27,19 @@ class FormationNotificationFactory extends NotificationFactory
     use RenduServiceAwareTrait;
     use ListeDiffusionServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
 
     /** INSCRIPTION ***************************************************************************************************/
 
     public function createNotificationInscriptionEnregistree(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session'   => $inscription->getSession(),
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session'   => $inscription->getSession(),
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+        unset($vars['inscription']);
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_ENREGISTREE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
@@ -57,11 +60,13 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationInscriptionListePrincipale(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session'   => $inscription->getSession(),
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session'   => $inscription->getSession(),
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+        unset($vars['inscription']);
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_PRINCIPALE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
@@ -82,12 +87,13 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationInscriptionListeComplementaire(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session'   => $inscription->getSession(),
-            'inscription' => $inscription,
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session'   => $inscription->getSession(),
+//            'inscription' => $inscription,
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_COMPLEMENTAIRE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
@@ -108,11 +114,14 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationInscriptionClose(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session' => $inscription->getSession(),
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session' => $inscription->getSession(),
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+        unset($vars['inscription']);
+
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_CLOSE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
@@ -131,11 +140,14 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationInscriptionEchec(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session'   => $inscription->getSession(),
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session'   => $inscription->getSession(),
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+        unset($vars['inscription']);
+
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_ECHEC, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
@@ -157,11 +169,14 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationSessionImminente(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session'   => $inscription->getSession(),
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session'   => $inscription->getSession(),
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+        unset($vars['inscription']);
+
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_IMMINENTE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
@@ -181,10 +196,11 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationSessionImminenteFormateur(Session $session) : Notification
     {
-        $vars = [
-            'formation' => $session->getFormation(),
-            'session'   => $session,
-        ];
+//        $vars = [
+//            'formation' => $session->getFormation(),
+//            'session'   => $session,
+//        ];
+        $vars = $this->createTemplateVarsForSession($session);
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_IMMINENTE_FORMATEUR, $vars);
 
         $mails = [];
@@ -208,14 +224,27 @@ class FormationNotificationFactory extends NotificationFactory
         return $notif;
     }
 
+    private function createTemplateVarsForSession(Session $session): array
+    {
+        $formationTemplateVariable = $this->getFormationTemplateVariable($session->getFormation());
+        $formationSessionTemplateVariable = $this->getFormationSessionTemplateVariable($session);
+
+        return [
+            'formation' => $formationTemplateVariable,
+            'session' => $formationSessionTemplateVariable,
+        ];
+    }
+
     public function createNotificationSessionTerminee(Inscription $inscription) : Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session'   => $inscription->getSession(),
-            'inscription'   => $inscription,
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session'   => $inscription->getSession(),
+//            'inscription'   => $inscription,
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_TERMINEE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
@@ -234,11 +263,14 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationSessionAnnulee(Inscription $inscription): Notification
     {
-        $vars = [
-            'doctorant' => $inscription->getDoctorant(),
-            'formation' => $inscription->getSession()->getFormation(),
-            'session' => $inscription->getSession(),
-        ];
+//        $vars = [
+//            'doctorant' => $inscription->getDoctorant(),
+//            'formation' => $inscription->getSession()->getFormation(),
+//            'session' => $inscription->getSession(),
+//        ];
+        $vars = $this->createTemplateVarsForInscription($inscription);
+        unset($vars['inscription']);
+
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_ANNULEE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
@@ -255,6 +287,24 @@ class FormationNotificationFactory extends NotificationFactory
         return $notif;
     }
 
+    private function createTemplateVarsForInscription(Inscription $inscription): array
+    {
+        $session = $inscription->getSession();
+        $doctorant = $inscription->getDoctorant();
+
+        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($doctorant);
+        $formationTemplateVariable = $this->getFormationTemplateVariable($session->getFormation());
+        $formationSessionTemplateVariable = $this->getFormationSessionTemplateVariable($session);
+        $formationInscriptionTemplateVariable = $this->getFormationInscriptionTemplateVariable($inscription);
+
+        return [
+            'doctorant' => $doctorantTemplateVariable,
+            'session' => $formationSessionTemplateVariable,
+            'formation' => $formationTemplateVariable,
+            'inscription' => $formationInscriptionTemplateVariable,
+        ];
+    }
+
     /** FORMATIONS ******************************************************************************************************/
     public function createNotificationFormationSpecifiqueAjoutee(Formation $formation, SessionStructureValide $structureValide): Notification
     {
@@ -264,9 +314,10 @@ class FormationNotificationFactory extends NotificationFactory
         $domain = $this->listeDiffusionService->getEmailDomain();
         $ng->setDomain($domain);
 
-        $vars = [
-            'formation' => $formation,
-        ];
+//        $vars = [
+//            'formation' => $formation,
+//        ];
+        $vars = $this->createTemplateVarsForFormation($formation);
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::FORMATION_SPECIFIQUE_AJOUTEE, $vars);
         $mail = $ng->generateName();
 
@@ -288,5 +339,14 @@ class FormationNotificationFactory extends NotificationFactory
             ->setBody($rendu->getCorps());
 
         return $notif;
+    }
+
+    private function createTemplateVarsForFormation(Formation $formation): array
+    {
+        $formationTemplateVariable = $this->getFormationTemplateVariable($formation);
+
+        return [
+            'formation' => $formationTemplateVariable,
+        ];
     }
 }

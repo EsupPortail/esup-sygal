@@ -18,6 +18,7 @@ Journal des modifications
 - Validité du jury de soutenance : nouvelle contrainte sur le nombre maximum d'émérites possibles (nouveau paramètre) ;
 infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites > 25%).
 - Soutenance : mention des personnes pouvant être Président du jury dans la notification 'Convocation des membres du jury'
+- Génération de textes via unicaen/renderer : utilisation généralisée de classes *TemplateVariable pour ne pas polluer les classes métiers.
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.
