@@ -441,6 +441,10 @@ class InscriptionController extends AbstractController
                             }else if($inscription->estHistorise() && !in_array($inscription, $session->getListePrincipale()) ||
                                 $inscription->estHistorise() && in_array($inscription, $session->getListePrincipale())){
                                 $presenceStatus = "Désistement";
+                            }elseif(in_array($inscription, $session->getNonClasses())){
+                                $presenceStatus = "Non classé";
+                            }elseif(in_array($inscription, $session->getListeComplementaire())){
+                                $presenceStatus = "Liste Complé.";
                             }
                         }
                         return $presenceStatus ? $seanceDate . ' (' . $presenceStatus . ')' : null;
