@@ -48,6 +48,7 @@ class GeneralitesHydrator extends DoctrineObject
     {
         //Nécessaire sinon Doctrine pense que c'est les données appartenant à un fieldset
         $data['doctorant'] = $data['doctorant']['id'] ?? null;
+        $data['discipline'] = isset($data['discipline']) && $data['discipline'] !== "" ? $data['discipline'] : null;
 
         $data['resultat'] = (isset($data['resultat']) && $data['resultat'] !== "") ? $data['resultat'] : null;
 
