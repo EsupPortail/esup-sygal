@@ -6,7 +6,6 @@ use Application\Service\Email\EmailTheseService;
 use Application\Service\Role\RoleService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
-use Laminas\View\Helper\Url as UrlHelper;
 use Notification\Factory\NotificationFactoryFactory;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
@@ -40,8 +39,9 @@ class DepotNotificationFactoryFactory extends NotificationFactoryFactory
         $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
         $uniteRechercheService = $container->get('UniteRechercheService');
 
-        /** @var UrlHelper $urlHelper */
-        $urlHelper = $container->get('ViewHelperManager')->get('Url');
+        /** @var \Laminas\Mvc\Controller\Plugin\Url $urlPlugin */
+        $urlPlugin = $container->get('ControllerPluginManager')->get('Url');
+        $factory->setUrlPlugin($urlPlugin);
 
         /* @var ModuleOptions $moduleOptions */
         $moduleOptions = $container->get('unicaen-app_module_options');
@@ -49,7 +49,6 @@ class DepotNotificationFactoryFactory extends NotificationFactoryFactory
         $factory->setVariableService($variableService);
         $factory->setEcoleDoctoraleService($ecoleDoctoraleService);
         $factory->setUniteRechercheService($uniteRechercheService);
-        $factory->setUrlHelper($urlHelper);
         $factory->setAppModuleOptions($moduleOptions);
 
         /** @var RoleService $roleService */

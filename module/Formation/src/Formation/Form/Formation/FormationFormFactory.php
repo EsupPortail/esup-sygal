@@ -2,13 +2,12 @@
 
 namespace Formation\Form\Formation;
 
+use Formation\Service\Module\ModuleService;
+use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
-use Formation\Service\Module\ModuleService;
-use Interop\Container\ContainerInterface;
-use Laminas\View\Helper\Url;
 
 class FormationFormFactory {
 
@@ -33,16 +32,11 @@ class FormationFormFactory {
         $hydrator = $container->get('HydratorManager')->get(FormationHydrator::class);
 
         $form = new FormationForm();
-        /** @var Url $urlManager */
-        $pluginManager = $container->get('ViewHelperManager');
-        $urlManager = $pluginManager->get('Url');
-        /** @see AgentController::rechercherAction() */
-        $urlResponsable =  $urlManager->__invoke('individu/rechercher', [], [], true);
-        $form->setUrlResponsable($urlResponsable);
         $form->setEtablissementService($etablissementService);
         $form->setModuleService($moduleService);
         $form->setStructureService($structureService);
         $form->setHydrator($hydrator);
+
         return $form;
     }
 }

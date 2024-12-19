@@ -23,7 +23,7 @@ class IndividuUsurpationHelperFactory
         $hpm = $container->get('ViewHelperManager');
 
         /** @var Url $urlHelper */
-        $urlHelper = $hpm->get('url');
+        $urlHelper = $hpm->get('Url');
         $url = $urlHelper->__invoke('utilisateur/default', ['action' => 'usurper-individu']);
 
         /** @var UserContext $userContextService */

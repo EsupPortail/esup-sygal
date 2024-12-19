@@ -100,6 +100,7 @@ class SessionController extends AbstractController
         $session = $this->getSessionService()->setValeurParDefaut($session);
 
         $form = $this->getSessionForm();
+        $form->setUrlResponsable($this->url()->fromRoute('individu/rechercher', [], [], true));
         $form->setAttribute('action', $this->url()->fromRoute('formation/session/ajouter', ['module' => $formation->getId()], [], true));
         $form->bind($session);
 

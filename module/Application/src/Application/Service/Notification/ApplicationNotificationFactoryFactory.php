@@ -3,7 +3,6 @@
 namespace Application\Service\Notification;
 
 use Interop\Container\ContainerInterface;
-use Laminas\View\Helper\Url as UrlHelper;
 use Notification\Factory\NotificationFactoryFactory;
 
 /**
@@ -25,9 +24,9 @@ class ApplicationNotificationFactoryFactory extends NotificationFactoryFactory
         /** @var ApplicationNotificationFactory $factory */
         $factory = parent::__invoke($container);
 
-        /** @var UrlHelper $urlHelper */
-        $urlHelper = $container->get('ViewHelperManager')->get('Url');
-        $factory->setUrlHelper($urlHelper);
+        /** @var \Laminas\Mvc\Controller\Plugin\Url $urlPlugin */
+        $urlPlugin = $container->get('ControllerPluginManager')->get('Url');
+        $factory->setUrlPlugin($urlPlugin);
 
         return $factory;
     }

@@ -2,11 +2,9 @@
 
 namespace Formation\Form\Session;
 
-use Individu\Controller\IndividuController;
+use Interop\Container\ContainerInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
-use Interop\Container\ContainerInterface;
-use Laminas\View\Helper\Url;
 
 class SessionFormFactory {
 
@@ -25,15 +23,10 @@ class SessionFormFactory {
         $hydrator = $container->get('HydratorManager')->get(SessionHydrator::class);
 
         $form = new SessionForm();
-        /** @var Url $urlManager */
-        $pluginManager = $container->get('ViewHelperManager');
-        $urlManager = $pluginManager->get('Url');
-        /** @see IndividuController::rechercherAction() */
-        $urlResponsable =  $urlManager->__invoke('individu/rechercher', [], [], true);
-        $form->setUrlResponsable($urlResponsable);
         $form->setEtablissementService($etablissementService);
         $form->setStructureService($structureService);
         $form->setHydrator($hydrator);
+
         return $form;
     }
 }
