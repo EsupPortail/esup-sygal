@@ -50,10 +50,17 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
         parent::setParams($params);
     }
 
-    public function filter($value)
+    public function filter($value): array
     {
-        if ($value === null) {
-            return null;
+        if (!is_array($value)) {
+            throw new InvalidArgumentException("Les données reçues ne sont pas un tableau");
+        }
+        if (!array_key_exists($this->column, $value)) {
+            throw new InvalidArgumentException("La colonne '$this->column' est introuvable dans les données reçues");
+        }
+
+        if ($value[$this->column] === null) {
+            return $value;
         }
 
         if ($this->codeEtablissement === null) {
@@ -63,9 +70,8 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
             ));
         }
 
-        if (in_array($this->columnName, $this->columns)) {
-            $value = $this->sourceCodeStringHelper->addPrefixTo($value, $this->codeEtablissement);
-        }
+        $value[$this->column] =
+            $this->sourceCodeStringHelper->addPrefixTo($value[$this->column], $this->codeEtablissement);
 
         return $value;
     }
