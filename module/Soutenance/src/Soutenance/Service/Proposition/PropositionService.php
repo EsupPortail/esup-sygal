@@ -308,7 +308,7 @@ class PropositionService extends BaseService
         $indicateurs = [];
 
         /** Bad rapporteur */
-        $nbRapporteursBad = 10;
+        $nbRapporteursBad = 0;
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->estRapporteur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->getHdr() !== 'O') {
                 $nbRapporteursBad++;
