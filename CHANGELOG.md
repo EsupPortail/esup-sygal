@@ -26,6 +26,7 @@ infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites
 - [FIX] Recherche des engagements d'impartialité existants : ajout de la jointure sur Individu il peut rester des engagements non supprimés !
 - [FIX] Module Saisie de thèse : Enregistrement impossible des généralites si aucune discipline renseignée
 - [FIX] $this->url(null,[],[],true) provoquait l'erreur 'No RouteMatch instance provided' : injections de UrlPlugin plutôt que UrlHelper car le RouteMatch n'est pas encore calculé et dispo dans ce dernier (cf. tâche #59885).
+- [FIX] Orthographe de 'Arrêté' dans certains documents PDF générés.
 
 9.1.1
 -----
