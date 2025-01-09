@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfb8947fe4d3c5e85a723ded4be2fc75",
+    "content-hash": "034e4b3116d627a1fa17c260641d971a",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11954,11 +11954,11 @@
         },
         {
             "name": "unicaen/utilisateur",
-            "version": "6.3.0",
+            "version": "6.3.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/utilisateur.git",
-                "reference": "9ffaa6060fac416813dbfad8f2295bc8126396cd"
+                "reference": "280a10f1344a326c22c9c121af9554660762ae14"
             },
             "require": {
                 "unicaen/app": "^6.1",
@@ -11981,7 +11981,7 @@
                 ]
             },
             "description": "Module reprenant la gestion des utilisateurs, privileges et roles - Version laminas",
-            "time": "2024-12-10T16:00:41+00:00"
+            "time": "2025-01-09T08:19:58+00:00"
         },
         {
             "name": "unicaen/zfc-user",
