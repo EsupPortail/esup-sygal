@@ -29,6 +29,7 @@ infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites
 - [FIX] $this->url(null,[],[],true) provoquait l'erreur 'No RouteMatch instance provided' : injections de UrlPlugin plutôt que UrlHelper car le RouteMatch n'est pas encore calculé et dispo dans ce dernier (cf. tâche #59885).
 - [FIX] Orthographe de 'Arrêté' dans certains documents PDF générés.
 - [FIX] Point médian dans un label du formulaire de création/modification d'une qualité de membre du jury.
+- [FIX] Proposition de soutenance : bouton 'Valider la proposition de soutenance' visible à tort pour le doctorant.
 
 9.1.1
 -----
