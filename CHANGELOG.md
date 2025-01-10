@@ -31,6 +31,7 @@ infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites
 - [FIX] Orthographe de 'Arrêté' dans certains documents PDF générés.
 - [FIX] Point médian dans un label du formulaire de création/modification d'une qualité de membre du jury.
 - [FIX] Proposition de soutenance : bouton 'Valider la proposition de soutenance' visible à tort pour le doctorant.
+- [FIX] Saisie du titre d'accès d'une thèse : exclusion des établissements historisés dans la liste déroulante.
 
 9.1.1
 -----

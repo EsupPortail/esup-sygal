@@ -118,6 +118,9 @@ class TitreAccesFieldset extends Fieldset implements InputFilterProviderInterfac
                 'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => Etablissement::class,
+                'find_method' => [
+                    'name' => 'findAll',
+                ],
                 'label_generator' => function($targetEntity) {
                     $sigle = $targetEntity->getStructure() && $targetEntity->getStructure()->getSigle() ? " (".$targetEntity->getStructure()->getSigle().")" : null;
                     return $targetEntity->getStructure()?->getLibelle() . $sigle;

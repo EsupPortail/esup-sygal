@@ -26,10 +26,16 @@ class EtablissementRepository extends DefaultEntityRepository
     /**
      * @return Etablissement[]
      */
-    public function findAll(): array
+    public function findAll(bool $exclureHistorises = true): array
     {
         $qb = $this->createQueryBuilder("e");
         $qb->orderBy("structure.libelle");
+
+        if ($exclureHistorises) {
+            $qb
+                ->andWhereNotHistorise('structure')
+                ->andWhereNotHistorise('e');
+        }
 
         return $this->_findAll($qb);
     }
