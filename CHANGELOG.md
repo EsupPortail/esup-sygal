@@ -19,6 +19,7 @@ Journal des modifications
 infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites > 25%).
 - Soutenance : mention des personnes pouvant être Président du jury dans la notification 'Convocation des membres du jury'
 - Génération de textes via unicaen/renderer : utilisation généralisée de classes *TemplateVariable pour ne pas polluer les classes métiers.
+- Passage à la v1.6 de la bibliothèque apereo/phpCAS (correction de failles de sécurité de la v1.5).
 - [FIX] Mise à jour d'une variable concernant un établissement impossible
 - [FIX] Index de la gestion des co-encadrants inaccessible
 - [FIX] Vue de synchronisation src_these erronée.

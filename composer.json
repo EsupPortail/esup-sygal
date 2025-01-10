@@ -61,7 +61,7 @@
         "unicaen/alerte": "^3.0",
         "unicaen/app": "^6.1.6",
         "unicaen/auth-token": "^7.0",
-        "unicaen/authentification": "^6.3",
+        "unicaen/authentification": "^6.4",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "^4.0",
         "unicaen/db-import": "^7.0",

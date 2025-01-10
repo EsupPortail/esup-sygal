@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "034e4b3116d627a1fa17c260641d971a",
+    "content-hash": "0fabfa20794edb0f74c1257ff17b02c6",
     "packages": [
         {
             "name": "apereo/phpcas",
-            "version": "1.5.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/apereo/phpCAS.git",
-                "reference": "d6f5797fb568726f34c8e48741776d81e4a2646b"
+                "reference": "c129708154852656aabb13d8606cd5b12dbbabac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/d6f5797fb568726f34c8e48741776d81e4a2646b",
-                "reference": "d6f5797fb568726f34c8e48741776d81e4a2646b",
+                "url": "https://api.github.com/repos/apereo/phpCAS/zipball/c129708154852656aabb13d8606cd5b12dbbabac",
+                "reference": "c129708154852656aabb13d8606cd5b12dbbabac",
                 "shasum": ""
             },
             "require": {
@@ -38,6 +38,9 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "source/CAS.php"
+                ],
                 "classmap": [
                     "source/"
                 ]
@@ -70,9 +73,9 @@
             ],
             "support": {
                 "issues": "https://github.com/apereo/phpCAS/issues",
-                "source": "https://github.com/apereo/phpCAS/tree/1.5.0"
+                "source": "https://github.com/apereo/phpCAS/tree/1.6.1"
             },
-            "time": "2022-05-03T21:12:54+00:00"
+            "time": "2023-02-19T19:52:35+00:00"
         },
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",
@@ -11355,18 +11358,18 @@
         },
         {
             "name": "unicaen/authentification",
-            "version": "6.3.0",
+            "version": "6.4.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "0d51a14bec6074c7f4c4b73213df9451801f9067"
+                "reference": "8e518af2342ff23efa344aa4c807e8f031045b25"
             },
             "require": {
-                "apereo/phpcas": "1.5.*",
+                "apereo/phpcas": "1.6.*",
                 "ramsey/uuid": "^3.7",
-                "unicaen/app": ">=6.0",
+                "unicaen/app": "^6.0|^7.0",
                 "unicaen/bjy-authorize": "^6.0",
-                "unicaen/utilisateur": "^6.3"
+                "unicaen/utilisateur": "^6.3|^7.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.6"
@@ -11381,7 +11384,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen - Version Laminas",
-            "time": "2024-12-10T08:33:42+00:00"
+            "time": "2025-01-10T09:05:20+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
