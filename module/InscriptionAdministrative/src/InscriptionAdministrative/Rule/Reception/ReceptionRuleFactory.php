@@ -8,6 +8,7 @@ use Individu\Service\IndividuService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use These\Service\These\TheseService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class ReceptionRuleFactory implements FactoryInterface
 {
@@ -26,6 +27,10 @@ class ReceptionRuleFactory implements FactoryInterface
         /** @var TheseService $theseService */
         $theseService = $container->get(TheseService::class);
         $rule->setTheseService($theseService);
+
+        /** @var TheseAnneeUnivService $theseAnneeUnivService */
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
+        $rule->setTheseAnneeUnivService($theseAnneeUnivService);
 
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);

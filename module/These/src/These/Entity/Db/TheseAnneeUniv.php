@@ -3,6 +3,7 @@
 namespace These\Entity\Db;
 
 use Application\Entity\AnneeUnivInterface;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 
 /**
@@ -51,5 +52,17 @@ class TheseAnneeUniv implements HistoriqueAwareInterface, AnneeUnivInterface
     public function getPremiereAnnee(): int
     {
         return $this->getAnneeUniv();
+    }
+
+    public function setEst1ereAnneeInscription(bool $est1ereAnneeInscription = true): static
+    {
+        $this->est1ereAnneeInscription = $est1ereAnneeInscription;
+        return $this;
+    }
+
+    public function setInscriptionAdministrative(?InscriptionAdministrative $inscriptionAdministrative): static
+    {
+        $this->inscriptionAdministrative = $inscriptionAdministrative;
+        return $this;
     }
 }

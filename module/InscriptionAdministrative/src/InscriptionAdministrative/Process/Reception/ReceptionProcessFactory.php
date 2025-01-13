@@ -10,6 +10,7 @@ use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use These\Service\These\TheseService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class ReceptionProcessFactory implements FactoryInterface
 {
@@ -40,6 +41,10 @@ class ReceptionProcessFactory implements FactoryInterface
         /** @var TheseService $theseService */
         $theseService = $container->get(TheseService::class);
         $service->setTheseService($theseService);
+
+        /** @var TheseAnneeUnivService $theseAnneeUnivService */
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
+        $service->setTheseAnneeUnivService($theseAnneeUnivService);
 
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);

@@ -6,15 +6,19 @@ use Application\Entity\Db\AutorisationInscription;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
 use Structure\Entity\Db\Etablissement;
 use These\Entity\Db\TheseAnneeUniv;
+use UnicaenApp\Exception\RuntimeException;
 
 class TheseAnneeUnivService extends BaseService
 {
     use SourceServiceAwareTrait;
+
     /**
-     * @return EntityRepository
+     * @return \These\Entity\Db\Repository\TheseAnneeUnivRepository
      */
     public function getRepository(): EntityRepository
     {
@@ -46,6 +50,29 @@ class TheseAnneeUnivService extends BaseService
         return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
+    }
+
+    public function newTheseAnneeUniv(int $premiereAnnee): TheseAnneeUniv
+    {
+        $theseAnneeUniv = new TheseAnneeUniv();
+        $theseAnneeUniv->setAnneeUniv($premiereAnnee);
+//        $theseAnneeUniv->setThese();
+        $theseAnneeUniv->setSource($this->sourceService->fetchApplicationSource());
+        $theseAnneeUniv->setSourceCode($this->sourceService->genereateSourceCode());
+
+        return $theseAnneeUniv;
+    }
+
+    public function save(TheseAnneeUniv $entity): void
+    {
+        try {
+            if ($entity->getId() === null) {
+                $this->entityManager->persist($entity);
+            }
+            $this->entityManager->flush($entity);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BDD !", null, $e);
+        }
     }
 
     public function initFromAutorisationInscription(AutorisationInscription $autorisationInscription): TheseAnneeUniv

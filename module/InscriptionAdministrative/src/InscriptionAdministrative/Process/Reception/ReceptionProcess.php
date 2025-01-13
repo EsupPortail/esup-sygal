@@ -7,7 +7,6 @@ use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Exception;
-use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
@@ -16,8 +15,12 @@ use InscriptionAdministrative\Process\AbstractProcess;
 use InscriptionAdministrative\Rule\Reception\ReceptionRuleAwareTrait;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceAwareTrait;
 use RuntimeException;
+use These\Entity\Db\These;
+use These\Entity\Db\TheseAnneeUniv;
 use These\Service\These\TheseServiceAwareTrait;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
+use Webmozart\Assert\Assert;
 
 class ReceptionProcess extends AbstractProcess
 {
@@ -26,6 +29,7 @@ class ReceptionProcess extends AbstractProcess
     use IndividuServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use TheseAnneeUnivServiceAwareTrait;
     use AdmissionServiceAwareTrait;
 
     use InscriptionAdministrativeAwareTrait;
@@ -35,6 +39,8 @@ class ReceptionProcess extends AbstractProcess
 
     private ?Admission $admission;
     private ?Doctorant $doctorant = null;
+    private ?These $these = null;
+    private ?TheseAnneeUniv $theseAnneeUniv = null;
 
     private ReceptionProcessResult $result;
 
@@ -106,6 +112,15 @@ class ReceptionProcess extends AbstractProcess
         if ($this->receptionRule->canCreateThese()) {
             $this->admission = $this->receptionRule->getAdmission();
             $this->createTheseFromAdmission();
+        } else {
+            $this->these = $this->receptionRule->getThese(); // évite de fetcher à nouveau la thèse
+        }
+
+        if ($this->receptionRule->canCreateTheseAnneeUniv()) {
+            $this->createTheseAnneeUnivFromInscriptionAdministrative();
+        }
+        if ($this->receptionRule->canLinkTheseAnneeUnivToInscriptionAdministrative()) {
+            $this->linkTheseAnneeUnivToInscriptionAdministrative();
         }
 
         if ($this->receptionRule->canLinkAdmissionToDoctorant()) {
@@ -152,17 +167,51 @@ class ReceptionProcess extends AbstractProcess
 
     private function createTheseFromAdmission(): void
     {
-        $these = $this->theseService->newTheseFromAdmission($this->admission, $this->doctorant);
-        $this->theseService->saveThese($these);
+        $this->these = $this->theseService->newTheseFromAdmission($this->admission, $this->doctorant);
+        $this->theseService->saveThese($this->these);
 
         $message = sprintf(
             "La thèse %s a été créée pour le doctorant %s à partir du dossier d'admission.",
-            $these->getId(),
+            $this->these->getId(),
             $this->doctorant->getId(),
         );
         $this->result->addMessage($message, MessageAwareInterface::INFO);
         $this->result->setIsTheseCreated(true);
-        $this->result->setCreatedThese($these);
+        $this->result->setCreatedThese($this->these);
+    }
+
+    private function createTheseAnneeUnivFromInscriptionAdministrative(): void
+    {
+        Assert::notNull($this->these, "Incohérence dans l'algo : une thèse devrait être dispo !"); // todo : généraliser ce type de vérif ?
+
+        $annee = $this->inscriptionAdministrative->getPeriodeAnneeUniversitaire();
+
+        $this->theseAnneeUniv = $this->theseAnneeUnivService->newTheseAnneeUniv($annee);
+        $this->theseAnneeUniv->setThese($this->these);
+        $this->theseAnneeUniv->setInscriptionAdministrative($this->inscriptionAdministrative);
+        $this->theseAnneeUnivService->save($this->theseAnneeUniv);
+
+        $message = sprintf(
+            "L'année universitaire %s a été créée pour la thèse %s à partir de l'inscription administrative.",
+            $this->theseAnneeUniv,
+            $this->these->getId(),
+        );
+        $this->result->addMessage($message, MessageAwareInterface::INFO);
+        $this->result->setIsTheseAnneeUnivCreated(true);
+        $this->result->setCreatedTheseAnneeUniv($this->theseAnneeUniv);
+    }
+
+    private function linkTheseAnneeUnivToInscriptionAdministrative(): void
+    {
+        $this->theseAnneeUniv = $this->receptionRule->getTheseAnneeUniv();
+        $this->theseAnneeUniv->setInscriptionAdministrative($this->inscriptionAdministrative);
+        $this->theseAnneeUnivService->save($this->theseAnneeUniv);
+
+        $message = sprintf(
+            "Le lien entre l'année universitaire %s et l'inscription administrative a été effectué.",
+            $this->theseAnneeUniv,
+        );
+        $this->result->addMessage($message, MessageAwareInterface::INFO);
     }
 
     private function updateCodeApprenantDoctorantFromApprenant(): void

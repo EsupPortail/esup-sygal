@@ -6,13 +6,16 @@ use Admission\Entity\Db\Admission;
 use Doctorant\Entity\Db\Doctorant;
 use InscriptionAdministrative\Process\ProcessResult;
 use These\Entity\Db\These;
+use These\Entity\Db\TheseAnneeUniv;
 
 class ReceptionProcessResult extends ProcessResult
 {
     private ?Admission $foundAdmissionValidee = null;
     private ?Doctorant $doctorant = null;
     private ?These $createdThese = null;
+    private ?TheseAnneeUniv $createdTheseAnneeUniv = null;
     private bool $isTheseCreated = false;
+    private bool $isTheseAnneeUnivCreated = false;
     private bool $isDoctorantCreated = false;
     private bool $isDoctorantUpdated = false;
 
@@ -27,6 +30,17 @@ class ReceptionProcessResult extends ProcessResult
         return $this;
     }
 
+    public function isTheseAnneeUnivCreated(): bool
+    {
+        return $this->isTheseAnneeUnivCreated;
+    }
+
+    public function setIsTheseAnneeUnivCreated(bool $isTheseAnneeUnivCreated): self
+    {
+        $this->isTheseAnneeUnivCreated = $isTheseAnneeUnivCreated;
+        return $this;
+    }
+
     public function setCreatedThese(?These $createdThese): self
     {
         $this->createdThese = $createdThese;
@@ -36,6 +50,17 @@ class ReceptionProcessResult extends ProcessResult
     public function getCreatedThese(): ?These
     {
         return $this->createdThese;
+    }
+
+    public function setCreatedTheseAnneeUniv(?TheseAnneeUniv $createdTheseAnneeUniv): self
+    {
+        $this->createdTheseAnneeUniv = $createdTheseAnneeUniv;
+        return $this;
+    }
+
+    public function getCreatedTheseAnneeUniv(): ?TheseAnneeUniv
+    {
+        return $this->createdTheseAnneeUniv;
     }
 
     public function isDoctorantCreated(): bool

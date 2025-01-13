@@ -2,6 +2,7 @@
 
 namespace These\Entity\Db;
 
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
@@ -29,6 +30,9 @@ trait TheseAnneeUnivTrait
      * @var These
      */
     protected $these;
+
+    protected ?InscriptionAdministrative $inscriptionAdministrative = null;
+    protected bool $est1ereAnneeInscription = false;
 
     /**
      * @return string
@@ -69,11 +73,21 @@ trait TheseAnneeUnivTrait
         return $this->anneeUniv . '/' . ($this->anneeUniv + 1);
     }
 
+    public function est1ereAnneeInscription(): bool
+    {
+        return $this->est1ereAnneeInscription;
+    }
+
     /**
      * @return These
      */
     public function getThese()
     {
         return $this->these;
+    }
+
+    public function getInscriptionAdministrative(): ?InscriptionAdministrative
+    {
+        return $this->inscriptionAdministrative;
     }
 }
