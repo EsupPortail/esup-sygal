@@ -440,6 +440,11 @@ class AdmissionController extends AdmissionAbstractController {
                 $this->admissionForm->bind($admission);
                 if ($this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_SON_DOSSIER_ADMISSION) ||
                     $this->isAllowed($admission, AdmissionPrivileges::ADMISSION_MODIFIER_TOUS_DOSSIERS_ADMISSION)) {
+                    $individu = $this->individuService->getRepository()->findRequestedIndividu($this);
+                    if($individu && isset($data["etudiant"]["dateNaissance"])){
+                        $individu->setDateNaissance(new DateTime($data["etudiant"]["dateNaissance"]));
+                        $this->individuService->saveIndividu($individu);
+                    }
                     //Lier les valeurs des données en session avec le formulaire
                     $this->admissionForm->get('etudiant')->bindValues($data['etudiant']);
                     $this->etudiantService->update($this->admissionForm->get('etudiant')->getObject());

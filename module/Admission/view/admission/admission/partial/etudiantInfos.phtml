@@ -34,7 +34,7 @@ $canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(Docume
     <div class="admission-section-title-container">
         <h2 class="admission-section-title">Étudiant<label class="admission-section-title-en">&nbsp; / Student</label></h2>
     </div>
-    <?php if($role->getCode() === Role::CODE_GEST_ED && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE){ ?>
+    <?php if($role->getCode() === Role::CODE_GEST_ED && $admission->getEtat()->getCode() === Etat::CODE_EN_COURS_SAISIE && !$admission->getIndividu()->getSource()->getImportable()){ ?>
         <div class="admission-informations-container">
             <i class="fas fa-info-circle"></i>
             <p>
