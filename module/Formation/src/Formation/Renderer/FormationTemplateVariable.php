@@ -14,6 +14,11 @@ class FormationTemplateVariable extends AbstractTemplateVariable
         $this->formation = $formation;
     }
 
+    public function getLibelle(): string
+    {
+        return $this->formation->getLibelle();
+    }
+
     /** @noinspection  PhpUnused */
     public function toStringResponsable() : string
     {

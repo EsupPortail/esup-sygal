@@ -35,6 +35,7 @@ infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites
 - [FIX] Saisie du titre d'accès d'une thèse : exclusion des établissements historisés dans la liste déroulante.
 - [FIX] Notification d'ouverture des inscriptions à une session de formation : correction pour le cas où la structure valide est de type établissement.
 - [FIX] Création/modification de formation/session : intialisation et prise en compte correcte de l'url de recherche d'individu (responsable).
+- [FIX] Notifications mails mentionnant le libellé d'une formation : 'Méthode [getLibelle] non trouvée'. 
 
 9.1.1
 -----
