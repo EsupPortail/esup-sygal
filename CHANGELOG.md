@@ -3,6 +3,7 @@ Journal des modifications
 
 9.2.0
 -----
+- Module Formation : impossibilité pour le doctorant de s'inscrire à plusieurs sessions de la même formation dans la même année universitaire
 - Affichage de l'identité d'un individu : le format privilégé est désormais NOMPATRONYMIQUE Prénom.
 - Amélioration de l'écran Inscriptions :
     - Ajout de plusieurs filtres : Site organisateur, Structure associée (ED), année universitaire
