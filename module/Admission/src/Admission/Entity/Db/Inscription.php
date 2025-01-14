@@ -898,4 +898,9 @@ class Inscription implements HistoriqueAwareInterface{
     {
         return $this->getFonctionCoDirecteurThese()?->getLibelle();
     }
+
+    public function getDenominationDirecteurThese() : ?string
+    {
+        return ($this->getNomDirecteurThese() || $this->getPrenomDirecteurThese()) ? $this->getNomDirecteurThese()." ".$this->getPrenomDirecteurThese() : null;
+    }
 }
