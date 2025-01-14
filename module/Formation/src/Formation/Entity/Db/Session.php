@@ -15,6 +15,7 @@ use Formation\Entity\Db\Traits\HasTypeTrait;
 use Individu\Entity\Db\Individu;
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Structure\Entity\Db\Structure;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
@@ -104,9 +105,12 @@ class Session implements HistoriqueAwareInterface,
         $this->etat = $etat;
     }
 
+    /**
+     * Retourne les structures valides non historisées.
+     */
     public function getStructuresValides(): Collection
     {
-        return $this->structuresValides;
+        return $this->structuresValides->filter(fn(SessionStructureValide $ssv) => $ssv->getStructure()->estNonHistorise());
     }
 
     public function getSeances() : Collection

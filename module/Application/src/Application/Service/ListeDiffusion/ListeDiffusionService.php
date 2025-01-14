@@ -107,11 +107,13 @@ class ListeDiffusionService extends BaseService
     }
 
     /**
+     * Fetche toutes les listes de diffusion sous la forme d'un tableau dont les clés sont les adresse mail.
+     *
      * @return ListeDiffusion[]
      */
-    public function fetchListesDiffusionActives()
+    public function fetchListesDiffusionActives(): array
     {
-        return $this->getRepository()->findAll();
+        return $this->getRepository()->createQueryBuilder('ld')->indexBy('ld', 'ld.adresse')->getQuery()->getResult();
     }
 
     /**

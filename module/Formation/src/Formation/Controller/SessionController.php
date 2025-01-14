@@ -255,7 +255,7 @@ class SessionController extends AbstractController
                         $structuresValides = $session->getStructuresValides();
 
                         if ($formationSpecifique) {
-                            if ($structuresValides instanceof PersistentCollection && !$structuresValides->isEmpty()) {
+                            if (!$structuresValides->isEmpty()) {
                                 $this->triggerNotificationFormationSpecifiqueAjoutee($session);
                                 break;
                             } else {
@@ -300,31 +300,36 @@ class SessionController extends AbstractController
         }
     }
 
-    private function triggerNotificationFormationSpecifiqueAjoutee(Session $session)
+    private function triggerNotificationFormationSpecifiqueAjoutee(Session $session): void
     {
-        $destinataires = [];
+        $notifs = [];
+        $errorMessages = [];
         /** @var SessionStructureValide $structureValide */
         foreach ($session->getStructuresValides() as $structureValide) {
-            //on notifie les doctorants des structures non historisées
-            if(!$structureValide->estHistorise()){
-                try {
-                    $notif = $this->formationNotificationFactory->createNotificationFormationSpecifiqueAjoutee($session->getFormation(), $structureValide);
-                    $result = $this->notifierService->trigger($notif);
-                    if(!empty($result->getErrorMessages())){
-                        $this->flashMessenger()->addErrorMessage($result->getErrorMessages()[0]. " (".$structureValide->getStructure()->getEcoleDoctorale().").");
-                    } else{
-                        //Si il n'y a pas d'erreurs, on informe l'utilisateur des destinataires notifiés
-                        $destinataires[] = $notif->getTo();
-                    }
-                } catch (RuntimeException $e) {
-                    $errorMessages[] = $e->getMessage();
-                }
+            try {
+                $notifs[] = $this->formationNotificationFactory->createNotificationFormationSpecifiqueAjoutee($session->getFormation(), $structureValide);
+            } catch (NotificationRuntimeException $e) {
+                $errorMessages[] = $e->getMessage();
             }
         }
 
-        if (!empty($errorMessages)) {
-            $errorMessage = implode(", ", $errorMessages);
-            $this->flashMessenger()->addErrorMessage("Les doctorants de(s) ED <b>".$errorMessage."</b> n'ont pas reçu de mail, puisqu'aucune liste de diffusion n'a été trouvée");
+        // NB : aucun envoi si un pb a été rencontré à la création/init de la notif (ex : liste de diff non active)
+        $destinataires = [];
+        if (count($errorMessages) === 0) {
+            foreach ($notifs as $notif) {
+                $result = $this->notifierService->trigger($notif);
+                if (!empty($result->getErrorMessages())) {
+                    $this->flashMessenger()->addErrorMessage($result->getErrorMessages()[0] . " (" . $structureValide->getStructure()->getEcoleDoctorale() . ").");
+                } else {
+                    //Si il n'y a pas d'erreurs, on informe l'utilisateur des destinataires notifiés
+                    $destinataires[] = $notif->getTo();
+                }
+            }
+        } else {
+            $errorMessage = implode("<br>", $errorMessages);
+            $this->flashMessenger()->addErrorMessage(
+                "La notification par mail (de l'ouverture des inscriptions) des doctorants n'a pas pu être effectuée. " . $errorMessage
+            );
         }
 
         //Si il y a au moins un destinataire qui a pu recevoir un mail
@@ -335,7 +340,9 @@ class SessionController extends AbstractController
             }, []);
             $destinataires = implode(', ', $destinataires);
 
-            $this->flashMessenger()->addInfoMessage("Une notification par mail (de l'ouverture des inscriptions) a été envoyée aux doctorants appartenant à la liste de diffusion suivante : " . $destinataires);
+            $this->flashMessenger()->addInfoMessage(
+                "Une notification par mail (de l'ouverture des inscriptions) a été envoyée aux doctorants appartenant aux listes de diffusion suivantes : " . $destinataires
+            );
         }
     }
 

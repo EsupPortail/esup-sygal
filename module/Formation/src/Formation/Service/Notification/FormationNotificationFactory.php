@@ -308,9 +308,14 @@ class FormationNotificationFactory extends NotificationFactory
     /** FORMATIONS ******************************************************************************************************/
     public function createNotificationFormationSpecifiqueAjoutee(Formation $formation, SessionStructureValide $structureValide): Notification
     {
-        $ed = $structureValide->getStructure()->getEcoleDoctorale();
-        $role = $this->applicationRoleService->getRepository()->findOneBy(["code" => Role::CODE_DOCTORANT]);
-        $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, null);
+        $ed = $structureValide->getStructure()->getEcoleDoctorale(); // NB: est null si la structure n'est pas une ED
+        $role = $this->applicationRoleService->getRepository()->findByCode(Role::CODE_DOCTORANT);
+        $etablissement = null;
+        if ($structureValide->getStructure()->getTypeStructure()->isEtablissement()) {
+            $etablissement = $structureValide->getStructure();
+        }
+
+        $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, $etablissement);
         $domain = $this->listeDiffusionService->getEmailDomain();
         $ng->setDomain($domain);
 
@@ -321,15 +326,9 @@ class FormationNotificationFactory extends NotificationFactory
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::FORMATION_SPECIFIQUE_AJOUTEE, $vars);
         $mail = $ng->generateName();
 
-        $listesDiffusionActives = $this->listeDiffusionService->fetchListesDiffusionActives();
-        foreach ($listesDiffusionActives as $listeDiffusion) {
-            $listesDiffusionActivess[$listeDiffusion->getAdresse()] = $listeDiffusion;
-        }
-        $adressesListesActives = array_keys($listesDiffusionActivess);
-
-        //si une liste a été récupérée et qu'elle n'est pas active
-        if(!$mail || !in_array($mail, $adressesListesActives)){
-            throw new RuntimeException($ed);
+        // si la liste de diff ne fait pas partie de celles activées, stop
+        if (!array_key_exists($mail, $this->listeDiffusionService->fetchListesDiffusionActives())) {
+            throw new RuntimeException("L'adresse de destination $mail ne fait pas partie des listes de diffusion actives.");
         }
 
         $notif = new Notification();
