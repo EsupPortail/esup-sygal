@@ -217,6 +217,8 @@ $now = new DateTime();
                                           title="M'inscrire" data-bs-toggle="tooltip" data-bs-html="true"
                                     ></span>&nbsp;M'inscrire
                                 </a>
+                            <?php else: ?>
+                                <span class="icon icon-unchecked" style="color:darkred;" data-bs-toggle="tooltip" title="Vous suivez déjà (ou avez déjà suivi) cette formation lors de cette année universitaire">&nbsp;Impossible de s'inscrire</span>
                             <?php endif;
                         endif; ?>
                     </td>
