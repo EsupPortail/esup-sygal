@@ -129,7 +129,6 @@ class FormationForm extends Form {
         //responsable
         $responsable = new SearchAndSelect('responsable', ['label' => "Responsable du module de formation :"]);
         $responsable
-            ->setAutocompleteSource($this->urlResponsable)
             ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'responsable',
@@ -222,5 +221,14 @@ class FormationForm extends Form {
             'objectif'=> [ 'required' => false, ],
             'programme'=> [ 'required' => false, ],
         ]));
+    }
+
+    public function prepare(): static
+    {
+        /** @var SearchAndSelect $responsableSearchAndSelect */
+        $responsableSearchAndSelect = $this->get('responsable');
+        $responsableSearchAndSelect->setAutocompleteSource($this->urlResponsable);
+
+        return parent::prepare();
     }
 }

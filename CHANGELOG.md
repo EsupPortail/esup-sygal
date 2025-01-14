@@ -33,6 +33,7 @@ infobulle d'explication en cas de contrainte non respectée (ex: nb d'émérites
 - [FIX] Proposition de soutenance : bouton 'Valider la proposition de soutenance' visible à tort pour le doctorant.
 - [FIX] Saisie du titre d'accès d'une thèse : exclusion des établissements historisés dans la liste déroulante.
 - [FIX] Notification d'ouverture des inscriptions à une session de formation : correction pour le cas où la structure valide est de type établissement.
+- [FIX] Création/modification de formation/session : intialisation et prise en compte correcte de l'url de recherche d'individu (responsable).
 
 9.1.1
 -----

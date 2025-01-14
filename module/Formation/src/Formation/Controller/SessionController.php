@@ -9,7 +9,7 @@ use Doctrine\ORM\PersistentCollection;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Session\Search\SessionSearchServiceAwareTrait;
 use Notification\Exception\ExceptionInterface;
-use Notification\Exception\RuntimeException;
+use Notification\Exception\RuntimeException as NotificationRuntimeException;
 use These\Entity\Db\These;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -144,6 +144,7 @@ class SessionController extends AbstractController
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         $form = $this->getSessionForm();
+        $form->setUrlResponsable($this->url()->fromRoute('individu/rechercher', [], [], true));
         $form->setAttribute('action', $this->url()->fromRoute('formation/session/modifier', ['session' => $session->getId()], [], true));
         $form->bind($session);
 
@@ -332,7 +333,7 @@ class SessionController extends AbstractController
             );
         }
 
-        //Si il y a au moins un destinataire qui a pu recevoir un mail
+        // Si il y a au moins un destinataire qui a pu recevoir un mail
         if (!empty($destinataires)) {
             $destinataires = array_reduce($destinataires, function ($carry, $item) {
                 $carry[] = implode(', ', $item);

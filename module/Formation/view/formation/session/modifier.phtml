@@ -12,7 +12,7 @@ use Formation\Form\Formation\FormationForm;
 <h2> Information sur la formation </h2>
 
 <?php
-echo $this->form()->openTag($form);
+echo $this->form()->openTag($form->prepare());
 ?>
 
 <?php echo $this->formControlGroup($form->get('libelle')); ?>

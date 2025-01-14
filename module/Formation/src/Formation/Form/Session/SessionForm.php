@@ -80,7 +80,6 @@ class SessionForm extends Form {
         //responsable
         $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :"]);
         $responsable
-            ->setAutocompleteSource($this->urlResponsable)
             ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'responsable',
@@ -209,5 +208,14 @@ class SessionForm extends Form {
             'date_fermeture_inscription'=> [ 'required' => false, ],
             'date_publication'=> [ 'required' => false, ],
         ]));
+    }
+
+    public function prepare(): static
+    {
+        /** @var SearchAndSelect $responsableSearchAndSelect */
+        $responsableSearchAndSelect = $this->get('responsable');
+        $responsableSearchAndSelect->setAutocompleteSource($this->urlResponsable);
+
+        return parent::prepare();
     }
 }
