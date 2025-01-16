@@ -13,6 +13,9 @@
         <field name="lien"                type="string"       length="9999"       column="lien"             nullable="true"/>
 
         <one-to-many field="sessions" target-entity="Formation\Entity\Db\Session" mapped-by="formation"/>
+        <many-to-one field="fiche" target-entity="Fichier\Entity\Db\Fichier">
+            <join-column name="fiche_id" referenced-column-name="id"/>
+        </many-to-one>
 
         <!-- VALEUR PAR DEFAUT DES SESSIONS ASSOCIEES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <many-to-one field="site" target-entity="Structure\Entity\Db\Etablissement">

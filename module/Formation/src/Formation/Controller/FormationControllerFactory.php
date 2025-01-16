@@ -3,17 +3,19 @@
 namespace Formation\Controller;
 
 use Application\Service\AnneeUniv\AnneeUnivService;
+use Doctrine\ORM\EntityManager;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\NatureFichier\NatureFichierService;
+use Formation\Form\Formation\FormationForm;
+use Formation\Service\Formation\FormationService;
 use Formation\Service\Module\ModuleService;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Session\SessionService;
+use Interop\Container\ContainerInterface;
 use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
-use Doctrine\ORM\EntityManager;
-use Formation\Form\Formation\FormationForm;
-use Formation\Service\Formation\FormationService;
-use Interop\Container\ContainerInterface;
 
 class FormationControllerFactory {
 
@@ -41,6 +43,8 @@ class FormationControllerFactory {
         /** @var FormationNotificationFactory $formationNotificationFactory */
         $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
         $anneeUnivService = $container->get(AnneeUnivService::class);
+        $natureFichier = $container->get(NatureFichierService::class);
+        $fichierService = $container->get(FichierService::class);
 
         /**
          * @var FormationForm $formationForm
@@ -57,6 +61,8 @@ class FormationControllerFactory {
         $controller->setNotifierService($notificationService);
         $controller->setFormationNotificationFactory($formationNotificationFactory);
         $controller->setAnneeUnivService($anneeUnivService);
+        $controller->setFichierService($fichierService);
+        $controller->setNatureFichierService($natureFichier);
 
         return $controller;
     }

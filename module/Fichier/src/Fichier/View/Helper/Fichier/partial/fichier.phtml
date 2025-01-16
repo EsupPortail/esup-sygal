@@ -1,0 +1,47 @@
+<?php
+/**
+* @var Fichier $fichier
+* @var string $urlFichier
+* @var string $urlSuppressionFichier
+* @var bool $canGererFichier
+* @var string $libelleOptionnel
+* @var bool $seeHistoInfo
+*/
+
+use Fichier\Entity\Db\Fichier;
+
+?>
+<div class="container mt-2 mb-2">
+    <div class="card file-card shadow-sm p-2">
+        <div class="d-flex align-items-center">
+            <!-- Icone du fichier -->
+            <div class="file-icon text-primary me-2">
+                <i class="fas fa-file-pdf fa-1x"></i>
+            </div>
+            <!-- Détails du fichier -->
+            <div class="file-details flex-grow-1">
+                <h6 class="mb-0"><?php echo $libelleOptionnel ?: $fichier->getNom();?></h6>
+                <?php if($seeHistoInfo): ?>
+                    <small class="text-muted">
+                        <?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>
+                    </small>
+                <?php endif; ?>
+            </div>
+            <!-- Boutons Actions -->
+            <div class="file-actions">
+                <a href="<?php echo $urlFichier; ?>">
+                    <i class="fas fa-download"></i>
+                </a>
+                <?php if ($canGererFichier) : ?>
+                    <a href="<?php echo $urlSuppressionFichier ?>">
+                        <span style='color:darkred;' data-toggle="confirmationx"
+                              data-message="Êtes-vous sûr de vouloir supprimer ce fichier ?">
+                            <span style='color:darkred;' class="icon icon-delete iconly"
+                                  data-bs-toggle="tooltip" title="Supprimer le fichier"></span>
+                        </span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

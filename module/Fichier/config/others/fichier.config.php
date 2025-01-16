@@ -18,6 +18,7 @@ use Fichier\Service\Fichier\FichierServiceFactory;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
+use Fichier\View\Helper\Fichier\FichierViewHelper;
 use Unicaen\Console\Router\Simple;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
@@ -237,6 +238,11 @@ return [
     'controller_plugins' => [
         'invokables' => [
             'urlFichier' => UrlFichier::class,
+        ],
+    ],
+    'view_helpers' => [
+        'invokables' => [
+            'fichier' => FichierViewHelper::class,
         ],
     ],
 ];

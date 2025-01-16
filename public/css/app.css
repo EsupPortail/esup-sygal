@@ -958,5 +958,29 @@ p.avis-complem {
 @media (min-width: 1500px) {
   .unicaen-alerte .modal-dialog {
     max-width: 900px; } }
+/******************** Fichier (ViewHelper) **********************/
+.file-card {
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.875rem;
+  width: fit-content; }
+
+.file-icon {
+  font-size: 1.5rem;
+  color: var(--primary-color) !important; }
+
+.file-details h6 {
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem; }
+
+.file-actions {
+  margin-left: 50px; }
+
+.file-actions .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem; }
+
+.nav-item:has(+ .nav-item .divider):has(> .divider) {
+  display: none; }
 
 /*# sourceMappingURL=app.css.map */

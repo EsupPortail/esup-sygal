@@ -3,6 +3,7 @@
 namespace Formation\Entity\Db;
 
 use Doctrine\Common\Collections\Collection;
+use Fichier\Entity\Db\Fichier;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Interfaces\HasSiteInterface;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
@@ -28,6 +29,7 @@ class Formation implements HistoriqueAwareInterface,
     private ?string $libelle = null;
     private ?string $description  = null;
     private ?string $lien  = null;
+    private ?Fichier $fiche  = null;
     private ?Module $module  = null;
     private Collection $sessions;
     private ?Individu $responsable  = null;
@@ -97,6 +99,22 @@ class Formation implements HistoriqueAwareInterface,
     {
         $this->lien = $lien;
         return $this;
+    }
+
+    /**
+     * @return Fichier|null
+     */
+    public function getFiche(): ?Fichier
+    {
+        return $this->fiche;
+    }
+
+    /**
+     * @param Fichier|null $fiche
+     */
+    public function setFiche(?Fichier $fiche): void
+    {
+        $this->fiche = $fiche;
     }
 
     /**

@@ -218,7 +218,7 @@ class AdmissionController extends AdmissionAbstractController {
             }
             /** @var Inscription $inscription */
             $inscription = $admission->getInscription()->first();
-            $etablissementInscription = $inscription?->getEtablissementInscription();
+            $etablissementInscription = $inscription instanceof Inscription ? $inscription?->getEtablissementInscription() : null;
             if($etablissementInscription && $etablissementInscription->getStructure()->getSigle()){
                 //Enregistrement des templates si l'établissement ne les possèdes pas encore
                 $this->admissionService->createTemplatesForEtablissement($etablissementInscription);

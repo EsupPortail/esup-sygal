@@ -5,6 +5,7 @@ namespace Formation\Form\Formation;
 use Application\Utils\FormUtils;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Service\Module\ModuleServiceAwareTrait;
+use Laminas\Form\Element\File;
 use Laminas\Form\Element\Number;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
@@ -92,6 +93,16 @@ class FormationForm extends Form {
             ],
             'attributes' => [
                 'id' => 'lien',
+            ],
+        ]);
+        $this->add([
+            'type' => File::class,
+            'name' => 'fiche',
+            'options' => [
+                'label' => "Fiche de la formation :",
+            ],
+            'attributes' => [
+                'id' => 'fiche',
             ],
         ]);
         //site

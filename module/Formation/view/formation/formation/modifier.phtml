@@ -3,8 +3,10 @@
  * @see \Formation\Controller\FormationController::ajouterAction()
  * @see \Formation\Controller\FormationController::modifierAction()
  * @var FormationForm $form
+ * @var UrlFichier $urlFichierPlugin
  */
 
+use Fichier\Controller\Plugin\UrlFichier;
 use Formation\Form\Formation\FormationForm;
 
 ?>
@@ -12,12 +14,43 @@ use Formation\Form\Formation\FormationForm;
 <h2> Information sur la formation </h2>
 
 <?php
-echo $this->form()->openTag($form->prepare());
+$form->prepare();
+echo $this->form()->openTag($form);
 ?>
 
 <?php echo $this->formControlGroup($form->get('libelle')); ?>
 <?php echo $this->formControlGroup($form->get('description')); ?>
 <?php echo $this->formControlGroup($form->get('lien')); ?>
+<?php if ($form->getObject()?->getFiche()): ?>
+    <div class="row mb-3">
+        <div class="col">
+            Fiche existante :
+            <a href="<?php echo $urlFichierPlugin->telechargerFichier($form->getObject()?->getFiche()); ?>">
+                Fiche de la formation
+            </a>
+            <?php /** @see \Formation\Controller\FormationController::supprimerFicheAction() */ ?>
+            <a style='color:darkred;' data-event="modification" data-bs-toggle="tooltip" title="Supprimer cette fiche ? (Une confirmation vous sera demandée)"
+               href="<?php echo $this->url('formation/formation/supprimer-fiche', ["formation"=>$form->getObject()->getId(), "fichier"=>$form->getObject()->getFiche()->getId()], [], true); ?>">
+                <span class="icon icon-delete"></span>
+            </a>
+        </div>
+
+    </div>
+    <a type="button" class="btn btn-primary mb-4" data-bs-target="#file-charte-doctorat-signe-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="file-charte-doctorat-signe-container">
+        <span class="icon icon-pdf"></span>
+        Remplacer la fiche existante
+    </a>
+    <div class="collapse row subfield mb-4" id="file-charte-doctorat-signe-container">
+        <div class="alert alert-info">
+            <span class="icon icon-info"></span>
+            Cela remplacera automatiquement la fiche déjà présente
+        </div>
+        <?php echo $this->formControlGroup($form->get('fiche')); ?>
+    </div>
+<?php else: ?>
+    <?php echo $this->formControlGroup($form->get('fiche')); ?>
+<?php endif; ?>
+
 <?php echo $this->formControlGroup($form->get('module')); ?>
 
 <h2> Valeur par défaut des sessions de cette formation </h2>
@@ -57,6 +90,13 @@ echo $this->form()->openTag($form->prepare());
         updateType();
     });
 
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
     $(document).ready(function() {
         tinymce.remove();
         tinymce.init({
@@ -78,5 +118,6 @@ echo $this->form()->openTag($form->prepare());
             }
         });
         $('select').selectpicker();
+        $('[data-bs-toggle="tooltip"]').tooltip({});
     });
 </script>

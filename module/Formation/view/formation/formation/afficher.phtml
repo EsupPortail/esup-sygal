@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\AnneeUniv;
+use Fichier\Controller\Plugin\UrlFichier;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -14,6 +15,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @var Session[] $sessions
  * @var array $anneesUniv
  * @var AnneeUniv $anneeUnivCourante
+ * @var UrlFichier $urlFichierPlugin
  */
 
 $pageTitle = '' . $formation->getLibelle();
@@ -82,9 +84,22 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php endif ?>
     <dt class="col-md-3"> Code </dt>
     <dd class="col-md-9"> <code><?php echo $formation->getCode(); ?></code></dd>
-    <?php if ($formation->getLien()) : ?>
-        <dt class="col-md-3"> Lien vers de la fiche </dt>
-        <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+    <?php if ($formation->getFiche()) : ?>
+        <dt class="col-md-3"> Fiche </dt>
+        <dd class="col-md-9">
+            <?php echo $this->fichier($formation->getFiche(),
+                $urlFichierPlugin->telechargerFichier($formation->getFiche()),
+                $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier"=>$formation->getFiche()->getId()], [], true),
+                $canModifierFormation,
+                "Fiche de la formation",
+                false
+            ); ?>
+        </dd>
+    <?php else: ?>
+        <?php if ($formation->getLien()) : ?>
+            <dt class="col-md-3"> Lien vers la fiche </dt>
+            <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+        <?php endif ?>
     <?php endif ?>
     <?php if ($formation->getObjectif() !== null) : ?>
         <dt class="col-md-3">Objectif </dt>

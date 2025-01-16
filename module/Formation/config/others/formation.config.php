@@ -19,9 +19,22 @@ use Formation\Service\Formation\Search\FormationSearchServiceFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [
+        'rule_providers' => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            FormationPrivileges::FORMATION_MODIFIER,
+                        ],
+//                        'resources' => ['Fichier'],
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -56,6 +69,7 @@ return [
                     'controller' => FormationController::class,
                     'action' => [
                         'modifier',
+                        'supprimer-fiche'
                     ],
                     'privileges' => [
                         FormationPrivileges::FORMATION_MODIFIER,
@@ -198,6 +212,18 @@ return [
                                     'defaults' => [
                                         'controller' => FormationController::class,
                                         'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'supprimer-fiche' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/supprimer-fiche/:formation/:fichier',
+                                    'defaults' => [
+                                        'controller' => FormationController::class,
+                                        /** @see FormationController::supprimerFicheAction */
+                                        'action'     => 'supprimer-fiche',
                                     ],
                                 ],
                             ],

@@ -3,22 +3,23 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\AnneeUniv;
+use Application\RouteMatch;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
-use Formation\Entity\Db\Seance;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
+use Formation\Form\Formation\FormationFormAwareTrait;
+use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use Laminas\Http\Response;
-use Notification\Exception\RuntimeException;
+use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Formation\Entity\Db\Formation;
-use Formation\Form\Formation\FormationFormAwareTrait;
-use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\View\Model\ViewModel;
 
 class FormationController extends AbstractController
 {
@@ -30,6 +31,8 @@ class FormationController extends AbstractController
     use NotifierServiceAwareTrait;
     use FormationNotificationFactoryAwareTrait;
     use AnneeUnivServiceAwareTrait;
+    use NatureFichierServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -55,7 +58,8 @@ class FormationController extends AbstractController
             'formation' => $formation,
             'sessions' => $sessionsAvecAnneeUniv,
             'anneeUnivCourante' => $anneeUnivCourante,
-            'anneesUniv' => $this->formationService->getAnneesUnivAsOptions($sessions)
+            'anneesUniv' => $this->formationService->getAnneesUnivAsOptions($sessions),
+            'urlFichierPlugin' => $this->urlFichier(),
         ]);
     }
 
@@ -76,6 +80,14 @@ class FormationController extends AbstractController
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
+                $files = $request->getFiles()->toArray();
+                if(isset($files['fiche']['size']) && $files['fiche']['size'] !== 0){
+                    /** @var NatureFichier $nature */
+                    $nature = $this->natureFichierService->getRepository()->findOneBy(['code' => \Formation\Provider\NatureFichier\NatureFichier::CODE_FICHE_FORMATION]);
+                    $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
+                    $this->fichierService->saveFichiers($fichiers);
+                    $formation->setFiche(array_pop($fichiers));
+                }
                 $this->getFormationService()->create($formation);
             }
         }
@@ -97,13 +109,28 @@ class FormationController extends AbstractController
         $form->setAttribute('action', $this->url()->fromRoute('formation/formation/modifier', [], [], true));
         $form->bind($formation);
 
-        $oldSite = $formation->getSite();
-        $oldStructure = $formation->getTypeStructure();
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
+                /** @var NatureFichier $nature */
+                $nature = $this->natureFichierService->getRepository()->findOneBy(['code' => \Formation\Provider\NatureFichier\NatureFichier::CODE_FICHE_FORMATION]);
+
+                $files = $request->getFiles()->toArray();
+                if(isset($files['fiche']['size']) && $files['fiche']['size'] !== 0){
+                    //Suppression de l'ancienne fiche, si une déjà présente
+                    if($formation->getFiche()){
+                        $oldFiche = $formation->getFiche();
+                        $formation->setFiche(null);
+                        $this->getFormationService()->update($formation);
+                        $this->fichierService->supprimerFichiers([$oldFiche]);
+                    }
+                    $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
+                    $this->fichierService->saveFichiers($fichiers);
+                    $formation->setFiche(array_pop($fichiers));
+                }
+
                 $this->getFormationService()->update($formation);
             }
         }
@@ -111,6 +138,7 @@ class FormationController extends AbstractController
         $vm = new ViewModel([
             'title' => "Modification d'une formation",
             'form' => $form,
+            'urlFichierPlugin' => $this->urlFichier(),
         ]);
         $vm->setTemplate('formation/formation/modifier');
         return $vm;
@@ -158,5 +186,37 @@ class FormationController extends AbstractController
             ]);
         }
         return $vm;
+    }
+
+    public function supprimerFicheAction(): Response|ViewModel
+    {
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
+        /** @var RouteMatch $routeMatch */
+        $routeMatch = $this->getEvent()->getRouteMatch();
+        $fichierId = $routeMatch->getParam("fichier");
+        $fichier = $this->fichierService->getRepository()->find($fichierId);
+
+        $result = $this->confirm()->execute();
+
+        // si un tableau est retourné par le plugin Confirm, l'opération a été confirmée
+        if (is_array($result)) {
+            $formation->setFiche(null);
+            $this->getFormationService()->update($formation);
+
+            $this->fichierService->supprimerFichiers([$fichier]);
+
+            $this->flashMessenger()->addSuccessMessage("La fiche de la formation {$formation->getLibelle()} supprimée avec succès.");
+
+            return $this->redirect()->toRoute('formation/formation/modifier', ['formation' => $formation->getId()], [], true);
+        }
+
+        $viewModel = $this->confirm()->getViewModel();
+        $viewModel->setTemplate("fichier/fichier/supprimer");
+        $viewModel->setVariables([
+            'title'   => "Suppression d'un fichier",
+            'fichier' => $fichier,
+        ]);
+
+        return $viewModel;
     }
 }
