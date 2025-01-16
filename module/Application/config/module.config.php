@@ -323,6 +323,7 @@ return array(
     ],
     'public_files' => [
         'head_scripts' => [
+            '040_tinymce' => "/vendor/tinymce-6.3.0/js/tinymce/tinymce.min.js",
             '050_select2' => "/vendor/select2-4.0.13/dist/js/select2.min.js",
             '050_select2_fr' => "/vendor/select2-4.0.13/dist/js/i18n/fr.js",
             '060_uploader' => "/vendor/jquery.ui.widget.js",
