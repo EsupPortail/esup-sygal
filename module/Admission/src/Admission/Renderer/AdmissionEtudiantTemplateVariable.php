@@ -17,6 +17,22 @@ class AdmissionEtudiantTemplateVariable extends AbstractTemplateVariable
     /**
      * @noinspection PhpUnused (il s'agit d'une méthode utilisée par les macros)
      */
+    public function getINE()
+    {
+        return $this->etudiant->getIne();
+    }
+
+    /**
+     * @noinspection PhpUnused (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getNumeroTelephone1()
+    {
+        return $this->etudiant->getNumeroTelephone1();
+    }
+
+    /**
+     * @noinspection PhpUnused (il s'agit d'une méthode utilisée par les macros)
+     */
     public function getLibelleCommuneNaissance()
     {
         return $this->etudiant->getLibelleCommuneNaissance();

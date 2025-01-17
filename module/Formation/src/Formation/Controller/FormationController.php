@@ -93,6 +93,7 @@ class FormationController extends AbstractController
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
 
         $form = $this->getFormationForm();
+        $form->setUrlResponsable($this->url()->fromRoute('individu/rechercher', [], [], true));
         $form->setAttribute('action', $this->url()->fromRoute('formation/formation/modifier', [], [], true));
         $form->bind($formation);
 
