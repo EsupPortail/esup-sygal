@@ -4,6 +4,7 @@ namespace Depot\Service\Notification;
 
 use Application\Service\Email\EmailTheseService;
 use Application\Service\Role\RoleService;
+use Application\Service\Url\UrlService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
@@ -39,9 +40,9 @@ class DepotNotificationFactoryFactory extends NotificationFactoryFactory
         $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
         $uniteRechercheService = $container->get('UniteRechercheService');
 
-        /** @var \Laminas\Mvc\Controller\Plugin\Url $urlPlugin */
-        $urlPlugin = $container->get('ControllerPluginManager')->get('Url');
-        $factory->setUrlPlugin($urlPlugin);
+        /** @var UrlService $urlService */
+        $urlService = $container->get(UrlService::class);
+        $factory->setUrlService($urlService);
 
         /* @var ModuleOptions $moduleOptions */
         $moduleOptions = $container->get('unicaen-app_module_options');

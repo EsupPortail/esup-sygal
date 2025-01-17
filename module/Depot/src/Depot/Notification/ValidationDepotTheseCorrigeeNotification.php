@@ -25,7 +25,7 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
         $successMessage = sprintf(
             "Un mail de notification vient d'être envoyé au président du jury (%s) avec copie à la Maison du doctorat (%s)",
             $to,
-            $cc
+            implode(', ', $cc)
         );
 
         $this
@@ -47,7 +47,7 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
         return $this;
     }
 
-    public function setDestinataire($utilisateur)
+    public function setDestinataire($utilisateur): void
     {
         $this->destinataire = $utilisateur;
     }

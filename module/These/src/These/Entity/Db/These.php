@@ -1400,18 +1400,23 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * Retourne les mails des directeurs de thèse.
+     * Retourne le mail du président du jury de thèse.
+     *
      * @return string|null
      */
     public function getPresidentJuryEmail() : ?string
     {
-        $president = $this->getActeursByRoleCode(Role::CODE_PRESIDENT_JURY)->toArray();
-        if (count($president) !== 1) throw new \RuntimeException("Nombre de président incorrect ...");
-        $president = current($president);
+        /** @var \These\Entity\Db\Acteur[] $presidents */
+        $presidents = $this->getActeursByRoleCode(Role::CODE_PRESIDENT_JURY)->toArray();
+        if (count($presidents) !== 1) throw new \RuntimeException("Nombre de président incorrect ...");
+        $president = current($presidents);
 
-        if ($president->getIndividu()->getEmail() !== null) return $president->getIndividu()->getEmail();
-        if ($president->getMembre()->getEmail() !== null) return $president->getMembre()->getEmail();
-        return null;
+        return
+            $president->getIndividu()->getEmailPro() ?:
+            $president->getIndividu()->getEmailContact() ?:
+            $president->getIndividu()->getEmailUtilisateur() ?:
+            $president->getMembre()->getEmail() ?:
+            null;
     }
 
     /**

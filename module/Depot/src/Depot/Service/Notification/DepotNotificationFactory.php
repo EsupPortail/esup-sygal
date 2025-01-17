@@ -7,6 +7,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
+use Application\Service\Url\UrlService;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Entity\Db\FichierThese;
 use Depot\Notification\ChangementCorrectionAttendueNotification;
@@ -16,7 +17,6 @@ use Depot\Notification\ValidationRdvBuNotification;
 use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Fichier\Entity\Db\VersionFichier;
 use Import\Model\ImportObservResult;
-use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -39,11 +39,11 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
 
     private ModuleOptions $appModuleOptions;
 
-    protected UrlPlugin $urlPlugin;
+    protected UrlService $urlService;
 
-    public function setUrlPlugin(UrlPlugin $urlPlugin): void
+    public function setUrlService(UrlService $urlService): void
     {
-        $this->urlPlugin = $urlPlugin;
+        $this->urlService = $urlService;
     }
 
     public function setAppModuleOptions(ModuleOptions $options): void
@@ -281,9 +281,9 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
      */
     public function createNotificationValidationDepotTheseCorrigee(These $these, ?Utilisateur $presidentJury = null): Notification
     {
-        $targetedUrl = $this->urlPlugin->fromRoute( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
+        $targetedUrl = $this->urlService->fromRoute( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
         $president = $this->getApplicationRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
-        $url = $this->urlPlugin->fromRoute('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
+        $url = $this->urlService->fromRoute('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
 
         // envoi de mail aux directeurs de thèse
         $notif = new ValidationDepotTheseCorrigeeNotification();
@@ -313,7 +313,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             ->setTemplateVariables([
                 'these' => $these,
                 'role' => $this->applicationRoleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
-                'url' => $this->urlPlugin->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
+                'url' => $this->urlService->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
             ]);
 
         $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
@@ -348,7 +348,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             ->setTemplateVariables([
                 'these' => $these,
                 'role' => $this->applicationRoleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
-                'url' => $this->urlPlugin->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
+                'url' => $this->urlService->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
             ]);
     }
 
