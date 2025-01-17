@@ -26,7 +26,7 @@ use Laminas\Paginator\Paginator;
     <?php echo $this->translate("Comptes utilisateurs"); ?>
     <a class="btn btn-primary float-end"
        title="Création d'un nouvel utilisateur..."
-       href="<?php echo $this->url('utilisateur/ajouter') ?>">
+       href="<?php echo $this->url('unicaen-utilisateur/ajouter') ?>">
         <span class="icon icon-ajouter"></span>
         <?php echo $this->translate("Nouveau compte utilisateur...") ?>
     </a>
@@ -57,7 +57,7 @@ use Laminas\Paginator\Paginator;
         foreach ($paginator as $utilisateur): ?>
             <tr>
                 <td><?php echo $utilisateur->getDisplayName() ?></td>
-                <td><code><a href="<?php echo $this->url('utilisateur/voir', ['utilisateur' => IdifyFilter::id($utilisateur)]) ?>">
+                <td><code><a href="<?php echo $this->url('unicaen-utilisateur/voir', ['utilisateur' => IdifyFilter::id($utilisateur)]) ?>">
                         <?php echo $utilisateur->getUsername() ?></a></code></td>
                 <td><?php echo $utilisateur->getId() ?></td>
                 <td><?php echo $utilisateur->getEmail() ?></td>

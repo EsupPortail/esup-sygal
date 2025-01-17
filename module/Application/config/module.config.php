@@ -26,6 +26,7 @@ use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
 use Application\Service\ServiceAwareInitializer;
+use Application\Service\Url\UrlService;
 use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInitializer;
@@ -237,10 +238,10 @@ return array(
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
             UserWrapperFactory::class => UserWrapperFactoryFactory::class,
             UserAuthenticatedEventListener::class => UserAuthenticatedEventListenerFactory::class,
+            UrlService::class => UrlServiceFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,
-            UrlServiceFactory::class, // construit: 'urlTheseService'
         ],
         'initializers' => [
             ServiceAwareInitializer::class,

@@ -2,6 +2,7 @@
 
 namespace Application\Service\Notification;
 
+use Application\Service\Url\UrlService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
 
@@ -24,9 +25,9 @@ class ApplicationNotificationFactoryFactory extends NotificationFactoryFactory
         /** @var ApplicationNotificationFactory $factory */
         $factory = parent::__invoke($container);
 
-        /** @var \Laminas\Mvc\Controller\Plugin\Url $urlPlugin */
-        $urlPlugin = $container->get('ControllerPluginManager')->get('Url');
-        $factory->setUrlPlugin($urlPlugin);
+        /** @var UrlService $urlService */
+        $urlService = $container->get(UrlService::class);
+        $factory->setUrlService($urlService);
 
         return $factory;
     }

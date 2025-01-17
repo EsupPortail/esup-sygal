@@ -16,6 +16,7 @@ use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Ramsey\Uuid\Uuid;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenUtilisateur\Entity\Db\AbstractUser;
 use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
@@ -163,7 +164,7 @@ class UtilisateurService extends BaseService
         $username = $individu->getEmailPro(); // NB: username = email
 
         $bcrypt = new Bcrypt();
-        $password = $bcrypt->create($formData['password']);
+        $password = $bcrypt->create($formData['password'] ?? Uuid::uuid4()->toString());
 
         return $this->createFromIndividu($individu, $username, $password);
     }

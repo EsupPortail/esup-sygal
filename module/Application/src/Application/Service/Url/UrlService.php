@@ -10,7 +10,7 @@ use Laminas\Router\RouteStackInterface;
 use Traversable;
 use UnicaenApp\Exception\RuntimeException;
 
-abstract class UrlService
+class UrlService
 {
     use IdifyFilterAwareTrait;
 

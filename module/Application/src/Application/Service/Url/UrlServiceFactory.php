@@ -4,25 +4,15 @@ namespace Application\Service\Url;
 
 use Application\RouteMatch;
 use Interop\Container\ContainerInterface;
-use Unicaen\Console\Console;
 use Laminas\Router\RouteStackInterface;
-use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Unicaen\Console\Console;
 
-class UrlServiceFactory implements AbstractFactoryInterface
+class UrlServiceFactory implements FactoryInterface
 {
-    public function canCreate(ContainerInterface $container, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): UrlService
     {
-        $requestedClass = $requestedName;
-
-        return substr($requestedClass, 0, strlen(__NAMESPACE__)) === __NAMESPACE__;
-    }
-
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $class = $requestedName;
-
-        /** @var UrlService $service */
-        $service = new $class();
+        $service = new UrlService();
 
         /** @var RouteStackInterface $router */
         $router = $container->get(Console::isConsole() ? 'HttpRouter' : 'Router');

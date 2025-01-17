@@ -5,8 +5,8 @@ namespace Application\Service\Notification;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
+use Application\Service\Url\UrlService;
 use Individu\Entity\Db\Individu;
-use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
@@ -19,11 +19,11 @@ use UnicaenApp\Exception\LogicException;
  */
 class ApplicationNotificationFactory extends NotificationFactory
 {
-    protected UrlPlugin $urlPlugin;
+    protected UrlService $urlService;
 
-    public function setUrlPlugin(UrlPlugin $urlPlugin): void
+    public function setUrlService(UrlService $urlService): void
     {
-        $this->urlPlugin = $urlPlugin;
+        $this->urlService = $urlService;
     }
 
     /**
@@ -95,7 +95,7 @@ class ApplicationNotificationFactory extends NotificationFactory
             throw new RuntimeException("Aucun reset token présent pour l'utilisateur '{$utilisateur->getUsername()}' !");
         }
 
-        $url = $this->urlPlugin->fromRoute(
+        $url = $this->urlService->fromRoute(
             'utilisateur/init-compte',
             ['token' => $token],
             ['force_canonical' => true],

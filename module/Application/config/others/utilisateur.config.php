@@ -90,6 +90,49 @@ return [
     ],
     'router'          => [
         'routes' => [
+            'unicaen-utilisateur' => [
+                'type'          => Segment::class,
+                'options'       => [
+                    'route'    => '/utilisateur',
+                    'defaults' => [
+                        'controller'    => 'Application\Controller\Utilisateur', // surcharge la config d'unicaen/utilisateur
+                        'action'        => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes'  => [
+                    'voir' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/voir/:utilisateur',
+                            'defaults'    => [
+                                'controller' => 'Application\Controller\Utilisateur', // nécessaire pour surcharger la config d'unicaen/utilisateur
+                                'action' => 'voir',
+                            ],
+                        ],
+                    ],
+                    'ajouter' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/ajouter',
+                            'defaults'    => [
+                                'controller' => 'Application\Controller\Utilisateur', // nécessaire pour surcharger la config d'unicaen/utilisateur
+                                'action' => 'ajouter',
+                            ],
+                        ],
+                    ],
+                    'supprimer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/supprimer/:utilisateur',
+                            'defaults'    => [
+                                'controller' => 'Application\Controller\Utilisateur', // nécessaire pour surcharger la config d'unicaen/utilisateur
+                                'action' => 'supprimer',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'utilisateur' => [
                 'type'          => Segment::class,
                 'options'       => [
@@ -108,33 +151,6 @@ return [
                             'defaults'    => [
                                 'controller'    => 'UnicaenAuthentification\Controller\Utilisateur',
                                 'action' => 'selectionner-profil',
-                            ],
-                        ],
-                    ],
-                    'voir' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/voir/:utilisateur',
-                            'defaults'    => [
-                                'action' => 'voir',
-                            ],
-                        ],
-                    ],
-                    'ajouter' => [
-                        'type'          => Literal::class,
-                        'options'       => [
-                            'route'       => '/ajouter',
-                            'defaults'    => [
-                                'action' => 'ajouter',
-                            ],
-                        ],
-                    ],
-                    'supprimer' => [
-                        'type'          => Segment::class,
-                        'options'       => [
-                            'route'       => '/supprimer/:utilisateur',
-                            'defaults'    => [
-                                'action' => 'supprimer',
                             ],
                         ],
                     ],

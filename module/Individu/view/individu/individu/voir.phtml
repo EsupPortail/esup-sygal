@@ -73,7 +73,7 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
                     <ul>
                     <?php foreach ($utilisateurs as $utilisateur): ?>
                         <li>
-                            <a href="<?php echo $this->url('utilisateur/voir', ['utilisateur' => $utilisateur->getId()]) ?>"
+                            <a href="<?php echo $this->url('unicaen-utilisateur/voir', ['utilisateur' => $utilisateur->getId()]) ?>"
                                title="Voir la fiche détaillée de cet utilisateur"><?php echo $utilisateur->getUsername() ?></a>
                         </li>
                     <?php endforeach ?>

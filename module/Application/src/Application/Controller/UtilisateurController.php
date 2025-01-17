@@ -241,7 +241,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
 
                 $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
 
-                return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
+                return $this->redirect()->toRoute('unicaen-utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
             }
         }
 
@@ -262,7 +262,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
                 $this->flashMessenger()->addSuccessMessage("Compte utilisateur suivant supprimé avec succès : " . $utilisateur->getUsername());
             } catch (Exception $e) {
                 $this->flashMessenger()->addErrorMessage("Le compte utilisateur '{$utilisateur->getUsername()}' n'a pas pu être supprimé. " . $e->getMessage());
-                return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()]);
+                return $this->redirect()->toRoute('unicaen-utilisateur/voir', ['utilisateur' => $utilisateur->getId()]);
             }
         }
 
@@ -641,7 +641,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
         }
-        return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
+        return $this->redirect()->toRoute('unicaen-utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
     /**
