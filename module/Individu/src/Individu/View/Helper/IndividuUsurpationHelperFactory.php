@@ -2,29 +2,25 @@
 
 namespace Individu\View\Helper;
 
-use Psr\Container\ContainerInterface;
-use UnicaenAuthentification\Options\ModuleOptions;
-use UnicaenAuthentification\Service\UserContext;
+use Application\Service\Url\UrlService;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
-use Laminas\View\Helper\Url;
-use Laminas\View\HelperPluginManager;
+use Psr\Container\ContainerInterface;
+use UnicaenAuthentification\Options\ModuleOptions;
+use UnicaenAuthentification\Service\UserContext;
 
 class IndividuUsurpationHelperFactory
 {
     /**
-     * @param ContainerInterface $container
-     * @return IndividuUsurpationHelper
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): IndividuUsurpationHelper
     {
-        /** @var HelperPluginManager $hpm */
-        $hpm = $container->get('ViewHelperManager');
-
-        /** @var Url $urlHelper */
-        $urlHelper = $hpm->get('Url');
-        $url = $urlHelper->__invoke('utilisateur/default', ['action' => 'usurper-individu']);
+        /** @var UrlService $urlService */
+        $urlService = $container->get(UrlService::class);
+        $url = $urlService->fromRoute('utilisateur/default', ['action' => 'usurper-individu']);
 
         /** @var UserContext $userContextService */
         $userContextService = $container->get('authUserContext');
