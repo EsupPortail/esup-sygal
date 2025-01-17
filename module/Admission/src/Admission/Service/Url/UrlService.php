@@ -2,6 +2,7 @@
 
 namespace Admission\Service\Url;
 
+use Admission\Entity\Db\Admission;
 use Laminas\View\Renderer\PhpRenderer;
 
 class UrlService {
@@ -36,7 +37,13 @@ class UrlService {
     public function getAdmission() : string
     {
         $admission = $this->variables['admission'];
-        $link = $this->renderer->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $admission->getIndividu()->getId()], ['force_canonical' => true, 'query' => ['refresh' => 'true']], true);
+        if($admission instanceof Admission){
+            $individu = $admission->getIndividu() ;
+        }else {
+            $individu = $admission->getAdmission()->getIndividu();
+        }
+        $link = $this->renderer->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $individu->getId()], ['force_canonical' => true, 'query' => ['refresh' => 'true']], true);
+
         $url = "<a href='" . $link . "'>lien</a>";
 
         return $url;

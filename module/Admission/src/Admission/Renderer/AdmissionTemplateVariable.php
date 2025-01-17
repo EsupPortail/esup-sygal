@@ -21,6 +21,14 @@ class AdmissionTemplateVariable extends AbstractTemplateVariable
         $this->operations = $operations;
     }
 
+    /**
+     * @return Admission
+     */
+    public function getAdmission(): Admission
+    {
+        return $this->admission;
+    }
+
     public function setAdmission(Admission $admission): void
     {
         $this->admission = $admission;
