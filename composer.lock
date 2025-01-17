@@ -11358,11 +11358,11 @@
         },
         {
             "name": "unicaen/authentification",
-            "version": "6.4.0",
+            "version": "6.4.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "8e518af2342ff23efa344aa4c807e8f031045b25"
+                "reference": "aa165561da6de37e251ade5b62d45501c2e44f26"
             },
             "require": {
                 "apereo/phpcas": "1.6.*",
@@ -11384,7 +11384,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen - Version Laminas",
-            "time": "2025-01-10T09:05:20+00:00"
+            "time": "2025-01-17T09:00:35+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -11837,11 +11837,11 @@
         },
         {
             "name": "unicaen/renderer",
-            "version": "7.0.0",
+            "version": "7.0.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/renderer.git",
-                "reference": "7487d78f27b4415ff4d53ab64050fb2f2aa407b0"
+                "reference": "90cbde07ffe030f011e9a2e1905ac50d1bf86aa4"
             },
             "require": {
                 "laminas/laminas-view": "^2.27",
@@ -11856,7 +11856,7 @@
                 ]
             },
             "description": "Module de rendu de texte avec templates et macros",
-            "time": "2024-12-08T15:28:37+00:00"
+            "time": "2025-01-16T15:46:19+00:00"
         },
         {
             "name": "unicaen/shell",
