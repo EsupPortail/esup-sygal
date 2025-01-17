@@ -292,10 +292,4 @@ return [
             __DIR__ . '/../view',
         ],
     ],
-
-    'public_files' => [
-        'inline_scripts' => [
-            '902_' => 'vendor/tinymce/js/tinymce/tinymce.js',
-        ],
-    ]
 ];

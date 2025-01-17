@@ -333,6 +333,7 @@ return array(
         'inline_scripts' => [
             '070_bootstrap-select' => '/vendor/bootstrap-select-1.14.0-beta3/js/bootstrap-select.min.js',
             '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.14.0-beta3/js/i18n/defaults-fr_FR.js',
+            '902_tinymce' => '/vendor/tinymce_7.6.0/js/tinymce/tinymce.min.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,

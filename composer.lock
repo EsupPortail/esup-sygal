@@ -11837,11 +11837,11 @@
         },
         {
             "name": "unicaen/renderer",
-            "version": "7.0.2",
+            "version": "7.0.3",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/renderer.git",
-                "reference": "90cbde07ffe030f011e9a2e1905ac50d1bf86aa4"
+                "reference": "98c758f30139ab8de051ae0cac75b80bbf7c1595"
             },
             "require": {
                 "laminas/laminas-view": "^2.27",
@@ -11856,7 +11856,7 @@
                 ]
             },
             "description": "Module de rendu de texte avec templates et macros",
-            "time": "2025-01-16T15:46:19+00:00"
+            "time": "2025-01-17T11:03:06+00:00"
         },
         {
             "name": "unicaen/shell",
