@@ -60,8 +60,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'validation' => $validation
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -100,8 +98,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'validation' => $validation
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -141,8 +137,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'unite-recherche' => $these->getUniteRecherche()
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -175,10 +169,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'etablissement' => $these->getEtablissement(),
-            'unite-recherche' => $these->getUniteRecherche(),
-            'ecole-doctorale' => $these->getEcoleDoctorale(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -210,8 +200,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'etablissement' => $these->getEtablissement(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -251,9 +239,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'etablissement' => $these->getEtablissement(),
-            'unite-recherche' => $these->getUniteRecherche(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -291,7 +276,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -321,8 +305,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'etablissement' => $these->getEtablissement(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -356,12 +338,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $refus->texte = $motif;
 
         $this->urlService->setVariables([
-            'individu' => $currentUser,
-            'role' => $currentRole,
-            'etablissement' => $currentRole->getStructure(),
-            'stringelement' => $refus,
             'these' => $these,
-            'doctorant' => $these->getDoctorant()
         ]);
         
         $individuTemplateVariable = $this->getIndividuTemplateVariable($currentUser);
@@ -394,7 +371,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'rapporteur' => $membre,
         ]);
 
@@ -426,7 +402,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'membre' => $membre,
         ]);
 
@@ -458,7 +433,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'membre' => $membre,
         ]);
 
@@ -493,7 +467,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'membre' => $membre,
         ]);
 
@@ -534,7 +507,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -564,7 +536,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -599,12 +570,9 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'membre' => $avis->getMembre(),
-            'acteur' => $avis->getRapporteur(),
+            'rapporteur' => $avis->getRapporteur(),
             'avis' => $avis,
-            'etablissement' => $these->getEtablissement(),
-            'unite-recherche' => $these->getUniteRecherche()
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -647,12 +615,9 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'membre' => $avis->getMembre(),
-            'acteur' => $avis->getRapporteur(),
+            'rapporteur' => $avis->getRapporteur(),
             'avis' => $avis,
-            'etablissement' => $these->getEtablissement(),
-            'unite-recherche' => $these->getUniteRecherche()
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -694,7 +659,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'membre' => $rapporteur,
         ]);
 
@@ -734,9 +698,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $this->urlService->setVariables([
             'soutenance' => $proposition,
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
-            'etablissement' => $these->getEtablissement(),
-            'unite-recherche' => $these->getUniteRecherche(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -775,7 +736,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -809,9 +769,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $this->urlService->setVariables([
             'soutenance' => $proposition,
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'rapporteur' => $rapporteur,
-            'etablissement' => $these->getEtablissement(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -854,10 +812,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $this->urlService->setVariables([
             'soutenance' => $proposition,
             'these' => $these,
-            'doctorant' => $these->getDoctorant(),
             'rapporteur' => $membre,
-            'etablissement' => $these->getEtablissement(),
-            'Url' => $this->urlService,
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
@@ -871,6 +826,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             'doctorant' => $doctorantTemplateVariable,
             'soutenanceMembre' => $soutenanceMembreTemplateVariable,
             'etablissement' => $etablissementTemplateVariable,
+            'Url' => $this->urlService,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_RAPPORT_SOUTENANCE, $vars);
@@ -899,8 +855,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $this->urlService->setVariables([
             'soutenance' => $proposition,
             'these' => $proposition->getThese(),
-            'doctorant' => $doctorant,
-            'validation' => $validation[0]
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($proposition->getThese());
@@ -939,11 +893,8 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'soutenance' => $proposition,
-            'doctorant' => $doctorant,
             'these' => $proposition->getThese(),
             'membre' => $membre,
-            'validation' => $validation[0],
-            'etablissement' => $proposition->getThese()->getEtablissement(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($proposition->getThese());
@@ -979,8 +930,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $this->urlService->setVariables([
             'these' => $these,
-            'proposition' => $proposition,
-            'doctorant' => $these->getDoctorant(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($proposition->getThese());
@@ -1016,8 +965,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'proposition' => $proposition,
-            'doctorant' => $these->getDoctorant(),
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);

@@ -2,13 +2,15 @@
 
 namespace Admission\Service\Url;
 
+use Application\RouteMatch;
 use Interop\Container\ContainerInterface;
-use Laminas\View\Renderer\PhpRenderer;
+use Laminas\Router\RouteStackInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Unicaen\Console\Console;
 
-class UrlServiceFactory {
-
+class UrlServiceFactory
+{
     /**
      * @param ContainerInterface $container
      * @return UrlService
@@ -17,13 +19,16 @@ class UrlServiceFactory {
      */
     public function __invoke(ContainerInterface $container) : UrlService
     {
-        /**
-         * @var PhpRenderer $renderer
-         */
-        $renderer = $container->get('ViewRenderer');
-
         $service = new UrlService();
-        $service->setRenderer($renderer);
+
+        /** @var RouteStackInterface $router */
+        $router = $container->get(Console::isConsole() ? 'HttpRouter' : 'Router');
+        $match = $container->get('application')->getMvcEvent()->getRouteMatch();
+        if ($match instanceof RouteMatch) {
+            $service->setRouteMatch($match);
+        }
+        $service->setRouter($router);
+
         return $service;
     }
 }

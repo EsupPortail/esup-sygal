@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Proposition;
 
+use Application\Constants;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
@@ -374,11 +375,15 @@ class PropositionService extends BaseService
         }
 
         /** ratio minimum d'émérites */
-        $ratioEmerites = $nbMembre ? ($nbEmerites / $nbMembre) : 0;
-        $indicateurs["emerites"] = ["Nombre" => $nbEmerites, "Ratio" => $ratioEmerites];
-        if ($ratioEmerites > $emerites_max) {
-            $indicateurs["emerites"]["valide"] = false;
-            $indicateurs["emerites"]["alerte"] = "Le nombre d'émérites ne doit pas dépasser " . ($emerites_max * 100.0) . '%';
+        if ($proposition->getDate() === null || $proposition->getDate() >= DateTime::createFromFormat(Constants::DATE_FORMAT, '01/01/2025')) {
+            $ratioEmerites = $nbMembre ? ($nbEmerites / $nbMembre) : 0;
+            $indicateurs["emerites"] = ["Nombre" => $nbEmerites, "Ratio" => $ratioEmerites];
+            if ($ratioEmerites > $emerites_max) {
+                $indicateurs["emerites"]["valide"] = false;
+                $indicateurs["emerites"]["alerte"] = "Le nombre d'émérites ne doit pas dépasser " . ($emerites_max * 100.0) . '%';
+            } else {
+                $indicateurs["emerites"]["valide"] = true;
+            }
         } else {
             $indicateurs["emerites"]["valide"] = true;
         }

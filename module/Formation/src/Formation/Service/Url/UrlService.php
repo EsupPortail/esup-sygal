@@ -6,27 +6,18 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
-use Laminas\View\Renderer\PhpRenderer;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
-class UrlService {
+class UrlService extends \Application\Service\Url\UrlService
+{
     use FichierStorageServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
 
-    /** @var PhpRenderer */
-    protected PhpRenderer $renderer;
-    protected array $variables = [];
-
-    public function setRenderer(PhpRenderer $renderer): void
-    {
-        $this->renderer = $renderer;
-    }
-    public function setVariables(array $variables) : void
-    {
-        $this->variables = $variables;
-    }
+    protected ?array $allowedVariables = [
+        'etablissement',
+    ];
 
     public function getFormationSignature() : string
     {
@@ -56,7 +47,7 @@ class UrlService {
         /** @var Inscription $inscription */
         $inscription = $this->vars['inscription'];
 
-        $url = $this->renderer->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true);
+        $url = $this->fromRoute('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true);
         return "<a href='".$url."'>Formulaire d'enquête de retour de formation</a>";
     }
 }

@@ -215,7 +215,7 @@ class UtilisateurService extends BaseService
         $password = $bcrypt->create($password);
 
         $utilisateur->setPassword($password);
-        $utilisateur->setPasswordResetToken();
+        $utilisateur->setPasswordResetToken(null);
 
         try {
             $this->entityManager->flush();

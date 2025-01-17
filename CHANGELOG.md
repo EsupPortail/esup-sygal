@@ -9,6 +9,7 @@ Journal des modifications
 - [FIX] Dysfonctionnements autour des comptes utilisateurs (accès à la page perturbé suite au passage à unicaen/utilisateur, bug dans la création de compte+individu et l'envoi de la notif).
 - [FIX] Envoi de la notif 'Validation du dépôt de la thèse corrigée' à un président du jury via la page Admin > Présidents.
 - [FIX] Utilisation de UrlService (plutôt que UrlHelper) pour générer l'URL d'usurpation d'identité à partir d'un individu.
+- [FIX] Notifications Admission et Formation
 
 9.2.0
 -----

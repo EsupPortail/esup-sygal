@@ -3,32 +3,12 @@
 namespace Admission\Service\Url;
 
 use Admission\Entity\Db\Admission;
-use Laminas\View\Renderer\PhpRenderer;
 
-class UrlService {
-
-    protected PhpRenderer $renderer;
-    protected array $variables;
-
-    /**
-     * @param PhpRenderer $renderer
-     * @return UrlService
-     */
-    public function setRenderer($renderer) : UrlService
-    {
-        $this->renderer = $renderer;
-        return $this;
-    }
-
-    /**
-     * @param array $variables
-     * @return UrlService
-     */
-    public function setVariables(array $variables): UrlService
-    {
-        $this->variables = $variables;
-        return $this;
-    }
+class UrlService extends \Application\Service\Url\UrlService
+{
+    protected ?array $allowedVariables = [
+        'admission',
+    ];
 
     /**
      * @noinspection
@@ -42,8 +22,7 @@ class UrlService {
         }else {
             $individu = $admission->getAdmission()->getIndividu();
         }
-        $link = $this->renderer->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $individu->getId()], ['force_canonical' => true, 'query' => ['refresh' => 'true']], true);
-
+        $link = $this->fromRoute('admission/ajouter', ['action' => 'etudiant', 'individu' => $individu->getId()], ['force_canonical' => true, 'query' => ['refresh' => 'true']], true);
         $url = "<a href='" . $link . "'>lien</a>";
 
         return $url;
@@ -55,7 +34,7 @@ class UrlService {
      */
     public function getAccueilAdmission() : string
     {
-        $link = $this->renderer->url('admission', ['action' => 'index'], ['force_canonical' => true], true);
+        $link = $this->fromRoute('admission', ['action' => 'index'], ['force_canonical' => true], true);
         $url = "<a href='" . $link . "'>lien</a>";
 
         return $url;

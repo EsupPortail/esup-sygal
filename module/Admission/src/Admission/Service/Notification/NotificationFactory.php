@@ -47,7 +47,6 @@ class NotificationFactory extends NF
 
         $this->urlService->setVariables([
             'admission' => $admission,
-            'individu' => $individu,
         ]);
 
         $individuTemplateVariable = $this->getIndividuTemplateVariable($individu);
@@ -193,9 +192,7 @@ class NotificationFactory extends NF
         $admissionOperationTemplateVariable = $this->getAdmissionOperationTemplateVariable($operationAttendue);
 
         $this->urlService->setVariables([
-            'individu' => $individuTemplateVariable,
             'admission' => $admissionAdmissionTemplateVariable,
-            'typeValidation' => $operationAttendue,
         ]);
 
         return [
@@ -478,8 +475,6 @@ class NotificationFactory extends NF
 
         $this->urlService->setVariables([
             'admission' => $admission,
-            'admissionAvis' => $admissionAvis,
-            'individu' => $individu,
         ]);
 
         $individuTemplateVariable = $this->getIndividuTemplateVariable($individu);

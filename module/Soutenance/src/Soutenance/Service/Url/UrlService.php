@@ -16,28 +16,14 @@ class UrlService extends \Application\Service\Url\UrlService
 
     protected ?array $allowedVariables = [
         'these',
-        'doctorant',
-        'etablissement',
         'rapporteur',
         'avis',
         'membre',
         'soutenance',
-        'validation',
     ];
 
-//    public function setVariables(array $variables): UrlService
-//    {
-//        if ($this->allowedVariables !== null && ($diff = array_diff_key($variables, $this->allowedVariables))) {
-//            throw new InvalidArgumentException(
-//                "Les valiables suivantes ne sont pas autorisées explicitement : " . implode(', ', array_keys($diff))
-//            );
-//        }
-//        $this->variables = $variables;
-//        return $this;
-//    }
-
     /**
-     * @noinspection
+     * @noinspection PhpUnused
      */
     public function getSoutenanceProposition() : string
     {
@@ -59,7 +45,7 @@ class UrlService extends \Application\Service\Url\UrlService
     }
 
     /**
-     * @noinspection
+     * @noinspection PhpUnused
      */
     public function getSermentDocteur() : string
     {
@@ -70,7 +56,7 @@ class UrlService extends \Application\Service\Url\UrlService
     }
 
     /**
-     * @noinspection
+     * @noinspection PhpUnused
      */
     public function getProcesVerbal() : string
     {
@@ -81,7 +67,7 @@ class UrlService extends \Application\Service\Url\UrlService
     }
 
     /**
-     * @noinspection
+     * @noinspection PhpUnused
      */
     public function getRapportSoutenance() : string
     {
@@ -92,7 +78,7 @@ class UrlService extends \Application\Service\Url\UrlService
     }
 
     /**
-     * @noinspection
+     * @noinspection PhpUnused
      */
     public function getRapportTechnique() : string
     {
@@ -103,7 +89,7 @@ class UrlService extends \Application\Service\Url\UrlService
     }
 
     /**
-     * @noinspection
+     * @noinspection PhpUnused
      */
     public function getUrlRapporteurDashboard() : string
     {
