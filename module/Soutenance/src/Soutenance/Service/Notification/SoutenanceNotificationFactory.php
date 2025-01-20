@@ -400,11 +400,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationSignatureEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $this->urlService->setVariables([
-            'these' => $these,
-            'membre' => $membre,
-        ]);
-
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
         $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
         $soutenanceMembre = $this->getSoutenanceMembreTemplateVariable($membre);
@@ -412,7 +407,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
             'these' => $theseTemplateVariable,
             'doctorant' => $doctorantTemplateVariable,
             'soutenanceMembre' => $soutenanceMembre,
-            'Url' => $this->urlService,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SIGNATURE_ENGAGEMENT_IMPARTIALITE, $vars);
@@ -431,11 +425,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationRefusEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $this->urlService->setVariables([
-            'these' => $these,
-            'membre' => $membre,
-        ]);
-
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
         $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
         $soutenanceMembre = $this->getSoutenanceMembreTemplateVariable($membre);
@@ -443,7 +432,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
             'these' => $theseTemplateVariable,
             'doctorant' => $doctorantTemplateVariable,
             'soutenanceMembre' => $soutenanceMembre,
-            'Url' => $this->urlService,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::REFUS_ENGAGEMENT_IMPARTIALITE, $vars);
@@ -465,11 +453,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationAnnulationEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $this->urlService->setVariables([
-            'these' => $these,
-            'membre' => $membre,
-        ]);
-
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
         $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
         $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
@@ -477,7 +460,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
             'these' => $theseTemplateVariable,
             'doctorant' => $doctorantTemplateVariable,
             'soutenanceMembre' => $soutenanceMembreTemplateVariable,
-            'Url' => $this->urlService,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::ANNULATION_ENGAGEMENT_IMPARTIALITE, $vars);
