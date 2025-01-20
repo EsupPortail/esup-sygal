@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+9.3.0
+-----
+- Module Formation : Ajout d'un tri pour les individus sur l'écran Inscriptions
+
 9.2.1
 -----
 - [FIX] Bouton Forçage inaccessible (sur la fiche de la thèse) si la thèse n'était plus en cours

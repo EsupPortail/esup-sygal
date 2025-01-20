@@ -35,6 +35,7 @@ class InscriptionSearchService extends SearchService
     const NAME_doctorant = 'doctorant';
     const NAME_liste = 'liste';
     const NAME_etat = 'etat';
+    const NAME_individu = 'individu';
     const NAME_seances = 'seances';
     const NAME_structure = 'structure';
     const NAME_site = 'site';
@@ -224,7 +225,7 @@ class InscriptionSearchService extends SearchService
 
     private function createDoctorantSorter(): SearchSorter
     {
-        $sorter = new SearchSorter("Modalité", self::NAME_liste);
+        $sorter = new SearchSorter("Individu", self::NAME_individu);
         $sorter->setOrderByField("ind.nomUsuel");
 
         return $sorter;

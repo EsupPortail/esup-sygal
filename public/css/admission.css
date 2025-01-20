@@ -602,7 +602,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 .validations-cards-container {
   margin-top: 15px; }
 
-.avisCompl, #file-charte-doctorat-signe-container {
+.avisCompl, #file-charte-doctorat-signe-container, #upload-file-container {
   background-color: #f8f9fa;
   border-radius: 15px;
   padding: 20px;

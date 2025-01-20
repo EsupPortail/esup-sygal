@@ -3,6 +3,8 @@
 namespace Application\View\Renderer;
 
 use Depot\View\Helper\Url\UrlDepotHelper;
+use Fichier\Entity\Db\Fichier;
+use Fichier\View\Helper\Fichier\FichierViewHelper;
 use Laminas\Form\ElementInterface;
 use Structure\Entity\Db\EcoleDoctorale;
 use These\Entity\Db\These;
@@ -156,6 +158,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method FinancementFormatterHelper financementFormatter()
  *
  * @method ActualiteViewHelper actualite()
+ * @method FichierViewHelper fichier(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $voirHistoInfo = true, bool $canVoirSuppression = true, array $options = [])
  *
  * @method IdrefLinkViewHelper idrefLink(string $ppn)
  *

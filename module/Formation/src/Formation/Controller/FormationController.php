@@ -206,8 +206,11 @@ class FormationController extends AbstractController
             $this->fichierService->supprimerFichiers([$fichier]);
 
             $this->flashMessenger()->addSuccessMessage("La fiche de la formation {$formation->getLibelle()} supprimée avec succès.");
-
-            return $this->redirect()->toRoute('formation/formation/modifier', ['formation' => $formation->getId()], [], true);
+            if($redirectUrl = $this->params()->fromQuery('redirect')){
+                return $this->redirect()->toUrl($redirectUrl);
+            }else{
+                return $this->redirect()->toRoute('formation/formation/modifier', ['formation' => $formation->getId()], [], true);
+            }
         }
 
         $viewModel = $this->confirm()->getViewModel();

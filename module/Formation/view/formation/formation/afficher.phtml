@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\AnneeUniv;
+use Application\View\Renderer\PhpRenderer;
 use Fichier\Controller\Plugin\UrlFichier;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Seance;
@@ -10,6 +11,7 @@ use Formation\Provider\Privilege\ModulePrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 
 /**
+ * @var PhpRenderer $this
  * @see \Formation\Controller\FormationController::afficherAction()
  * @var Formation $formation
  * @var Session[] $sessions
@@ -89,9 +91,10 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <dd class="col-md-9">
             <?php echo $this->fichier($formation->getFiche(),
                 $urlFichierPlugin->telechargerFichier($formation->getFiche()),
-                $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier"=>$formation->getFiche()->getId()], [], true),
+                $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier" => $formation->getFiche()->getId()], ['query' => ['redirect' => $this->url('formation/formation/afficher', ["formation" => $formation->getId()])]], true),
                 $canModifierFormation,
                 "Fiche de la formation",
+                false,
                 false
             ); ?>
         </dd>

@@ -10,6 +10,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
+use Formation\Service\Inscription\Search\InscriptionSearchService;
 use Formation\Service\Session\Search\SessionSearchService;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 
@@ -61,18 +62,23 @@ $queryParams = $this->queryParams();
             <th>Identifiant</th>
             <th>Session</th>
             <th style="max-width: 6rem;">
-                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_site) ?>"
+                <a href="<?php echo $s = $this->sortable(InscriptionSearchService::NAME_site) ?>"
                    title="<?php echo $this->translate("Établissement organisateur") ?> ">
                     <?php echo $this->translate("Établissement organisateur") ?>
                 </a> <?php echo $s->icon() ?>
             </th>
             <th>
-                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_seances) ?>"
+                <a href="<?php echo $s = $this->sortable(InscriptionSearchService::NAME_seances) ?>"
                    data-bs-toggle="tooltip" title="<?php echo $this->translate("Tri sur la date de début/fin d'une séance") ?> ">
                     <?php echo $this->translate("Séances") ?>
                 </a> <?php echo $s->icon() ?>
             </th>
-            <th>Individu</th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(InscriptionSearchService::NAME_individu) ?>"
+                   title="<?php echo $this->translate("Individu") ?> ">
+                    <?php echo $this->translate("Individu") ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
             <th>Liste</th>
             <th>Action</th>
         </tr>

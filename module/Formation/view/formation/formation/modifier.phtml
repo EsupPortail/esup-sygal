@@ -1,13 +1,18 @@
 <?php
 /**
+ * @var PhpRenderer $this
  * @see \Formation\Controller\FormationController::ajouterAction()
  * @see \Formation\Controller\FormationController::modifierAction()
  * @var FormationForm $form
  * @var UrlFichier $urlFichierPlugin
  */
 
+use Application\View\Renderer\PhpRenderer;
 use Fichier\Controller\Plugin\UrlFichier;
 use Formation\Form\Formation\FormationForm;
+use Formation\Provider\Privilege\FormationPrivileges;
+
+$canModifierFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
 
 ?>
 
@@ -25,22 +30,21 @@ echo $this->form()->openTag($form);
     <div class="row mb-3">
         <div class="col">
             Fiche existante :
-            <a href="<?php echo $urlFichierPlugin->telechargerFichier($form->getObject()?->getFiche()); ?>">
-                Fiche de la formation
-            </a>
-            <?php /** @see \Formation\Controller\FormationController::supprimerFicheAction() */ ?>
-            <a style='color:darkred;' data-event="modification" data-bs-toggle="tooltip" title="Supprimer cette fiche ? (Une confirmation vous sera demandée)"
-               href="<?php echo $this->url('formation/formation/supprimer-fiche', ["formation"=>$form->getObject()->getId(), "fichier"=>$form->getObject()->getFiche()->getId()], [], true); ?>">
-                <span class="icon icon-delete"></span>
-            </a>
+            <?php echo $this->fichier($form->getObject()->getFiche(),
+                $urlFichierPlugin->telechargerFichier($form->getObject()->getFiche()),
+                $this->url('formation/formation/supprimer-fiche', ["formation"=>$form->getObject()->getId(), "fichier" => $form->getObject()->getFiche()->getId()], [], true),
+                $canModifierFormation,
+                "Fiche de la formation",
+                false
+            ); ?>
         </div>
 
     </div>
-    <a type="button" class="btn btn-primary mb-4" data-bs-target="#file-charte-doctorat-signe-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="file-charte-doctorat-signe-container">
+    <a type="button" class="btn btn-primary mb-4" data-bs-target="#upload-file-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="upload-file-container">
         <span class="icon icon-pdf"></span>
         Remplacer la fiche existante
     </a>
-    <div class="collapse row subfield mb-4" id="file-charte-doctorat-signe-container">
+    <div class="collapse row subfield mb-4" id="upload-file-container">
         <div class="alert alert-info">
             <span class="icon icon-info"></span>
             Cela remplacera automatiquement la fiche déjà présente
