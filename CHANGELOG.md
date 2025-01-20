@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] Envoi de la notif 'Validation du dépôt de la thèse corrigée' à un président du jury via la page Admin > Présidents.
 - [FIX] Utilisation de UrlService (plutôt que UrlHelper) pour générer l'URL d'usurpation d'identité à partir d'un individu.
 - [FIX] Notifications Admission et Formation
+- [FIX] Erreur lors de l'envoi de la notif 'Demande des pré-rapports de soutenance' (variable 'rapporteur' non transmise à UrlService).
 
 9.2.0
 -----

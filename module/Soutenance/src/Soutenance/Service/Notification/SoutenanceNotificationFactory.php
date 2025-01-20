@@ -641,7 +641,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
         $this->urlService->setVariables([
             'these' => $these,
-            'membre' => $rapporteur,
+            'rapporteur' => $rapporteur,
         ]);
 
         $theseTemplateVariable = $this->getTheseTemplateVariable($these);
