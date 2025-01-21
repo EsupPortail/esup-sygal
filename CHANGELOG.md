@@ -3,6 +3,7 @@ Journal des modifications
 
 9.2.1
 -----
+- [FIX] Bouton Forçage inaccessible (sur la fiche de la thèse) si la thèse n'était plus en cours
 - [FIX] Module Admission : Notifications non reçues 
 - [FIX] Modification d'une formation impossible 
 - [FIX] Certaines méthodes n'étaient pas présentes dans AdmissionEtudiantTemplateVariable

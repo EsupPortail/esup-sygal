@@ -53,7 +53,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return true;
     }
 
-    protected function isStructureDuRoleRespectee(): bool
+    public function isStructureDuRoleRespectee(): bool
     {
         return $this->userContextService->isStructureDuRoleRespecteeForThese($this->these);
     }

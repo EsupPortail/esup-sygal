@@ -77,6 +77,8 @@ class TheseAssertion extends AbstractAssertion
                 return ! $this->isAllowed(new WfEtapeResource(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE, $these));
             case $privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU:
                 return $this->isAllowed(new WfEtapeResource(WfEtape::CODE_RDV_BU_VALIDATION_BU, $these));
+            case $privilege === DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE:
+                return $this->theseEntityAssertion->isStructureDuRoleRespectee();
         }
 
         return true;

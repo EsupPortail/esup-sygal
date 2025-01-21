@@ -318,7 +318,7 @@ switch ($these->getEtatThese()){
                     <dd class="col-md-9 <?php echo $class ?>">
                         <p>
                             <?php echo $reponse ?>
-                            <?php if ($canEditForcageCorrectionAutorisee && $canEditThese): ?>
+                            <?php if ($canEditForcageCorrectionAutorisee): ?>
                                 <?php if ($these->isCorrectionAutoriseeForcee()): ?>
                                     <em>Cette valeur est forcée.</em>
                                 <?php endif ?>
