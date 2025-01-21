@@ -2,236 +2,184 @@
 
 /**
  * @var Proposition $proposition
+ * @var These $these
  * @var Membre[] $rapporteurs
- * @var ActeurThese[]|ActeurHDR[] $acteursRapporteurs
- * @var ValidationThese[] $engagements
- * @var string $typeProposition
+ * @var Validation[] $engagements
  *
  * @var bool $tousLesEngagements
  * @var bool $tousLesAvis
  */
 
-use Acteur\Entity\Db\ActeurHDR;
-use Acteur\Entity\Db\ActeurThese;
 use Application\Constants;
-use These\Entity\Db\These;
-use Validation\Entity\Db\ValidationThese;
+use Application\Entity\Db\Validation;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Service\Horodatage\HorodatageService;
+use These\Entity\Db\These;
 
 $tousLesRapporteurs = true;
 foreach ($rapporteurs as $rapporteur) {
-    $acteur = $acteursRapporteurs[$rapporteur->getId()] ?? null;
-    if ($acteur === null) {
+    if ($rapporteur->getActeur() === null) {
         $tousLesRapporteurs = false;
         break;
     }
 }
 
-$object = $proposition->getObject();
-$canNotifierEngagementImpartialite = $this->isAllowed($object, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
-$canRevoquerEngagementImpartialite = $this->isAllowed($object, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
+$canNotifierEngagementImpartialite = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+$canRevoquerEngagementImpartialite = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
+
 ?>
 
 <div class="box card">
-    <div class="card-header <?= $tousLesEngagements === true ? "bg-success" : "bg-danger"?>">
+    <div class="card-header <?= $tousLesEngagements ? "bg-success" : "bg-danger"?>">
         <h2> Engagements d'impartialité</h2>
     </div>
     <div class="card-body">
 
         <p class="lead">
-            <?php if($object instanceof These): ?>
-                Afin de devenir officiellement rapporteur de cette thèse, les futurs rapporteurs doivent signer un engagement
-                d'impartialité.
-            <?php else: ?>
-                Afin de devenir officiellement rapporteur de cette HDR, les futurs rapporteurs doivent signer un engagement
-                d'impartialité.
-            <?php endif; ?>
+            Afin de devenir officiellement rapporteur de cette thèse les futurs rapporteurs doivent signer un engagement
+            d'impartialité.
         </p>
 
-        <?php if(!$rapporteurs): ?>
-            <div class="alert alert-warning">
-                <span class="icon icon-warning"></span>
-                Aucun rapporteur déclaré dans la proposition de soutenance
-            </div>
-        <?php else: ?>
-            <table class="table table-extra-condensed">
-                <thead>
-                <tr>
-                    <th> Rapporteur</th>
-                    <th> Signé</th>
-                    <th> Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+        <table class="table table-extra-condensed">
+            <thead>
+            <tr>
+                <th> Rapporteur</th>
+                <th> Signé</th>
+                <th> Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($rapporteurs as $rapporteur) : ?>
+
                 <?php
-                foreach ($rapporteurs as $rapporteur) : ?>
+                $acteur = $rapporteur->getActeur();
+                $emailActeur = $acteur?->getEmail(true);
+                $engagement = ($acteur) ? ($engagements[$rapporteur->getIndividu()->getId()])??null : null;
+                ?>
 
-                    <?php
-                    $acteur = $acteursRapporteurs[$rapporteur->getId()] ?? null;
-                    $emailActeur = $acteur?->getEmail(true);
-                    $engagement = ($acteur) ? ($engagements[$acteur->getIndividu()->getId()])??null : null;
-                    ?>
-
-                    <tr>
-                        <!-- Affichage du nom du rapporteur --------------------------------------------------------------->
-                        <td>
-                            <?php if ($acteur !== null) : ?>
-                                <?php echo $acteur->getIndividu(); ?>
-                            <?php else : ?>
-                                <span class="text-danger">
+                <tr>
+                    <!-- Affichage du nom du rapporteur --------------------------------------------------------------->
+                    <td>
+                        <?php if ($acteur !== null) : ?>
+                            <?php echo $acteur->getIndividu(); ?>
+                        <?php else : ?>
+                            <span class="text-danger">
                                 <?php echo $rapporteur->getDenomination(); ?>
                             </span>
-                            <?php endif; ?>
-                        </td>
+                        <?php endif; ?>
+                    </td>
 
-                        <!-- Signature ------------------------------------------------------------------------------------>
-                        <td>
-                            <?php if ($acteur !== null) : ?>
-                                <?php if ($emailActeur !== null) : ?>
-                                    <?php if ($engagement !== null): ?>
-                                        <?php
-                                        echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
-                                        ?>
-                                    <?php else: ?>
-                                        <span class="badge bg-warning text-white">
-                                        <span class="icon icon-warning"></span>
-                                        Non signé
+                    <!-- Signature ------------------------------------------------------------------------------------>
+                    <td>
+                        <?php if ($acteur !== null) : ?>
+                            <?php if ($emailActeur !== null) : ?>
+                                <?php if ($engagement !== null): ?>
+                                    <?php
+                                    echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
+                                    ?>
+                                <?php else: ?>
+                                    <span class="text-warning">
+                                        <i> Non signé </i>
                                     </span>
-                                    <?php endif; ?>
-                                <?php else : ?>
-                                    <span class="text-danger">
-                                    <span class="fas fa-exclamation-triangle"></span>
-                                    <i> Aucun email trouvé</i>
-                                    <i> Aucun email trouvé</i>
-                                    <span class="fas fa-exclamation-triangle"></span>
-                                </span>
                                 <?php endif; ?>
-                            <?php else: ?>
+                            <?php else : ?>
                                 <span class="text-danger">
+                                <span class="fas fa-exclamation-triangle"></span>
+                                <i> Aucun email trouvé</i>
+                                <i> Aucun email trouvé</i>
+                                <span class="fas fa-exclamation-triangle"></span>
+                            </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="text-danger">
                                 <span class="fas fa-exclamation-triangle"></span>
                                 <i> N'est pas un individu <?php echo $this->appInfos()->nom ?></i>
                                 <span class="fas fa-exclamation-triangle"></span>
                             </span>
-                            <?php endif; ?>
-                        </td>
+                        <?php endif; ?>
+                    </td>
 
-                        <!-- Actions -------------------------------------------------------------------------------------->
-                        <td>
-                            <?php if ($acteur !== null and $emailActeur !== null) : ?>
+                    <!-- Actions -------------------------------------------------------------------------------------->
+                    <td>
+                        <?php if ($acteur !== null and $emailActeur !== null) : ?>
 
-                                <?php if ($canNotifierEngagementImpartialite) : ?>
-                                    <?php if ($engagement) : ?>
-                                        <span class="icon icon-notify" title="Notifier le rapporteur"
-                                              data-bs-toggle="tooltip"
-                                              style="color:lightgray;">
-                                    </span>
-                                    <?php else: ?>
-                                        <a
-                                            <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
-                                                href="<?php echo $this->url("soutenance_{$typeProposition}/engagement-impartialite/notifier", ['id' => $object->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true); ?>"
-                                        >
+                            <?php if ($canNotifierEngagementImpartialite) : ?>
+                                <?php if ($engagement) : ?>
+                                    <span class="icon icon-notify" title="Notifier le rapporteur"
+                                          style="color:lightgray;"></span>
+                                <?php else: ?>
+                                    <a
+                                        <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
+                                            href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true); ?>"
+                                    >
                                         <span class="icon icon-notify"
-                                              data-bs-toggle="tooltip"
-                                              title="Notifier ce rapporteur (<?php echo $emailActeur; ?>)">
-                                        </span>
-                                        </a>
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <span class="icon icon-notify iconly" style="color:lightgray;"
-                                          data-bs-toggle="tooltip"
-                                          title="Notifier ce rapporteur (<?php echo $emailActeur; ?>)">
-                                </span>
+                                              title="Notifier ce rapporteur (<?php echo $emailActeur; ?>)"></span>
+                                    </a>
                                 <?php endif; ?>
-
-                                <?php if ($canRevoquerEngagementImpartialite) : ?>
-                                    <?php if ($engagement) : ?>
-                                        <a <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
-                                                href="<?php echo $this->url("soutenance_{$typeProposition}/engagement-impartialite/annuler", ['id' => $object->getId(), 'membre' => $rapporteur->getId()], [], true); ?>"
-                                                data-toggle="confirmationx">
-                                            <span class="icon icon-delete iconly text-danger"
-                                                  data-bs-toggle="tooltip"
-                                                  data-bs-html="true"
-                                                  title="Révoquer l'engagement d'impartialité <br>(Une confirmation avant la révocation vous sera demandée)">
-                                            </span>
-                                        </a>
-                                    <?php else: ?>
-                                        <span class="icon icon-delete iconly" style="color:lightgray;"
-                                              data-bs-toggle="tooltip"
-                                              title="Révoquer l'engagement d'impartialité">
-                                    </span>
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <span class="icon icon-delete iconly" style="color:lightgray;"
-                                          data-bs-toggle="tooltip"
-                                          title="Révoquer l'engagement d'impartialité">
-                                </span>
-                                <?php endif; ?>
-
-                            <?php else : ?>
-
-                                <?php if ($canNotifierEngagementImpartialite) : ?>
-                                    <span class="icon icon-notify iconly" style="color:lightgray;"
-                                          data-bs-toggle="tooltip"
-                                          title="Notifier le rapporteur">
-                                </span>
-                                <?php else: ?>
-                                    <span class="icon icon-notify iconly"
-                                          title="Notifier le rapporteur"
-                                          data-bs-toggle="tooltip"
-                                          style="color:lightgray;">
-                                </span>
-                                <?php endif; ?>
-
-                                <?php if ($canRevoquerEngagementImpartialite) : ?>
-                                    <span class="icon icon-delete iconly" style="color:lightgray;"
-                                          data-bs-toggle="tooltip"
-                                          title="Révoquer l'engagement d'impartialité">
-                                </span>
-                                <?php else: ?>
-                                    <span class="icon icon-delete iconly"
-                                          title="Révoquer l'engagement d'impartialité"
-                                          data-bs-toggle="tooltip"
-                                          style="color:lightgray;">
-                                </span>
-                                <?php endif; ?>
-
                             <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <?php if ($canNotifierEngagementImpartialite): ?>
-                        <a
-                            <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierRapporteursEngagementImpartialiteAction() */ ?>
-                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/notifier-engagement-impartialite", ['id' => $object->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
-                                class="btn btn-info <?php echo ($tousLesRapporteurs) ? '' : 'disabled'; ?>">
-                            <span class="icon icon-notify"></span> Envoyer les notifications aux rapporteurs
-                        </a>
-                    <?php endif; ?>
+                            <?php if ($canRevoquerEngagementImpartialite) : ?>
+                                <?php if ($engagement) : ?>
+                                    <a <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
+                                            href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                        <span class="icon icon-delete iconly"
+                                              title="Révoquer l'engagement d'impartialité"></span>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="icon icon-delete iconly" style="color:lightgray;"
+                                          title="Révoquer l'engagement d'impartialité"></span>
+                                <?php endif; ?>
+                            <?php endif; ?>
 
-                    <br/>
-                </div>
+                        <?php else : ?>
 
-                <!--            <div class="col-md-8">-->
-                <!--                --><?php //if (!$tousLesEngagements) : ?>
-                <!--                    <div class="card">-->
-                <!--                        <div class="card-header bg-warning">-->
-                <!--                            <span class="fas fa-exclamation-triangle"></span>-->
-                <!--                            Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                --><?php //endif; ?>
-                <!--            </div>-->
+                            <?php if ($canNotifierEngagementImpartialite) : ?>
+                                <span class="icon icon-notify iconly" style="color:lightgray;"
+                                      title="Notifier le rapporteur"></span>
+                            <?php endif; ?>
 
-                <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité"); ?>
+                            <?php if ($canRevoquerEngagementImpartialite) : ?>
+                                <span class="icon icon-delete iconly" style="color:lightgray;"
+                                      title="Révoquer l'engagement d'impartialité"></span>
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-md-4">
+                <?php if ($canNotifierEngagementImpartialite): ?>
+                    <a
+                        <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierRapporteursEngagementImpartialiteAction() */ ?>
+                            href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+                            class="btn btn-info <?php echo ($tousLesRapporteurs) ? '' : 'disabled'; ?>">
+                        <span class="icon icon-notify"></span> Envoyer les notifications aux rapporteurs
+                    </a>
+                <?php endif; ?>
+
+                <br/>
             </div>
-        <?php endif; ?>
+
+            <!--            <div class="col-md-8">-->
+            <!--                --><?php //if (!$tousLesEngagements) : ?>
+            <!--                    <div class="card">-->
+            <!--                        <div class="card-header bg-warning">-->
+            <!--                            <span class="fas fa-exclamation-triangle"></span>-->
+            <!--                            Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                --><?php //endif; ?>
+            <!--            </div>-->
+
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité"); ?>
+        </div>
+
     </div>
 </div>

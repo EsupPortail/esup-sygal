@@ -472,8 +472,17 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <span class="fas fa-file-csv"></span>
         Générer export des inscriptions
     </a>
-<?php endif; ?>
 
+<?php endif; ?>
+<?php if ($canEmargementSeance) : ?>
+    <?php /** @see \Formation\Controller\SessionController::transmettreListeInscritsAction() */ ?>
+    <a href="<?php echo $this->url('formation/session/transmettre-liste-inscrits', ['session' => $session->getId()], [] , true); ?>"
+       data-bs-toggle="tooltip" title="Cela enverra la feuille d'émargement aux formateurs déclarés"
+       class="btn btn-primary action <?php if (empty($inscrits) || empty($formateurs)) echo " disabled "; ?>">
+        <span class="icon icon-mail"></span>
+        Envoyer les inscrits aux formateurs
+    </a>
+<?php endif; ?>
 <div class="index-result">
 <?php if (empty($inscrits)) : ?>
     <em>Aucun·e doctorant·e inscrit·e à cette session de formation.</em>

@@ -12,6 +12,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Entity\Db\SessionStructureValide;
 use Formation\Provider\Template\MailTemplates;
+use Formation\Service\Url\UrlServiceAwareTrait;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
@@ -28,6 +29,7 @@ class FormationNotificationFactory extends NotificationFactory
     use ListeDiffusionServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
     use TemplateVariablePluginManagerAwareTrait;
+    use UrlServiceAwareTrait;
 
     /** INSCRIPTION ***************************************************************************************************/
 
@@ -303,6 +305,44 @@ class FormationNotificationFactory extends NotificationFactory
             'formation' => $formationTemplateVariable,
             'inscription' => $formationInscriptionTemplateVariable,
         ];
+    }
+
+    public function createNotificationTransmettreInscritsSession(Session $session): Notification
+    {
+        $formationTemplateVariable = $this->getFormationTemplateVariable($session->getFormation());
+        $formationSessionTemplateVariable = $this->getFormationSessionTemplateVariable($session);
+
+        $this->urlService->setVariables([
+            'session' => $session,
+        ]);
+
+        $vars = [
+            'session' => $formationSessionTemplateVariable,
+            'formation' => $formationTemplateVariable,
+            'Url' => $this->urlService,
+        ];
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::TRANSMETTRE_LISTE_INSCRITS_FORMATEURS, $vars);
+
+        $mails = [];
+        /** @var Formateur $formateur */
+        foreach ($session->getFormateurs() as $formateur) {
+            $mail = $formateur->getIndividu()->getEmailUtilisateur()??$formateur->getIndividu()->getEmailPro();
+            if ($mail !== null) $mails[] = $mail;
+        }
+
+        if (empty($mails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour les formateurs de la session {$session->getCode()}.");
+        }
+
+        $notif = new Notification();
+        $notif
+            ->setTo($mails)
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps())
+        ;
+
+        return $notif;
     }
 
     /** FORMATIONS ******************************************************************************************************/

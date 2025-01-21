@@ -4,6 +4,7 @@ namespace Formation\Service\Notification;
 
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Role\RoleService;
+use Formation\Service\Url\UrlService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
 use UnicaenRenderer\Service\Rendu\RenduService;
@@ -44,6 +45,12 @@ class FormationNotificationFactoryFactory extends NotificationFactoryFactory
         /** @var TemplateVariablePluginManager $rapm */
         $rapm = $container->get(TemplateVariablePluginManager::class);
         $factory->setTemplateVariablePluginManager($rapm);
+
+        /**
+         * @var UrlService $urlService
+         */
+        $urlService = $container->get(UrlService::class);
+        $factory->setUrlService($urlService);
 
         return $factory;
     }

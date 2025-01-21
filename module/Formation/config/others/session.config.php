@@ -72,6 +72,7 @@ return [
                         'afficher',
                         'generer-emargements',
                         'generer-export',
+                        'transmettre-liste-inscrits'
                     ],
                     'privileges' => [
                         SessionPrivileges::SESSION_AFFICHER,
@@ -328,6 +329,17 @@ return [
                                         /** @see SessionController::genererExportCsvAction() */
                                         'controller'    => SessionController::class,
                                         'action'        => 'generer-export-csv',
+                                    ],
+                                ],
+                            ],
+                            'transmettre-liste-inscrits' => [
+                                'type'          => Segment::class,
+                                'options'       => [
+                                    'route'    => '/transmettre-liste-inscrits/:session',
+                                    'defaults' => [
+                                        /** @see SessionController::transmettreListeInscritsAction() */
+                                        'controller'    => SessionController::class,
+                                        'action'        => 'transmettre-liste-inscrits',
                                     ],
                                 ],
                             ],

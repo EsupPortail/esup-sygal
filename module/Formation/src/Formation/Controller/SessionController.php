@@ -282,7 +282,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationInscriptionListePrincipale($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -295,7 +295,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationInscriptionListeComplementaire($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -355,7 +355,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationInscriptionClose($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -372,7 +372,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationInscriptionEchec($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -385,7 +385,7 @@ class SessionController extends AbstractController
         try {
             $notif = $this->formationNotificationFactory->createNotificationSessionImminenteFormateur($session);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
+        } catch (NotificationRuntimeException $e) {
             // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
         }
 
@@ -393,7 +393,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationSessionImminente($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -408,7 +408,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationSessionTerminee($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -422,7 +422,7 @@ class SessionController extends AbstractController
             try {
                 $notif = $this->formationNotificationFactory->createNotificationSessionAnnulee($inscription);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
+            } catch (NotificationRuntimeException $e) {
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
@@ -453,7 +453,7 @@ class SessionController extends AbstractController
                     try {
                         $notif = $this->formationNotificationFactory->createNotificationInscriptionListePrincipale($inscription);
                         $this->notifierService->trigger($notif);
-                    } catch (\Notification\Exception\RuntimeException $e) {
+                    } catch (NotificationRuntimeException $e) {
                         // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
                     }
                 }
@@ -466,7 +466,7 @@ class SessionController extends AbstractController
                         try {
                             $notif = $this->formationNotificationFactory->createNotificationInscriptionListeComplementaire($inscription);
                             $this->notifierService->trigger($notif);
-                        } catch (\Notification\Exception\RuntimeException $e) {
+                        } catch (NotificationRuntimeException $e) {
                             // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
                         }
                     }
@@ -541,6 +541,20 @@ class SessionController extends AbstractController
         $CSV->setData($records);
         $CSV->setFilename($filename);
         return $CSV;
+    }
+
+    public function transmettreListeInscritsAction() : Response
+    {
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+
+        try {
+            $notif = $this->formationNotificationFactory->createNotificationTransmettreInscritsSession($session);
+            $this->notifierService->trigger($notif);
+        } catch (NotificationRuntimeException) {
+            // aucun destinataire, todo : cas à gérer !
+        }
+
+        return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
     }
 
     public function genererEmargementsAction()
