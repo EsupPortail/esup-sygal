@@ -80,8 +80,11 @@ $canAjouter = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivi
                 <td>
                     <?php if (($canModifier OR $canModifierCetteEcole) && !$historisee) : ?>
                         <a href="<?php echo $this->url('ecole-doctorale/supprimer', ["ecole-doctorale" => $ecole->getId()], [], true); ?>"
-                           title="Historiser l'établissement">
-                            <span class="icon icon-delete iconly"></span>
+                           data-toggle="confirmationx"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
+                           title="Historiser l'établissement <br>(Une confirmation avant l'historisation vous sera demandée)">
+                            <span class="icon icon-delete iconly text-danger"></span>
                         </a>
                     <?php endif; ?>
 

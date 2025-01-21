@@ -131,9 +131,12 @@ $tousLesAvisSontFavorables = count(array_filter($avis, fn($avis) => $avis->getAv
 
                             <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
                                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::revoquerAvisSoutenanceAction(); */ ?>
-                                    href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
-                                    <span class="icon icon-delete iconly"
-                                          title="Révoquer l'avis de soutenance">
+                                    href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>"
+                                    data-toggle="confirmationx">
+                                    <span class="icon icon-delete iconly text-danger"
+                                          data-bs-toggle="tooltip"
+                                          data-bs-html="true"
+                                          title="Révoquer l'avis de soutenance <br>Une confirmation avant la révocation vous sera demandée">
                                     </span>
                                 </a>
                             <?php else: ?>

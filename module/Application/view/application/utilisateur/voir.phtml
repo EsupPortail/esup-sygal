@@ -103,6 +103,9 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
                         <div class="float-end">
                             <a href="<?php echo $this->url('utilisateur/delier-individu', ['utilisateur' => $utilisateur->getId()], [], true);?>"
                                class="btn btn-danger"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
+                               title="Une confirmation avant la désunion vous sera demandée"
                                data-toggle="confirmationx">Délier du compte utilisateur</a>
                         </div>
                     </h2>

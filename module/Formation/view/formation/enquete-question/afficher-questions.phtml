@@ -52,6 +52,10 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                         <?php if ($categorie->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\EnqueteQuestionController::historiserCategorieAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/categorie/historiser', ['categorie' => $categorie->getId()], [], true); ?>"
+                               data-toggle="confirmationx"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
+                               title="Une confirmation avant l'historisation vous sera demandée"
                             >
                                 <span class="icon icon-historiser"></span></a>
                         <?php else : ?>
@@ -65,8 +69,11 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                         <?php /** @see \Formation\Controller\EnqueteQuestionController::supprimerCategorieAction() */?>
                         <a href="<?php echo $this->url('formation/enquete/categorie/supprimer', ['categorie' => $categorie->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
+                           title="Une confirmation avant la suppression vous sera demandée"
                         >
-                            <span class="icon icon-detruire"></span></a>
+                            <span class="icon icon-detruire text-danger"></span></a>
                     <?php endif; ?>
 
                     <ul>
@@ -97,6 +104,10 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                     <?php if ($question->estNonHistorise()) : ?>
                                         <?php /** @see \Formation\Controller\EnqueteQuestionController::historiserQuestionAction() */?>
                                         <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
+                                           data-toggle="confirmationx"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-html="true"
+                                           title="Une confirmation avant l'historisation vous sera demandée"
                                         >
                                             <span class="icon icon-historiser"></span></a>
                                     <?php else : ?>
@@ -110,8 +121,11 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                     <?php /** @see \Formation\Controller\EnqueteQuestionController::supprimerQuestionAction() */?>
                                     <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
                                        class="ajax-modal" data-event="modification"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-html="true"
+                                       title="Une confirmation avant la suppression vous sera demandée"
                                     >
-                                        <span class="icon icon-detruire"></span></a>
+                                        <span class="icon icon-detruire text-danger"></span></a>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -143,6 +157,10 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                             <?php if ($question->estNonHistorise()) : ?>
                                 <?php /** @see \Formation\Controller\EnqueteQuestionController::historiserQuestionAction() */?>
                                 <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
+                                   data-toggle="confirmationx"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-html="true"
+                                   title="Une confirmation avant l'historisation vous sera demandée"
                                 >
                                     <span class="icon icon-historiser"></span></a>
                             <?php else : ?>
@@ -156,8 +174,11 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                             <?php /** @see \Formation\Controller\EnqueteQuestionController::supprimerQuestionAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
+                               title="Une confirmation avant la suppression vous sera demandée"
                             >
-                                <span class="icon icon-detruire"></span></a>
+                                <span class="icon icon-detruire text-danger"></span></a>
                         <?php endif; ?>
                     </li>
                 <?php endforeach; ?>

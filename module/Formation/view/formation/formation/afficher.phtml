@@ -188,7 +188,9 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <th>Type</th>
         <th>État</th>
         <th>Séances</th>
-        <th>Action</th>
+        <?php if ($canAfficherSession || $canSupprimerSession || $canHistoriserSession) : ?>
+            <th>Action</th>
+        <?php endif; ?>
     </tr>
     </thead>
     <tbody>
@@ -248,6 +250,10 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php if ($session["session"]->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session["session"]->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
+                           data-toggle="confirmationx"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
+                           title="Une confirmation avant l'historisation vous sera demandée"
                         >
                             <span class="icon icon-historiser"></span>
                         </a>
@@ -263,7 +269,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
                     <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session["session"]->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
-                       title="supprimer une session"
+                       title="Supprimer une session <br>(Une confirmation avant la suppression vous sera demandée)"
                        data-bs-toggle="tooltip" data-bs-html="true">
                         <span class="icon icon-detruire text-danger"></span>
                     </a>

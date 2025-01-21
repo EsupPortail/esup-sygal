@@ -90,12 +90,16 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
                     <?php if ($canSupprimer): ?>
                         <?php if ($doctorant->estHistorise()): ?>
                             <a href="<?php echo $this->url('doctorant/restaurer', ['doctorant' => $doctorant->getId()], [], true); ?>"
-                               title="Restaurer cet doctorant"
+                               title="Restaurer cet doctorant <br>(Une confirmation avant la restauration vous sera demandée)"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
                                data-toggle="confirmationx">
                                 <span class="icon icon-restaurer"></span></a>
                         <?php else: ?>
                             <a href="<?php echo $this->url('doctorant/supprimer', ['doctorant' => $doctorant->getId()], [], true); ?>"
-                               title="Supprimer cet doctorant"
+                               title="Supprimer cet doctorant <br>(Une confirmation avant la suppression vous sera demandée)"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
                                data-toggle="confirmationx">
                                 <span class="icon icon-supprimer"></span></a>
                         <?php endif ?>

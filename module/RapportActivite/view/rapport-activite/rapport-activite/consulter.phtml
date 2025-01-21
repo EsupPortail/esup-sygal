@@ -471,7 +471,11 @@ $canGen =
 
     <?php if ($canDel): ?>
         <a class="btn btn-danger float-end"
-           href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()]) ?>">
+           href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()]) ?>"
+           data-toggle="confirmationx"
+           data-bs-toggle="tooltip"
+           data-bs-html="true"
+           title="Une confirmation avant la suppression vous sera demandée">
             <span class="icon icon-supprimer"></span> Supprimer ce rapport d'activité</a>
     <?php endif; ?>
 

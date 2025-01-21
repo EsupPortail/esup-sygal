@@ -121,6 +121,9 @@ $this->headTitle("Modification de l'ED ".$ecole->getStructure()->getCode());
                 </div>
                 <?php if ($ecole->getId()): ?>
                     <a data-toggle="confirmationx" id="supprimer-logo" class="btn btn-danger"
+                       data-bs-toggle="tooltip"
+                       data-bs-html="true"
+                       title="Une confirmation avant la suppression vous sera demandée"
                        href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["ecole-doctorale" => $ecole->getId()]); ?>">
                         <span class="icon icon-delete"></span>
                         Supprimer le logo

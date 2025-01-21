@@ -141,6 +141,9 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php if (($canModifierEtablissement || $canModifierCetEtab) && !$historisee) : ?>
         <a href="<?php echo $this->url('etablissement/supprimer', ["etablissement" => $etablissement->getId()], [], true); ?>"
            class="btn btn-danger action"
+           data-bs-toggle="tooltip"
+           data-bs-html="true"
+           title="Une confirmation avant la suppression vous sera demandée"
            data-toggle="confirmationx">
             <span class="icon icon-delete"></span> Supprimer cet établissement
         </a>
@@ -148,6 +151,9 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <?php if (($canModifierEtablissement || $canModifierCetEtab) && $historisee) : ?>
         <a href="<?php echo $this->url('etablissement/restaurer', ["etablissement" => $etablissement->getId()], [], true); ?>"
            class="btn btn-danger action"
+           data-bs-toggle="tooltip"
+           data-bs-html="true"
+           title="Une confirmation avant la restauration vous sera demandée"
            data-toggle="confirmationx">
             <span class="icon icon-restaurer"></span> Restaurer cet établissement
         </a>

@@ -32,7 +32,9 @@ $canAjouterOperation =
                     'query' => ['redirect' => $returnUrl],
                 ]) ?>"
                class="card-link btn btn-success btn-sm action"
-               title="Valider ce rapport ?"
+               title="Valider ce rapport ? <br>(Une confirmation avant la validation vous sera demandée)"
+               data-bs-toggle="tooltip"
+               data-bs-html="true"
                data-toggle="confirmationx"
                data-message="Une fois la validation effectuée, le rapport ne sera plus modifiable. Confirmez-vous la validation de ce rapport ?
 

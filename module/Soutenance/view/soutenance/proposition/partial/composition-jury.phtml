@@ -232,8 +232,12 @@ $these = $proposition->getThese();
                                 <span class="icon icon-edit iconly"></span>
                             </a>
                             <a  <?php /** @see \Soutenance\Controller\PropositionController::effacerMembreAction(); */ ?>
-                                href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
-                                <span class="icon icon-delete iconly"></span>
+                                href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                data-toggle="confirmationx"
+                                data-bs-toggle="tooltip"
+                                data-bs-html="true"
+                                title="Une confirmation avant la suppression vous sera demandée">
+                                <span class="icon icon-delete iconly text-danger"></span>
                             </a>
 
                     </td>

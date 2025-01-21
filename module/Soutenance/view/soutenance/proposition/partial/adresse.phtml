@@ -43,7 +43,12 @@ $adresse = $proposition->getAdresseActive();
                     </a>
                     <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
                     <a href="<?php echo $this->url('soutenance/proposition/historiser-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
-                       class="btn btn-danger">
+                       class="btn btn-danger"
+                       data-toggle="confirmationx"
+                       data-bs-toggle="tooltip"
+                       data-bs-html="true"
+                       title="Une confirmation avant l'historisation vous sera demandée"
+                    >
                         <span class="icon icon-historiser"></span>
                         Supprimer l'adresse
                     </a>

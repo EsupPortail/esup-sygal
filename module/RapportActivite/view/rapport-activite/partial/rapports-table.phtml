@@ -267,9 +267,11 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 <?php endif; ?>
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                       title="Supprimer ce rapport"
+                       title="Supprimer ce rapport <br>(Une confirmation avant la suppression vous sera demandée)"
+                       data-bs-toggle="tooltip"
+                       data-bs-html="true"
                        data-toggle="confirmationx"
-                       data-message="Êtes-vous sûr de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
+                       data-message="Êtes-vous sûr de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly text-danger"></span></a>
                 <?php endif; ?>
                 <?php if ($canGen): ?>
                     <a href="<?php echo $this->url('rapport-activite/generer', ['rapport' => $rapport->getId()]) ?>"

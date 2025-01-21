@@ -236,7 +236,12 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                                     <span class="icon icon-editer"></span></a>
                                 <?php if ($structureComplemenaire->estNonHistorise()) : ?>
                                     <?php /** @see \Formation\Controller\SessionStructureValideController::historiserStructureComplemlentaireAction() */ ?>
-                                    <a href="<?php echo $this->url('formation/session/historiser-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>">
+                                    <a href="<?php echo $this->url('formation/session/historiser-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>"
+                                       data-toggle="confirmationx"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-html="true"
+                                       title="Une confirmation avant l'historisation vous sera demandée"
+                                    >
                                         <span class="icon icon-historiser"></span></a>
                                 <?php else : ?>
                                     <?php /** @see \Formation\Controller\SessionStructureValideController::restaurerStructureComplemlentaireAction() */ ?>
@@ -247,7 +252,11 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                                 <?php if ($canSupprimerSession AND $structureComplemenaire->estHistorise()) : ?>
                                 <?php /** @see \Formation\Controller\SessionStructureValideController::supprimerStructureComplementaireAction() */ ?>
                                 <a href="<?php echo $this->url('formation/session/supprimer-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>"
-                                   class="ajax-modal" data-event="modification">
+                                   class="ajax-modal" data-event="modification"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-html="true"
+                                   title="Une confirmation avant la suppression vous sera demandée"
+                                >
                                     <span class="icon icon-detruire text-danger"></span></a>
                             <?php endif; ?>
 
@@ -287,10 +296,10 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php if ($canModifierSession) : ?>
                         <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
                         <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
-                           title="Retirer le·a formateur·trice" data-bs-toggle="tooltip" data-bs-html="true"
+                           title="Retirer le·a formateur·trice <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true"
                            class="ajax-modal" data-event="modification"
                         >
-                            <span class="icon icon-historiser"></span>
+                            <span class="icon icon-suppression text-danger"></span>
                         </a>
                     <?php endif ;?>
                 </li>
@@ -403,7 +412,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php if ($seance->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SeanceController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()], [], true)]], true); ?>"
-                           title="Historisation de la séance" data-bs-toggle="tooltip" data-bs-html="true"
+                           data-toggle="confirmationx" title="Historisation de la séance <br>(Une confirmation avant l'historisation vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true"
                         >
                             <span class="icon icon-historiser"></span>
                         </a>
@@ -420,7 +429,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */ ?>
                     <a href="<?php echo $this->url('formation/seance/supprimer', ['seance' => $seance->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
-                       title="Suppression de la séance" data-bs-toggle="tooltip" data-bs-html="true"
+                       title="Suppression de la séance <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true"
                     >
                         <span class="icon icon-detruire text-danger"></span>
                     </a>

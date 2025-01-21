@@ -64,8 +64,12 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
                 </td>
                 <td>
                     <?php if ($canFichier) : ?>
-                        <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
-                            <span class="icon icon-delete iconly"></span>
+                        <a data-toggle="confirmationx" href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
+                            <span class="icon icon-delete iconly text-danger"
+                                  data-bs-toggle="tooltip"
+                                  data-bs-html="true"
+                                  title="Une confirmation avant la suppression vous sera demandée">
+                            </span>
                         </a>
                     <?php endif; ?>
                 </td>

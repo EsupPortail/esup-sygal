@@ -167,7 +167,8 @@ $queryParams = $this->queryParams();
                         <?php if ($inscription->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], [], true); ?>"
-                               title="Historiser l'inscription" data-bs-toggle="tooltip" data-bs-html="true"
+                               title="Historiser l'inscription <br>(Une confirmation avant l'historisation vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true"
+                               data-toggle="confirmationx"
                             >
                                 <span class="icon icon-historiser"></span>
                             </a>
@@ -184,7 +185,7 @@ $queryParams = $this->queryParams();
                         <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
                         <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
-                           title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                           title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>

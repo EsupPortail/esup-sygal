@@ -18,6 +18,7 @@ $this->headTitle($pageTitle);
 $canIndexModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_INDEX));
 $canModifierModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_MODIFIER));
 
+$canAjouterFormation       = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AJOUTER));
 $canAfficherFormation = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
 $canHistoriserFormation = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_HISTORISER));
 $canSupprimerFormation = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_SUPPRIMER));
@@ -80,13 +81,15 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
     Liste des formations associées au module
 </h2>
 
-<a
-    <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
-        href="<?php echo $this->url('formation/formation/ajouter', ['module' => $module->getId()], [], true); ?>"
-        class="btn btn-primary action ajax-modal" data-event="modification">
-    <span class="icon icon-ajouter"></span>
-    Ajouter une formation
-</a>
+<?php if ($canAjouterFormation) : ?>
+    <a
+        <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
+            href="<?php echo $this->url('formation/formation/ajouter', ['module' => $module->getId()], [], true); ?>"
+            class="btn btn-primary action ajax-modal" data-event="modification">
+        <span class="icon icon-ajouter"></span>
+        Ajouter une formation
+    </a>
+<?php endif; ?>
 
 <div class="index-result">
     <?php if (empty($formations)) : ?>
@@ -136,7 +139,12 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
                     <?php if ($canHistoriserFormation) : ?>
                         <?php if ($formation->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
-                            <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], ['query' => ['retour' => $urlRetour]], true); ?>">
+                            <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], ['query' => ['retour' => $urlRetour]], true); ?>"
+                               data-toggle="confirmationx"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
+                               title="Une confirmation avant l'historisation vous sera demandée"
+                            >
                                 <span class="icon icon-historiser"></span>
                             </a>
                         <?php else : ?>
@@ -150,6 +158,9 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
                         <?php /** @see \Formation\Controller\FormationController::supprimerAction() */ ?>
                         <a href="<?php echo $this->url('formation/formation/supprimer', ['formation' => $formation->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
+                           title="Une confirmation avant la suppression vous sera demandée"
                         >
                             <span class="icon icon-detruire text-danger"></span>
                         </a>

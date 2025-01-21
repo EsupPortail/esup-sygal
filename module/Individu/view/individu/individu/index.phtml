@@ -118,12 +118,16 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
                     <?php if ($canSupprimer): ?>
                         <?php if ($individu->estHistorise()): ?>
                             <a href="<?php echo $this->url('individu/restaurer', ['individu' => $individu->getId()], [], true); ?>"
-                               title="Restaurer cet individu"
+                               title="Restaurer cet individu <br>(Une confirmation avant la restauration vous sera demandée)"
+                               data-bs-html="true"
+                               data-bs-toggle="tooltip"
                                data-toggle="confirmationx">
                                 <span class="icon icon-restaurer"></span></a>
                         <?php else: ?>
                             <a href="<?php echo $this->url('individu/supprimer', ['individu' => $individu->getId()], [], true); ?>"
-                               title="Supprimer cet individu"
+                               title="Supprimer cet individu <br>(Une confirmation avant la suppression vous sera demandée)"
+                               data-bs-toggle="tooltip"
+                               data-bs-html="true"
                                data-toggle="confirmationx">
                                 <span class="icon icon-supprimer"></span></a>
                         <?php endif ?>

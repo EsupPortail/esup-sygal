@@ -116,8 +116,13 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                 <?php if($canDelete): ?>
                     <a
                         <?php /** @see \Soutenance\Controller\QualiteController::effacerAction() */ ?>
-                        href="<?php echo $this->url('qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>">
-                        <span class="icon icon-delete iconly"></span>
+                        href="<?php echo $this->url('qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>"
+                        data-toggle="confirmationx"
+                        data-bs-toggle="tooltip"
+                        data-bs-html="true"
+                        title="Une confirmation avant la suppression vous sera demandée"
+                    >
+                        <span class="icon icon-delete iconly text-danger"></span>
                     </a>
                 <?php endif; ?>
             </td>

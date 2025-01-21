@@ -137,7 +137,11 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
                 </div>
                 <?php if ($unite->getId()): ?>
                     <a data-toggle="confirmationx" id="supprimer-logo" class="btn btn-danger"
-                       href="<?php echo $this->url('unite-recherche/supprimer-logo', ["unite-recherche" => $unite->getId()]); ?>">
+                       href="<?php echo $this->url('unite-recherche/supprimer-logo', ["unite-recherche" => $unite->getId()]); ?>"
+                       data-bs-toggle="tooltip"
+                       data-bs-html="true"
+                       title="Une confirmation avant la suppression vous sera demandée"
+                    >
                         <span class="icon icon-delete"></span>
                         Supprimer le logo
                     </a>
@@ -180,9 +184,12 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
                     <td>
                         <a
                                 href="<?php echo $this->url("unite-recherche/modifier/retirer-etablissement-rattachement", ["unite-recherche" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
-                                title="Retirer l'établissement de rattachement"
+                                data-toggle="confirmationx"
+                                data-bs-toggle="tooltip"
+                                data-bs-html="true"
+                                title="Retirer l'établissement de rattachement <br>(Une confirmation avant la suppression vous sera demandée)"
                         >
-                            <span class="icon icon-delete iconly"></span>
+                            <span class="icon icon-delete iconly text-danger"></span>
                         </a>
                     </td>
                 </tr>
@@ -257,9 +264,12 @@ $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
                     <td>
                         <a
                                 href="<?php echo $this->url('unite-recherche/modifier/retirer-domaine-scientifique', ["unite-recherche" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
-                                title="Retirer le domaine scientifique"
+                                data-toggle="confirmationx"
+                                data-bs-toggle="tooltip"
+                                data-bs-html="true"
+                                title="Retirer le domaine scientifique <br>(Une confirmation avant la suppression vous sera demandée)"
                         >
-                            <span class="icon icon-delete iconly"></span>
+                            <span class="icon icon-delete iconly text-danger"></span>
                         </a>
                     </td>
                 </tr>

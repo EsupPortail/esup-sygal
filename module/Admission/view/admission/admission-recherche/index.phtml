@@ -229,8 +229,8 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                          if($canSupprimerAdmission){ ?>
                             <a href="<?php echo $this->url('admission/ajouter',['action' => 'supprimer', 'individu' => $admission->getIndividu()->getId()], [], true); ?>"
                                data-toggle="confirmationx" data-event="modification"
-                               title="Suppression du dossier d'admission #<?php echo $admission->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
-                                <span class="icon icon-historiser text-danger"></span>
+                               title="Suppression du dossier d'admission #<?php echo $admission->getId(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true">
+                                <span class="icon icon-supprimer text-danger"></span>
                             </a>
                         <?php } ?>
                     </td>

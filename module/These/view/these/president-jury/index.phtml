@@ -211,7 +211,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
                                             <a href="<?php echo $this->url('president-jury/supprimer-mail', ['president' => $president->getId()], [], true); ?>"
                                                title="Suppression de l'email ajouté manuellement pour le président du jury"
                                             >
-                                                <span class="icon icon-delete iconly"></span> </a>
+                                                <span class="icon icon-delete iconly text-danger"></span> </a>
                                         <?php else : ?>
                                             <span class="icon icon-plus" style="color:white;"></span>
                                         <?php endif;?>

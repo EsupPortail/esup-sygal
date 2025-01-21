@@ -102,7 +102,7 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
                         <?php if ($module->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\ModuleController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/module/historiser', ['module' => $module->getId()], [], true); ?>"
-                               title="Historiser le module de  formation #<?php echo $module->getId(); ?>"
+                               title="Historiser le module de  formation #<?php echo $module->getId(); ?> <br>(Une confirmation avant l'historisation vous sera demandée)"
                                class="historiser-module-btn"
                                data-bs-toggle="tooltip" data-bs-html="true"
                                data-toggle="confirmationx"
@@ -123,9 +123,8 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
                         <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/supprimer', ['module' => $module->getId()], [], true); ?>"
                            class="ajax-modal supprimer-module-btn" data-event="modification"
-                           title="Suppression du module de formation #<?php echo $module->getId(); ?>"
+                           title="Suppression du module de formation #<?php echo $module->getId(); ?> <br>(Une confirmation avant la suppression vous sera demandée)"
                            data-bs-toggle="tooltip" data-bs-html="true"
-                           data-toggle="confirmationx"
                            data-message="Êtes-vous sûr de vouloir supprimer ce module ?">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>

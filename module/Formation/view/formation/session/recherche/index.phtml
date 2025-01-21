@@ -169,7 +169,7 @@ $queryParams = $this->queryParams();
                         <?php if ($session->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], [], true); ?>"
-                               title="Historiser la session"
+                               title="Historiser la session <br>(Une confirmation avant l'historisation vous sera demandée)"
                                class="historiser-session-btn"
                                data-bs-toggle="tooltip" data-bs-html="true"
                                data-toggle="confirmationx"
@@ -189,9 +189,8 @@ $queryParams = $this->queryParams();
                         <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
                            class="ajax-modal supprimer-session-btn" data-event="modification"
-                           title="Supprimer la session"
+                           title="Supprimer la session <br>(Une confirmation avant la suppression vous sera demandée)"
                            data-bs-toggle="tooltip" data-bs-html="true"
-                           data-toggle="confirmationx"
                            data-message="Êtes-vous sûr de vouloir supprimer cette session ?">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>

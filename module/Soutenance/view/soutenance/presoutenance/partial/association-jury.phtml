@@ -94,8 +94,10 @@ $theseImportee = $these->getSource()->getImportable()
                                     <?php else: ?>
                                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::deassocierJuryAction() */ ?>
                                             href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);; ?>"
+                                            data-toggle="confirmationx"
                                         >
-                                            <span class="icon icon-delete iconly" title="Casser l'association d'un individu à un membre de jury"></span>
+                                            <span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
+                                                  data-bs-html="true" title="Casser l'association d'un individu à un membre de jury <br>(Une confirmation avant la suppression vous sera demandée)"></span>
                                         </a>
                                     <?php endif; ?>
 <!--                            --><?php //endif; ?>

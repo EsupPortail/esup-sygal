@@ -38,7 +38,7 @@ use Fichier\Entity\Db\Fichier;
                     <a data-event="modification" data-toggle="confirmationx" data-message="Êtes-vous sûr de vouloir supprimer ce fichier ?" href="<?php echo $urlSuppressionFichier ?>">
                         <span style='color:darkred;'>
                             <span style='color:darkred;' class="icon icon-delete iconly"
-                                  data-bs-toggle="tooltip" title="Supprimer le fichier (une confirmation vous sera demandée)"></span>
+                                  data-bs-toggle="tooltip" data-bs-html="true" title="Supprimer le fichier <br>(une confirmation vous sera demandée)"></span>
                         </span>
                     </a>
                 <?php endif; ?>

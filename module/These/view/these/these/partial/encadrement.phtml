@@ -100,8 +100,12 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                                     <?php endif ?>
                                     <?php if ($canCoEncadrantGerer && $acteur->estCoEncadrant()): /** @see \These\Controller\CoEncadrantController::retirerCoEncadrantAction() */ ?>
                                         <a href="<?php echo $this->url('co-encadrant/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ?>"
-                                           data-toggle="confirmationx" data-message="Êtes-vous sûr·e de vouloir retirer ce·tte co-encadrant·e ?">
-                                            <span class='icon icon-delete iconly' title='Retirer le co-encadrant'></span></a>
+                                           data-toggle="confirmationx" data-message="Êtes-vous sûr·e de vouloir retirer ce·tte co-encadrant·e ?"
+                                           title='Retirer le co-encadrant <br>(Une confirmation avant la suppression vous sera demandée)'
+                                           data-bs-toggle="tooltip"
+                                           data-bs-html="true"
+                                        >
+                                            <span class='icon icon-delete iconly text-danger'></span></a>
                                     <?php endif ?>
                                     <?php
                                     $canEditActeur =

@@ -87,8 +87,9 @@ use Laminas\Paginator\Paginator;
                 <?php echo $fichier->getHistoCreation()->format(Constants::DATETIME_FORMAT) ?>
             </td>
             <td>
-                <a href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>"
-                    ><span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span></a>
+                <a data-toggle="confirmationx" href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>"
+                    ><span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
+                           data-bs-html="true" title="Supprimer le fichier <br>(Une confirmation avant la suppression vous sera demandée)"></span></a>
             </td>
         </tr>
     <?php endforeach ?>

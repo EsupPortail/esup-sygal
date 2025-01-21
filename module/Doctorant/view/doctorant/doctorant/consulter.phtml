@@ -56,12 +56,16 @@ $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTOR
             <?php if ($doctorant->estHistorise()): ?>
                 <a href="<?php echo $this->url('doctorant/restaurer', ['doctorant' => $doctorant->getId()]) ?>"
                    class="btn bg-secondary text-light float-end"
-                   title="Restaurer (déhistoriser) ce doctorant"
+                   title="Restaurer (déhistoriser) ce doctorant <br>(Une confirmation avant la restauration vous sera demandée)"
+                   data-bs-toggle="tooltip"
+                   data-bs-html="true"
                    data-toggle="confirmationx">Restaurer le doctorant</a>
             <?php else: ?>
                 <a href="<?php echo $this->url('doctorant/supprimer', ['doctorant' => $doctorant->getId()]) ?>"
                    class="btn bg-danger float-end"
-                   title="Supprimer (historiser) ce doctorant"
+                   title="Supprimer (historiser) ce doctorant <br>(Une confirmation avant l'historisation vous sera demandée)"
+                   data-bs-toggle="tooltip"
+                   data-bs-html="true"
                    data-toggle="confirmationx">Supprimer le doctorant</a>
             <?php endif ?>
         <?php endif ?>

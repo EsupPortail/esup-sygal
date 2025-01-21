@@ -82,8 +82,9 @@ $canChangePrivilege = true;
                         <?php endif; ?>
                         <?php if ($canDelete) : ?>
                             <a href="<?php echo $this->url('profil/supprimer', ['profil' => $profil->getId()], [], true);?>"
-                               data-toggle="confirmationx">
-                                <span class="icon icon-delete iconly" title="Supprimer le profil"></span>
+                               data-toggle="confirmationx"
+                               title="Une confirmation avant la suppression vous sera demandée" data-bs-toggle="tooltip" data-bs-html="true">
+                                <span class="icon icon-delete iconly text-danger" title="Supprimer le profil"></span>
                             </a>
                         <?php endif; ?>
                         <?php if ($canManage) : ?>

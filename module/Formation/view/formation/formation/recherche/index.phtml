@@ -157,7 +157,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php if ($formation->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
                             <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], [], true); ?>"
-                               title="Historiser la formation #<?php echo $formation->getId(); ?>"
+                               title="Historiser la formation #<?php echo $formation->getId(); ?> <br>(Une confirmation avant l'historisation vous sera demandée)"
                                data-bs-toggle="tooltip" data-bs-html="true" class="historiser-formation-btn"
                                data-toggle="confirmationx"
                                data-message="Êtes-vous sûr de vouloir historiser cette formation ?">
@@ -177,8 +177,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php /** @see \Formation\Controller\FormationController::supprimerAction() */?>
                         <a href="<?php echo $this->url('formation/formation/supprimer',['formation' => $formation->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
-                           title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
-                           data-toggle="confirmationx"
+                           title="Suppression de la formation #<?php echo $formation->getId(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true"
                            data-message="Êtes-vous sûr de vouloir supprimer cette formation ?">
                             <span class="icon icon-detruire text-danger"></span>
                         </a>

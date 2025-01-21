@@ -32,7 +32,9 @@ $canSupprimerOperation =
         <?php if ($canSupprimerOperation): ?>
             <a href="<?php echo $this->url('rapport-activite/devalider', ['rapportValidation' => $operation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                class="btn btn-danger collapsable-action"
-               title="Dévalider ce rapport ?"
+               title="Dévalider ce rapport ? <br>(Une confirmation avant la dévalidation vous sera demandée)"
+               data-bs-toggle="tooltip"
+               data-bs-html="true"
                data-toggle="confirmationx"
                data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
         <?php endif ?>

@@ -228,9 +228,13 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
                     <a
                         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
                         href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
-                        class="btn btn-danger" style="margin-top: 1rem;">
+                        class="btn btn-danger" style="margin-top: 1rem;"
+                        data-toggle="confirmationx"
+                        data-bs-toggle="tooltip"
+                        data-bs-html="true"
+                        title="Une confirmation avant l'annulation vous sera demandée">
                         <span class="icon icon-delete"></span>
-                        Annuler l'avis de soutance
+                        Annuler l'avis de soutenance
                     </a>
                     </div>
                 </div>

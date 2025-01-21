@@ -93,7 +93,9 @@ $this->headTitle("Proposition de soutenance");
                         href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                         class="btn btn-danger"
                         data-toggle="confirmationx" data-event="modification"
-                        title="Suppression des informations de la soutenance"
+                        data-bs-toggle="tooltip"
+                        data-bs-html="true"
+                        title="Suppression des informations de la soutenance <br>(Une confirmation avant la suppression vous sera demandée)"
                         data-message="Attention, cela supprimera l'ensemble des informations rentrées pour cette proposition de soutenance, êtes-vous sûr(e) ?">
                     <span class="icon icon-delete"></span>
                     Suppression des informations de la soutenance

@@ -55,7 +55,9 @@ $canSupprimerOperation =
             <?php $queryParams = isset($returnUrl) ? ['query' => ['redirect' => $returnUrl]] : []; ?>
             <a href="<?php echo $this->url('rapport-activite/avis/supprimer', ['rapportAvis' => $operation->getId()], $queryParams) ?>"
                class="card-link btn btn-warning btn-sm"
-               title="Supprimer cet avis ?"
+               title="Supprimer cet avis ? <br>(Une confirmation avant la suppression vous sera demandée)"
+               data-bs-toggle="tooltip"
+               data-bs-html="true"
                data-toggle="confirmationx">Supprimer l'avis</span></a>
         <?php endif ?>
     </div>

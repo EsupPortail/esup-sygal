@@ -122,7 +122,11 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
                    class="btn btn-danger ajax-modal"
-                   data-event="event-page-de-couverture-validated-or-not"><span
+                   data-event="event-page-de-couverture-validated-or-not"
+                   data-bs-toggle="tooltip"
+                   data-bs-html="true"
+                   title="Une confirmation avant l'annulation vous sera demandée"
+                ><span
                             class="icon icon-delete"></span>
                     Annuler la validation la page de couverture</a>
             <?php endif ?>

@@ -49,12 +49,16 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
                     <?php if ($individu->estHistorise()): ?>
                         <a href="<?php echo $this->url('individu/restaurer', ['individu' => $individu->getId()]) ?>"
                            class="btn bg-secondary text-light float-end"
-                           title="Restaurer (déhistoriser) cet individu"
+                           title="Restaurer (déhistoriser) cet individu <br>(Une confirmation avant la restauration vous sera demandée)"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
                            data-toggle="confirmationx">Restaurer l'individu</a>
                     <?php else: ?>
                         <a href="<?php echo $this->url('individu/supprimer', ['individu' => $individu->getId()]) ?>"
                            class="btn btn-danger float-end"
-                           title="Supprimer (historiser) cet individu"
+                           title="Supprimer (historiser) cet individu <br>(Une confirmation avant l'historisation vous sera demandée)"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
                            data-toggle="confirmationx">
                             <span class="icon icon-delete"></span>
                             Supprimer l'individu
@@ -107,8 +111,10 @@ $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIM
                            class="btn btn-primary" data-event="modification" title="Modifier ce complément d'individu">
                             <span class="icon icon-editer"></span> Modifier</a>
                         <a href="<?php echo $this->url("individu-compl/historiser", ['individu-compl' => $complement->getId()], [], true); ?>"
-                           class="btn btn-danger float-end" data-event="modification" title="Supprimer ce complément d'individu"
+                           class="btn btn-danger float-end" data-event="modification" title="Supprimer ce complément d'individu <br>(Une confirmation avant la suppression vous sera demandée)"
                            data-message="Êtes-vous sûr de vouloir supprimer ce complément ?"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true"
                            data-toggle="confirmationx">
                             <span class="icon icon-delete"></span> Supprimer</a>
                     <?php endif; ?>

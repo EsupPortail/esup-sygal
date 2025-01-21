@@ -15,11 +15,9 @@ $description = "Pas d'état : État manquant pour cette session de formation";
 
 if ($etat !== null) {
     $libelle = $etat->getLibelle();
-    $description = $etat->getLibelle();
-    if ($etat->getDescription()) $description .= " : " . $etat->getDescription();
+    if ($etat->getDescription()) $description = $etat->getDescription();
     if ($etat->getCouleur()) $couleur = $etat->getCouleur();
     if ($etat->getIcone()) $icone = $etat->getIcone();
-
 }
 ?>
 

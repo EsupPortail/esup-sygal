@@ -57,9 +57,13 @@ use Structure\Entity\Db\Structure;
                 <img class="signature" src="data:image/*;base64,<?php echo base64_encode($contenusFichiers[$document->getId()]); ?>"/>
 
                 <?php /** @see \Structure\Controller\StructureController::supprimerDocumentAction() */ ?>
-                <a href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>">
-                        <span class="icon icon-delete iconly float-end" style="color:darkred;" data-toggle="confirmationx"
-                              title="Supprimer le document"></span>
+                <a href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>"
+                   data-bs-toggle="tooltip"
+                   data-bs-html="true"
+                   data-toggle="confirmationx"
+                   title="Supprimer le document <br>(Une confirmation avant la suppression vous sera demandée)"
+                >
+                        <span class="icon icon-delete iconly float-end" style="color:darkred;"></span>
                 </a>
             </td>
         </tr>

@@ -86,8 +86,12 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
                                 ['these' => $these->getId(), 'justificatif'=>$attestation->getId()],
                                 ["query" => ["retour" => $retour]],
                                 true); ?>
-                           ">
-                                <span style='color:darkred;' class="icon icon-delete iconly" title="Supprimer le justificatif"></span>
+                            "
+                               data-toggle="confirmationx"
+                            >
+                                <span data-bs-toggle="tooltip"
+                                      data-bs-html="true"
+                                      style='color:darkred;' class="icon icon-delete iconly" title="Supprimer le justificatif <br>Une confirmation avant la suppression vous sera demandée"></span>
                             </a>
                         <?php endif; ?>
                     </li>

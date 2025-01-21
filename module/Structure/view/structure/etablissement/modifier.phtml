@@ -191,7 +191,11 @@ $this->headTitle(($isNew ? "Création" : "Modif.") . " établissemnt " . $etabli
                 </div>
                 <?php if ($form->getObject()->getId()): ?>
                     <a data-toggle="confirmationx" id="supprimer-logo" class="btn btn-danger"
-                       href="<?php echo $this->url('etablissement/supprimer-logo', ["etablissement" => $form->getObject()->getId()], [], true); ?>">
+                       href="<?php echo $this->url('etablissement/supprimer-logo', ["etablissement" => $form->getObject()->getId()], [], true); ?>"
+                       data-bs-toggle="tooltip"
+                       data-bs-html="true"
+                       title="Une confirmation avant la suppression vous sera demandée"
+                    >
                         <span class="icon icon-delete"></span>
                         Supprimer le logo
                     </a>
