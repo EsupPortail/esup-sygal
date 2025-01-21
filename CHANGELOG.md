@@ -6,7 +6,7 @@ Journal des modifications
 - [FIX] Bouton Forçage inaccessible (sur la fiche de la thèse) si la thèse n'était plus en cours
 - [FIX] Module Admission : Notifications non reçues 
 - [FIX] Modification d'une formation impossible 
-- [FIX] Certaines méthodes n'étaient pas présentes dans AdmissionEtudiantTemplateVariable
+- [FIX] Certaines méthodes n'étaient pas présentes dans les classes *TemplateVariable.php
 - [FIX] Dysfonctionnements autour des comptes utilisateurs (accès à la page perturbé suite au passage à unicaen/utilisateur, bug dans la création de compte+individu et l'envoi de la notif).
 - [FIX] Envoi de la notif 'Validation du dépôt de la thèse corrigée' à un président du jury via la page Admin > Présidents.
 - [FIX] Utilisation de UrlService (plutôt que UrlHelper) pour générer l'URL d'usurpation d'identité à partir d'un individu.

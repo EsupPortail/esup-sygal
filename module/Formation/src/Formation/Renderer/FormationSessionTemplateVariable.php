@@ -2,6 +2,7 @@
 
 namespace Formation\Renderer;
 
+use DateTime;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
@@ -107,5 +108,22 @@ class FormationSessionTemplateVariable extends AbstractTemplateVariable
     {
         $responsable = $this->session->getResponsable();
         return $responsable?$responsable->getNomComplet():"Aucun responsable de désigner pour cette session";
+    }
+
+    /** @noinspection PhpUnused */
+    public function getDuree() : float
+    {
+        $somme = new DateTime('00:00');
+        /** @var Seance $seance */
+        foreach ($this->session->getSeances() as $seance) {
+            if ($seance->estNonHistorise()) {
+                $debut = $seance->getDebut();
+                $fin = $seance->getFin();
+                $interval = $debut->diff($fin);
+                $somme->add($interval);
+            }
+        }
+        $interval = $somme->diff(new DateTime('00:00'));
+        return ((float) $interval->format('%d')*24 + (float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
     }
 }
