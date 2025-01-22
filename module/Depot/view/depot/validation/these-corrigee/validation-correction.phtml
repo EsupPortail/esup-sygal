@@ -52,7 +52,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                         <?php if (empty($utilisateurs[$i->getId()])) : ?>
                             <?php
                             $message = sprintf(
-                                "Cette personne ne possèdent aucune adresse électronique connue par l'application. <br/>
+                                "Cette personne ne possède aucune adresse électronique connue de l'application. <br/>
                                         &nbsp; &nbsp;&nbsp;&nbsp;
                                         L'école doctorale a été notifiée du souci et va pouvoir associer un compte au Président de jury.",
                                 $validation->getIndividu()->getSource(),
@@ -81,13 +81,15 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
 
         <?php if ($canValidate): ?>
             <a href="<?php echo $validerUrl ?>"
-               class="btn btn-success ajax-modal"
+               class="btn btn-success"
+               data-toggle="confirmationx"
                data-event="event-validation-correction-these"><span class="fas fa-thumbs-up"></span> Valider</a>
         <?php endif ?>
         <?php if ($canUnvalidate): ?>
             <br>
             <a href="<?php echo $devaliderUrl ?>"
-               class="btn btn-danger ajax-modal"
+               class="btn btn-danger"
+               data-toggle="confirmationx"
                data-event="event-validation-correction-these"><span class="icon icon-delete"></span> Annuler la validation</a>
         <?php endif ?>
 
@@ -98,8 +100,3 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
         ?>
     </div>
 </div>
-
-
-<?php echo $this->messenger()
-    ->setContainerClassesToAdd('alert-md')
-    ->addMessagesFromFlashMessengerWithNamespace($typeValidation->getCode() . '/*') ?>

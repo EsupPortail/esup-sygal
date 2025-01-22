@@ -6,6 +6,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Depot\Controller\ValidationController;
+use Depot\Process\Validation\DepotValidationProcess;
 use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
@@ -49,6 +50,10 @@ class ValidationControllerFactory implements FactoryInterface
         /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
         $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
         $controller->setDepotNotificationFactory($depotNotificationFactory);
+
+        /** @var DepotValidationProcess $depotValidationProcess */
+        $depotValidationProcess = $container->get(DepotValidationProcess::class);
+        $controller->setDepotValidationProcess($depotValidationProcess);
 
         return $controller;
     }

@@ -317,8 +317,14 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             ]);
 
         $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+        if (!$to) {
+            throw new RuntimeException(sprintf(
+                "Aucune adresse mail trouvée pour les aspects doctorat de l'établissement %s",
+                $these->getEtablissement()->getSigle()
+            ));
+        }
         $notif
-            ->addSuccessMessage(sprintf("Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)", $to))
+            ->addSuccessMessage(sprintf("Un mail de notification vient d'être envoyé aux adresses suivantes : %s", implode(',', $to)))
             ->setTo($to)
             ->setTemplateVariables([
                 'these' => $these,

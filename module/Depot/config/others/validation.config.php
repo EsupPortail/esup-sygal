@@ -1,8 +1,12 @@
 <?php
 
+namespace Depot;
+
 use Depot\Assertion\These\TheseAssertion;
 use Depot\Controller\Factory\ValidationControllerFactory;
 use Depot\Controller\ValidationController;
+use Depot\Process\Validation\DepotValidationProcess;
+use Depot\Process\Validation\DepotValidationProcessFactory;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Depot\Service\Validation\DepotValidationService;
@@ -170,6 +174,7 @@ return [
     'service_manager' => [
         'factories' => [
             DepotValidationService::class => DepotValidationServiceFactory::class,
+            DepotValidationProcess::class => DepotValidationProcessFactory::class,
         ],
     ],
     'controllers' => [

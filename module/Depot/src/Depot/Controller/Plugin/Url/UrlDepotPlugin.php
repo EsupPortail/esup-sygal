@@ -31,6 +31,7 @@ use These\Entity\Db\These;
  * @method modifierRdvBuUrl(These $these)
  * @method validerRdvBuUrl(These $these)
  * @method devaliderRdvBuUrl(These $these)
+ * @method validationTheseCorrigeeUrl(These $these)
  * @method validationDepotTheseCorrigeeUrl(These $these)
  * @method validationCorrectionTheseUrl(These $these)
  * @method validerDepotTheseCorrigeeUrl(These $these)

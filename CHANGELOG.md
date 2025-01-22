@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Utilisation de UrlService (plutôt que UrlHelper) pour générer l'URL d'usurpation d'identité à partir d'un individu.
 - [FIX] Notifications Admission et Formation
 - [FIX] Erreur lors de l'envoi de la notif 'Demande des pré-rapports de soutenance' (variable 'rapporteur' non transmise à UrlService).
+- [FIX] Validation de la version corrigée de la thèse par le président du jury : améliorations (transaction bdd, remontée erreur, messages).
 
 9.2.0
 -----

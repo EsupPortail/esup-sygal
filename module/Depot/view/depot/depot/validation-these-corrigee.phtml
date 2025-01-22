@@ -11,7 +11,6 @@ use These\Entity\Db\These;
  * @var These            $these
  * @var string           $validationDepotTheseCorrigeeUrl
  * @var string           $validationCorrectionTheseUrl
- * @var TypeValidation   $typeValidation
  * @var Validation|null  $validation
  * @var string           $nextStepUrl
  * @var bool             $isDoctorant
@@ -29,6 +28,9 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
 <h1 class="page-header">Validations
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
+
+<?php echo $this->alertes()->renderAsBootstrapToasts()
+    ->addAlertesFromFlashMessenger() ?>
 
 <div>
     <div class="box card">

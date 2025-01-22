@@ -7,6 +7,7 @@ use Application\Entity\Db\Validation;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Depot\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
@@ -17,6 +18,11 @@ class DepotValidationService
 {
     use ValidationServiceAwareTrait;
     use UserContextServiceAwareTrait;
+
+    public function getEntityManager(): EntityManager
+    {
+        return $this->validationService->getEntityManager();
+    }
 
     /**
      * Recherche s'il existe des validations RDV BU historisées.

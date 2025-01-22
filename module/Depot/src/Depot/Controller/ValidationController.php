@@ -7,10 +7,13 @@ use Application\Entity\Db\TypeValidation;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Depot\Process\Validation\DepotValidationProcessAwareTrait;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
+use Exception;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use These\Entity\Db\Acteur;
@@ -27,9 +30,12 @@ class ValidationController extends AbstractController
     use UtilisateurServiceAwareTrait;
     use DepotServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use DepotValidationProcessAwareTrait;
 
     public function pageDeCouvertureAction(): ViewModel
     {
+        // todo : utiliser un process pour remonter les erreurs proprement, cf. modifierValidationCorrectionTheseAction()
+
         $these = $this->requestedThese();
         $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
@@ -82,6 +88,8 @@ class ValidationController extends AbstractController
 
     public function rdvBuAction()
     {
+        // todo : utiliser un process pour remonter les erreurs proprement, cf. modifierValidationCorrectionTheseAction()
+
         $these = $this->requestedThese();
         $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
@@ -172,6 +180,8 @@ class ValidationController extends AbstractController
 
     public function modifierValidationDepotTheseCorrigeeAction(): ViewModel
     {
+        // todo : utiliser un process pour remonter les erreurs proprement, cf. modifierValidationCorrectionTheseAction()
+
         $these = $this->requestedThese();
         $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
@@ -222,86 +232,37 @@ class ValidationController extends AbstractController
         return $viewModel;
     }
 
-    public function modifierValidationCorrectionTheseAction()
+    public function modifierValidationCorrectionTheseAction(): Response
     {
         $these = $this->requestedThese();
-        $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
 
-        $notificationLogs = [];
-
-        // si un tableau est retourné par le plugin, l'opération a été confirmée
-        if (is_array($result)) {
+        try {
             if ($action === 'valider') {
                 $this->assertIsAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE);
-
-                $validation = $this->depotValidationService->validateCorrectionThese($these);
+                $validation = $this->depotValidationProcess->validateCorrectionThese($these);
                 $successMessage = "Validation enregistrée avec succès.";
-
-                // notification par mail si plus aucune validation attendue
-                $results = $this->depotValidationService->getValidationsAttenduesPourCorrectionThese($these);
-                if (count($results) === 0) {
-                    //Met à jour le témoin correction effectuée pour une thèse provenant de SyGAL
-                    if(!$these->getSource()->getImportable()){
-                        $these->setCorrectionEffectuee("O");
-                        $this->theseService->update($these);
-                    }
-                    // notification de la MDD
-                    $notification = $this->depotNotificationFactory->createNotificationValidationCorrectionThese($these);
-                    $notificationResult = $this->notifierService->trigger($notification);
-                    $notificationLogs = array_merge_recursive($notificationLogs, array_filter([
-                        'success' => $notificationResult->getSuccessMessages(),
-                        'danger' => $notificationResult->getErrorMessages(),
-                    ]));
-
-                    // notification du doctorant
-                    try {
-                        $notification = $this->depotNotificationFactory->createNotificationValidationCorrectionTheseEtudiant($these);
-                        $notificationResult = $this->notifierService->trigger($notification);
-                        $notificationLogs = array_merge_recursive($notificationLogs, array_filter([
-                            'success' => $notificationResult->getSuccessMessages(),
-                            'danger' => $notificationResult->getErrorMessages(),
-                        ]));
-                    } catch (\Notification\Exception\RuntimeException $e) {
-                        $notificationLogs = array_merge_recursive($notificationLogs, [
-                            'danger' => $e->getMessage(),
-                        ]);
-                    }
-                }
-            }
-            elseif ($action === 'devalider') {
+            } elseif ($action === 'devalider') {
                 $this->assertIsAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR);
-
-                $validation = $this->depotValidationService->unvalidateCorrectionThese($these);
-                $successMessage ="Validation annulée avec succès.";
-
-                // pas de notification par mail
-            }
-            else {
+                $validation = $this->depotValidationProcess->unvalidateCorrectionThese($these);
+                $successMessage = "Validation annulée avec succès.";
+            } else {
                 throw new RuntimeException("Action inattendue!");
             }
-
-            $tvCode = $validation->getTypeValidation()->getCode();
-            $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
-            if (isset($notificationLogs['info'])) {
-                $this->flashMessenger()->addMessage($notificationLogs['success'], "$tvCode/info");
-            }
-            if (isset($notificationLogs['danger'])) {
-                $this->flashMessenger()->addMessage($notificationLogs['danger'], "$tvCode/danger");
-            }
+            $this->flashMessenger()->addSuccessMessage($successMessage);
+        } catch (Exception $e) {
+            $this->flashMessenger()->addErrorMessage("Validation impossible. " . $e->getMessage());
         }
 
-        // récupération du modèle de vue auprès du plugin et passage de variables classique
-        $viewModel = $this->confirm()->getViewModel();
 
-        $viewModel->setVariables([
-            'title'  => "Validation des corrections de la thèse",
-            'these'  => $these,
-            'action' => $action,
-        ]);
+        $notificationLogs = $this->depotValidationProcess->getNotificationLogs();
+        if (isset($notificationLogs['info'])) {
+            $this->flashMessenger()->addInfoMessage($notificationLogs['success']);
+        }
+        if (isset($notificationLogs['danger'])) {
+            $this->flashMessenger()->addErrorMessage($notificationLogs['danger']);
+        }
 
-        $viewModel->setTemplate('depot/validation/these-corrigee/modifier-validation-correction');
-
-        return $viewModel;
+        return $this->redirect()->toUrl($this->urlDepot()->validationTheseCorrigeeUrl($these));
     }
 }

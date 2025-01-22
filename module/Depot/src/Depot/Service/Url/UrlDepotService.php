@@ -291,6 +291,15 @@ class UrlDepotService extends UrlService
         );
     }
 
+    public function validationTheseCorrigeeUrl(These $these, array $options = []): string
+    {
+        return $this->fromRoute(
+            'these/validation-these-corrigee',
+            ['these' => $this->idify($these)],
+            $options
+        );
+    }
+
     public function validerPageDeCouvertureUrl(These $these)
     {
         return $this->fromRoute('validation/page-de-couverture',
