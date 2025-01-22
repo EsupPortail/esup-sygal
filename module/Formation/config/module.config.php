@@ -94,5 +94,8 @@ return array(
         'stylesheets' => [
             '071_formation' => '/css/formation.css',
         ],
+        'head_scripts' => [
+            '080_formation' => "/js/formation.js",
+        ]
     ],
 );

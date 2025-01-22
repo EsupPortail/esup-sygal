@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Module Formation : Ajout d'un tri pour les individus sur l'écran Inscriptions
 - Module Formation : Ajout d'un bouton sur la fiche d'une session pour envoyer la feuille d'émargement aux formateurs
+- Module Formation : Amélioration de l'UI concernant l'affichage des inscrits à une session de formation
 
 9.2.1
 -----

@@ -483,7 +483,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         Envoyer les inscrits aux formateurs
     </a>
 <?php endif; ?>
-<div class="index-result">
+<div class="index-result mt-4">
 <?php if (empty($inscrits)) : ?>
     <em>Aucun·e doctorant·e inscrit·e à cette session de formation.</em>
 <?php else : ?>
@@ -494,17 +494,22 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             (<?php echo count($listeNonClasseeTrue); ?> inscriptions)
         </h3>
 
-        <ul>
-        <?php foreach ($listeNonClassee as $inscrit) : ?>
-            <?php echo $this->inscription($inscrit, [
-                    'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
-                    'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
-                    'action-historiser' => $canModifierInscription,
-                    'action-supprimer' => $canModifierInscription,
-                    'anneeUniv' => $anneeUniv
-            ]); ?>
-            <?php endforeach; ?>
-        </ul>
+        <div class="doctorant-cards-container" id="inscrits-non-classes-container">
+            <div class="doctorant-cards-wrapper">
+                <?php foreach ($listeNonClassee as $inscrit) : ?>
+                    <?php echo $this->inscription($inscrit, [
+                        'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
+                        'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
+                        'action-historiser' => $canModifierInscription,
+                        'action-supprimer' => $canModifierInscription,
+                        'anneeUniv' => $anneeUniv
+                    ]); ?>
+                <?php endforeach; ?>
+            </div>
+            <div class="text-center mt-3">
+                <button id="show-more-non-classes" class="btn btn-primary show-more-inscrits-button ">Afficher tout</button>
+            </div>
+        </div>
 
     </div>
     <div class="col-md-4">
@@ -513,17 +518,23 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             (<?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?>)
         </h3>
 
-        <ul>
-        <?php foreach ($listePrincipale as $inscription) : ?>
-            <?php echo $this->inscription($inscription, [
-                    'action-liste-principale' => false,
-                    'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
-                    'action-historiser' => $canModifierInscription,
-                    'action-supprimer' => $canModifierInscription,
-                    'anneeUniv' => $anneeUniv
-            ]); ?>
-        <?php endforeach; ?>
-        </ul>
+        <div class="doctorant-cards-container" id="inscrits-liste-principale-container">
+            <div class="doctorant-cards-wrapper">
+                <?php foreach ($listePrincipale as $inscription) : ?>
+                    <?php echo $this->inscription($inscription, [
+                            'action-liste-principale' => false,
+                            'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
+                            'action-historiser' => $canModifierInscription,
+                            'action-supprimer' => $canModifierInscription,
+                            'anneeUniv' => $anneeUniv
+                    ]); ?>
+                <?php endforeach; ?>
+            </div>
+            <div class="text-center mt-3">
+                <button id="show-more-principale" class="btn btn-primary show-more-inscrits-button">Afficher tout</button>
+            </div>
+        </div>
+
     </div>
 
     <div class="col-md-4">
@@ -532,18 +543,23 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             (<?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?>)
         </h3>
 
-        <ul>
-            <?php /** @var Inscription $inscription */ ?>
-            <?php foreach ($listeComplementaire as $inscription) : ?>
-                <?php echo $this->inscription($inscription, [
-                        'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
-                        'action-liste-complementaire' => false,
-                        'action-historiser' => $canModifierInscription,
-                        'action-supprimer' => $canModifierInscription,
-                        'anneeUniv' => $anneeUniv
-                ]); ?>
-            <?php endforeach; ?>
-        </ul>
+        <div class="doctorant-cards-container" id="inscrits-liste-compl-container">
+            <div class="doctorant-cards-wrapper">
+                <?php /** @var Inscription $inscription */ ?>
+                <?php foreach ($listeComplementaire as $inscription) : ?>
+                    <?php echo $this->inscription($inscription, [
+                            'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
+                            'action-liste-complementaire' => false,
+                            'action-historiser' => $canModifierInscription,
+                            'action-supprimer' => $canModifierInscription,
+                            'anneeUniv' => $anneeUniv
+                    ]); ?>
+                <?php endforeach; ?>
+            </div>
+            <div class="text-center mt-3">
+                <button id="show-more-compl" class="btn btn-primary show-more-inscrits-button">Afficher tout</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -572,4 +588,3 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         cursor: not-allowed;
     }
 </style>
-

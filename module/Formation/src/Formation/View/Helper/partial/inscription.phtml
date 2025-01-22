@@ -31,104 +31,127 @@ $these = current($doctorant->getTheses());
 
 ?>
 
-<li>
-    <?php
+<div class="card doctorant-card <?php if ($inscription->estHistorise()) echo "historise"; ?>"
+     <?php if($inscription->getDescription()) : ?>
+        data-bs-toggle='tooltip' data-bs-placement="right" title="Motif : <?php echo strip_tags($inscription->getDescription()); ?>"
+     <?php endif; ?>
+>
+    <div class="card-body d-flex align-items-center">
+        <div class="doctorant-icon">
+            <div class="icon">
+                <i class="fas fa-user-graduate"></i>
+                <?php foreach ($doctorant->getTheses() as $these):
+                    if ($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise()): ?>
+                        <span class="badge">
+                            <?php echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee->getPremiereAnnee())); ?>
+                        </span>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
 
-    echo $doctorant->getIndividu()->getNomComplet(); ?>
-    <span class=" <?php if ($inscription->estHistorise()) echo "historisee"; ?> " data-bs-toggle='tooltip' data-bs-placement="right" title="<?php echo strip_tags($inscription->getDescription()); ?>">
-    <?php foreach ($doctorant->getTheses() as $these) {
-        if ($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise()) {
-            echo "<br/>";
-            echo $this->site($these->getEtablissement());
-            echo " - ";
-            echo $this->site($these->getEcoleDoctorale());
-            echo " - ";
-            echo $this->site($these->getUniteRecherche());
-            echo " - ";
-            echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee->getPremiereAnnee()));
-        }
-        $missions = $doctorant->getMissionsEnseignements();
-        if (!empty($missions)) {
-            echo " - ";
-            foreach ($missions as $mission) {
-                echo "<span style='font-weight:bold; font-family: monospace; color:";
-                echo ($mission->getAnneeUniversitaire() === $annee->getPremiereAnnee())?"darkgreen":"darkorange";
-                echo "'>";
-                echo "ME".$mission->getAnneeUniversitaire(). " ";
-                echo "</span>";
-            }
-        }
-    }
-    ?>
-    </span>
-    <br/>
-    Inscrit le <?php echo $inscription->getHistoCreation()->format("d/m/Y à H:i"); ?>
-    <?php if ($inscription->getSursisEnquete()) : ?>
-        <br><b>Possède un sursis personnel de <?= $inscription->getSursisEnquete() ?> jours pour répondre à l'enquête</b>
-    <?php endif; ?>
-    <?php if ($actionListePrincipale OR $actionListeComplementaire OR $actionHistoriser OR $actionSupprimer) : ?>
-        <br/>
-        <?php if ($inscription->estNonHistorise() AND $actionListePrincipale) : ?>
-            <a
-                <?php /** @see \Formation\Controller\InscriptionController::passerListePrincipaleAction() */?>
-                    href="<?php echo $this->url('formation/inscription/passer-liste-principale', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                    title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste principale" data-bs-toggle="tooltip" data-bs-html="true"
-            >
-                <strong>P</strong></a>
-        <?php endif; ?>
-        <?php if ($inscription->estNonHistorise() AND $actionListeComplementaire) : ?>
-        <a <?php /** @see \Formation\Controller\InscriptionController::passerListeComplementaireAction() */?>
-                href="<?php echo $this->url('formation/inscription/passer-liste-complementaire', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-bs-toggle="tooltip" data-bs-html="true"
-        >
-            <strong>C</strong></a>
-        <?php endif; ?>
-        <?php if (($inscription->getListe() !== null) AND $inscription->getListe()) : ?>
-            <a <?php /** @see \Formation\Controller\InscriptionController::retirerListeAction() */?>
-                    href="<?php echo $this->url('formation/inscription/retirer-liste', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                    title="Mettre <?php echo $doctorant->getIndividu()->getNomComplet(); ?> dans la liste des non-classés" data-bs-toggle="tooltip" data-bs-html="true"
-            >
-                <strong>∅</strong></a>
-        <?php endif; ?>
-        <?php if ($actionHistoriser) : ?>
-            <?php if ($inscription->estNonHistorise()) : ?>
-                <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
-                <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                   data-bs-toggle="tooltip"
-                   title="Historiser l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
-                >
-                    <span class="fa fa-trash"></span></a>
-            <?php else : ?>
-                <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
-                <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                   data-bs-toggle="tooltip"
-                   title="Restaurer l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
-                >
-                    <span class="fa fa-trash-restore"></span>
-                </a>
+        <div class="doctorant-info flex-grow-1">
+            <div class="doctorant-name"><?php echo $doctorant->getIndividu()->getNomComplet(); ?></div>
+            <div class="doctorant-details">
+                <span>
+                    <?php foreach ($doctorant->getTheses() as $these) {
+                        if ($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise()) {
+                            echo "<br/>";
+                            echo $this->site($these->getEtablissement());
+                            echo " - ";
+                            echo $this->site($these->getEcoleDoctorale());
+                            echo " - ";
+                            echo $this->site($these->getUniteRecherche());
+                            echo " - ";
+                            echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee->getPremiereAnnee()));
+                        }
+                        $missions = $doctorant->getMissionsEnseignements();
+                        if (!empty($missions)) {
+                            echo " - ";
+                            foreach ($missions as $mission) {
+                                echo "<span style='font-weight:bold; font-family: monospace; color:";
+                                echo ($mission->getAnneeUniversitaire() === $annee->getPremiereAnnee())?"darkgreen":"darkorange";
+                                echo "'>";
+                                echo "ME".$mission->getAnneeUniversitaire(). " ";
+                                echo "</span>";
+                            }
+                        }
+                    }
+                    ?>
+                </span>
+            </div>
+            <div class="doctorant-extra">
+                Inscrit le <?php echo $inscription->getHistoCreation()->format("d/m/Y à H:i"); ?>
+                <?php if ($inscription->getSursisEnquete()) : ?>
+                    <br><b>Possède un sursis personnel de <?= $inscription->getSursisEnquete() ?> jours pour répondre à l'enquête</b>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="doctorant-actions">
+            <?php if ($actionListePrincipale OR $actionListeComplementaire OR $actionHistoriser OR $actionSupprimer) : ?>
+                <br/>
+                <?php if ($inscription->estNonHistorise() AND $actionListePrincipale) : ?>
+                    <a
+                        <?php /** @see \Formation\Controller\InscriptionController::passerListePrincipaleAction() */?>
+                            href="<?php echo $this->url('formation/inscription/passer-liste-principale', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
+                            title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste principale" data-bs-toggle="tooltip" data-bs-html="true"
+                    >
+                        <strong>P</strong></a>
+                <?php endif; ?>
+                <?php if ($inscription->estNonHistorise() AND $actionListeComplementaire) : ?>
+                    <a <?php /** @see \Formation\Controller\InscriptionController::passerListeComplementaireAction() */?>
+                            href="<?php echo $this->url('formation/inscription/passer-liste-complementaire', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
+                            title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-bs-toggle="tooltip" data-bs-html="true"
+                    >
+                        <strong>C</strong></a>
+                <?php endif; ?>
+                <?php if (($inscription->getListe() !== null) AND $inscription->getListe()) : ?>
+                    <a <?php /** @see \Formation\Controller\InscriptionController::retirerListeAction() */?>
+                            href="<?php echo $this->url('formation/inscription/retirer-liste', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
+                            title="Mettre <?php echo $doctorant->getIndividu()->getNomComplet(); ?> dans la liste des non-classés" data-bs-toggle="tooltip" data-bs-html="true"
+                    >
+                        <strong>∅</strong></a>
+                <?php endif; ?>
+                <?php if ($actionHistoriser) : ?>
+                    <?php if ($inscription->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
+                           data-bs-toggle="tooltip"
+                           title="Historiser l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
+                        >
+                            <span class="fa fa-trash"></span></a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
+                           data-bs-toggle="tooltip"
+                           title="Restaurer l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
+                        >
+                            <span class="fa fa-trash-restore"></span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canAccorderSursis && $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER AND $inscription->getListe() == Inscription::LISTE_PRINCIPALE) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::accorderSursisAction() */?>
+                        <a class="action ajax-modal"
+                           data-event="modification"
+                           href="<?php echo $this->url('formation/inscription/accorder-sursis', ['inscription' => $inscription->getId()], true); ?>"
+                           data-bs-toggle="tooltip"
+                           title="Accorder un sursis à <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour la saisie de l'enquête"
+                        >
+                            <span class="fa fa-clock"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($actionSupprimer AND $inscription->estHistorise()) : ?>
+                    <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
+                    <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       data-bs-toggle="tooltip"
+                       title="Supprimer l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
+                    >
+                        <span class="fa fa-bomb text-danger"></span></a>
+                <?php endif; ?>
             <?php endif; ?>
-            <?php if ($canAccorderSursis && $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER AND $inscription->getListe() == Inscription::LISTE_PRINCIPALE) : ?>
-                <?php /** @see \Formation\Controller\InscriptionController::accorderSursisAction() */?>
-                <a class="action ajax-modal"
-                   data-event="modification"
-                   href="<?php echo $this->url('formation/inscription/accorder-sursis', ['inscription' => $inscription->getId()], true); ?>"
-                   data-bs-toggle="tooltip"
-                   title="Accorder un sursis à <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour la saisie de l'enquête"
-                >
-                    <span class="fa fa-clock"></span>
-                </a>
-            <?php endif; ?>
-        <?php endif; ?>
-        <?php if ($actionSupprimer AND $inscription->estHistorise()) : ?>
-            <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
-            <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
-               class="ajax-modal" data-event="modification"
-               data-bs-toggle="tooltip"
-               title="Supprimer l'inscription de <?php echo $doctorant->getIndividu()->getNomComplet(); ?> pour cette session"
-            >
-                <span class="fa fa-bomb text-danger"></span></a>
-        <?php endif; ?>
-    <?php endif; ?>
-</li>
-
-
+        </div>
+    </div>
+</div>
