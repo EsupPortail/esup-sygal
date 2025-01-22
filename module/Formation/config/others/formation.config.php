@@ -51,6 +51,7 @@ return [
                     'controller' => FormationController::class,
                     'action' => [
                         'afficher',
+                        'telecharger-fiche',
                     ],
                     'privileges' => [
                         FormationPrivileges::FORMATION_AFFICHER,
@@ -224,6 +225,18 @@ return [
                                         'controller' => FormationController::class,
                                         /** @see FormationController::supprimerFicheAction */
                                         'action'     => 'supprimer-fiche',
+                                    ],
+                                ],
+                            ],
+                            'telecharger-fiche' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/telecharger-fiche/:formation',
+                                    'defaults' => [
+                                        'controller' => FormationController::class,
+                                        /** @see FormationController::telechargerFicheAction() */
+                                        'action'     => 'telecharger-fiche',
                                     ],
                                 ],
                             ],

@@ -1047,7 +1047,8 @@ p.avis-complem {
 .doctorant-card.visible {
   display: block;
   opacity: 1;
-  transform: translateY(0); }
+  transform: translateY(0);
+  min-height: 103px; }
 
 /* Carte preview (partiellement visible sous le bouton) */
 .doctorant-card.preview {

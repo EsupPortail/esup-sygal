@@ -81,6 +81,7 @@ $these = current($doctorant->getTheses());
                 </span>
             </div>
             <div class="doctorant-extra">
+                <?php if (!($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise())) echo "<br/>"; ?>
                 Inscrit le <?php echo $inscription->getHistoCreation()->format("d/m/Y à H:i"); ?>
                 <?php if ($inscription->getSursisEnquete()) : ?>
                     <br><b>Possède un sursis personnel de <?= $inscription->getSursisEnquete() ?> jours pour répondre à l'enquête</b>

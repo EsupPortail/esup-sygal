@@ -7,7 +7,9 @@ use Application\RouteMatch;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
 use Formation\Form\Formation\FormationFormAwareTrait;
@@ -19,6 +21,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class FormationController extends AbstractController
@@ -33,6 +36,7 @@ class FormationController extends AbstractController
     use AnneeUnivServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
@@ -186,6 +190,27 @@ class FormationController extends AbstractController
             ]);
         }
         return $vm;
+    }
+
+    public function telechargerFicheAction(): void
+    {
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
+        $fichier = $formation->getFiche();
+
+        if (!$fichier) {
+            return;
+        }
+
+        // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
+        try {
+            $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
+        }
+        $fichier->setContenuFichierData($contenuFichier);
+
+        // Envoi du fichier au client (navigateur)
+        $this->uploader()->download($fichier);
     }
 
     public function supprimerFicheAction(): Response|ViewModel

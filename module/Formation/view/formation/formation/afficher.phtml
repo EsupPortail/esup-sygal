@@ -90,7 +90,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <dt class="col-md-3"> Fiche </dt>
         <dd class="col-md-9">
             <?php echo $this->fichier($formation->getFiche(),
-                $urlFichierPlugin->telechargerFichier($formation->getFiche()),
+                $this->url('formation/formation/telecharger-fiche', ["formation"=> $formation->getId()],[], true),
                 $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier" => $formation->getFiche()->getId()], ['query' => ['redirect' => $this->url('formation/formation/afficher', ["formation" => $formation->getId()])]], true),
                 $canModifierFormation,
                 "Fiche de la formation",

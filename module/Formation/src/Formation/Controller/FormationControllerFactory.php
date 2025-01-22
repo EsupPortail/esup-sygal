@@ -5,6 +5,7 @@ namespace Formation\Controller;
 use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctrine\ORM\EntityManager;
 use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Formation\Form\Formation\FormationForm;
 use Formation\Service\Formation\FormationService;
@@ -33,6 +34,7 @@ class FormationControllerFactory {
          * @var FormationService $formationService
          * @var ModuleService $moduleService
          * @var SessionService $sessionService
+         * @var FichierStorageService $fichierStorageService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
@@ -45,6 +47,7 @@ class FormationControllerFactory {
         $anneeUnivService = $container->get(AnneeUnivService::class);
         $natureFichier = $container->get(NatureFichierService::class);
         $fichierService = $container->get(FichierService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
 
         /**
          * @var FormationForm $formationForm
@@ -63,6 +66,7 @@ class FormationControllerFactory {
         $controller->setAnneeUnivService($anneeUnivService);
         $controller->setFichierService($fichierService);
         $controller->setNatureFichierService($natureFichier);
+        $controller->setFichierStorageService($fichierStorageService);
 
         return $controller;
     }
