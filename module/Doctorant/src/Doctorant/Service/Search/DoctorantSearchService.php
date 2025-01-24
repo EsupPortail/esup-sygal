@@ -19,12 +19,9 @@ class DoctorantSearchService extends SearchService
     {
         $qb = $this->doctorantService->getRepository()->createQueryBuilder('d');
         $qb
-            ->addSelect('i')
-            ->join('d.individu', 'i')
-            ->addSelect('u')
-            ->leftJoin('i.utilisateurs', 'u')
-            ->addSelect('cu')
-            ->leftJoin('i.complements', 'cu');
+            ->addSelect('i')->join('d.individu', 'i')
+            ->addSelect('u')->leftJoin('i.utilisateurs', 'u')
+            ->addSelect('cu')->leftJoin('i.complements', 'cu');
 
         return $qb;
     }
@@ -33,21 +30,21 @@ class DoctorantSearchService extends SearchService
     {
         // filtre textuel
         $textFilter = new TextSearchFilter("Recherche textuelle", 'text');
-        $textFilter->setAttributes(['title' => "Recherche sur le nom d'usage, le prénom ou l'adresse électronique"]);
+        $textFilter->setAttributes(['title' => "Recherche sur le nom d'usage, le prénom, l'adresse électronique ou l'INE"]);
         $textFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
-            $individus = $this->individuService->getRepository()->findByText($filter->getValue());
-            if (empty($individus)) {
+            $entities = $this->doctorantService->getRepository()->findByText($filter->getValue());
+            if (empty($entities)) {
                 $qb->andWhere('0 = 1');
             } else {
-                $individusIds = array_map(fn(array $individu) => $individu['id'], $individus);
-                $qb->andWhere($qb->expr()->in('i', $individusIds));
+                $ids = array_map(fn(array $individu) => $individu['id'], $entities);
+                $qb->andWhere($qb->expr()->in('i', $ids));
             }
         });
         $this->addFilter($textFilter);
 
-        $this->addSorters([
-            (new SearchSorter("Id", 'id')),
-            (new SearchSorter("Nom d'usage", 'i.nomUsuel'))->setIsDefault()
-        ]);
+//        $this->addSorters([
+//            (new SearchSorter("Id", 'id')),
+//            (new SearchSorter("Nom d'usage", 'i.nomUsuel'))->setIsDefault()
+//        ]);
     }
 }

@@ -341,7 +341,7 @@ class Doctorant implements
         return 'Doctorant';
     }
 
-    public function getIne(): string
+    public function getIne(): ?string
     {
         return $this->ine;
     }
