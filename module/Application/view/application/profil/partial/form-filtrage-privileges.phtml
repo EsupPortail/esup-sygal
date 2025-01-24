@@ -1,12 +1,11 @@
 <?php
 
-use Application\Entity\Db\Profil;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
  * @var string      $text
- * @var Profil[]      $profilsForFilter
+ * @var \UnicaenPrivilege\Entity\Db\PrivilegeCategorie[] $categoriesPrivilegesForFilter
  */
 
 /**
@@ -21,27 +20,20 @@ $urlFiltrer = function ($paramName, $paramValue, $queryParams) {
     return $this->url('profil', [], ['query' => $queryParams], true);
 };
 
+$values = [
+    ['value' => '', 'label' => $this->translate("(Peu importe)")],
+];
+foreach ($categoriesPrivilegesForFilter as $categorie) {
+    $values[$categorie->getCode()] = [
+        'value' => $categorie->getCode(),
+        'label' => $this->translate($categorie->getLibelle()),
+    ];
+}
+
 echo $this->filterPanel([
     $this->translate("Catégorie") => [
         'paramName'   => 'categorie',
-        'paramConfig' => [
-            ['value' => '', 'label' => $this->translate("(Peu importe)")],
-            ['value' => $v = "droit", 'label' => $this->translate("Droit")],
-            ['value' => $v = "import", 'label' => $this->translate("Import")],
-            ['value' => $v = "these", 'label' => $this->translate("These")],
-            ['value' => $v = "utilisateur", 'label' => $this->translate("Utilisateur")],
-            ['value' => $v = "doctorant", 'label' => $this->translate("Doctorant")],
-            ['value' => $v = "structure", 'label' => $this->translate("Structure")],
-            ['value' => $v = "indicateur", 'label' => $this->translate("Indicateur")],
-            ['value' => $v = "soutenance", 'label' => $this->translate("Soutenance")],
-            ['value' => $v = "substitution", 'label' => $this->translate("Substitution")],
-            ['value' => $v = "validation", 'label' => $this->translate("Validation")],
-            ['value' => $v = "fichier-divers", 'label' => $this->translate("Fichier divers")],
-            ['value' => $v = "fichier-commun", 'label' => $this->translate("Fichier commun")],
-            ['value' => $v = "faq", 'label' => $this->translate("FAQ")],
-            ['value' => $v = "page-information", 'label' => $this->translate("Page d'informations")],
-
-        ],
+        'paramConfig' => $values,
         'filterUrl'   => $urlFiltrer,
         'titre'       => "Filtrage en fonction de la catégorie du privilège",
     ],

@@ -11,6 +11,7 @@ use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenPrivilege\Service\Privilege\PrivilegeCategorieServiceAwareTrait;
 use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
@@ -20,6 +21,7 @@ use Laminas\View\Model\ViewModel;
 
 class ProfilController extends AbstractActionController
 {
+    use PrivilegeCategorieServiceAwareTrait;
     use PrivilegeServiceAwareTrait;
     use ProfilServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
@@ -68,6 +70,7 @@ class ProfilController extends AbstractActionController
         return new ViewModel([
             'profils' => $profils,
             'privileges' => $privileges,
+            'categoriesPrivilegesForFilter' => $this->fetchCategoriesPrivilegesForFilter(),
             'profilsForFilter' => $this->fetchProfilsForFilter($depend),
             'params' => $this->params()->fromQuery(),
         ]);
@@ -116,6 +119,11 @@ class ProfilController extends AbstractActionController
         }
 
         return $qb;
+    }
+
+    private function fetchCategoriesPrivilegesForFilter(): array
+    {
+        return $this->privilegeCategorieService->findAll(['libelle' => 'asc']);
     }
 
     private function fetchProfilsForFilter($depend): array

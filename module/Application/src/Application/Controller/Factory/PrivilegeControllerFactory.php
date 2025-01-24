@@ -8,10 +8,15 @@ use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
+use UnicaenPrivilege\Service\Privilege\PrivilegeCategorieService;
 
 class PrivilegeControllerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): PrivilegeController
     {
         /**
          * @var EntityManager $entityManager
@@ -29,6 +34,10 @@ class PrivilegeControllerFactory
         $controller->setApplicationRoleService($roleService);
         $controller->setEtablissementService($etablissementService);
         $controller->setStructureService($structureService);
+
+        /** @var PrivilegeCategorieService $categoriesPrivilegeService */
+        $categoriesPrivilegeService = $container->get(PrivilegeCategorieService::class);
+        $controller->setprivilegeCategorieService($categoriesPrivilegeService);
 
         return $controller;
     }

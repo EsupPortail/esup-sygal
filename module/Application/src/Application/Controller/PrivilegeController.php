@@ -14,10 +14,12 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenPrivilege\Service\Privilege\PrivilegeCategorieServiceAwareTrait;
 use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
 
 class PrivilegeController extends AbstractController
 {
+    use PrivilegeCategorieServiceAwareTrait;
     use EntityManagerAwareTrait;
     use ApplicationRoleServiceAwareTrait;
     use StructureServiceAwareTrait;
@@ -62,6 +64,7 @@ class PrivilegeController extends AbstractController
         return new ViewModel([
             'roles'          => $roles,
             'privileges'     => $privileges,
+            'categoriesPrivilegesForFilter' => $this->fetchCategoriesPrivilegesForFilter(),
             'rolesForFilter' => $this->fetchRolesForFilter($depend),
             'params'         => $this->params()->fromQuery(),
         ]);
@@ -80,6 +83,11 @@ class PrivilegeController extends AbstractController
         $roles = $qb->getQuery()->getResult();
 
         return $roles;
+    }
+
+    private function fetchCategoriesPrivilegesForFilter(): array
+    {
+        return $this->privilegeCategorieService->findAll(['libelle' => 'asc']);
     }
 
     /**
