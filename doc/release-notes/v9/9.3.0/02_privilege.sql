@@ -2,6 +2,43 @@
 -- 9.3.0
 --
 
+alter table profil_to_role add histo_creation timestamp default current_timestamp not null;
+alter table profil_privilege add histo_creation timestamp default current_timestamp not null;
+alter table role_privilege add histo_creation timestamp default current_timestamp not null;
+
+create or replace function privilege__update_role_privilege() returns void
+    language plpgsql
+as $$
+BEGIN
+    -- Création des 'role_privilege' manquants d'après le contenu de 'profil_to_role' et de 'profil_privilege'
+    insert into role_privilege (role_id, privilege_id)
+    select p2r.role_id, pp.privilege_id
+    from profil_to_role p2r
+             join profil pr on pr.id = p2r.profil_id
+             join profil_privilege pp on pp.profil_id = pr.id
+    where not exists(
+        select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
+    );
+
+    -- Suppression des 'role_privilege' existant à tort : suppression de toute attribution de privilège à un rôle lié à un profil
+    -- (via 'profil_to_role') mais dont ce dernier ne possède par ce privilège.
+    -- ATTENTION : ne pas faire de suppression des 'role_privilege' en trop d'après uniquement le contenu de 'profil_to_role' et de 'profil_privilege'
+    -- parce que des rôles ne sont associés à aucun profil (ex: "Authentifié") et ces derniers se verraient retirer tous leurs privilèges !
+    with priv_attribue_a_un_role_ayant_un_profil_nayant_pas_ce_priv as (
+        select rp.role_id, rp.privilege_id, r.libelle as role_libelle, r.structure_id, p.libelle as privilege_libelle
+        from role_privilege rp
+                 join unicaen_privilege_privilege p on rp.privilege_id = p.id
+                 join role r on rp.role_id = r.id
+                 join profil_to_role p2r on r.id = p2r.role_id
+        where not exists(select * from profil_privilege pp where pp.profil_id = p2r.profil_id and pp.privilege_id = p.id)
+    )
+    delete from role_privilege rp
+    where (rp.role_id, rp.privilege_id) in (
+        select role_id, privilege_id from priv_attribue_a_un_role_ayant_un_profil_nayant_pas_ce_priv
+    );
+END;
+$$;
+
 create or replace function privilege__grant_privilege_to_profile(categorycode character varying, privilegecode character varying, profileroleid character varying) returns void
     language plpgsql
 as $$
