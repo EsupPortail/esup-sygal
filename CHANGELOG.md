@@ -9,6 +9,7 @@ Journal des modifications
 - Module Formation : Amélioration de l'UI concernant l'affichage des inscrits à une session de formation
 - Passage unicaen/renderer 7.0.2 (et donc à TinyMCE 6.3.0).
 - Filtre 'Catégorie de privilège' sur les pages 'Droits d'accès' : la liste est désormais issue d'une requête en bdd.
+- [FIX] Rapport d'activité : correction du filtrage selon le profil de l'utilisateur.
 
 9.2.1
 -----

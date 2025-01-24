@@ -67,6 +67,8 @@ class RapportActiviteSearchService extends SearchService
     private ?SelectSearchFilter $operationRealiseeSearchFilter = null;
     private ?SelectSearchFilter $operationAttendueSearchFilter = null;
     private ?SelectSearchFilter $dematerialiseSearchFilter = null;
+    private ?TextSearchFilter $nomDirecteurSearchFilter = null;
+    private ?TextSearchFilter $nomDoctorantSearchFilter = null;
 
     /**
      * @inheritDoc
@@ -110,8 +112,8 @@ class RapportActiviteSearchService extends SearchService
             $uniteRechercheFilter,
             $finalSearchFilter,
             $anneeRapportActiviteInscrFilter,
-            $this->createFilterNomDoctorant(),
-            $this->createFilterNomDirecteur(),
+            $this->getNomDoctorantSearchFilter(),
+            $this->getNomDirecteurSearchFilter(),
             $avisAttenduSearchFilter,
             $dematerialiseSearchFilter,
         ]));
@@ -148,6 +150,8 @@ class RapportActiviteSearchService extends SearchService
             ->leftJoin('ra.rapportAvis', 'raa')
             ->leftJoin('raa.avis', 'a')
             ->leftJoin('a.avisType', 'at')
+            ->leftJoin('these.acteurs', 'act')->andWhereNotHistorise('act')
+            ->leftJoin('act.role', 'actr')->andWhereNotHistorise('actr')
             ->andWhereNotHistorise();
 
         $qb
@@ -648,6 +652,22 @@ class RapportActiviteSearchService extends SearchService
     public function getAnneeRapportActiviteSearchFilter(): AnneeRapportActiviteSearchFilter
     {
         return $this->anneeRapportActiviteSearchFilter;
+    }
+
+    public function getNomDirecteurSearchFilter(): TextSearchFilter
+    {
+        if ($this->nomDirecteurSearchFilter === null) {
+            $this->nomDirecteurSearchFilter = $this->createFilterNomDirecteur();
+        }
+        return $this->nomDirecteurSearchFilter;
+    }
+
+    public function getNomDoctorantSearchFilter(): TextSearchFilter
+    {
+        if ($this->nomDoctorantSearchFilter === null) {
+            $this->nomDoctorantSearchFilter = $this->createFilterNomDoctorant();
+        }
+        return $this->nomDoctorantSearchFilter;
     }
 
     /**

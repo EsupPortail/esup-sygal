@@ -140,6 +140,11 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
         return $this->getCode() === self::CODE_DIRECTEUR_THESE;
     }
 
+    public function isCodirecteurThese(): bool
+    {
+        return $this->getCode() === self::CODE_CODIRECTEUR_THESE;
+    }
+
     /**
      * @return bool
      */

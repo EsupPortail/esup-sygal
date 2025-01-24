@@ -4,10 +4,13 @@ namespace RapportActivite\Controller\Recherche;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Application\Entity\Db\Role;
 use Application\Exporter\ExporterDataException;
 use Application\Filter\IdifyFilter;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\Filter\SearchFilter;
+use Application\Search\Filter\WhereSearchFilter;
 use Application\Search\SearchServiceAwareTrait;
 use Fichier\Entity\FichierArchivable;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
@@ -19,7 +22,9 @@ use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
+use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
+use RapportActivite\Service\Search\RapportActiviteSearchService;
 use RuntimeException;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnexpectedValueException;
@@ -57,8 +62,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
      */
     public function indexAction()
     {
-        $this->restrictFilterEcolesDoctorales();
-        $this->restrictFilterUnitesRecherches();
+        $this->restrictFilters();
 
         $text = $this->params()->fromQuery('text');
 
@@ -106,8 +110,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
      */
     public function filtersAction(): ViewModel
     {
-        $this->restrictFilterEcolesDoctorales();
-        $this->restrictFilterUnitesRecherches();
+        $this->restrictFilters();
 
         $filters = $this->filters();
 
@@ -120,9 +123,47 @@ class RapportActiviteRechercheController extends AbstractController implements S
         return $model;
     }
 
-    private function restrictFilterEcolesDoctorales()
+    private function restrictFilters(): void
     {
-        $edFilter = $this->searchService->getEcoleDoctoraleSearchFilter();
+        $this->restrictFilterDoctorant();
+        $this->restrictFilterEtablissementTheseSearchFilter();
+        $this->restrictFilterEcolesDoctorales();
+        $this->restrictFilterUnitesRecherches();
+        $this->restrictFilterNomDirecteur();
+    }
+
+
+    private function restrictFilterDoctorant(): void
+    {
+        if ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT))) {
+            // aucune restriction sur les ED sélectionnables
+        } elseif ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN))) {
+            // restrictions en fonction du rôle
+            $role = $this->userContextService->getSelectedIdentityRole();
+            if ($role->isDirecteurThese() || $role->isCodirecteurThese()) {
+                $this->searchService->addFilter((new WhereSearchFilter("invisible", 'acteur_individu'))
+                    ->setWhereField('act.individu')
+                    ->setDefaultValue($this->userContextService->getDbUser()->getIndividu()->getId())
+                    ->setVisible(false)
+                );
+                $this->searchService->addFilter((new WhereSearchFilter("invisible", 'acteur_role'))
+                    ->setWhereField('actr.code')
+                    ->setDefaultValue($role->isDirecteurThese() ? Role::CODE_DIRECTEUR_THESE : Role::CODE_CODIRECTEUR_THESE)
+                    ->setVisible(false)
+                );
+            }
+        } else {
+            throw new UnexpectedValueException(
+                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
+                implode(', ', [RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT, RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN])
+            );
+        }
+
+    }
+
+    private function restrictFilterEcolesDoctorales(): void
+    {
+        $filter = $this->searchService->getEcoleDoctoraleSearchFilter();
 
         if ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT))) {
             // aucune restriction sur les ED sélectionnables
@@ -130,9 +171,11 @@ class RapportActiviteRechercheController extends AbstractController implements S
             // restrictions en fonction du rôle
             if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
                 $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
-                $edFilter->setData([$ed]);
-                $edFilter->setDefaultValueAsObject($ed);
-                $edFilter->setAllowsEmptyOption(false);
+                $filter->setData([$ed]);
+                $filter->setDefaultValueAsObject($ed);
+                $filter->setAllowsEmptyOption(false);
+            } elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
+                $filter->setVisible(false);
             }
         } else {
             throw new UnexpectedValueException(
@@ -142,7 +185,29 @@ class RapportActiviteRechercheController extends AbstractController implements S
         }
     }
 
-    private function restrictFilterUnitesRecherches()
+    private function restrictFilterEtablissementTheseSearchFilter(): void
+    {
+        $filter = $this->searchService->getEtablissementTheseSearchFilter();
+
+        if ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT))) {
+            // aucune restriction sur les ED sélectionnables
+        } elseif ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN))) {
+            // restrictions en fonction du rôle
+            $role = $this->userContextService->getSelectedIdentityRole();
+            if ($etab = $role->getStructure()?->getEtablissement()) {
+                $filter->setData([$etab]);
+                $filter->setDefaultValueAsObject($etab);
+                $filter->setAllowsEmptyOption(false);
+            }
+        } else {
+            throw new UnexpectedValueException(
+                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
+                implode(', ', [RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT, RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN])
+            );
+        }
+    }
+
+    private function restrictFilterUnitesRecherches(): void
     {
         $filter = $this->searchService->getUniteRechercheSearchFilter();
 
@@ -155,6 +220,27 @@ class RapportActiviteRechercheController extends AbstractController implements S
                 $filter->setData([$ur]);
                 $filter->setDefaultValueAsObject($ur);
                 $filter->setAllowsEmptyOption(false);
+            } elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
+                $filter->setVisible(false);
+            }
+        } else {
+            throw new UnexpectedValueException(
+                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
+                implode(', ', [RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT, RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN])
+            );
+        }
+    }
+
+    private function restrictFilterNomDirecteur(): void
+    {
+        $filter = $this->searchService->getNomDirecteurSearchFilter();
+
+        if ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT))) {
+            // aucune restriction
+        } elseif ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN))) {
+            // restrictions en fonction du rôle
+            if ($this->userContextService->getSelectedRoleDirecteurThese()) {
+                $filter->setVisible(false);
             }
         } else {
             throw new UnexpectedValueException(
@@ -187,7 +273,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
      */
     public function telechargerZipAction(): Response
     {
-        $this->restrictFilterEcolesDoctorales();
+        $this->restrictFilters();
 
         $result = $this->search();
         if ($result instanceof Response) {
