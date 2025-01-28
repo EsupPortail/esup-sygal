@@ -31,4 +31,4 @@ vendor/bin/doctrine-module orm:generate-proxies
 vendor/bin/laminas-development-mode disable
 echo
 
-${CURDIR}/clear-cache.sh
+./clear-cache.sh
