@@ -5,6 +5,7 @@ use Application\Entity\Db\Role;
 use Application\Filter\IdifyFilter;
 use Application\Search\SearchResultPaginator;
 use Application\View\Renderer\PhpRenderer;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Laminas\Paginator\Paginator;
 use These\Entity\Db\These;
 use These\Provider\Privilege\ThesePrivileges;
@@ -30,7 +31,7 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
 
 <h1 class="page-header">
     <span class="fas fa-user-friends"></span>
-    <?php echo $this->translate("Doctorants"); ?>
+    <?php echo $this->translate("Doctorant·es"); ?>
 
     <?php if ($canAjouter): ?>
         <a class="btn btn-primary float-end"
@@ -53,25 +54,24 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
 </div>
 <div class="clearfix"></div>
 
-<p>
-    <?php echo $paginator->getTotalItemCount() . " " . $this->translate("doctorant(s) trouvé(s).") ?>
-</p>
-
-<?php if (!empty($paginator)): ?>
+<?php if ($paginator->getTotalItemCount()): ?>
+    <p>
+        <?php echo $paginator->getTotalItemCount() . " " . $this->translate("doctorant(s) trouvé(s).") ?>
+    </p>
     <table class="table table-bordered table-extra-condensed">
         <tr>
             <th>Id</th>
-            <th>Nom d'usage</th>
-            <th>Prénoms</th>
+            <th>Nom patronymique Prénoms</th>
             <th>Adresse électronique</th>
             <th>Date de naissance</th>
             <th>INE</th>
+            <th>Établissement</th>
             <th class="action">Action</th>
         </tr>
         <?php /** @var \Doctorant\Entity\Db\Doctorant $doctorant */
         foreach ($paginator as $doctorant): ?>
             <?php
-            $canConsulter = true;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER);
+            $canConsulter = $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT) || $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN);
             $canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER);
             $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
             ?>
@@ -88,16 +88,11 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
                         <?php endif ?>
                     </span>
                 </td>
-                <td><?php echo $doctorant->getIndividu()->getNomUsuel() ?></td>
-                <td>
-                    <?php echo $doctorant->getIndividu()->getPrenom1() ?>
-                    <span class="text-sm text-secondary">
-                        <?php echo implode(', ', array_filter([$doctorant->getIndividu()->getPrenom2(), $doctorant->getIndividu()->getPrenom3()])) ?>
-                    </span>
-                </td>
+                <td><?php echo $doctorant->getIndividu()->getNomCompletFormatter()->avecAutresPrenoms()->f() ?></td>
                 <td><?php echo $doctorant->getIndividu()->getEmailPro() ?></td>
                 <td><?php echo $doctorant->getIndividu()->getDateNaissanceToString() ?></td>
                 <td><?php echo $doctorant->getIne() ?></td>
+                <td><?php echo $doctorant->getEtablissement()->getSigle() ?></td>
                 <td class="action">
                     <?php if ($canModifier): ?>
                         <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()], [], true); ?>"
@@ -124,7 +119,7 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
     </table>
     <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => 'doctorant']) ?>
 <?php else: ?>
-    <p>Aucun doctorant trouvé.</p>
+    <p>Aucun·e doctorant·e trouvé·e.</p>
 <?php endif ?>
 
 

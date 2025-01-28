@@ -1,16 +1,12 @@
 <?php
 
-use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var array       $filters
+ * @var array $filters
  *
  * @see \Doctorant\Controller\DoctorantRechercheController::filtersAction()
  */
 
-/** @var FiltersPanelHelper $helper */
-$helper = $this->plugin('filtersPanel');
-
-echo $helper->__invoke($filters);
+echo $this->filtersPanel($filters);

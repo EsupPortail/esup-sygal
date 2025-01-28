@@ -17,6 +17,8 @@ use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenAuthentification\Authentication\Adapter\Ldap as LdapAuthAdapter;
 
 /**
@@ -26,6 +28,7 @@ class DoctorantController extends AbstractController implements SearchController
 {
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
+    use TheseServiceAwareTrait;
 
     use DoctorantServiceAwareTrait;
 
@@ -83,8 +86,18 @@ class DoctorantController extends AbstractController implements SearchController
             throw new \InvalidArgumentException("Individu introuvable.");
         }
 
+        $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
+
+        /** @var ViewModel $vmFormations */
+        $vmFormations = $this->forward()->dispatch(
+            \Formation\Controller\IndexController::class,
+            ['action' => 'index-doctorant', 'doctorant' => $doctorant]
+        );
+
         return new ViewModel([
             'doctorant' => $doctorant,
+            'theses' => $theses,
+            'inscriptions' => $vmFormations->getVariable('inscriptions'),
         ]);
     }
 

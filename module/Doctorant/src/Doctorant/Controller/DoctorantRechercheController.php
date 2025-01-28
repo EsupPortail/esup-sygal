@@ -3,15 +3,18 @@
 namespace Doctorant\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Role;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchResultPaginator;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Doctrine\ORM\QueryBuilder;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use UnexpectedValueException;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * @property \Doctorant\Service\Search\DoctorantSearchService $searchService
@@ -28,7 +31,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
 
     public function indexAction(): Response|ViewModel
     {
-        $this->restrictFiltersByStructure();
+//        $this->restrictFilters();
 
         $text = $this->params()->fromQuery('text');
 
@@ -54,6 +57,44 @@ class DoctorantRechercheController extends AbstractController implements SearchC
         ]);
     }
 
+    public function filtersAction(): ViewModel
+    {
+//        $this->restrictFilters();
+
+        $filters = $this->filters();
+
+        return new ViewModel([
+            'filters' => $filters,
+        ]);
+    }
+
+    /**
+     * Méthode donnant l'occasion de modifier le query builder selon le contexte (rôle, etc.)
+     */
+    public function updateSearchQueryBuilder(QueryBuilder $qb): void
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        if ($role->isDoctorant()) {
+            // théoriquement, le rôle Doctorant ne devrait pas avoir accès à la recherche de doctorants, mais au cas où...
+            $qb->andWhere('d = :doctorant')->setParameter('doctorant', $this->userContextService->getIdentityDoctorant());
+        }
+        elseif ($role->isDirecteurThese() || $role->isCodirecteurThese()) {
+            $qb
+                ->andWhere('act.individu = :individu')->setParameter('individu', $this->userContextService->getIdentityIndividu())
+                ->andWhere('actr.code = :codeRole')->setParameter('codeRole', $role->getCode());
+        }
+        elseif ($sc = $role->getStructure()?->getEtablissement()) {
+            $qb->andWhere('etab = :etab')->setParameter('etab', $sc);
+        }
+        elseif ($sc = $role->getStructure()?->getEcoleDoctorale()) {
+            $qb->andWhere('these.ecoleDoctorale = :ed')->setParameter('ed', $sc);
+        }
+        elseif ($sc = $role->getStructure()?->getUniteRecherche()) {
+            $qb->andWhere('these.uniteRecherche = :ur')->setParameter('ur', $sc);
+        }
+    }
+
     /**
      * Prévu pour ED, UR, MDD.
      *
@@ -61,7 +102,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
      */
     public function notresAction()
     {
-        $this->restrictFilters();
+//        $this->restrictFilters();
 
         $this->searchIfRequired = false;
 
@@ -79,7 +120,7 @@ class DoctorantRechercheController extends AbstractController implements SearchC
      */
     public function notresFiltersAction(): ViewModel
     {
-        $this->restrictFilters();
+//        $this->restrictFilters();
 
         $filters = $this->filters();
 
@@ -92,50 +133,36 @@ class DoctorantRechercheController extends AbstractController implements SearchC
         return $vm;
     }
 
-    private function restrictFilters()
+    /**
+     * Méthode donnant l'occasion de modifier/restreindre les filtres de recherche
+     * (ex : restreindre un select à la seule ED autorisée à l'utilisateur).
+     */
+    public function restrictSearchFilters(): void
     {
-//        /** @var Role $role */
-//        $role = $this->userContextService->getSelectedIdentityRole();
-//
-//        switch (true) {
-//            case $role->isEcoleDoctoraleDependant():
-//                $filter = $this->searchService->getEcoleDoctoraleSearchFilter();
-//                $entity = $role->getStructure()->getEcoleDoctorale();
-//                break;
-//            case $role->isUniteRechercheDependant():
-//                $filter = $this->searchService->getUniteRechercheSearchFilter();
-//                $entity = $role->getStructure()->getUniteRecherche();
-//                break;
-//            case $role->isEtablissementDependant():
-//                $filter = $this->searchService->getEtablissementInscSearchFilter();
-//                $entity = $role->getStructure()->getEtablissement();
-//                break;
-//            default:
-//                return;
-//        }
-//
-//        $filter
-//            ->setData([$entity])
-//            ->setDefaultValueAsObject($entity)
-//            ->setAllowsEmptyOption(false);
+        if ($this->isAllowed(Privileges::getResourceId(DoctorantPrivileges::DOCTORANT_LISTER_TOUT))) {
+            // aucune restriction
+            return;
+        }
+        if (!$this->isAllowed(Privileges::getResourceId(DoctorantPrivileges::DOCTORANT_LISTER_SIEN))) {
+            throw new UnexpectedValueException(
+                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
+                implode(', ', [DoctorantPrivileges::DOCTORANT_LISTER_TOUT, DoctorantPrivileges::DOCTORANT_LISTER_SIEN])
+            );
+        }
+
+        $this->restrictFiltersFromStructureRole();
     }
 
-    private function restrictFiltersByStructure(): void
+    private function restrictFiltersFromStructureRole(): void
     {
-//        $role = $this->userContextService->getSelectedIdentityRole();
-//
-//        if ($role->isEcoleDoctoraleDependant()) {
-//            $filter = $this->searchService->getEcoleDoctoraleSearchFilter();
-//            $sc = $role->getStructure()->getEcoleDoctorale();
-//            $filter->setDefaultValueAsObject($sc);
-//        } elseif ($role->isUniteRechercheDependant()) {
-//            $filter = $this->searchService->getUniteRechercheSearchFilter();
-//            $sc = $role->getStructure()->getUniteRecherche();
-//            $filter->setDefaultValueAsObject($sc);
-//        } elseif ($role->isEtablissementDependant()) {
-//            $filter = $this->searchService->getEtablissementInscSearchFilter();
-//            $sc = $role->getStructure()->getEtablissement();
-//            $filter->setDefaultValueAsObject($sc);
-//        }
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        if ($etab = $role->getStructure()?->getEtablissement()) {
+            $filter = $this->searchService->getEtablissementInscSearchFilter();
+            $filter
+                ->setData([$etab])
+                ->setDefaultValueAsObject($etab)
+                ->setAllowsEmptyOption(false);
+        }
     }
 }

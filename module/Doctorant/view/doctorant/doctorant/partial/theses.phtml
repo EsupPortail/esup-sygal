@@ -1,0 +1,12 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Doctorant\Entity\Db\Doctorant $doctorant
+ * @var \These\Entity\Db\These[] $theses
+ */
+?>
+
+<?php foreach ($theses as $these): ?>
+    <?php echo $this->partial('these/these/partial/panel', ['these' => $these]) ?>
+<?php endforeach ?>
+

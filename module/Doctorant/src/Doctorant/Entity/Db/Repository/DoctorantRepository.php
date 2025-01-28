@@ -107,7 +107,6 @@ class DoctorantRepository extends DefaultEntityRepository
     {
         if (strlen($text) < 2) return [];
 
-        $text = Util::reduce($text);
         $criteres = explode(' ', $text);
 
         $sql =
@@ -120,7 +119,7 @@ class DoctorantRepository extends DefaultEntityRepository
 
         $sqlCri = [];
         foreach ($criteres as $c) {
-            $sqlCri[] = "(concat(ir.haystack,' ',d.ine)) LIKE str_reduce($$%" . $c . "%$$)";
+            $sqlCri[] = "concat(ir.haystack,' ',d.ine) ilike str_reduce($$%" . $c . "%$$)";
         }
         $sqlCri = implode(' AND ', $sqlCri);
 

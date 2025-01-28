@@ -5,6 +5,8 @@ namespace Doctorant\Service\Search;
 use Doctorant\Service\DoctorantService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Service\Etablissement\EtablissementService;
 
 class DoctorantSearchServiceFactory
 {
@@ -23,7 +25,13 @@ class DoctorantSearchServiceFactory
         /** @var DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
         $service->setDoctorantService($doctorantService);
-        
+
+        /** @var EtablissementService $etablissementService */
+        $etablissementService = $container->get(EtablissementService::class);
+        $service->setEtablissementService($etablissementService);
+
+        $service->setEtablissementInscSearchFilter(EtablissementSearchFilter::newInstance());
+
         return $service;
     }
 }

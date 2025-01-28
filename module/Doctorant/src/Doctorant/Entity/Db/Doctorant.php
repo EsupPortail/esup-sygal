@@ -68,10 +68,7 @@ class Doctorant implements
      */
     public function getEtablissement(): Etablissement
     {
-        $theses = $this->getTheses();
-        /** @var These $these */
-        $these = (!empty($theses))?end($theses):null;
-        return $these?->getEtablissement();
+        return $this->etablissement;
     }
 
     /**

@@ -7,9 +7,14 @@ use Application\Service\MailConfirmationService;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantService;
 use Interop\Container\ContainerInterface;
+use These\Service\These\TheseService;
 
 class DoctorantControllerFactory
 {
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): DoctorantController
     {
         /**
@@ -30,6 +35,10 @@ class DoctorantControllerFactory
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setMailConfirmationForm($mailConfirmationForm);
         $controller->setMailConsentementForm($mailConsentementForm);
+
+        /** @var TheseService $theseServuice */
+        $theseService = $container->get(TheseService::class);
+        $controller->setTheseService($theseService);
 
         return $controller;
     }

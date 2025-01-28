@@ -13,6 +13,7 @@ use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 
@@ -22,6 +23,7 @@ class DoctorantAssertion extends AbstractAssertion
     use ThrowsFailedAssertionExceptionTrait;
     use TheseServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use ActeurServiceAwareTrait;
 
     public function __invoke(array $page): bool
     {
@@ -37,6 +39,10 @@ class DoctorantAssertion extends AbstractAssertion
     {
         if (!parent::assertController($controller, $action, $privilege)) {
             return false;
+        }
+
+        if ($privilege === DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT) {
+            return true;
         }
 
         $doctorant = $this->getRequestedDoctorant();
@@ -86,12 +92,19 @@ class DoctorantAssertion extends AbstractAssertion
 
                     $theses = $this->theseService->getRepository()->findThesesByDoctorant($entity);
 
-                    // todo : cas des acteurs de thèse
+                    if ($role->isTheseDependant()) {
+                        return in_array(true, array_map(
+                            fn(These $these) => !empty($this->acteurService->getRepository()->findActeursByTheseAndRole($these, $role)),
+                            $theses
+                        ));
+                    }
 
                     if ($role->isEtablissementDependant()) {
-                        return !empty(
-                            array_filter($theses, fn(These $t) => $t->getEtablissement() === $role->getStructure()->getEtablissement())
-                        );
+                        return
+                            $entity->getEtablissement() === $role->getStructure()->getEtablissement() ||
+                            !empty(
+                                array_filter($theses, fn(These $t) => $t->getEtablissement() === $role->getStructure()->getEtablissement())
+                            );
                     }
                     if ($role->isEcoleDoctoraleDependant()) {
                         return !empty(

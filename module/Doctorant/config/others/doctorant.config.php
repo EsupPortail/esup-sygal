@@ -35,6 +35,11 @@ use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [
+        'resource_providers' => [
+            'BjyAuthorize\Provider\Resource\Config' => [
+                'Doctorant' => [],
+            ],
+        ],
         'rule_providers'     => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
@@ -45,6 +50,13 @@ return [
                         ],
                         'resources' => ['These'],
                         'assertion' => TheseAssertion::class,
+                    ],
+                    [
+                        'privileges' => [
+                            DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN,
+                        ],
+                        'resources' => ['Doctorant'],
+                        'assertion' => DoctorantAssertion::class,
                     ],
                 ],
             ],
@@ -68,20 +80,23 @@ return [
                         'notres',
                         'notresFilters',
                     ],
-                    'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
-//                    'assertion'  => DoctorantAssertion::class,
+                    'privileges' => [
+                        DoctorantPrivileges::DOCTORANT_LISTER_TOUT,
+                        DoctorantPrivileges::DOCTORANT_LISTER_SIEN,
+                    ],
+//                    'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
                 ],
                 [
                     'controller' => DoctorantController::class,
                     'action' => [
                         'voir',
-                        'consulter',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT,
                         DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN,
                     ],
-                    'assertion'  => DoctorantAssertion::class,
+                    'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
+//                    'assertion'  => DoctorantAssertion::class,
                 ],
                 [
                     'controller' => DoctorantController::class,
@@ -89,7 +104,7 @@ return [
                         'rechercher',
                         'lister',
                     ],
-                    'privilege' => [
+                    'privileges' => [
                         DoctorantPrivileges::DOCTORANT_LISTER_TOUT,
                         DoctorantPrivileges::DOCTORANT_LISTER_SIEN,
                     ],
@@ -182,7 +197,7 @@ return [
                             ],
                             'defaults' => [
                                 'controller' => DoctorantController::class,
-                                'action' => 'consulter',
+                                'action' => 'voir',
                             ],
                         ],
                     ],

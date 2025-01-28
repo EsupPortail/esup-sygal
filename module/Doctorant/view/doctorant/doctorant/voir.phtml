@@ -1,0 +1,52 @@
+<?php
+
+namespace Doctorant;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctorant\Entity\Db\Doctorant $doctorant
+ * @var \These\Entity\Db\These[] $theses
+ * @var \Formation\Entity\Db\Inscription[] $inscriptions
+ *
+ * @see \Doctorant\Controller\DoctorantController::voirAction()
+ */
+
+$canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER);
+$canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
+?>
+
+<?php $this->headTitle($this->translate("Doctorant"))->append($doctorant->getIndividu()->getNomComplet()) ?>
+
+<h1 class="page-header">
+    <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+        Doctorant &laquo; <?php echo $doctorant->getIndividu()->getNomComplet() ?> &raquo;
+    </span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <h2 class="nav-link active" id="fiche-tab" data-bs-toggle="tab" data-bs-target="#fiche" type="button" role="tab" aria-controls="fiche" aria-selected="true">Fiche</h2>
+    </li>
+    <li class="nav-item" role="presentation">
+        <h2 class="nav-link" id="theses-tab" data-bs-toggle="tab" data-bs-target="#theses" type="button" role="tab" aria-controls="theses" aria-selected="false">Thèse</h2>
+    </li>
+    <li class="nav-item" role="presentation">
+        <h2 class="nav-link" id="formations-tab" data-bs-toggle="tab" data-bs-target="#formations" type="button" role="tab" aria-controls="formations" aria-selected="false">Formations</h2>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="fiche" role="tabpanel" aria-labelledby="fiche-tab">
+        <?php echo $this->partial('doctorant/doctorant/partial/fiche', ['doctorant' => $doctorant, 'horizontal' => true]) ?>
+    </div>
+    <div class="tab-pane fade" id="theses" role="tabpanel" aria-labelledby="theses-tab">
+        <?php echo $this->partial('doctorant/doctorant/partial/theses', ['doctorant' => $doctorant, 'theses' => $theses, 'horizontal' => true]) ?>
+    </div>
+    <div class="tab-pane fade" id="formations" role="tabpanel" aria-labelledby="formations-tab">
+        <?php echo $this->partial('doctorant/doctorant/partial/formations', ['doctorant' => $doctorant, 'inscriptions' => $inscriptions, 'horizontal' => true]) ?>
+    </div>
+</div>

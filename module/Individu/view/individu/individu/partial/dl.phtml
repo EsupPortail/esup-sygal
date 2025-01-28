@@ -23,11 +23,11 @@ if (!isset($verbose)) $verbose = false;
         <dd class="<?php echo $ddClass ?>"><?php echo $entity->getCivilite() ?></dd>
     <?php endif ?>
 
-    <dt class="<?php echo $dtClass ?>">Nom d'usage</dt>
-    <dd class="<?php echo $ddClass ?>"><strong><?php echo $entity->getNomUsuel() ?></strong></dd>
-
     <dt class="<?php echo $dtClass ?>">Nom patronymique</dt>
-    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getNomPatronymique() ?></dd>
+    <dd class="<?php echo $ddClass ?>"><strong><?php echo $entity->getNomPatronymique() ?></strong></dd>
+
+    <dt class="<?php echo $dtClass ?>">Nom d'usage</dt>
+    <dd class="<?php echo $ddClass ?>"><?php echo $entity->getNomUsuel() ?></dd>
 
     <dt class="<?php echo $dtClass ?>">Prénom</dt>
     <dd class="<?php echo $ddClass ?>"><?php echo $entity->getPrenom1() ?></dd>
