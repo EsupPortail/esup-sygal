@@ -129,3 +129,47 @@ BEGIN
     perform privilege__update_role_privilege();
 END;
 $$;
+
+
+
+INSERT INTO unicaen_privilege_privilege(CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+WITH d(code, lib, ordre) AS (
+    SELECT 'parametrecategorie_index', 'Affichage de l''index des paramètres', 10 UNION
+    SELECT 'parametrecategorie_afficher', 'Affichage des détails d''une catégorie', 20 UNION
+    SELECT 'parametrecategorie_ajouter', 'Ajouter une catégorie de paramètre', 30 UNION
+    SELECT 'parametrecategorie_modifier', 'Modifier une catégorie de paramètre', 40 UNION
+    SELECT 'parametrecategorie_supprimer', 'Supprimer une catégorie de paramètre', 60
+)
+SELECT cp.id, d.code, d.lib, d.ordre
+FROM d
+         JOIN unicaen_privilege_categorie cp ON cp.CODE = 'parametrecategorie'
+on conflict (categorie_id, code) DO UPDATE set LIBELLE = EXCLUDED.libelle, ORDRE = EXCLUDED.ordre
+;
+
+INSERT INTO unicaen_privilege_categorie (code, libelle, ordre, namespace)
+VALUES ('parametre', 'UnicaenParametre - Gestion des paramètres', 70001, 'UnicaenParametre\Provider\Privilege');
+
+INSERT INTO unicaen_privilege_privilege(CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+WITH d(code, lib, ordre) AS (
+    SELECT 'parametre_afficher', 'Afficher un paramètre', 10 UNION
+    SELECT 'parametre_afficher_masquer', 'Afficher un paramètre masqué', 15 UNION
+    SELECT 'parametre_ajouter', 'Ajouter un paramètre', 20 UNION
+    SELECT 'parametre_modifier', 'Modifier un paramètre', 30 UNION
+    SELECT 'parametre_supprimer', 'Supprimer un paramètre', 50 UNION
+    SELECT 'parametre_valeur', 'Modifier la valeur d''un parametre', 100
+)
+SELECT cp.id, d.code, d.lib, d.ordre
+FROM d
+         JOIN unicaen_privilege_categorie cp ON cp.CODE = 'parametre'
+on conflict (categorie_id, code) DO UPDATE set LIBELLE = EXCLUDED.libelle, ORDRE = EXCLUDED.ordre;
+
+select privilege__grant_privileges_to_profiles(
+        'parametrecategorie',
+        ARRAY['index','afficher','ajouter','modifier','supprimer'],
+        ARRAY['ADMIN_TECH']
+);
+select privilege__grant_privileges_to_profiles(
+        'parametre',
+        ARRAY['afficher','afficher_masquer','ajouter','modifier','supprimer','valeur'],
+        ARRAY['ADMIN_TECH']
+);
