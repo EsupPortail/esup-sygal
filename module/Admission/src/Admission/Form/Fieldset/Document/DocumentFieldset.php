@@ -115,6 +115,12 @@ class DocumentFieldset extends AdmissionBaseFieldset implements InputFilterProvi
                 ->setLabel("Récapitulatif du dossier d'admission signé par la direction de l'établissement")
                 ->setAttributes(["id" => "ADMISSION_RECAPITULATIF_DOSSIER_SIGNE"])
         );
+        $this->add(
+            (new File('attestationResponsabiliteCivile'))
+                ->setLabel("Attestation de responsabilité civile")
+                ->setAttributes(["id" => NatureFichier::CODE_ADMISSION_ATTESTATION_RESPONSABILITE_CIVILE])
+                ->setLabelAttributes(['data-after' => " / Civil liability certificate"])
+        );
 
         $this->add(
             (new Hidden('enregistrerVerification'))

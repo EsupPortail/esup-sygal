@@ -89,6 +89,11 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         'admission' => $admission,
     ]);
     echo $this->partial('admission/partial/document/document', [
+        'fieldset' => $fieldset->get('attestationResponsabiliteCivile'),
+        'documents' => $documents,
+        'admission' => $admission,
+    ]);
+    echo $this->partial('admission/partial/document/document', [
         'fieldset' => $fieldset->get('exemplairesConvention'),
         'documents' => $documents,
         'admission' => $admission,
