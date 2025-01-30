@@ -100,7 +100,7 @@ $dejaTeleversee = array_key_exists($natureFichierCharteDoctoratSignee, $document
                                 if($role->getCode() === Role::CODE_GEST_ED || $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT):
                                     echo $this->formfile($fieldsetCharteDoctoratSignee->setAttribute('disabled', false));
                                 else:
-                                    echo $this->formfile($fieldsetCharteDoctoratSignee);
+                                    echo $this->formfile($fieldsetCharteDoctoratSignee->setAttribute('disabled', true));;
                                 endif;
                                 ?>
                             </div>

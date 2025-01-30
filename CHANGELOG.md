@@ -10,6 +10,7 @@ Journal des modifications
 - Passage unicaen/renderer 7.0.2 (et donc à TinyMCE 6.3.0).
 - Filtre 'Catégorie de privilège' sur les pages 'Droits d'accès' : la liste est désormais issue d'une requête en bdd.
 - [FIX] Rapport d'activité : correction du filtrage selon le profil de l'utilisateur.
+- [FIX] Module Admission : modification de la convention de formation doctorale impossible
 
 9.2.1
 -----

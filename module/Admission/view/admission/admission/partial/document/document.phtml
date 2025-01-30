@@ -82,7 +82,7 @@ $enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_
                         $nameRoute = $conventionFormationDoctorale ? 'admission/modifier-convention-formation' : 'admission/ajouter-convention-formation';
                         $classButton = $canGenererConventionFormationDoctorale ? "" : "required"; ?>
                         <a href="<?php echo $this->url($nameRoute, ['admission' => $admission->getId()], [], true) ?>"
-                           class="btn btn-primary access-conv-form-doct-btn <?=$classButton?>"
+                           class="btn btn-primary <?=$classButton?>"
                            title="Accéder à la convention de formation doctorale">Remplir la convention de formation doctorale</a>
                     <?php endif;
 
