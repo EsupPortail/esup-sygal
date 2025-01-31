@@ -9,11 +9,8 @@ return [
         'DoctrineModule',
         'DoctrineORMModule',
 
-        'ApiSkeletons\DoctrineORMHydrationModule',
         'Laminas\ApiTools',
         'Laminas\ApiTools\Provider',
-        'Laminas\ApiTools\Doctrine\Server',
-        'Laminas\ApiTools\Doctrine\QueryBuilder',
         'Laminas\ApiTools\Documentation',
         'Laminas\ApiTools\Documentation\Swagger',
         'Laminas\ApiTools\ApiProblem',

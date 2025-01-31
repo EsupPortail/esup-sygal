@@ -8,6 +8,7 @@
 /tmp/
 .~*
 .sass-cache/
+.phpcs-cache
 
 # temporaire (pour la branche migration_postgres)
 bin/aaa.sh

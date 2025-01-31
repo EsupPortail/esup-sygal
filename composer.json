@@ -4,21 +4,12 @@
     "type": "project",
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/orderadmin/api-tools-doctrine.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/orderadmin/api-tools-doctrine-querybuilder.git"
-        },
-        {
             "type": "composer",
             "url": "https://gest.unicaen.fr/packagist"
         }
     ],
     "require-dev": {
         "laminas-api-tools/api-tools-asset-manager": "^1.5",
-        "laminas/laminas-dependency-plugin": "^2.1",
         "laminas/laminas-developer-tools": "^2.3",
         "laminas/laminas-development-mode": "^3.2",
         "phpcompatibility/php-compatibility": "*",
@@ -27,7 +18,7 @@
         "unicaen/test": "^6.0"
     },
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
 
         "ext-curl": "*",
         "ext-dom": "*",
@@ -43,11 +34,6 @@
         "ext-xmlwriter": "*",
         "ext-xsl": "*",
         "ext-zip": "*",
-
-        "laminas-api-tools/api-tools-doctrine": "2.5.x-dev",
-        "laminas-api-tools/api-tools-doctrine-querybuilder": "1.10.x-dev",
-        "laminas-api-tools/api-tools-documentation": "^1.2",
-        "laminas-api-tools/api-tools-documentation-swagger": "^1.2",
 
         "aws/aws-sdk-php": "^3.226",
         "beberlei/assert": "^3.0",
@@ -65,7 +51,7 @@
         "unicaen/authentification": "^6.4",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "^4.0",
-        "unicaen/db-import": "^7.0",
+        "unicaen/db-import": "dev-release_7.2.0",
         "unicaen/etat": "^6.0",
         "unicaen/faq": "^7.0",
         "unicaen/idref": "^2.0",
@@ -128,7 +114,8 @@
     "config": {
         "allow-plugins": {
             "laminas-api-tools/api-tools-asset-manager": true,
-            "laminas/laminas-dependency-plugin": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "laminas/laminas-dependency-plugin": false
         }
     }
 }

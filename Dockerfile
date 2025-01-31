@@ -128,7 +128,7 @@ RUN apt-get -qq update && \
 RUN update-alternatives --set php /usr/bin/php${PHP_VERSION}
 
 # Installation manuelle de xdebug 3.2.2, car les 3.3.0/1/2 provoquent une "Segmentation fault" au 22/05/2024 (à cause de PHP 8.0 ?)
-RUN pecl install xdebug-3.2.2 && \
+RUN pecl install xdebug && \
     echo "zend_extension=xdebug" > ${PHP_CONF_DIR}/fpm/conf.d/20-xdebug.ini && \
     echo "zend_extension=xdebug" > ${PHP_CONF_DIR}/cli/conf.d/20-xdebug.ini
 
