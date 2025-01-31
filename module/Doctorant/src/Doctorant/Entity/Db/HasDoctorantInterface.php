@@ -1,8 +1,6 @@
 <?php
 
-namespace Doctorant\Entity\Db\Interface;
-
-use Doctorant\Entity\Db\Doctorant;
+namespace Doctorant\Entity\Db;
 
 interface HasDoctorantInterface
 {

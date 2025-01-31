@@ -2,8 +2,6 @@
 
 namespace Doctorant\Entity\Db;
 
-use Doctorant\Entity\Db\Interface\HasDoctorantInterface;
-use Doctorant\Entity\Db\Trait\HasDoctorantTrait;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 

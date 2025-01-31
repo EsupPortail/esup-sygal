@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Soutenance\Validator;
 
@@ -64,16 +57,6 @@ class DateLesserThan extends AbstractValidator
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
-        }
-        if (!is_array($options)) {
-            $options = func_get_args();
-            $temp['max'] = array_shift($options);
-
-            if (!empty($options)) {
-                $temp['inclusive'] = array_shift($options);
-            }
-
-            $options = $temp;
         }
 
         if (!array_key_exists('max', $options)) {

@@ -1,8 +1,6 @@
 <?php
 
-namespace Doctorant\Entity\Db\Trait;
-
-use Doctorant\Entity\Db\Doctorant;
+namespace Doctorant\Entity\Db;
 
 trait HasDoctorantTrait
 {
