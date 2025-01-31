@@ -21,6 +21,7 @@
         "laminas/laminas-dependency-plugin": "^2.1",
         "laminas/laminas-developer-tools": "^2.3",
         "laminas/laminas-development-mode": "^3.2",
+        "phpcompatibility/php-compatibility": "*",
 
         "unicaen/code": "^6.0",
         "unicaen/test": "^6.0"
@@ -112,12 +113,16 @@
         }
     },
     "scripts": {
+        "post-update-cmd": [
+            "vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility"
+        ],
         "post-install-cmd": [
             "mkdir -p public/unicaen && cp -r vendor/unicaen/app/public/unicaen public/",
             "mkdir -p public/unicaen && cp -r vendor/unicaen/db-import/public/unicaen public/",
             "mkdir -p public/unicaen && cp -r vendor/unicaen/idref/public/unicaen public/",
             "mkdir -p public/unicaen && cp -r vendor/unicaen/renderer/public/unicaen public/",
-            "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata"
+            "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata",
+            "vendor/bin/phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility"
         ]
     },
     "config": {
