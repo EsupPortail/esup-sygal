@@ -13,7 +13,7 @@ use Soutenance\Entity\Etat;
 <?php if ($etat === null) : ?>
 
         Pas d'état
-    </span>
+
 <?php else : ?>
     <span class="badge <?php echo $etat->getCode(); ?>">
         <?php echo $etat->getLibelle(); ?>

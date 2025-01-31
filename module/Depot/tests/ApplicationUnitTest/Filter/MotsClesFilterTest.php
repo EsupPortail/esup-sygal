@@ -11,7 +11,7 @@ class MotsClesFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected $filter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filter = new MotsClesFilter(['separator' => ';']);
     }

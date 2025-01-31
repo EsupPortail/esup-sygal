@@ -48,7 +48,7 @@ $canSupprimerOperation =
         </p>
     </div>
     <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
-        <div id="<?= $idAvis ?>" class="avisCompl collapse">
+        <div id="<?= $idAvis ?? null ?>" class="avisCompl collapse">
             <h3>Compléments</h3>
             <?php echo $avisComplemsToHtml ?>
         </div>

@@ -101,7 +101,7 @@ use Application\Entity\Db\Utilisateur;
     <?php if ($utilisateur) : ?>
         <?php if ($utilisateur->isLocal()) : ?>
 
-            <?php if ($utilisateur->getEmail() === null AND $acteur->getIndividu()->getEmailPro() === null) : ?>
+            <?php if ($utilisateur->getEmail() === null AND $utilisateur->getIndividu()->getEmailPro() === null) : ?>
                 <div class="alert alert-warning">
                     <strong>
                         <span class="fas fa-exclamation-triangle"></span>
@@ -123,7 +123,7 @@ use Application\Entity\Db\Utilisateur;
             Le compte utilisateur existe et est non local.
         <?php endif; ?>
     <?php else : ?>
-        <?php if ($acteur->getIndividu()->getEmailPro() === null) : ?>
+        <?php if ($utilisateur->getIndividu()->getEmailPro() === null) : ?>
             <div class="alert alert-warning">
                 <strong>
                     <span class="fas fa-exclamation-triangle"></span>

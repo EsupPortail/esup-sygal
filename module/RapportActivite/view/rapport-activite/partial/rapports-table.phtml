@@ -263,7 +263,6 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 <?php if ($canEdit): ?>
                     <a href="<?php echo $this->url('rapport-activite/modifier', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Modifier ce rapport"><span class="icon icon-modifier iconly"></span></a>
-                    </a>
                 <?php endif; ?>
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"

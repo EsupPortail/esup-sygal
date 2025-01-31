@@ -76,6 +76,8 @@ class RapportActiviteController extends AbstractController
         $this->rapportActiviteCreationRule->execute();
 
         $anneesUnivs = $this->these->getAnneesUnivInscription();
+        $anneesUnivsPossiblesPourRapportAnnuel = [];
+        $anneesUnivsPossiblesPourRapportFinContrat = [];
         $typesRapportPossiblesData = [];
         if (!$anneesUnivs->isEmpty()) {
             $this->rapportActiviteCreationRule->setAnneesUnivs($anneesUnivs->toArray());

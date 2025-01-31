@@ -6,9 +6,9 @@
 *
 */
 
-use These\Provider\Privilege\ThesePrivileges;
+use Depot\Provider\Privilege\DepotPrivileges;
 
-$canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
+$canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
 ?>
 
@@ -70,7 +70,7 @@ if ($these->isCorrectionAutorisee()) {
                         <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
                     </abbr>
                 <?php endif ?>
-                <?php if ($this->isAllowed($these, ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
+                <?php if ($this->isAllowed($these, DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
                     <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
                        data-event="event-sursis-correction-modified"
                        title="Accorder un sursis"

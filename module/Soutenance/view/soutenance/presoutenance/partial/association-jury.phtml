@@ -85,7 +85,7 @@ $theseImportee = $these->getSource()->getImportable()
                                             /** @see \Soutenance\Controller\PresoutenanceController::associerJuryTheseSygalAction() **/
                                             $lienAssociationJury = $this->url('soutenance/presoutenance/associer-jury-these-sygal', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>
                                         <?php endif; ?>
-                                            <a  href="<?php echo $lienAssociationJury ?>"
+                                            <a  href="<?php echo $lienAssociationJury ?? null ?>"
                                                 class="action ajax-modal"
                                                 data-event="modification-association-jury"
                                             >

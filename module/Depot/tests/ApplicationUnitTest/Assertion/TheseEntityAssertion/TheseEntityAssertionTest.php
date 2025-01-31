@@ -19,7 +19,7 @@ class TheseEntityAssertionTest extends \PHPUnit_Framework_TestCase
      */
     private $assertion;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->prophet = new Prophet();
         $this->assertion = new TheseEntityAssertion();

@@ -20,10 +20,12 @@ $appName = $this->appInfos()->nom;
 </p>
 <p>
     Des informations associées à la thèse [<?php echo $these->getId() ?> | <?php echo $these->getTitre() ?>] sont manquantes :
-    <ul>
-        <?php foreach($manques as $manquante):?>
-        <li> <?php echo $manquante; ?> </li>
-        <?php endforeach; ?>
-    </ul>
+</p>
+<ul>
+    <?php foreach($manques as $manquante):?>
+    <li> <?php echo $manquante; ?> </li>
+    <?php endforeach; ?>
+</ul>
+<p>
     Il est nécessaire de compléter cette information dans le système d'information de votre établissement.
 </p>
