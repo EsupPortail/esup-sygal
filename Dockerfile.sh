@@ -124,7 +124,6 @@ apt-get -qq update && \
         php${PHP_VERSION}-opcache \
         php${PHP_VERSION}-pgsql \
         php${PHP_VERSION}-soap \
-#        php${PHP_VERSION}-xdebug \ --> cf. install à part ci-après
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-cli \
