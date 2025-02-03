@@ -18,6 +18,8 @@ class UrlService extends \Application\Service\Url\UrlService
 
     protected ?array $allowedVariables = [
         'etablissement',
+        'session',
+        'inscription'
     ];
 
     public function getFormationSignature() : string

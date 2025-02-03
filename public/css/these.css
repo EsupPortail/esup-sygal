@@ -114,13 +114,6 @@ span.erase-direction-acteur:hover, span.erase-coencadrant-acteur:hover {
   box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px; }
 
-.separator {
-  width: 50%;
-  height: 2px;
-  background-color: var(--primary-color);
-  margin: 20px auto;
-  border-radius: 2px; }
-
 .these-informations-div {
   width: fit-content; }
 

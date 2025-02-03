@@ -1089,4 +1089,22 @@ p.avis-complem {
   text-decoration: line-through;
   /* Nom barré pour signaler l'historisation */ }
 
+td > a + a {
+  margin-left: 4px;
+  /* Ajoute de l'espace entre les <a> */ }
+
+.separator {
+  width: 50%;
+  height: 2px;
+  background-color: var(--primary-color);
+  margin: 20px auto;
+  border-radius: 2px; }
+
+.separator-vertical {
+  background-color: var(--primary-color);
+  border-left: 4px solid var(--primary-color);
+  height: 30px;
+  margin-left: 15px;
+  margin-right: 15px; }
+
 /*# sourceMappingURL=app.css.map */

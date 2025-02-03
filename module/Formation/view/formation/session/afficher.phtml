@@ -82,43 +82,50 @@ usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a
 echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 ?>
 
-<?php if ($canIndexSession) : ?>
-    <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
-    <a class="btn btn-primary action"
-       href="<?php echo $this->url('formation/session', [], [], true); ?>"
-    >
-        <span class="icon icon-listing"></span>
-        Retourner à la liste des sessions
-    </a>
-<?php endif;?>
-<?php if ($canModifierSession) : ?>
-    <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
-    <a class="btn btn-primary action ajax-modal" data-event="modification"
-       href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
-    >
-        <span class="icon icon-modifier"></span>
-        Modifier les informations
-    </a>
-<?php endif; ?>
-<?php if ($canModifierSession) : ?>
-    <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
-    <a class="btn btn-primary action ajax-modal" data-event="modification"
-       href="<?php echo $this->url('formation/session/changer-etat', ['session' => $session->getId()], [], true); ?>"
-    >
-        <span class="fas fa-adjust"></span>
-        Changer l'état
-    </a>
-<?php endif; ?>
-<?php if ($canResultatEnquete) : ?>
-    <?php /** @see \Formation\Controller\EnqueteQuestionController::afficherResultatsAction() */?>
-    <a class="btn btn-primary action"
-       href="<?php echo $this->url('formation/enquete/resultat', ['session' => $session->getId()], [], true); ?>"
-       target="_blank"
-    >
-        <span class="fas fa-poll"></span>
-        Résultats de l'enquète
-    </a>
-<?php endif; ?>
+<div style="display: flex; gap: 2px;">
+    <?php if ($canIndexSession) : ?>
+        <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
+        <a class="btn btn-primary action"
+           href="<?php echo $this->url('formation/session', [], [], true); ?>"
+        >
+            <span class="icon icon-retour"></span>
+            Retourner à la liste des sessions
+        </a>
+    <?php endif;?>
+
+    <?php if ($canIndexSession && $canModifierSession) : ?>
+        <div class="separator-vertical"></div>
+    <?php endif; ?>
+
+    <?php if ($canModifierSession) : ?>
+        <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
+        <a class="btn btn-primary action ajax-modal" data-event="modification"
+           href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
+        >
+            <span class="icon icon-modifier"></span>
+            Modifier les informations
+        </a>
+    <?php endif; ?>
+    <?php if ($canModifierSession) : ?>
+        <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
+        <a class="btn btn-primary action ajax-modal" data-event="modification"
+           href="<?php echo $this->url('formation/session/changer-etat', ['session' => $session->getId()], [], true); ?>"
+        >
+            <span class="fas fa-adjust"></span>
+            Changer l'état
+        </a>
+    <?php endif; ?>
+    <?php if ($canResultatEnquete) : ?>
+        <?php /** @see \Formation\Controller\EnqueteQuestionController::afficherResultatsAction() */?>
+        <a class="btn btn-primary action"
+           href="<?php echo $this->url('formation/enquete/resultat', ['session' => $session->getId()], [], true); ?>"
+           target="_blank"
+        >
+            <span class="fas fa-poll"></span>
+            Résultats de l'enquète
+        </a>
+    <?php endif; ?>
+</div>
 
 <h2> Informations sur la session de formation </h2>
 <div class="row">
@@ -444,45 +451,49 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 </div>
 
 <h2> Inscriptions et listes </h2>
+<div style="display: flex; gap: 2px;">
+    <?php if ($canModifierInscription) : ?>
+        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary action ajax-modal" data-event="modification">
+            <span class="icon icon-ajouter"></span>
+            Inscrire un·e doctorant·e
+        </a>
 
-<?php if ($canModifierInscription) : ?>
-    <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-    <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
-       class="btn btn-primary action ajax-modal" data-event="modification">
-        <span class="icon icon-ajouter"></span>
-        Inscrire un·e doctorant·e
-    </a>
+        <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary action <?php if (empty($inscrits) OR $session->getDateDebut() === null) echo " disabled "; ?>">
+            <span class="fas fa-align-left"></span>
+            Classer les inscrits
+        </a>
 
-    <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
-    <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-       class="btn btn-primary action <?php if (empty($inscrits) OR $session->getDateDebut() === null) echo " disabled "; ?>">
-        <span class="fas fa-align-left"></span>
-        Classer les inscrits
-    </a>
+        <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary action <?php if (empty($inscrits)  OR $session->getDateDebut() === null) echo " disabled "; ?>">
+            <span class="fas fa-align-right"></span>
+            Déclasser les inscrits
+        </a>
 
-    <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
-    <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-       class="btn btn-primary action <?php if (empty($inscrits)  OR $session->getDateDebut() === null) echo " disabled "; ?>">
-        <span class="fas fa-align-right"></span>
-        Déclasser les inscrits
-    </a>
-    <?php /** @see \Formation\Controller\SessionController::genererExportAction() */ ?>
-    <a href="<?php echo $this->url('formation/session/generer-export', ['session' => $session->getId()], [] , true); ?>"
-       class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
-        <span class="fas fa-file-csv"></span>
-        Générer export des inscriptions
-    </a>
+        <div class="separator-vertical"></div>
 
-<?php endif; ?>
-<?php if ($canEmargementSeance) : ?>
-    <?php /** @see \Formation\Controller\SessionController::transmettreListeInscritsAction() */ ?>
-    <a href="<?php echo $this->url('formation/session/transmettre-liste-inscrits', ['session' => $session->getId()], [] , true); ?>"
-       data-bs-toggle="tooltip" title="Cela enverra la feuille d'émargement aux formateurs déclarés"
-       class="btn btn-primary action <?php if (empty($inscrits) || empty($formateurs)) echo " disabled "; ?>">
-        <span class="icon icon-mail"></span>
-        Envoyer les inscrits aux formateurs
-    </a>
-<?php endif; ?>
+        <?php /** @see \Formation\Controller\SessionController::genererExportAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/generer-export', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
+            <span class="fas fa-file-csv"></span>
+            Générer export des inscriptions
+        </a>
+
+    <?php endif; ?>
+    <?php if ($canEmargementSeance) : ?>
+        <?php /** @see \Formation\Controller\SessionController::transmettreListeInscritsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/transmettre-liste-inscrits', ['session' => $session->getId()], [] , true); ?>"
+           data-bs-toggle="tooltip" title="Cela enverra la feuille d'émargement aux formateurs déclarés"
+           class="btn btn-primary action <?php if (empty($inscrits) || empty($formateurs)) echo " disabled "; ?>">
+            <span class="icon icon-mail"></span>
+            Envoyer les inscrits aux formateurs
+        </a>
+    <?php endif; ?>
+</div>
 <div class="index-result mt-4">
 <?php if (empty($inscrits)) : ?>
     <em>Aucun·e doctorant·e inscrit·e à cette session de formation.</em>

@@ -99,10 +99,6 @@ table.formation-presence tr td.reponse {
   min-height: 3rem;
 }
 
-td > a + a {
-  margin-left: 8px; /* Ajoute de l'espace entre les <a> */
-}
-
 .session-non-visible {
   position: relative;
   opacity: 0.75;
