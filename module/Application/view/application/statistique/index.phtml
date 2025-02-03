@@ -74,21 +74,21 @@ $this->headTitle($this->translate("Statistiques"));
             switch($(this).attr("value")) {
                 case "ETAB" :
                     //null option
-                    $("select#structure_id").append(new Option(("Selectionner un établissement ... "), null, false, true));
+                    $("select#structure_id").append(new Option(("Sélectionner un établissement ... "), null, false, true));
                     <?php foreach ($etablissements as $structureConcrete) : ?>
                         $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getStructure()->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
                     <?php endforeach; ?>
                     break;
                 case "ED" :
                     //null option
-                    $("select#structure_id").append(new Option(("Selectionner une école doctorale ... "), null, false, true));
+                    $("select#structure_id").append(new Option(("Sélectionner une école doctorale ... "), null, false, true));
                     <?php foreach ($ecoles as $structureConcrete) : ?>
                         $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getStructure()->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
                     <?php endforeach; ?>
                     break;
                 case "UR" :
                     //null option
-                    $("select#structure_id").append(new Option(("Selectionner une unité de recherche ... "), null, false, true));
+                    $("select#structure_id").append(new Option(("Sélectionner une unité de recherche ... "), null, false, true));
                     <?php foreach ($unites as $structureConcrete) : ?>
                         $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getStructure()->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
                     <?php endforeach; ?>
@@ -406,7 +406,7 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
             //console.log(data);
 
             let options_fullStacked = {
-                title: 'Pourcentage d\'inscription en premère année de thèse en fonction du genre du doctorant' ,
+                title: 'Pourcentage d\'inscription en première année de thèse en fonction du genre du doctorant' ,
                 isStacked: 'relative',
                 height: 400,
                 legend: { position: 'bottom' },
@@ -425,7 +425,7 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
             };
 
             let options_stacked = {
-                title: 'Nombre d\'inscription en premère année de thèse en fonction du genre du doctorant' ,
+                title: 'Nombre d\'inscription en première année de thèse en fonction du genre du doctorant' ,
                 isStacked: 'false',
                 height: 400,
                 legend: { position: 'bottom' },

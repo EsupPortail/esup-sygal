@@ -124,14 +124,14 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 
 <div class="box card">
     <div class="card-header <?php echo ($engagement !== null)?"bg-dark":"bg-warning"; ?> text-white">
-        <h2> Engagement d'impartialité / Impartiality Commitement </h2>
+        <h2> Engagement d'impartialité / Impartiality Commitment </h2>
     </div>
     <div class="card-body">
         <?php if ($engagement !== null) : ?>
             Vous avez signé l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
             <div class="card float-end">
                 <div class="card-header bg-dark text-white">
-                    Signature de l'engagment d'impartialité
+                    Signature de l'engagement d'impartialité
                 </div>
                 <div class="card-body">
                     <ul>
@@ -183,7 +183,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
             <?php else : ?>
                 <span class="fas fa-exclamation-triangle"></span>
                 La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
-                Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
+                Une fois le dépôt réalisé, vous pourrez télécharger celle-ci via cette page.
             <?php endif; ?>
         <?php endif; ?>
     </div>
@@ -265,7 +265,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 
             <?php endif; ?>
         <?php else : ?>
-        <span class="fas fa-exclamation-triangle"></span> Pour pouvoir rendre votre avis de soutenance vous devez avoir signez l'engagement d'impartialité.
+        <span class="fas fa-exclamation-triangle"></span> Pour pouvoir rendre votre avis de soutenance, vous devez avoir signé l'engagement d'impartialité.
         <?php endif; ?>
 </div>
 

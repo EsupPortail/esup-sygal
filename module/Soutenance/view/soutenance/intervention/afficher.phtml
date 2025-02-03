@@ -123,7 +123,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                                     <span class="icon icon-delete iconly text-danger"></span></a>
                                 <?php endif; ?>
                             <?php else : ?>
-                                <span class="text text-danger">Déléguation de signature manquante pour <strong style="font-variant:small-caps;"><?php echo $membre->getDenomination(); ?></strong></span>
+                                <span class="text text-danger">Délégation de signature manquante pour <strong style="font-variant:small-caps;"><?php echo $membre->getDenomination(); ?></strong></span>
                                 <?php if ($canModifier) : ?>
                                     <a      <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAction() */?>
                                             href="<?php echo $this->url("soutenance/justificatif/ajouter", ['these' => $these->getId(), "proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
@@ -166,15 +166,15 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
 
     <div class="box card">
         <div class="card-header bg-dark text-white">
-            <h2>Déclaration tardive de membre en visio-conférence</h2>
+            <h2>Déclaration tardive de membre en visioconférence</h2>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-8">
                     <?php if ($visios === null or empty($visios)) : ?>
-                        Aucune déclaration de visoconférence tardive
+                        Aucune déclaration de visioconférence tardive
                     <?php else : ?>
-                        Liste des déclaration tardive d'un membre en visio-conférence :
+                        Liste des déclarations tardives d'un membre en visioconférence :
                         <ul>
                         <?php foreach ($visios as $visio) : ?>
                             <li>

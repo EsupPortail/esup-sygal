@@ -19,7 +19,7 @@ use These\Entity\Db\These;
 <p>
     Le président du jury, <?php echo ($president)?$president->getIndividu()->getNomComplet():"PRESIDENT MANQUANT"; ?>, n'a pas d'email de renseigner dans <?php echo $this->appInfos()->nom ?>.
     <?php echo $this->appInfos()->nom ?> n'a pas pu créer de compte pour celui-ci et par conséquent il ne pourra pas valider les corrections.
-    Il présidait le jury de la la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> intitulée <?php echo $these->getTitre(); ?>
+    Il présidait le jury de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> intitulée <?php echo $these->getTitre(); ?>
 </p>
 
 <p>

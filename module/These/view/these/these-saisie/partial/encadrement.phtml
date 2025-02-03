@@ -14,7 +14,7 @@ use These\Fieldset\Encadrement\EncadrementFieldset;
     ?>
 
     <div class="col-6 mb-3 these-saisie-form-section">
-        <h3 class="these-saisie-title-section">Coencadrant·e de thèse</h3>
+        <h3 class="these-saisie-title-section">Co-encadrant·e de thèse</h3>
         <?php for ($i = 1; $i <= EncadrementFieldset::NB_COENCADRANTS_MAXI; $i++)  : ?>
             <div class="row coencadrant<?php echo $i ?>">
                 <div class="col-md-8"><?php echo $this->formControlGroup($fs->get('coencadrant' . $i . '-individu')); ?></div>

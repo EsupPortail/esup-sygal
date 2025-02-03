@@ -48,7 +48,7 @@ use These\Entity\Db\These;
 <p>
     <strong>Nom :</strong> <?php echo $these->getDoctorant()->getIndividu()->getNomUsuel() ?> <br>
     <strong>Prénom :</strong> <?php echo $these->getDoctorant()->getIndividu()->getPrenom() ?> <br>
-    <strong>Etablissement de préparation :</strong> <?php echo $libEtablissement ?> <br>
+    <strong>Établissement de préparation :</strong> <?php echo $libEtablissement ?> <br>
 
     <?php if ($these->getDateSoutenance()): ?>
         <strong>Date de soutenance :</strong> <?php echo $these->getDateSoutenanceToString() ?><br>
