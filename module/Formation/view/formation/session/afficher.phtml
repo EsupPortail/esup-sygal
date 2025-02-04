@@ -68,15 +68,30 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a->getHistoCreation() > $b->getHistoCreation();});
 ?>
 
-<h1 class="page-header">
-    <?php echo $pageTitle; ?>
-    <?php if (!$session->estVisible()) : ?>
-        <span class="text-danger" data-bs-toggle="popover" data-bs-content="<span class=&quot;text-danger&quot;>Non visible pour les doctorants jusqu'au <?php echo $session->getDatePublication()->format('d/m/Y'); ?></span>" data-bs-trigger="hover" data-bs-html="true" data-bs-placement="bottom" data-bs-original-title="" title=""><span class="badge bg-danger">
-            NON VISIBLE
+<div class="row">
+    <div class="col-md-8" style="max-width: max-content;">
+        <h1 class="page-header">
+            <?php echo $pageTitle; ?>
+        </h1>
+    </div>
+    <div class="col-md-4" style="margin-top:5px;">
+        <?php if (!$session->estVisible()) : ?>
+            <span style="font-size:27px;" class="text-danger" data-bs-toggle="popover"
+                  data-bs-content="<span class=&quot;text-danger&quot;>Non visible pour les doctorants jusqu'au <?php echo $session->getDatePublication()->format('d/m/Y'); ?></span>"
+                  data-bs-trigger="hover" data-bs-html="true" data-bs-placement="bottom" data-bs-original-title=""
+                  title="">
+                    <span class="badge bg-danger">
+                        NON VISIBLE
+                    </span>
+                </span>
+        <?php endif; ?>
+        <span style="font-size:27px;">
+            <?php echo $this->etat($session); ?>
         </span>
-    </span>
-    <?php endif; ?>
-</h1>
+    </div>
+</div>
+
+
 
 <?php
 echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
@@ -160,8 +175,6 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <?php endif; ?>
         <dt class="col-md-3"> Code </dt>
         <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
-        <dt class="col-md-3"> État </dt>
-        <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
         <dt class="col-md-3"> Établissement organisateur </dt>
         <dd class="col-md-9"> <?php echo $this->site($session); ?> </dd>
         <dt class="col-md-3"> Responsable </dt>

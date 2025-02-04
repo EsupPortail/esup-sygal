@@ -66,92 +66,109 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php endif; ?>
 </div>
 
-<h2> Informations sur la formation </h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="box card" style="margin-top:20px;height:max-content">
+            <div class="card-header these-card-header text-white">
+                <h2> Informations sur la formation </h2>
 
-<dl class="row">
-    <dt class="col-md-3"> Module </dt>
-    <dd class="col-md-9">
-        <?php if($formation->getModule()) : ?>
-            <?php if ($canAfficherModule) : ?>
-                <a href="<?php echo $this->url('formation/module/afficher', ['module' => $formation->getModule()->getId() ], [], true); ?>"
-                   title="Accéder au module <strong><?php echo $formation->getModule()->getLibelle(); ?></strong>" data-bs-toggle='tooltip' data-bs-html='true'
-                >
-                    <?php echo $formation->getModule()->getLibelle(); ?></a>
-            <?php else : ?>
-                <?php echo $formation->getModule()->getLibelle(); ?>
-            <?php endif; ?>
-        <?php else : ?>
-            <i>Aucun module associé à cette formation</i>
-        <?php endif; ?>
-    </dd>
-    <dt class="col-md-3"> Formation </dt>
-    <dd class="col-md-9"> <?php echo $formation->getLibelle(); ?> </dd>
-    <?php if ($formation->getDescription()) : ?>
-        <dt class="col-md-3"> Description de la formation </dt>
-        <dd class="col-md-9"> <?php echo $formation->getDescription(); ?> </dd>
-    <?php endif ?>
-    <dt class="col-md-3"> Code </dt>
-    <dd class="col-md-9"> <code><?php echo $formation->getCode(); ?></code></dd>
-    <?php if ($formation->getFiche()) : ?>
-        <dt class="col-md-3"> Fiche </dt>
-        <dd class="col-md-9">
-            <?php echo $this->fichier($formation->getFiche(),
-                $this->url('formation/formation/telecharger-fiche', ["formation"=> $formation->getId()],[], true),
-                $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier" => $formation->getFiche()->getId()], ['query' => ['redirect' => $this->url('formation/formation/afficher', ["formation" => $formation->getId()])]], true),
-                $canModifierFormation,
-                "Fiche de la formation",
-                false,
-                false
-            ); ?>
-        </dd>
-    <?php else: ?>
-        <?php if ($formation->getLien()) : ?>
-            <dt class="col-md-3"> Lien vers la fiche </dt>
-            <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
-        <?php endif ?>
-    <?php endif ?>
-    <?php if ($formation->getObjectif() !== null) : ?>
-        <dt class="col-md-3">Objectif </dt>
-        <dd class="col-md-9">
-                <?php echo $formation->getObjectif(); ?>
-        </dd>
-    <?php endif; ?>
-    <?php if ($formation->getProgramme() !== null) : ?>
-        <dt class="col-md-3">Programme </dt>
-        <dd class="col-md-9">
-            <?php echo $formation->getProgramme(); ?>
-        </dd>
-    <?php endif; ?>
-</dl>
+            </div>
+            <div class="card-body these-identite-body">
+                <dl class="row">
+                    <dt class="col-md-4"> Module </dt>
+                    <dd class="col-md-8">
+                        <?php if($formation->getModule()) : ?>
+                            <?php if ($canAfficherModule) : ?>
+                                <a href="<?php echo $this->url('formation/module/afficher', ['module' => $formation->getModule()->getId() ], [], true); ?>"
+                                   title="Accéder au module <strong><?php echo $formation->getModule()->getLibelle(); ?></strong>" data-bs-toggle='tooltip' data-bs-html='true'
+                                >
+                                    <?php echo $formation->getModule()->getLibelle(); ?></a>
+                            <?php else : ?>
+                                <?php echo $formation->getModule()->getLibelle(); ?>
+                            <?php endif; ?>
+                        <?php else : ?>
+                            <i>Aucun module associé à cette formation</i>
+                        <?php endif; ?>
+                    </dd>
+                    <dt class="col-md-4"> Formation </dt>
+                    <dd class="col-md-8"> <?php echo $formation->getLibelle(); ?> </dd>
+                    <?php if ($formation->getDescription()) : ?>
+                        <dt class="col-md-4"> Description de la formation </dt>
+                        <dd class="col-md-8"> <?php echo $formation->getDescription(); ?> </dd>
+                    <?php endif ?>
+                    <dt class="col-md-4"> Code </dt>
+                    <dd class="col-md-8"> <code><?php echo $formation->getCode(); ?></code></dd>
+                    <?php if ($formation->getFiche()) : ?>
+                        <dt class="col-md-4"> Fiche </dt>
+                        <dd class="col-md-8">
+                            <?php echo $this->fichier($formation->getFiche(),
+                                $this->url('formation/formation/telecharger-fiche', ["formation"=> $formation->getId()],[], true),
+                                $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier" => $formation->getFiche()->getId()], ['query' => ['redirect' => $this->url('formation/formation/afficher', ["formation" => $formation->getId()])]], true),
+                                $canModifierFormation,
+                                "Fiche de la formation",
+                                false,
+                                false
+                            ); ?>
+                        </dd>
+                    <?php else: ?>
+                        <?php if ($formation->getLien()) : ?>
+                            <dt class="col-md-4"> Lien vers la fiche </dt>
+                            <dd class="col-md-8"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+                        <?php endif ?>
+                    <?php endif ?>
+                    <?php if ($formation->getObjectif() !== null) : ?>
+                        <dt class="col-md-4">Objectif </dt>
+                        <dd class="col-md-8">
+                            <?php echo $formation->getObjectif(); ?>
+                        </dd>
+                    <?php endif; ?>
+                    <?php if ($formation->getProgramme() !== null) : ?>
+                        <dt class="col-md-4">Programme </dt>
+                        <dd class="col-md-8">
+                            <?php echo $formation->getProgramme(); ?>
+                        </dd>
+                    <?php endif; ?>
+                </dl>
+            </div>
+        </div>
+    </div>
 
-<h2> Valeurs par défaut transmises aux sessions </h2>
-
-<dl class="row">
-    <?php if ($formation->getSite()) : ?>
-        <dt class="col-md-3"> Établissement organisateur</dt>
-        <dd class="col-md-9"> <?php echo $this->site($formation); ?> </dd>
-    <?php endif; ?>
-    <?php if ($formation->getResponsable()) : ?>
-        <dt class="col-md-3"> Responsable</dt>
-        <dd class="col-md-9"> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
-    <?php endif; ?>
-    <?php if ($formation->getModalite()) : ?>
-        <dt class="col-md-3"> Modalité</dt>
-        <dd class="col-md-9"> <?php echo $this->modalite($formation); ?> </dd>
-    <?php endif; ?>
-    <?php if ($formation->getType()) : ?>
-        <dt class="col-md-3"> Type</dt>
-        <dd class="col-md-9"> <?php echo $this->type($formation); ?> </dd>
-    <?php endif; ?>
-    <?php if ($formation->getTailleListePrincipale()) : ?>
-        <dt class="col-md-3"> Effectif de la liste principale </dt>
-        <dd class="col-md-9"> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
-    <?php endif; ?>
-    <?php if ($formation->getTailleListeComplementaire()) : ?>
-        <dt class="col-md-3"> Effectif de la liste complémentaire </dt>
-        <dd class="col-md-9"> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
-    <?php endif; ?>
-</dl>
+    <div class="col-md-6">
+        <div class="box card" style="margin-top:20px;height:max-content">
+            <div class="card-header these-card-header text-white">
+                <h2> Valeurs par défaut transmises aux sessions </h2>
+            </div>
+            <div class="card-body these-identite-body">
+                <dl class="row">
+                    <?php if ($formation->getSite()) : ?>
+                        <dt class="col-md-4"> Établissement organisateur</dt>
+                        <dd class="col-md-8"> <?php echo $this->site($formation); ?> </dd>
+                    <?php endif; ?>
+                    <?php if ($formation->getResponsable()) : ?>
+                        <dt class="col-md-4"> Responsable</dt>
+                        <dd class="col-md-8"> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
+                    <?php endif; ?>
+                    <?php if ($formation->getModalite()) : ?>
+                        <dt class="col-md-4"> Modalité</dt>
+                        <dd class="col-md-8"> <?php echo $this->modalite($formation); ?> </dd>
+                    <?php endif; ?>
+                    <?php if ($formation->getType()) : ?>
+                        <dt class="col-md-4"> Type</dt>
+                        <dd class="col-md-8"> <?php echo $this->type($formation); ?> </dd>
+                    <?php endif; ?>
+                    <?php if ($formation->getTailleListePrincipale()) : ?>
+                        <dt class="col-md-4"> Effectif de la liste principale </dt>
+                        <dd class="col-md-8"> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
+                    <?php endif; ?>
+                    <?php if ($formation->getTailleListeComplementaire()) : ?>
+                        <dt class="col-md-4"> Effectif de la liste complémentaire </dt>
+                        <dd class="col-md-8"> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
+                    <?php endif; ?>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
 
 <h2> Liste des sessions </h2>
 
