@@ -26,6 +26,7 @@ Journal des modifications
 - [FIX] Notifications Admission et Formation
 - [FIX] Erreur lors de l'envoi de la notif 'Demande des pré-rapports de soutenance' (variable 'rapporteur' non transmise à UrlService).
 - [FIX] Validation de la version corrigée de la thèse par le président du jury : améliorations (transaction bdd, remontée erreur, messages).
+- [FIX] Fonction 'implode' manquante faisant planter l'envoi de la notif 'Validation des corrections de la thèse'.
 
 9.2.0
 -----

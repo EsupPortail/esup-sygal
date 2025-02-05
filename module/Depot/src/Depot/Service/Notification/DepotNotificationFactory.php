@@ -115,7 +115,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             ]);
 
         $notif->addSuccessMessage(
-            sprintf("Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s).", $to)
+            sprintf("Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s).", implode(', ', $to))
         );
 
         return $notif;
