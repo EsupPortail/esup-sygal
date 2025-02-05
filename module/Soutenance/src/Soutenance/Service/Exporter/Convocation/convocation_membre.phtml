@@ -100,7 +100,7 @@ le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure
 désigné<?php echo ($civilite === "Madame" ? 'e' : ($civilite === "Monsieur" ? '' : '·e')) ?>
  pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
  en vue de l'obtention du diplôme : <br/>
-Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
+Doctorat en <?php echo $these->getDiscipline(); ?>.
 </p>
 
 <p>

@@ -111,16 +111,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $anneeUniv1ereInscription;
 
     /**
-     * @var string
-     */
-    private $codeSiseDiscipline;
-
-    /**
-     * @var string
-     */
-    private $libelleDiscipline;
-
-    /**
      * @var DateTime
      */
     protected $dateSoutenance;
@@ -386,26 +376,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return string
-     * @deprecated
-     */
-    public function getCodeSiseDiscipline()
-    {
-        return $this->codeSiseDiscipline;
-    }
-
-    /**
-     * @param string $codeSiseDiscipline
-     * @return self
-     * @deprecated
-     */
-    public function setCodeSiseDiscipline($codeSiseDiscipline): self
-    {
-        $this->codeSiseDiscipline = $codeSiseDiscipline;
-        return $this;
-    }
-
-    /**
      * Set discipline.
      *
      * @param Discipline|null $discipline
@@ -427,27 +397,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDiscipline(): ?Discipline
     {
         return $this->discipline;
-    }
-
-    /**
-     * @param string $libelleDiscipline
-     * @return self
-     * @deprecated
-     */
-    public function setLibelleDiscipline($libelleDiscipline)
-    {
-        $this->libelleDiscipline = $libelleDiscipline;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     * @deprecated Remise en service suite au bug "Entity of type 'Application\Entity\Db\Discipline' for IDs code(4100108) was not found"
-     */
-    public function getLibelleDiscipline()
-    {
-        return $this->getDiscipline()?->__toString() ?: $this->libelleDiscipline;
     }
 
     /**so

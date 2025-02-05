@@ -17,7 +17,7 @@ class TheseTemplateVariable extends AbstractTemplateVariable
 
     public function getLibelleDiscipline(): string
     {
-        return $this->these->getLibelleDiscipline();
+        return (string) $this->these->getDiscipline();
     }
 
     public function getTitre(): string

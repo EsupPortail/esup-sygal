@@ -385,7 +385,7 @@ class RapportActiviteService extends BaseService
 
         // généralités
         $exportData->titre = $these->getTitre();
-        $exportData->specialite = $these->getLibelleDiscipline();
+        $exportData->specialite = (string) $these->getDiscipline();
 
         // doctorant
         if ($these->getDoctorant()) {

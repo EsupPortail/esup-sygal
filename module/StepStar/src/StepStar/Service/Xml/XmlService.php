@@ -453,7 +453,7 @@ class XmlService
 
             // thèse
             self::THESE_ID => $these['id'],
-            self::DISCIPLINE => $these['libelleDiscipline'],
+            self::DISCIPLINE => $these['discipline']['libelle'] ?? null,
             self::AVIS_DE_REPRODUCTION => $these['correctionAutorisee'], // todo : ce n'est pas l'avis de reproduction !
             self::DATE_DEBUT_CONFIDENTIALITE => $this->formatDate($dateDebutConfidentialite),
             self::DATE_FIN_CONFIDENTIALITE => $this->formatDate($dateFinConfidentialite),
@@ -588,18 +588,18 @@ class XmlService
 
     private function extractDomaineFromThese(array $these)
     {
-        $codeSiseDiscipline = $these['codeSiseDiscipline'] ?? null;
-        if (! $codeSiseDiscipline) {
+        $discipline = $these['discipline'] ?? null;
+        if (! $discipline) {
             return null;
         }
 
-        Assert::integerish($codeSiseDiscipline, "Le code discipline SISE est sensé être un entier");
+        Assert::integerish($discipline['code'], "Le code discipline SISE de la thèse {$these['id']} ne semble pas être un entier");
 
-        if (!isset($this->codesSiseDisciplinesToCodesDomaines[(int)$codeSiseDiscipline])) {
+        if (!isset($this->codesSiseDisciplinesToCodesDomaines[(int)$discipline['code']])) {
             return null;
         }
 
-        $domaines = (array) $this->codesSiseDisciplinesToCodesDomaines[(int)$codeSiseDiscipline];
+        $domaines = (array) $this->codesSiseDisciplinesToCodesDomaines[(int)$discipline['code']];
 
         // pour l'instant, on retourne le 1er domaine de la liste
         return reset($domaines);

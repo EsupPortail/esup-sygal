@@ -101,7 +101,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
      */
     public function createNotificationForRdvBuSaisiParDoctorant(These $these, bool $estLaPremiereSaisie): Notification
     {
-        $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getLibelleDiscipline());
+        $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getDiscipline());
         $to = $this->emailTheseService->fetchEmailAspectsBibliotheque($these);
 
         $notif = $this->createNotification();

@@ -293,7 +293,6 @@ class Config
                     'dateTransfert' => 'dat_transfert_dep',
                     'etatThese' => 'eta_ths',
                     'codeSiseDiscipline' => 'code_sise_disc',
-                    'libDiscipline' => 'lib_int1_dis',
                     'libEtabCotut' => 'lib_etab_cotut',
                     'libPaysCotut' => 'lib_pays_cotut',
                     'correctionAutorisee' => 'correction_possible',
