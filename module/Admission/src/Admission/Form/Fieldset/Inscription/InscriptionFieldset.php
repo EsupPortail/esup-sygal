@@ -3,6 +3,7 @@ namespace Admission\Form\Fieldset\Inscription;
 
 use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
+use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToNull;
@@ -20,6 +21,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
 class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
+    use AdmissionServiceAwareTrait;
     //Informations Inscription
     private string $urlIndividuThese;
     private array $composantesEnseignement;
@@ -80,7 +82,9 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
     {
         $options = [];
         foreach ($etablissementsInscription as $etablissementInscription) {
-            $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle();
+            if($this->admissionService->canEtabAccessModuleAdmission($etablissementInscription)){
+                $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle();
+            }
         }
         $this->etablissementInscription = $options;
     }

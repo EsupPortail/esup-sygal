@@ -69,6 +69,10 @@ class VariableController extends AbstractActionController
                 } else {
                     $this->variableService->create($variable);
                 }
+
+                $redirectUrl = $this->params()->fromQuery('redirect');
+                if($redirectUrl) return $this->redirect()->toUrl($redirectUrl);
+
                 return $this->redirect()->toRoute(
                     'etablissement/voir',
                     ['etablissement' => $etablissement->getId()],

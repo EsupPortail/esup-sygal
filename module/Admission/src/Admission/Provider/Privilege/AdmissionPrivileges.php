@@ -5,6 +5,7 @@ namespace Admission\Provider\Privilege;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class AdmissionPrivileges extends Privileges {
+    const ADMISSION_CONFIGURER_MODULE  = 'admission-admission-configurer-module';
     const ADMISSION_LISTER_MES_DOSSIERS_ADMISSION  = 'admission-admission-lister-mes-dossiers-admission';
     const ADMISSION_INITIALISER_ADMISSION  = 'admission-admission-initialiser-son-dossier-admission';
     const ADMISSION_RECHERCHER_DOSSIERS_ADMISSION  = 'admission-admission-rechercher-dossiers-admission';

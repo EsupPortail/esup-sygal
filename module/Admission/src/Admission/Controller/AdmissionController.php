@@ -34,8 +34,10 @@ use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Variable;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\Exception\ORMException;
@@ -82,6 +84,7 @@ class AdmissionController extends AdmissionAbstractController {
     use TypeValidationServiceAwareTrait;
     use AdmissionValidationServiceAwareTrait;
     use RenduServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     public function indexAction(): ViewModel|Response
     {
@@ -875,5 +878,22 @@ class AdmissionController extends AdmissionAbstractController {
         } catch (MpdfException $e) {
             throw new RuntimeException("Un problème est survenu lors de la génération du pdf",0,$e);
         }
+    }
+
+    public function configurerModuleAdmissionAction(){
+        $etablissementsInscription = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
+
+        $tabEtablissementsVariables = [];
+        foreach($etablissementsInscription as $etablissementInscription){
+            $tabEtablissementsVariables[] = [
+                "etablissement" => $etablissementInscription,
+                "variable" => $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_UTILISATION_MODULE_ADMISSION, $etablissementInscription),
+                "canAccessModule" => $this->admissionService->canEtabAccessModuleAdmission($etablissementInscription),
+            ];
+        }
+
+        return new ViewModel([
+            'tabEtablissementsVariables' => $tabEtablissementsVariables,
+        ]);
     }
 }

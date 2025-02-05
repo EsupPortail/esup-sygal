@@ -8,8 +8,11 @@
 */
 
 use Admission\Entity\Db\Admission;
+use Admission\Provider\Privilege\AdmissionPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
+
+$canConfigurerModule = $this->isAllowed(AdmissionPrivileges::getResourceId(AdmissionPrivileges::ADMISSION_CONFIGURER_MODULE));
 
 ?>
 <div class="header-admission">
@@ -20,9 +23,18 @@ use Individu\Entity\Db\Individu;
     ?>
 
     <h1 class="page-header"><?php echo $this->translate($title); ?> </h1>
+    <?php if(!isset($individu) && $canConfigurerModule):
+        /** @see \Admission\Controller\AdmissionController::configurerModuleAdmissionAction() */?>
+        <a href="<?php echo $this->url('admission/configurer-module-admission', [], [], true); ?>" class="float-end btn btn-primary">
+            <span class="icon icon-gerer"></span> Gérer le module Admission
+        </a>
+    <?php endif; ?>
+
 
     <p class="introduction">Ce module permet dans un premier temps de candidater à un parcours doctoral.
         <br>Vous devrez remplir un formulaire en ligne et déposer les documents demandés.<br>
         Les données que vous saisissez dans ce formulaire sont automatiquement sauvegardées dès que vous avancez vers l'étape suivante, ou que vous revenez à l'étape précédente.
     </p>
+
+
 </div>

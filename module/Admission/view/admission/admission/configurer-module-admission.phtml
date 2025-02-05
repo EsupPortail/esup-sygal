@@ -1,0 +1,97 @@
+<?php
+
+use Admission\Entity\Db\Admission;
+use Admission\Entity\Db\AdmissionOperationInterface;
+use Application\Entity\Db\Role;
+use Individu\Entity\Db\Individu;
+use Structure\Provider\Privilege\StructurePrivileges;use UnicaenRenderer\Provider\Privilege\DocumenttemplatePrivileges;
+
+/**
+ *  @var array $tabEtablissementsVariables
+ */
+
+$canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+?>
+<div class="header-admission">
+    <h1 class="page-header">
+        Configuration du module Admission
+    </h1>
+</div>
+
+<a class="btn btn-primary action"
+   href="<?php echo $this->url('admission', [], [], true); ?>">
+    <span class="icon icon-retour"></span>
+    Retourner au module Admission
+</a>
+
+<div class="admission-section-title-container mt-5 mb-3">
+    <h2 class="admission-section-title">
+        Accès au module
+        <span class="icon icon-info" data-bs-toggle="tooltip" title="Si l'établissement ne possède pas l'accès à ce module, aucun candidat ne pourra le sélectionner lors du remplissage de son dossier"</h2>
+    </h2>
+</div>
+
+
+<table class="table table-sm table-hover">
+    <thead>
+    <tr>
+        <th>Établissement d'inscription</th>
+        <th>est visible</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($tabEtablissementsVariables as $tabEtabVar) : ?>
+        <tr>
+            <td>
+                <?php echo $tabEtabVar["etablissement"]->getStructure()->getLibelle(); ?>
+            </td>
+            <td>
+                <?php if($tabEtabVar["canAccessModule"] === true): ?>
+                    <span class="icon icon-oui text-success"></span>
+                <?php elseif($tabEtabVar["canAccessModule"] === false): ?>
+                    <span class="icon icon-non text-danger"></span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($canModifier) : ?>
+                    <?php $redirectUrl =  $this->url('admission/configurer-module-admission', [], [], true); ?>
+                    <a  <?php /**  @see \Structure\Controller\VariableController::saisirVariableAction() */ ?>
+                        class="ajax-modal" data-event="modification"
+                        data-bs-toggle="tooltip"
+                        title="Si vous voulez accorder le droit d'accès au module à <?= $tabEtabVar["etablissement"]->getStructure()->getLibelle() ?>, il faut saisir true <br><br> Dans le cas contraire, il faut saisir false."
+                        data-bs-html="true"
+                        href="<?php echo $this->url('etablissement/saisir-variable', ['id' => $tabEtabVar["variable"]?->getId(), 'etablissement'=> $tabEtabVar["etablissement"]->getId()], ['query' => ['redirect' => $redirectUrl]], true); ?>">
+                        <span class="icon icon-edit iconly" title="Modifier la variable"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php
+$canModifier = $this->isAllowed(DocumenttemplatePrivileges::getResourceId(DocumenttemplatePrivileges::DOCUMENTTEMPLATE_MODIFIER));
+if($canModifier) : ?>
+
+    <div class="admission-section-title-container mt-5 mb-3">
+        <h2 class="admission-section-title">
+            Gestion des templates Renderer
+        </h2>
+    </div>
+
+    <a class="btn btn-primary action"
+       href="<?php echo $this->url('contenu/template', [], ['query' => ['namespace' => 'Admission\Provider\Template']], true) ?>">
+        Accéder aux templates
+    </a>
+<?php endif; ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

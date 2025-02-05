@@ -4,6 +4,7 @@ namespace Admission\Form\Fieldset\Inscription;
 
 use Admission\Entity\Db\Inscription;
 use Admission\Hydrator\Inscription\InscriptionHydrator;
+use Admission\Service\Admission\AdmissionService;
 use Application\Service\Discipline\DisciplineService;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Application\View\Renderer\PhpRenderer;
@@ -30,6 +31,9 @@ class InscriptionFieldsetFactory
         $fieldset = new InscriptionFieldset();
         $fieldset->setHydrator($inscriptionHydrator);
         $fieldset->setObject(new Inscription());
+
+        $admissionService = $container->get(AdmissionService::class);
+        $fieldset->setAdmissionService($admissionService);
 
         $disciplineService = $container->get(DisciplineService::class);
         $disciplines = $disciplineService->getDisciplinesAsOptions('libelle','ASC','id');

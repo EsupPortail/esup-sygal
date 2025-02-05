@@ -325,4 +325,10 @@ class AdmissionService extends BaseService
             if($isNew) $this->templateService->create($templateForEtab);
         }
     }
+
+    public function canEtabAccessModuleAdmission(Etablissement $etablissement): bool
+    {
+        $variable = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_UTILISATION_MODULE_ADMISSION, $etablissement);
+        return $variable?->getValeur() === "true";
+    }
 }

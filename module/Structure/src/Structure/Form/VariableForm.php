@@ -23,6 +23,17 @@ class VariableForm extends Form implements InputFilterProviderInterface
     use VariableServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
+    public function prepare()
+    {
+        /** @var Variable $variable */
+        $variable = $this->getObject();
+        $codeModifiable = !$variable->getId();
+
+        $this->get('code')->setAttribute('disabled', !$codeModifiable);
+
+        return parent::prepare();
+    }
+
     public function init(): void
     {
         $this->add([
@@ -97,9 +108,12 @@ class VariableForm extends Form implements InputFilterProviderInterface
 
     public function getInputFilterSpecification(): array
     {
+        /** @var Variable $variable */
+        $variable = $this->getObject();
+        $codeModifiable = !$variable->getId();
         return [
             'code' => [
-                'required' => true,
+                'required' => $codeModifiable,
                 'validators' => [
                     [
                         'name' => Callback::class,

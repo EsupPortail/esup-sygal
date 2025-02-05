@@ -18,6 +18,7 @@ use Admission\Service\TypeValidation\TypeValidationService;
 use Admission\Service\Validation\AdmissionValidationService;
 use Admission\Service\Verification\VerificationService;
 use Application\Service\Role\RoleService;
+use Application\Service\Variable\VariableService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
@@ -66,6 +67,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $admissionTypeValidationService = $container->get(TypeValidationService::class);
         $admissionValidationService = $container->get(AdmissionValidationService::class);
         $renduService = $container->get(RenduService::class);
+        $variableService = $container->get(VariableService::class);
 
         /** @var AdmissionOperationRule $admissionOperationRule */
         $admissionOperationRule = $container->get(AdmissionOperationRule::class);
@@ -100,6 +102,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setTypeValidationService($admissionTypeValidationService);
         $controller->setAdmissionValidationService($admissionValidationService);
         $controller->setRenduService($renduService);
+        $controller->setVariableService($variableService);
 
         return $controller;
     }

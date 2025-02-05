@@ -208,6 +208,15 @@ return array(
                         AdmissionPrivileges::ADMISSION_GENERER_EXPORT_ADMISSIONS,
                     ],
                 ],
+                [
+                    'controller' => AdmissionController::class,
+                    'action'     => [
+                        'configurer-module-admission',
+                    ],
+                    'privileges' => [
+                        AdmissionPrivileges::ADMISSION_CONFIGURER_MODULE,
+                    ],
+                ],
             ]
         ],
     ],
@@ -305,6 +314,17 @@ return array(
                             ],
                         ],
                     ],
+                    'configurer-module-admission' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/configurer-module-admission',
+                            'defaults' => [
+                                /** @see AdmissionController::configurerModuleAdmissionAction() */
+                                'controller'    => AdmissionController::class,
+                                'action'        => 'configurer-module-admission',
+                            ],
+                        ],
+                    ],
                     'recherche' => [
                         'type' => Literal::class,
                         'options' => [
@@ -346,8 +366,7 @@ return array(
                         'label' => 'Admission',
                         'route' => 'admission',
                         'resource' => PrivilegeController::getResourceId(AdmissionRechercheController::class, 'index'),
-                        'pages' => [
-                        ],
+                        'pages' => []
                     ],
 
                     /**

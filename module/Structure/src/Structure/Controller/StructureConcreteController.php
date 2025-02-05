@@ -4,7 +4,9 @@ namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\Variable;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Fichier\Service\Storage\Adapter\Exception\FileNotFoundInStorageException;
 use Individu\Entity\Db\IndividuRole;
@@ -29,6 +31,7 @@ abstract class StructureConcreteController extends AbstractController
 {
     use ApplicationRoleServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use VariableServiceAwareTrait;
 
     /**
      * @var string TypeStructure::CODE_ECOLE_DOCTORALE ou
@@ -211,6 +214,15 @@ abstract class StructureConcreteController extends AbstractController
                 // sauvegarde du logo si fourni
                 if ($data['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoStructure($data['cheminLogo']['tmp_name'], $structureConcrete);
+                }
+
+                //ajoute à la création de l'établissement d'inscription l'accès au module Admission
+                if($structureConcrete instanceof Etablissement && $structureConcrete->estInscription()){
+                    $variable = $this->variableService->newVariable($structureConcrete);
+                    $variable->setCode(Variable::CODE_UTILISATION_MODULE_ADMISSION);
+                    $variable->setDescription("Utilisation ou non du module Admission");
+                    $variable->setValeur("true");
+                    $this->variableService->create($variable);
                 }
 
                 $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' créée avec succès");
