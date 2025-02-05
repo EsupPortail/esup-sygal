@@ -25,6 +25,42 @@ x-minio-common: &minio-common
 
 
 services:
+  sygal82:
+    #    image: registre.unicaen.fr:5000/sygal-image-php8.2
+    build:
+      context: .
+      dockerfile: Dockerfile82
+      args:
+        - PHP_VERSION=8.2
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
+    ports:
+      - "8003:443"
+    volumes:
+      - .:/app
+      - /tmp:/tmp
+      - /tmp/upload:/tmp/upload
+      - $HOME/.ssh:/root/.ssh
+      - $HOME/.cache/composer:/root/.cache/composer
+      - $HOME/.config/composer/auth.json:/root/.config/composer/auth.json
+      - ../sygal-pegase-connect/vendor/unicaen/sygal-api:/sygal-api
+      - ./docker/configs/apache/conf-available/api.conf:/etc/apache2/conf-available/api.conf
+      - ./docker/configs/apache/conf-available/livelog.conf:/etc/apache2/conf-available/livelog.conf
+      - ./docker/configs/apache/conf-available/security.conf:/etc/apache2/conf-available/security.conf
+      - ./docker/entrypoint.d/001_memcached:/entrypoint.d/001_memcached
+      - ./docker/entrypoint.d/008_api:/entrypoint.d/008_api
+      - ./docker/entrypoint.d/009_livelog:/entrypoint.d/009_livelog
+    working_dir: /app
+    networks:
+      - sygalnet
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   sygal:
 #    image: registre.unicaen.fr:5000/sygal-image-php8.0
     build:
@@ -46,6 +82,7 @@ services:
      - /tmp/upload:/tmp/upload
      - $HOME/.ssh:/root/.ssh
      - $HOME/.cache/composer:/root/.cache/composer
+     - $HOME/.config/composer/auth.json:/root/.config/composer/auth.json
      - ../sygal-pegase-connect/vendor/unicaen/sygal-api:/sygal-api
      - ./docker/configs/apache/conf-available/api.conf:/etc/apache2/conf-available/api.conf
      - ./docker/configs/apache/conf-available/livelog.conf:/etc/apache2/conf-available/livelog.conf
