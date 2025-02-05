@@ -2,6 +2,8 @@
 -- 9.3.0
 --
 
+call unicaen_indicateur_delete_matviews();
+
 drop view v_extract_theses;
 
 alter table discipline_sise alter column libelle type varchar(256);
@@ -9931,3 +9933,5 @@ insert into discipline_sise(code, libelle) values ('5400817', $$ENDOCRINOLOGIE-D
 insert into discipline_sise(code, libelle) values ('5100818', $$GERIATRIE FST DOULEUR$$) on conflict do nothing;
 insert into discipline_sise(code, libelle) values ('5200028', $$PEDIATRIE OPTION REANIMATION PEDIATRIQUE$$) on conflict do nothing;
 insert into discipline_sise(code, libelle) values ('2400317', $$ACTIVITES JURIDIQUES : MANDATAIRE JUDICIAIRE A LA PROTECTION DES MAJEURS$$) on conflict do nothing;
+
+call unicaen_indicateur_recreate_matviews();
