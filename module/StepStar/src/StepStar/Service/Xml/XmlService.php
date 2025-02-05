@@ -427,7 +427,7 @@ class XmlService
 
         $data = [
             // doctorant
-            self::CODE_ETUDIANT => $these['doctorant']['individu']['supannId'], // todo : ou l'id ?
+            self::CODE_ETUDIANT => ($these['doctorant']['ine'] ?? null) ?: $these['doctorant']['id'],
             self::CODE_INE => $these['doctorant']['ine'],
             self::PPN_DOCTORANT => $these['doctorant']['individu']['idRef'] ?? null,
             self::NOM_ETUDIANT => $these['doctorant']['individu']['nomPatronymique'] ?: $these['doctorant']['individu']['nomUsuel'],

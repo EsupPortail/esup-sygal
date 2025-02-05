@@ -14,6 +14,7 @@ Journal des modifications
 - Thèse : abandon des colonnes 'discipline_sise_code' et 'lib_disc' au profit de la jointure avec la table 'discipline_sise'.
 - [FIX] Rapport d'activité : correction du filtrage selon le profil de l'utilisateur.
 - [FIX] Module Admission : modification de la convention de formation doctorale impossible
+- [FIX] Echec de l'envoi vers STEP-STAR 'Impossible d'extraire du nom de fichier... l'identifiant de la these' si l'individu/doctorant n'a pas de supannId : utilisation de l'INE ou de l'id doctorant.
 
 9.2.1
 -----
