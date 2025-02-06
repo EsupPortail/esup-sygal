@@ -3,6 +3,7 @@ Journal des modifications
 
 9.3.1
 -----
+- Module Formation : Permettre à un doctorant de s'inscrire à une autre session d'une même formation si la première session a été annulée
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 
 9.3.0

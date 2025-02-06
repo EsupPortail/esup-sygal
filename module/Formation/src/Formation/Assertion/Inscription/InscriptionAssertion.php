@@ -145,8 +145,8 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
                 $sessionOuverteDateDebut = $session->getDateDebut();
                 if ($sessionOuverteDateDebut) {
                     $premiereAnneeUnivSessionOuverte = $this->anneeUnivService->fromDate($sessionOuverteDateDebut)->getPremiereAnnee();
-                    // Si les années universitaires sont identiques, on interdit l'inscription
-                    if ($premiereAnneeUnivSessionOuverte === $premiereAnneeUnivSessionInscription) {
+                    // Si les années universitaires sont identiques, on interdit l'inscription et que la session n'a pas été annulée
+                    if ($premiereAnneeUnivSessionOuverte === $premiereAnneeUnivSessionInscription && $sessionInscriptionEnregistree->getEtat()->getCode() !== Etat::CODE_ANNULEE) {
                         return false;
                     }
                 }
