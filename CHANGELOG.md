@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+9.3.1
+-----
+- [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
+
 9.3.0
 -----
 - Module Admission : Nouvelle pièce justificative : Attestation de responsabilité civile

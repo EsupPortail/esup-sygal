@@ -1,13 +1,13 @@
 <?php
 /**
- * Liste de tous les fichiers uploadés.
+ * Liste de tous les fichiers de thèses uploadés.
  *
  * @var PhpRenderer              $this
  * @var Paginator|FichierThese[] $fichiers
  * @var UrlFichierThese          $urlFichierThese
- * @var string $url
+ *
+ * @see \Depot\Controller\FichierTheseController::deposesAction()
  */
-
 
 use Application\View\Renderer\PhpRenderer;
 use Depot\Controller\Plugin\UrlFichierThese;
@@ -32,7 +32,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 <div class="float-start">
     <?php echo $this->partial('partial/form-filtrage') ?>
 </div>
-<form method="post" action="<?php echo $url ?>">
+<form method="post">
     <div class="float-end">
         &nbsp;
         <input type='submit' class='btn btn-secondary btn-sm' value='Filtrer'/>
