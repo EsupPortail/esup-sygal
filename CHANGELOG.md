@@ -4,6 +4,7 @@ Journal des modifications
 9.3.1
 -----
 - Module Formation : Permettre à un doctorant de s'inscrire à une autre session d'une même formation si la première session a été annulée
+- Accès aux rapports CSI et mi-parcours même lorsque la thèse est abandonnée
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 
 9.3.0

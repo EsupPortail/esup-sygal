@@ -4,12 +4,15 @@ namespace Application\Assertion\Rapport;
 
 use Application\Assertion\Interfaces\PageAssertionInterface;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
+use Application\Controller\Rapport\RapportCsiController;
+use Application\Controller\Rapport\RapportCsiRechercheController;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 class RapportPageAssertion implements PageAssertionInterface, UserContextServiceAwareInterface
 {
@@ -84,7 +87,7 @@ class RapportPageAssertion implements PageAssertionInterface, UserContextService
     private function assertEtatThese()
     {
         $this->assertTrue(
-            in_array($this->these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]),
+            in_array($this->these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE, These::ETAT_ABANDONNEE]),
             "La thèse doit être en cours ou soutenue"
         );
     }
