@@ -866,7 +866,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $email = $membre->getEmail();
         $doctorant = $proposition->getThese()->getDoctorant();
         if ($email === null) {
-            throw new RuntimeException("Aucun mail pour la notification [" . MailTemplates::SOUTENANCE_CONVOCATION_DOCTORANT . "]");
+            throw new RuntimeException("Aucun mail pour la notification [" . MailTemplates::SOUTENANCE_CONVOCATION_MEMBRE . "]");
         }
         $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $proposition->getThese());
         if (empty($validation)) {

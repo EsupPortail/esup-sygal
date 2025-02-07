@@ -2,8 +2,10 @@
 
 namespace Soutenance\Renderer;
 
+use InvalidArgumentException;
 use Soutenance\Entity\Membre;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
+use Webmozart\Assert\Assert;
 
 class SoutenanceMembreTemplateVariable extends AbstractTemplateVariable
 {
@@ -27,6 +29,12 @@ class SoutenanceMembreTemplateVariable extends AbstractTemplateVariable
      */
     public function setMembresPouvantEtrePresidentDuJury(array $membresPouvantEtrePresidentDuJury): void
     {
+        if (count($membresPouvantEtrePresidentDuJury) === 0) {
+            throw new InvalidArgumentException("La liste des membres pouvant être président du jury ne peut être vide");
+        }
+
+        Assert::allIsInstanceOf($membresPouvantEtrePresidentDuJury, Membre::class);
+
         $this->membresPouvantEtrePresidentDuJury = $membresPouvantEtrePresidentDuJury;
     }
 

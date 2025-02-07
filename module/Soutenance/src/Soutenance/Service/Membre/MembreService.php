@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Membre;
 
+use Application\QueryBuilder\DefaultQueryBuilder;
 use These\Entity\Db\Acteur;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -110,17 +111,15 @@ class MembreService {
 
     /** REQUETES ******************************************************************************************************/
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder() : QueryBuilder
+    public function createQueryBuilder() : DefaultQueryBuilder
     {
+        /** @var DefaultQueryBuilder $qb */
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
             ->addSelect('proposition')->join('membre.proposition', 'proposition')
             ->addSelect('qualite')->join('membre.qualite', 'qualite')
-            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
-            ->addSelect('individu')->leftJoin('acteur.individu', 'individu')
-            ;
+            ->addSelect('acteur')->join('membre.acteur', 'acteur')
+            ->addSelect('individu')->join('acteur.individu', 'individu');
+
         return $qb;
     }
 
@@ -235,6 +234,7 @@ class MembreService {
         $qb = $this->createQueryBuilder()
             ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
             ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
+            ->andWhereNotHistorise('membre')
             ->addOrderBy('membre.nom', 'ASC');
 
         return  $qb->getQuery()->getResult();

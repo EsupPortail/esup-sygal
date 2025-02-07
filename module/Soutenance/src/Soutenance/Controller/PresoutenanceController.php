@@ -142,6 +142,7 @@ class PresoutenanceController extends AbstractController
             'validationPDC' => $validationPDC,
             'justificatifsOk' => $justificatifsOk,
             'justificatifs' => $justificatifs,
+            'membresPouvantEtrePresidentDuJury' => $this->membreService->findAllMembresPouvantEtrePresidentDuJury($proposition),
 
             'deadline' => $deadline,
 

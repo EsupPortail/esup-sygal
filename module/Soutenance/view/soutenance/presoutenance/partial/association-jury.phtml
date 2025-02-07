@@ -3,6 +3,7 @@
 /**
  * @var Proposition $proposition
  * @var These $these
+ * @var Membre[] $membresPouvantEtrePresidentDuJury
  */
 
 use Soutenance\Service\Horodatage\HorodatageService;
@@ -107,6 +108,20 @@ $theseImportee = $these->getSource()->getImportable()
             <?php endforeach; ?>
             </tbody>
         </table>
+
+        <div class="text-info">
+            <span class="icon icon-info"></span> Pour information, seuls les membres du jury (associés à un acteur)
+            ci-dessous pourront être désignés président du jury de par leur statut de rang A :
+            <ul>
+            <?php if ($membresPouvantEtrePresidentDuJury): ?>
+                <?php foreach ($membresPouvantEtrePresidentDuJury as $membrePouvantEtrePresidentDuJury): ?>
+                    <li><?php echo $membrePouvantEtrePresidentDuJury->getActeur() ?></li>
+                <?php endforeach ?>
+            <?php else: ?>
+                <li class="text-danger">Aucun membre trouvé.</li>
+            <?php endif ?>
+            </ul>
+        </div>
 
         <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury"); ?>
 

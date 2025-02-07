@@ -7,6 +7,7 @@ Journal des modifications
 - Module Rapport d'activité : Amélioration de l'UI pour la consultation d'un rapport d'activité 
 - Module Formation : Permettre à un doctorant de s'inscrire à une autre session d'une même formation si la première session a été annulée
 - Accès aux rapports CSI et mi-parcours même lorsque la thèse est abandonnée
+- Module Soutenance : message informant des possibles présidents du jury (rang A) dans l'encart Association d'acteur SYGAL aux membres de jury. 
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 
 9.3.0
