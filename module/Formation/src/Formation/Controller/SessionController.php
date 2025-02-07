@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use UnicaenSearch\SearchServiceAwareTrait;
+use Application\Export\Xlsx\Manager\XlsxExportManagerAwareTrait;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\PersistentCollection;
@@ -14,28 +15,29 @@ use Formation\Service\Session\Search\SessionSearchServiceAwareTrait;
 use Notification\Exception\ExceptionInterface;
 use Notification\Exception\RuntimeException as NotificationRuntimeException;
 use These\Entity\Db\These;
+use DateTime;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Formation\Entity\Db\Formation;
-use Formation\Entity\Db\SessionStructureValide;
-use Formation\Service\Formation\FormationServiceAwareTrait;
-use Formation\Service\Presence\PresenceServiceAwareTrait;
-use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareTrait;
-use Laminas\Http\Response;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use DateTime;
 use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionStructureValide;
+use Formation\Export\Xlsx\Formation\FormationStatsXlsxExport;
 use Formation\Form\Session\SessionFormAwareTrait;
 use Formation\Service\Exporter\Emargement\EmargementExporter;
+use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
-use Notification\Service\NotifierServiceAwareTrait;
+use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareTrait;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
 
 class SessionController extends AbstractController
@@ -53,7 +55,7 @@ class SessionController extends AbstractController
     use AnneeUnivServiceAwareTrait;
     use SessionSearchServiceAwareTrait;
     use JustificatifServiceAwareTrait;
-
+    use XlsxExportManagerAwareTrait;
 
     use SessionFormAwareTrait;
 
@@ -89,7 +91,8 @@ class SessionController extends AbstractController
             'session' => $session,
             'presences' => $dictionnaire,
             'anneeUniv' => $anneeUniv,
-            'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees
+            'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees,
+            'exports' => [$this->formationXlsxExportManager->get(FormationStatsXlsxExport::CODE)],
         ]);
     }
 

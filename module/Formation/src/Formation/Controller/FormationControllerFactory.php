@@ -2,6 +2,7 @@
 
 namespace Formation\Controller;
 
+use Application\Export\Xlsx\Manager\XlsxExportManager;
 use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctrine\ORM\EntityManager;
 use Fichier\Service\Fichier\FichierService;
@@ -67,6 +68,10 @@ class FormationControllerFactory {
         $controller->setFichierService($fichierService);
         $controller->setNatureFichierService($natureFichier);
         $controller->setFichierStorageService($fichierStorageService);
+
+        /** @var XlsxExportManager $formationXlsxExportManager */
+        $formationXlsxExportManager = $container->get(XlsxExportManager::class);
+        $controller->setFormationXlsxExportManager($formationXlsxExportManager);
 
         return $controller;
     }

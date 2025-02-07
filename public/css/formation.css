@@ -1,11 +1,14 @@
 div.index-result {
   padding-top: 1rem; }
 
-span.formation-typage {
+span.module-typage,
+span.formation-typage,
+span.session-typage {
   border: 1px solid lightgrey;
   border-radius: 5px;
-  padding: 0 2px;
-  font-weight: 500; }
+  padding: 0 3px;
+  font-weight: 500;
+  font-variant: small-caps; }
 
 span.formation-lettrine {
   position: relative;
@@ -121,5 +124,8 @@ table.formation-presence tr td.reponse {
 .lieu-session-non-visible {
   filter: blur(8px);
   cursor: pointer; }
+
+.btn-export-formation .dropdown-menu .dropdown-item {
+  line-height: 90%; }
 
 /*# sourceMappingURL=formation.css.map */

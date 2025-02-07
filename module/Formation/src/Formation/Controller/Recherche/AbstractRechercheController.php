@@ -40,7 +40,7 @@ class AbstractRechercheController extends AbstractController implements SearchCo
             'paginator' => $paginator,
             'routeName' => $this->routeName,
             'returnUrl' => $this->getRequest()->getRequestUri(),
-            'delai' => $this->getParametreService()?$this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE):null,
+            'delai' => $this->getParametreService()?->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
         ]);
         $model->setTemplate($this->indexActionTemplate);
 
@@ -62,5 +62,10 @@ class AbstractRechercheController extends AbstractController implements SearchCo
         $model->setTemplate($this->filtersActionTemplate);
 
         return $model;
+    }
+
+    protected function restrictFilters(): void
+    {
+        // ...
     }
 }

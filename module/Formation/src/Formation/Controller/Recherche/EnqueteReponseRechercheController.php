@@ -2,6 +2,8 @@
 
 namespace Formation\Controller\Recherche;
 
+use Application\Search\Controller\SearchControllerTrait2;
+use Application\Search\SearchResultPaginator;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
@@ -25,6 +27,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
     use FormateurRepositoryAwareTrait;
     use EnqueteQuestionRepositoryAwareTrait;
     use EnqueteCategorieRepositoryAwareTrait;
+    use SearchControllerTrait2 { search as public searchDefault; }
 
     public const SESSION_ROUTE_PARAM_TOUTES = 'toutes';
 
@@ -40,15 +43,18 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
      *
      * @return \UnicaenSearch\SearchResultPaginator|\Laminas\Http\Response|\Laminas\Paginator\Paginator
      */
-    public function search()
+    public function search(?callable $queryBuilderModifierCallback = null): Response|SearchResultPaginator
     {
         $session = $this->getRequestedSession();
 
-        return $this->getSearchPluginController()->search(function (QueryBuilder $qb) use ($session) {
-            if ($session !== null) {
+        $callbcack = null;
+        if ($session !== null) {
+            $callbcack = function (QueryBuilder $qb) use ($session) {
                 $qb->andWhere('sess = :session')->setParameter('session', $session);
-            }
-        });
+            };
+        }
+
+        return $this->searchDefault($callbcack);
     }
 
     /**

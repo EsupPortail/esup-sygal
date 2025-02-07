@@ -64,7 +64,9 @@
         "unicaen/search": "dev-master",
         "unicaen/sql": "dev-master",
         "unicaen/sygal-api": "dev-master",
-        "unicaen/utilisateur": "^6.3"
+        "unicaen/utilisateur": "^6.3",
+        "phpoffice/phpspreadsheet": "^2.1",
+        "svrnm/exceldatatables": "^0.3.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

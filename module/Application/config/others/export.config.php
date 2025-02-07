@@ -2,10 +2,31 @@
 
 use Application\Controller\ExportController;
 use Application\Controller\Factory\ExportControllerFactory;
+use Application\Export\Xlsx\Writer\ExcelDataTables\ExcelDataTablesXlsxWriter;
+use Application\Export\Xlsx\Writer\PhpOffice\PhpOfficeXlsxWriter;
+use Application\Export\Xlsx\Writer\XlsxWriterManager;
+use Application\Export\Xlsx\Writer\XlsxWriterManagerFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
+    'xlsx_writer' => [
+        'factories' => [
+            // Cf. https://github.com/PHPOffice/PhpSpreadsheet
+            // Attention : détruit les éventuels tableaux croisés existants !
+            PhpOfficeXlsxWriter::class => InvokableFactory::class,
+            // Cf. https://github.com/svrnm/exceldatatables
+            // Injection de données brutes dans un .xlsx contenant des tableaux dynamiques.
+            ExcelDataTablesXlsxWriter::class => InvokableFactory::class,
+        ],
+    ],
+    'xlsx_export' => [
+        'factories' => [],
+        'aliases' => [],
+        'config' => [],
+    ],
+
     'bjyauthorize'    => [
         'guards' => [
             PrivilegeController::class => [
@@ -47,7 +68,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-//            'ExportService' => ::class,
+            XlsxWriterManager::class => XlsxWriterManagerFactory::class,
         ],
     ],
     'controllers'     => [

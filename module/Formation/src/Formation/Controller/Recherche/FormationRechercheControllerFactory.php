@@ -2,6 +2,7 @@
 
 namespace Formation\Controller\Recherche;
 
+use Application\Export\Xlsx\Manager\XlsxExportManager;
 use Formation\Service\Formation\Search\FormationSearchService;
 use Psr\Container\ContainerInterface;
 use UnicaenParametre\Service\Parametre\ParametreService;
@@ -24,6 +25,10 @@ class FormationRechercheControllerFactory
         $controller = new FormationRechercheController();
         $controller->setSearchService($searchService);
         $controller->setParametreService($parametreService);
+
+        /** @var XlsxExportManager $formationXlsxExportManager */
+        $formationXlsxExportManager = $container->get(XlsxExportManager::class);
+        $controller->setFormationXlsxExportManager($formationXlsxExportManager);
 
         return $controller;
     }

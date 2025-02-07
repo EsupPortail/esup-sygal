@@ -1,0 +1,29 @@
+<?php
+/**
+ * @var \Application\Export\Xlsx\XlsxExportInterface[] $exports
+ * @var \Formation\Entity\Db\Formation|null $formation
+ * @var \Formation\Entity\Db\Session|null $session
+ * @var string|null $return
+ */
+$formation = $formation ?? null;
+$session = $session ?? null;
+$redirect = $redirect ?? null;
+
+$queryParams = $this->queryParams();
+$queryParams['redirect'] = $redirect ?? null;
+?>
+<div class="btn-export-formation btn-group float-end">
+    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="icon icon-exporter"></span> Export Excel...
+    </button>
+    <div class="dropdown-menu">
+        <?php foreach ($exports as $export): ?>
+            <?php /** @see \Formation\Controller\Recherche\FormationRechercheController::exporterXlsxAction() */ ?>
+            <a class="dropdown-item" href="<?php echo $this->url('formation/formation/exporter-xls', array_filter([
+                'code' => $export->getCode(),
+                'formation' => $formation?->getId(),
+                'session' => $session?->getId(),
+            ]), ['query' => array_filter($queryParams)], true) ?>"><?php echo $export->getHtmlDescription() ?></a>
+        <?php endforeach ?>
+    </div>
+</div>

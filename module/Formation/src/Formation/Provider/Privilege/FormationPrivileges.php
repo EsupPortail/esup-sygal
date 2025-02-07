@@ -21,4 +21,6 @@ class FormationPrivileges extends Privileges {
     const FORMATION_FORMATIONEXTERNE_TELECHARGER_ATTESTATION  = 'formation_formationexterne-telecharger-attestation';
     const FORMATION_FORMATIONEXTERNE_GERER_VALIDATION  = 'formation_formationexterne-gerer-validation';
     const FORMATION_FORMATIONEXTERNE_NOTIFIER_FORMATION_AJOUTEE  = 'formation_formationexterne-notifier-formation-ajoutee';
+
+    const FORMATION_EXPORTER_XLS  = 'formation_formation-exporter-xls';
 }

@@ -2,7 +2,8 @@
 
 use Application\Entity\AnneeUniv;
 use Formation\Entity\Db\Etat;
-use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -19,6 +20,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @var Session $session
  * @var array $presences
  * @var AnneeUniv $anneeUniv
+ * @var \Application\Export\Xlsx\XlsxExportInterface[] $exports
  * @var Inscription[] $inscriptionsAbsenceInjustifiees
  */
 
@@ -38,6 +40,7 @@ $this->headTitle($pageTitle);
 
 $canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
 $canAfficherFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+$canExporterFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_EXPORTER_XLS));
 
 $canIndexSession        = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_INDEX));
 $canModifierSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_MODIFIER));
@@ -74,7 +77,7 @@ echo $this->alertes()->addAlertesFromFlashMessenger(true)->renderAsBootstrapToas
 <div class="row">
     <div class="col-md-8" style="max-width: max-content;">
         <h1 class="page-header">
-            <?php echo $pageTitle; ?>
+            <span class="session-typage">Session</span> <?php echo $pageTitle; ?>
         </h1>
     </div>
     <div class="col-md-4" style="margin-top:5px;">
@@ -142,6 +145,14 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             <span class="fas fa-poll"></span>
             Résultats de l'enquête
         </a>
+    <?php endif; ?>
+    <?php if ($canExporterFormation) : ?>
+        <?php echo $this->partial('formation/formation/partial/exporter_btn_group', [
+            'formation' => $formation,
+            'session' => $session,
+            'exports' => $exports,
+            'redirect' => $this->url(null, [], [], true),
+        ]); ?>
     <?php endif; ?>
 </div>
 

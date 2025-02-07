@@ -471,6 +471,85 @@
             "time": "2021-12-14T00:20:41+00:00"
         },
         {
+            "name": "composer/pcre",
+            "version": "3.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/pcre.git",
+                "reference": "b2bed4734f0cc156ee1fe9c0da2550420d99a21e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/pcre/zipball/b2bed4734f0cc156ee1fe9c0da2550420d99a21e",
+                "reference": "b2bed4734f0cc156ee1fe9c0da2550420d99a21e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<1.11.10"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.12 || ^2",
+                "phpstan/phpstan-strict-rules": "^1 || ^2",
+                "phpunit/phpunit": "^8 || ^9"
+            },
+            "type": "library",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Pcre\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "PCRE wrapping library that offers type-safe preg_* replacements.",
+            "keywords": [
+                "PCRE",
+                "preg",
+                "regex",
+                "regular expression"
+            ],
+            "support": {
+                "issues": "https://github.com/composer/pcre/issues",
+                "source": "https://github.com/composer/pcre/tree/3.3.2"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2024-11-12T16:29:46+00:00"
+        },
+        {
             "name": "devizzent/cebe-php-openapi",
             "version": "1.1.4",
             "source": {
@@ -7450,6 +7529,84 @@
             ],
             "time": "2021-06-28T04:27:21+00:00"
         },
+      {
+        "name": "maennchen/zipstream-php",
+        "version": "2.4.0",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/maennchen/ZipStream-PHP.git",
+          "reference": "3fa72e4c71a43f9e9118752a5c90e476a8dc9eb3"
+        },
+        "dist": {
+          "type": "zip",
+          "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/3fa72e4c71a43f9e9118752a5c90e476a8dc9eb3",
+          "reference": "3fa72e4c71a43f9e9118752a5c90e476a8dc9eb3",
+          "shasum": ""
+        },
+        "require": {
+          "ext-mbstring": "*",
+          "myclabs/php-enum": "^1.5",
+          "php": "^8.0",
+          "psr/http-message": "^1.0"
+        },
+        "require-dev": {
+          "ext-zip": "*",
+          "friendsofphp/php-cs-fixer": "^3.9",
+          "guzzlehttp/guzzle": "^6.5.3 || ^7.2.0",
+          "mikey179/vfsstream": "^1.6",
+          "php-coveralls/php-coveralls": "^2.4",
+          "phpunit/phpunit": "^8.5.8 || ^9.4.2",
+          "vimeo/psalm": "^5.0"
+        },
+        "type": "library",
+        "autoload": {
+          "psr-4": {
+            "ZipStream\\": "src/"
+          }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+          "MIT"
+        ],
+        "authors": [
+          {
+            "name": "Paul Duncan",
+            "email": "pabs@pablotron.org"
+          },
+          {
+            "name": "Jonatan Männchen",
+            "email": "jonatan@maennchen.ch"
+          },
+          {
+            "name": "Jesse Donat",
+            "email": "donatj@gmail.com"
+          },
+          {
+            "name": "András Kolesár",
+            "email": "kolesar@kolesar.hu"
+          }
+        ],
+        "description": "ZipStream is a library for dynamically streaming dynamic zip files from PHP without writing to the disk at all on the server.",
+        "keywords": [
+          "stream",
+          "zip"
+        ],
+        "support": {
+          "issues": "https://github.com/maennchen/ZipStream-PHP/issues",
+          "source": "https://github.com/maennchen/ZipStream-PHP/tree/2.4.0"
+        },
+        "funding": [
+          {
+            "url": "https://github.com/maennchen",
+            "type": "github"
+          },
+          {
+            "url": "https://opencollective.com/zipstream",
+            "type": "open_collective"
+          }
+        ],
+        "time": "2022-12-08T12:29:14+00:00"
+      },
         {
             "name": "marc-mabe/php-enum",
             "version": "v4.7.1",
@@ -7978,6 +8135,69 @@
             "time": "2025-04-29T12:36:36+00:00"
         },
         {
+            "name": "myclabs/php-enum",
+            "version": "1.8.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myclabs/php-enum.git",
+                "reference": "e7be26966b7398204a234f8673fdad5ac6277802"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/e7be26966b7398204a234f8673fdad5ac6277802",
+                "reference": "e7be26966b7398204a234f8673fdad5ac6277802",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "1.*",
+                "vimeo/psalm": "^4.6.2 || ^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MyCLabs\\Enum\\": "src/"
+                },
+                "classmap": [
+                    "stubs/Stringable.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP Enum contributors",
+                    "homepage": "https://github.com/myclabs/php-enum/graphs/contributors"
+                }
+            ],
+            "description": "PHP Enum implementation",
+            "homepage": "https://github.com/myclabs/php-enum",
+            "keywords": [
+                "enum"
+            ],
+            "support": {
+                "issues": "https://github.com/myclabs/php-enum/issues",
+                "source": "https://github.com/myclabs/php-enum/tree/1.8.5"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mnapoli",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/php-enum",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-01-14T11:49:03+00:00"
+        },
+        {
             "name": "nikic/php-parser",
             "version": "v5.4.0",
             "source": {
@@ -8084,6 +8304,112 @@
                 "source": "https://github.com/paragonie/random_compat"
             },
             "time": "2020-10-15T08:29:30+00:00"
+        },
+        {
+            "name": "phpoffice/phpspreadsheet",
+            "version": "2.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
+                "reference": "8be52afdacac097057f8e165b1427cb8789dde92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/8be52afdacac097057f8e165b1427cb8789dde92",
+                "reference": "8be52afdacac097057f8e165b1427cb8789dde92",
+                "shasum": ""
+            },
+            "require": {
+                "composer/pcre": "^3.2",
+                "ext-ctype": "*",
+                "ext-dom": "*",
+                "ext-fileinfo": "*",
+                "ext-gd": "*",
+                "ext-iconv": "*",
+                "ext-libxml": "*",
+                "ext-mbstring": "*",
+                "ext-simplexml": "*",
+                "ext-xml": "*",
+                "ext-xmlreader": "*",
+                "ext-xmlwriter": "*",
+                "ext-zip": "*",
+                "ext-zlib": "*",
+                "maennchen/zipstream-php": "^2.1 || ^3.0",
+                "markbaker/complex": "^3.0",
+                "markbaker/matrix": "^3.0",
+                "php": "^8.0",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "dev-main",
+                "dompdf/dompdf": "^2.0 || ^3.0",
+                "friendsofphp/php-cs-fixer": "^3.2",
+                "mitoteam/jpgraph": "^10.3",
+                "mpdf/mpdf": "^8.1.1",
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^1.1",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^9.6",
+                "squizlabs/php_codesniffer": "^3.7",
+                "symfony/process": "^5",
+                "tecnickcom/tcpdf": "^6.5"
+            },
+            "suggest": {
+                "dompdf/dompdf": "Option for rendering PDF with PDF Writer",
+                "ext-intl": "PHP Internationalization Functions",
+                "mitoteam/jpgraph": "Option for rendering charts, or including charts with PDF or HTML Writers",
+                "mpdf/mpdf": "Option for rendering PDF with PDF Writer",
+                "tecnickcom/tcpdf": "Option for rendering PDF with PDF Writer"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpOffice\\PhpSpreadsheet\\": "src/PhpSpreadsheet"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maarten Balliauw",
+                    "homepage": "https://blog.maartenballiauw.be"
+                },
+                {
+                    "name": "Mark Baker",
+                    "homepage": "https://markbakeruk.net"
+                },
+                {
+                    "name": "Franck Lefevre",
+                    "homepage": "https://rootslabs.net"
+                },
+                {
+                    "name": "Erik Tilt"
+                },
+                {
+                    "name": "Adrien Crivelli"
+                }
+            ],
+            "description": "PHPSpreadsheet - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
+            "homepage": "https://github.com/PHPOffice/PhpSpreadsheet",
+            "keywords": [
+                "OpenXML",
+                "excel",
+                "gnumeric",
+                "ods",
+                "php",
+                "spreadsheet",
+                "xls",
+                "xlsx"
+            ],
+            "support": {
+                "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.1.8"
+            },
+            "time": "2025-01-26T04:51:58+00:00"
         },
         {
             "name": "psr/cache",
@@ -9561,6 +9887,59 @@
                 }
             ],
             "time": "2025-02-05T13:22:35+00:00"
+        },
+        {
+            "name": "svrnm/exceldatatables",
+            "version": "v0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/svrnm/exceldatatables.git",
+                "reference": "a276c370ff1e8c17f0b281e8e0bf705c3fa2efe6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/svrnm/exceldatatables/zipball/a276c370ff1e8c17f0b281e8e0bf705c3fa2efe6",
+                "reference": "a276c370ff1e8c17f0b281e8e0bf705c3fa2efe6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "1.3.*@dev",
+                "phpspec/phpspec": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Svrnm\\ExcelDataTables": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Severin Neumann",
+                    "email": "severin.neumann@altmuehlnet.de"
+                }
+            ],
+            "description": "Replace a worksheet within an Excel workbook (.xlsx) without changing any other properties of the file",
+            "keywords": [
+                "datatables",
+                "excel",
+                "php",
+                "spreadsheet",
+                "workbook",
+                "worksheet",
+                "xls"
+            ],
+            "support": {
+                "issues": "https://github.com/svrnm/exceldatatables/issues",
+                "source": "https://github.com/svrnm/exceldatatables/tree/v0.3.0"
+            },
+            "time": "2024-07-10T14:07:41+00:00"
         },
         {
             "name": "symfony/console",
