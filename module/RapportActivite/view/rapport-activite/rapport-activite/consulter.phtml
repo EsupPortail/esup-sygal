@@ -64,380 +64,424 @@ $canGen =
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
-<div class="rapport-activite-container">
-
-    <dl>
-        <dt>
-            Création du rapport
-        </dt>
-        <dd>
+<div class="row informations-compl-div" style="margin-left: 2px;">
+    <div class="col-md-6 informations-compl-card information-etat-card -etat-card"
+         data-bs-toggle="tooltip" data-bs-original-title="Création du rapport d'activité">
+        <span class="fas fa-clock"></span>
+        <h2>
             <?php echo $rapport->getHistoCreateur() ?> le
             <?php echo $rapport->getHistoCreation()->format('d/m/Y à H:i') ?>
-        </dd>
-
-        <?php if ($rapport->getParDirecteurTheseMotif()): ?>
-            <dt>
-                Motif de la non saisie du rapport par le doctorant (en cas d’incapacité du doctorant)
-            </dt>
-            <dd>
-                <?php echo $rapport->getParDirecteurTheseMotif() ?>
-            </dd>
+        </h2>
+    </div>
+    <div class="col-md-6">
+        <?php if ($canEdit): ?>
+            <a class="btn btn-primary" href="<?php echo $this->url('rapport-activite/modifier', ['rapport' => $rapport->getId()]) ?>">
+                <span class="icon icon-modifier"></span> Modifier ce rapport d'activité
+            </a>
         <?php endif; ?>
 
-        <?php if ($fichier = $rapport->getFichier()): ?>
-            <dt>
-                Fichier téléversé
-            </dt>
-            <dd>
-                <?php if ($canDl): ?>
-                    <?php $returnUrl = $this->url('rapport-activite/consulter', ['these' => $these->getId(), 'rapport' => IdifyFilter::id($rapport)]) ?>
-                    <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
-                       title="Cliquez pour télécharger">
-                        <?php echo $fichier->getNom() ?>
-                    </a>
-                <?php else: ?>
-                    <?php echo $fichier->getNom() ?>
-                <?php endif; ?>
-                <span class="icon icon-info text-info"
-                      title="Il s'agit d'un rapport non dématérialisé téléversé dans l'ancienne version du module Rapport d'activité"></span>
-            </dd>
+        <?php if ($canDel): ?>
+            <a class="btn btn-danger"
+               href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()]) ?>"
+               data-toggle="confirmationx"
+               data-bs-toggle="tooltip"
+               data-bs-html="true"
+               title="Une confirmation avant la suppression vous sera demandée">
+                <span class="icon icon-supprimer"></span>
+                Supprimer ce rapport d'activité
+            </a>
         <?php endif; ?>
-    </dl>
 
+        <?php if ($canDl): ?>
+            <a class="btn btn-info"
+               href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => $rapport->getId()]) ?>">
+                <span class="icon icon-telecharger"></span>
+                Télécharger ce rapport d'activité
+            </a>
+        <?php endif; ?>
 
-    <h2>Volet administratif / General information</h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <dl>
-                <dt>
-                    École doctorale / Doctoral School
-                </dt>
-                <dd>
-                    <?php echo $these->getEcoleDoctorale() ?>
-                </dd>
-
-                <dt>
-                    Établissement d’inscription / Enrollment institution
-                </dt>
-                <dd>
-                    <?php echo $these->getEtablissement() ?>
-                </dd>
-
-                <dt>
-                    Unité de recherche / Research unit
-                </dt>
-                <dd>
-                    <?php echo $these->getUniteRecherche(); ?>
-                </dd>
-
-                <dt>
-                    Année de 1re inscription en these / Starting year of your PhD program
-                </dt>
-                <dd>
-                    <?php echo $these->getDatePremiereInscriptionToString() ?>
-                </dd>
-
-            </dl>
-        </div>
-        <div class="col-md-6">
-            <dl>
-                <dt>
-                    Direction de thèse / Thesis advisor
-                </dt>
-                <dd class="acteurs">
-                    <?php
-                    $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
-                    foreach ($directeurs as $directeur) {
-                        echo $acteursFormatterDirecteurs->htmlifyActeur($directeur) . "<br/>";
-                    }
-                    ?>
-                </dd>
-
-                <dt>
-                    Codirection de thèse / Co-advisor
-                </dt>
-                <dd class="acteurs">
-                    <?php $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs()) ?>
-                    <?php if ($codirecteurs): ?>
-                        <?php foreach ($codirecteurs as $codirecteur): ?>
-                            <?php echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur) . "<br/>" ?>
-                        <?php endforeach ?>
-                    <?php else: ?>
-                        Aucune
-                    <?php endif ?>
-                </dd>
-
-                <dt>
-                    Co-encadrement / Additional supervisor
-                </dt>
-                <dd class="acteurs">
-                    <?php $coencadrants = $acteursFormatterCoencadrants->filter($these->getActeursByRoleCode(Role::CODE_CO_ENCADRANT)) ?>
-                    <?php if ($coencadrants): ?>
-                        <?php foreach ($coencadrants as $coencadrant): ?>
-                            <?php echo $acteursFormatterCoencadrants->htmlifyActeur($coencadrant) . "<br/>" ?>
-                        <?php endforeach ?>
-                    <?php else: ?>
-                        Aucune
-                    <?php endif ?>
-                </dd>
-
-                <dt>
-                    Cotutelle / Joint supervision
-                </dt>
-                <dd>
-                    <?php if ($these->getLibelleEtabCotutelle()): ?>
-                        Avec <?php echo $these->getLibelleEtabCotutelle() ?>,
-                        <?php echo $these->getLibellePaysCotutelle() ?>
-                    <?php else: ?>
-                        Aucune
-                    <?php endif ?>
-                </dd>
-
-                <dt>
-                    Thèse confidentielle / Confidential research
-                </dt>
-                <dd>
-                    <?php echo $these->estConfidentielle() ? "Oui" : "Non" ?>
-                </dd>
-            </dl>
-        </div>
+        <?php if ($canGen): ?>
+            <a class="btn btn-primary"
+               href="<?php echo $this->url('rapport-activite/generer', ['rapport' => $rapport->getId()]) ?>">
+                <span class="icon icon-pdf"></span>
+                Générer et télécharger ce rapport au format PDF
+            </a>
+        <?php endif; ?>
     </div>
+</div>
 
+<div class="rapport-activite-container">
 
-    <h2>Nature du financement doctoral / Funding information</h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <?php if ($these->getFinancements()->isEmpty()): ?>
-                Pas de financement dédié à la thèse.
-            <?php else: ?>
-                <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
-            <?php endif ?>
+    <?php if ($rapport->getParDirecteurTheseMotif()): ?>
+        <div class="alert alert-warning">
+            <span class="icon icon-info"></span>
+            <b>Motif de la non saisie du rapport par le doctorant (en cas d’incapacité du doctorant) : </b>
+            <?php echo $rapport->getParDirecteurTheseMotif() ?>
         </div>
-    </div>
+    <?php endif; ?>
 
+    <?php if ($fichier = $rapport->getFichier()): ?>
+        Fichier téléversé :
+        <?php if ($canDl): ?>
+            <?php $returnUrl = $this->url('rapport-activite/consulter', ['these' => $these->getId(), 'rapport' => IdifyFilter::id($rapport)]) ?>
+            <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
+               title="Cliquez pour télécharger">
+                <?php echo $fichier->getNom() ?>
+            </a>
+        <?php else: ?>
+            <?php echo $fichier->getNom() ?>
+        <?php endif; ?>
+        <span class="icon icon-info text-info"
+              title="Il s'agit d'un rapport non dématérialisé téléversé dans l'ancienne version du module Rapport d'activité"></span>
+    <?php endif; ?>
 
-    <h2>Activités scientifiques / Scientific activities</h2>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="informations-tab" data-bs-toggle="tab" data-bs-target="#informations"
+                    type="button" role="tab" aria-controls="informations" aria-selected="true">Informations générales
+                (General information)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="formations-tab" data-bs-toggle="tab" data-bs-target="#formations" type="button" role="tab" aria-controls="formations" aria-selected="false">Formations/Activités (Training/Activities)</button>
+        </li>
+        <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled($anneeUnivCourante)): ?>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="calendrier-tab" data-bs-toggle="tab" data-bs-target="#calendrier" type="button" role="tab" aria-controls="calendrier" aria-selected="false">Calendrier prévisionnel de fin de thèse (Provisional timetable for completion of thesis)</button>
+            </li>
+        <?php endif; ?>
+        <?php if ($rapport->getPreparationApresTheseEnabled() || $rapport->getPerspectivesApresTheseEnabled()): ?>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="apres-tab" data-bs-toggle="tab" data-bs-target="#apres" type="button" role="tab" aria-controls="apres" aria-selected="false">L'après-thèse (After the thesis)</button>
+            </li>
+        <?php endif; ?>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="commentaires-tab" data-bs-toggle="tab" data-bs-target="#commentaires" type="button" role="tab" aria-controls="commentaires" aria-selected="false">Commentaires (Additional Comments)</button>
+        </li>
+    </ul>
 
-    <div class="row">
-        <div class="col-md-10">
-            <dl>
-                <dt>Description du projet de recherche</dt>
-                <dd>
-                    <?php echo $rapport->getDescriptionProjetRecherche() ?>
-                </dd>
-                <dt>Principaux résultats obtenus</dt>
-                <dd>
-                    <?php echo $rapport->getPrincipauxResultatsObtenus() ?>
-                </dd>
-                <dt>Productions scientifiques</dt>
-                <dd>
-                    <?php echo $rapport->getProductionsScientifiques() ?>
-                </dd>
-            </dl>
-        </div>
-    </div>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="informations" role="tabpanel" aria-labelledby="informations-tab">
+            <div class="row">
+                <h3 class="mt-4 mb-4">Volet administratif / <span class="en">General information</span></h3>
 
+                <div class="col-md-6">
+                    <dl>
+                        <dt>
+                            École doctorale /
+                            <span class="en">Doctoral School</span>
+                        </dt>
+                        <dd>
+                            <span class="text-structure ed"><?php echo $these->getEcoleDoctorale() ?></span>
+                        </dd>
 
-    <h2>Formations doctorales thématiques et transversales / Doctoral training</h2>
+                        <dt>
+                            Établissement d’inscription /
+                            <span class="en">Enrollment institution</span>
+                        </dt>
+                        <dd>
+                            <span class="text-structure etablissement"><?php echo $these->getEtablissement() ?></span>
+                        </dd>
 
-    <div class="row">
-        <div class="col-md-8">
-            <dl>
-                <?php $formationsArray = $rapport->getFormationsSpecifiques() ?>
-                <dt>Formations spécifiques/thématiques / Specific training
-                    <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
-                <dd class="collection">
-                    <?php if ($formationsArray): ?>
-                        <ul>
-                            <?php foreach ($formationsArray as $action): ?>
-                                <li>
-                                    <dl class="row">
-                                        <dt class="col-md-2">Intitulé</dt>
-                                        <dd class="col-md-9"><?php echo $action->getIntitule() ?></dd>
-                                        <dt class="col-md-2">Volume horaire</dt>
-                                        <dd class="col-md-9"><?php echo $action->getTemps() ?> h</dd>
-                                    </dl>
-                                </li>
-                            <?php endforeach ?>
-                        </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getFormationsSpecifiquesTempsTotal() ?> h</span>
+                        <dt>
+                            Unité de recherche /
+                            <span class="en">Research unit</span>
+                        </dt>
+                        <dd>
+                            <span class="text-structure ur"><?php echo $these->getUniteRecherche() ?></span>
+                        </dd>
+
+                        <dt>
+                            Année de 1re inscription en these /
+                            <span class="en">Starting year of your PhD program</span>
+                        </dt>
+                        <dd>
+                            <?php echo $these->getDatePremiereInscriptionToString() ?>
+                        </dd>
+
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl>
+                        <dt>
+                            Direction de thèse /
+                            <span class="en">Thesis advisor</span>
+                        </dt>
+                        <dd class="acteurs">
+                            <?php
+                            $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
+                            foreach ($directeurs as $directeur) {
+                                echo $acteursFormatterDirecteurs->htmlifyActeur($directeur) . "<br/>";
+                            }
+                            ?>
+                        </dd>
+
+                        <dt>
+                            Codirection de thèse /
+                            <span class="en">Co-advisor</span>
+                        </dt>
+                        <dd class="acteurs">
+                            <?php $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs()) ?>
+                            <?php if ($codirecteurs): ?>
+                                <?php foreach ($codirecteurs as $codirecteur): ?>
+                                    <?php echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur) . "<br/>" ?>
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+
+                        <dt>
+                            Co-encadrement /
+                            <span class="en">Additional supervisor</span>
+                        </dt>
+                        <dd class="acteurs">
+                            <?php $coencadrants = $acteursFormatterCoencadrants->filter($these->getActeursByRoleCode(Role::CODE_CO_ENCADRANT)) ?>
+                            <?php if ($coencadrants): ?>
+                                <?php foreach ($coencadrants as $coencadrant): ?>
+                                    <?php echo $acteursFormatterCoencadrants->htmlifyActeur($coencadrant) . "<br/>" ?>
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+
+                        <dt>
+                            Cotutelle /
+                            <span class="en">Joint supervision</span>
+                        </dt>
+                        <dd>
+                            <?php if ($these->getLibelleEtabCotutelle()): ?>
+                                Avec <?php echo $these->getLibelleEtabCotutelle() ?>,
+                                <?php echo $these->getLibellePaysCotutelle() ?>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+
+                        <dt>
+                            Thèse confidentielle /
+                            <span class="en">Confidential research</span>
+                        </dt>
+                        <dd>
+                            <?php echo $these->estConfidentielle() ? "Oui" : "Non" ?>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <h3 class="mt-4 mb-4">Nature du financement doctoral / <span class="en">Funding information</span></h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <?php if ($these->getFinancements()->isEmpty()): ?>
+                        Pas de financement dédié à la thèse.
                     <?php else: ?>
-                        Aucune
+                        <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
                     <?php endif ?>
-                </dd>
-
-                <?php $formationsArray = $rapport->getFormationsTransversales() ?>
-                <dt>Formations transversales/professionnalisantes / Transversal training
-                    <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
-                <dd class="collection">
-                    <?php if ($formationsArray): ?>
-                        <ul>
-                            <?php foreach ($formationsArray as $action): ?>
-                                <li>
-                                    <dl class="row">
-                                        <dt class="col-md-2">Intitulé</dt>
-                                        <dd class="col-md-9"><?php echo $action->getIntitule() ?></dd>
-                                        <dt class="col-md-2">Volume horaire</dt>
-                                        <dd class="col-md-9"><?php echo $action->getTemps() ?> h</dd>
-                                    </dl>
-                                </li>
-                            <?php endforeach ?>
-                        </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getFormationsTransversalesTempsTotal() ?> h</span>
-                    <?php else: ?>
-                        Aucune
-                    <?php endif ?>
-                </dd>
-
-                <?php $actionsArray = $rapport->getActionsDiffusionCultureScientifique() ?>
-                <dt>Actions de diffusion de la culture scientifique, technique et industrielle (CSTI) / Actions undertaken within the framework of the promotion of scientific, technical and industrial knowledge
-                    <span class="badge bg-secondary"><?php echo count($actionsArray) ?></span></dt>
-                <dd class="collection">
-                    <?php if ($actionsArray): ?>
-                        <ul>
-                            <?php foreach ($actionsArray as $action): ?>
-                                <li>
-                                    <dl class="row">
-                                        <dt class="col-md-2">Nature</dt>
-                                        <dd class="col-md-9"><?php echo $action->getNature() ?></dd>
-                                        <dt class="col-md-2">Public</dt>
-                                        <dd class="col-md-9"><?php echo $action->getPublic() ?></dd>
-                                        <dt class="col-md-2">Temps consacré</dt>
-                                        <dd class="col-md-9"><?php echo $action->getTemps() ?> h</dd>
-                                        <dt class="col-md-2">Date</dt>
-                                        <dd class="col-md-9"><?php echo $action->getDate()->format(Constants::DATE_FORMAT) ?></dd>
-                                    </dl>
-                                </li>
-                            <?php endforeach ?>
-                        </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getActionsDiffusionCultureScientifiqueTempsTotal() ?> h</span>
-                    <?php else: ?>
-                        Aucune
-                    <?php endif ?>
-                </dd>
-            </dl>
-        </div>
-    </div>
+                </div>
+            </div>
 
 
-    <h2>Autres activités / Other activities</h2>
+            <h3 class="mt-4 mb-4">Activités scientifiques / <span class="en">Scientific activities</span></h3>
 
-    <div class="row">
-        <div class="col-md-8">
-            <dl>
-                <?php $autresActivitesArray = $rapport->getAutresActivites() ?>
-                <dt>Autres activités / Other activities
-                    <span class="badge bg-secondary"><?php echo count($autresActivitesArray) ?></span></dt>
-                <dd class="collection">
-                    <?php if ($autresActivitesArray): ?>
-                        <ul>
-                            <?php foreach ($autresActivitesArray as $autreActivite): ?>
-                                <li>
-                                    <dl class="row">
-                                        <dt class="col-md-2">Nature</dt>
-                                        <dd class="col-md-9"><?php echo $autreActivite->getNature() ?></dd>
-                                        <dt class="col-md-2">Lieu</dt>
-                                        <dd class="col-md-9"><?php echo $autreActivite->getLieu() ?></dd>
-                                        <dt class="col-md-2">Public</dt>
-                                        <dd class="col-md-9"><?php echo $autreActivite->getPublic() ?></dd>
-                                        <dt class="col-md-2">Temps consacré</dt>
-                                        <dd class="col-md-9"><?php echo $autreActivite->getTemps() ?> h</dd>
-                                        <dt class="col-md-2">Date</dt>
-                                        <dd class="col-md-9"><?php echo $autreActivite->getDate()->format(Constants::DATE_FORMAT) ?></dd>
-                                    </dl>
-                                </li>
-                            <?php endforeach ?>
-                        </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getAutresActivitesTempsTotal() ?> h</span>
-                    <?php else: ?>
-                        Aucune
-                    <?php endif ?>
-                </dd>
-            </dl>
-        </div>
-    </div>
-
-
-    <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled($anneeUnivCourante)): ?>
-
-        <h2>Calendrier prévisionnel de finalisation de la thèse / Provisional timetable to finalize the thesis</h2>
-
-        <div class="row">
-            <div class="col-md-10">
-                <dl>
-                    <dt>
-                        Calendrier prévisionnel / Provisional timetable (up to 4-5 lines)
-                    </dt>
-                    <dd>
-                        <?php echo $rapport->getCalendrierPrevionnelFinalisation() ?>
-                    </dd>
-                </dl>
+            <div class="row">
+                <div class="col-md-10">
+                    <dl>
+                        <dt>Description du projet de recherche</dt>
+                        <dd>
+                            <?php echo $rapport->getDescriptionProjetRecherche() ?>
+                        </dd>
+                        <dt>Principaux résultats obtenus</dt>
+                        <dd>
+                            <?php echo $rapport->getPrincipauxResultatsObtenus() ?>
+                        </dd>
+                        <dt>Productions scientifiques</dt>
+                        <dd>
+                            <?php echo $rapport->getProductionsScientifiques() ?>
+                        </dd>
+                    </dl>
+                </div>
             </div>
         </div>
+        <div class="tab-pane fade" id="formations" role="tabpanel" aria-labelledby="formations-tab">
+            <h3 class="mt-4 mb-4">Formations doctorales thématiques et transversales / <span class="en">Doctoral training</span></h3>
 
-    <?php endif ?>
+            <div class="row">
+                <div class="col-md-8">
+                    <dl>
+                        <?php $formationsArray = $rapport->getFormationsSpecifiques() ?>
+                        <dt>Formations spécifiques/thématiques / <span class="en">Specific training</span>
+                            <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
+                        <dd class="collection">
+                            <?php if ($formationsArray): ?>
+                                <ul>
+                                    <?php foreach ($formationsArray as $action): ?>
+                                        <li>
+                                            <dl class="row">
+                                                <dt class="col-md-2">Intitulé</dt>
+                                                <dd class="col-md-9"><?php echo $action->getIntitule() ?></dd>
+                                                <dt class="col-md-2">Volume horaire</dt>
+                                                <dd class="col-md-9"><?php echo $action->getTemps() ?> h</dd>
+                                            </dl>
+                                        </li>
+                                    <?php endforeach ?>
+                                </ul>
+                                <span class="total">Volume horaire total : <?php echo $rapport->getFormationsSpecifiquesTempsTotal() ?> h</span>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+
+                        <?php $formationsArray = $rapport->getFormationsTransversales() ?>
+                        <dt class="mt-4">Formations transversales/professionnalisantes / <span class="en">Transversal training</span>
+                            <span class="badge bg-secondary"><?php echo count($formationsArray) ?></span></dt>
+                        <dd class="collection">
+                            <?php if ($formationsArray): ?>
+                                <ul>
+                                    <?php foreach ($formationsArray as $action): ?>
+                                        <li>
+                                            <dl class="row">
+                                                <dt class="col-md-2">Intitulé</dt>
+                                                <dd class="col-md-9"><?php echo $action->getIntitule() ?></dd>
+                                                <dt class="col-md-2">Volume horaire</dt>
+                                                <dd class="col-md-9"><?php echo $action->getTemps() ?> h</dd>
+                                            </dl>
+                                        </li>
+                                    <?php endforeach ?>
+                                </ul>
+                                <span class="total">Volume horaire total : <?php echo $rapport->getFormationsTransversalesTempsTotal() ?> h</span>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+
+                        <?php $actionsArray = $rapport->getActionsDiffusionCultureScientifique() ?>
+                        <dt class="mt-4">Actions de diffusion de la culture scientifique, technique et industrielle (CSTI) / <span class="en">Actions undertaken within the framework of the promotion of scientific, technical and industrial knowledge</span>
+                            <span class="badge bg-secondary"><?php echo count($actionsArray) ?></span></dt>
+                        <dd class="collection">
+                            <?php if ($actionsArray): ?>
+                                <ul>
+                                    <?php foreach ($actionsArray as $action): ?>
+                                        <li>
+                                            <dl class="row">
+                                                <dt class="col-md-2">Nature</dt>
+                                                <dd class="col-md-9"><?php echo $action->getNature() ?></dd>
+                                                <dt class="col-md-2">Public</dt>
+                                                <dd class="col-md-9"><?php echo $action->getPublic() ?></dd>
+                                                <dt class="col-md-2">Temps consacré</dt>
+                                                <dd class="col-md-9"><?php echo $action->getTemps() ?> h</dd>
+                                                <dt class="col-md-2">Date</dt>
+                                                <dd class="col-md-9"><?php echo $action->getDate()->format(Constants::DATE_FORMAT) ?></dd>
+                                            </dl>
+                                        </li>
+                                    <?php endforeach ?>
+                                </ul>
+                                <span class="total">Volume horaire total : <?php echo $rapport->getActionsDiffusionCultureScientifiqueTempsTotal() ?> h</span>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
 
 
-    <?php if ($rapport->getPreparationApresTheseEnabled()): ?>
+            <h3 class="mt-4 mb-4">Autres activités / <span class="en">Other activities</span></h3>
 
-        <h2>Préparation de l’après-thèse / Preparing for after the thesis</h2>
-
-        <div class="row">
-            <div class="col-md-10">
-                <dl>
-                    <dt>
-                        Perspectives de carrière et démarches entreprises / Careers paths and actions undertaken
-                    </dt>
-                    <dd>
-                        <?php echo $rapport->getPreparationApresThese() ?>
-                    </dd>
-                </dl>
+            <div class="row">
+                <div class="col-md-8">
+                    <dl>
+                        <?php $autresActivitesArray = $rapport->getAutresActivites() ?>
+                        <dt>Autres activités / <span class="en">Other activities</span>
+                            <span class="badge bg-secondary"><?php echo count($autresActivitesArray) ?></span></dt>
+                        <dd class="collection">
+                            <?php if ($autresActivitesArray): ?>
+                                <ul>
+                                    <?php foreach ($autresActivitesArray as $autreActivite): ?>
+                                        <li>
+                                            <dl class="row">
+                                                <dt class="col-md-2">Nature</dt>
+                                                <dd class="col-md-9"><?php echo $autreActivite->getNature() ?></dd>
+                                                <dt class="col-md-2">Lieu</dt>
+                                                <dd class="col-md-9"><?php echo $autreActivite->getLieu() ?></dd>
+                                                <dt class="col-md-2">Public</dt>
+                                                <dd class="col-md-9"><?php echo $autreActivite->getPublic() ?></dd>
+                                                <dt class="col-md-2">Temps consacré</dt>
+                                                <dd class="col-md-9"><?php echo $autreActivite->getTemps() ?> h</dd>
+                                                <dt class="col-md-2">Date</dt>
+                                                <dd class="col-md-9"><?php echo $autreActivite->getDate()->format(Constants::DATE_FORMAT) ?></dd>
+                                            </dl>
+                                        </li>
+                                    <?php endforeach ?>
+                                </ul>
+                                <span class="total">Volume horaire total : <?php echo $rapport->getAutresActivitesTempsTotal() ?> h</span>
+                            <?php else: ?>
+                                Aucune
+                            <?php endif ?>
+                        </dd>
+                    </dl>
+                </div>
             </div>
         </div>
-
-    <?php endif ?>
-
-
-    <?php if ($rapport->getPerspectivesApresTheseEnabled()): ?>
-
-        <h2>Perspectives de carrière et démarches entreprises / Plans after the thesis</h2>
-
-        <div class="row">
-            <div class="col-md-10">
-                <dl>
-                    <dt>
-                        Perspectives de carrière et démarches entreprises / Careers paths and actions undertaken
-                    </dt>
-                    <dd>
-                        <?php echo $rapport->getPerspectivesApresThese() ?>
-                    </dd>
-                </dl>
+        <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled($anneeUnivCourante)): ?>
+            <div class="tab-pane fade" id="calendrier" role="tabpanel" aria-labelledby="calendrier-tab">
+                <div class="row">
+                    <div class="col-md-10">
+                        <dl>
+                            <dt>
+                                Calendrier prévisionnel / <span class="en">Provisional timetable (up to 4-5 lines)</span>
+                            </dt>
+                            <dd>
+                                <?php echo $rapport->getCalendrierPrevionnelFinalisation() ?>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
+        <?php if ($rapport->getPreparationApresTheseEnabled() || $rapport->getPerspectivesApresTheseEnabled()): ?>
+            <div class="tab-pane fade" id="apres" role="tabpanel" aria-labelledby="apres-tab">
+                <?php if ($rapport->getPreparationApresTheseEnabled()): ?>
+                    <h3 class="mt-4 mb-4">Perspectives de carrière et démarches entreprises / <span class="en">Careers paths and actions undertaken</span></h3>
 
-    <?php endif ?>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?php echo $rapport->getPreparationApresThese() ?>
+                        </div>
+                    </div>
+                <?php endif ?>
 
+                <?php if ($rapport->getPerspectivesApresTheseEnabled()): ?>
+                    <h3 class="mt-4 mb-4">Perspectives de carrière et démarches entreprises / <span class="en">Plans after the thesis</span></h3>
 
-    <h2>Commentaires / Additional comments</h2>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <?php echo $rapport->getPerspectivesApresThese() ?>
+                        </div>
+                    </div>
 
-    <div class="row">
-        <div class="col-md-10">
-            <dl>
-                <dt>
-                    Commentaires libres / Additional comments
-                </dt>
-                <dd>
+                <?php endif ?>
+            </div>
+        <?php endif; ?>
+        <div class="tab-pane fade" id="commentaires" role="tabpanel" aria-labelledby="commentaires-tab">
+            <h3 class="mt-4 mb-4">Commentaires libres / <span class="en">Additional comments</span></h3>
+
+            <div class="row">
+                <div class="col-md-10">
                     <?php if ($commentaires = $rapport->getCommentaires()): ?>
                         <?php echo $commentaires ?>
                     <?php else: ?>
                         Aucun
                     <?php endif ?>
-                </dd>
-            </dl>
+                </div>
+            </div>
         </div>
     </div>
+
+    <br>
+    <div class="separator"></div>
+    <br>
 
 
     <h2>Validations et avis</h2>
@@ -458,39 +502,6 @@ $canGen =
             <?php endif ?>
         </div>
     </div>
-
-
-    <hr>
-
-
-    <?php if ($canEdit): ?>
-        <a class="btn btn-primary" href="<?php echo $this->url('rapport-activite/modifier', ['rapport' => $rapport->getId()]) ?>">
-            <span class="icon icon-modifier"></span> Modifier ce rapport d'activité
-        </a>
-    <?php endif; ?>
-
-    <?php if ($canDel): ?>
-        <a class="btn btn-danger float-end"
-           href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()]) ?>"
-           data-toggle="confirmationx"
-           data-bs-toggle="tooltip"
-           data-bs-html="true"
-           title="Une confirmation avant la suppression vous sera demandée">
-            <span class="icon icon-supprimer"></span> Supprimer ce rapport d'activité</a>
-    <?php endif; ?>
-
-    <?php if ($canDl): ?>
-        <a class="btn btn-info"
-           href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => $rapport->getId()]) ?>">
-            <span class="icon icon-telecharger"></span> Télécharger ce rapport d'activité</a>
-    <?php endif; ?>
-
-    <?php if ($canGen): ?>
-        <a class="btn btn-primary"
-           href="<?php echo $this->url('rapport-activite/generer', ['rapport' => $rapport->getId()]) ?>">
-            <span class="icon icon-pdf"></span> Générer et télécharger ce rapport au format PDF</a>
-    <?php endif; ?>
-
 </div>
 
 

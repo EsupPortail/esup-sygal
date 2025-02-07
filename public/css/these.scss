@@ -11,13 +11,13 @@
   width:auto;
 }
 
-.informations-compl-these-div{
+.informations-compl-div{
   margin-top: 5px!important;
   margin-bottom: 20px;
   flex-wrap: nowrap!important;
   gap: 10px;
 
-  .informations-compl-these-card .informations-titre-these-card, .information-etat-these-card {
+  .informations-compl-card .informations-titre-these-card, .information-etat-card {
     margin-top: inherit!important;
     padding: 5px 10px;
     border-left: 5px solid var(--primary-color);
@@ -31,7 +31,7 @@
       font-weight: 450;
   }
 
-  .information-etat-these-card {
+  .information-etat-card {
     display: flex;
     align-items: center;
     font-style: initial;
@@ -50,30 +50,30 @@
     }
   }
 
-  .informations-compl-these-card{
+  .informations-compl-card{
     flex: 0 1 auto;
   }
 
-  .en-cours-etat-these-card{
+  .en-cours-etat-card{
     color: #f1732d;
     border-left: 5px solid #f1732d;
     min-width: 09%;
   }
-  .admis-etat-these-card{
+  .admis-etat-card{
     color: #2EA662;
     border-left: 5px solid #2EA662;
   }
-  .transferee-etat-these-card{
+  .transferee-etat-card{
     color: grey;
     border-left: 5px solid grey;
   }
-  .abandonnee-etat-these-card, .non-admis-etat-these-card{
+  .abandonnee-etat-card, .non-admis-etat-card{
     color: #d23544;
     border-left: 5px solid #d23544;
   }
 }
 
-.informations-compl-these-div > div {
+.informations-compl-div > div {
   width:fit-content;
 }
 

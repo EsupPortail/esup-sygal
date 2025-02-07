@@ -18,7 +18,6 @@ use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Entity\Formation;
 use RapportActivite\Form\RapportActiviteAbstractForm;
 use RapportActivite\Form\RapportActiviteAnnuelForm;
 use RapportActivite\Form\RapportActiviteFinContratForm;
@@ -28,7 +27,6 @@ use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use SplObjectStorage;
 use These\Entity\Db\These;
-use These\Entity\Db\TheseAnneeUniv;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -350,7 +348,7 @@ class RapportActiviteController extends AbstractController
             //   - soit modifier le comportement du formulaire pour faire saisir d'abord l'année seule (.e. validation group)
             //     et ensuite le formulaire entier (avec année grisée) initialisé avec les formations de l'année choisie.
             //     Cf. AnneeUnivService pour les bornes de début et de fin d'une année univ.
-            $formationInscriptions = $this->inscriptionService->getInscriptionByDoctorantAndAnnee($rapportActivite->getThese()->getDoctorant(), null, $rapportActivite->getAnneeUniv()->getPremiereAnnee());
+            $formationInscriptions = $this->inscriptionService->getInscriptionByDoctorantAndAnnee($rapportActivite->getThese()->getDoctorant());
             $rapportActivite->setFormationsFromInscriptions($formationInscriptions);
 
             if ($rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportFinContrat() ||
