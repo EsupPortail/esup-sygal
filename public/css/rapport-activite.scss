@@ -65,6 +65,7 @@
     font-size: 85%;
     margin-top: -1em;
     padding-left: 1.5rem;
+    font-weight: bold;
   }
 }
 
@@ -84,6 +85,57 @@ div.rapport-activite-container {
     dd.collection {
       @include dlCollection();
     }
+  }
+
+  dd{
+    margin-bottom : 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .liste-formations {
+    li {
+      list-style: none;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+  }
+
+  .formation-card {
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.875rem;
+    width:auto;
+  }
+
+  .formation-card.aucune {
+    background-color: #f5f5f5;
+    border-color: #c0c0c0;
+    color: #6c757d;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    .formation-icon {
+      color:#6c757d !important;
+    }
+  }
+
+  .formation-icon {
+    font-size: 1.5rem;
+    color:var(--primary-color) !important;
+  }
+
+  .formation-details h6 {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .formation-actions{
+    margin-left:50px
+  }
+
+  .formation-actions .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
   }
 
   p.help {

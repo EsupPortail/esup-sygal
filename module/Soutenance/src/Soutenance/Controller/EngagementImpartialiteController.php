@@ -46,7 +46,7 @@ class EngagementImpartialiteController extends AbstractController
         $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
 
         $vars = [
-            'membre' => $soutenanceMembreTemplateVariable,
+            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
             'doctorant' => $doctorantTemplateVariable,
         ];
         $texteEngagnement = $this->getRenduService()->generateRenduByTemplateCode(TexteTemplates::SOUTENANCE_ENGAGEMENT_IMPARTIALITE, $vars);

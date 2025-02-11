@@ -38,7 +38,39 @@ div.rapport-activite-container dl dd.collection {
   div.rapport-activite-container dl dd.collection .total {
     font-size: 85%;
     margin-top: -1em;
-    padding-left: 1.5rem; }
+    padding-left: 1.5rem;
+    font-weight: bold; }
+div.rapport-activite-container dd {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem; }
+div.rapport-activite-container .liste-formations li {
+  list-style: none;
+  margin-top: 15px;
+  margin-bottom: 15px; }
+div.rapport-activite-container .formation-card {
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.875rem;
+  width: auto; }
+div.rapport-activite-container .formation-card.aucune {
+  background-color: #f5f5f5;
+  border-color: #c0c0c0;
+  color: #6c757d;
+  margin-top: 15px;
+  margin-bottom: 15px; }
+  div.rapport-activite-container .formation-card.aucune .formation-icon {
+    color: #6c757d !important; }
+div.rapport-activite-container .formation-icon {
+  font-size: 1.5rem;
+  color: var(--primary-color) !important; }
+div.rapport-activite-container .formation-details h6 {
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem; }
+div.rapport-activite-container .formation-actions {
+  margin-left: 50px; }
+div.rapport-activite-container .formation-actions .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem; }
 div.rapport-activite-container p.help {
   line-height: 95%;
   font-weight: 450;
