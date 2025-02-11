@@ -75,10 +75,18 @@ class IndividuRepository extends DefaultEntityRepository
             "FROM INDIVIDU i " .
             "JOIN INDIVIDU_RECH ir on ir.id = i.id " .
             "JOIN SOURCE src on src.id = i.source_id " .
+            "left join doctorant id on id.individu_id = i.id and id.histo_destruction is null " .
+            "left join acteur ia on ia.individu_id = i.id and ia.histo_destruction is null " .
             "WHERE i.HISTO_DESTRUCTION IS NULL";
 
         if ($type !== null) {
-            $sql .= sprintf(" AND i.type = '%s'", $type);
+            if ($type === Individu::TYPE_ACTEUR) {
+                $sql .= sprintf(" AND (i.type = '%s' or ia.id is not null)", $type);
+            } elseif ($type === Individu::TYPE_DOCTORANT) {
+                $sql .= sprintf(" AND (i.type = '%s' or id.id is not null)", $type);
+            } else {
+                $sql .= sprintf(" AND i.type = '%s'", $type);
+            }
         }
 
         $sqlCri = [];

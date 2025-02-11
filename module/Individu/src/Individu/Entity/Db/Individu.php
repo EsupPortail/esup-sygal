@@ -33,7 +33,9 @@ class Individu implements
     const CIVILITE_M = 'M.';
     const CIVILITE_MME = 'Mme';
 
+    /** @deprecated La colonne 'individu.type' n'est pas fiable, il faut l'abandonner */
     const TYPE_ACTEUR = 'acteur';
+    /** @deprecated La colonne 'individu.type' n'est pas fiable, il faut l'abandonner */
     const TYPE_DOCTORANT = 'doctorant';
 
     /**
