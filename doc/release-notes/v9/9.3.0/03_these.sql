@@ -2,7 +2,7 @@
 -- 9.3.0
 --
 
-drop materialized view mv_recherche_these;
+drop materialized view if exists mv_recherche_these;
 
 create materialized view mv_recherche_these as
 WITH acteurs AS (
@@ -10,7 +10,7 @@ WITH acteurs AS (
            i.nom_usuel,
            a_1.individu_id
     FROM individu i
-             JOIN acteur a_1 ON i.id = a_1.individu_id
+             JOIN acteur_these a_1 ON i.id = a_1.individu_id
              JOIN these t_1 ON t_1.id = a_1.these_id
              JOIN role r ON a_1.role_id = r.id AND (r.code::text = ANY (ARRAY['D'::character varying::text, 'K'::character varying::text]))
 )
