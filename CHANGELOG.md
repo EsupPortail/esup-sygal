@@ -10,6 +10,7 @@ Journal des modifications
 - Module Soutenance : message informant des possibles présidents du jury (rang A) dans l'encart Association d'acteur SYGAL aux membres de jury. 
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 - [FIX] Recherche textuelle d'individu selon le type : jointure avec doctorant/acteur au cas où individu.type est null. 
+- [FIX] Import des thèses : rétablissement du mapping libDiscipline => lib_int1_dis dans la config supprimé à tort.
 
 9.3.0
 -----
