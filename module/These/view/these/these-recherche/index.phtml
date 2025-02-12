@@ -147,7 +147,7 @@ $canAddThese = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE
         <?php /** @var These $these */
         foreach ($theses as $these): ?>
             <tr>
-                <td>
+                <td style="width: 490px;">
                     <span title="<?php echo $these->getTitre() ?>">
                         <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>">
                             <?php echo $this->partial('these/these/partial/titre', ['these' => $these, 'useTitreThese' => true]) ?>

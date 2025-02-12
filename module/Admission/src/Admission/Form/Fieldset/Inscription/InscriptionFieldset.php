@@ -4,6 +4,7 @@ namespace Admission\Form\Fieldset\Inscription;
 use Admission\Form\Fieldset\AdmissionBaseFieldset;
 use Admission\Form\Fieldset\Verification\VerificationFieldset;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
+use Application\Service\Discipline\DisciplineServiceAwareTrait;
 use Laminas\Filter\StringTrim;
 use Laminas\Filter\StripTags;
 use Laminas\Filter\ToNull;
@@ -22,6 +23,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
 {
     use AdmissionServiceAwareTrait;
+    use DisciplineServiceAwareTrait;
     //Informations Inscription
     private string $urlIndividuThese;
     private array $composantesEnseignement;

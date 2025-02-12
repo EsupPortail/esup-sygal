@@ -41,16 +41,21 @@ class DisciplineService {
      * @param string $ordre
      * @return Discipline[]
      */
-    public function getDisciplines(string $champ = 'code', string $ordre = 'ASC') : array
+    public function getDisciplines(string $champ = 'code', string $ordre = 'ASC', string $filter = '') : array
     {
         $qb = $this->createQueryBuilder()
             ->orderBy('discipline.'. $champ, $ordre);
+
+        if($filter !== ''){
+            $qb->andWhere('discipline.code LIKE :filter')
+                ->setParameter('filter', $filter);
+        }
         $result = $qb->getQuery()->getResult();
         return $result;
     }
 
-    public function getDisciplinesAsOptions(string $champ = 'code', string $ordre = 'ASC', string $attributeForKeys = 'libelle') : array
+    public function getDisciplinesAsOptions(string $champ = 'code', string $ordre = 'ASC', string $attributeForKeys = 'libelle', string $filter = '') : array
     {
-        return Discipline::toValueOptions($this->getDisciplines($champ, $ordre), $attributeForKeys);
+        return Discipline::toValueOptions($this->getDisciplines($champ, $ordre, $filter), $attributeForKeys);
     }
 }

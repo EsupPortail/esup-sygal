@@ -146,6 +146,8 @@ class AdmissionRechercheService extends SearchService
             $etatAdmissionSearchFilter->createSorter(),
             $this->createSorterIndividu(),
         ]);
+
+        $this->addInvisibleSort('admission.histoCreation', 'DESC');
     }
 
     /**

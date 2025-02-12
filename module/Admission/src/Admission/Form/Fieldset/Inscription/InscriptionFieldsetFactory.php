@@ -36,7 +36,9 @@ class InscriptionFieldsetFactory
         $fieldset->setAdmissionService($admissionService);
 
         $disciplineService = $container->get(DisciplineService::class);
-        $disciplines = $disciplineService->getDisciplinesAsOptions('libelle','ASC','id');
+        //ajout d'un filtre '420%', afin de ne récupérer que les disciplines SISE
+        /** @see DisciplineService::getDisciplinesAsOptions() */
+        $disciplines = $disciplineService->getDisciplinesAsOptions('libelle','ASC','id', '420%');
         $fieldset->setSpecialites($disciplines);
 
         $structureService = $container->get(StructureService::class);
