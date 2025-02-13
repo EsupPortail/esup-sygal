@@ -34,15 +34,17 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use UnexpectedValueException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
 use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
 use UnicaenAuthentification\Options\ModuleOptions;
 use UnicaenAuthentification\Service\User as AuthentificationUserService;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceException;
 use Webmozart\Assert\Assert;
 
 /**
@@ -53,7 +55,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
 
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
@@ -67,6 +69,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
     use StructureServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use TokenServiceAwareTrait;
+    use MailerServiceAwareTrait;
 
     use UtilisateurProcessAwareTrait;
 
@@ -385,7 +388,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
     public function gererUtilisateurAction()
     {
         $individu = $this->getIndividuService()->getRequestedIndividu($this);
-        $acteurs = $this->acteurService->getRepository()->findActeursForIndividu($individu);
+        $acteurs = $this->acteurTheseService->getRepository()->findActeursForIndividu($individu);
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
         // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
@@ -604,7 +607,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
             /** @var Individu $individu */
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
             if ($individu !== null) {
-                $acteurs = $this->getActeurService()->getRepository()->findActeursForIndividu($individu);
+                $acteurs = $this->getActeurTheseService()->getRepository()->findActeursForIndividu($individu);
                 $roles = $individu->getRoles();
 
                 $vars['individu'] = $individu;
@@ -634,21 +637,24 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
      * Demande de création d'un jeton d'authentification.
      *
      * NB : à l'issue de la création, l'utilisateur reçoit automatiquement son jeton, cf {@see envoyerToken()}.
-     *
-     * @return ViewModel|Response
      */
-    public function ajouterTokenAction()
+    public function ajouterTokenAction(): Response|ViewModel
     {
-        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this, 'user');
 
         // on délègue au module unicaen/auth-token
-        return $this->forward()->dispatch(TokenController::class, [
-            'action' => 'creer',
-            'user' => $utilisateur->getId(),
-        ]);
+        try {
+            return $this->forward()->dispatch(TokenController::class, [
+                'action' => 'creer',
+                'user' => $utilisateur->getId(),
+            ]);
+        } catch (Exception $e) {
+            $this->flashMessenger()->addErrorMessage("Opération impossible : " . $e->getMessage());
+            return $this->redirect()->toRoute('unicaen-utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
+        }
     }
 
-    public function listenEventsOf(TokenController $tokenController)
+    public function listenEventsOf(TokenController $tokenController): void
     {
         // écoute pour envoyer automatiquement tout jeton nouvellement créé à l'utlisateur
         $tokenController->getEventManager()->attach(
@@ -657,15 +663,29 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
         );
     }
 
-    public function envoyerToken(EventInterface $event)
+    public function envoyerToken(EventInterface $event): void
     {
         /** @var \Application\Entity\Db\UtilisateurToken $utilisateurToken */
         $utilisateurToken = $event->getParam('userToken');
+        /** @var \Laminas\Mail\Message $mailMessage */
+        $mailMessage = $event->getParam('mailMessage');
 
-        // on délègue au module unicaen/auth-token
-        $this->forward()->dispatch(TokenController::class, [
-            'action' => 'envoyer',
-            'userToken' => $utilisateurToken->getId(),
-        ]);
+        try {
+            try {
+                $message = $this->mailerService->send($mailMessage);
+            } catch (Exception $e) {
+                throw new \RuntimeException("L'envoi du token par mail a échoué", null, $e);
+            }
+
+            $utilisateurToken->setSentOn(new \DateTime('now'));
+            $this->tokenService->saveUserToken($utilisateurToken);
+
+            $this->flashMessenger()->addSuccessMessage(sprintf(
+                "Le jeton utilisateur a été envoyé avec succès à %s.",
+                $message->getTo()->rewind()->getEmail()
+            ));
+        } catch (Exception $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'envoi du jeton utilisateur.", null, $e);
+        }
     }
 }

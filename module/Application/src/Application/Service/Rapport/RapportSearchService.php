@@ -3,7 +3,7 @@
 namespace Application\Service\Rapport;
 
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Validation\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Filter\AnneeUnivFormatter;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\Filter\SearchFilter;
@@ -13,7 +13,7 @@ use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use These\Search\These\TheseTextSearchFilter;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait;
 use These\Service\These\TheseSearchServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
@@ -35,7 +35,7 @@ class RapportSearchService extends SearchService
     use TheseAnneeUnivServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use RapportServiceAwareTrait;
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;

@@ -3,7 +3,6 @@
 namespace RapportActivite\Service;
 
 use Application\Service\AnneeUniv\AnneeUnivService;
-use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
@@ -19,6 +18,7 @@ use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use UnicaenParametre\Service\Parametre\ParametreService;
+use Validation\Service\ValidationService;
 
 class RapportActiviteServiceFactory
 {
@@ -79,7 +79,7 @@ class RapportActiviteServiceFactory
         $structureService = $container->get(StructureService::class);
         $service->setStructureService($structureService);
 
-        /** @var \Application\Service\Validation\ValidationService $validationService */
+        /** @var \Validation\Service\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
         $service->setValidationService($validationService);
 

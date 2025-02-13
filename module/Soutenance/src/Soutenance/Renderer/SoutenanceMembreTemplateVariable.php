@@ -48,7 +48,7 @@ class SoutenanceMembreTemplateVariable extends AbstractTemplateVariable
             implode(
                 '</li><li>',
                 array_filter(array_map(
-                    fn(Membre $m) => $m->getActeur()?->__toString(),
+                    fn(Membre $m) => $m->getNom() ? (mb_strtoupper($m->getNom()) . ' ' . $m->getPrenom()) : null,
                     $this->membresPouvantEtrePresidentDuJury
                 ))
             ) .

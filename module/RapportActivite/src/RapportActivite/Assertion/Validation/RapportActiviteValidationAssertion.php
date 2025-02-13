@@ -3,13 +3,13 @@
 namespace RapportActivite\Assertion\Validation;
 
 use Application\Assertion\Exception\FailedAssertionException;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use RapportActivite\Assertion\RapportActiviteOperationAbstractAssertion;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class RapportActiviteValidationAssertion extends RapportActiviteOperationAbstractAssertion
 {
@@ -31,9 +31,6 @@ class RapportActiviteValidationAssertion extends RapportActiviteOperationAbstrac
                     return false;
                 }
                 $typeValidation = $this->validationService->findTypeValidationById($this->getRouteMatch()->getParam('typeValidation'));
-                if ($typeValidation === null) {
-                    return false;
-                }
                 $rapportActiviteValidation = new RapportActiviteValidation($typeValidation, $rapportActivite); // prototype
                 $these = $rapportActivite->getThese();
                 break;

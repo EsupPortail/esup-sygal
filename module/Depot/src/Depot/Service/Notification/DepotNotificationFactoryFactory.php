@@ -2,7 +2,7 @@
 
 namespace Depot\Service\Notification;
 
-use Application\Service\Email\EmailTheseService;
+use Application\Service\Email\EmailService;
 use Application\Service\Role\RoleService;
 use Application\Service\Url\UrlService;
 use Application\Service\Variable\VariableService;
@@ -56,9 +56,9 @@ class DepotNotificationFactoryFactory extends NotificationFactoryFactory
         $roleService = $container->get('RoleService');
         $factory->setApplicationRoleService($roleService);
 
-        /** @var EmailTheseService $emailTheseService */
-        $emailTheseService = $container->get(EmailTheseService::class);
-        $factory->setEmailTheseService($emailTheseService);
+        /** @var EmailService $emailService */
+        $emailService = $container->get(EmailService::class);
+        $factory->setEmailService($emailService);
 
         return $factory;
     }

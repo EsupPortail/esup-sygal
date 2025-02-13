@@ -3,19 +3,19 @@
  * @var These $these
  */
 
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
+use Acteur\Provider\Privilege\ActeurPrivileges;
 use Application\Entity\Db\Role;
 use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
-use These\Filter\ActeursFormatter;
-use These\Provider\Privilege\ActeurPrivileges;
 use These\Provider\Privilege\CoEncadrantPrivileges;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 $canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 
-$acteursFormatter = new ActeursFormatter();
+$acteursFormatter = new ActeursTheseFormatter();
 $acteursFormatter->paramFilter(["role" => [
     Role::CODE_CO_ENCADRANT,
 ]]);
@@ -35,7 +35,7 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
             <dd class="col-md-9 acteurs">
                 <table class="table table-extra-condensed">
                     <?php foreach ($acteurs as $i => $result){
-                        /** @var Acteur $acteur */
+                        /** @var ActeurThese $acteur */
                         $acteur = $result["acteur"]; ?>
                         <tr>
                             <td style="width: 30%">
@@ -76,11 +76,11 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
                                     );
                                 }
                                 elseif (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
-                                    $ligne[] = "<span class='text-structure etablissement' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
+                                    $ligne[] = "<span class='text-structure etablissement' style='background-color:white;' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
                                 }
 
                                 if (isset($result["uniteRecherche"]) && trim($result["uniteRecherche"]) != "") {
-                                    $ligne[] = "<span class='text-structure ur' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
+                                    $ligne[] = "<span class='text-structure ur' style='background-color:white;' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
                                 }
                                 echo implode('<br>', $ligne);
                                 ?>
@@ -129,7 +129,7 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
             Co-encadrant
         </dt>
         <?php
-        $canCoEncadrantGerer = $this->isAllowed(new Acteur(),CoEncadrantPrivileges::COENCADRANT_GERER);
+        $canCoEncadrantGerer = $this->isAllowed(new ActeurThese(),CoEncadrantPrivileges::COENCADRANT_GERER);
         if ($canCoEncadrantGerer){ ?>
             <dd class="col-md-9 acteurs">
                 <table class="table table-extra-condensed">
@@ -151,8 +151,8 @@ $acteursFormatted = $acteursFormatter->doFormat($these->getActeursSorted()->toAr
             </dd>
         <?php }else{ ?>
             <dd class="col-md-9">
-                <span class='text-danger'>
-                    <span class='fas fa-exclamation-triangle'></span>
+                <span class="badge bg-secondary text-white" style="font-size:unset">
+                      <span class="icon icon-info" style="padding-right: unset"></span>
                     <?php echo $this->translate("Aucun encadrement renseigné") ?>
                 </span>
             </dd>

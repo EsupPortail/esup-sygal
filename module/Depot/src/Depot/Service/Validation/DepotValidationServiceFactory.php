@@ -3,9 +3,10 @@
 namespace Depot\Service\Validation;
 
 use Application\Service\UserContextService;
-use Application\Service\Validation\ValidationService as ValidationEntityService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
+use Validation\Service\ValidationThese\ValidationTheseService as ValidationEntityService;
+use Validation\Service\ValidationService;
 
 class DepotValidationServiceFactory implements FactoryInterface
 {
@@ -17,9 +18,13 @@ class DepotValidationServiceFactory implements FactoryInterface
         $userContextService = $container->get(UserContextService::class);
         $service->setUserContextService($userContextService);
 
+        /** @var ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $service->setValidationService($validationService);
+
         /** @var ValidationEntityService $validationService */
         $validationService = $container->get(ValidationEntityService::class);
-        $service->setValidationService($validationService);
+        $service->setValidationTheseService($validationService);
 
         return $service;
     }

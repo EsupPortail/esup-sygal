@@ -3,7 +3,7 @@
 namespace ComiteSuiviIndividuel\Entity\Db;
 
 use Soutenance\Entity\Qualite;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
@@ -27,7 +27,7 @@ class Membre implements HistoriqueAwareInterface {
     private ?string $exterieur = null;
     private ?string $role = null;
     private bool $visio = false;
-    private ?Acteur $acteur = null;
+    private ?ActeurThese $acteur = null;
 
     public function getId(): ?int
     {
@@ -139,12 +139,12 @@ class Membre implements HistoriqueAwareInterface {
         $this->visio = $visio;
     }
 
-    public function getActeur(): ?Acteur
+    public function getActeur(): ?ActeurThese
     {
         return $this->acteur;
     }
 
-    public function setActeur(?Acteur $acteur): void
+    public function setActeur(?ActeurThese $acteur): void
     {
         $this->acteur = $acteur;
     }

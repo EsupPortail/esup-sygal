@@ -15,11 +15,11 @@ use Laminas\Router\Http\Segment;
 
 return array(
     'bjyauthorize' => [
-        'resource_providers' => [
-            'BjyAuthorize\Provider\Resource\Config' => [
-                'Acteur' => [],
-            ],
-        ],
+//        'resource_providers' => [
+//            'BjyAuthorize\Provider\Resource\Config' => [
+//                'Acteur' => [],
+//            ],
+//        ],
         'rule_providers' => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
@@ -30,7 +30,7 @@ return array(
                             EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER,
                             EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER,
                         ],
-                        'resources' => ['These'],
+                        'resources' => ['These', 'HDR'],
                         'assertion' => EngagementImpartialiteAssertion::class,
                     ],
                 ],
@@ -48,10 +48,10 @@ return array(
                 [
                     'controller' => EngagementImpartialiteController::class,
                     'action' => [
-                        'notifier-rapporteurs-engagement-impartialite',
                         'notifier-engagement-impartialite',
                     ],
                     'privileges' => EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER,
+                    'assertion' => EngagementImpartialiteAssertion::class,
                 ],
                 [
                     'controller' => EngagementImpartialiteController::class,
@@ -74,8 +74,8 @@ return array(
 
     'router' => [
         'routes' => [
-            'soutenance' => [
-                'child_routes' => [
+            'soutenance_these' => [
+                'child_routes' => $soutenanceChildRoutes = [
                     'engagement-impartialite' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -134,6 +134,9 @@ return array(
                         ],
                     ],
                 ],
+            ],
+            'soutenance_hdr' => [
+                'child_routes' => $soutenanceChildRoutes,
             ],
         ],
     ],

@@ -14,7 +14,7 @@ use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RuntimeException;
 use Structure\Entity\Db\StructureConcreteInterface;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
 use Webmozart\Assert\Assert;
 
@@ -25,7 +25,7 @@ class OperationAttendueNotificationRule implements RuleInterface
 {
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteOperationRuleAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
     use MessageAwareTrait;
 
@@ -124,7 +124,7 @@ class OperationAttendueNotificationRule implements RuleInterface
 
                 case Role::CODE_DIRECTEUR_THESE:
                 case Role::CODE_CODIRECTEUR_THESE:
-                    $acteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($these, $codeRole);
+                    $acteurs = $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, $codeRole);
                     if (count($acteurs)) {
                         $emailsActeurs = $this->collectEmails($acteurs);
                     } else {

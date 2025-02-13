@@ -6,7 +6,7 @@ use Application\Service\DomaineHal\DomaineHalService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Application\Service\Validation\ValidationService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 use Application\Service\Variable\VariableService;
 use Depot\Controller\DepotController;
 use Depot\Form\Description\DescriptionTheseForm;
@@ -25,7 +25,7 @@ use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\These\TheseService;
 
 class DepotControllerFactory
@@ -40,7 +40,7 @@ class DepotControllerFactory
 
         /**
          * @var VariableService         $variableService
-         * @var ValidationService       $validationService
+         * @var ValidationTheseService       $validationService
          * @var DepotValidationService  $depotValidationService
          * @var VersionFichierService   $versionFichierService
          * @var TheseService            $theseService
@@ -54,12 +54,12 @@ class DepotControllerFactory
          * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager           $entityManager
          * @var UtilisateurService      $utilisateurService
-         * @var ActeurService           $acteurService
+         * @var ActeurTheseService           $acteurService
          * @var IndividuService         $indivdiService
          * @var EventManager            $eventManager
          */
         $variableService = $container->get('VariableService');
-        $validationService = $container->get('ValidationService');
+        $validationService = $container->get(ValidationTheseService::class);
         $depotValidationService = $container->get(DepotValidationService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $theseService = $container->get('TheseService');
@@ -102,7 +102,7 @@ class DepotControllerFactory
         $controller = new DepotController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
         $controller->setVariableService($variableService);
-        $controller->setValidationService($validationService);
+        $controller->setValidationTheseService($validationService);
         $controller->setDepotValidationService($depotValidationService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setTheseService($theseService);

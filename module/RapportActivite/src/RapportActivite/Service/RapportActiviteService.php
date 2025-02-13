@@ -4,13 +4,11 @@ namespace RapportActivite\Service;
 
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUnivInterface;
-use Application\Entity\Db\TypeValidation;
 use Application\Exporter\ExporterDataException;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Closure;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
@@ -44,6 +42,8 @@ use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class RapportActiviteService extends BaseService
 {

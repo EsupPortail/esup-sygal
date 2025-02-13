@@ -1,0 +1,96 @@
+<?php
+/**
+ * @var Form $form
+ */
+
+use HDR\Entity\Db\HDR;
+use Laminas\Form\Form;
+use These\Fieldset\Generalites\GeneralitesFieldset;
+
+?>
+
+<fieldset>
+    <?php
+        /** @var GeneralitesFieldset $fs */
+        $fs = $form->get('generalites');
+        /** @var HDR $hdr */
+        $hdr = $fs->getObject();
+        $form->prepare();
+        echo $this->form()->openTag($form);
+    ?>
+    <div class="row these-saisie-form-section">
+        <div class="col-6">
+            <h3 class="these-saisie-title-section">
+                Informations générales
+            </h3>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('candidat')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('discipline')) ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('cnu')) ?>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <h3 class="these-saisie-title-section">
+                    Confidentialité de la HDR
+                </h3>
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('confidentialite')); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9" id="date-fin-confidentialite">
+                    <?php echo $this->formControlGroup($fs->get('dateFinConfidentialite')); ?>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <?php if($hdr->getId() !== null && !$hdr->getSource()->getImportable()): ?>
+        <div class="separator"></div>
+        <div class="row these-saisie-form-section">
+            <div class="row ">
+                <h3 class="these-saisie-title-section">
+                    Gestion de la HDR
+                </h3>
+                <div class="col-4">
+                    <?php echo $this->formControlGroup($fs->get('dateAbandon')); ?>
+                </div>
+            </div>
+
+<!--            <div class="row">-->
+<!--                <div class="col-4">-->
+<!--                    --><?php //echo $this->formControlGroup($fs->get('resultat')); ?>
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    <?php endif ?>
+
+    <?php if($fs->useAsBaseFieldset()): ?>
+        <?php echo $this->formHidden($form->get('security')); ?>
+        <?php echo $this->formControlGroup($form->get('submit')); ?>
+        <?php echo $this->form()->closeTag(); ?>
+        <script>
+            $('select').selectpicker();
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip({});
+            });
+        </script>
+    <?php endif ?>
+
+</fieldset>

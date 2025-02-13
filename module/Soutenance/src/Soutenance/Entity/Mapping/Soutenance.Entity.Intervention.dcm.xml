@@ -7,9 +7,9 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <many-to-one field="these" target-entity="These\Entity\Db\These">
+        <many-to-one field="proposition" target-entity="Soutenance\Entity\Proposition">
             <join-columns>
-                <join-column name="these_id" referenced-column-name="id"/>
+                <join-column name="proposition_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

@@ -2,21 +2,25 @@
 
 namespace Soutenance\Controller;
 
+use Acteur\Service\ActeurHDR\ActeurHDRService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
+use Depot\Service\FichierHDR\FichierHDRService;
 use Depot\Service\FichierThese\FichierTheseService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
+use Interop\Container\ContainerInterface;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Soutenance\Service\Notification\SoutenanceNotificationFactory;
-use These\Service\Acteur\ActeurService;
-use These\Service\These\TheseService;
-use Interop\Container\ContainerInterface;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
-use Notification\Service\NotifierService;
-use Soutenance\Service\Proposition\PropositionService;
-use Soutenance\Service\Validation\ValidationService;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
+use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
+use Soutenance\Service\Proposition\PropositionThese\PropositionTheseService;
+use Soutenance\Service\Validation\ValidationHDR\ValidationHDRService;
+use Soutenance\Service\Validation\ValidationThese\ValidationTheseService;
+use These\Service\These\TheseService;
 
 class AvisControllerFactory
 {
@@ -30,28 +34,37 @@ class AvisControllerFactory
     {
 
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
+         * @var ActeurHDRService $acteurHDRService
          * @var AvisService $avisService
          * @var MembreService $membreService
          * @var NotifierService $notifierSoutenanceService
-         * @var PropositionService $propositionService
+         * @var PropositionTheseService $propositionTheseService
+         * @var PropositionHDRService $propositionHDRService
          * @var TheseService $theseService
-         * @var ValidationService $validationService
+         * @var ValidationTheseService $validationService
+         * @var ValidationHDRService $validationHDRService
          */
-        $acteurService              = $container->get(ActeurService::class);
+        $acteurTheseService          = $container->get(ActeurTheseService::class);
+        $acteurHDRService          = $container->get(ActeurHDRService::class);
         $avisService                = $container->get(AvisService::class);
         $membreService              = $container->get(MembreService::class);
         $notifierSoutenanceService  = $container->get(NotifierService::class);
-        $propositionService         = $container->get(PropositionService::class);
+        $propositionTheseService    = $container->get(PropositionTheseService::class);
+        $propositionHDRService      = $container->get(PropositionHDRService::class);
         $theseService               = $container->get('TheseService');
-        $validationService          = $container->get(ValidationService::class);
+        $validationService          = $container->get(ValidationTheseService::class);
+        $validationHDRService          = $container->get(ValidationHDRService::class);
+
 
         /**
          * @var FichierService $fichierService
          * @var FichierTheseService $fichierTheseService
+         * @var FichierHDRService $fichierHDRService
          */
         $fichierService = $container->get(FichierService::class);
         $fichierTheseService = $container->get(FichierTheseService::class);
+        $fichierHDRService = $container->get(FichierHDRService::class);
 
         /** @var FichierStorageService $fileService */
         $fileService = $container->get(FichierStorageService::class);
@@ -63,15 +76,19 @@ class AvisControllerFactory
 
         $controller = new AvisController();
         $controller->setTheseService($theseService);
-        $controller->setValidationService($validationService);
-        $controller->setActeurService($acteurService);
+        $controller->setValidationTheseService($validationService);
+        $controller->setValidationHDRService($validationHDRService);
+        $controller->setActeurTheseService($acteurTheseService);
+        $controller->setActeurHDRService($acteurHDRService);
         $controller->setNotifierService($notifierSoutenanceService);
-        $controller->setPropositionService($propositionService);
+        $controller->setPropositionHDRService($propositionHDRService);
+        $controller->setPropositionTheseService($propositionTheseService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);
 
         $controller->setFichierService($fichierService);
         $controller->setFichierTheseService($fichierTheseService);
+        $controller->setFichierHDRService($fichierHDRService);
         $controller->setFichierStorageService($fileService);
 
         $controller->setAvisForm($avisForm);

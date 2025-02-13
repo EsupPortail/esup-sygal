@@ -15,7 +15,7 @@ class AdresseSoutenanceForm extends Form
             'name' => 'ligne1',
             'type' => Text::class,
             'options' => [
-                'label' => "Batiment et salle <span class='icon icon-obligatoire'></span> : ",
+                'label' => "Bâtiment et salle <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'form-label',
@@ -29,7 +29,7 @@ class AdresseSoutenanceForm extends Form
             'name' => 'ligne2',
             'type' => Text::class,
             'options' => [
-                'label' => "Numéro et voie <span class='icon icon-obligatoire'></span> : ",
+                'label' => "Numéro et voie <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'form-label',
@@ -57,7 +57,7 @@ class AdresseSoutenanceForm extends Form
             'name' => 'ligne4',
             'type' => Text::class,
             'options' => [
-                'label' => "Code poste et ville  <span class='icon icon-obligatoire'></span> : ",
+                'label' => "Code postal et ville  <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'form-label',

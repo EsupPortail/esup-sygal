@@ -2,7 +2,11 @@
 
 namespace Soutenance\Controller;
 
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurHDR\ActeurHDRService;
+use HDR\Service\HDRService;
+use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
+use Soutenance\Service\Proposition\PropositionThese\PropositionTheseService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use These\Service\These\TheseService;
@@ -22,36 +26,43 @@ class IndexControllerFactory {
     public function __invoke(ContainerInterface $container)
     {
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
+         * @var ActeurHDRService $acteurHDRService
          * @var AvisService $avisService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var EngagementImpartialiteService $engagementService
          * @var EtablissementService $etablissementService
-         * @var PropositionService $propositionService
          * @var TheseService $theseService
+         * @var HDRService $hdrService
          * @var UniteRechercheService $uniteRechercheService
          * @var UserContextService $userContextService
          */
-        $acteurService          = $container->get(ActeurService::class);
+        $acteurTheseService          = $container->get(ActeurTheseService::class);
+        $acteurHDRService          = $container->get(ActeurHDRService::class);
         $avisService            = $container->get(AvisService::class);
         $ecoleDoctoraleService  = $container->get(EcoleDoctoraleService::class);
         $engagementService      = $container->get(EngagementImpartialiteService::class);
         $etablissementService   = $container->get(EtablissementService::class);
-        $propositionService     = $container->get(PropositionService::class);
         $theseService           = $container->get('TheseService');
+        $hdrService           = $container->get(HDRService::class);
         $userContextService     = $container->get('UserContextService');
         $uniteRechercheService  = $container->get(UniteRechercheService::class);
+        $propositionTheseService = $container->get(PropositionTheseService::class);
+        $propositionHDRService = $container->get(PropositionHDRService::class);
 
         $controller = new IndexController();
-        $controller->setActeurService($acteurService);
+        $controller->setActeurTheseService($acteurTheseService);
+        $controller->setActeurHDRService($acteurHDRService);
         $controller->setAvisService($avisService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEngagementImpartialiteService($engagementService);
         $controller->setEtablissementService($etablissementService);
-        $controller->setPropositionService($propositionService);
         $controller->setTheseService($theseService);
+        $controller->setHDRService($hdrService);
         $controller->setUserContextService($userContextService);
         $controller->setUniteRechercheService($uniteRechercheService);
+        $controller->setPropositionTheseService($propositionTheseService);
+        $controller->setPropositionHDRService($propositionHDRService);
 
         return $controller;
     }

@@ -8,14 +8,14 @@ use Fichier\View\Helper\Fichier\FichierViewHelper;
 use Laminas\Form\ElementInterface;
 use Structure\Entity\Db\EcoleDoctorale;
 use These\Entity\Db\These;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Depot\Entity\Db\VWorkflow;
 use Application\View\Helper\Actualite\ActualiteViewHelper;
 use Structure\View\Helper\EcoleDoctoraleHelper;
 use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\FinancementFormatterHelper;
 use These\View\Helper\Url\UrlTheseHelper;
-use Application\View\Helper\ValidationViewHelper;
+use Validation\View\Helper\ValidationTheseViewHelper;
 use Depot\View\Helper\Workflow\RoadmapHelper;
 use Depot\View\Helper\Workflow\WorkflowHelper;
 use Depot\View\Helper\Workflow\WorkflowStepHelper;
@@ -150,7 +150,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method WorkflowHelper        wf(These $these = null)
  * @method WorkflowStepHelper    wfs(VWorkflow $step = null)
  * @method RoadmapHelper         roadmap(These $these = null)
- * @method ValidationViewHelper  validation(Validation $validation = null)
+ * @method ValidationTheseViewHelper  validationThese(ValidationThese $validation = null)
  * @method EcoleDoctoraleHelper  ed(EcoleDoctorale $ecole)
  *
  * @method UrlDepotHelper urlThese()

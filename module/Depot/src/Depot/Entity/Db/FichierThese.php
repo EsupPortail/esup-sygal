@@ -5,14 +5,17 @@ namespace Depot\Entity\Db;
 use Fichier\Entity\Db\Fichier;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use These\Entity\Db\These;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 /**
  * Classe représentant un fichier lié *à une thèse*.
  *
  * @todo : déplacer de cette classe ce qui concerne le retraitement et la conformité.
  */
-class FichierThese implements ResourceInterface
+class FichierThese implements ResourceInterface, HistoriqueAwareInterface
 {
+    use HistoriqueAwareTrait;
     /**
      * Tag marquant un fichier qui résulte d'un deuxième dépôt (après correction).
      *

@@ -4,18 +4,21 @@
  * @var Proposition $proposition
  * @var array $justificatifs
  * @var bool $justificatifsOk
- * @var UrlFichierThese $urlFichierThese
+ * @var UrlFichierThese|UrlFichierHDR $urlFichier
  * @var bool $canModifier
+ * @var string $typeProposition
  */
 
+use Depot\Controller\Plugin\UrlFichierHDR;
 use Depot\Controller\Plugin\UrlFichierThese;
 use Fichier\Entity\Db\NatureFichier;
+use HDR\Entity\Db\HDR;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 
-$these = $proposition->getThese();
+$object = $proposition->getObject();
 $hasVisio = false;
 foreach ($proposition->getMembres() as $membre) {
     if ($membre->isVisio()) $hasVisio = true;
@@ -36,8 +39,14 @@ foreach ($proposition->getMembres() as $membre) {
     </div>
     <div class="card-body">
 
+        <?php if ($justificatifs === [] && $justificatifsOk === true) : ?>
+            <div class="alert alert-info">
+                <span class="icon icon-info"></span>
+                Aucun justificatif n'est encore demandé au vu des informations renseignées
+            </div>
+         <?php endif; ?>
         <?php if ($canModifier) : ?>
-            <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true); ?>"
+            <a href="<?php echo $this->url("soutenance_{$typeProposition}/justificatif/ajouter-justificatif", ['id' => $object->getId()], [], true); ?>"
                class="btn btn-primary ajax-modal" data-event="modification">
                 <span class="icon icon-televerser"></span>
                 Téléverser un justificatif
@@ -47,7 +56,11 @@ foreach ($proposition->getMembres() as $membre) {
         <?php if ($justificatifsOk !== true) : ?>
             <div class="alert alert-warning float-end">
                 <span class="fas fa-exclamation-triangle"></span>
-                Liste des justificatifs manquants :
+                <?php if ($object instanceof HDR) : ?>
+                    Liste des justificatifs manquants (<b>à déposer par le candidat</b>):
+                <?php else:; ?>
+                    Liste des justificatifs manquants :
+                <?php endif; ?>
             <ul>
             <?php foreach ($justificatifs as $justificatif) : ?>
                 <?php if($justificatif['justificatif'] === null) : ?>
@@ -87,28 +100,20 @@ foreach ($proposition->getMembres() as $membre) {
                 $liste = array_filter($justificatifs, function($j) use ($code) {
                     return ($j["type"] === $code AND $j["justificatif"] !== null) AND $j["justificatif"]->estNonHistorise();}); ?>
             <?php if (!empty($liste)) : ?>
-            <h4>
-                <?php echo $label; ?>
-                <span class="badge bg-secondary"><?php echo count($liste); ?></span>
-            </h4>
-                <ul>
+                <h4>
+                    <?php echo $label; ?>
+                    <span class="badge bg-secondary"><?php echo count($liste); ?></span>
+                </h4>
                 <?php /** @var Justificatif $justificatif */
-                foreach($liste as $justificatif) : ?>
-                    <li>
-                        <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichierThese, ['court' => true]); ?>
-                        <?php if ($canModifier) : ?>
-                            <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */ ?>
-                            <?php $retour = $this->url('soutenance/proposition', ['these' => $these->getId()],['force_canonical' => true ], true); ?>
-                            <a href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                    ['these' => $these->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
-                                    ["query" => ["retour" => $retour]],
-                                    true); ?>">
-                                <span style='color:darkred;' class="icon icon-delete iconly" title="Supprimer le justificatif"></span>
-                            </a>
-                        <?php endif; ?>
-                    </li>
+                foreach($liste as $justificatif) :
+                        $retour = $this->url("soutenance_{$typeProposition}/proposition", ['id' => $object->getId()], ['force_canonical' => true], true);
+                        /** @see \Soutenance\Controller\InterventionController::retirerAction() */
+                        $urlSuppressionJustificatif = $this->url("soutenance_{$typeProposition}/justificatif/retirer",
+                            ['id' => $object->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
+                            ["query" => ["retour" => $retour]],
+                            true); ?>
+                        <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichier, $urlSuppressionJustificatif, $canModifier, ['court' => true]); ?>
                 <?php endforeach; ?>
-                </ul>
             <?php endif; ?>
         <?php endforeach; ?>
     </div>

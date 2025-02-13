@@ -3,6 +3,8 @@
 namespace Soutenance\Service\Intervention;
 
 use Application\Entity\DateTimeAwareTrait;
+use HDR\Entity\Db\HDR;
+use Soutenance\Entity\Proposition;
 use These\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
@@ -145,7 +147,7 @@ class InterventionService
     public function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(Intervention::class)->createQueryBuilder('intervention')
-            ->addSelect('these')->join('intervention.these', 'these');
+            ->addSelect('proposition')->join('intervention.proposition', 'proposition');
         return $qb;
     }
 
@@ -163,19 +165,20 @@ class InterventionService
     }
 
     /**
-     * @param These $these
+     * @param Proposition $proposition
      * @param int $type
      * @return Intervention[]
      */
-    public function getInterventionByTheseAndType(These $these, int $type) : array
+    public function getInterventionByPropositionType(Proposition $proposition, int $type) : array
     {
         $qb = $this->createQueryBuilder()
-            ->andWhere('intervention.these = :these')
-            ->setParameter('these', $these)
             ->andWhere('intervention.type = :type')
+            ->andWhere('intervention.proposition = :proposition')
+            ->setParameter('proposition', $proposition)
             ->setParameter('type', $type)
             ->andWhere('intervention.histoDestruction IS NULL')
             ->orderby('intervention.histoCreation', 'DESC');
+
         $result = $qb->getQuery()->getResult();
         return $result;
     }

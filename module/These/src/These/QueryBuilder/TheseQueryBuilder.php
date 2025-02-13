@@ -3,8 +3,8 @@
 namespace These\QueryBuilder;
 
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\QueryBuilder\Expr\AndWhereDoctorantIs;
 use Doctorant\Entity\Db\Doctorant;
+use Doctorant\QueryBuilder\Expr\AndWhereDoctorantIs;
 use These\Entity\Db\These;
 
 /**

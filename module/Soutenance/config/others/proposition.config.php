@@ -2,12 +2,16 @@
 
 namespace Soutenance;
 
-use Soutenance\Assertion\PropositionAssertion;
-use Soutenance\Assertion\PropositionAssertionFactory;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+use Soutenance\Assertion\These\PropositionTheseAssertion;
+use Soutenance\Assertion\These\PropositionTheseAssertionFactory;
+use Soutenance\Controller\HDR\Proposition\PropositionHDRRechercheController;
+use Soutenance\Controller\HDR\Proposition\PropositionHDRRechercheControllerFactory;
 use Soutenance\Controller\PropositionController;
-use Soutenance\Controller\PropositionControllerFactory;
-use Soutenance\Controller\PropositionRechercheController;
-use Soutenance\Controller\PropositionRechercheControllerFactory;
+use Soutenance\Controller\These\PropositionThese\PropositionTheseController;
+use Soutenance\Controller\These\PropositionThese\PropositionTheseRechercheController;
+use Soutenance\Controller\These\PropositionThese\PropositionTheseRechercheControllerFactory;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\Anglais\AnglaisFormFactory;
 use Soutenance\Form\Anglais\AnglaisHydrator;
@@ -34,14 +38,9 @@ use Soutenance\Rule\PropositionJuryRule;
 use Soutenance\Rule\PropositionJuryRuleFactory;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Horodatage\HorodatageServiceFactory;
-use Soutenance\Service\Proposition\PropositionSearchService;
-use Soutenance\Service\Proposition\PropositionSearchServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceFactory;
 use UnicaenPrivilege\Guard\PrivilegeController;
-use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [
@@ -50,55 +49,54 @@ return [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers' => [
-            PrivilegeRuleProvider::class => [
-                'allow' => [
-                    [
-                        'privileges' => [
-                            PropositionPrivileges::PROPOSITION_VISUALISER,
-                            PropositionPrivileges::PROPOSITION_MODIFIER,
-                            PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
-                            PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR,
-                            PropositionPrivileges::PROPOSITION_VALIDER_ED,
-                            PropositionPrivileges::PROPOSITION_VALIDER_UR,
-                            PropositionPrivileges::PROPOSITION_VALIDER_BDD,
-                            PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE,
-                            PropositionPrivileges::PROPOSITION_PRESIDENCE,
-                            PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS,
-
-                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
-                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER,
-                        ],
-                        'resources' => ['These'],
-                        'assertion' => PropositionAssertion::class,
-                    ],
-                ],
-            ],
-        ],
+//        'rule_providers' => [
+//            PrivilegeRuleProvider::class => [
+//                'allow' => [
+//                    [
+//                        'privileges' => [
+//                            PropositionPrivileges::PROPOSITION_VISUALISER,
+//                            PropositionPrivileges::PROPOSITION_MODIFIER,
+//                            PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
+//                            PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR,
+//                            PropositionPrivileges::PROPOSITION_VALIDER_ED,
+//                            PropositionPrivileges::PROPOSITION_VALIDER_UR,
+//                            PropositionPrivileges::PROPOSITION_VALIDER_BDD,
+//                            PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE,
+//                            PropositionPrivileges::PROPOSITION_PRESIDENCE,
+//                            PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS,
+//
+//                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
+//                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER,
+//                        ],
+//                        'resources' => ['These'],
+//                        'assertion' => PropositionTheseAssertion::class,
+//                    ],
+//                ],
+//            ],
+//        ],
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => PropositionRechercheController::class,
+                    'controller' => PropositionTheseRechercheController::class,
                     'action' => [
                         'filters',
                         'notres',
-                        'notresFilters',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
+                ],
+                [
+                    'controller' => PropositionHDRRechercheController::class,
+                    'action' => [
+                        'filters',
+                        'notres',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'afficher-soutenances-par-ecole-doctorale',
-                    ],
-                    'roles' => [],
-                ],
-                [
-                    'controller' => PropositionController::class,
-                    'action' => [
-                        'proposition',
                         'horodatages',
-                        'generer-serment',
+//                        'generer-serment',
                         'generate-view-date-lieu',
                         'generate-view-jury',
                         'generate-view-informations',
@@ -111,10 +109,10 @@ return [
                         'modifier-date-lieu',
                         'modifier-membre',
                         'effacer-membre',
-                        'label-europeen',
+//                        'label-europeen',
                         'anglais',
                         'confidentialite',
-                        'changement-titre',
+//                        'changement-titre',
                         'ajouter-adresse',
                         'modifier-adresse',
                         'historiser-adresse',
@@ -138,14 +136,14 @@ return [
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'valider-acteur',
+//                        'valider-acteur',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR,
                 ],
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'valider-structure',
+//                        'valider-structure',
                         'refuser-structure',
                     ],
                     'privileges' => [
@@ -157,7 +155,7 @@ return [
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'revoquer-structure',
+//                        'revoquer-structure',
                     ],
                     'privileges' => [
                         PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE,
@@ -166,7 +164,7 @@ return [
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'signature-presidence',
+//                        'signature-presidence',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_PRESIDENCE,
                 ],
@@ -207,25 +205,16 @@ return [
 
     'router' => [
         'routes' => [
-            'soutenances-par-ecole-doctorale' => [
-                'type' => Segment::class,
-                'may_terminate' => true,
-                'options' => [
-                    'route' => '/soutenances-par-ecole-doctorale/:ecole',
-                    'defaults' => [
-                        'controller' => PropositionController::class,
-                        'action' => 'afficher-soutenances-par-ecole-doctorale',
-                    ],
-                ],
-            ],
-            'soutenance' => [
-                'child_routes' => [
+            'soutenance_these' => [
+                'child_routes' => $soutenanceChildRoutes = [
                     'proposition' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
                             'route' => '/proposition',
                             'defaults' => [
+                                /** @see PropositionTheseController::propositionAction() */
+                                /** @see PropositionHDRController::propositionAction() */
                                 'controller' => PropositionController::class,
                                 'action' => 'proposition',
                             ],
@@ -321,6 +310,7 @@ return [
                                 'options' => [
                                     'route' => '/generer-serment',
                                     'defaults' => [
+                                        /** @see PropositionTheseController::genererSermentAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'generer-serment',
                                     ],
@@ -332,6 +322,7 @@ return [
                                 'options' => [
                                     'route' => '/generate-view-date-lieu',
                                     'defaults' => [
+                                        /** @see PropositionController::generateViewDateLieuAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'generate-view-date-lieu',
                                     ],
@@ -343,6 +334,7 @@ return [
                                 'options' => [
                                     'route' => '/generate-view-jury',
                                     'defaults' => [
+                                        /** @see PropositionController::generateViewJuryAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'generate-view-jury',
                                     ],
@@ -354,6 +346,7 @@ return [
                                 'options' => [
                                     'route' => '/generate-view-informations',
                                     'defaults' => [
+                                        /** @see PropositionController::generateViewInformationsAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'generate-view-informations',
                                     ],
@@ -365,6 +358,7 @@ return [
                                 'options' => [
                                     'route' => '/sursis',
                                     'defaults' => [
+                                        /** @see PropositionController::toggleSursisAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'toggle-sursis',
                                     ],
@@ -376,6 +370,7 @@ return [
                                 'options' => [
                                     'route' => '/suppression',
                                     'defaults' => [
+                                        /** @see PropositionController::suppressionAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'suppression',
                                     ],
@@ -387,6 +382,7 @@ return [
                                 'options' => [
                                     'route' => '/modifier-date-lieu',
                                     'defaults' => [
+                                        /** @see PropositionController::modifierDateLieuAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'modifier-date-lieu',
                                     ],
@@ -398,6 +394,7 @@ return [
                                 'options' => [
                                     'route' => '/modifier-membre[/:membre]',
                                     'defaults' => [
+                                        /** @see PropositionController::modifierMembreAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'modifier-membre',
                                     ],
@@ -409,6 +406,7 @@ return [
                                 'options' => [
                                     'route' => '/effacer-membre/:membre',
                                     'defaults' => [
+                                        /** @see PropositionController::effacerMembreAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'effacer-membre',
                                     ],
@@ -420,6 +418,7 @@ return [
                                 'options' => [
                                     'route' => '/label-europeen',
                                     'defaults' => [
+                                        /** @see PropositionTheseController::labelEuropeenAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'label-europeen',
                                     ],
@@ -431,6 +430,7 @@ return [
                                 'options' => [
                                     'route' => '/anglais',
                                     'defaults' => [
+                                        /** @see PropositionController::anglaisAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'anglais',
                                     ],
@@ -442,6 +442,7 @@ return [
                                 'options' => [
                                     'route' => '/confidentialite',
                                     'defaults' => [
+                                        /** @see PropositionController::confidentialiteAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'confidentialite',
                                     ],
@@ -453,6 +454,7 @@ return [
                                 'options' => [
                                     'route' => '/changement-titre',
                                     'defaults' => [
+                                        /** @see PropositionTheseController::changementTitreAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'changement-titre',
                                     ],
@@ -464,6 +466,8 @@ return [
                                 'options' => [
                                     'route' => '/valider',
                                     'defaults' => [
+                                        /** @see PropositionTheseController::validerActeurAction() */
+                                        /** @see PropositionHDRController::validerActeurAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'valider-acteur',
                                     ],
@@ -475,7 +479,8 @@ return [
                                 'options' => [
                                     'route' => '/valider-structure',
                                     'defaults' => [
-                                        /** @see PropositionController::validerStructureAction() */
+                                        /** @see PropositionTheseController::validerStructureAction() */
+                                        /** @see PropositionHDRController::validerStructureAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'valider-structure',
                                     ],
@@ -487,7 +492,8 @@ return [
                                 'options' => [
                                     'route' => '/revoquer-structure',
                                     'defaults' => [
-                                        /** @see PropositionController::revoquerStructureAction() */
+                                        /** @see PropositionTheseController::revoquerStructureAction() */
+                                        /** @see PropositionHDRController::revoquerStructureAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'revoquer-structure',
                                     ],
@@ -511,7 +517,8 @@ return [
                                 'options' => [
                                     'route' => '/signature-presidence',
                                     'defaults' => [
-                                        /** @see PropositionController::signaturePresidenceAction() */
+                                        /** @see PropositionTheseController::signaturePresidenceAction() */
+                                        /** @see PropositionHDRController::signaturePresidenceAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'signature-presidence',
                                     ],
@@ -523,6 +530,7 @@ return [
                                 'options' => [
                                     'route' => '/declaration-non-plagiat',
                                     'defaults' => [
+                                        /** @see PropositionTheseController::declarationNonPlagiatAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'declaration-non-plagiat',
                                     ],
@@ -534,6 +542,7 @@ return [
                                         'options' => [
                                             'route' => '/valider',
                                             'defaults' => [
+                                                /** @see PropositionTheseController::validerDeclarationNonPlagiatAction() */
                                                 'controller' => PropositionController::class,
                                                 'action' => 'valider-declaration-non-plagiat',
                                             ],
@@ -545,6 +554,7 @@ return [
                                         'options' => [
                                             'route' => '/refuser',
                                             'defaults' => [
+                                                /** @see PropositionTheseController::refuserDeclarationNonPlagiatAction() */
                                                 'controller' => PropositionController::class,
                                                 'action' => 'refuser-declaration-non-plagiat',
                                             ],
@@ -556,6 +566,7 @@ return [
                                         'options' => [
                                             'route' => '/revoquer',
                                             'defaults' => [
+                                                /** @see PropositionTheseController::revoquerDeclarationNonPlagiatAction() */
                                                 'controller' => PropositionController::class,
                                                 'action' => 'revoquer-declaration-non-plagiat',
                                             ],
@@ -567,22 +578,24 @@ return [
                     ],
                 ],
             ],
+            'soutenance_hdr' => [
+                'child_routes' => $soutenanceChildRoutes,
+            ],
         ],
     ],
 
     'service_manager' => [
         'factories' => [
             PropositionService::class => PropositionServiceFactory::class,
-            PropositionSearchService::class => PropositionSearchServiceFactory::class,
-            PropositionAssertion::class => PropositionAssertionFactory::class,
+            PropositionTheseAssertion::class => PropositionTheseAssertionFactory::class,
             HorodatageService::class => HorodatageServiceFactory::class,
             PropositionJuryRule::class => PropositionJuryRuleFactory::class,
         ],
     ],
     'controllers' => [
         'factories' => [
-            PropositionController::class => PropositionControllerFactory::class,
-            PropositionRechercheController::class => PropositionRechercheControllerFactory::class,
+            PropositionTheseRechercheController::class => PropositionTheseRechercheControllerFactory::class,
+            PropositionHDRRechercheController::class => PropositionHDRRechercheControllerFactory::class,
         ],
     ],
 

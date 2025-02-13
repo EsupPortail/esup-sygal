@@ -2,16 +2,10 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Soutenance\Entity\Proposition" table="SOUTENANCE_PROPOSITION">
+    <entity name="Soutenance\Entity\Proposition" table="SOUTENANCE_PROPOSITION" inheritance-type="SINGLE_TABLE">
         <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
-
-        <many-to-one field="these" target-entity="These\Entity\Db\These">
-            <join-columns>
-                <join-column name="these_id" referenced-column-name="id"/>
-            </join-columns>
-        </many-to-one>
 
         <field name="date"                      type="datetime"                         column="dateprev"   nullable="true"/>
         <field name="lieu"                      type="string"        length="256"       column="lieu"       nullable="true"/>
@@ -24,12 +18,8 @@
         <field name="renduRapport"              type="datetime"                         column="rendu_rapport"        nullable="true"/>
         <field name="confidentialite"           type="datetime"                         column="confidentialite"      nullable="true"/>
 
-        <field name="labelEuropeen"             type="boolean"                           column="label_europeen"      nullable="false"/>
         <field name="huitClos"                  type="boolean"                           column="huit_clos"           nullable="false"/>
-<!--        <field name="manuscritAnglais"          type="boolean"                           column="manuscrit_anglais"   nullable="false"/>-->
         <field name="soutenanceAnglais"         type="boolean"                           column="soutenance_anglais"  nullable="false"/>
-
-        <field name="nouveauTitre"              type="string"        length="2048"       column="nouveau_titre"       nullable="true"/>
 
         <many-to-one field="etat" target-entity="Soutenance\Entity\Etat">
             <join-columns>
@@ -52,6 +42,17 @@
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
+
+        <discriminator-column name="type" type="string" length="255"/>
+        <!-- Colonne discriminante -->
+        <discriminator-map>
+            <discriminator-mapping value="SOUTENANCE_HDR_PROPOSITION" class="Soutenance\Entity\PropositionHDR"/>
+            <discriminator-mapping value="SOUTENANCE_THESE_PROPOSITION" class="Soutenance\Entity\PropositionThese"/>
+        </discriminator-map>
+
+        <options>
+            <option name="check">((these_id IS NOT NULL AND hdr_id IS NULL) OR (these_id IS NULL AND hdr_id IS NOT NULL))</option>
+        </options>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>

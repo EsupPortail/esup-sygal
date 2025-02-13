@@ -2,16 +2,18 @@
 
 /**
  * @see \Soutenance\Controller\InterventionController::ajouterVisioconferenceTardiveAction()
- * @var These $these
+ * @var These|HDR $object
  * @var Membre[] $membres
+ * @var string $typeProposition
  */
 
+use HDR\Entity\Db\HDR;
 use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 
 ?>
 
-<form method="post" action="<?php echo $this->url('soutenance/intervention/ajouter-visioconference-tardive', ['these' => $these->getId()], [], true); ?>">
+<form method="post" action="<?php echo $this->url("soutenance_{$typeProposition}/intervention/ajouter-visioconference-tardive", ['id' => $object->getId()], [], true); ?>">
     <label for="membre">
         Membre du jury en visioconférence <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :
     </label>

@@ -2,8 +2,6 @@
 
 namespace RapportActivite\Service\Operation;
 
-use Application\Entity\Db\TypeValidation;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
@@ -15,6 +13,8 @@ use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrai
 use UnicaenAvis\Entity\Db\Avis;
 use UnicaenAvis\Entity\Db\AvisType;
 use UnicaenAvis\Service\AvisServiceAwareTrait;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class RapportActiviteOperationService
 {

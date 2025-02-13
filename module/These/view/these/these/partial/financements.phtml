@@ -19,7 +19,10 @@ $financementsFormatted = $financementFormatter->format($these->getFinancements()
 <dl class="row">
     <?php if (!$financementsFormatted): ?>
         <div class="col-md-3">
-            Aucun financement de renseigné
+            <span class="badge bg-warning text-white" style="font-size:unset">
+                <span class="icon icon-warning" style="padding-right: unset"></span>
+                <?php echo $this->translate("Aucun financement renseigné") ?>
+            </span>
         </div>
     <?php else:
         /** @var Financement $financement */

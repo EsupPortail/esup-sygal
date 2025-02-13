@@ -2,7 +2,7 @@
 
 use Depot\Entity\Db\Diffusion;
 use These\Entity\Db\These;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\View\Helper\Messenger;
@@ -13,7 +13,7 @@ use UnicaenApp\View\Helper\Messenger;
  * @var Diffusion       $diffusion
  * @var bool            $estDoctorant
  * @var string          $modifierUrl
- * @var Validation|null $validation
+ * @var ValidationThese|null $validation
  * @var string          $nextStepUrl
  */
 
@@ -109,7 +109,7 @@ $rdvBu = $these->getRdvBu();
     </div>
     <div class="card-body">
         <?php if ($validation): ?>
-            <?php echo $this->validation($validation) ?>
+            <?php echo $this->validation($validation, "success") ?>
         <?php else: ?>
             <p>Aucune.</p>
         <?php endif ?>

@@ -2,14 +2,14 @@
 
 namespace RapportActivite\Controller\Recherche;
 
-use Application\Entity\Db\TypeValidation;
-use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\Search\RapportActiviteSearchService;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationService;
 
 class RapportActiviteRechercheControllerFactory
 {

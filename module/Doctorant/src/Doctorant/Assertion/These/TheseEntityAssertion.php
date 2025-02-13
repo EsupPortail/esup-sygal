@@ -4,22 +4,18 @@ namespace Doctorant\Assertion\These;
 
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareInterface;
-use Application\Service\Validation\ValidationServiceAwareTrait;
-use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use These\Entity\Db\These;
-use These\Service\These\TheseServiceAwareInterface;
 use These\Service\These\TheseServiceAwareTrait;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 
 class TheseEntityAssertion extends GeneratedTheseEntityAssertion
-    implements ValidationServiceAwareInterface, FichierTheseServiceAwareInterface, TheseServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
     use FichierTheseServiceAwareTrait;

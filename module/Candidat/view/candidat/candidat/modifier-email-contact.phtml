@@ -1,0 +1,72 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use Candidat\Entity\Db\Candidat;
+use Laminas\Form\Form;
+
+/**
+ * @var PhpRenderer $this
+ * @var Candidat $candidat
+ * @var string|null $emailInstitutionnel
+ * @var Form $form
+ * @var string $title
+ *
+ * @see CandidatController::modifierEmailContactAction()
+ */
+
+$appName = $this->appInfos()->nom;
+?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<div class="col-md-10">
+    <p class="lead">
+        Merci de saisir une adresse électronique de contact. <br>
+        Cette adresse sera utilisée par <?php echo $appName ?> pour vous communiquer les informations importantes
+        associées à votre HDR. <br>
+        <strong class="text-danger">
+            L'adresse de contact que vous saisissez ici doit être une adresse durable (autre que vos adresses
+            fournies par votre établissement/institution).
+        </strong>
+    </p>
+</div>
+
+<?php
+$fcg = $this->formControlGroup();
+echo $this->form()->openTag($form->prepare()->setAttribute('class', 'mail-confirmation'));
+?>
+<div class="row">
+    <div class="col-md-4">
+        <?php
+        echo $fcg($form->get('security'));
+        echo $fcg($form->get('id'));
+        echo $fcg($form->get('idIndividu'));
+        echo $fcg($form->get('individu'));
+        echo $fcg($form->get('email'));
+        ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-7">
+        <?php
+        $helpContent = $emailInstitutionnel ?
+            "En cas de refus, l'application utilisera uniquement votre adresse professionnelle/institutionnelle suivante : " . $emailInstitutionnel :
+            "<span class='text-danger'>ATTENTION : L'application ne dispose d'aucune adresse professionnelle/institutionnelle vous concernant, 
+        ce qui vous oblige temporairement à autoriser ici l'utilisation de votre adresse de contact.
+        Vous pourrez contacter l'assistance (lien en bas de page) plus tard pour régulariser la situation...</span>";
+        echo $fcg->setHelpContent($helpContent)->render($form->get('refusListeDiff'));
+        ?>
+    </div>
+</div>
+<?php
+echo $this->formControlGroup()->render($form->get('submit'));
+echo $this->form()->closeTag();
+?>
+
+<script>
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
+</script>

@@ -2,13 +2,13 @@
 
 namespace Soutenance\Entity;
 
-use Application\Entity\Db\Validation;
+use Depot\Entity\Db\FichierHDR;
 use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\Fichier;
-use These\Entity\Db\Acteur;
-use These\Entity\Db\These;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
+use Validation\Entity\Db\ValidationHDR;
+use Validation\Entity\Db\ValidationThese;
 
 class Avis implements HistoriqueAwareInterface
 {
@@ -22,8 +22,10 @@ class Avis implements HistoriqueAwareInterface
     private ?Membre $membre = null;
     private ?string $avis = null;
     private ?string $motif = null;
-    private ?Validation $validation = null;
+    private ?ValidationThese $validationThese = null;
+    private ?ValidationHDR $validationHDR = null;
     private ?FichierThese $fichierThese = null;
+    private ?FichierHDR $fichierHDR = null;
 
     /** @var Fichier */
     private $fichier;
@@ -74,51 +76,41 @@ class Avis implements HistoriqueAwareInterface
         $this->motif = $motif;
     }
 
-    public function getValidation(): ?Validation
+    public function getValidation() : ValidationThese|ValidationHDR|null
     {
-        return $this->validation;
+        return $this->proposition instanceof PropositionThese ? $this->validationThese : $this->validationHDR;
     }
 
-    public function setValidation(?Validation $validation): void
+    public function setValidation(ValidationThese|ValidationHDR $validation) : void
     {
-        $this->validation = $validation;
+        if($this->proposition instanceof PropositionThese){
+            $this->validationThese = $validation;
+        }else{
+            $this->validationHDR = $validation;
+        }
     }
 
-    public function getFichierThese(): ?FichierThese
+    public function getFichier() : FichierThese|FichierHDR|null
     {
-        return $this->fichierThese;
+        return $this->proposition instanceof PropositionThese ? $this->fichierThese : $this->fichierHDR;
     }
 
-    public function setFichierThese(?FichierThese $fichierThese): void
+    public function setFichier(FichierThese|FichierHDR $fichier) : void
     {
-        $this->fichierThese = $fichierThese;
+        if($this->proposition instanceof PropositionThese){
+            $this->fichierThese = $fichier;
+        }else{
+            $this->fichierHDR = $fichier;
+        }
     }
 
-    public function setFichier($fichier) : void //todo check that
-    {
-        $this->fichier = $fichier;
-    }
-
-
-    /** Fonctions de qualité de vie ***********************************************************************************/
-
-    public function getThese(): ?These
-    {
-        if (!isset($this->proposition)) return null;
-        return $this->proposition->getThese();
-    }
-
-    public function getRapporteur(): ?Acteur
-    {
-        if (!isset($this->membre)) return null;
-        return $this->getMembre()->getActeur();
-    }
-
-    public function getFichier(): ?Fichier
-    {
-        if (!isset($this->fichierThese)) return null;
-        return $this->fichierThese->getFichier();
-    }
-
+//    /**
+//     * @deprecated À abandonner car utilise {@see \Soutenance\Entity\Membre::getActeur()}
+//     */
+//    public function getRapporteur(): ?ActeurThese
+//    {
+//        if (!isset($this->membre)) return null;
+//        return $this->getMembre()->getActeur();
+//    }
 
 }

@@ -2,7 +2,7 @@
 
 namespace Soutenance\Controller;
 
-use Application\Controller\AbstractController;
+use Depot\Service\FichierHDR\FichierHDRServiceAwareTrait;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
@@ -11,26 +11,24 @@ use Laminas\View\Model\ViewModel;
 use Soutenance\Entity\Intervention;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
-use Soutenance\Provider\Parametre\SoutenanceParametres;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Parametre\These\SoutenanceParametres;
 use Soutenance\Service\Intervention\InterventionServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
-class InterventionController extends AbstractController
+class InterventionController extends AbstractSoutenanceController
 {
     use EntityManagerAwareTrait;
     use FichierTheseServiceAwareTrait;
+    use FichierHDRServiceAwareTrait;
     use InterventionServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
     use ParametreServiceAwareTrait;
-    use PropositionServiceAwareTrait;
-    use TheseServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
@@ -39,38 +37,40 @@ class InterventionController extends AbstractController
 
     public function afficherAction(): ViewModel
     {
-        $these = $this->getTheseService()->getRequestedThese($this);
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition, true);
-        $distanciels = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_DISTANCIEL);
-        $visios = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_VISIO_TARDIVE);
+        $this->initializeFromType(false, false, false);
+
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($this->proposition, true);
+        $distanciels = $this->getInterventionService()->getInterventionByPropositionType($this->proposition, Intervention::TYPE_DISTANCIEL);
+        $visios = $this->getInterventionService()->getInterventionByPropositionType($this->proposition, Intervention::TYPE_VISIO_TARDIVE);
+
         $membres = [];
-        foreach ($proposition->getMembres() as $membre) {
+        foreach ($this->proposition->getMembres() as $membre) {
             $membres[$membre->getId()] = $membre;
         }
 
         return new ViewModel([
-            'these' => $these,
+            'object' => $this->entity,
             'distanciel' => (!empty($distanciels)) ? current($distanciels) : null,
             'visios' => (!empty($visios)) ? $visios : null,
-            'proposition' => $proposition,
+            'proposition' => $this->proposition,
             'membres' => $membres,
             'justificatifs' => $justificatifs,
-            'urlFichierThese' => $this->urlFichierThese(),
+            'urlFichier' => $this->type === Proposition::ROUTE_PARAM_PROPOSITION_THESE ? $this->urlFichierThese(): $this->urlFichierHDR(),
             'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
+            'typeProposition' => $this->type,
         ]);
     }
 
     public function togglePresidentDistancielAction() : Response
     {
-        $these = $this->getTheseService()->getRequestedThese($this);
-        $interventions = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_DISTANCIEL);
+        $this->initializeFromType(false, false, false);
+        $interventions = $this->getInterventionService()->getInterventionByPropositionType($this->proposition, Intervention::TYPE_DISTANCIEL);
         $nbInterventions = count($interventions);
 
         switch ($nbInterventions) {
             case 0: //creation d'une intervention
                 $intervention = new Intervention();
-                $intervention->setThese($these);
+                $intervention->setProposition($this->proposition);
                 $intervention->setType(Intervention::TYPE_DISTANCIEL);
                 $this->getInterventionService()->create($intervention);
                 break;
@@ -79,17 +79,15 @@ class InterventionController extends AbstractController
                 $this->getInterventionService()->historiser($intervention);
                 break;
             default: //erreur
-                throw new RuntimeException("Plusieurs Intervention de type '" . Intervention::TYPE_DISTANCIEL . " pour la thèse '" . $these->getId() . "'.");
+                throw new RuntimeException("Plusieurs Intervention de type '" . Intervention::TYPE_DISTANCIEL . " pour la thèse\HDR '" . $this->entity->getId() . "'.");
         }
 
-        return $this->redirect()->toRoute('soutenance/intervention/afficher', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute("soutenance_{$this->type}/intervention/afficher", ['id' => $this->entity->getId()], [], true);
     }
 
     public function ajouterVisioconferenceTardiveAction(): ViewModel
     {
-        $these = $this->getTheseService()->getRequestedThese($this);
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-
+        $this->initializeFromType(false, false, false);
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
@@ -100,11 +98,17 @@ class InterventionController extends AbstractController
 
                 // 1 - Justificatif
                 $files = ['files' => $files->toArray()];
-                $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_DELEGUATION_SIGNATURE);
-                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
+                $nature = $this->isThese()
+                    ? $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_DELEGUATION_SIGNATURE)
+                    : $this->fichierHDRService->fetchNatureFichier(NatureFichier::CODE_DELEGUATION_SIGNATURE);
+                $version = $this->isThese()
+                    ? $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG)
+                : $this->fichierHDRService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $fichiers = $this->isThese()
+                    ? $this->fichierTheseService->createFichierThesesFromUpload($this->entity, $files, $nature, $version)
+                : $this->fichierHDRService->createFichierHDRsFromUpload($this->entity, $files, $nature, $version);
                 $justificatif = new Justificatif();
-                $justificatif->setProposition($proposition);
+                $justificatif->setProposition($this->proposition);
                 $justificatif->setFichier($fichiers[0]);
                 $justificatif->setMembre($membre);
                 $this->getJustificatifService()->create($justificatif);
@@ -116,14 +120,14 @@ class InterventionController extends AbstractController
                 // 3- Déclaration de l'intervention
                 $intervention = new Intervention();
                 $intervention->setType(Intervention::TYPE_VISIO_TARDIVE);
-                $intervention->setThese($these);
+                $intervention->setProposition($this->proposition);
                 $intervention->setComplement($data['membre']);
                 $this->getInterventionService()->create($intervention);
             }
             exit();
         }
 
-        $membres = $proposition->getMembres()->toArray();
+        $membres = $this->proposition->getMembres()->toArray();
         $membres = array_filter($membres, function (Membre $membre) {
             return $membre->isVisio() === false;
         });
@@ -131,15 +135,15 @@ class InterventionController extends AbstractController
         return new ViewModel([
             'title' => "Ajout d'une déclaration de visioconférence tardive pour un membre du jury",
             'membres' => $membres,
-            'these' => $these,
+            'object' => $this->entity,
+            'typeProposition' => $this->type,
         ]);
     }
 
     public function supprimerVisioconferenceTardiveAction(): Response
     {
+        $this->initializeFromType(false, false, false);
         $intervention = $this->getInterventionService()->getRequestedIntervention($this);
-        $these = $intervention->getThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         /** retrait de la déclaration de viso sur le membre et du justificatif */
         $membre = $this->getMembreService()->find($intervention->getComplement());
@@ -147,7 +151,7 @@ class InterventionController extends AbstractController
             $membre->setVisio(false);
             $this->getMembreService()->update($membre);
 
-            $justificatif = $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre);
+            $justificatif = $this->proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre);
             if ($justificatif !== null) {
                 $this->getJustificatifService()->historise($justificatif);
             }
@@ -155,6 +159,6 @@ class InterventionController extends AbstractController
 
         $this->getInterventionService()->delete($intervention);
 
-        return $this->redirect()->toRoute('soutenance/intervention/afficher', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute("soutenance_{$this->type}/intervention/afficher", ['id' => $this->entity->getId()], [], true);
     }
 }

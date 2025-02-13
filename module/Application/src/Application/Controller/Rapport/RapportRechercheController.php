@@ -4,7 +4,7 @@ namespace Application\Controller\Rapport;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Validation\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Rapport;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;

@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @var string $typeStructureClass
+ * @var string $structureLibelle
+ * @var string $structureCode
+ * @var bool $afficherLibelle
+ **/
+
+?>
+
+<span class="text-structure <?= $typeStructureClass ?>" style="padding: 4px 4px 5px 0; background-color:white;"
+      data-bs-toggle="tooltip" data-bs-original-title="<?php echo $afficherLibelle ? "" : $structureLibelle ?>">
+    <?php echo $afficherLibelle ? $structureLibelle : $structureCode ?>
+</span>

@@ -3,6 +3,10 @@
 namespace Soutenance\Assertion;
 
 use Application\Entity\Db\Role;
+use HDR\Entity\Db\HDR;
+use HDR\Service\HDRServiceAwareTrait;
+use Soutenance\Entity\PropositionHDR;
+use Soutenance\Entity\PropositionThese;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -21,6 +25,7 @@ class JustificatifAssertion implements AssertionInterface {
     use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use HDRServiceAwareTrait;
 
     /**
      * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
@@ -39,19 +44,20 @@ class JustificatifAssertion implements AssertionInterface {
 
     public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
     {
-        /** @var These $these */
-        $these = $resource;
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
+        /** @var These|HDR $entity */
+        $entity = $resource;
+        $proposition = $this->getPropositionService()->findOneForObject($entity);
+        if($proposition instanceof PropositionThese){
+            $date_soutenance = ($entity->getDateSoutenance())?$entity->getDateSoutenance():$proposition->getDate();
+        }else if($proposition instanceof PropositionHDR){
+            $date_soutenance = $proposition->getDate();
+        }
 
-        $depasse = (new DateTime() > $date_soutenance);
+        $depasse = $date_soutenance && new DateTime() > $date_soutenance;
         $encours = ($proposition->getEtat()->getCode() === Etat::EN_COURS);
 
         $user = $this->userContextService->getIdentityDb();
         $role = $this->userContextService->getSelectedIdentityRole();
-
-//        var_dump($role->getStructure()->getId());
-//        var_dump($these->getEtablissement()->getStructure()->getId());
 
         switch ($privilege) {
             case JustificatifPrivileges::JUSTIFICATIF_AJOUTER:
@@ -60,17 +66,21 @@ class JustificatifAssertion implements AssertionInterface {
                     case Role::CODE_ADMIN_TECH:
                         return true;
                     case Role::CODE_BDD:
-                        return ($role->getStructure() === $these->getEtablissement()->getStructure());
+                    case Role::CODE_GEST_HDR:
+                        return ($role->getStructure() === $entity->getEtablissement()->getStructure());
                     case Role::CODE_DIRECTEUR_THESE :
-                        return ($encours AND !$depasse and $this->getTheseService()->isDirecteur($these, $user->getIndividu()));
+                        return ($encours AND !$depasse and $this->getTheseService()->isDirecteur($entity, $user->getIndividu()));
                     case Role::CODE_CODIRECTEUR_THESE :
-                        return ($encours AND !$depasse and $this->getTheseService()->isCoDirecteur($these, $user->getIndividu()));
+                        return ($encours AND !$depasse and $this->getTheseService()->isCoDirecteur($entity, $user->getIndividu()));
                     case Role::CODE_DOCTORANT :
-                        return ($encours AND !$depasse and $this->getTheseService()->isDoctorant($these, $user->getIndividu()));
+                        return ($encours AND !$depasse and $this->getTheseService()->isDoctorant($entity, $user->getIndividu()));
+                    case Role::CODE_HDR_CANDIDAT :
+                        return ($encours AND !$depasse and $this->hdrService->isCandidat($entity, $user->getIndividu()));
+                    case Role::CODE_HDR_GARANT :
+                        return ($encours AND !$depasse and $this->hdrService->isGarant($entity, $user->getIndividu()));
                 }
                 return false;
         }
         return false;
     }
-
 }

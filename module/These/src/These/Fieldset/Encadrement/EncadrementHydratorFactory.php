@@ -6,7 +6,7 @@ use Application\Service\Role\RoleService;
 use Doctrine\ORM\EntityManager;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 
 class EncadrementHydratorFactory
 {
@@ -26,9 +26,9 @@ class EncadrementHydratorFactory
         $individuService = $container->get(IndividuService::class);
         $hydrator->setIndividuService($individuService);
 
-        /** @var ActeurService $acteurService */
-        $acteurService = $container->get(ActeurService::class);
-        $hydrator->setActeurService($acteurService);
+        /** @var ActeurTheseService $acteurService */
+        $acteurService = $container->get(ActeurTheseService::class);
+        $hydrator->setActeurTheseService($acteurService);
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);

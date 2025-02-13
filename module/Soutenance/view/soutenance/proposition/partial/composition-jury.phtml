@@ -4,13 +4,14 @@
   * @var array $indicateurs
   * @var bool $canModifier
   * @var string $FORMULAIRE_DELEGUATION
+  * @var string $typeProposition
   */
 
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Horodatage\HorodatageService;
 
-$these = $proposition->getThese();
+$object = $proposition->getObject();
 ?>
 
 <div id="BOXDIV_JURY">
@@ -193,9 +194,10 @@ $these = $proposition->getThese();
                 /** @var Membre $membre */
                 $membres = $proposition->getMembres()->toArray();
                 usort($membres, function (Membre $a, Membre $b) { return $a->getNom() . " " . $a->getPrenom() > $b->getNom() . " " . $b->getPrenom();});
+                $str = "Rapporteur de rang B non titulaire d'une HDR";
             ?>
             <?php foreach($membres as $membre): ?>
-                <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->getHdr() !== 'O') echo " style='background:lightsalmon;' "; ?>>
+                <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->getHdr() !== 'O') echo " data-toggle='tooltip' title='".htmlentities($str, ENT_QUOTES)."' style='background:lightsalmon;' "; ?>>
                     <td> <?php echo $membre->getCiviliteCourte(); ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
@@ -226,18 +228,18 @@ $these = $proposition->getThese();
                     <td>
 
                             <a  <?php /** @see \Soutenance\Controller\PropositionController::modifierMembreAction(); */ ?>
-                                href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/modifier-membre", ['id' => $object->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
                                 class="ajax-modal"
                                 data-event="edition-membre">
                                 <span class="icon icon-edit iconly"></span>
                             </a>
                             <a  <?php /** @see \Soutenance\Controller\PropositionController::effacerMembreAction(); */ ?>
-                                href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/effacer-membre", ['id' => $object->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
                                 data-toggle="confirmationx"
                                 data-bs-toggle="tooltip"
                                 data-bs-html="true"
                                 title="Une confirmation avant la suppression vous sera demandée">
-                                <span class="icon icon-delete iconly text-danger"></span>
+                                <span class="icon icon-delete iconly"></span>
                             </a>
 
                     </td>
@@ -262,7 +264,7 @@ $these = $proposition->getThese();
             <div class="col-md-4 float-end">
                 <?php if ($canModifier): ?>
                     <a  <?php /** @see \Soutenance\Controller\PropositionController::modifierMembreAction(); */ ?>
-                        href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"
+                        href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/modifier-membre", ['id' => $object->getId()], [], true); ?>"
                         class="btn btn-primary action ajax-modal"
                         data-event="edition-membre">
                         <span class="icon icon-plus"></span> Ajouter un membre de jury

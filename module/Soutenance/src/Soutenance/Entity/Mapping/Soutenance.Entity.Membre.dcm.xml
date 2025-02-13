@@ -30,11 +30,13 @@
         <field name="role"              type="string"       length="64"         column="role_id"        nullable="false"/>
         <field name="visio"             type="boolean"                          column="visio"          nullable="false"/>
 
-        <many-to-one field="acteur" target-entity="These\Entity\Db\Acteur">
+        <!-- La relation dans ce sens n'existe plus puisqu'il existe désormais 2 entités Acteur : ActeurThese et ActeurHDR.
+             On a inversé les choses : il y a une relation 'membre' dans les entités ActeurThese et ActeurHDR. -->
+        <!-- <many-to-one field="acteur" target-entity="Acteur\Entity\Db\ActeurThese">
             <join-columns>
                 <join-column name="acteur_id" referenced-column-name="id"/>
             </join-columns>
-        </many-to-one>
+        </many-to-one> -->
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>

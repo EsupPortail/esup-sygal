@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Application\View\Renderer\PhpRenderer;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
@@ -14,7 +14,7 @@ use These\Provider\Privilege\ThesePrivileges;
  * @var string       $modifierCorrecAutorUrl
  * @var string       $accorderSursisCorrecUrl
  * @var string       $nextStepUrl
- * @var Validation[] $validationsDesCorrectionsEnAttente
+ * @var ValidationThese[] $validationsDesCorrectionsEnAttente
  * @var string $modifierEmailContactUrl
  * @var string $modifierEmailContactConsentUrl
  *
@@ -53,7 +53,7 @@ switch ($these->getEtatThese()){
         $iconEtatThese = "export";
         break;
     case "S" :
-        if(!$these->getResultat()){
+        if($these->getResultat() === null){
             $etatTheseClass = "";
             $iconEtatThese = "";
             $etatTheseTextTooltip = "Résultat inconnu";
@@ -216,7 +216,10 @@ switch ($these->getEtatThese()){
                         <?php endif; ?>
                         <dd class="col-md-6">
                             <?php if (empty($missions)) : ?>
-                                (Aucune mission renseignée)
+                                <span class="badge bg-secondary text-white" style="font-size:unset">
+                                    <span class="icon icon-info" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Aucune mission renseignée") ?>
+                                </span>
                             <?php else: ?>
                                 <ul>
                                     <?php foreach ($missions as $mission) : ?>
@@ -239,11 +242,38 @@ switch ($these->getEtatThese()){
                     </dl>
                 <?php endif; ?>
 
+                <?php if ($these->getSoutenanceAutorisee()): ?>
+                    <dl>
+                        <dt class="col-md-3">Soutenance autorisée</dt>
+                        <dd class="col-md-9">
+                            <?php if($these->getSoutenanceAutorisee() === 'O'): ?>
+                                <span class="badge bg-success text-white" style="font-size:unset">
+                                    <span class="icon icon-ok" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Oui") ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="badge bg-danger text-white" style="font-size:unset">
+                                    <span class="icon icon-ko" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Non") ?>
+                                </span>
+                            <?php endif; ?>
+                        </dd>
+                    </dl>
+                <?php endif ?>
+
                 <?php if ($resultat = $these->getResultatToString()): ?>
                     <dl>
                         <dt class="col-md-3">Résultat</dt>
                         <dd class="col-md-9">
-                            <?php echo $resultat ?>
+                            <?php if($these->getResultat() === 1): ?>
+                                <span class="badge bg-success text-white" style="font-size:unset">
+                                    <span class="icon icon-ok" style="padding-right: unset"></span>
+                            <?php elseif($these->getResultat() === 0): ?>
+                                <span class="badge bg-danger text-white" style="font-size:unset">
+                                    <span class="icon icon-ko" style="padding-right: unset"></span>
+                            <?php endif; ?>
+                            <?php echo $this->translate($resultat) ?>
+                            </span>
                         </dd>
                     </dl>
                 <?php endif ?>
@@ -259,13 +289,6 @@ switch ($these->getEtatThese()){
                     <dl>
                         <dt class="col-md-3">Date de transfert
                         <dd class="col-md-9"><?php echo $these->getDateTransfertToString() ?></dd>
-                    </dl>
-                <?php endif ?>
-
-                <?php if ($these->getSoutenanceAutorisee()): ?>
-                    <dl>
-                        <dt class="col-md-3">Soutenance autorisée</dt>
-                        <dd class="col-md-9"><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>
                     </dl>
                 <?php endif ?>
 

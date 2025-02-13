@@ -2,12 +2,12 @@
 
 namespace RapportActivite\Service\Validation;
 
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Validation\Entity\Db\TypeValidation;
 use Application\Service\BaseService;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
@@ -25,7 +25,7 @@ class RapportActiviteValidationService extends BaseService
 {
     use UserContextServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use TypeValidationAwareTrait;
     use EventManagerAwareTrait;
 
@@ -77,7 +77,7 @@ class RapportActiviteValidationService extends BaseService
 
     /**
      * @param \RapportActivite\Entity\Db\RapportActivite $rapportActivite
-     * @param \Application\Entity\Db\TypeValidation $type
+     * @param \Validation\Entity\Db\TypeValidation $type
      * @return \RapportActivite\Entity\Db\RapportActiviteValidation|null
      *
      * @deprecated Remplacé par l'utilisation d'un fetch du rapport avec les relations vers les entités liées

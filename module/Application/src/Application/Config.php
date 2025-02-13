@@ -432,6 +432,51 @@ class Config
             ],
         ],
         [
+            'name' => 'acteur-%s',
+            'order' => 110,
+            'source' => [
+                'name' => '%s',
+                'connection' => 'sygal-import-ws-%s',
+                'select' => '/acteur',
+                'page_size' => 500,
+                'column_value_filter' => [
+                    ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['column' => 'sourceCode']],
+                    ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['column' => 'sourceId']],
+                    ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['column' => 'individuId']],
+                    ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['column' => 'roleId']],
+                    ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['column' => 'theseId']],
+                    ['name' => PrefixEtabColumnValueFilter::class, 'params' => ['column' => 'acteurEtablissementId']],
+                ],
+                'column_name_filter' => [
+                    'individuId' => 'individu_id',
+                    'theseId' => 'these_id',
+                    'roleId' => 'role_id',
+                    'acteurEtablissementId' => 'acteur_etablissement_id',
+                    'libQualite' => 'lib_cps',
+                    'codeQualite' => 'cod_cps',
+                    'codeRoleJury' => 'cod_roj_compl',
+                    'libRoleJury' => 'lib_roj_compl',
+                    'temoinHDR' => 'tem_hab_rch_per',
+                    'temoinRapport' => 'tem_rap_recu',
+                    'sourceCode' => 'source_code',
+                    'sourceId' => 'source_id',
+                    'sourceInsertDate' => 'source_insert_date',
+                ],
+                'source_code_column' => 'source_code',
+                'extra' => [
+                    /** cf. injection dans {@see \Application\Config::generateConfigImportsForEtabs()} */
+                ],
+            ],
+            'destination' => [
+                'name' => 'application',
+                'table' => 'tmp_acteur',
+                'connection' => 'default',
+                'source_code_column' => 'source_code',
+                'id_strategy' => null,
+                'id_sequence' => null,
+            ],
+        ],
+        [
             'name' => 'origine-financement-%s',
             'order' => 120,
             'source' => [
@@ -814,13 +859,13 @@ class Config
             'source' => [
                 'name' => 'sygal',
                 'code' => 'app',
-                'table' => 'src_acteur',
+                'table' => 'src_acteur_these',
                 'connection' => 'default',
                 'source_code_column' => 'source_code',
             ],
             'destination' => [
                 'name' => 'application',
-                'table' => 'acteur',
+                'table' => 'acteur_these',
                 'connection' => 'default',
                 'source_code_column' => 'source_code',
                 'id_strategy' => 'SEQUENCE',

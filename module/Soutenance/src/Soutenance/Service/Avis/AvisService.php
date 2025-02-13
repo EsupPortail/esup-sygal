@@ -2,8 +2,13 @@
 
 namespace Soutenance\Service\Avis;
 
+use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Entity\DateTimeAwareTrait;
+use Depot\Service\FichierHDR\FichierHDRServiceAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
+use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionThese;
 use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
@@ -20,12 +25,16 @@ use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class AvisService {
+class AvisService
+{
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
     use FichierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
+    use FichierHDRServiceAwareTrait;
     use DateTimeAwareTrait;
+    use ActeurTheseServiceAwareTrait;
+    use ActeurHDRServiceAwareTrait;
 
     /** GESTION DES ENTITÉS *******************************************************************************************/
 
@@ -162,23 +171,31 @@ class AvisService {
     }
 
     /**
-     * @param These $these
+     * @param Proposition $proposition
      * @return Avis[]
      */
-    public function getAvisByThese(These $these)
+    public function getAvisByProposition(Proposition $proposition)
     {
-        $qb =$this->createQueryBuilder()
-            ->andWhere('avis.histoDestruction is null')
-            ->andWhere('proposition.these = :these')
-            ->andWhere('proposition.histoDestruction is null')
-            ->setParameter('these', $these)
-        ;
+        $acteurService = $proposition instanceof PropositionThese ?
+            $this->acteurTheseService :
+            $this->acteurHDRService;
+        $qb = $this->createQueryBuilder('avis')
+            ->andWhere('avis.histoDestruction IS NULL')
+            ->andWhere('proposition.histoDestruction IS NULL')
+            ->andWhere('proposition = :proposition')
+            ->setParameter('proposition', $proposition);
         $result = $qb->getQuery()->getResult();
 
         $avis = [];
         /** @var Avis $entry */
         foreach ($result as $entry) {
-            if ($entry->getRapporteur()) $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
+//            if ($entry->getRapporteur()) $avis[$entry->getRapporteur()->getIndividu()->getId()] = $entry;
+            $membre = $entry->getMembre();
+            if ($membre !== null) {
+                if ($acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre)) {
+                    $avis[$acteur->getIndividu()->getId()] = $entry;
+                }
+            }
         }
         return $avis;
     }
@@ -189,7 +206,15 @@ class AvisService {
      */
     public function getAvisByMembre(Membre $membre)
     {
-        if ($membre === null OR $membre->getActeur() === null) return null;
+        $acteurService = $membre->getProposition() instanceof PropositionThese ?
+            $this->acteurTheseService :
+            $this->acteurHDRService;
+//        if ($membre === null OR $membre->getActeur() === null) return null;
+        $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+        if ($acteur === null) {
+            return null;
+        }
+
         $qb = $this->createQueryBuilder()
             ->andWhere('avis.histoDestruction is null')
             ->andWhere('avis.membre = :membre')
@@ -198,7 +223,7 @@ class AvisService {
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Plusieurs avis sont associés au rapporteur ['.$membre->getId().' - '.$membre->getIndividu()->getNomComplet().']');
+            throw new RuntimeException('Plusieurs avis sont associés au même membre ['.$membre->getId().']');
         }
 
         return $result;
@@ -208,8 +233,11 @@ class AvisService {
     {
         $this->fichierService->setNomFichierFormatter(new NomAvisFormatter($membre->getIndividu()));
 
-        $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
-        $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $fichierService = $membre->getProposition() instanceof PropositionThese ?
+            $this->fichierTheseService :
+            $this->fichierHDRService;
+        $nature = $fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+        $version = $fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
         $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version);
         $this->fichierService->saveFichiers($fichiers);
 

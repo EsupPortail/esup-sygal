@@ -3,7 +3,7 @@
 namespace Depot\Notification;
 
 use Notification\Notification;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class PasDeMailPresidentJury extends Notification
@@ -48,15 +48,15 @@ class PasDeMailPresidentJury extends Notification
     }
 
     /**
-     * @var Acteur
+     * @var ActeurThese
      */
     protected $president;
 
     /**
-     * @param Acteur $president
+     * @param ActeurThese $president
      * @return PasDeMailPresidentJury
      */
-    public function setPresident(Acteur $president)
+    public function setPresident(ActeurThese $president)
     {
         $this->president = $president;
         return $this;

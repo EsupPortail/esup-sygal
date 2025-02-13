@@ -2,7 +2,7 @@
 
 namespace Application\Service\ListeDiffusion\Handler;
 
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Doctorant\Service\DoctorantService;
 use Structure\Service\Etablissement\EtablissementService;
 use Individu\Service\IndividuService;
@@ -39,10 +39,10 @@ class ListeDiffusionHandlerFactory
         $service->setEtablissementService($etablissementService);
 
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
          */
-        $acteurService = $container->get(ActeurService::class);
-        $service->setActeurService($acteurService);
+        $acteurService = $container->get(ActeurTheseService::class);
+        $service->setActeurTheseService($acteurService);
 
         /**
          * @var RoleService $roleService

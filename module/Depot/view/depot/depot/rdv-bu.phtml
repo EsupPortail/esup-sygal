@@ -4,7 +4,7 @@ use These\Controller\TheseController;
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\Repository\FichierTheseRepository;
 use These\Entity\Db\These;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -18,7 +18,7 @@ use UnicaenApp\Service\MessageCollector;
  * @var string                 $modifierUrl
  * @var string                 $validerUrl
  * @var string                 $devaliderUrl
- * @var Validation|null        $validation
+ * @var ValidationThese|null        $validation
  * @var MessageCollector       $msgCollector
  * @var string                 $nextStepUrl
  * @var FichierTheseRepository $fichierRepository
@@ -135,7 +135,7 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
     </div>
     <div class="card-body">
         <?php if ($validation): ?>
-            <?php echo $this->validation($validation) ?>
+            <?php echo $this->validation($validation, "success") ?>
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
                    class="btn btn-danger ajax-modal"

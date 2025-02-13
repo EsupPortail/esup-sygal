@@ -214,7 +214,7 @@ class RapportActiviteOperationRule
     }
 
     /**
-     * @param \Application\Entity\Db\TypeValidation|\UnicaenAvis\Entity\Db\AvisType|string $typeOperation
+     * @param \Validation\Entity\Db\TypeValidation|\UnicaenAvis\Entity\Db\AvisType|string $typeOperation
      * @return array
      */
     public function getConfigForTypeOperation($typeOperation): array
@@ -356,7 +356,7 @@ class RapportActiviteOperationRule
     }
 
     /**
-     * @return \Application\Entity\Db\TypeValidation[]|\UnicaenAvis\Entity\Db\AvisType[]
+     * @return \Validation\Entity\Db\TypeValidation[]|\UnicaenAvis\Entity\Db\AvisType[]
      */
     public function fetchTypesOperation(): array
     {

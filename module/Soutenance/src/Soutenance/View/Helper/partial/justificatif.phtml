@@ -3,16 +3,22 @@
 /**
  * @see \Soutenance\View\Helper\JustificatifViewHelper
  * @var Justificatif $justificatif
- * @var UrlFichierThese $urlFichierThese
+ * @var UrlFichierThese|UrlFichierHDR $urlFichier
+ * @var string $urlSuppressionJustificatif
+ * @var bool $canGererDocument
  * @var array $options
  */
 
+use Depot\Controller\Plugin\UrlFichierHDR;
 use Depot\Controller\Plugin\UrlFichierThese;
+use Depot\Entity\Db\FichierHDR;
+use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
 use Soutenance\Entity\Justificatif;
 
-$these = $justificatif->getProposition()->getThese();
-$fichierThese = $justificatif->getFichier();
+$object = $justificatif->getProposition()->getObject();
+/** @var FichierThese|FichierHDR $fichierObject */
+$fichierObject = $justificatif->getFichier();
 $fichier = $justificatif->getFichier()->getFichier();
 $membre = $justificatif->getMembre();
 
@@ -37,8 +43,48 @@ $membre = $justificatif->getMembre();
     }
 ?>
 
-<a href="<?php echo $urlFichierThese->telechargerFichierThese($these, $fichierThese); ?>">
-    <?php echo $label; ?>
-</a>
-    (<?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>)
-
+<div class="container mt-2 mb-2">
+    <div class="card file-card shadow-sm p-2">
+        <div class="d-flex align-items-center">
+            <!-- Icone du fichier -->
+            <div class="file-icon text-primary me-2">
+                <i class="fas fa-file-pdf fa-2x"></i>
+            </div>
+            <!-- Détails du fichier -->
+            <div class="file-details flex-grow-1">
+                <h6 class="mb-0"> <?php echo $label; ?></h6>
+                <small class="text-muted">
+                    <?php echo $fichier->getHistoCreateur()->getDisplayName(); ?> - <?php echo $fichier->getHistoCreation()->format("d/m/Y à H:i"); ?>
+                </small>
+            </div>
+            <!-- Boutons Actions -->
+            <div class="file-actions">
+                <?php if($fichierObject instanceof FichierThese): ?>
+                    <a href="<?php echo $urlFichier->telechargerFichierThese($object, $fichierObject); ?>">
+                        <i class="fas fa-download"></i>
+                    </a>
+                    <?php if ($canGererDocument) : ?>
+                        <a href="<?= $urlSuppressionJustificatif ?>" >
+                                <span style='color:darkred;' data-toggle="confirmationx"
+                                      data-message="Êtes-vous sûr de vouloir supprimer ce document ?">
+                                    <span style='color:darkred;' class="icon icon-delete iconly" data-bs-toggle="tooltip" title="Supprimer le document"></span>
+                                </span>
+                        </a>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <a href="<?php echo $urlFichier->telechargerFichierHDR($object, $fichierObject); ?>">
+                        <i class="fas fa-download"></i>
+                    </a>
+                    <?php if ($canGererDocument) : ?>
+                        <a href="<?= $urlSuppressionJustificatif ?>" >
+                            <span style='color:darkred;' data-toggle="confirmationx"
+                                  data-message="Êtes-vous sûr de vouloir supprimer ce document ?">
+                                <span style='color:darkred;' class="icon icon-delete iconly" data-bs-toggle="tooltip" title="Supprimer le document (une confirmation vous sera demandée)"></span>
+                            </span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>

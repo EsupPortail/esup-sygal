@@ -3,6 +3,8 @@
 namespace Application;
 
 use Admission\Entity\Db\Admission;
+use Candidat\Entity\Db\Candidat;
+use HDR\Entity\Db\HDR;
 use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
@@ -42,7 +44,9 @@ class RouteMatch extends BaseRouteMatch
         'etablissement' => Etablissement::class,
         'structure' => Structure::class,
         'rapport' => Rapport::class,
-        'individu' => Individu::class
+        'individu' => Individu::class,
+        'hdr' => HDR::class,
+        'candidat' => Candidat::class,
     ];
 
     /**
@@ -65,7 +69,9 @@ class RouteMatch extends BaseRouteMatch
         $id = $this->getParam($name);
 
         if (! $id) {
-            return null;
+            // utile dans le cas du module soutenance
+            if($name === "these" && ($id = $this->getParam("id")) === null) return null;
+            if($name === "hdr" && ($id = $this->getParam("id")) === null) return null;
         }
 
         // NB : certaines entités peuvent être recherchées par autre chose que par leur id.
@@ -128,6 +134,23 @@ class RouteMatch extends BaseRouteMatch
         }
 
         return $this->doctorant;
+    }
+
+    /**
+     * @var Candidat
+     */
+    private $candidat;
+
+    /**
+     * @return Candidat|null
+     */
+    public function getCandidat(): ?Candidat
+    {
+        if (null === $this->candidat) {
+            $this->candidat = $this->fetchEntityParam('candidat');
+        }
+
+        return $this->candidat;
     }
 
     /**
@@ -260,5 +283,22 @@ class RouteMatch extends BaseRouteMatch
         }
 
         return $this->rapport;
+    }
+
+    /**
+     * @var HDR
+     */
+    private $hdr;
+
+    /**
+     * @return HDR|null
+     */
+    public function getHDR(): ?HDR
+    {
+        if (null === $this->hdr) {
+            $this->hdr = $this->fetchEntityParam('hdr');
+        }
+
+        return $this->hdr;
     }
 }

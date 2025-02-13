@@ -2,9 +2,11 @@
 
 namespace Soutenance;
 
+use HDR\Provider\Privileges\HDRPrivileges;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Soutenance\Assertion\PresoutenanceAssertion;
 use Soutenance\Assertion\PresoutenanceAssertionFactory;
-use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\PresoutenanceControllerFactory;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
@@ -19,9 +21,6 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Service\Adresse\AdresseService;
 use Soutenance\Service\Adresse\AdresseServiceFactory;
 use UnicaenPrivilege\Guard\PrivilegeController;
-use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
-use Laminas\Router\Http\Literal;
-use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [
@@ -30,35 +29,20 @@ return [
                 'Acteur' => [],
             ],
         ],
-        'rule_providers' => [
-            PrivilegeRuleProvider::class => [
-                'allow' => [
-                    [
-                        'privileges' => [
-                            PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
-                            PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
-                            PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
-                        ],
-                        'resources' => ['These'],
-                        'assertion' => PresoutenanceAssertion::class,
-                    ],
-                ],
-            ],
-        ],
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => PresoutenanceController::class,
                     'action' => [
-                        'generer-simulation',
-                        'nettoyer-simulation',
+//                        'generer-simulation',
+//                        'nettoyer-simulation',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_SIMULER_REMONTEES,
                 ],
                 [
                     'controller' => PresoutenanceController::class,
                     'action' => [
-                        'presoutenance',
+//                        'presoutenance',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
                     'assertion' => PresoutenanceAssertion::class,
@@ -71,21 +55,29 @@ return [
                         'indiquer-dossier-complet',
                         'feu-vert',
                         'stopper-demarche',
-                        'avis-soutenance',
-                        'convocations',
+//                        'avis-soutenance',
+//                        'convocations',
                         'envoyer-convocation',
-                        'transmettre-documents-direction-these',
+//                        'transmettre-documents-direction',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
                 [
                     'controller' => PresoutenanceController::class,
                     'action' => [
+                        'deliberation-jury',
+                    ],
+                    'privileges' => HDRPrivileges::HDR_DONNER_RESULTAT,
+                    'assertion' => PresoutenanceAssertion::class,
+                ],
+                [
+                    'controller' => PresoutenanceController::class,
+                    'action' => [
                         'convocation-doctorant',
                         'convocation-membre',
-                        'proces-verbal-soutenance',
-                        'rapport-soutenance',
-                        'rapport-technique',
+//                        'proces-verbal-soutenance',
+//                        'rapport-soutenance',
+//                        'rapport-technique',
                     ],
                     'roles' => [],
                 ],
@@ -93,8 +85,8 @@ return [
                     'controller' => PresoutenanceController::class,
                     'action' => [
                         'associer-jury',
-                        'deassocier-jury',
-                        'associer-jury-these-sygal'
+//                        'deassocier-jury',
+//                        'associer-jury-sygal'
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],
@@ -119,14 +111,15 @@ return [
                     ],
                     'roles' => 'guest',
                 ],
+
             ],
         ],
     ],
 
     'router' => [
         'routes' => [
-            'soutenance' => [
-                'child_routes' => [
+            'soutenance_these' => [
+                'child_routes' => $soutenanceChildRoutes = [
                     // TODO :: doit devenir une route console ...
                     'notifier-retard-rapport-presoutenance' => [
                         'type' => Literal::class,
@@ -228,6 +221,17 @@ return [
                                     ],
                                 ],
                             ],
+                            'convocation-candidat' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/convocation-candidat',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'convocation-candidat',
+                                    ],
+                                ],
+                            ],
                             'convocation-membre' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -261,14 +265,14 @@ return [
                                     ],
                                 ],
                             ],
-                            'transmettre-documents-direction-these' => [
+                            'transmettre-documents-direction' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route' => '/transmettre-documents-direction-these',
+                                    'route' => '/transmettre-documents-direction',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action' => 'transmettre-documents-direction-these',
+                                        'action' => 'transmettre-documents-direction',
                                     ],
                                 ],
                             ],
@@ -283,13 +287,14 @@ return [
                                     ],
                                 ],
                             ],
-                            'notifier-engagement-impartialite' => [
-                                'type' => Segment::class,
+                            'notifier-rapporteurs-engagement-impartialite' => [
+                                'type' => Literal::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route' => '/notifier-engagement-impartialite',
+                                    'route' => '/notifier-rapporteurs-engagement-impartialite',
                                     'defaults' => [
-                                        'controller' => EngagementImpartialiteController::class,
+                                        /** @see PresoutenanceController::notifierRapporteursEngagementImpartialiteAction */
+                                        'controller' => PresoutenanceController::class,
                                         'action' => 'notifier-rapporteurs-engagement-impartialite',
                                     ],
                                 ],
@@ -316,14 +321,14 @@ return [
                                     ],
                                 ],
                             ],
-                            'associer-jury-these-sygal' => [
+                            'associer-jury-sygal' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route' => '/associer-jury-these-sygal/:membre',
+                                    'route' => '/associer-jury-sygal/:membre',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
-                                        'action' => 'associer-jury-these-sygal',
+                                        'action' => 'associer-jury-sygal',
                                     ],
                                 ],
                             ],
@@ -383,9 +388,23 @@ return [
                                     ],
                                 ],
                             ],
+                            'deliberation-jury' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/deliberation-jury/:resultat',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'deliberation-jury',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
+            ],
+            'soutenance_hdr' => [
+                'child_routes' => $soutenanceChildRoutes,
             ],
         ],
     ],
@@ -398,7 +417,6 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            PresoutenanceController::class => PresoutenanceControllerFactory::class,
         ],
     ],
 

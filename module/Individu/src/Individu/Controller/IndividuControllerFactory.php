@@ -2,8 +2,10 @@
 
 namespace Individu\Controller;
 
+use Acteur\Service\ActeurHDR\ActeurHDRService;
 use Admission\Service\Inscription\InscriptionService;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
+use Candidat\Service\CandidatService;
 use Structure\Service\Structure\StructureService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -35,9 +37,13 @@ class IndividuControllerFactory {
         $individuForm = $container->get('FormElementManager')->get(IndividuForm::class);
         $controller->setIndividuForm($individuForm);
 
-        /** @var \These\Service\Acteur\ActeurService $acteurService */
-        $acteurService = $container->get(ActeurService::class);
-        $controller->setActeurService($acteurService);
+        /** @var \Acteur\Service\ActeurThese\ActeurTheseService $acteurService */
+        $acteurService = $container->get(ActeurTheseService::class);
+        $controller->setActeurTheseService($acteurService);
+
+        /** @var ActeurHDRService $acteurService */
+        $acteurService = $container->get(ActeurHDRService::class);
+        $controller->setActeurHDRService($acteurService);
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get('RoleService');
@@ -50,6 +56,10 @@ class IndividuControllerFactory {
         /** @var \Doctorant\Service\DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
         $controller->setDoctorantService($doctorantService);
+
+        /** @var CandidatService $candidatService */
+        $candidatService = $container->get(CandidatService::class);
+        $controller->setCandidatService($candidatService);
 
         /** @var IndividuSearchService $searchService */
         $searchService = $container->get(IndividuSearchService::class);

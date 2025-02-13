@@ -2,7 +2,6 @@
 
 namespace These\Service\These;
 
-use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
@@ -17,10 +16,10 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\Repository\TheseRepository;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use These\Service\FichierThese\MembreData;
 use These\Service\FichierThese\PdcData;
 use UnicaenApp\Exception\RuntimeException;
@@ -31,9 +30,8 @@ class TheseService extends BaseService
     use UserContextServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use MembreServiceAwareTrait;
-    use ThrowsFailedAssertionExceptionTrait;
 
     /**
      * @return TheseRepository
@@ -57,7 +55,7 @@ class TheseService extends BaseService
 
     public function saveThese(These $these): These
     {
-        /** @var Acteur[] $direction */
+        /** @var ActeurThese[] $direction */
         $direction = $these->getActeursByRoleCode([
             Role::CODE_DIRECTEUR_THESE,
             Role::CODE_CODIRECTEUR_THESE,
@@ -71,7 +69,7 @@ class TheseService extends BaseService
             }
         }
 
-        /** @var Acteur[] $direction */
+        /** @var ActeurThese[] $direction */
         $coencadrants = $these->getActeursByRoleCode([
             Role::CODE_CO_ENCADRANT,
         ]);
@@ -176,7 +174,7 @@ class TheseService extends BaseService
     public function fetchInformationsPageDeCouverture(These $these) : PdcData
     {
         $pdcData = new PdcData();
-        $propositions = $these->getPropositions()->toArray();
+        $propositions = $these->getPropositionsThese()->toArray();
         /** @var Proposition $proposition */
         $proposition = end($propositions);
 
@@ -225,23 +223,23 @@ class TheseService extends BaseService
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
 
-        $rapporteurs = array_filter($acteurs, function (Acteur $a) {
+        $rapporteurs = array_filter($acteurs, function (ActeurThese $a) {
             return $a->estRapporteur();
         });
         $pdcData->setRapporteurs($rapporteurs);
-        $directeurs = array_filter($acteurs, function (Acteur $a) {
+        $directeurs = array_filter($acteurs, function (ActeurThese $a) {
             return $a->estDirecteur();
         });
         $pdcData->setDirecteurs($directeurs);
-        $codirecteurs = array_filter($acteurs, function (Acteur $a) {
+        $codirecteurs = array_filter($acteurs, function (ActeurThese $a) {
             return $a->estCodirecteur();
         });
         $pdcData->setCodirecteurs($codirecteurs);
-        $coencadrants = array_filter($acteurs, function (Acteur $a) {
+        $coencadrants = array_filter($acteurs, function (ActeurThese $a) {
             return $a->estCoEncadrant();
         });
         $pdcData->setCoencadrants($coencadrants);
-        $president = array_filter($acteurs, function (Acteur $a) {
+        $president = array_filter($acteurs, function (ActeurThese $a) {
             return $a->estPresidentJury();
         });
 
@@ -249,14 +247,14 @@ class TheseService extends BaseService
         $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
         $pdcData->setMembres($membres);
 
-        $jury = array_filter($acteurs, function (Acteur $a) {
+        $jury = array_filter($acteurs, function (ActeurThese $a) {
             return $a->getRole()->getCode() === Role::CODE_MEMBRE_JURY;
         });
         $pdcData->setJury($jury);
 
         /** associée */
         $pdcData->setAssocie(false);
-        /** @var Acteur $directeur */
+        /** @var ActeurThese $directeur */
         foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
             if ($directeur->getEtablissement()) {
                 if ($directeur->getEtablissement()->estAssocie()) {
@@ -272,19 +270,19 @@ class TheseService extends BaseService
         }
 
         $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
-        usort($acteursEnCouverture, Acteur::getComparisonFunction());
+        usort($acteursEnCouverture, ActeurThese::getComparisonFunction());
         $acteursEnCouverture = array_unique($acteursEnCouverture);
 
-        /** @var Acteur $acteur */
+        /** @var ActeurThese $acteur */
         foreach ($acteursEnCouverture as $acteur) {
             $individu = $acteur->getIndividu();
 
-            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
+            $acteursLies = array_filter($these->getActeurs()->toArray(), function (ActeurThese $a) use ($individu) { return $a->getIndividu() === $individu;});
 
             $acteurData = new MembreData();
             $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomCompletFormatter()->avecCivilite()->f()));
 
-            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
+            $estMembre = !empty(array_filter($jury, function (ActeurThese $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
 
             /** GESTION DES RÔLES SPÉCIAUX ****************************************************************************/
             if (!$acteur->estPresidentJury()) {
@@ -411,7 +409,7 @@ class TheseService extends BaseService
      */
     public function isDirecteur(These $these, Individu $individu): bool
     {
-        $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'D');
+        $directeurs = $this->getActeurTheseService()->getRepository()->findActeursByTheseAndRole($these, 'D');
         foreach ($directeurs as $directeur) {
             if ($directeur->getIndividu() === $individu) return true;
         }
@@ -425,55 +423,10 @@ class TheseService extends BaseService
      */
     public function isCoDirecteur(These $these, Individu $individu): bool
     {
-        $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'K');
+        $directeurs = $this->getActeurTheseService()->getRepository()->findActeursByTheseAndRole($these, 'K');
         foreach ($directeurs as $directeur) {
             if ($directeur->getIndividu() === $individu) return true;
         }
         return false;
-    }
-
-
-    public function assertAppartenanceThese(These $these, UserContextService $userContextService): void
-    {
-        $role = $userContextService->getSelectedIdentityRole();
-        if (!$role) {
-            return;
-        }
-
-        if ($role->isDoctorant()) {
-            $doctorant = $userContextService->getIdentityDoctorant();
-            $this->assertTrue(
-                $these->getDoctorant()->getId() === $doctorant->getId(),
-                "La thèse n'appartient pas au doctorant " . $doctorant
-            );
-        } elseif ($roleEcoleDoctorale = $userContextService->getSelectedRoleEcoleDoctorale()) {
-            $this->assertTrue(
-                $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
-            );
-        } elseif ($roleUniteRech = $userContextService->getSelectedRoleUniteRecherche()) {
-            $this->assertTrue(
-                $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
-            );
-        } elseif ($userContextService->getSelectedRoleDirecteurThese()) {
-            $individuUtilisateur = $userContextService->getIdentityDb()->getIndividu();
-            $this->assertTrue(
-                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE),
-                "La thèse n'est pas dirigée par " . $individuUtilisateur
-            );
-        } elseif ($userContextService->getSelectedRoleCodirecteurThese()) {
-            $individuUtilisateur = $userContextService->getIdentityDb()->getIndividu();
-            $this->assertTrue(
-                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
-                "La thèse n'est pas codirigée par " . $individuUtilisateur
-            );
-        } elseif($role->getCode() === Role::CODE_BDD) {
-            $structure = $role->getStructure();
-            $this->assertTrue(
-                $these->getEtablissement()->getStructure() === $structure,
-                "La thèse n'appartient pas à la structure  " . $structure
-            );
-        }
     }
 }

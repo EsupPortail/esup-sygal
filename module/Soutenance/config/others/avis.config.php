@@ -21,7 +21,8 @@ return array(
     'bjyauthorize' => [
         'resource_providers' => [
             'BjyAuthorize\Provider\Resource\Config' => [
-                'Acteur' => [],
+                'ActeurThese' => [],
+                'ActeurHDR' => [],
             ],
         ],
         'rule_providers' => [
@@ -33,7 +34,7 @@ return array(
                             AvisSoutenancePrivileges::AVIS_MODIFIER,
                             AvisSoutenancePrivileges::AVIS_ANNULER,
                         ],
-                        'resources' => ['Acteur'],
+                        'resources' => ['ActeurThese', 'ActeurHDR'],
                         'assertion' => AvisSoutenanceAssertion::class,
                     ],
                 ],
@@ -48,6 +49,7 @@ return array(
                         'afficher',
                     ],
                     'privileges' => AvisSoutenancePrivileges::AVIS_VISUALISER,
+                    'assertion' => AvisSoutenanceAssertion::class,
                 ],
                 [
                     'controller' => AvisController::class,
@@ -55,6 +57,7 @@ return array(
                         'annuler',
                     ],
                     'privileges' => AvisSoutenancePrivileges::AVIS_ANNULER,
+                    'assertion' => AvisSoutenanceAssertion::class,
                 ],
                 [
                     'controller' => AvisController::class,
@@ -69,8 +72,8 @@ return array(
 
     'router' => [
         'routes' => [
-            'soutenance' => [
-                'child_routes' => [
+            'soutenance_these' => [
+                'child_routes' => $soutenanceChildRoutes =[
                     'avis-soutenance' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -118,6 +121,9 @@ return array(
                         ],
                     ],
                 ],
+            ],
+            'soutenance_hdr' => [
+                'child_routes' => $soutenanceChildRoutes,
             ],
         ],
     ],

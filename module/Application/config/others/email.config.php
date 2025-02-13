@@ -2,13 +2,13 @@
 
 namespace Application;
 
-use Application\Service\Email\EmailTheseService;
-use Application\Service\Email\EmailTheseServiceFactory;
+use Application\Service\Email\EmailService;
+use Application\Service\Email\EmailServiceFactory;
 
 return [
     'service_manager' => [
         'factories' => [
-            EmailTheseService::class => EmailTheseServiceFactory::class,
+            EmailService::class => EmailServiceFactory::class,
         ],
     ],
 ];

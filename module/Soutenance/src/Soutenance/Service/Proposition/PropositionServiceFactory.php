@@ -13,10 +13,12 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\UserContextService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
-use Notification\Service\NotifierService;
-use Soutenance\Service\Validation\ValidationService;
+use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
+use Soutenance\Service\Proposition\PropositionThese\PropositionTheseService;
+use Soutenance\Service\Validation\ValidationThese\ValidationTheseService;
 use UnicaenParametre\Service\Parametre\ParametreService;
 
 class PropositionServiceFactory
@@ -29,8 +31,8 @@ class PropositionServiceFactory
     {
         /**
          * @var EntityManager $entityManager
-         * @var ActeurService $acteurService
-         * @var ValidationService $validationService
+         * @var ActeurTheseService $acteurService
+         * @var ValidationTheseService $validationService
          * @var NotifierService $notifierService
          * @var ParametreService $parametreService
          * @var VariableService $variableService
@@ -41,8 +43,8 @@ class PropositionServiceFactory
          * @var HorodatageService $horodatageService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $acteurService = $container->get(ActeurService::class);
-        $validationService = $container->get(ValidationService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
+        $validationService = $container->get(ValidationTheseService::class);
         $notifierService = $container->get(NotifierService::class);
         $parametreService = $container->get(ParametreService::class);
         $variableService = $container->get('VariableService');
@@ -50,12 +52,13 @@ class PropositionServiceFactory
         $etablissamentService = $container->get(EtablissementService::class);
         $membreService = $container->get(MembreService::class);
         $userContextService = $container->get('UserContextService');
-        $horodatageService = $container->get(HorodatageService::class);
+        $propositionTheseService = $container->get(PropositionTheseService::class);
+        $propositionHDRService = $container->get(PropositionHDRService::class);
 
         $service = new PropositionService();
         $service->setEntityManager($entityManager);
-        $service->setActeurService($acteurService);
-        $service->setValidationService($validationService);
+        $service->setActeurTheseService($acteurService);
+        $service->setValidationTheseService($validationService);
         $service->setNotifierService($notifierService);
         $service->setParametreService($parametreService);
         $service->setVariableService($variableService);
@@ -63,6 +66,8 @@ class PropositionServiceFactory
         $service->setEtablissementService($etablissamentService);
         $service->setMembreService($membreService);
         $service->setUserContextService($userContextService);
+        $service->setPropositionTheseService($propositionTheseService);
+        $service->setPropositionHDRService($propositionHDRService);
 
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $service->setSoutenanceNotificationFactory($soutenanceNotificationFactory);

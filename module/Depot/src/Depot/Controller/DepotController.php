@@ -5,7 +5,7 @@ namespace Depot\Controller;
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
@@ -13,7 +13,7 @@ use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Utils\FormUtils;
 use Depot\Entity\Db\Attestation;
@@ -74,7 +74,7 @@ class DepotController extends AbstractController
     use ApplicationRoleServiceAwareTrait;
     use TheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use WorkflowServiceAwareTrait;
     use IdifyFilterAwareTrait;
@@ -266,7 +266,7 @@ class DepotController extends AbstractController
     {
         $these = $this->requestedThese();
 
-        $validation = current($this->validationService->getRepository()->findValidationByCodeAndThese(
+        $validation = current($this->validationTheseService->getRepository()->findValidationByCodeAndThese(
             TypeValidation::CODE_PAGE_DE_COUVERTURE,
             $these
         ));
@@ -452,7 +452,7 @@ class DepotController extends AbstractController
         $hasVA = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
         $hasVD = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);
 
-        $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $validationsPdc = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
         $pageCouvValidee = !empty($validationsPdc);
 
         $isExemplPapierFourniPertinent = $this->depotService->isExemplPapierFourniPertinent($these);
@@ -597,7 +597,7 @@ class DepotController extends AbstractController
         $estDoctorant = (bool) $this->userContextService->getSelectedRoleDoctorant();
         $isExemplPapierFourniPertinent = $this->depotService->isExemplPapierFourniPertinent($these);
 
-        $validationsPdc = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
+        $validationsPdc = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
         $pageCouvValidee = !empty($validationsPdc);
 
         $rdvBu = $these->getRdvBu() ?: new RdvBu($these);
@@ -1537,7 +1537,7 @@ class DepotController extends AbstractController
             return $this->redirect()->toRoute('these/version-papier', [], [], true);
         }
 
-        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(
+        $validations = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(
             TypeValidation::CODE_VERSION_PAPIER_CORRIGEE,
             $these
         );

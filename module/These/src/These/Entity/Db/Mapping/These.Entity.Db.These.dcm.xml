@@ -43,9 +43,9 @@
             </order-by>
         </one-to-many>
         <one-to-many field="metadonnees" target-entity="Depot\Entity\Db\MetadonneeThese" mapped-by="these"/>
-        <one-to-many field="acteurs" target-entity="These\Entity\Db\Acteur" mapped-by="these"/>
+        <one-to-many field="acteurs" target-entity="Acteur\Entity\Db\ActeurThese" mapped-by="these"/>
         <one-to-many field="rdvBus" target-entity="Depot\Entity\Db\RdvBu" mapped-by="these"/>
-        <one-to-many field="validations" target-entity="Application\Entity\Db\Validation" mapped-by="these"/>
+        <one-to-many field="validations" target-entity="Validation\Entity\Db\ValidationThese" mapped-by="these"/>
         <one-to-one field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
 <!--        <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>-->
         <one-to-many field="anneesUnivInscription" target-entity="These\Entity\Db\TheseAnneeUniv" mapped-by="these"/>
@@ -127,7 +127,7 @@
         </many-to-one>
 
         <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these" orphan-removal="true"/>
-        <one-to-many target-entity="Soutenance\Entity\Proposition" field="propositions" mapped-by="these"/>
+        <one-to-many target-entity="Soutenance\Entity\PropositionThese" field="propositionsThese" mapped-by="these"/>
 
     </entity>
 </doctrine-mapping>

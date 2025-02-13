@@ -3,15 +3,15 @@
 /**
  * @var int $deadline
  * @var Proposition $proposition
- * @var These $these
+ * @var string $typeProposition
  */
 
-use Soutenance\Service\Horodatage\HorodatageService;
-use These\Entity\Db\These;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
 
-$canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION);
+$object = $proposition->getObject();
+$canEditDateRenduRapport = $this->isAllowed($object, PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION);
 ?>
 
 <div class="box card">
@@ -22,7 +22,7 @@ $canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRE
 
     <div class="card-body">
         <p class="lead">
-            Les prérapports doivent être reçus <?php echo $deadline; ?> jours avant la date de soutenance.
+            Les pré-rapports doivent être reçus <?php echo $deadline; ?> jours avant la date de soutenance.
         </p>
 
         <div class="row">
@@ -34,7 +34,7 @@ $canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRE
         <?php if($canEditDateRenduRapport): ?>
             <div class="col-md-4">
                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::dateRenduRapportAction() */ ?>
-                    href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
+                    href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/date-rendu-rapport", ['id' => $object->getId()], [] , true); ?>"
                     class="btn btn-primary action ajax-modal"
                     data-event="modification-date-rendu-rapport"
                 >

@@ -3,16 +3,16 @@
  * @var These $these
  */
 
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
+use Acteur\Provider\Privilege\ActeurPrivileges;
 use Application\Entity\Db\Role;
 use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
-use These\Filter\ActeursFormatter;
-use These\Provider\Privilege\ActeurPrivileges;
 use UnicaenPrivilege\Provider\Privilege\Privileges;
 
-$acteursFormatter = new ActeursFormatter();
+$acteursFormatter = new ActeursTheseFormatter();
 $acteursFormatter->paramFilter(["role" => [
     Role::CODE_DIRECTEUR_THESE,
     Role::CODE_CODIRECTEUR_THESE,
@@ -39,7 +39,7 @@ $estImportable = $these?->getSource()->getImportable();
             <dd class="col-md-9 acteurs">
                 <table class="table table-extra-condensed">
                     <?php foreach ($acteurs as $i => $result){
-                        /** @var Acteur $acteur */
+                        /** @var ActeurThese $acteur */
                         $acteur = $result["acteur"]; ?>
                         <tr>
                             <td style="width: 30%">
@@ -80,11 +80,11 @@ $estImportable = $these?->getSource()->getImportable();
                                     );
                                 }
                                 elseif (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
-                                    $ligne[] = "<span class='text-structure etablissement' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
+                                    $ligne[] = "<span class='text-structure etablissement' style='background-color:white;padding: 4px 4px 5px 0;' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Établissement'>" . $result["etablissement"] . "</span>";
                                 }
 
                                 if (isset($result["uniteRecherche"]) && trim($result["uniteRecherche"]) != "") {
-                                    $ligne[] = "<span class='text-structure ur' data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
+                                    $ligne[] = "<span class='text-structure ur' style='background-color:white;padding: 4px 4px 5px 0;'  data-bs-toggle='tooltip' data-placement='right' data-bs-original-title='Unité de recherche'>" . $result["uniteRecherche"] . "</span>";
                                 }
                                 echo implode('<br>', $ligne);
                                 ?>
@@ -113,10 +113,10 @@ $estImportable = $these?->getSource()->getImportable();
     <?php else : ?>
         <dt class="col-md-3">Direction</dt>
         <dd class="col-md-9">
-        <span class='text-danger'>
-            <span class='fas fa-exclamation-triangle'></span>
-            <?php echo $this->translate("Aucune direction renseignée") ?>
-        </span>
+            <span class="badge bg-danger text-white" style="font-size:unset">
+                <span class="icon icon-warning" style="padding-right: unset"></span>
+                <?php echo $this->translate("Aucune direction renseignée") ?>
+            </span>
         </dd>
     <?php endif ?>
 </dl>

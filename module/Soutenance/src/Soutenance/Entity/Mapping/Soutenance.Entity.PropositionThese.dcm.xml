@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Soutenance\Entity\PropositionThese" table="SOUTENANCE_THESE_PROPOSITION">
+
+        <field name="titre"              type="string"        length="2048"       column="titre"       nullable="true"/>
+        <field name="nouveauTitre"              type="string"        length="2048"       column="nouveau_titre"       nullable="true"/>
+        <field name="labelEuropeen"             type="boolean"                           column="label_europeen"      nullable="false"/>
+        <!--        <field name="manuscritAnglais"          type="boolean"                           column="manuscrit_anglais"   nullable="false"/>-->
+
+        <many-to-one field="these" target-entity="These\Entity\Db\These">
+            <join-columns>
+                <join-column name="these_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

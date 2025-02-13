@@ -2,7 +2,8 @@
 
 namespace Soutenance\Entity;
 
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
+use BadMethodCallException;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
@@ -43,7 +44,8 @@ class Membre implements HistoriqueAwareInterface {
     /** @var boolean */
     private $visio;
 
-    /** @var Acteur */
+    /** @var ActeurThese
+     * @deprecated */
     private  $acteur;
 
     /**
@@ -96,24 +98,26 @@ class Membre implements HistoriqueAwareInterface {
     public function getCivilite(): string|null
     {
         $civilite = null;
-        if ($this->getIndividu()) {
-            if ($this->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
-            if ($this->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
-        }
+// supprimé car utilise $this->getIndividu() qui elle-même a été supprimée car utilise une relation supprimée
+//        if ($this->getIndividu()) {
+//            if ($this->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
+//            if ($this->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
+//        }
 
-        if(empty($civilite)){
+//        if(empty($civilite)){
             if ($this->getGenre() === 'F') $civilite = "Madame";
             if ($this->getGenre() === 'H') $civilite = "Monsieur";
-        }
+//        }
 
         return $civilite;
     }
 
     public function getCiviliteCourte(): string
     {
-        if ($this->getIndividu()) {
-            return $this->getIndividu()->getCivilite() ?: '-';
-        }
+// supprimé car utilise $this->getIndividu() qui elle-même a été supprimée car utilise une relation supprimée
+//        if ($this->getIndividu()) {
+//            return $this->getIndividu()->getCivilite() ?: '-';
+//        }
 
         if ($this->getGenre() === 'F') return "Mme";
         if ($this->getGenre() === 'H') return "M.";
@@ -290,28 +294,36 @@ class Membre implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return Acteur|null
+     * @deprecated La relation n'existe plus dans ce sens
      */
-    public function getActeur(): ?Acteur
+    public function getActeur(): ?ActeurThese
     {
-        return $this->acteur;
-    }
-
-    public function setActeur(?Acteur $acteur) : Membre
-    {
-        $this->acteur = $acteur;
-        return $this;
+        throw new BadMethodCallException(
+            "La relation dans ce sens n'existe plus puisqu'il existe désormais 2 entités Acteur : ActeurThese et ActeurHDR." .
+            "On a inversé les choses : il y a une relation 'membre' dans les entités ActeurThese et ActeurHDR."
+        );
     }
 
     /**
-     * @return Individu
+     * @deprecated La relation n'existe plus dans ce sens
      */
-    public function getIndividu()
+    public function setActeur(?ActeurThese $acteur) : Membre
     {
-        $acteur = $this->getActeur();
-        if ($acteur === null) return null;
-        return $acteur->getIndividu();
+        throw new BadMethodCallException(
+            "La relation dans ce sens n'existe plus puisqu'il existe désormais 2 entités Acteur : ActeurThese et ActeurHDR." .
+            "On a inversé les choses : il y a une relation 'membre' dans les entités ActeurThese et ActeurHDR."
+        );
     }
+
+//    /**
+//     * @deprecated À abandonner car utilise {@see \Soutenance\Entity\Membre::getActeur()}
+//     */
+//    public function getIndividu()
+//    {
+//        $acteur = $this->getActeur();
+//        if ($acteur === null) return null;
+//        return $acteur->getIndividu();
+//    }
 
     /** @return boolean */
     public function estRapporteur()
@@ -349,19 +361,25 @@ class Membre implements HistoriqueAwareInterface {
         return false;
     }
 
-    public function estDirecteur()
-    {
-        if (!$this->getActeur()) return false;
-        return (
-            $this->getActeur()->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE
-        );
-    }
+//    /**
+//     * @deprecated À abandonner car utilise {@see \Soutenance\Entity\Membre::getActeur()}
+//     */
+//    public function estDirecteur()
+//    {
+//        if (!$this->getActeur()) return false;
+//        return (
+//            $this->getActeur()->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE
+//        );
+//    }
 
-    public function estCoDirecteur()
-    {
-        if (!$this->getActeur()) return false;
-        return (
-            $this->getActeur()->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE
-        );
-    }
+//    /**
+//     * @deprecated À abandonner car utilise {@see \Soutenance\Entity\Membre::getActeur()}
+//     */
+//    public function estCoDirecteur()
+//    {
+//        if (!$this->getActeur()) return false;
+//        return (
+//            $this->getActeur()->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE
+//        );
+//    }
 }

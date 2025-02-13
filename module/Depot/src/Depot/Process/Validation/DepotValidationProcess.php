@@ -2,7 +2,6 @@
 
 namespace Depot\Process\Validation;
 
-use Application\Entity\Db\Validation;
 use Application\Service\UserContextServiceAwareTrait;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
@@ -11,6 +10,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use RuntimeException;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
+use Validation\Entity\Db\ValidationThese;
 
 class DepotValidationProcess
 {
@@ -23,7 +23,7 @@ class DepotValidationProcess
 
     private array $notificationLogs;
 
-    public function validateCorrectionThese(These $these): Validation
+    public function validateCorrectionThese(These $these): ValidationThese
     {
         $em = $this->depotValidationService->getEntityManager();
         $em->beginTransaction();
@@ -89,7 +89,7 @@ class DepotValidationProcess
         return $validation;
     }
 
-    public function unvalidateCorrectionThese(These $these): Validation
+    public function unvalidateCorrectionThese(These $these): ValidationThese
     {
         $em = $this->depotValidationService->getEntityManager();
         $em->beginTransaction();

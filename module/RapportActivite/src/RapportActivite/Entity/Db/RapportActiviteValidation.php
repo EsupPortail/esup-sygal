@@ -3,7 +3,7 @@
 namespace RapportActivite\Entity\Db;
 
 use Application\Constants;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use DateTime;
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;

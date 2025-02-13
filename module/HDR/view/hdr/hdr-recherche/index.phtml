@@ -1,0 +1,214 @@
+<?php
+
+use Acteur\Filter\ActeurHDR\ActeursHDRFormatter;
+use Application\Entity\Db\Role;
+use Application\Search\SearchResultPaginator;
+use Application\View\Renderer\PhpRenderer;
+use HDR\Entity\Db\HDR;
+use HDR\Provider\Privileges\HDRPrivileges;
+use HDR\Service\HDRSorter;
+use These\Provider\Privilege\ThesePrivileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+
+/**
+ * @var PhpRenderer $this
+ * @var SearchResultPaginator $hdrs
+ * @var string      $text
+ * @var Role        $roleGarant
+ * @var bool        $displayEtablissement
+ * @var bool        $displayDateSoutenance
+ * @var string      $filtersRoute
+ *
+ * @see \HDR\Controller\HDRRechercheController::indexAction()
+ */
+
+$canExport = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_EXPORT_CSV));
+$queryParams = $this->queryParams();
+
+$acteursFormatterGarants = new ActeursHDRFormatter();
+$acteursFormatterGarants->asSeparated()
+    ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_HDR_GARANT]));
+
+$canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIFICATION_TOUTES_HDRS)) || $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIFICATION_SES_HDRS));
+?>
+
+<?php $this->headTitle($this->translate("HDR")); ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("HDR"); ?>
+    <span class="badge bg-secondary">
+        <?php echo $hdrs->getTotalItemCount(); ?>
+    </span>
+</h1>
+<?php if ($canAddHDR): ?>
+    <div class="col-md-7" style="align-content: center;">
+        <a href="<?php echo $this->url('hdr/ajouter', [], [], true) ?>"
+           class="btn btn-primary">
+            <span class="icon icon-ajouter"></span>
+            <?php echo $this->translate("Ajouter une HDR"); ?>
+        </a>
+    </div>
+<?php endif ?>
+
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($filtersRoute, [], ['query' => $this->queryParams()], true); ?>
+    <div class="filters" id="hdr-filters" data-url="<?php echo $loadFiltersUrl ?>">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<?php if (count($hdrs) > 0): ?>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_candidat); ?>"
+                   title="<?php echo $this->translate("Nom du candidat"); ?>">
+                    <?php echo $this->translate("Candidat"); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <?php if ($displayEtablissement): ?>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_etablissement); ?>"
+                       title="<?php echo $this->translate("Établissement");?> ">
+                        <?php echo $this->translate("Étab."); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+            <?php endif ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_etatHDR); ?>"
+                   title="<?php echo $this->translate("État de la HDR");?> ">
+                    <?php echo $this->translate("État"); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <span title="<?php echo $this->translate("Liste des garants de HDR"); ?>">
+                    <?php echo $this->translate("Garant de HDR"); ?>
+                </span>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_uniteRecherche); ?>"
+                   title="<?php echo $this->translate("Unité de recherche"); ?>">
+                    <?php echo $this->translate("Unité<br>rech."); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <?php if ($displayDateSoutenance): ?>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_dateSoutenance); ?>"
+                       title="<?php echo $this->translate("Date de soutenance");?> ">
+                        <?php echo $this->translate("Date de<br>sout."); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+            <?php endif ?>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <?php /** @var HDR $hdr */
+        foreach ($hdrs as $hdr): ?>
+            <tr>
+                <td><?php echo $hdr->getCandidat()->getIndividu()->getNomComplet() ?></td>
+                <?php
+                if ($displayEtablissement) { ?>
+                    <td>
+                        <?php echo $this->structure($hdr->getEtablissement(), false); ?>
+                    </td>
+                <?php } ?>
+                <td>
+                    <?= $this->etatHelper($hdr->getEtatHDR(), $hdr->getResultat(), $hdr->getResultatToString()) ?>
+                </td>
+                <td class="acteurs">
+                    <?php
+                        $acteursFormatterGarantsAvecRole = clone $acteursFormatterGarants;
+                        $acteursFormatterGarantsAvecRole = $acteursFormatterGarantsAvecRole
+                            ->paramDisplay(['role' => true, 'complement' => false, "qualite" => false, "etablissement" => false,]);
+                        $garants = $acteursFormatterGarantsAvecRole->filter($hdr->getActeurs());
+                        $directeursAvecRoleStr = "";
+                        foreach ($garants as $garant) {
+                            $directeursAvecRoleStr .= $acteursFormatterGarantsAvecRole->htmlifyActeur($garant) . "<br/>";
+                        }
+                        $acteursAvecRole = $directeursAvecRoleStr;
+                    ?>
+                    <abbr title="">
+                        <span class="site" title="<?php echo $acteursAvecRole ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                            <?php
+                                $garants = $acteursFormatterGarants->filter($hdr->getActeurs());
+                                foreach ($garants as $garant) {
+                                    echo $acteursFormatterGarants->htmlifyActeur($garant) . "<br/>";
+                                }
+                            ?>
+                        </span>
+                    </abbr>
+                </td>
+                <td>
+                    <?php if($hdr->getUniteRecherche()): ?>
+                        <?php echo $this->structure($hdr->getUniteRecherche(), false); ?>
+                    <?php endif ?>
+                </td>
+                <?php
+                //Affichage de la date de soutenace si l'etat est à soutenue ou à tous
+                if ($displayDateSoutenance) {
+                    echo '<td>';
+                    if ($hdr->getCurrentProposition()?->getDate()) echo $hdr->getCurrentProposition()?->getDateToString();
+                    echo '</td>';
+                } ?>
+                <td>
+                    <a href="<?php echo $this->url('hdr/identite', ['hdr' => $hdr->getId()], [], true) ?>"
+                       title="Accéder à la HDR #<?php echo $hdr->getId(); ?>"
+                       data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-voir"></span>
+                    </a>
+<!--                    --><?php
+//                    $canSupprimerHDR  = $this->isAllowed($admission, HDRPrivileges::SU);
+//                    if($canSupprimerHDR){ ?>
+<!--                        <a href="--><?php //echo $this->url('hdr/supprimer',['action' => 'supprimer', 'hdr' => $hdr->getId()], [], true); ?><!--"-->
+<!--                           data-toggle="confirmationx" data-event="modification"-->
+<!--                           title="Suppression de la HDR #--><?php //echo $admission->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
+<!--                            <span class="icon icon-historiser text-danger"></span>-->
+<!--                        </a>-->
+<!--                    --><?php //} ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+
+    <?php echo $paginationControl = $this->paginationControl($hdrs, 'sliding', 'application/paginator.phtml', ['route' => 'hdr']) ?>
+
+    <?php if ($canExport): ?>
+        <a class="btn btn-secondary" href="<?php echo $this->url('hdr/export-csv', [], ['query' => $queryParams]) ?>">
+            <span class="icon icon-export"></span>
+            <?php echo $this->translate("Exporter ces HDR au format CSV"); ?>
+        </a>
+    <?php endif ?>
+
+<?php else: ?>
+
+    <?php if ($hdrs->containsRealSearchResult()): ?>
+        <p>Aucune HDR trouvée.</p>
+    <?php else: ?>
+        <p class="text-info text-center"><i class="fa fa-bullhorn"></i> Ajustez les filtres et lancez la recherche...</p>
+    <?php endif ?>
+
+<?php endif ?>
+
+<?php
+$this->translate("Filtres");
+$this->translate("État");
+$this->translate("En cours");
+$this->translate("Abandonnée");
+$this->translate("Soutenue");
+$this->translate("Transférée");
+$this->translate("Tous");
+?>
+
+
+<script>
+    $(function() {
+        $("#hdr-filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

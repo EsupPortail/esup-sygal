@@ -3,6 +3,7 @@
 namespace Application\Authentication\Storage;
 
 use Application\Entity\UserWrapperFactory;
+use Candidat\Service\CandidatService;
 use Doctorant\Service\DoctorantService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -26,6 +27,9 @@ class AppStorageFactory
         /** @var DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
 
+        /** @var CandidatService $candidatService */
+        $candidatService = $container->get(CandidatService::class);
+
         $etablissementService = $this->locateEtablissementService($container);
 
         /** @var UserWrapperFactory $userWrapperFactory */
@@ -34,6 +38,7 @@ class AppStorageFactory
         $service = new AppStorage();
         $service->setUtilisateurService($utilisateurService);
         $service->setDoctorantService($doctorantService);
+        $service->setCandidatService($candidatService);
         $service->setEtablissementService($etablissementService);
         $service->setUserWrapperFactory($userWrapperFactory);
 

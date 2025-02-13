@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Justificatif;
 
+use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
@@ -11,6 +12,8 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionHDR;
+use Soutenance\Entity\PropositionThese;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -18,6 +21,17 @@ class JustificatifService
 {
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
+
+    /**
+     * @return DefaultEntityRepository
+     */
+    public function getRepository()
+    {
+        /** @var DefaultEntityRepository $repo */
+        $repo = $this->entityManager->getRepository(Justificatif::class);
+
+        return $repo;
+    }
 
 
     /** GESTION DES ENTITES *******************************************************************************************/
@@ -104,11 +118,14 @@ class JustificatifService
      */
     public function createQueryBuilder(): QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
+        $qb = $this->getRepository()->createQueryBuilder('justificatif')
             ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
-            ->addSelect('fichierthese')->join('justificatif.fichier', 'fichierthese')
-            ->addSelect('fichier')->join('fichierthese.fichier', 'fichier')
-            ->addSelect('nature')->join('fichier.nature', 'nature')
+            ->addSelect('fichierthese')->leftJoin('justificatif.fichierThese', 'fichierthese')
+            ->addSelect('fichierhdr')->leftJoin('justificatif.fichierHDR', 'fichierhdr')
+            ->addSelect('fichierH')->leftJoin('fichierhdr.fichier', 'fichierH')
+            ->addSelect('fichierT')->leftJoin('fichierthese.fichier', 'fichierT')
+            ->addSelect('natureH')->leftJoin('fichierH.nature', 'natureH')
+            ->addSelect('natureT')->leftJoin('fichierT.nature', 'natureT')
             ->addSelect('membre')->leftJoin('justificatif.membre', 'membre');
         return $qb;
     }
@@ -117,7 +134,7 @@ class JustificatifService
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('justificatif.id = :id')
-            ->setParameter('id', $id);
+            ->setParameter('id', (int)$id);
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
@@ -164,7 +181,7 @@ class JustificatifService
                 'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELOCALISATION_SOUTENANCE, null),
             ];
         }
-        if ($proposition->isLabelEuropeen()) {
+        if ($proposition instanceof PropositionThese && $proposition->isLabelEuropeen()) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DEMANDE_LABEL,
                 'label' => NatureFichier::LABEL_DEMANDE_LABEL,
@@ -315,10 +332,12 @@ class JustificatifService
     public function getJustificatifsByPropositionAndNature(Proposition $proposition, string $natureCode, bool $histo = false): array
     {
         $qb = $this->createQueryBuilder()
-            ->andWhere('justificatif.proposition = :proposition')->setParameter('proposition', $proposition)
-            ->andWhere('nature.code = :nature')->setParameter('nature', $natureCode)
+            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
             ->orderBy('justificatif.histoCreation', 'DESC');
         if (!$histo) $qb = $qb->andWhere('justificatif.histoDestruction IS NULL');
+
+        if($proposition instanceof PropositionThese) $qb = $qb->andWhere('natureT.code = :natureT')->setParameter('natureT', $natureCode);
+        if($proposition instanceof PropositionHDR) $qb = $qb->andWhere('natureH.code = :natureH')->setParameter('natureH', $natureCode);
 
         $result = $qb->getQuery()->getResult();
         return $result;

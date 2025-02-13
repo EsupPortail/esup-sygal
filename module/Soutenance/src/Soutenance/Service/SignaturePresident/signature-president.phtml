@@ -1,7 +1,7 @@
 <?php
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -9,8 +9,10 @@ use Soutenance\Entity\Proposition;
 /**
  * @var PhpRenderer             $this
  * @var Proposition $proposition
- * @var Validation[] $validations
- * @var Validation $validation
+ * @var Membre[] $membres
+ * @var \Acteur\Entity\Db\ActeurThese[] $acteursMembres
+ * @var ValidationThese[] $validations
+ * @var ValidationThese $validation
  * @var array $logos
  * @var int $nbCodirecteur
  * @var string $libelle
@@ -135,11 +137,11 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure
     </tr>
     <tr>
         <td class="head"> Doctorant : </td>
-        <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
+        <td> <?php echo $proposition->getThese()->getApprenant()->getIndividu()->getNomComplet(); ?> </td>
     </tr>
     <tr>
         <td class="head"> Numéro étudiant : </td>
-        <td> <?php echo $proposition->getThese()->getDoctorant()->getNumeroEtudiant(); ?> </td>
+        <td> <?php echo $proposition->getThese()->getApprenant()->getNumeroEtudiant(); ?> </td>
     </tr>
     <tr>
         <td class="head"> Date de la soutenance : </td>
@@ -147,7 +149,7 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure
             <?php if($proposition->getDate()) : ?>
                 le <?php echo $proposition->getDate()->format("d/m/Y"); ?> à <?php echo $proposition->getDate()->format("H:i"); ?> <br/></td>
             <?php else: ?>
-                <span class="warning"> Aucune date de renseignée </span>
+                <span class="warning"> Aucune date renseignée </span>
             <?php endif; ?>
     </tr>
     <tr>
@@ -156,7 +158,7 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure
             <?php if($proposition->getLieu()) : ?>
                 <?php echo $proposition->getLieu(); ?>
             <?php else : ?>
-                <span class="warning"> Aucun lieu de renseigné </span>
+                <span class="warning"> Aucun lieu renseigné </span>
             <?php endif; ?>
         </td>
     </tr>
@@ -178,7 +180,8 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure
     </thead>
     <tbody>
         <?php /** @var Membre $membre */ ?>
-        <?php foreach ($proposition->getMembres() as $membre) : ?>
+        <?php foreach ($membres as $membre) : ?>
+            <?php $acteurMembre = $acteursMembres[$membre->getId()] ?? null ?>
             <tr>
                 <td> <?php echo $membre->getDenomination(); ?> </td>
                 <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
@@ -188,10 +191,10 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure
                     <?php else : ?>
                         Membre du jury
                     <?php endif; ?>
-                    <?php if ($membre->estDirecteur()) : ?>
+                    <?php if ($acteurMembre && $acteurMembre->estDirecteur()) : ?>
                         <br/> Directeur de thèse
                     <?php endif; ?>
-                    <?php if ($membre->estCoDirecteur()) : ?>
+                    <?php if ($acteurMembre && $acteurMembre->estCoDirecteur()) : ?>
                         <br/> Co-directeur de thèse
                     <?php endif; ?>
                 </td>

@@ -33,6 +33,13 @@ class DepotPrivileges extends Privileges
     const THESE_FICHIER_DIVERS_CONSULTER            = 'these-fichier-divers-consulter';
 
     /**
+     * Dépôt de fichiers liés à une HDR
+     */
+    const HDR_TELECHARGEMENT_FICHIER              = 'hdr-telechargement-fichier';
+    const HDR_FICHIER_DIVERS_TELEVERSER           = 'hdr-fichier-divers-televerser';
+    const HDR_FICHIER_DIVERS_CONSULTER            = 'hdr-fichier-divers-consulter';
+
+    /**
      * Attestations
      */
     const THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE = 'these-saisie-attestations-version-initiale';

@@ -2,7 +2,7 @@
 
 namespace Application\Service\RapportValidation;
 
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Validation\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\RapportValidation;
 use Application\Service\BaseService;

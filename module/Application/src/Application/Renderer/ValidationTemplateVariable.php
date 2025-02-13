@@ -2,14 +2,15 @@
 
 namespace Application\Renderer;
 
-use Application\Entity\Db\Validation;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
+use Validation\Entity\Db\ValidationHDR;
+use Validation\Entity\Db\ValidationThese;
 
 class ValidationTemplateVariable extends AbstractTemplateVariable
 {
-    private Validation $validation;
+    private ValidationThese|ValidationHDR $validation;
 
-    public function setValidation(Validation $validation): void
+    public function setValidation(ValidationThese|ValidationHDR $validation): void
     {
         $this->validation = $validation;
     }
@@ -37,6 +38,6 @@ class ValidationTemplateVariable extends AbstractTemplateVariable
      */
     public function getLibelleType() : string
     {
-        return $this->validation->getTypeValidation()->getLibelle();
+        return $this->validation->getValidation()->getTypeValidation()->getLibelle();
     }
 }

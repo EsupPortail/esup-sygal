@@ -22,7 +22,8 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
+use UnicaenApp\Service\Mailer\MailerService;
 use UnicaenAuthentification\Options\ModuleOptions;
 use UnicaenAuthentification\Service\ShibService;
 use UnicaenAuthentification\Service\User as AuthentificationUserService;
@@ -43,7 +44,7 @@ class UtilisateurControllerFactory
     public function __invoke(ContainerInterface $container): UtilisateurController
     {
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
          * @var EtablissementService $etablissementService
@@ -60,7 +61,7 @@ class UtilisateurControllerFactory
          * @var UserMapper $userMapper
          * @var SessionService $sessionService
          */
-        $acteurService = $container->get(ActeurService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
         $roleService = $container->get('RoleService');
         $utilisateurService = $container->get('UtilisateurService');
         $etablissementService = $container->get('EtablissementService');
@@ -95,7 +96,7 @@ class UtilisateurControllerFactory
         $authModuleOptions = $container->get('unicaen-auth_module_options');
 
         $controller = new UtilisateurController();
-        $controller->setActeurService($acteurService);
+        $controller->setActeurTheseService($acteurService);
         $controller->setApplicationRoleService($roleService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setIndividuService($this->locateIndividuService($container));
@@ -136,6 +137,10 @@ class UtilisateurControllerFactory
         /** @var TokenController $tokenController */
         $tokenController = $container->get('ControllerManager')->get(TokenController::class);
         $controller->listenEventsOf($tokenController);
+
+        /** @var \UnicaenApp\Service\Mailer\MailerService $mailerService */
+        $mailerService = $container->get(MailerService::class);
+        $controller->setMailerService($mailerService);
 
         return $controller;
     }

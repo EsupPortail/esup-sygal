@@ -93,7 +93,7 @@ class UrlFichierThese extends UrlPlugin
      */
     public function listerFichiersPreRapportByUtilisateur(These $these, Utilisateur $utilisateur)
     {
-        return $this->fromRoute('soutenance/lister-rapport-presoutenance-by-utilisateur', ['these' => $these->getId(), 'utilisateur' => $utilisateur->getId()], [], true);
+        return $this->fromRoute('soutenance_hdr/lister-rapport-presoutenance-by-utilisateur', ['these' => $these->getId(), 'utilisateur' => $utilisateur->getId()], [], true);
     }
 
 }

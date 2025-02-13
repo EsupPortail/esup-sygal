@@ -220,4 +220,44 @@ h1.app-name {
     overflow: hidden;
     border-top: 1px solid rgba(0, 0, 0, 0.15); }
 
+/**
+ Table
+ */
+/* Style de base du tableau */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #333; }
+
+/* Bordures des cellules */
+.table th,
+.table td {
+  padding: 10px; }
+
+/* En-tête stylisée */
+.table th {
+  font-weight: bold; }
+
+/* Lignes alternées */
+.table tr:nth-child(even) {
+  background-color: #f2f2f2; }
+
+/* Survol des lignes */
+.table tr:hover {
+  transition: background-color 0.3s ease; }
+
+/* Colonnes spécifiques (par exemple, la première) */
+.table td:first-child {
+  font-weight: bold;
+  color: #555; }
+
+/* Coins arrondis pour les bordures du tableau */
+.table {
+  border-radius: 8px;
+  overflow: hidden; }
+
+/* Ajout d'un effet d'ombre */
+.table-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+
 /*# sourceMappingURL=charte.css.map */

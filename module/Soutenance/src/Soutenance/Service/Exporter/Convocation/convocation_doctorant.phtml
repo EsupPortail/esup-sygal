@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Proposition;
 use These\Entity\Db\These;
@@ -9,8 +9,8 @@ use These\Service\FichierThese\PdcData;
 /**
  * @var PhpRenderer             $this
  * @var Proposition $proposition
- * @var Validation[] $validations
- * @var Validation $validation
+ * @var ValidationThese[] $validations
+ * @var ValidationThese $validation
  * @var array $logos
  * @var int $nbCodirecteur
  * @var PdcData                 $informations
@@ -24,7 +24,7 @@ use These\Service\FichierThese\PdcData;
 
 $date = new DateTime();
 
-$civilite = $these->getDoctorant()->getIndividu()->getCiviliteToString() ?: null;
+$civilite = $these->getApprenant()->getIndividu()->getCiviliteToString() ?: null;
 ?>
 
 <style>
@@ -76,7 +76,7 @@ $civilite = $these->getDoctorant()->getIndividu()->getCiviliteToString() ?: null
 <br/>
 
 <p>
-    <?php echo $civilite ?> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>, <br/>
+    <?php echo $civilite ?> <?php echo $these->getApprenant()->getIndividu()->getNomComplet(); ?>, <br/>
 </p>
 <p>
     Par décision en date du

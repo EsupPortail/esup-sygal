@@ -3,11 +3,7 @@
 namespace Depot\Assertion\These;
 
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareInterface;
-use Application\Service\Validation\ValidationServiceAwareTrait;
-use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
@@ -15,15 +11,14 @@ use Doctorant\Entity\Db\Doctorant;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use These\Entity\Db\These;
-use These\Service\These\TheseServiceAwareInterface;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenApp\Exception\LogicException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 
 class TheseEntityAssertion extends GeneratedTheseEntityAssertion
-    implements ValidationServiceAwareInterface, FichierTheseServiceAwareInterface, TheseServiceAwareInterface
 {
     use UserContextServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
     use FichierTheseServiceAwareTrait;
@@ -60,7 +55,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected function isExisteValidationPageDeCouverture(): bool
     {
-        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $this->these);
+        $validations = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $this->these);
 
         return !empty($validations);
     }
@@ -135,7 +130,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected function isExisteValidationVersionPapierCorrigee(): bool
     {
-        $validations = $this->validationService->getRepository()->findValidationByCodeAndThese(
+        $validations = $this->validationTheseService->getRepository()->findValidationByCodeAndThese(
             TypeValidation::CODE_VERSION_PAPIER_CORRIGEE,
             $this->these
         );

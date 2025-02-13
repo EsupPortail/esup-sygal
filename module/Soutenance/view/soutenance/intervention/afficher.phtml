@@ -1,7 +1,9 @@
 <?php
 
+use Depot\Controller\Plugin\UrlFichierHDR;
 use Depot\Controller\Plugin\UrlFichierThese;
 use Fichier\Entity\Db\NatureFichier;
+use HDR\Entity\Db\HDR;
 use These\Entity\Db\These;
 use Soutenance\Entity\Intervention;
 use Soutenance\Entity\Membre;
@@ -10,18 +12,24 @@ use Soutenance\Provider\Privilege\InterventionPrivileges;
 
 /**
  * @see \Soutenance\Controller\InterventionController::afficherAction()
- * @var These $these
+ * @var These|HDR $object
  * @var Intervention $distanciel
  * @var Intervention[]|null $visios
  * @var Proposition $proposition
  * @var Membre[] $membres
  * @var array $justificatifs
  * @var string $FORMULAIRE_DELEGUATION
- * @var UrlFichierThese $urlFichierThese
+ * @var UrlFichierThese|UrlFichierHDR $urlFichier
+ * @var string $typeProposition
  */
 
-$this->headTitle("Intervention sur la soutenance de thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet());
+if($typeProposition === Proposition::ROUTE_PARAM_PROPOSITION_THESE){
+    $this->headTitle("Intervention sur la soutenance de thèse de " . $object->getApprenant()->getIndividu()->getNomComplet());
+}else{
+    $this->headTitle("Intervention sur la soutenance de HDR de " . $object->getApprenant()->getIndividu()->getNomComplet());
+}
 
+$libelleEntite = $typeProposition === Proposition::ROUTE_PARAM_PROPOSITION_THESE ? "thèse" : "HDR";
 
 function getJustificatif(array $justificatifs, string $type, Membre $membre) {
     foreach ($justificatifs as $justificatif) {
@@ -31,8 +39,8 @@ function getJustificatif(array $justificatifs, string $type, Membre $membre) {
 }
 
 
-$canAfficher = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_AFFICHER);
-$canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MODIFIER);
+$canAfficher = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_AFFICHER);
+$canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MODIFIER);
 
 //var_dump([
 //    'canAfficher' => $canAfficher,
@@ -41,13 +49,13 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
 ?>
 
 <h1 class="page-header">
-    Intervention sur la soutenance de thèse de <?php echo  $these->getDoctorant()->getIndividu()->getNomComplet(); ?>
+    Intervention sur la soutenance de <?= $libelleEntite ?> de <?php echo  $object->getApprenant()->getIndividu()->getNomComplet(); ?>
 </h1>
 
 <?php if (!$canAfficher) : ?>
     <div class="alert alert-danger">
         <p class="lead">
-            Vous n'êtes pas habilité&middot;e à afficher la liste des interventions sur la soutenance de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>
+            Vous n'êtes pas habilité&middot;e à afficher la liste des interventions sur la soutenance de la <?= $libelleEntite ?> de <?php echo $object->getApprenant()->getIndividu()->getNomComplet(); ?>
         </p>
     </div>
 <?php else : ?>
@@ -94,7 +102,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                     <?php if ($canModifier) : ?>
                         <div class="float-end" style="margin-right: 1rem; margin-top:10px">
                             <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
-                                    href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                                    href="<?php echo $this->url("soutenance_{$typeProposition}/intervention/toggle-president-distanciel", ['id' => $object->getId()], [], true); ?>" class="btn btn-primary action">
                                 <span class="icon icon-minus"></span> Président en distanciel
                             </a>
                         </div>
@@ -106,35 +114,22 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                 <?php /** LISTE DES JUSTIFICATIFS ******************************************************************/ ?>
                 <div>
                     Liste des délégations de signatures :
-                    <ul>
                     <?php foreach ($proposition->getMembres() as $membre) : ?>
                         <?php $justificatif = getJustificatif($justificatifs, NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre); ?>
-                        <li>
-                            <?php if ($justificatif !== null) : ?>
-                                <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
-                                <?php if ($canModifier) : ?>
-                                    <a      <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */?>
-                                            href="<?php echo $this->url("soutenance/justificatif/retirer", ['these' => $these->getId(), "justificatif" => $justificatif->getId()], ["query" => ["retour" => $this->url('soutenance/intervention/afficher', ["these" => $these->getId()], [], true)]], true); ?>"
-                                            data-toggle="confirmationx"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-html="true"
-                                            title="Une confirmation avant la suppression vous sera demandée"
-                                    >
-                                    <span class="icon icon-delete iconly text-danger"></span></a>
-                                <?php endif; ?>
+                            <?php if ($justificatif !== null) :
+                                /** @see \Soutenance\Controller\JustificatifController::retirerAction() */
+                                $urlSuppressionJustificatif = $this->url("soutenance_{$typeProposition}/justificatif/retirer", ['id' => $object->getId(), "justificatif" => $justificatif->getId()], ["query" => ["retour" => $this->url("soutenance_{$typeProposition}/intervention/afficher", ['id' => $object->getId(),], [], true)]], true); ?>
+                                <?php echo $this->justificatif()->render($justificatif, $urlFichier, $urlSuppressionJustificatif, $canModifier, ['court' => true]); ?>
                             <?php else : ?>
                                 <span class="text text-danger">Délégation de signature manquante pour <strong style="font-variant:small-caps;"><?php echo $membre->getDenomination(); ?></strong></span>
                                 <?php if ($canModifier) : ?>
                                     <a      <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAction() */?>
-                                            href="<?php echo $this->url("soutenance/justificatif/ajouter", ['these' => $these->getId(), "proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
+                                            href="<?php echo $this->url("soutenance_{$typeProposition}/justificatif/ajouter", ['id' => $object->getId(), "proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
                                             class="btn btn-sm btn-primary ajax-modal" data-event='modification' style="margin: 1px;">
                                     <span class="icon icon-upload"></span> Déposer le justificatif </a>
                                 <?php endif; ?>
                             <?php endif; ?>
-
-                        </li>
                     <?php endforeach; ?>
-                    </ul>
                 </div>
 
 
@@ -143,12 +138,14 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                 <?php /** AUCUNE DECLARATATION DE DISTANCIEL POUR LE PRESIDENT  ************************************/ ?>
                 <div class="row">
                     <div class="col-md-8">
-                        Vous pouvez déclarer ici que le président du jury examinera la soutenance en distanciel.
+                        <p class="lead">
+                            Vous pouvez déclarer ici que le président du jury examinera la soutenance en distanciel.
+                        </p>
                     </div>
                     <?php if ($canModifier) : ?>
                     <div class="float-end" style="margin-right: 1rem; margin-top:10px;">
                         <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
-                                href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/intervention/toggle-president-distanciel", ['id' => $object->getId()], [], true); ?>" class="btn btn-primary action">
                             <span class="icon icon-plus"></span> Président en distanciel
                         </a>
                     </div>
@@ -172,9 +169,9 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
             <div class="row">
                 <div class="col-md-8">
                     <?php if ($visios === null or empty($visios)) : ?>
-                        Aucune déclaration de visioconférence tardive
+                        Aucune déclaration de visio-conférence tardive
                     <?php else : ?>
-                        Liste des déclarations tardives d'un membre en visioconférence :
+                        Liste des déclarations tardives d'un membre en visio-conférence :
                         <ul>
                         <?php foreach ($visios as $visio) : ?>
                             <li>
@@ -189,22 +186,12 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                                     }
                                 ?>
 
-                                <?php if ($justificatif !== null) : ?>
-                                    <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichierThese, ['court' => true]); ?>
+                                <?php if ($justificatif !== null) :
+                                    /** @see \Soutenance\Controller\InterventionController::supprimerVisioconferenceTardiveAction() */
+                                    $urlSuppressionJustificatif = $this->url("soutenance_{$typeProposition}/intervention/supprimer-visioconference-tardive", ['id' => $object->getId(), 'intervention' => $visio->getId()], [], true); ?>
+                                    <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichier, $urlSuppressionJustificatif, $canModifier, ['court' => true]); ?>
                                 <?php else : ?>
                                     (<span class="text-danger">justificatif manquant</span>)
-                                <?php endif; ?>
-
-                                <?php if ($canModifier) : ?>
-                                    <?php /** @see \Soutenance\Controller\InterventionController::supprimerVisioconferenceTardiveAction() */ ?>
-                                    <a href="<?php echo $this->url('soutenance/intervention/supprimer-visioconference-tardive', ['these' => $these->getId(), 'intervention' => $visio->getId()], [], true); ?>"
-                                       data-toggle="confirmationx"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-html="true"
-                                       title="Une confirmation avant la suppression vous sera demandée"
-                                    >
-                                        <span class="icon icon-supprimer"></span>
-                                    </a>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -215,7 +202,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                 <div class="col-md-3">
                     <?php if ($canModifier) : ?>
                         <?php /** @see \Soutenance\Controller\InterventionController::ajouterVisioconferenceTardiveAction() */ ?>
-                        <a href="<?php echo $this->url('soutenance/intervention/ajouter-visioconference-tardive', ['these' => $these->getId()],[], true); ?>" class="btn btn-primary action ajax-modal" data-event="modification">
+                        <a href="<?php echo $this->url("soutenance_{$typeProposition}/intervention/ajouter-visioconference-tardive", ['id' => $object->getId()],[], true); ?>" class="btn btn-primary action ajax-modal" data-event="modification">
                             <span class="icon icon-ajouter"></span>
                             Ajout d'une déclaration
                         </a>

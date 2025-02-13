@@ -15,6 +15,7 @@
         <field name="ldapFilter" type="string" column="ldap_filter" length="255" nullable="true"/>
         <field name="attributionAutomatique" type="boolean" column="attrib_auto" nullable="false"/>
         <field name="theseDependant" type="boolean" column="these_dep" nullable="false"/>
+        <field name="hdrDependant" type="boolean" column="hdr_dep" nullable="false"/>
         <field name="sourceCode" type="string" column="source_code" length="100" nullable="true"/>
         <field name="ordreAffichage" type="string" column="ordre_affichage" length="32" nullable="false"/>
 

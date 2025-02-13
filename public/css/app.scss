@@ -158,6 +158,44 @@ h2.modal-title {
   width: 50%;
 }
 
+.card.card-success{
+  width: fit-content;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: $successColor;
+  color:white;
+
+  .corps{
+    display: flex;
+    align-items: center;
+    padding:1rem!important;
+    .icon{
+      //color:$successColor;
+      font-size: 2rem;
+      margin-right: 1rem !important;
+    }
+  }
+}
+
+.card.card-danger{
+  width: fit-content;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: $dangerColor;
+  color:white;
+
+  .corps{
+    display: flex;
+    align-items: center;
+    padding:1rem!important;
+    .icon{
+      //color:$successColor;
+      font-size: 2rem;
+      margin-right: 1rem !important;
+    }
+  }
+}
+
 
 .panel.box {
   margin-bottom: 10px;
@@ -958,8 +996,8 @@ a.btn > span.icon {
   border-color: $dangerColor;
 }
 .btn-warning {
-  background-color: $warningColor;
-  border-color: $warningColor;
+  background-color: #D9822B;
+  border-color: #D9822B;
 }
 .btn-primary {
   background-color: var(--secondary-color);
@@ -1463,7 +1501,7 @@ p.avis-complem {
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 0.875rem;
-  width:fit-content;
+  width:406px;
 }
 
 .file-icon {

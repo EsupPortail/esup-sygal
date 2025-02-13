@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Controller\Avis;
 
-use Application\Service\Validation\ValidationService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\RapportActiviteService;
@@ -22,13 +22,13 @@ class RapportActiviteAvisControllerFactory
         $rapportAvisService = $container->get(RapportActiviteAvisService::class);
         $avisForm = $container->get('FormElementManager')->get(AvisForm::class);
         $rapportValidationService = $container->get(RapportActiviteValidationService::class);
-        $validationService = $container->get(ValidationService::class);
+        $validationService = $container->get(ValidationTheseService::class);
 
         $controller = new RapportActiviteAvisController();
         $controller->setRapportActiviteService($rapportService);
         $controller->setRapportActiviteAvisService($rapportAvisService);
         $controller->setRapportActiviteValidationService($rapportValidationService);
-        $controller->setValidationService($validationService);
+        $controller->setValidationTheseService($validationService);
 
         $controller->setForm($avisForm);
 

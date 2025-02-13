@@ -2,15 +2,15 @@
 
 namespace Soutenance\Form\LabelEuropeen;
 
-use Soutenance\Entity\Proposition;
 use Laminas\Hydrator\HydratorInterface;
+use Soutenance\Entity\PropositionThese;
 
 class LabelEuropeenHydrator implements HydratorInterface
 {
     /**
      * @param array $data
-     * @param Proposition $proposition
-     * @return Proposition
+     * @param PropositionThese $proposition
+     * @return PropositionThese
      */
     public function hydrate(array $data, $proposition) {
 
@@ -20,7 +20,7 @@ class LabelEuropeenHydrator implements HydratorInterface
     }
 
     /**
-     * @param Proposition $proposition
+     * @param PropositionThese $proposition
      * @return array
      */
     public function extract($proposition): array {

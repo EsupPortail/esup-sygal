@@ -14,8 +14,10 @@ class Intervention implements HistoriqueAwareInterface {
 
     /** @var int */
     private $id;
-    /** @var These */
-    private $these;
+
+    /** @var Proposition */
+    private $proposition;
+
     /** @var int */
     private $type;
     /** @var string */
@@ -27,24 +29,6 @@ class Intervention implements HistoriqueAwareInterface {
     public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return These
-     */
-    public function getThese(): These
-    {
-        return $this->these;
-    }
-
-    /**
-     * @param These $these
-     * @return Intervention
-     */
-    public function setThese(These $these): Intervention
-    {
-        $this->these = $these;
-        return $this;
     }
 
     /**
@@ -83,8 +67,19 @@ class Intervention implements HistoriqueAwareInterface {
         return $this;
     }
 
+    /**
+     * @return Proposition
+     */
+    public function getProposition(): Proposition
+    {
+        return $this->proposition;
+    }
 
-
-
-
+    /**
+     * @param Proposition $proposition
+     */
+    public function setProposition(Proposition $proposition): void
+    {
+        $this->proposition = $proposition;
+    }
 }

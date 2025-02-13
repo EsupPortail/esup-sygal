@@ -3,7 +3,7 @@
 namespace RapportActivite\Controller\Recherche;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Validation\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Role;
 use Application\Exporter\ExporterDataException;
 use Application\Filter\IdifyFilter;

@@ -3,15 +3,15 @@
 namespace Soutenance\Form\ChangementTitre;
 
 use DateTime;
-use Soutenance\Entity\Proposition;
 use Laminas\Hydrator\HydratorInterface;
+use Soutenance\Entity\PropositionThese;
 
 class ChangementTitreHydrator implements HydratorInterface
 {
     /**
      * @param array $data
-     * @param Proposition $proposition
-     * @return Proposition
+     * @param PropositionThese $proposition
+     * @return PropositionThese
      */
     public function hydrate(array $data, $proposition) {
 
@@ -20,7 +20,7 @@ class ChangementTitreHydrator implements HydratorInterface
     }
 
     /**
-     * @param Proposition $proposition
+     * @param PropositionThese $proposition
      * @return array
      */
     public function extract($proposition): array {

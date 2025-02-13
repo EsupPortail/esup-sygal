@@ -2,25 +2,35 @@
 
 namespace Soutenance\Assertion;
 
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
+use Application\Assertion\AbstractAssertion;
+use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Exception;
-use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
-use Laminas\Permissions\Acl\Acl;
+use HDR\Entity\Db\HDR;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Laminas\Permissions\Acl\Role\RoleInterface;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use These\Entity\Db\These;
+use UnicaenApp\Exception\RuntimeException;
 
-class AvisSoutenanceAssertion  implements  AssertionInterface {
+class AvisSoutenanceAssertion extends AbstractAssertion implements  AssertionInterface {
     use PropositionServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use ThrowsFailedAssertionExceptionTrait;
+    use AvisServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     /**
      * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
@@ -37,17 +47,58 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
         return true;
     }
 
-    public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null) {
+    /**
+     * @param string $controller
+     * @param string $action
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertController($controller, $action = null, $privilege = null): bool
+    {
+        if (!parent::assertController($controller, $action, $privilege)) {
+            return false;
+        }
+
+        $entity = $this->getRequestedEntity();
+        if($entity instanceof Avis){
+            $object = $entity->getProposition() instanceof PropositionThese ? $entity->getProposition()->getThese() : $entity->getProposition()->getHDR();
+        }else{
+            return true;
+        }
+
+        if($object instanceof These){
+            if(!$this->userContextService->isStructureDuRoleRespecteeForThese($object)) return false;
+        }elseif($object instanceof HDR){
+            if(!$this->userContextService->isStructureDuRoleRespecteeForHDR($object)) return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param ActeurThese|ActeurHDR $entity
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
+    {
+
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
+        }
 
         /**
-         * @var Acteur $rapporteur
-         * @var These $these
+         * @var ActeurThese|ActeurHDR $rapporteur
+         * @var These|HDR $object
          */
-        $rapporteur = $resource;
-        $these = $rapporteur->getThese();
+        $rapporteur = $entity;
+        $object = $rapporteur instanceof ActeurThese ? $rapporteur->getThese() : $rapporteur->getHDR();
 
-        $utilisateur = $this->userContextService->getIdentityDb();
-        $role = $this->userContextService->getSelectedIdentityRole();
+        if($object instanceof These){
+            if(!$this->userContextService->isStructureDuRoleRespecteeForThese($object)) return false;
+        }elseif($object instanceof HDR){
+            if(!$this->userContextService->isStructureDuRoleRespecteeForHDR($object)) return false;
+        }
 
         switch ($privilege) {
             /**
@@ -58,21 +109,11 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
              * - le rapporteur émettant l'avis
              */
             case AvisSoutenancePrivileges::AVIS_VISUALISER :
-
-                if ($role->getCode() === Role::CODE_ADMIN_TECH || $role->getCode() === Role::CODE_OBSERVATEUR) return true;
-                if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
-                if ($these->hasActeurWithRole($utilisateur->getIndividu(),Role::CODE_DIRECTEUR_THESE) || $these->hasActeurWithRole($utilisateur->getIndividu(),Role::CODE_CODIRECTEUR_THESE)) return true;
-                if ($role->getCode() === Role::CODE_RAPPORTEUR_JURY && $utilisateur->getIndividu() === $rapporteur->getIndividu()) return true;
-                return false;
-                break;
             /**
              * Les personnes pouvant éditer l'avis de soutenance sont :
              * - le rapporteur émettant l'avis
              */
             case AvisSoutenancePrivileges::AVIS_MODIFIER :
-
-                if ($role->getCode() !== Role::CODE_RAPPORTEUR_JURY) return false;
-                if ($utilisateur->getIndividu() !== $rapporteur->getIndividu()) return false;
                 try {
                     $currentDate = new DateTime();
                 } catch (Exception $e) {
@@ -80,23 +121,29 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
                 }
 
                 /** @var Proposition $proposition */
-                $proposition = $this->getPropositionService()->findOneForThese($these);
+                $proposition = $this->getPropositionService()->findOneForObject($object);
                 $dateRetour = ($proposition->getRenduRapport())->add(new DateInterval('P1D'));
                 if ($currentDate > $dateRetour) return false;
-                return true;
-                break;
             /**
              * Les personnes pouvant révoquer un avis
              * - le rapporteur
              * - le bdd de l'etablissement
              */
             case AvisSoutenancePrivileges::AVIS_ANNULER :
-                if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
-                if ($role->getCode() === Role::CODE_RAPPORTEUR_JURY && $utilisateur->getIndividu() === $rapporteur->getIndividu()) return true;
-                return false;
-                break;
         }
-        return false;
+        return true;
     }
 
+    protected function getRequestedEntity(): Avis|null
+    {
+        $avis = null;
+        if (($routeMatch = $this->getRouteMatch())) {
+            if($routeMatch->getParam('rapporteur') !== null){
+                $membre = $this->membreService->getEntityManager()->getRepository(Membre::class)->find($routeMatch->getParam('rapporteur'));
+                if($membre) $avis = $this->avisService->getAvisByMembre($membre);
+            }
+        }
+
+        return $avis;
+    }
 }

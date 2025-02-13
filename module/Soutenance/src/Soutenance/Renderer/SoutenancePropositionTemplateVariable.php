@@ -65,7 +65,7 @@ class SoutenancePropositionTemplateVariable extends AbstractTemplateVariable
     public function toStringPublicOuHuisClos(): string
     {
         $mode = $this->proposition->isHuitClos();
-        if ($mode === false) return " sera publique ";
+        if ($mode === false) return " sera publique";
         if ($mode === true) return " se déroulera en huis clos";
         return "<span style='color:darkorange;'>Aucun mode déclaré</span>";
     }

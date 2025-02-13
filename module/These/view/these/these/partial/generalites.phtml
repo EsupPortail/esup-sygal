@@ -35,11 +35,12 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
             </dt>
             <dd class="col-md-9">
                 <?php if ($these->getEtablissement()): ?>
-                    <span class="text-structure etablissement"><?php echo $these->getEtablissement()->getStructure()->getLibelle() ?></span>
+                    <?php echo $this->structure($these->getEtablissement()); ?>
                 <?php else: ?>
-                    <div class='alert alert-sm alert-warning'>
-                        <span class='fas fa-exclamation-triangle'></span> Aucun établissement n'est renseignée.
-                    </div>
+                    <span class="badge bg-danger text-white" style="font-size:unset">
+                        <span class="icon icon-warning" style="padding-right: unset"></span>
+                        Aucun établissement n'est renseigné.
+                    </span>
                 <?php endif; ?>
             </dd>
         </dl>
@@ -70,7 +71,10 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
             <dd class="col-md-9">
                 <?php
                 if ($these->getDomainesHal() instanceof PersistentCollection && $these->getDomainesHal()->isEmpty()){ ?>
-                    <em> Aucun domaine HAL de renseigné </em>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Aucun domaine HAL renseigné
+                    </span>
                 <?php }else{ ?>
                     <ul>
                         <?php foreach($these->getDomainesHal() as $domaine){ ?>
@@ -92,10 +96,19 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
             <?php if ($these->etaitConfidentielle()): ?>
                 <dd class="col-md-9">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
             <?php elseif ($these->estConfidentielle()): ?>
-                <dd class="col-md-9 text-danger">Confidentielle,
-                    jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
+                <dd class="col-md-9 text-danger">
+                    <span class="badge bg-danger text-white" style="font-size:unset">
+                        <span class="fa fa-eye-slash" style="padding-right: unset"></span>
+                        Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?>
+                    </span>
+                </dd>
             <?php else: ?>
-                <dd class="col-md-9">Non confidentielle</dd>
+                <dd class="col-md-9">
+                    <span class="badge bg-success text-white" style="font-size:unset">
+                        <span class="icon icon-voir" style="padding-right: unset"></span>
+                        Non confidentielle
+                    </span>
+                </dd>
             <?php endif ?>
         </dl>
         <dl>
@@ -103,21 +116,55 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
                 <?php echo $this->translate("Titre d'accès à l'inscr. en thèse") ?>
             </dt>
             <dd class="col-md-9">
-                <?php echo ($titreAcces = $these->getTitreAcces()) ?: "(Non renseigné)"; ?>
+                <?php if($these->getTitreAcces()) :
+                    echo $these->getTitreAcces();
+                else: ?>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Non renseigné
+                    </span>
+                <?php endif; ?>
             </dd>
         </dl>
         <div class="separator"></div>
         <dl>
             <dt class="col-md-3">Date de 1ère<br>inscription</dt>
-            <dd class="col-md-9"><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
+            <dd class="col-md-9">
+                <?php if($these->getDatePremiereInscriptionToString()) :
+                    echo $these->getDatePremiereInscriptionToString();
+                else: ?>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Non renseignée
+                    </span>
+                <?php endif; ?>
+            </dd>
         </dl>
         <dl>
             <dt class="col-md-3">Année universitaire<br>de 1ère inscription</dt>
-            <dd class="col-md-9"><?php echo $these->getAnneeUniv1ereInscription() ?></dd>
+            <dd class="col-md-9">
+                <?php if($these->getAnneeUniv1ereInscription()) :
+                    echo $these->getAnneeUniv1ereInscription();
+                else: ?>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Non renseignée
+                    </span>
+                <?php endif; ?>
+            </dd>
         </dl>
         <dl>
             <dt class="col-md-3">Années universitaires<br>d'inscription</dt>
-            <dd class="col-md-9"><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
+            <dd class="col-md-9">
+                <?php if($these->getAnneesUnivInscriptionToString('<br>') !== null) :
+                    echo $these->getAnneesUnivInscriptionToString('<br>');
+                else: ?>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Non renseignée(s)
+                    </span>
+                <?php endif; ?>
+            </dd>
         </dl>
     </div>
     <div class="col-md-4">
@@ -167,16 +214,28 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
                         <strong>
                             <?php echo $this->translate("Nationalité :"); ?>
                         </strong>
-                        <?php echo $these->getDoctorant()->getIndividu() && $these->getDoctorant()->getIndividu()->getPaysNationalite() ?
-                            $these->getDoctorant()->getIndividu()->getPaysNationalite()->getLibelleNationalite() :
-                            null;?>
+                        <?php if ($these->getDoctorant()->getIndividu() && $these->getDoctorant()->getIndividu()->getPaysNationalite()): ?>
+                            <?php echo $these->getDoctorant()->getIndividu()->getPaysNationalite()->getLibelleNationalite() ?> <br>
+                        <?php else: ?>
+                            <span class="badge bg-secondary text-white" style="font-size:unset">
+                                <span class="icon icon-info" style="padding-right: unset"></span>
+                                Non renseignée
+                            </span>
+                        <?php endif ?>
                     </li>
 
                     <li class="list-group-item">
                         <strong>
                             <?php echo $this->translate("N° étudiant :"); ?>
                         </strong>
-                        <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
+                        <?php if ($these->getDoctorant()->getNumeroEtudiant() !== ""): ?>
+                            <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
+                        <?php else: ?>
+                            <span class="badge bg-secondary text-white" style="font-size:unset">
+                                <span class="icon icon-info" style="padding-right: unset"></span>
+                                Non renseigné
+                            </span>
+                        <?php endif ?>
                     </li>
                     <li class="list-group-item">
                         <strong>
@@ -185,7 +244,10 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
                         <?php if ($email = $these->getDoctorant()->getIndividu()->getEmailPro()): ?>
                             <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
                         <?php else: ?>
-                            <?php echo $this->translate("(Inconnu)"); ?>
+                            <span class="badge bg-secondary text-white" style="font-size:unset">
+                                <span class="icon icon-info" style="padding-right: unset"></span>
+                                Inconnue
+                            </span>
                         <?php endif ?>
 
                         <?php if ($canVoirEmailContact) : ?>
@@ -196,7 +258,10 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
                             <?php if ($mailContact = $these->getDoctorant()->getIndividu()->getEmailContact()): ?>
                                 <a href="mailto: <?php echo $mailContact = $these->getDoctorant()->getIndividu()->getEmailContact() ?>"><?php echo $mailContact ?></a>
                             <?php else: ?>
-                                (Non renseignée)
+                                <span class="badge bg-secondary text-white" style="font-size:unset">
+                                    <span class="icon icon-info" style="padding-right: unset"></span>
+                                    Non renseignée
+                                </span>
                             <?php endif; ?>
                             <?php if ($canEditEmailContact): ?>
                                 <a href="<?php echo $modifierEmailContactUrl ?>"

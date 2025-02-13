@@ -3,14 +3,14 @@
 namespace RapportActivite\Controller\Validation;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\TypeValidation;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Laminas\Http\Response;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class RapportActiviteValidationController extends AbstractController
 {

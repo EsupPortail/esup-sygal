@@ -4,7 +4,10 @@ namespace Application\Navigation;
 
 use Application\Entity\Db\Role;
 use Application\Service\UserContextServiceAwareTrait;
+use Candidat\Entity\Db\Candidat;
 use Doctorant\Entity\Db\Doctorant;
+use HDR\Entity\Db\HDR;
+use HDR\Service\HDRServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Interop\Container\ContainerInterface;
 use Laminas\Router\RouteMatch;
@@ -22,12 +25,17 @@ class ApplicationNavigationFactory extends NavigationFactory
 {
     use UserContextServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use HDRServiceAwareTrait;
 
     const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
-    const MES_DONNEES_PAGE_ID = 'MES_DONNEES';
     const MA_THESE_PAGE_ID = 'MA_THESE';
     const MES_THESES_PAGE_ID = 'MES_THESES';
     const NOS_THESES_PAGE_ID = 'NOS_THESES';
+
+    const HDR_SELECTIONNEE_PAGE_ID = 'HDR_SELECTIONNEE';
+    const MA_HDR_PAGE_ID = 'MA_HDR';
+    const MES_HDR_PAGE_ID = 'MES_HDR';
+    const NOS_HDR_PAGE_ID = 'NOS_HDR';
 
     const FORMATIONS_PAGE_ID = 'FORMATIONS';
     const MES_FORMATIONS_DOCTORANT_PAGE_ID = 'MES_FORMATIONS_DOCTORANT';
@@ -37,25 +45,13 @@ class ApplicationNavigationFactory extends NavigationFactory
     const MES_ADMISSIONS_PAGE_ID = 'MES_ADMISSIONS';
     const NOS_ADMISSIONS_PAGE_ID = 'NOS_ADMISSIONS';
 
-    /**
-     * @var Doctorant|null
-     */
-    private $doctorant;
+    private ?Doctorant $doctorant = null;
+    private ?Candidat $candidat = null;
+    private ?Role $role = null;
+    private ?Individu $individu = null;
 
-    /**
-     * @var Role|null
-     */
-    private $role;
-
-    /**
-     * @var Individu|null
-     */
-    private $individu;
-
-    /**
-     * @var bool
-     */
-    private $pageMaTheseCreated = false;
+    private bool $pageMaTheseCreated = false;
+    private bool $pageMaHDRCreated = false;
 
     /**
      * @inheritDoc
@@ -65,6 +61,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         $role = $this->userContextService->getSelectedIdentityRole();
 
         $this->doctorant = ($role !== null && $role->isDoctorant()) ? $this->userContextService->getIdentityDoctorant() : null;
+        $this->candidat = ($role !== null && $role->isCandidatHDR()) ? $this->userContextService->getIdentityCandidatHDR() : null;
         $this->role = $role;
         $this->individu = $this->userContextService->getIdentityIndividu();
 
@@ -109,10 +106,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         parent::processPage($page, $routeMatch);
     }
 
-    /**
-     * @param array $page
-     */
-    protected function handleDynamicPage(array &$page)
+    protected function handleDynamicPage(array &$page): void
     {
         /**
          * Ma thèse
@@ -151,7 +145,7 @@ class ApplicationNavigationFactory extends NavigationFactory
          */
         // Rôles ED, UR, MDD, etc. : génération d'une page "Nos thèses" contenant une page fille indiquant la structure filtrante
         if ($protoPage = $page['pages'][$key = self::NOS_THESES_PAGE_ID] ?? null) {
-            if ($this->role !== null && !$this->role->isDoctorant() && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
+            if ($this->role !== null && $this->role->isGestionnaireDeThese()) {
                 $newPages = $this->createPageNosTheses($protoPage, $this->role);
                 $page['pages'][$key]['pages'] = $newPages;
             } else {
@@ -163,8 +157,62 @@ class ApplicationNavigationFactory extends NavigationFactory
          * Thèse sélectionnée
          */
         if ($page['pages'][$key = self::THESE_SELECTIONNEE_PAGE_ID] ?? null) {
-            if ($this->pageMaTheseCreated) {
+            if ($this->doctorant === null && $this->candidat !== null || $this->pageMaTheseCreated) {
                 // si une page 'Ma thèse' est présente, la page 'Thèse sélectionnée' qui fait doublon est supprimée
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Mon HDR
+         */
+        // Rôle Candidat : génération d'une page "Mon HDR" pour chaque HDR du candidat
+        if ($protoPage = $page['pages'][$key = self::MA_HDR_PAGE_ID] ?? null) {
+            if ($this->candidat !== null) {
+                $hdrs = $this->hdrService->getRepository()->findHDRByCandidat($this->candidat, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]);
+                $newPages = $this->createPagesMaHDR($protoPage, $hdrs);
+                $page['pages'] = array_merge($page['pages'], $newPages);
+                $page['visible'] = true;
+
+                // si une page 'Ma HDR' est présente, la page 'HDR sélectionnée' qui fait doublon sera supprimée
+                $this->pageMaHDRCreated = true;
+            }
+            unset($page['pages'][$key]);
+        }
+
+        /**
+         * Mes HDR
+         */
+        // Rôles acteurs de HDR (Garant...) : génération d'une page "Mes HDR" contenant une page fille par HDR
+        if ($protoPage = $page['pages'][$key = self::MES_HDR_PAGE_ID] ?? null) {
+            if ($this->role !== null && $this->role->isActeurDeHDR()) {
+                $hdrs = $this->hdrService->getRepository()->findHDRByActeur($this->individu, $this->role, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]);
+                $newPages = $this->createPageMesHDR($protoPage, $hdrs);
+                $page['pages'][$key]['pages'] = $newPages;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Nos HDR
+         */
+        // Rôles ED, UR, MDD, etc. : génération d'une page "Nos HDR" contenant une page fille indiquant la structure filtrante
+        if ($protoPage = $page['pages'][$key = self::NOS_HDR_PAGE_ID] ?? null) {
+            if ($this->role !== null && $this->role->isGestionnaireDeHDR()) {
+                $newPages = $this->createPageNosHDR($protoPage, $this->role);
+                $page['pages'][$key]['pages'] = $newPages;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * HDR sélectionnée
+         */
+        if ($page['pages'][$key = self::HDR_SELECTIONNEE_PAGE_ID] ?? null) {
+            if ($this->candidat === null && $this->doctorant !== null || $this->pageMaHDRCreated) {
+                // si une page 'Mon HDR' est présente, la page 'HDR sélectionnée' qui fait doublon est supprimée
                 unset($page['pages'][$key]);
             }
         }
@@ -360,6 +408,120 @@ class ApplicationNavigationFactory extends NavigationFactory
         $page = $protoPage;
         // label
         $page['label'] = "Rapports CSI " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
+        $newPages[] = $page;
+
+        // génération d'une page fille emmenant vers les soutenances
+        $protoPage = $parentPage['pages']['SOUTENANCES'];
+        $page = $protoPage;
+        // label
+        $page['label'] = "Soutenances " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
+        $newPages[] = $page;
+
+        return $newPages;
+    }
+
+    /**
+     * Création d'une page "Ma HDR" pour chaque HDR du candidat.
+     *
+     * @param array $protoPage
+     * @param HDR[] $hdrs
+     * @return array
+     */
+    private function createPagesMaHDR(array $protoPage, array $hdrs): array
+    {
+        $newPages = [];
+        foreach ($hdrs as $i => $hdr) {
+            $newPage = $protoPage;
+            // order
+            if (isset($newPage['order'])) {
+                $newPage['order'] = $newPage['order'] + $i;
+            }
+            // label
+            if (count($hdrs) > 1) {
+                $newPage['label'] = $newPage['label'] . ' ' . ($i + 1);
+            }
+
+            // injection du paramètre de route 'hdr' dans la page et ses filles
+            $this->setParamInPage($newPage, 'hdr', $hdr->getId());
+
+            $newPages['ma-hdr-' . ($i + 1)] = $newPage;
+        }
+
+        return $newPages;
+    }
+
+    /**
+     * Création d'une page fille pour chaque HDR spécifiée.
+     *
+     * @param array $parentPage
+     * @param HDR[] $hdrs
+     * @return array
+     */
+    private function createPageMesHDR(array $parentPage, array $hdrs): array
+    {
+        $protoPage = $parentPage['pages']['HDR'];
+
+        $newPages = [];
+        foreach ($hdrs as $i => $hdr) {
+            $newPage = $protoPage;
+            // order
+            if (isset($newPage['order'])) {
+                $newPage['order'] = $newPage['order'] + $i;
+            }
+            // label
+            $newPage['label'] = Util::truncatedString($hdr->getCandidat()->getIndividu()->getNomComplet(), 30);
+            // injection du paramètre de route 'hdr' dans la page et ses filles
+            $this->setParamInPage($newPage, 'hdr', $hdr->getId());
+
+            $newPages['hdr-' . ($i + 1)] = $newPage;
+        }
+
+        return $newPages;
+    }
+
+    /**
+     * Création d'une page précisant la structure concernée.
+     *
+     * @param array $parentPage
+     * @param Role $role
+     * @return array
+     */
+    private function createPageNosHDR(array $parentPage, Role $role): array
+    {
+        switch (true) {
+            case $role->isEcoleDoctoraleDependant():
+                $ed = $role->getStructure()->getEcoleDoctorale();
+                $label = $ed->getStructure()->getSigle();
+                $query = [EcoleDoctoraleSearchFilter::NAME => $ed->getSourceCode()];
+                break;
+            case $role->isUniteRechercheDependant():
+                $ur = $role->getStructure()->getUniteRecherche();
+                $label = $ur->getStructure()->getCode();
+                $query = [UniteRechercheSearchFilter::NAME => $ur->getSourceCode()];
+                break;
+            case $role->isEtablissementDependant():
+                $etab = $role->getStructure()->getEtablissement();
+                $label = $etab->getStructure()->getSourceCode();
+                $query = [EtablissementSearchFilter::NAME => $etab->getSourceCode()];
+                break;
+            default:
+                $label = (string) $role->getStructure();
+                $query = [];
+        }
+
+        $newPages = [];
+
+        // génération d'une page fille emmenant vers les HDR de la struture
+        $protoPage = $parentPage['pages']['HDR'];
+        $page = $protoPage;
+        // label
+        $page['label'] = "HDR " . $label;
         // params
         $page['query'] = $page['query'] ?? [];
         $page['query'] = array_merge($page['query'], $query);

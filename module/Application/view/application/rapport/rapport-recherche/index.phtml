@@ -2,13 +2,13 @@
 
 namespace Application;
 
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
 use Application\Controller\Rapport\RapportRechercheController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeRapport;
-use Application\Entity\Db\TypeValidation;
-use These\Filter\ActeursFormatter;
-use UnicaenPrivilege\Provider\Privilege\Privileges;
+use Validation\Entity\Db\TypeValidation;
 use Laminas\Paginator\Paginator as LaminasPaginator;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * @var string $title
@@ -50,11 +50,11 @@ use Laminas\Paginator\Paginator as LaminasPaginator;
 $canDlZip = $this->isAllowed(Privileges::getResourceId($privilege_TELECHARGER_ZIP));
 $queryParams = $this->queryParams();
 
-$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs = new ActeursTheseFormatter();
 $acteursFormatterDirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
-$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs = new ActeursTheseFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));

@@ -3,7 +3,7 @@
 namespace ApplicationFunctionalTest\Service\Workflow\VersionCorrigee;
 
 use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Depot\Entity\Db\WfEtape;
 use ApplicationFunctionalTest\Service\Workflow\WorkflowServiceAbstractTest;
 

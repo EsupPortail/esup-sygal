@@ -1,18 +1,20 @@
 <?php
 
-use These\Entity\Db\Acteur;
+use HDR\Entity\Db\HDR;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
- * @see \Soutenance\Controller\AvisController::indexAction()
+ * @see AvisController::indexAction()
  * @var AvisForm $form
- * @var These $these
- * @var Acteur $rapporteur
+ * @var These|HDR $object
+ * @var ActeurThese $rapporteur
+ * @var string $typeProposition
  */
 
-$denominationDoctorant = $these->getDoctorant()->getIndividu()->__toString();
+$denominationDoctorant = $object->getApprenant()->getIndividu()->__toString();
 $denominationRapporteur = $rapporteur->__toString();
 $titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant . " / Notification on the PhD defense ";
 $this->headTitle($titrePage);
@@ -33,7 +35,7 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
 
 <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
-<?php if ($canEdit) : ?>
+<?php if (!$canEdit) : ?>
     <div class="card">
         <div class="card-header bg-dark text-white">
             <h2> Avis sur la soutenance et dépôt du pré-rapport de soutenance /
@@ -60,7 +62,7 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
 <?php endif; ?>
 
 <div class="float-end">
-    <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+    <a href="<?php echo $this->url("soutenance_{$typeProposition}/index-rapporteur", ['id' => $object->getId()], [], true); ?>"
        class="btn btn-primary action">
         <span class="icon icon-retour"></span>
         Retour à l'index rapporteur

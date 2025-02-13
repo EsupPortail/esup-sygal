@@ -17,11 +17,11 @@ class ConfidentialiteHydrator implements HydratorInterface
 
         $date = null;
         $huisclos = false;
-        if ($data['date'] and $proposition->getThese()->getDateFinConfidentialite() === null) {
+        if ($data['date'] and $proposition->getObject()->getDateFinConfidentialite() === null) {
             $date = DateTime::createFromFormat("Y-m-d", $data['date']);
         }
-        if ($data['date'] OR $proposition->getThese()->getDateFinConfidentialite() !== null) {
-            $huisclos = $data['huitclos']??false;
+        if ($data['date'] OR $proposition->getObject()->getDateFinConfidentialite() !== null) {
+            $huisclos = $data['huitClos']??false;
         }
 
         $proposition->setConfidentialite($date);
@@ -38,7 +38,7 @@ class ConfidentialiteHydrator implements HydratorInterface
 
         $data = [];
         $data['date']  = ($proposition->getConfidentialite())?$proposition->getConfidentialite()->format("Y-m-d"):"";
-        $data['huitclos'] = $proposition->isHuitClos();
+        $data['huitClos'] = $proposition->isHuitClos();
 
         return $data;
     }

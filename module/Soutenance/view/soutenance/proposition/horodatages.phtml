@@ -6,7 +6,6 @@ use These\Entity\Db\These;
 
 /**
  * @see \Soutenance\Controller\PropositionController::horodatagesAction()
- * @var These $these
  * @var Proposition $proposition
  * @var Horodatage[] $horodatages
  */
@@ -21,9 +20,95 @@ $this->headTitle("Horodatages de la proposition de soutenance");
 
 La proposition possède <?php echo count($horodatages); ?> événements datés.
 
-<ul>
-    <?php foreach ($horodatages as $horodatage) : ?>
-        <li> <?php echo $this->horodatage($horodatage); ?> </li>
-    <?php endforeach; ?>
-</ul>
+<section class="py-5">
+    <ul class="timeline-with-icons">
+        <?php foreach ($horodatages as $horodatage) : ?>
+            <?php
+                switch($horodatage->getType()) {
+                    case Horodatage::HORODATAGE_TYPE_EDITION:
+                        $icon = "icon icon-export";
+                        $color = "bg-primary";
+                        break;
+                    case Horodatage::HORODATAGE_TYPE_VALIDATION:
+                        $icon = "icon icon-ok";
+                        $color = "bg-success";
+                        break;
+                    case Horodatage::HORODATAGE_TYPE_NOTIFICATION:
+                        $icon = "icon icon-mail";
+                        $color = "bg-secondary";
+                        break;
+                    case Horodatage::HORODATAGE_TYPE_ETAT:
+                        $icon = "icon icon-info";
+                        $color = "bg-secondary";
+                        break;
+                    case Horodatage::HORODATAGE_TYPE_MODIFICATION:
+                        $icon = "icon icon-modifier";
+                        $color = "bg-warning";
+                        break;
+                    default:
+                        $icon = "";
+                        $color = "";
+                }
+            ?>
+            <li class="timeline-item mb-4">
+              <span class="timeline-icon <?= $color ?>">
+                <i class="<?= $icon ?> text-white" style="font-style:unset; padding-right:unset"></i>
+              </span>
+                <p>
+                    <b>
+                        <?php echo $horodatage->getType(); ?>
+                        <?php if ($horodatage->getComplement()) : ?>
+                            : <?php echo $horodatage->getComplement(); ?>
+                        <?php endif; ?>
+                    </b>
+                </p>
+                <p class="text-muted mb-2 fw-bold">
+                    le <?php echo $horodatage->getDate()->format('d/m/Y'); ?>
+                    à <?php echo $horodatage->getDate()->format('H:i'); ?>
+                </p>
+                <p class="text-muted">
+                    fait par <?php echo $horodatage->getUtilisateur()->getDisplayName(); ?>
+                </p>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</section>
+<style>
+    .timeline-with-icons {
+        border-left: 1px solid hsl(0, 0%, 90%);
+        position: relative;
+        list-style: none;
+    }
 
+    .timeline-with-icons .timeline-item {
+        position: relative;
+    }
+
+    .timeline-with-icons .timeline-item:after {
+        position: absolute;
+        display: block;
+        top: 0;
+    }
+
+    .timeline-with-icons .timeline-icon {
+        position: absolute;
+        left: -48px;
+        background-color: hsl(217, 88.2%, 90%);
+        color: hsl(217, 88.8%, 35.1%);
+        border-radius: 50%;
+        height: 31px;
+        width: 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .timeline-item {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        width:300px;
+        padding-left: 15px;
+        padding-top: 10px;
+        padding-bottom: 1px;
+    }
+</style>

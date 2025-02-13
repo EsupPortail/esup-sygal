@@ -2,6 +2,8 @@
 
 namespace Soutenance\Service\Url;
 
+use Acteur\Service\ActeurHDR\ActeurHDRService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Application\RouteMatch;
 use Interop\Container\ContainerInterface;
 use Laminas\Router\RouteStackInterface;
@@ -33,6 +35,14 @@ class UrlServiceFactory
             $service->setRouteMatch($match);
         }
         $service->setRouter($router);
+
+        /** @var ActeurTheseService $acteurService */
+        $acteurService = $container->get(ActeurTheseService::class);
+        $service->setActeurTheseService($acteurService);
+
+        /** @var ActeurHDRService $acteurHDRService */
+        $acteurHDRService = $container->get(ActeurHDRService::class);
+        $service->setActeurHDRService($acteurHDRService);
 
         return $service;
     }

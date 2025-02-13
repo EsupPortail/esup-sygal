@@ -1,0 +1,341 @@
+    <?php
+
+    use Acteur\Entity\Db\ActeurHDR;
+    use Acteur\Entity\Db\ActeurThese;
+    use Application\Entity\Db\Role;
+    use Candidat\Entity\Db\Candidat;
+    use Depot\Controller\Plugin\UrlFichierHDR;
+    use HDR\Entity\Db\HDR;
+    use Individu\Entity\Db\IndividuRole;
+    use Soutenance\Entity\Avis;
+    use Soutenance\Entity\Etat;
+    use Soutenance\Entity\PropositionHDR;
+    use Soutenance\Provider\Privilege\JustificatifPrivileges;
+    use Soutenance\Provider\Privilege\PropositionPrivileges;
+    use Validation\Entity\Db\ValidationHDR;
+
+    /**
+ * @see \Soutenance\Controller\HDR\Proposition\PropositionHDRController::propositionAction()
+ *
+* // * @var \Application\View\Renderer\PhpRenderer $this
+ *
+ * @var HDR $hdr
+ * @var PropositionHDR $proposition
+ * @var ValidationHDR[] $validations
+ * @var Candidat $candidat
+ * @var ActeurHDR[] $garants
+ * @var Avis[] $avis
+ * @var array $indicateurs
+ * @var boolean $isIndicateursOk
+ * @var boolean $juryOk
+ * @var UrlFichierHDR $urlFichierHDR ,
+ * @var array $justificatifs ,
+ * @var boolean $justificatifsOk ,
+ * @var boolean $validationActeur
+ * @var string $typeProposition
+ *
+ * @var IndividuRole[] $ecoleResponsables
+ * @var IndividuRole[] $uniteResponsables
+ * @var string[] $emailsAspectDoctorats
+ * @var bool $informationsOk
+ *
+ * @var $FORMULAIRE_DELOCALISATION
+ * @var $FORMULAIRE_DELEGUATION
+ * @var $FORMULAIRE_DEMANDE_ANGLAIS
+ * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
+ */
+
+$canModifier = ($this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_MODIFIER) or $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
+$canModifierJustificatif = ($this->isAllowed($hdr, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
+$canSuppression = ($this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS));
+
+
+$this->headTitle("Proposition de soutenance");
+?>
+
+<?php echo $this->alertes()
+    ->addAlertesFromDatabase()
+    ->renderAsBootstrapToasts()
+?>
+
+<?php echo $this->alertes()
+    ->addAlertesFromFlashMessenger()
+    ->renderAsBootstrapToasts()
+?>
+
+<h1 class="page-header">
+    Proposition de soutenance
+    <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
+</h1>
+
+<p class="lead">
+    Afin d'être validée et traitée par l'établissement, la proposition de soutenance doit être validée par tous les
+    intervenants immédiats de la HDR (c'est-à-dire candidat, garant).
+<!--    Les règles de composition du jury sont rappelées dans la page d'accueil <q>Guide de la HDR</q>.-->
+</p>
+
+<?php if(!empty($validations)): ?>
+    <div class="alert alert-warning">
+        <span class="icon icon-attention"></span>
+        En cas de modification de la proposition, toutes les validations seront annulées et la proposition devra être à nouveau
+        validée.
+    </div>
+<?php endif; ?>
+
+<?php if ($canSuppression) : ?>
+    <div class="box card">
+        <div class="card-header bg-dark text-white">
+            <h2>Gestion de la proposition de soutenance</h2>
+        </div>
+        <div class="card-body">
+            <div>
+                <p class="lead">
+                    <span class="icon icon-attention"></span>
+                    Attention, cela supprimera l'ensemble des informations déjà rentrées pour cette proposition de soutenance.
+                </p>
+                <a
+                    <?php
+                    /** @see \Soutenance\Controller\PropositionController::propositionAction() */
+                    $returnUrl = $this->url("soutenance_{$typeProposition}/proposition", ['id' => $hdr->getId()], [], true);
+                    /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                        href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/suppression", ['id' => $hdr->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                        class="btn btn-danger"
+                        data-toggle="confirmationx" data-event="modification"
+                        title="Suppression des informations de la soutenance"
+                        data-message="Attention, cela supprimera l'ensemble des informations rentrées pour cette proposition de soutenance, êtes-vous sûr(e) ?">
+                    <span class="icon icon-delete"></span>
+                    Suppression des informations de la soutenance
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="separator"></div>
+    <br>
+<?php endif; ?>
+<br/>
+
+<div class="INFORMATIONS"></div>
+<?php
+echo $this->partial('partial/informations', [
+    'proposition' => $proposition,
+
+    'informationsOk' => $informationsOk,
+    'garants' => $garants,
+    'uniteResponsables' => $uniteResponsables,
+    'ecoleResponsables' => $ecoleResponsables,
+    'emailsAspectDoctorats' => $emailsAspectDoctorats,
+
+    'canModifier' => $canModifier]);
+?>
+
+<div id="DATE_ET_LIEU"></div>
+<?php
+echo $this->partial('soutenance/proposition/partial/date-et-lieu', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
+    'typeProposition' => $typeProposition,]);
+?>
+
+<div id="COMPOSITION_JURY"></div>
+<?php
+echo $this->partial('soutenance/proposition/partial/composition-jury', [
+    'proposition' => $proposition,
+    'indicateurs' => $indicateurs,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION,
+    'typeProposition' => $typeProposition]);
+?>
+
+
+<div id="INFORMATION"></div>
+<?php
+echo $this->partial('partial/informations-complementaires', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+    'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
+    'typeProposition' => $typeProposition]);
+?>
+
+<div id="JUSTIFICATIF"></div>
+<?php echo $this->partial('soutenance/proposition/partial/fichiers', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifierJustificatif,
+    'justificatifs' => $justificatifs,
+    'justificatifsOk' => $justificatifsOk,
+    'urlFichier' => $urlFichierHDR,
+    'typeProposition' => $typeProposition
+]); ?>
+
+<div id="VALIDATION"></div>
+<?php
+$canValiderActeur = $isIndicateursOk && ($justificatifsOk !== false) && ($informationsOk !== false) && $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+$canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
+
+echo $this->partial('partial/validations-acteurs', [
+    'proposition' => $proposition,
+    'validations' => $validations,
+    'canValiderActeur' => $canValiderActeur,
+    'canSursis' => $canSursis,
+
+    'isIndicateursOk' => $isIndicateursOk,
+    'candidat' => $candidat,
+    'garants' => $garants,
+    'validationActeur' => $validationActeur,
+
+    'isInformationsOk' => $informationsOk,
+    'typeProposition' => $typeProposition,
+
+]); ?>
+
+<?php
+$canStructureValider = $isIndicateursOk && $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
+    $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
+    $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+
+$canStructureRevoquer = $isIndicateursOk && $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE);
+
+$canPresidence = $this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+
+echo $this->partial('soutenance/proposition/partial/validations-structures', [
+    'proposition' => $proposition,
+    'validations' => $validations,
+    'canStructureValider' => $canStructureValider,
+    'canStructureRevoquer' => $canStructureRevoquer,
+    'canPresidence' => $canPresidence,
+    'typeProposition' => $typeProposition,
+]); ?>
+
+<?php
+echo $this->partial('soutenance/proposition/partial/adresse', [
+    'proposition' => $proposition,
+    'typeProposition' => $typeProposition,
+]);
+?>
+
+<?php
+echo $this->partial('soutenance/proposition/partial/pre-rapports', [
+    'proposition' => $proposition,
+    'avis' => $avis,
+    'typeProposition' => $typeProposition,
+]);
+?>
+
+<?php
+$validationMDD = null;
+if (isset($validations[Role::CODE_GEST_HDR]) && $validations[Role::CODE_GEST_HDR]) {
+    $validationMDD = current($validations[Role::CODE_GEST_HDR]);
+}
+
+if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and $canPresidence): ?>
+    <div class="box card">
+        <div class="card-header bg-success">
+            <h2 class="first"> Et ensuite ? </h2>
+        </div>
+        <div class="card-body">
+
+            Vous pouvez maintenant procéder aux saisies des informations de préparation de la soutenance.
+            <nav aria-label="Etape suivante">
+                <ul class="roadmap pagination">
+                    <li>
+                        <a
+                            <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
+                                class="roadmap-step-link"
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance", ['id' => $hdr->getId()], [], true); ?>">
+                            <span class="fas fa-arrow-alt-circle-right"></span>
+                            Préparation de la soutenance
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>
+</div>
+<script>
+    let navbar = 50 + 5;
+
+    $(function () {
+        $("body").on({
+            "edition-datelieu": function (event) {
+                event.div.modal('hide');
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see \Soutenance\Controller\PropositionController::generateViewDateLieuAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-date-lieu", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_DATE_LIEU").html(retour);
+                        }
+                });
+
+                // window.location.reload();
+                // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
+                // window.scrollTo(0,top);
+            },
+            "edition-membre": function (event) {
+                event.div.modal('hide');
+                //$.ajax({
+                //    type: "POST",
+                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-jury', ["these" => $hdr->getId()], [], true); ?>//",
+                //    beforeSend:
+                //        function () {
+                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée au jury.</div><br/>");
+                //        },
+                //    success:
+                //        function(retour){
+                //            let texte = "ok";
+                //            $("div#BOXDIV_JURY").html(retour);
+                //        }
+                //});
+
+                window.location.reload();
+                let top = $('div#COMPOSITION_JURY').offset().top - navbar;
+                window.scrollTo(0, top);
+            },
+            "edition-informations": function (event) {
+                event.div.modal('hide');
+                //$.ajax({
+                //    type: "POST",
+                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations', ["these" => $hdr->getId()], [], true); ?>//",
+                //    beforeSend:
+                //        function () {
+                //            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                //        },
+                //    success:
+                //        function(retour){
+                //            let texte = "ok";
+                //            $("div#BOXDIV_INFORMATIONS").html(retour);
+                //        }
+                //});
+
+                window.location.reload();
+                // let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
+                // window.scrollTo(0, top);
+            },
+            "edition-confidentialite": function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            },
+            "refus-proposition": function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            },
+        });
+    });
+
+    $(function () {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+</script>

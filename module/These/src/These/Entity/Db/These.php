@@ -2,6 +2,7 @@
 
 namespace These\Entity\Db;
 
+use Acteur\Entity\Db\ActeurThese;
 use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Discipline;
 use Application\Entity\Db\DomaineHal;
@@ -10,8 +11,6 @@ use Application\Entity\Db\Pays;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TitreAcces;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
 use DateTime;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
@@ -26,16 +25,19 @@ use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Soutenance\Entity\PropositionThese;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use These\Filter\TitreApogeeFilter;
-use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
-use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
+use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Entity\Db\ValidationThese;
 
 /**
  * These
@@ -207,11 +209,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     private $validations;
 
-//    /**
-//     * @var Collection
-//     */
-//    private $titreAcces;
-
     /**
      * @var TitreAcces
      */
@@ -250,7 +247,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var ArrayCollection
      */
-    private $propositions;
+    private $propositionsThese;
 
     /**
      * @var ArrayCollection
@@ -294,8 +291,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
         $this->rapports = new ArrayCollection();
-        $this->propositions = new ArrayCollection();
+        $this->propositionsThese = new ArrayCollection();
         $this->domainesHal = new ArrayCollection();
+        $this->validations = new ArrayCollection();
     }
 
     /**
@@ -825,7 +823,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getActeurs($exceptHistorises = true)
     {
         if ($exceptHistorises) {
-            return $this->acteurs->filter(function (Acteur $a) {
+            return $this->acteurs->filter(function (ActeurThese $a) {
                 return null === $a->getHistoDestruction();
             });
         }
@@ -841,7 +839,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         $acteurs = $this->getActeurs()->toArray();
 
-        usort($acteurs, $callable ?: Acteur::getComparisonFunction());
+        usort($acteurs, $callable ?: ActeurThese::getComparisonFunction());
 
         return new ArrayCollection($acteurs);
     }
@@ -855,7 +853,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getActeursByRoleCode($code): Collection
     {
         $codes = (array) $code;
-        $filter = function(Acteur $a) use ($codes) {
+        $filter = function(ActeurThese $a) use ($codes) {
             return in_array($a->getRole()->getCode(), $codes);
         };
 
@@ -869,7 +867,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getActeursToString($includeRole = false, $separator = ", ")
     {
-        $formatter = function(Acteur $a) use ($includeRole) {
+        $formatter = function(ActeurThese $a) use ($includeRole) {
             $str = (string) $a;
             if ($includeRole) {
                 $str .= " ({$a->getRole()->getRoleId()})";
@@ -893,26 +891,26 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             $role = $role->getCode();
         }
 
-        $individus = $this->getActeursByRoleCode($role)->map(function(Acteur $a) { return $a->getIndividu(); });
+        $individus = $this->getActeursByRoleCode($role)->map(function(ActeurThese $a) { return $a->getIndividu(); });
 
         return $individus->contains($individu);
     }
 
     /**
-     * @param Acteur $acteur
+     * @param ActeurThese $acteur
      * @return $this
      */
-    public function addActeur(Acteur $acteur)
+    public function addActeur(ActeurThese $acteur)
     {
         $this->acteurs->add($acteur);
         return $this;
     }
 
     /**
-     * @param Acteur $acteur
+     * @param ActeurThese $acteur
      * @return $this
      */
-    public function removeActeur(Acteur $acteur)
+    public function removeActeur(ActeurThese $acteur)
     {
         $this->acteurs->removeElement($acteur);
         return $this;
@@ -948,47 +946,37 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * Retourne les éventuelles validations du type spécifié.
-     *
-     * @param TypeValidation|string $type
-     * @param bool                  $historisee
-     * @return Collection
      */
-    public function getValidations($type = null, $historisee = false)
+    public function getValidations(string|TypeValidation|null $type = null, bool $historisee = false): Collection
     {
         if ($type instanceof TypeValidation) {
             $type = $type->getCode();
         }
 
         $validations = $this->validations;
-        if($validations){
-            $validations = $validations->filter(function(Validation $v) use ($type) {
-                return $v->getTypeValidation()->getCode() === $type;
-            });
-            $validations = $validations->filter(function(Validation $v) use ($historisee) {
-                return $historisee === null || !$historisee === $v->estNonHistorise();
-            });
-        }
+        $validations = $validations->filter(function(ValidationThese $v) use ($type) {
+            return $v->getValidation()->getTypeValidation()->getCode() === $type;
+        });
+        $validations = $validations->filter(function (ValidationThese $v) use ($historisee) {
+            return !$historisee === $v->estNonHistorise();
+        });
 
         return $validations;
     }
 
     /**
      * Retourne l'éventuelle validation du type spécifié.
-     *
-     * @param TypeValidation|string $type
-     * @param bool                  $historisee
-     * @return Validation|null
      */
-    public function getValidation($type, $historisee = false)
+    public function getValidation(string|TypeValidation $type, bool $historisee = false): ?ValidationThese
     {
         return $this->getValidations($type, $historisee)->first() ?: null;
     }
 
     /**
-     * @param Validation $validation
+     * @param ValidationThese $validation
      * @return These
      */
-    public function addValidation(Validation $validation)
+    public function addValidation(ValidationThese $validation)
     {
         $this->validations->add($validation);
 
@@ -996,10 +984,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param Validation $validation
+     * @param ValidationThese $validation
      * @return These
      */
-    public function removeValidation(Validation $validation)
+    public function removeValidation(ValidationThese $validation)
     {
         $this->validations->removeElement($validation);
 
@@ -1299,14 +1287,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$individusSansMail = []): array
     {
         $emails = [];
-        /** @var Acteur[] $directeurs */
+        /** @var ActeurThese[] $directeurs */
         $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
-        /** @var Acteur[] $codirecteurs */
+        /** @var ActeurThese[] $codirecteurs */
         $codirecteurs = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
         $encadrements = array_merge($directeurs, $codirecteurs);
         $emailExtractor = fn(Individu $i) => $i->getEmailPro() ?: $i->getEmailUtilisateur();
 
-        /** @var Acteur $acteur */
+        /** @var ActeurThese $acteur */
         foreach ($encadrements as $acteur) {
             $individu = $acteur->getIndividu();
             $email = $emailExtractor->__invoke($individu);
@@ -1333,7 +1321,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $encadrements = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
         $emailExtractor = fn(Individu $i) => $i->getEmailPro() ?: $i->getEmailUtilisateur();
 
-        /** @var Acteur $acteur */
+        /** @var ActeurThese $acteur */
         foreach ($encadrements as $acteur) {
             $individu = $acteur->getIndividu();
             $email = $emailExtractor->__invoke($individu);
@@ -1434,11 +1422,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * @param boolean $asIndividu
-     * @return Acteur[]|Individu[]
+     * @return ActeurThese[]|Individu[]
      */
     public function getEncadrements($asIndividu = false)
     {
-        /** @var Acteur[] $acteurs */
+        /** @var ActeurThese[] $acteurs */
         $acteurs = [];
 
         $directeurs     = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
@@ -1460,24 +1448,50 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @return mixed
      */
-    public function getPropositions()
+    public function getPropositionsThese()
     {
-        return $this->propositions;
+        return $this->propositionsThese;
     }
 
     /**
      * @param mixed $propositions
      * @return These
      */
-    public function setPropositions($propositions)
+    public function setPropositionsThese($propositions)
     {
-        $this->propositions = $propositions;
+        $this->propositionsThese = $propositions;
         return $this;
     }
 
-    public function getPresidentJury(): ?Acteur
+    /**
+     * Add proposition.
+     *
+     * @param PropositionThese $propositionThese
+     *
+     * @return These
+     */
+    public function addPropositionThese(PropositionThese $propositionThese)
     {
-        /** @var Acteur $acteur */
+        $this->propositionsThese[] = $propositionThese;
+
+        return $this;
+    }
+
+    /**
+     * Remove proposition.
+     *
+     * @param PropositionThese $propositionThese
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removePropositionThese(PropositionThese $propositionThese)
+    {
+        return $this->propositionsThese->removeElement($propositionThese);
+    }
+
+    public function getPresidentJury(): ?ActeurThese
+    {
+        /** @var ActeurThese $acteur */
         foreach ($this->getActeurs() as $acteur) {
             if ($acteur->estNonHistorise() AND $acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
                 return $acteur;
@@ -1817,5 +1831,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getPaysCoTutelle()
     {
         return $this->paysCoTutelle;
+    }
+
+    public function getApprenant(): Doctorant
+    {
+        return $this->getDoctorant();
     }
 }

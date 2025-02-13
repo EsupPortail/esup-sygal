@@ -1,14 +1,17 @@
 <?php
 
-use These\Entity\Db\These;
-use Soutenance\Form\Membre\MembreForm;
 use Laminas\Form\Element;
+use Soutenance\Entity\Proposition;
+use Soutenance\Form\Membre\MembreForm;
+use These\Entity\Db\These;
 
 /**
  * @see \Soutenance\Controller\PropositionController::modifierMembreAction()
  * @var MembreForm $form
- * @var These $these
+ * @var Proposition $proposition
  */
+
+$object = $proposition->getObject();
 ?>
 
 
@@ -22,11 +25,18 @@ echo $this->formControlGroup($form->get('qualite'));
 echo $this->formControlGroup($form->get('etablissement'));
 echo $this->formControlGroup($form->get('adresse'));
 
-if ($these->getEtablissement()->estComue()) {
-    /** @var Element $element */
-    $element = $form->get('exterieur');
+/** @var Element $element */
+$element = $form->get('exterieur');
+if ($object->getEtablissement()->estComue()) {
     $element->setLabel('Le membre est extérieur (n\'appartient pas à l\'établissement qui délivre le dîplome)');
+}else{
+    if ($object instanceof These) {
+        $element->setLabel("Le membre est extérieur (non membre d'un établissement de la COMUE et non membre de l'unité de recherche de la thèse) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :");
+    }else{
+        $element->setLabel("Le membre est extérieur (n'appartient pas à l'établissement d'inscription du candidat HDR) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :");
+    }
 }
+
 echo $this->formControlGroup($form->get('exterieur'));
 echo $this->formControlGroup($form->get('visio'));
 echo $this->formControlGroup($form->get('role'));
@@ -42,4 +52,7 @@ echo $this->form()->closeTag();
 
 <script>
     $('select').selectpicker();
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
 </script>

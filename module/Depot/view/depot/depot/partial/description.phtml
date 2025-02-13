@@ -41,7 +41,7 @@ $langueAutreTitre = function () use ($metadonnee) {
             <dt>Domaine(s) HAL</dt>
             <dd><?php
                 if ($these->getDomainesHal() instanceof PersistentCollection && $these->getDomainesHal()->isEmpty()){ ?>
-                    <em> Aucun domaine HAL de renseigné </em><br>
+                    <em> Aucun domaine HAL renseigné </em><br>
                 <?php }else{ ?>
                 <ul>
                     <?php foreach($these->getDomainesHal() as $domaine){ ?>

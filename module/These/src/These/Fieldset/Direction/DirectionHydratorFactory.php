@@ -2,13 +2,13 @@
 
 namespace These\Fieldset\Direction;
 
+use Acteur\Hydrator\ActeurThese\ActeurTheseHydrator;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Application\Service\Role\RoleService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\Hydrator\HydratorPluginManager;
 use Structure\Service\Etablissement\EtablissementService;
-use These\Hydrator\ActeurHydrator;
-use These\Service\Acteur\ActeurService;
 
 class DirectionHydratorFactory
 {
@@ -24,9 +24,9 @@ class DirectionHydratorFactory
         $individuService = $container->get(IndividuService::class);
         $hydrator->setIndividuService($individuService);
 
-        /** @var ActeurService $acteurService */
-        $acteurService = $container->get(ActeurService::class);
-        $hydrator->setActeurService($acteurService);
+        /** @var ActeurTheseService $acteurService */
+        $acteurService = $container->get(ActeurTheseService::class);
+        $hydrator->setActeurTheseService($acteurService);
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);
@@ -36,9 +36,9 @@ class DirectionHydratorFactory
         $etablissementService = $container->get(EtablissementService::class);
         $hydrator->setEtablissementService($etablissementService);
 
-        /** @var \These\Hydrator\ActeurHydrator $acteurHydrator */
-        $acteurHydrator = $container->get(HydratorPluginManager::class)->get(ActeurHydrator::class);
-        $hydrator->setActeurHydrator($acteurHydrator);
+        /** @var \Acteur\Hydrator\ActeurThese\ActeurTheseHydrator $acteurHydrator */
+        $acteurHydrator = $container->get(HydratorPluginManager::class)->get(ActeurTheseHydrator::class);
+        $hydrator->setActeurTheseHydrator($acteurHydrator);
 
         return $hydrator;
     }

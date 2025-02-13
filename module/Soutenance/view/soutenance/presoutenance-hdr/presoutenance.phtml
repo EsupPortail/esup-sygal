@@ -1,0 +1,398 @@
+<?php
+
+/**
+ * @see PresoutenanceHDRController::presoutenanceAction()
+ * @var HDR $hdr
+ * @var Validation\Entity\Db\Validation $validationBDD
+ * @var Soutenance\Entity\Proposition $proposition
+ * @var Membre[] $membres
+ * @var ActeurHDR[] $acteursMembres
+ * @var Membre[] $rapporteurs
+ * @var \Acteur\Entity\Db\ActeurHDR[] $acteursRapporteurs
+ * @var ValidationHDR[] $engagements
+ * @var Avis[] $avis
+ * @var Adresse $adresse
+ * @var bool $justificatifsOk
+ * @var array $justificatifs
+ * @var UrlFichierHDR $urlFichierHDR
+ * @var string $typeProposition
+ *
+ * @var array $documentsLiesSoutenance
+ */
+
+use Acteur\Entity\Db\ActeurHDR;
+use Depot\Controller\Plugin\UrlFichierHDR;
+use HDR\Entity\Db\HDR;
+use HDR\Provider\Privileges\HDRPrivileges;
+use Soutenance\Entity\Adresse;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\Membre;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Validation\Entity\Db\ValidationHDR;
+
+$tousLesEngagements = true;
+foreach($rapporteurs as $rapporteur) {
+//    $individu = $rapporteur->getIndividu();
+    $individu = $acteursRapporteurs[$rapporteur->getId()] ?? null;
+    $found = false;
+    foreach ($engagements as $engagement) {
+        if ($engagement->getIndividu() === $individu) {
+            $found = true;
+            break;
+        }
+    }
+    if ($found === false) {
+        $tousLesEngagements = false;
+        break;
+    }
+}
+
+$tousLesAvis = true;
+foreach($rapporteurs as $rapporteur) {
+// NB : la méthode Membre::getIndividu() a été supprimée (car utilise la relation "acteur" supprimée)
+// => le test ci-dessous peut comparer les Membre plutôt que les Individu...
+//    $individu = $rapporteur->getIndividu();
+    $found = false;
+    foreach ($avis as $avi) {
+//        if ($avi->getMembre()->getIndividu() === $individu) {
+        if ($avi->getMembre() === $rapporteur) {
+            $found = true;
+            break;
+        }
+    }
+    if ($found === false) {
+        $tousLesAvis = false;
+        break;
+    }
+}
+
+$canFeuVert = ($justificatifsOk === true AND $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU)));
+$this->headTitle('Préparation de la soutenance de '.$hdr->getCandidat()->getIndividu());
+$canModifierAdresse = $canFeuVert;
+$canGenererDocument = $canFeuVert;
+?>
+
+<h1 class="page-header">
+    Préparation de la soutenance
+    <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->alertes()
+    ->addAlertesFromFlashMessenger()
+    ->renderAsBootstrapToasts()
+?>
+
+<?php if (! $validationBDD) : ?>
+
+    <p class="lead text-danger">
+        La proposition de soutenance n'a pas encore été validée.
+    </p>
+
+<?php else: ?>
+
+    <?php if ($justificatifsOk !== true) : ?>
+        <div class="box card">
+            <div class="card-header <?php echo ($justificatifsOk === null)?'bg-warning':'bg-danger'; ?>">
+                <h2>
+                    Des justificatifs sont manquants
+                </h2>
+            </div>
+            <div class="card-body">
+                <span class="icon icon-warning"></span>
+                Liste des justificatifs manquants :
+                <ul>
+                    <?php foreach ($justificatifs as $justificatif) : ?>
+                        <?php if($justificatif['justificatif'] === null) : ?>
+                            <li>
+                                <?php echo $justificatif['label'] ?>
+                                <?php if (isset($justificatif['membre'])) : ?>
+                                    -
+                                    <?php
+                                    /** @var Membre $membre */
+                                    $membre = $justificatif['membre'];
+                                    echo $membre->getDenomination();
+                                    ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
+            <?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
+        </div>
+        <div class="col-lg-6">
+            <?php if (true): ?>
+                <div class="box card">
+                    <div class="card-header <?= $proposition->getAdresseActive() ? "bg-success" : "bg-danger"; ?>">
+                        <h2>  Adresse exacte de la soutenance</h2>
+                    </div>
+                    <div class="card-body">
+                        <?php echo $this->partial('soutenance/presoutenance/partial/adresse', ['proposition' => $proposition, 'typeProposition' => $typeProposition]); ?>
+                        <div>
+                            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <br>
+    <div class="separator"></div>
+    <br>
+
+    <!-- MEMBRES DU JURY ET PERSOPASS ------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/association-jury'); ?>
+
+    <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
+
+    <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
+
+
+    <!-- En attente de validation de l'établissement ------------------------------------------------------------------>
+
+    <?php
+    $bgcolor = "bg-danger";
+    $tousLesAvisSontFavorables = count(array_filter($avis, fn($avis) => $avis->getAvis() === 'Favorable')) === count($avis);
+    if (!$tousLesAvis || !$tousLesAvisSontFavorables) $bgcolor = "bg-danger";
+    else {
+        switch ($proposition->getEtat()->getCode()) {
+            case Etat::VALIDEE :
+            case Etat::COMPLET :
+                $bgcolor = "bg-success";
+                break;
+            case Etat::REJETEE :
+                $bgcolor = "bg-danger";
+                break;
+        }
+    }
+    ?>
+
+    <div class="box card">
+        <div class="card-header <?php echo $bgcolor; ?> text-white">
+            <h2>Complétion du dossier et validation de l'établissement</h2>
+        </div>
+        <div class="card-body">
+            <?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
+
+                <p class="lead">
+                    Pour permettre de faire avancer le dossier, veuillez vérifier que les rapports de pré-soutenance sont valides.
+                </p>
+
+                <?php if (count($avis) === 0 || !$tousLesAvis) : ?>
+                    <div class="alert alert-warning" style="margin-left: 1rem !important;">
+                        <span class="icon icon-attention"></span>
+                        Tous les rapports n'ont pas été rendus.
+                    </div>
+                <?php else : ?>
+                    <?php if (!$tousLesAvisSontFavorables) : ?>
+                        <div class="alert alert-warning">
+                            <span class="icon icon-attention"></span>
+                            Tous les rapports doivent être favorables pour déclarer le dossier comme complet.
+                        </div>
+                    <?php else : ?>
+                        <?php /** @see PresoutenanceController::indiquerDossierCompletAction() */ ?>
+                        <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/indiquer-dossier-complet", ['id' => $hdr->getId()], [], true); ?>"
+                           class="btn btn-success"
+                        >
+                            <span class="icon icon-checked"></span>
+                            Dossier complet
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS): ?>
+                <p class="lead">
+                    La direction de l'établissement n'a pas encore validé la proposition de soutenance
+                </p>
+            <?php endif; ?>
+
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
+
+            <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET || $proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                <div class="bg-success text-white" style="padding-left:1rem; font-size: x-large; "> Dossier complet </div>
+            <?php elseif($proposition->getEtat()->getCode() === Etat::REJETEE): ?>
+                <div class="bg-danger text-white" style="padding-left:1rem; font-size: x-large; "> Dossier incomplet </div>
+            <?php endif; ?>
+
+        </div>
+    </div>
+
+    <!-- Feu vert ----------------------------------------------------------------------------------------------------->
+
+    <?php
+    $bgcolor = "bg-danger";
+    if (!$tousLesAvis) $bgcolor = "bg-danger";
+    else {
+        switch ($proposition->getEtat()->getCode()) {
+            case Etat::VALIDEE :
+                $bgcolor = "bg-success";
+                break;
+            case Etat::REJETEE :
+                $bgcolor = "bg-danger";
+                break;
+        }
+    }
+    ?>
+
+    <div class="box card">
+        <div class="card-header <?php echo $bgcolor; ?> text-white">
+            <h2> Validation finale de la proposition de soutenance </h2>
+        </div>
+        <div class="card-body">
+            <p class="lead"> Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé
+                par l'établissement. </p>
+            <?php if ($canFeuVert) : ?>
+                <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET) : ?>
+                    <?php /** @see \Soutenance\Controller\PresoutenanceController::feuVertAction() */ ?>
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/feu-vert", ['id' => $hdr->getId()], [], true); ?>"
+                       class="btn btn-success action"
+                    >
+                        <span class="fas fa-thumbs-up"></span>
+                        Donner le feu vert
+                    </a>
+
+                    <?php /** @see \Soutenance\Controller\PresoutenanceController::stopperDemarcheAction() */ ?>
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/stopper-demarche", ['id' => $hdr->getId()], [], true); ?>"
+                       class="btn btn-danger action ajax-modal" data-event="annuler-soutenance"
+                    >
+                        <span class="fas fa-thumbs-down"></span>
+                        Annuler/Rejeter la proposition de soutenance
+                    </a>
+                <?php endif; ?>
+            <?php endif ?>
+
+            <?php echo $this->horodatagesParTypes($proposition, [
+                [HorodatageService::TYPE_ETAT, "Annulation de la soutenance"],
+                [HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance"],
+            ]); ?>
+
+            <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                <div class="bg-success text-white" style="padding-left:1rem; font-size: x-large; "> Soutenance autorisée
+                </div>
+            <?php endif; ?>
+            <?php if ($proposition->getEtat()->getCode() === Etat::REJETEE) : ?>
+                <div class="bg-danger text-white" style="padding-left:1rem; font-size: x-large; "> Soutenance rejetée
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <?php
+    $bgcolor = "bg-danger";
+    if ($hdr->getResultat() === HDR::RESULTAT_ADMIS) {
+        $bgcolor = "bg-success";
+    }elseif($hdr->getResultat() === HDR::RESULTAT_AJOURNE) {
+        $bgcolor = "bg-danger";
+    }else {
+        $bgcolor = "bg-warning";
+    }
+
+    $canAjouterResultat = $this->isAllowed($hdr, HDRPrivileges::HDR_DONNER_RESULTAT);
+    ?>
+
+    <div class="box card">
+        <div class="card-header <?php echo $bgcolor; ?> text-white">
+            <h2> Délibération suite à la soutenance </h2>
+        </div>
+        <div class="card-body">
+            <p class="lead">
+                À la suite de la soutenance, le jury délibère et statue sur la délivrance de la HDR.
+            </p>
+            <?php if ($canAjouterResultat && $hdr->getResultat() === null) : ?>
+                    <?php /** @see \Soutenance\Controller\PresoutenanceController::deliberationJuryAction() */ ?>
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/deliberation-jury", ['id' => $hdr->getId(), 'resultat' => HDR::RESULTAT_ADMIS], [], true); ?>"
+                       class="btn btn-success action"
+                    >
+                        <span class="fas fa-thumbs-up"></span>
+                        Admis
+                    </a>
+
+                    <?php /** @see \Soutenance\Controller\PresoutenanceController::deliberationJuryAction() */ ?>
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/deliberation-jury", ['id' => $hdr->getId(), 'resultat' => HDR::RESULTAT_AJOURNE], [], true); ?>"
+                       class="btn btn-danger action"
+                    >
+                        <span class="fas fa-thumbs-down"></span>
+                        Ajourné
+                    </a>
+            <?php endif ?>
+
+            <?php echo $this->horodatagesParTypes($proposition, [
+                [HorodatageService::TYPE_ETAT, "Délibération positive"],
+                [HorodatageService::TYPE_ETAT, "Délibération négative"],
+            ]); ?>
+
+            <?php if ($hdr->getResultat() === HDR::RESULTAT_ADMIS) : ?>
+                <div class="bg-success text-white" style="padding-left:1rem; font-size: x-large; "> Admis </div>
+            <?php endif; ?>
+            <?php if ($hdr->getResultat() === HDR::RESULTAT_AJOURNE) : ?>
+                <div class="bg-danger text-white" style="padding-left:1rem; font-size: x-large; "> Ajourné </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+
+    <br>
+    <div class="separator"></div>
+    <br>
+
+    <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/documents',
+        [
+            'documentsLiesSoutenance' => $documentsLiesSoutenance,
+            'proposition' => $proposition,
+            'urlFichier' => $urlFichierHDR,
+            'typeProposition' => $typeProposition,
+            'canGenererDocument' => $canGenererDocument
+        ]
+    ); ?>
+
+<?php endif; ?>
+
+<style>
+    div.adresse-block {
+        border-left: 2px gray solid;
+        padding: 0.5rem;
+    }
+</style>
+
+<script>
+    $(function() {
+        $("body").on("annuler-soutenance", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function() {
+        $("body").on("modification-date-rendu-rapport", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function() {
+        $("body").on("modification-association-jury", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function() {
+        $("body").on("modification-adresse", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

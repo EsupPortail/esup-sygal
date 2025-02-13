@@ -8,6 +8,7 @@ namespace Fichier\Entity\Db;
 class NatureFichier
 {
     const CODE_THESE_PDF = 'THESE_PDF';
+    const CODE_HDR_PDF = 'HDR_PDF';
     const CODE_FICHIER_NON_PDF = 'FICHIER_NON_PDF';
 
     // Fichiers divers

@@ -2,8 +2,7 @@
 
 namespace RapportActivite\Service\Search;
 
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use Application\Entity\Db\TypeValidation;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
@@ -12,7 +11,6 @@ use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use Application\Service\Financement\FinancementServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
@@ -29,10 +27,11 @@ use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Search\These\TheseTextSearchFilter;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseSearchServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenAvis\Entity\Db\AvisType;
+use Validation\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Validation\Entity\Db\TypeValidation;
 use Webmozart\Assert\Assert;
 
 class RapportActiviteSearchService extends SearchService
@@ -42,11 +41,10 @@ class RapportActiviteSearchService extends SearchService
     use TheseAnneeUnivServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteOperationRuleAwareTrait;
     use RapportActiviteOperationServiceAwareTrait;
-    use ValidationServiceAwareTrait;
     use TypeValidationAwareTrait;
 
     const NAME_nom_doctorant = 'nom_doctorant';
@@ -391,7 +389,7 @@ class RapportActiviteSearchService extends SearchService
     }
 
     /**
-     * @param \Application\Entity\Db\TypeValidation|\UnicaenAvis\Entity\Db\AvisType|string $typeOperation
+     * @param \Validation\Entity\Db\TypeValidation|\UnicaenAvis\Entity\Db\AvisType|string $typeOperation
      */
     private function getEnabledAsDqlComplementForTypeOperation($typeOperation, string $rapportAlias): string
     {

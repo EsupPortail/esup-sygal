@@ -4,12 +4,12 @@
  * @var $these These
  */
 
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
-use These\Filter\ActeursFormatter;
 use Application\View\Renderer\PhpRenderer;
+use These\Entity\Db\These;
 
-$acteursFormatter = new ActeursFormatter();
+$acteursFormatter = new ActeursTheseFormatter();
 $theseActeurs = $these->getActeurs();
 ?>
 
@@ -28,7 +28,7 @@ $theseActeurs = $these->getActeurs();
     <?php if ($theseActeurs->count()) {
             $roles = [Role::CODE_DIRECTEUR_THESE, Role::CODE_CODIRECTEUR_THESE, Role::CODE_MEMBRE_JURY, Role::CODE_RAPPORTEUR_JURY];
             foreach ($roles as $role) {
-                /** @var \These\Entity\Db\Acteur[] $acteurs */
+                /** @var \Acteur\Entity\Db\ActeurThese[] $acteurs */
                 $acteurs = $acteursFormatter->paramFilter(["role" => $role])->filter($theseActeurs);
                 if (count($acteurs) != 0) {
                     $libelle = $acteurs[0]->getRole()->getLibelle();

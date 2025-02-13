@@ -36,7 +36,7 @@ use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Repository\TheseRepository;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use These\Service\Notification\TheseNotificationFactoryAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -61,7 +61,7 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use MembreServiceAwareTrait;
 
     /**

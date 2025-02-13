@@ -22,15 +22,27 @@
         <field name="avis"              type="string"       length="64"         column="avis"           nullable="false"/>
         <field name="motif"             type="string"       length="1024"       column="motif"          nullable="false"/>
 
-        <many-to-one field="validation" target-entity="Application\Entity\Db\Validation">
+        <many-to-one field="validationThese" target-entity="Validation\Entity\Db\ValidationThese">
             <join-columns>
-                <join-column name="validation_id" referenced-column-name="id"/>
+                <join-column name="validation_these_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="validationHDR" target-entity="Validation\Entity\Db\ValidationHDR">
+            <join-columns>
+                <join-column name="validation_hdr_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
         <many-to-one field="fichierThese" target-entity="Depot\Entity\Db\FichierThese">
             <join-columns>
                 <join-column name="fichierthese_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="fichierHDR" target-entity="Depot\Entity\Db\FichierHDR">
+            <join-columns>
+                <join-column name="fichier_hdr_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 

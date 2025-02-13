@@ -1,17 +1,24 @@
 <?php
 
 /**
- * @var These $these
+ * @var Proposition $proposition
  * @var array $documentsLiesSoutenance
- * @var UrlFichierThese $urlFichierThese
+ * @var UrlFichierThese|UrlFichierHDR $urlFichier
+ * @var string $typeProposition
+ * @var bool $canGenererDocument
  */
 
+use Depot\Controller\Plugin\UrlFichierHDR;
 use Depot\Controller\Plugin\UrlFichierThese;
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\These;
 
-$canGererDocument             = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
-
+$object = $proposition->getObject();
+$apprenant = $object instanceof These ? "doctorant" : "candidat";
+$canGererDocument = $this->isAllowed($object, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
 ?>
 
 <div class="box card">
@@ -19,61 +26,176 @@ $canGererDocument             = $this->isAllowed($these, PropositionPrivileges::
         <h2> Documents liés à la soutenance</h2>
     </div>
     <div class="card-body">
-        <p class="lead">
-        Dépôt des fichiers liés à la soutenance : autorisation de soutenance, rapport de soutenance
-        </p>
-        <?php foreach ($documentsLiesSoutenance as $document) : ?>
-            <h3><?= $document["label"] ?></h3>
-            <div class="row">
-                <div class="col-md-4">
-                <?php if ($document["justificatif"] === null && $canGererDocument) : ?>
-                    <?php /** @see \Soutenance\Controller\JustificatifController::ajouterDocumentLieSoutenanceAction() */?>
-                    <a href="<?php echo $this->url("soutenance/justificatif/ajouter-document-lie-soutenance", ['these' => $these?->getId()], ["query" => [
-                        "nature" => $document["type"],
-                        "label" => $document["label"]
-                    ]], true) ?>"
-                       class="btn btn-primary ajax-modal" data-event="modification">
-                        <span class="icon icon-televerser"></span>
-                        Téléverser <?= strtolower($document["label"]) ?>
+
+        <!-- documents liés à la soutenance ----------------------------------------------------------------------------->
+
+        <?php if ($canGenererDocument && ($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::COMPLET)) : ?>
+            <div class="row m-2">
+                <h3> Génération et envoi des documents </h3>
+                <div class="col-md-6">
+                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/avis-soutenance", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                    >
+                        <span class="icon icon-pdf"></span>Générer l'avis de soutenance
                     </a>
-                <?php endif; ?>
-                </div>
-                <div class="col-md-8">
-                    <?php if (empty($document["justificatif"])) : ?>
-                        <div class="card-header bg-warning">
-                            <span class="icon icon-attention"></span>
-                            Aucun(e) <?= strtolower($document["label"]) ?> déposé(e).
-                        </div>
-                    <?php else : ?>
-                        <ul>
-                            <li>
-                                <?php echo $this->justificatif()->render($document["justificatif"], $urlFichierThese); ?>
-                                <?php if ($canGererDocument) : ?>
-                                    <a href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                        ['justificatif' => $document["justificatif"]->getId(), 'these' => $these->getId()],
-                                        ["query" => [
-                                                "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
-                                            ]
-                                        ],
-                                        true); ?>"
-                                       data-toggle="confirmationx"
-                                       data-message="Êtes-vous sûr de vouloir supprimer ce document ?">
-                                        <span style='color:darkred;' class="icon icon-delete iconly" data-bs-toggle="tooltip" title="Supprimer le document"></span>
-                                    </a>
-                                <?php endif; ?>
-                            </li>
-                        </ul>
+                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/proces-verbal-soutenance", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                        >
+                            <span class="icon icon-pdf"></span>
+                            Générer le procès verbal
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::rapportSoutenanceAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/rapport-soutenance", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                        >
+                            <span class="icon icon-pdf"></span>Générer le rapport de soutenance
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE AND $proposition->hasVisio()) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::rapportTechniqueAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/rapport-technique", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                        >
+                            <span class="icon icon-pdf"></span>Générer le rapport technique
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/convocations", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                                data-toggle="tooltip"
+                                data-bs-html = "true"
+                                title = "Génération des convocations pour : <br>
+                                - le <?= $apprenant ?> <br>
+                                - les membres déclarés"
+                        >
+                            <span class="icon icon-pdf"></span>Générer les convocations
+                        </a>
                     <?php endif; ?>
                 </div>
+                <div class="col-md-6">
+                    <?php echo $this->horodatagesParTypes($proposition, [
+                        [HorodatageService::TYPE_EDITION, "Avis de soutenance"],
+                        [HorodatageService::TYPE_EDITION, "Procès verbal"],
+                        [HorodatageService::TYPE_EDITION, "Rapport de soutenance"],
+                        [HorodatageService::TYPE_EDITION, "Rapport technique"],
+                        [HorodatageService::TYPE_EDITION, "Convocations"],
+                    ]);
+                    ?>
+                </div>
             </div>
-            <br/>
-        <?php endforeach; ?>
+
+            <!-- Partie envoi des convocations ------------------------------------------------------------------------>
+
+            <div class="row m-2">
+                <div class="col-md-6">
+                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE AND $canGenererDocument) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::envoyerConvocationAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/envoyer-convocation", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-info action"
+                                data-toggle="tooltip"
+                                data-bs-html = "true"
+                                title = "Les convocations seront envoyées : <br>
+                                - au <?= $apprenant ?> <br>
+                                - aux membres déclarés"
+                        >
+                            <span class="icon icon-notify"></span>Envoyer les convocations
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canGenererDocument) : ?>
+                        <a  <?php /** @see PresoutenanceController::transmettreDocumentsDirectionAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/transmettre-documents-direction", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-info action"
+                                data-toggle="tooltip"
+                                data-bs-html = "true"
+                                title = "Les documents envoyés seront : <br>
+                                - le procès-verbal <br>
+                                - le rapport de soutenance<br>
+                                - le rapport technique (en cas de visio-conférence)"
+                        >
+                            <span class="icon icon-notify"></span>
+                            <?php if($object instanceof These): ?>
+                                Transmettre les documents à la direction de thèse
+                            <?php else: ?>
+                                Transmettre les documents au garant
+                            <?php endif; ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-6">
+                    <?php echo $this->horodatagesParTypes($proposition, [
+                        [HorodatageService::TYPE_NOTIFICATION, "Convocations"],
+                        [HorodatageService::TYPE_NOTIFICATION, "Transmission des documents"]
+                    ]);
+                    ?>
+                </div>
+            </div>
+
+            <br>
+            <div class="separator"></div>
+
+        <?php endif; ?>
+
+        <div class="row m-2">
+            <h3> Dépôt des documents </h3>
+            <p class="lead">
+                Documents liés à la soutenance : autorisation de soutenance, rapport de soutenance...
+            </p>
+            <?php foreach ($documentsLiesSoutenance as $document) : ?>
+                <h4><?= $document["label"] ?></h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <?php if ($document["justificatif"] === null && $canGererDocument) : ?>
+                            <?php /** @see \Soutenance\Controller\JustificatifController::ajouterDocumentLieSoutenanceAction() */ ?>
+                            <a href="<?php echo $this->url("soutenance_{$typeProposition}/justificatif/ajouter-document-lie-soutenance", ['id' => $object?->getId()], ["query" => [
+                                "nature" => $document["type"],
+                                "label" => $document["label"]
+                            ]], true) ?>"
+                               class="btn btn-primary ajax-modal" data-event="modification">
+                                <span class="icon icon-televerser"></span>
+                                Téléverser <?= strtolower($document["label"]) ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-8">
+                        <?php if (empty($document["justificatif"])) : ?>
+                            <div class="card-header bg-warning">
+                                <span class="icon icon-attention"></span>
+                                Aucun(e) <?= strtolower($document["label"]) ?> déposé(e).
+                            </div>
+                        <?php else :
+                            $urlSuppressionJustificatif = $this->url("soutenance_{$typeProposition}/justificatif/retirer",
+                                ['justificatif' => $document["justificatif"]->getId(), 'id' => $object->getId()],
+                                ["query" => [
+                                    "retour" => $this->url("soutenance_{$typeProposition}/presoutenance", ['id' => $object->getId()], [], true)
+                                ]
+                                ],
+                                true);
+                            echo $this->justificatif()->render($document["justificatif"], $urlFichier, $urlSuppressionJustificatif, $canGererDocument); ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <br/>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 
-
 <script>
-    $(function() {
+    $(function () {
         $("body").on("modification", function (event) {
             event.div.modal('hide');
             window.location.reload();

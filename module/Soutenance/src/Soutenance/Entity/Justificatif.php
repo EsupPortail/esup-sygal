@@ -2,16 +2,19 @@
 
 namespace Soutenance\Entity;
 
+use Depot\Entity\Db\FichierHDR;
 use Depot\Entity\Db\FichierThese;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
 class Justificatif implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
-
     private ?int $id = null;
     private ?Proposition $proposition = null;
-    private ?FichierThese $fichier = null;
+    private ?FichierThese $fichierThese = null;
+    private ?FichierHDR $fichierHDR = null;
+    private int $fichier;
+
     private ?Membre $membre = null;
 
     public function getId() : ?int
@@ -29,14 +32,18 @@ class Justificatif implements HistoriqueAwareInterface {
         $this->proposition = $proposition;
     }
 
-    public function getFichier() : ?FichierThese
+    public function getFichier() : FichierThese|FichierHDR|null
     {
-        return $this->fichier;
+        return $this->proposition instanceof PropositionThese ? $this->fichierThese : $this->fichierHDR;
     }
 
-    public function setFichier(FichierThese $fichier) : void
+    public function setFichier(FichierThese|FichierHDR $fichier) : void
     {
-        $this->fichier = $fichier;
+        if($this->proposition instanceof PropositionThese){
+            $this->fichierThese = $fichier;
+        }else{
+            $this->fichierHDR = $fichier;
+        }
     }
 
     public function getMembre() : ?Membre
@@ -49,4 +56,11 @@ class Justificatif implements HistoriqueAwareInterface {
         $this->membre = $membre;
     }
 
+    /**
+     * Set a resolver for fichier.
+     */
+    public function setFichierResolver(callable $resolver): void
+    {
+        $this->fichierResolver = $resolver;
+    }
 }

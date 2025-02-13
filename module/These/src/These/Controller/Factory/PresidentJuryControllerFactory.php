@@ -7,7 +7,7 @@ use Depot\Service\These\DepotService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
 use These\Controller\PresidentJuryController;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\These\TheseService;
 
 class PresidentJuryControllerFactory
@@ -19,11 +19,11 @@ class PresidentJuryControllerFactory
     public function __invoke(ContainerInterface $container)
     {
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
          * @var MembreService $membreService
          * @var TheseService $theseService
          */
-        $acteurService = $container->get(ActeurService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
         $membreService = $container->get(MembreService::class);
         $theseService = $container->get(TheseService::class);
 
@@ -33,7 +33,7 @@ class PresidentJuryControllerFactory
         $adresseMailForm = $container->get('FormElementManager')->get(AdresseMailForm::class);
 
         $controller = new PresidentJuryController();
-        $controller->setActeurService($acteurService);
+        $controller->setActeurTheseService($acteurService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
         $controller->setAdresseMailForm($adresseMailForm);

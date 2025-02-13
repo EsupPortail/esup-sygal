@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="HDR\Entity\Db\HDR" table="HDR"
+            repository-class="HDR\Entity\Db\Repository\HDRRepository">
+        <id name="id" type="integer" column="id">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="etatHDR" type="string" column="etat_hdr" length="20" nullable="false"/>
+        <field name="resultat" type="integer" column="resultat" nullable="true"/>
+        <field name="dateAbandon" type="datetime" column="date_abandon" nullable="true"/>
+        <field name="cnu" type="string" column="cnu" nullable="false"/>
+        <field name="dateFinConfidentialite" type="datetime" column="date_fin_confid" nullable="true"/>
+        <field name="sourceCode" type="string" column="source_code" length="64" nullable="true"/>
+
+        <one-to-many field="fichierHDRs" target-entity="Depot\Entity\Db\FichierHDR" mapped-by="hdr" />
+
+        <many-to-one field="candidat" target-entity="Candidat\Entity\Db\Candidat">
+            <join-columns>
+                <join-column name="candidat_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
+            <join-columns>
+                <join-column name="etablissement_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
+            <join-columns>
+                <join-column name="ecole_doct_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
+            <join-columns>
+                <join-column name="unite_rech_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="discipline" target-entity="Application\Entity\Db\Discipline" fetch="LAZY">
+            <join-columns>
+                <join-column name="discipline_sise_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <one-to-many field="acteurs" target-entity="Acteur\Entity\Db\ActeurHDR" mapped-by="hdr"/>
+        <one-to-many field="validations" target-entity="Validation\Entity\Db\ValidationHDR" mapped-by="hdr"/>
+        <one-to-many field="propositionsHDR" target-entity="Soutenance\Entity\PropositionHDR" mapped-by="hdr"/>
+
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
+            <join-columns>
+                <join-column name="source_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

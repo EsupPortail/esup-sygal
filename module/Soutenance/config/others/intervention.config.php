@@ -3,6 +3,7 @@
 namespace Soutenance;
 
 use Application\Navigation\ApplicationNavigationFactory;
+use HDR\Entity\Db\HDR;
 use Soutenance\Assertion\InterventionAssertion;
 use Soutenance\Assertion\InterventionAssertionFactory;
 use Soutenance\Controller\InterventionController;
@@ -29,7 +30,7 @@ return [
                             InterventionPrivileges::INTERVENTION_AFFICHER,
                             InterventionPrivileges::INTERVENTION_MODIFIER,
                         ],
-                        'resources' => ['These'],
+                        'resources' => ['These', 'HDR'],
                         'assertion' => InterventionAssertion::class,
                     ],
                 ],
@@ -50,6 +51,7 @@ return [
                         'afficher',
                     ],
                     'privileges' => InterventionPrivileges::INTERVENTION_AFFICHER,
+                    'assertion' => InterventionAssertion::class,
                 ],
                 [
                     'controller' => InterventionController::class,
@@ -75,17 +77,47 @@ return [
                     ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'pages' => [
                             // DEPTH = 2
-                            'soutenance' => [
+                            'soutenance_these' => [
                                 'pages' => [
                                     // DEPTH = 3
                                     'intervention' => [
                                         'label' => 'Intervention de soutenance',
-                                        'route' => 'soutenance/intervention/afficher',
+                                        'route' => 'soutenance_these/intervention/afficher',
+                                        'order' => 250,
+                                        'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
+                                        'withtarget' => true,
+//                                        'paramsInject' => [
+//                                            'these',
+//                                        ],
+                                        'paramsInject' => [
+                                            'type',
+                                            'these',
+                                            'id',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
+                    /**
+                     * Navigation pour LA HDR courante.
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::HDR_SELECTIONNEE_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 2
+                            'soutenance_hdr' => [
+                                'pages' => [
+                                    // DEPTH = 3
+                                    'intervention' => [
+                                        'label' => 'Intervention de soutenance',
+                                        'route' => 'soutenance_hdr/intervention/afficher',
                                         'order' => 250,
                                         'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
                                         'withtarget' => true,
                                         'paramsInject' => [
-                                            'these',
+                                            'hdr',
                                         ],
                                     ],
                                 ],
@@ -99,8 +131,8 @@ return [
 
     'router' => [
         'routes' => [
-            'soutenance' => [
-                'child_routes' => [
+            'soutenance_these' => [
+                'child_routes' => $soutenanceChildRoutes = [
                     'intervention' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -155,6 +187,9 @@ return [
                         ],
                     ],
                 ],
+            ],
+            'soutenance_hdr' => [
+                'child_routes' => $soutenanceChildRoutes,
             ],
         ],
     ],

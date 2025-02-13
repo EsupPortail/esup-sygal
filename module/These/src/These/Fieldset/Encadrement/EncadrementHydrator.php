@@ -7,14 +7,14 @@ use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 
 class EncadrementHydrator extends DoctrineObject
 {
     use IndividuServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
 
     /**
@@ -27,10 +27,10 @@ class EncadrementHydrator extends DoctrineObject
         $data = parent::extract($object);
 
         $coencadrants = $object->getId() !== null ?
-            $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) :
+            $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) :
             $object->getActeursByRoleCode(Role::CODE_CO_ENCADRANT);
 
-        if(is_array($coencadrants)) usort($coencadrants, fn(Acteur $a, Acteur $b) => $a->getIndividu()->getNomComplet() <=> $b->getIndividu()->getNomComplet());
+        if(is_array($coencadrants)) usort($coencadrants, fn(ActeurThese $a, ActeurThese $b) => $a->getIndividu()->getNomComplet() <=> $b->getIndividu()->getNomComplet());
         $i = 1;
         foreach ($coencadrants as $coencadrant) {
             $data['coencadrant' . $i . '-individu'] = [
@@ -55,10 +55,10 @@ class EncadrementHydrator extends DoctrineObject
             if ($individuId = $data['coencadrant' . $i . '-individu']['id'] ?? null) {
                 /** @var Individu $individu */
                 $individu = $this->individuService->getRepository()->find($individuId);
-                $acteur = $object->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $object) : null;
+                $acteur = $object->getId() ? $this->acteurTheseService->getRepository()->findActeurByIndividuAndThese($individu, $object) : null;
                 $role = $this->applicationRoleService->getRepository()->findByCode(Role::CODE_CO_ENCADRANT);
                 if ($acteur === null) {
-                    $acteur = $this->acteurService->newActeur($object, $individu, $role);
+                    $acteur = $this->acteurTheseService->newActeurThese($object, $individu, $role);
                     $object->addActeur($acteur);
                 }
                 $acteur->setRole($role);
@@ -67,7 +67,7 @@ class EncadrementHydrator extends DoctrineObject
                 $temoins[] = $acteur->getId();
             }
         }
-        $coencadrants = $object->getId() ? $this->acteurService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) : [];
+        $coencadrants = $object->getId() ? $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) : [];
         foreach ($coencadrants as $acteur) {
             if (array_search($acteur->getId(), $temoins) === false) {
                 $acteur->historiser();

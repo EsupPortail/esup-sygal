@@ -4,7 +4,7 @@ namespace These\Controller\Factory;
 
 use Application\Service\MailConfirmationService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Application\Service\Validation\ValidationService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 use Depot\Service\Validation\DepotValidationService;
 use Doctorant\Service\MissionEnseignement\MissionEnseignementService;
 use Individu\Service\IndividuService;
@@ -13,7 +13,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Controller\TheseController;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\These\TheseService;
 
 class TheseControllerFactory
@@ -27,16 +27,16 @@ class TheseControllerFactory
     public function __invoke(ContainerInterface $container): TheseController
     {
         /**
-         * @var ValidationService       $validationService
+         * @var ValidationTheseService       $validationService
          * @var TheseService            $theseService
          * @var UniteRechercheService   $uniteService
          * @var MailConfirmationService $mailConfirmationService
          * @var MissionEnseignementService $missionEnseignementService
          * @var UtilisateurService      $utilisateurService
-         * @var ActeurService           $acteurService
+         * @var ActeurTheseService           $acteurService
          * @var IndividuService         $indivdiService
          */
-        $validationService = $container->get('ValidationService');
+        $validationService = $container->get(ValidationTheseService::class);
         $theseService = $container->get('TheseService');
         $uniteService = $container->get('UniteRechercheService');
         $mailConfirmationService = $container->get('MailConfirmationService');
@@ -44,7 +44,7 @@ class TheseControllerFactory
         $utilisateurService = $container->get('UtilisateurService');
 
         $controller = new TheseController();
-        $controller->setValidationService($validationService);
+        $controller->setValidationTheseService($validationService);
         $controller->setTheseService($theseService);
         $controller->setUniteRechercheService($uniteService);
         $controller->setMailConfirmationService($mailConfirmationService);

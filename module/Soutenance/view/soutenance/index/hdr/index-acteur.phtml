@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\IndexController::indexActeurAction()
+ *
+ * @var HDR[] $hdrs
+ *
+ */
+
+use HDR\Entity\Db\HDR;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
+
+$this->headTitle("Gestion de la préparation de la soutenance");
+
+$canProposer   = $this->isAllowed(EngagementImpartialitePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER));
+$canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER));
+?>
+
+<h1 class="page-header">
+    Gestion de la préparation de la soutenance
+</h1>
+
+<p class="lead">
+    Ce module permet de préparer votre soutenance de HDR, de la <strong>proposition du jury jusqu'à la réception des rapports de pré-soutenance</strong>.
+</p>
+
+<h2> Constituer votre jury de HDR </h2>
+
+<p>
+    <?php echo $this->appInfos()->nom ?> permet la constitution de votre jury de HDR de façon dématérialisée et ceci en deux étapes :
+</p>
+<ol>
+    <li> <strong>proposition</strong> de jury par le candidat et le garant de HDR;</li>
+    <li> <strong>validation de cette proposition</strong> successivement par le garant de l'unité de recherche, et la maison du doctorat.</li>
+</ol>
+
+<strong>Attention, votre jury doit respecter les règles suivantes :</strong>
+    <ul>
+        <li> le jury doit inclure deux rapporteurs, extérieurs aux établissements membres de la ComUE Normandie Université, et soit de rang A (Professeur des universités, Directeur de recherche, ...), soit d’un niveau équivalent (Professeur ou personnalité exerçant à l’étranger qui peuvent justifier d’un statut équivalent), soit de rang B détenteur d’une HDR (Maître de Conférence-HDR, Chargé de Recherche-HDR) ;</li>
+        <li> au moins la moitié des membres doivent être de rang A (Professeur des universités, Directeur de recherche, ...) ou équivalents (Professeur ou personnalité à l’étranger qui peuvent justifier d’un statut équivalent) ; </li>
+        <li> au moins la moitié des membres doivent être extérieurs aux établissements membres de la ComUE Normandie Université. </li>
+    </ul>
+
+    <u>N.B. :</u> En fonction des disciplines, le jury doit respecter un équilibre entre hommes et femmes..
+
+
+<p>
+    Lors de cette étape, il pourra vous être demandé de télécharger des documents et justificatifs (délégation de signature, attestation d’HDR ...)
+</p>
+
+    <?php if ($canProposer && $hdrs !== []) : ?>
+        <div class="btn-group float-end action">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="icon icon-edit"></span>
+                Consulter les propositions
+            </button>
+            <div class="dropdown-menu">
+                <?php foreach($hdrs as $hdrLink) : ?>
+                        <a
+                            class="dropdown-item complete"
+                            <?php /** @see \Soutenance\Controller\HDR\Proposition\PropositionHDRController::propositionAction() */ ?>
+                            href="<?php echo $this->url("soutenance_hdr/proposition", ['id' => $hdrLink->getId()], [], true); ?>">
+                            <span class="badge bg-secondary"><?php echo $hdrLink->getCandidat(); ?></span>
+                        </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+<h2> Voir l'avancement des validations de votre soutenance </h2>
+
+<p>
+    Avant de pouvoir soutenir, <strong>votre proposition de jury doit être validée</strong> par le garant de HDR, directeur de l’unité de recherche, et l’établissement d’inscription puis <strong>votre HDR doit recevoir un avis positif des 2 rapporteurs</strong> de votre HDR.
+    Afin de suivre ces validations, <?php echo $this->appInfos()->nom ?> fournit une interface permettant de suivre l'évolution de la procédure.
+    Cette interface permet de connaître la liste de validations reçues et celles en attente.
+</p>
+
+    <?php if ($canVisualiser && $hdrs !== []) : ?>
+        <div class="btn-group float-end action">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="icon icon-voir"></span>
+                Voir les validations <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu">
+<!--                --><?php //foreach($hdrs as $hdrLink) : ?>
+<!--                        <a-->
+<!--                            class="dropdown-item complete"-->
+<!--                            --><?php ///** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
+<!--                            href="--><?php //echo $this->url("soutenance_{$typeProposition}/avancement", ['these' => $hdrLink->getId()], [], true); ?><!--">-->
+<!--                            <span class="badge bg-secondary">--><?php //echo $hdrLink->getDoctorant(); ?><!--</span>-->
+<!--                            --><?php
+//                            echo $this->partial('these/these/partial/titre', ['these' => $hdrLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+//                            ?>
+<!--                        </a>-->
+<!--                --><?php //endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>

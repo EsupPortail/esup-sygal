@@ -3,7 +3,7 @@
 namespace Admission\Controller\Avis;
 
 use Admission\Service\Etudiant\EtudiantService;
-use Application\Service\Validation\ValidationService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 use Psr\Container\ContainerInterface;
 use Admission\Service\Avis\AdmissionAvisService;
 use Admission\Service\Admission\AdmissionService;

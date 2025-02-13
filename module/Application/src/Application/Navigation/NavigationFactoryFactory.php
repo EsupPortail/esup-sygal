@@ -2,6 +2,7 @@
 
 namespace Application\Navigation;
 
+use HDR\Service\HDRService;
 use These\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
@@ -14,10 +15,13 @@ class NavigationFactoryFactory
         $userContextService = $container->get('UserContextService');
         /** @var TheseService $theseService */
         $theseService = $container->get('TheseService');
+        /** @var HDRService $hdrService */
+        $hdrService = $container->get(HDRService::class);
 
         $navigation = new ApplicationNavigationFactory();
         $navigation->setUserContextService($userContextService);
         $navigation->setTheseService($theseService);
+        $navigation->setHDRService($hdrService);
 
         return $navigation->__invoke($container, $requestedName, $options);
     }

@@ -2,8 +2,10 @@
 
 namespace Application\Provider;
 
+use Acteur\Service\ActeurHDR\ActeurHDRService;
 use Application\Entity\UserWrapperFactory;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
+use Candidat\Service\CandidatService;
 use Doctorant\Service\DoctorantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
@@ -28,11 +30,17 @@ class IdentityProviderFactory
         /** @var UserService $userService */
         $userService = $container->get('zfcuser_user_service');
 
-        /** @var ActeurService $acteurService */
-        $acteurService = $container->get(ActeurService::class);
+        /** @var ActeurTheseService $acteurService */
+        $acteurService = $container->get(ActeurTheseService::class);
+
+        /** @var ActeurHDRService $acteurHDRService */
+        $acteurHDRService = $container->get(ActeurHDRService::class);
 
         /** @var DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
+
+        /** @var CandidatService $candidatService */
+        $candidatService = $container->get(CandidatService::class);
 
         /** @var EcoleDoctoraleService $edService */
         $edService = $container->get(EcoleDoctoraleService::class);
@@ -53,8 +61,10 @@ class IdentityProviderFactory
 
         $service = new IdentityProvider();
         $service->setAuthenticationService($userService->getAuthService());
-        $service->setActeurService($acteurService);
+        $service->setActeurTheseService($acteurService);
+        $service->setActeurHDRService($acteurHDRService);
         $service->setDoctorantService($doctorantService);
+        $service->setCandidatService($candidatService);
         $service->setEcoleDoctoraleService($edService);
         $service->setUniteRechercheService($urService);
         $service->setApplicationRoleService($roleService);

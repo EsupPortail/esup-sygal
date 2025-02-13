@@ -2,8 +2,8 @@
 
 namespace These;
 
+use Acteur\Renderer\ActeurTemplateVariable;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use These\Renderer\ActeurTemplateVariable;
 use These\Renderer\TheseTemplateVariable;
 
 return [

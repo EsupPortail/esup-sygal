@@ -2,8 +2,8 @@
 
 use Application\Assertion\BaseAssertion;
 use Application\Constants;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Entity\Db\ValidationThese;
 use Application\View\Renderer\PhpRenderer;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use These\Entity\Db\These;
@@ -14,7 +14,7 @@ use These\Entity\Db\These;
  * @var string           $validerUrl
  * @var string           $devaliderUrl
  * @var TypeValidation   $typeValidation
- * @var Validation|null  $validation
+ * @var ValidationThese|null  $validation
  */
 
 $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE);

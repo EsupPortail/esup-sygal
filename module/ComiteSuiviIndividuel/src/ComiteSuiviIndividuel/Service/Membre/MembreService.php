@@ -72,10 +72,10 @@ class MembreService {
 
     /** REQUETAGE *****************************************************************************************************/
 
-    public function createQueryBuilder() : QueryBuilder
+    private function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
-            ->leftJoin('membre.acteur', 'acteur')->addSelect('acteur')
+//            ->leftJoin('membre.acteur', 'acteur')->addSelect('acteur') // n'existe plus
             ->leftJoin('membre.qualite', 'qualite')->addSelect('qualite')
             ->leftJoin('membre.these', 'these')->addSelect('these')
         ;

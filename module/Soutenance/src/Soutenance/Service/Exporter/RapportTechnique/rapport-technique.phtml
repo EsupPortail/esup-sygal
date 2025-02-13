@@ -7,7 +7,7 @@ use Application\View\Renderer\PhpRenderer;
 /**
  * @var PhpRenderer             $this
  * @see \Soutenance\Service\Exporter\AvisSoutenance\RapportTechniquePdfExporter
- * @see \Soutenance\Controller\PresoutenanceController::rapportTechniqueAction()
+ * @see PresoutenanceController::rapportTechniqueAction()
  * @var These                   $these
  * @var PdcData                 $informations
  */
@@ -203,7 +203,7 @@ Unité de recherche :
 </u>
 <br/><br/>
 
-Président du jury de soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
+Président du jury de soutenance de thèse de <?php echo $these->getApprenant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
 <br/><br/>
 
 <h3> Déroulement de la soutenance </h3>

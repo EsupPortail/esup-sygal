@@ -34,7 +34,7 @@ return [
                             JustificatifPrivileges::JUSTIFICATIF_AJOUTER,
                             JustificatifPrivileges::JUSTIFICATIF_RETIRER,
                         ],
-                        'resources' => ['These'],
+                        'resources' => ['These', 'HDR'],
                         'assertion' => JustificatifAssertion::class,
                     ],
                 ],
@@ -81,8 +81,8 @@ return [
 
     'router' => [
         'routes' => [
-            'soutenance' => [
-                'child_routes' => [
+            'soutenance_these' => [
+                'child_routes' => $soutenanceChildRoutes = [
                     'justificatif' => [
                         'type' => Segment::class,
                         'options' => [
@@ -135,6 +135,9 @@ return [
                         ],
                     ],
                 ],
+            ],
+            'soutenance_hdr' => [
+                'child_routes' => $soutenanceChildRoutes,
             ],
         ],
     ],

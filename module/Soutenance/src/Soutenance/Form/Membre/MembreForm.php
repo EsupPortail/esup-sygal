@@ -98,7 +98,7 @@ class MembreForm extends Form {
         );
         $this->add(
             (new Radio('role'))
-                ->setLabel("Role dans le jury <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
+                ->setLabel("Rôle dans le jury <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :")
                 ->setLabelOptions([ 'disable_html_escape' => true, ])
                 ->setValueOptions([
                     Membre::RAPPORTEUR_JURY   => 'rapporteur et membre du jury',

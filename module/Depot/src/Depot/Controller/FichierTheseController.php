@@ -7,7 +7,7 @@ use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
-use Application\Service\Validation\ValidationServiceAwareTrait;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Depot\Entity\Db\FichierThese;
 use Depot\Event\EventsInterface;
@@ -50,7 +50,7 @@ class FichierTheseController extends AbstractController
     use NotifierServiceAwareTrait;
     use DepotNotificationFactoryAwareTrait;
     use IndividuServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
 

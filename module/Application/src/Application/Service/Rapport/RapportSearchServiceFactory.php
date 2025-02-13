@@ -2,33 +2,33 @@
 
 namespace Application\Service\Rapport;
 
-use Application\Entity\Db\TypeValidation;
+use Application\Search\Financement\OrigineFinancementSearchFilter;
+use Application\Service\Financement\FinancementService;
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
-use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Financement\FinancementService;
-use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Structure\Service\Structure\StructureService;
 use These\Service\These\TheseSearchService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
-use Application\Service\Validation\ValidationService;
-use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\Factory\FactoryInterface;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationService;
 
 class RapportSearchServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
-     * @return RapportSearchService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): RapportSearchService
     {
+        /** @var ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
+
         /**
          * @var RapportService $rapportService
          */
@@ -44,7 +44,6 @@ class RapportSearchServiceFactory implements FactoryInterface
          * @var TheseAnneeUnivService $theseAnneeUnivService
          * @var TheseSearchService $theseSearchService
          * @var RapportService $rapportService
-         * @var ValidationService $validationService
          */
         $structureService = $container->get(StructureService::class);
         $etablissementService = $container->get(EtablissementService::class);
@@ -52,8 +51,6 @@ class RapportSearchServiceFactory implements FactoryInterface
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $theseSearchService = $container->get(TheseSearchService::class);
         $rapportService = $container->get(RapportService::class);
-        $validationService = $container->get(ValidationService::class);
-        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
 
         $service->setFinancementService($financementService);
         $service->setAnneesUnivs($theseAnneeUnivService);

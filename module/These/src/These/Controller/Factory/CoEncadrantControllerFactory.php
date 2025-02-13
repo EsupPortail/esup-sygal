@@ -2,6 +2,8 @@
 
 namespace These\Controller\Factory;
 
+use Acteur\Service\ActeurThese\ActeurTheseService;
+use Application\Service\Role\RoleService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
@@ -13,7 +15,6 @@ use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Controller\CoEncadrantController;
 use These\Form\CoEncadrant\RechercherCoEncadrantForm;
-use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporter;
 use These\Service\These\TheseService;
@@ -31,7 +32,7 @@ class CoEncadrantControllerFactory
     public function __invoke(ContainerInterface $container): CoEncadrantController
     {
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
          * @var CoEncadrantService $coEncadrantService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var EtablissementService $etablissementService
@@ -41,7 +42,7 @@ class CoEncadrantControllerFactory
          * @var TheseService $theseService
          * @var UniteRechercheService $uniteRechercheService
  */
-        $acteurService = $container->get(ActeurService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
         $coEncadrantService = $container->get(CoEncadrantService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $etablissementService = $container->get(EtablissementService::class);
@@ -52,7 +53,6 @@ class CoEncadrantControllerFactory
         $uniteRechercheService = $container->get(UniteRechercheService::class);
         $coEncadrementsExporter = $container->get(CoEncadrementsExporter::class);
 
-
         /**
          * @var RechercherCoEncadrantForm $rechercheCoEncadrantForm
          */
@@ -62,7 +62,7 @@ class CoEncadrantControllerFactory
         $renderer = $container->get('ViewRenderer');
 
         $controller = new CoEncadrantController();
-        $controller->setActeurService($acteurService);
+        $controller->setActeurTheseService($acteurService);
         $controller->setCoEncadrantService($coEncadrantService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEtablissementService($etablissementService);
@@ -74,6 +74,10 @@ class CoEncadrantControllerFactory
         $controller->setRechercherCoEncadrantForm($rechercheCoEncadrantForm);
         $controller->setRenderer($renderer);
         $controller->setCoEncadrementsExporter($coEncadrementsExporter);
+
+        /** @var \Application\Service\Role\RoleService $roleService */
+        $roleService = $container->get(RoleService::class);
+        $controller->setApplicationRoleService($roleService);
 
         return $controller;
     }

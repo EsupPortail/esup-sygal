@@ -2,7 +2,7 @@
 
 namespace These\Service\Notification;
 
-use Application\Service\Email\EmailTheseService;
+use Application\Service\Email\EmailService;
 use Interop\Container\ContainerInterface;
 use Notification\Factory\NotificationFactoryFactory;
 
@@ -25,9 +25,9 @@ class TheseNotificationFactoryFactory extends NotificationFactoryFactory
         /** @var TheseNotificationFactory $factory */
         $factory = parent::__invoke($container);
 
-        /** @var EmailTheseService $emailTheseService */
-        $emailTheseService =  $container->get(EmailTheseService::class);
-        $factory->setEmailTheseService($emailTheseService);
+        /** @var EmailService $emailService */
+        $emailService =  $container->get(EmailService::class);
+        $factory->setEmailService($emailService);
 
         return $factory;
     }

@@ -2,6 +2,8 @@
 
 namespace Soutenance\Service\Membre;
 
+use Acteur\Service\ActeurHDR\ActeurHDRService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Doctrine\ORM\EntityManager;
@@ -36,6 +38,14 @@ class MembreServiceFactory
         $service->setTokenService($tokenService);
         $service->setUserContextService($userContextService);
         $service->setUtilisateurService($utilisateurService);
+
+        /** @var ActeurTheseService $acteurService */
+        $acteurService = $container->get(ActeurTheseService::class);
+        $service->setActeurTheseService($acteurService);
+
+        /** @var ActeurHDRService $acteurHDRService */
+        $acteurHDRService = $container->get(ActeurHDRService::class);
+        $service->setActeurHDRService($acteurHDRService);
 
         return $service;
     }

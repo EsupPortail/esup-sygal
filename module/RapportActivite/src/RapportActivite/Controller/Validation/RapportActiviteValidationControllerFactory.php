@@ -2,10 +2,10 @@
 
 namespace RapportActivite\Controller\Validation;
 
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
+use Validation\Service\ValidationService;
 
 class RapportActiviteValidationControllerFactory
 {
@@ -19,12 +19,13 @@ class RapportActiviteValidationControllerFactory
         $rapportActiviteService = $container->get(RapportActiviteService::class);
         /** @var RapportActiviteValidationService $rapportActiviteValidationService */
         $rapportActiviteValidationService = $container->get(RapportActiviteValidationService::class);
-        /** @var ValidationService $validationService */
-        $validationService = $container->get(ValidationService::class);
 
         $controller = new RapportActiviteValidationController();
         $controller->setRapportActiviteService($rapportActiviteService);
         $controller->setRapportActiviteValidationService($rapportActiviteValidationService);
+
+        /** @var \Validation\Service\ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
         $controller->setValidationService($validationService);
 
         return $controller;

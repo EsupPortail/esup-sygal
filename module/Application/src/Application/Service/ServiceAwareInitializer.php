@@ -2,20 +2,19 @@
 
 namespace Application\Service;
 
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
-use Depot\Service\FichierThese\FichierTheseService;
-use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
-use These\Service\These\TheseService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
-use Application\Service\Validation\ValidationService;
+use Depot\Service\FichierThese\FichierTheseService;
+use Depot\Service\Workflow\WorkflowService;
 use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
-use Depot\Service\Workflow\WorkflowService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
-use Retraitement\Service\RetraitementService;
 use Laminas\ServiceManager\Initializer\InitializerInterface;
+use Retraitement\Service\RetraitementService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
+use These\Service\These\TheseService;
 
 class ServiceAwareInitializer implements InitializerInterface
 {
@@ -25,17 +24,12 @@ class ServiceAwareInitializer implements InitializerInterface
     public function __invoke(ContainerInterface $container, $instance)
     {
         $services = [
-            //'UtilisateurService'     => UtilisateurService::class,
             'RoleService'            => RoleService::class,
-            //'ParametreService'       => ParametreService::class,
-            //'VariableService'        => VariableService::class,
             'TheseService'           => TheseService::class,
-            //'DoctorantService'       => DoctorantService::class,
             'FichierTheseService'    => FichierTheseService::class,
             'VersionFichierService'  => VersionFichierService::class,
             'ValiditeFichierService' => ValiditeFichierService::class,
             'WorkflowService'        => WorkflowService::class,
-            'ValidationService'      => ValidationService::class,
             'UserContextService'     => UserContextService::class,
             'RetraitementService'    => RetraitementService::class,
             'EcoleDoctoraleService'  => EcoleDoctoraleService::class,

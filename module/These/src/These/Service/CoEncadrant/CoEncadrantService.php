@@ -11,7 +11,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\UniteRecherche;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -23,7 +23,7 @@ class CoEncadrantService
     public function createQueryBuilder(): QueryBuilder
     {
         try {
-            $qb = $this->getEntityManager()->getRepository(Acteur::class)->createQueryBuilder('acteur')
+            $qb = $this->getEntityManager()->getRepository(ActeurThese::class)->createQueryBuilder('acteur')
                 ->addSelect('individu')->join('acteur.individu', 'individu')
                 ->addSelect('role')->join('acteur.role', 'role')
                 ->andWhere('role.code = :code')
@@ -34,7 +34,7 @@ class CoEncadrantService
         return $qb;
     }
 
-    /**@return Acteur[] */
+    /**@return ActeurThese[] */
     public function findByText(string $term): array
     {
         $qb = $this->createQueryBuilder()
@@ -44,7 +44,7 @@ class CoEncadrantService
         return $result;
     }
 
-    public function getCoEncadrant(?int $id): ?Acteur
+    public function getCoEncadrant(?int $id): ?ActeurThese
     {
         if ($id === null) return null;
 
@@ -59,7 +59,7 @@ class CoEncadrantService
         return $result;
     }
 
-    public function getRequestedCoEncadrant(AbstractActionController $controller, string $param = 'co-encadrant'): ?Acteur
+    public function getRequestedCoEncadrant(AbstractActionController $controller, string $param = 'co-encadrant'): ?ActeurThese
     {
         $id = $controller->params()->fromRoute($param);
         $result = $this->getCoEncadrant($id);

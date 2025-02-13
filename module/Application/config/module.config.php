@@ -32,6 +32,7 @@ use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\Etat\EtatViewHelper;
 use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
@@ -295,6 +296,7 @@ return array(
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
             'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
+            'etatHelper'  => EtatViewHelper::class,
         ),
         'factories' => array(
             'languageSelector'          => 'Application\View\Helper\LanguageSelectorHelperFactory',

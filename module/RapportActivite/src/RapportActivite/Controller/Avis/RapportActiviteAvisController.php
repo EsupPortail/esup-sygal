@@ -5,7 +5,7 @@ namespace RapportActivite\Controller\Avis;
 use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Closure;
 use Doctrine\ORM\NoResultException;
 use Individu\Service\IndividuServiceAwareTrait;
@@ -28,7 +28,7 @@ class RapportActiviteAvisController extends AbstractController
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use AvisServiceAwareTrait;
 

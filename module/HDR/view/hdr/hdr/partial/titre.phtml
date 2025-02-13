@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var HDR $hdr
+ * @var int $length
+ * @var boolean $description
+ */
+
+if (! isset($length)) $length = 40;
+
+use HDR\Entity\Db\HDR;
+
+$class = $hdr->estConfidentielle() ? 'text-danger' : '';
+?>
+
+<span class="<?php echo $class ?>"><?php echo $hdr->getCandidat()->getIndividu()->getNomComplet() ?></span>
+
+<?php if ($hdr->estConfidentielle()): ?>
+    <?php $content = sprintf('<span class="text-danger">Confidentielle jusqu\'au %s</span>', $hdr->getDateFinConfidentialiteToString()) ?>
+    <span class="text-danger"
+       data-bs-toggle="popover"
+       data-bs-content="<?php echo htmlspecialchars($content) ?>"
+       data-bs-trigger="hover"
+       data-bs-html="true"
+       data-bs-placement="bottom"><span class="badge bg-danger">CONFIDENTIELLE</span></span>
+<?php endif ?>

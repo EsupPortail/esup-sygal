@@ -2,8 +2,9 @@
 
 namespace RapportActivite;
 
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Application\Filter\IdifyFilter;
 use Application\Service\Rapport\RapportSearchService;
 use Application\View\Renderer\PhpRenderer;
@@ -12,7 +13,6 @@ use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
-use These\Filter\ActeursFormatter;
 
 /**
  * @var PhpRenderer $this
@@ -33,11 +33,11 @@ use These\Filter\ActeursFormatter;
  * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
  */
 
-$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs = new ActeursTheseFormatter();
 $acteursFormatterDirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
-$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs = new ActeursTheseFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
@@ -154,9 +154,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
 
             <?php if ($displayEtablissement): ?>
             <td>
-                <abbr title="<?php echo $these->getEtablissement()->getStructure()->getLibelle() ?>">
-                    <?php echo $these->getEtablissement()->getStructure()->getSourceCode() ?>
-                </abbr>
+                <?php echo $this->structure($these->getEtablissement(), false); ?>
             </td>
             <?php endif ?>
 
@@ -201,9 +199,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <?php if ($displayEcoleDoctorale): ?>
             <td>
                 <?php if ($ed = $these->getEcoleDoctorale()): ?>
-                    <abbr title="<?php echo $ed->getStructure()->getLibelle() ?>">
-                        <?php echo $ed->getStructure()->getCode(); ?>
-                    </abbr>
+                    <?php echo $this->structure($ed, false); ?>
                 <?php endif ?>
             </td>
             <?php endif ?>
@@ -211,9 +207,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <?php if ($displayUniteRecherche): ?>
             <td>
                 <?php if ($ur = $these->getUniteRecherche()): ?>
-                    <abbr title="<?php echo $ur->getStructure()->getLibelle() ?>">
-                        <?php echo $ur->getStructure()->getCode(); ?>
-                    </abbr>
+                    <?php echo $this->structure($ur, false); ?>
                 <?php endif ?>
             </td>
             <?php endif ?>

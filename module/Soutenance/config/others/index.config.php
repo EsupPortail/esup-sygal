@@ -3,16 +3,34 @@
 namespace Soutenance;
 
 use Application\Navigation\ApplicationNavigationFactory;
-use Soutenance\Controller\IndexController;
-use Soutenance\Controller\IndexControllerFactory;
-use Soutenance\Controller\PropositionRechercheController;
-use Soutenance\Provider\Privilege\IndexPrivileges;
-use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use Soutenance\Assertion\IndexAssertion;
+use Soutenance\Assertion\IndexAssertionFactory;
+use Soutenance\Controller\HDR\Proposition\PropositionHDRRechercheController;
+use Soutenance\Controller\IndexController;
+use Soutenance\Controller\IndexControllerFactory;
+use Soutenance\Controller\These\PropositionThese\PropositionTheseRechercheController;
+use Soutenance\Provider\Privilege\IndexPrivileges;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'bjyauthorize' => [
+        'rule_providers' => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            IndexPrivileges::INDEX_RAPPORTEUR,
+                            IndexPrivileges::INDEX_GLOBAL,
+                        ],
+                        'resources' => ['These', 'HDR'],
+                        'assertion' => IndexAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
@@ -28,6 +46,7 @@ return array(
                         'index-acteur',
                     ],
                     'privileges' => IndexPrivileges::INDEX_ACTEUR,
+                    'assertion' => IndexAssertion::class,
                 ],
                 [
                     'controller' => IndexController::class,
@@ -35,9 +54,17 @@ return array(
                         'index-rapporteur',
                     ],
                     'privileges' => IndexPrivileges::INDEX_RAPPORTEUR,
+                    'assertion' => IndexAssertion::class,
                 ],
                 [
-                    'controller' => PropositionRechercheController::class,
+                    'controller' => PropositionHDRRechercheController::class,
+                    'action' => [
+                        'index',
+                    ],
+                    'privileges' => IndexPrivileges::INDEX_STRUCTURE,
+                ],
+                [
+                    'controller' => PropositionTheseRechercheController::class,
                     'action' => [
                         'index',
                     ],
@@ -62,7 +89,22 @@ return array(
                             // DEPTH = 2
                             'SOUTENANCES' => [
                                 'label' => '(Soutenances Structure)',
-                                'route' => 'soutenances/index-structure',
+                                'route' => 'soutenances/index-structure-these',
+//                                'resource' => PrivilegeController::getResourceId(TheseController::class, 'index'),
+                            ],
+                        ],
+                    ],
+                    /**
+                     * Cette page aura une page fille 'hdr-1', 'hdr-2', etc. générées automatiquement.
+                     * @see ApplicationNavigationFactory::processPage()
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::NOS_HDR_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 2
+                            'SOUTENANCES' => [
+                                'label' => '(Soutenances Structure)',
+                                'route' => 'soutenances/index-structure-hdr',
 //                                'resource' => PrivilegeController::getResourceId(TheseController::class, 'index'),
                             ],
                         ],
@@ -85,13 +127,14 @@ return array(
                     ],
                 ],
                 'child_routes' => [
-                    'recherche' => [
+                    'recherche-these' => [
                         'type' => Literal::class,
                         'may_terminate' => false,
                         'options' => [
                             'route' => '/recherche',
                             'defaults' => [
-                                'controller' => PropositionRechercheController::class,
+                                'controller' => PropositionTheseRechercheController::class,
+                                'type' => 'these', // requis
                             ],
                         ],
                         'child_routes' => [
@@ -107,15 +150,51 @@ return array(
                             ],
                         ],
                     ],
-                    'index-structure' => [
+                    'recherche-hdr' => [
+                        'type' => Literal::class,
+                        'may_terminate' => false,
+                        'options' => [
+                            'route' => '/recherche',
+                            'defaults' => [
+                                'controller' => PropositionHDRRechercheController::class,
+                                'type' => 'hdr', // requis
+                            ],
+                        ],
+                        'child_routes' => [
+                            'filters' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'index-structure-hdr' => [
                         'type' => Literal::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/index-structure',
+                            'route' => '/hdr/index-structure',
                             'defaults' => [
 //                                'controller' => IndexController::class,
 //                                'action' => 'index-structure',
-                                'controller' => PropositionRechercheController::class,
+                                'controller' => PropositionHDRRechercheController::class,
+                                'action' => 'index',
+                            ],
+                        ],
+                    ],
+                    'index-structure-these' => [
+                        'type' => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/these/index-structure',
+                            'defaults' => [
+//                                'controller' => IndexController::class,
+//                                'action' => 'index-structure',
+                                'controller' => PropositionTheseRechercheController::class,
                                 'action' => 'index',
                             ],
                         ],
@@ -144,19 +223,20 @@ return array(
                     ],
                 ],
             ],
-            'soutenance' => [
+            'soutenance_these' => [
                 'type' => Segment::class,
                 'may_terminate' => false,
                 'options' => [
-                    'route' => '/soutenance/:these',
+                    'route' => '/soutenance/these/:these',
                     'constraints' => [
                         'these' => '\d+',
                     ],
                     'defaults' => [
                         'controller' => IndexController::class,
+                        'type' => 'these', // requis
                     ],
                 ],
-                'child_routes' => [
+                'child_routes' => $soutenanceChildRoutes = [
                     'index-rapporteur' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
@@ -170,11 +250,28 @@ return array(
                     ],
                 ],
             ],
+            'soutenance_hdr' => [
+                'type' => Segment::class,
+                'may_terminate' => false,
+                'options' => [
+                    'route' => '/soutenance/hdr/:hdr',
+                    'constraints' => [
+                        'hdr' => '\d+',
+                    ],
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                        'type' => 'hdr', // requis
+                    ],
+                ],
+                'child_routes' => $soutenanceChildRoutes,
+            ],
         ],
     ],
 
     'service_manager' => [
-        'factories' => [],
+        'factories' => [
+            IndexAssertion::class => IndexAssertionFactory::class,
+        ],
     ],
     'controllers' => [
         'factories' => [

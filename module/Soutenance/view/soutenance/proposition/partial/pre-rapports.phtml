@@ -1,13 +1,15 @@
 <?php
 
 /**
- * @var These $these
+ * @var Proposition $proposition
  * @var Avis[] $avis
+ * @var string $typeProposition
  */
 
 use Soutenance\Entity\Avis;
-use These\Entity\Db\These;
+use Soutenance\Entity\Proposition;
 
+$object = $proposition->getObject();
 ?>
 
 <div class="box card">
@@ -36,19 +38,19 @@ use These\Entity\Db\These;
                         <td> <?php echo $avi->getMembre()->getDenomination(); ?> </td>
                         <td>
                             <?php if ($avi->getAvis() === Avis::FAVORABLE) : ?>
-                                <span class="text-success">
+                                <span class="badge bg-success text-white">
                                     <span class="icon icon-ok"></span>
                                     Avis favorable
                                 </span>
                             <?php else : ?>
-                                <span class="text-danger">
-                                    <span class="icon icon-kk"></span>
+                                <span class="badge bg-danger text-white">
+                                    <span class="icon icon-ko"></span>
                                     Avis défavorable
                                 </span>
                             <?php endif; ?>
                         <td>
                             <?php /** @see \Soutenance\Controller\AvisController::telechargerAction() ?> */?>
-                            <a href="<?php echo $this->url('soutenance/avis-soutenance/telecharger', ['these' => $these->getId(), 'rapporteur' => $avi->getMembre()->getId()]); ?>"
+                            <a href="<?php echo $this->url("soutenance_{$typeProposition}/avis-soutenance/telecharger", ['id' => $object->getId(), 'rapporteur' => $avi->getMembre()->getId()], true); ?>"
                             class="btn btn-primary"
                             >
                                 <span class="icon icon-pdf"></span> Télécharger le pré-rapport

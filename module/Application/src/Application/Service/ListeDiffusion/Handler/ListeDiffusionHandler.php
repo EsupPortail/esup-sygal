@@ -13,14 +13,14 @@ use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use These\Entity\Db\Acteur;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 
 class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
 {
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
 
@@ -93,7 +93,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
         switch ($this->role) {
             case 'dirtheses':
                 $acteurs = $this->fetchActeursDirecteursTheses();
-                return array_map(function(Acteur $acteur) {
+                return array_map(function(ActeurThese $acteur) {
                     return $acteur->getIndividu();
                 }, $acteurs);
             case 'doctorants':
@@ -107,13 +107,13 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     }
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     protected function fetchActeursDirecteursTheses(): array
     {
         $critereEd = $this->computeCritereED();
 
-        return $this->acteurService->getRepository()->findActeursByRole(
+        return $this->acteurTheseService->getRepository()->findActeursByRole(
             Role::CODE_DIRECTEUR_THESE,
             $this->etablissement,
             $critereEd

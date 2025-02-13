@@ -205,7 +205,7 @@ function generateRolesEtablissements($individu, $roles, $rolesAffectes, $etablis
     foreach ($etablissements as $structureConcrete) {
         $structureId = $structureConcrete->getStructure()->getId();
         $rolesFiltres = array_filter($roles, function (Role $role) use ($structureId) {
-            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId && !$role->isTheseDependant();
+            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId && !$role->isTheseDependant() && !$role->isHDRDependant();
         });
 
         if (!empty($rolesFiltres)) {

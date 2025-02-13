@@ -29,7 +29,7 @@
         <field name="role"              type="string"       length="64"         column="role_id"        nullable="false"/>
         <field name="visio"             type="boolean"                          column="visio"          nullable="false"/>
 
-        <many-to-one field="acteur" target-entity="These\Entity\Db\Acteur">
+        <many-to-one field="acteur" target-entity="Acteur\Entity\Db\ActeurThese">
             <join-columns>
                 <join-column name="acteur_id" referenced-column-name="id"/>
             </join-columns>

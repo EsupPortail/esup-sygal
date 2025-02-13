@@ -12,14 +12,7 @@ $long = $options['long']??false;
 ?>
 
 <?php if ($site !== null) : ?>
-    <span class="site" title="<?php echo $site->getStructure()->getLibelle(); ?>"
-          data-bs-toggle="tooltip" data-bs-html="true">
-        <?php if ($long) : ?>
-            <?php echo $site->getStructure()->getLibelle(); ?>
-        <?php else : ?>
-            <?php echo $site->getStructure()->getSigle(); ?>
-        <?php endif; ?>
-    </span>
+    <?php echo $this->structure($site, $long); ?>
 <?php else : ?>
     <span class="site" title="Formation dispensée pour tous les sites"
           data-bs-toggle="tooltip" data-bs-html="true">

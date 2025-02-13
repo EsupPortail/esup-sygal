@@ -7,7 +7,7 @@ use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Fichier\Entity\Db\VersionFichier;
 use Depot\Service\Workflow\WorkflowService;
 use ApplicationUnitTest\Controller\AbstractControllerTestCase;

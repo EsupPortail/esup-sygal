@@ -2,10 +2,10 @@
 
 namespace Soutenance\Service\Membre;
 
-use Application\Entity\Db\Profil;
-use Application\Entity\Db\Role;
-use Application\QueryBuilder\DefaultQueryBuilder;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
@@ -18,6 +18,7 @@ use LogicException;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionThese;
 use Soutenance\Entity\Qualite;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -28,12 +29,15 @@ use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceException;
 use Laminas\Mvc\Controller\AbstractActionController;
 
-class MembreService {
+class MembreService
+{
     use EntityManagerAwareTrait;
     use QualiteServiceAwareTrait;
     use TokenServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
+    use ActeurHDRServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -113,16 +117,18 @@ class MembreService {
 
     /** REQUETES ******************************************************************************************************/
 
-    public function createQueryBuilder() : DefaultQueryBuilder
+    /**
+     * @return QueryBuilder
+     */
+    private function createQueryBuilder() : QueryBuilder
     {
         /** @var DefaultQueryBuilder $qb */
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
             ->addSelect('proposition')->join('membre.proposition', 'proposition')
             ->addSelect('qualite')->join('membre.qualite', 'qualite')
-            // le reste est en "left join" car le Membre peut ne pas encore être lié à un Acteur
-            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
-            ->addSelect('individu')->leftJoin('acteur.individu', 'individu');
-
+//            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur') // n'existe plus
+//            ->addSelect('individu')->leftJoin('acteur.individu', 'individu')
+            ;
         return $qb;
     }
 
@@ -210,22 +216,24 @@ class MembreService {
     }
 
     /**
-     * @param Acteur $acteur
+     * @param ActeurThese|ActeurHDR $acteur
      * @return Membre|null
+     * @deprecated Equivaut à $acteur->getMembre() depuis quela relationa été inversée
      */
-    public function getMembreByActeur(Acteur $acteur) : ?Membre
+    public function getMembreByActeur(ActeurThese|ActeurHDR $acteur) : ?Membre
     {
-        $qb = $this->createQueryBuilder()
-            ->andWhere('membre.acteur = :acteur')
-            ->setParameter('acteur', $acteur)
-        ;
-
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs Membre partagent le même Acteur [".$acteur->getId()."]", 0, $e);
-        }
-        return $result;
+//        $qb = $this->createQueryBuilder()
+//            ->andWhere('membre.acteur = :acteur')
+//            ->setParameter('acteur', $acteur)
+//        ;
+//
+//        try {
+//            $result = $qb->getQuery()->getOneOrNullResult();
+//        } catch (NonUniqueResultException $e) {
+//            throw new RuntimeException("Plusieurs Membre partagent le même Acteur [".$acteur->getId()."]", 0, $e);
+//        }
+//        return $result;
+        return $acteur->getMembre();
     }
 
     /**
@@ -269,10 +277,10 @@ class MembreService {
 
     /**
      * @param Proposition $proposition
-     * @param Acteur $acteur
+     * @param ActeurThese|ActeurHDR $acteur
      * @return Membre
      */
-    public function createMembre(Proposition $proposition, Acteur $acteur) : Membre
+    public function createMembre(Proposition $proposition, ActeurThese|ActeurHDR $acteur) : Membre
     {
         $qualite = $this->qualiteService->getQualiteByLibelle($acteur->getLibelleQualite()) ?:
             $this->qualiteService->getQualiteParDefaut();
@@ -289,7 +297,7 @@ class MembreService {
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
         $membre->setEmail($acteur->getIndividu()->getEmailPro());
-        $membre->setActeur($acteur);
+//        $membre->setActeur($acteur); // la relation a été inversée et celle dans le sens supprimée.
         $membre->setVisio(false);
         $this->create($membre);
 
@@ -318,7 +326,11 @@ class MembreService {
 
     public function generateUsername(Membre $membre) : string
     {
-        $acteur = $membre->getActeur();
+//        $acteur = $membre->getActeur();
+        $proposition = $membre->getProposition();
+        $acteur = $proposition instanceof PropositionThese ?
+            $this->acteurTheseService->getRepository()->findActeurForSoutenanceMembre($membre) :
+            $this->acteurHDRService->getRepository()->findActeurForSoutenanceMembre($membre);
         if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
         $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
         return ($nomusuel . "_" . $membre->getId());
@@ -332,7 +344,11 @@ class MembreService {
      */
     public function getUtilisateur(Membre $membre) : ?AbstractUser
     {
-        $acteur = $membre->getActeur();
+//        $acteur = $membre->getActeur();
+        $proposition = $membre->getProposition();
+        $acteur = $proposition instanceof PropositionThese ?
+            $this->acteurTheseService->getRepository()->findActeurForSoutenanceMembre($membre) :
+            $this->acteurHDRService->getRepository()->findActeurForSoutenanceMembre($membre);
         if ($acteur === null) return null;
         $individu = $acteur->getIndividu();
         if ($individu === null) return null;
@@ -346,7 +362,12 @@ class MembreService {
 
     public function retrieveToken(Membre $membre) : ?AbstractUserToken
     {
-        $individu = $membre->getActeur()->getIndividu();
+//        $individu = $membre->getActeur()->getIndividu();
+        $proposition = $membre->getProposition();
+        $acteur = $proposition instanceof PropositionThese ?
+            $this->acteurTheseService->getRepository()->findActeurForSoutenanceMembre($membre) :
+            $this->acteurHDRService->getRepository()->findActeurForSoutenanceMembre($membre);
+        $individu = $acteur->getIndividu();
         $utilisateurs = $individu->getUtilisateurs();
 
         foreach ($utilisateurs as $utilisateur) {

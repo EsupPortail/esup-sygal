@@ -9,6 +9,7 @@ use Horodatage\Entity\Interfaces\HasHorodatagesInterface;
 use Horodatage\Entity\Traits\HasHorodatagesTrait;
 use RuntimeException;
 use These\Entity\Db\These;
+use UnicaenApp\Util;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
@@ -16,8 +17,10 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     use HistoriqueAwareTrait;
     use HasHorodatagesTrait;
 
+    const ROUTE_PARAM_PROPOSITION_HDR = "hdr";
+    const ROUTE_PARAM_PROPOSITION_THESE = "these";
+
     private ?int $id = null;
-    private ?These $these = null;
     private ?DateTime $date = null;
     private ?string $lieu = null;
     private ?string $adresse = null;
@@ -29,23 +32,19 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     private ?DateTime $renduRapport = null;
     private ?DateTime $confidentialite = null;
     private bool $huitClos = false;
-    private bool $labelEuropeen = false;
-//    private bool $manuscritAnglais = false;
     private bool $soutenanceAnglais = false;
-    private ?string $nouveauTitre = null;
     private  ?Etat $etat = null;
     private ?string $sursis = null;
-
     private Collection $justificatifs;
     private Collection $avis;
+    private Collection $propositionsThese;
+    private Collection $propositionsHDR;
 
-    public function __construct(?These $these = null)
+
+    public function __construct()
     {
         $this->membres = new ArrayCollection();
 
-        $this->setThese($these);
-        $this->setLabelEuropeen(false);
-//        $this->setManuscritAnglais(false);
         $this->setSoutenanceAnglais(false);
         $this->setHuitClos(false);
         $this->setExterieur(false);
@@ -54,6 +53,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         $this->avis = new ArrayCollection();
         $this->adresses = new ArrayCollection();
         $this->horodatages = new ArrayCollection();
+        $this->propositionsThese = new ArrayCollection();
+        $this->propositionsHDR = new ArrayCollection();
     }
 
     public function getId() : ?int
@@ -61,19 +62,17 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         return $this->id;
     }
 
-    public function getThese() : ?These
-    {
-        return $this->these;
-    }
-
-    public function setThese(These $these) : void
-    {
-        $this->these = $these;
-    }
-
     public function getDate() : ?DateTime
     {
         return $this->date;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateToString(): string
+    {
+        return Util::formattedDate($this->getDate());
     }
 
     public function setDate(?DateTime $date) : void
@@ -155,42 +154,6 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     /**
      * @return bool
      */
-    public function isLabelEuropeen()
-    {
-        return $this->labelEuropeen;
-    }
-
-    /**
-     * @param bool $labelEuropeen
-     * @return Proposition
-     */
-    public function setLabelEuropeen($labelEuropeen)
-    {
-        $this->labelEuropeen = $labelEuropeen;
-        return $this;
-    }
-
-//    /**
-//     * @return bool
-//     */
-//    public function isManuscritAnglais()
-//    {
-//        return $this->manuscritAnglais;
-//    }
-//
-//    /**
-//     * @param bool $manuscritAnglais
-//     * @return Proposition
-//     */
-//    public function setManuscritAnglais($manuscritAnglais)
-//    {
-//        $this->manuscritAnglais = $manuscritAnglais;
-//        return $this;
-//    }
-
-    /**
-     * @return bool
-     */
     public function isSoutenanceAnglais()
     {
         return $this->soutenanceAnglais;
@@ -244,24 +207,6 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
         }
 
         return $rapporteurs;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNouveauTitre()
-    {
-        return $this->nouveauTitre;
-    }
-
-    /**
-     * @param string $nouveauTitre
-     * @return Proposition
-     */
-    public function setNouveauTitre($nouveauTitre)
-    {
-        $this->nouveauTitre = $nouveauTitre;
-        return $this;
     }
 
     /**
@@ -328,7 +273,7 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
      * @var bool $sursis
      * @return Proposition
      */
-    public function setSurcis($sursis)
+    public function setSursis($sursis)
     {
         if ($sursis) {
             $this->sursis = 'O';
@@ -403,5 +348,67 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
             }
         }
         return $result;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPropositionsThese(): Collection
+    {
+        return $this->propositionsThese;
+    }
+
+    /**
+     * @param PropositionThese $propositionThese
+     * @return Proposition
+     */
+    public function addPropositionsThese($propositionThese)
+    {
+        $this->propositionsThese->add($propositionThese);
+        return $this;
+    }
+
+    public function removePropositionsThese($propositionThese)
+    {
+        $this->propositionsThese->removeElement($propositionThese);
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPropositionsHDR(): Collection
+    {
+        return $this->propositionsHDR;
+    }
+
+    /**
+     * @param PropositionHDR $propositionHDR
+     * @return Proposition
+     */
+    public function addPropositionsHDR($propositionHDR)
+    {
+        $this->propositionsHDR->add($propositionHDR);
+        return $this;
+    }
+
+    public function removePropositionsHDR($propositionHDR)
+    {
+        $this->propositionsHDR->removeElement($propositionHDR);
+        return $this;
+    }
+
+    /**
+     * Retourne l'élément (These ou HDR) auquel cette proposition est rattachée.
+     */
+    public function getObject()
+    {
+        if ($this instanceof PropositionThese) {
+            return $this->getThese();
+        } elseif ($this instanceof PropositionHDR) {
+            return $this->getHDR();
+        }
+
+        throw new \LogicException('Type de proposition inconnu.');
     }
 }

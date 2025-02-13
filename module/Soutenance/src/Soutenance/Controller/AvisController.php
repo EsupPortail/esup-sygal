@@ -2,7 +2,7 @@
 
 namespace Soutenance\Controller;
 
-use Application\Controller\AbstractController;
+use Depot\Service\FichierHDR\FichierHDRServiceAwareTrait;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
@@ -10,51 +10,43 @@ use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Soutenance\Entity\Justificatif;
-use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Notification\Service\NotifierServiceAwareTrait;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
-use Laminas\Http\Request;
-use Laminas\View\Model\ViewModel;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 
-class AvisController extends AbstractController
+class AvisController extends AbstractSoutenanceController
 {
-    use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use SoutenanceNotificationFactoryAwareTrait;
-    use PropositionServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use ValidatationServiceAwareTrait;
 
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
+    use FichierHDRServiceAwareTrait;
 
     use AvisFormAwareTrait;
 
     public function indexAction()
     {
-        $these = $this->requestedThese();
+        $this->initializeFromType(true, false);
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
-
-        /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $acteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+        
         $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         if ($avis !== null) {
-            $this->redirect()->toRoute('soutenance/avis-soutenance/afficher', ['these' => $these->getId(), 'rapporteur' => $membre->getId()]);
+            $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance/afficher", ['id' => $this->entity->getId(), 'rapporteur' => $membre->getId()], [], true);
         }
 
         /** @var AvisForm $form */
@@ -67,12 +59,12 @@ class AvisController extends AbstractController
             $files = ['files' => $request->getFiles()->toArray()];
 
             if ($files['files']['rapport']['size'] === 0) {
-                $this->flashMessenger()->addErrorMessage("Pas de prérapport de soutenance !");
-                $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()]);
+                $this->flashMessenger()->addErrorMessage("Pas de pré-rapport de soutenance !");
+                $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance", ['id' => $this->entity->getId(), 'rapporteur' => $membre->getId()], [], true);
             }
             if ($data['avis'] === "Défavorable" && trim($data['motif']) == '') {
                 $this->flashMessenger()->addErrorMessage("Vous devez motivez votre avis défavorable en quelques mots.");
-                $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()]);
+                $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance", ['id' => $this->entity->getId(), 'rapporteur' => $membre->getId()], [], true);
             }
 
             $form->setData($data);
@@ -85,22 +77,26 @@ class AvisController extends AbstractController
                 if (!empty($files)) {
 
                     $file = new Fichier();
-                    $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+                    $fichierService = $this->proposition->getObject() instanceof These ?
+                        $this->fichierTheseService :
+                        $this->fichierHDRService;
+                    $nature = $fichierService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
                     $file->setNature($nature);
                     $nfiles['files'][0] =  $files['files']['rapport'] ;
 
 
-                    $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                    $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $nfiles , $nature, $version);
+                    $version = $fichierService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                    $fichiers = $this->proposition->getObject() instanceof These ?
+                        $fichierService->createFichierThesesFromUpload($this->entity, $nfiles , $nature, $version) :
+                        $fichierService->createFichierHDRsFromUpload($this->entity, $nfiles , $nature, $version);
                 }
 //                var_dump($fichiers);
 //                die();
-
-                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
+                $validation = $this->validationService->signerAvisSoutenance($this->entity, $acteur->getIndividu());
                 $avis = new Avis();
-                $avis->setProposition($proposition);
+                $avis->setProposition($this->proposition);
                 $avis->setMembre($membre);
-                $avis->setFichierThese($fichiers[0]);
+                $avis->setFichier($fichiers[0]);
                 $avis->setValidation($validation);
                 $avis->setAvis($data['avis']);
                 $avis->setMotif($data['motif']);
@@ -111,12 +107,13 @@ class AvisController extends AbstractController
                  *   - peu importe l'avis il faut notifier à chaque dépot d'un avis ;
                  *   - si tous les avis sont déposés penser à notifier le bureau des doctorats.
                  */
-                $allAvis = $this->getAvisService()->getAvisByThese($these);
-                $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
+
+                $allAvis = $this->getAvisService()->getAvisByProposition($this->proposition);
+                $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($this->proposition);
 
                 if ($avis->getAvis() === Avis::FAVORABLE) {
                     try {
-                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisFavorable($these, $avis);
+                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisFavorable($this->entity, $avis);
                         $this->notifierService->trigger($notif);
                     } catch (\Notification\Exception\RuntimeException $e) {
                         // aucun destinataire, todo : cas à gérer !
@@ -124,7 +121,7 @@ class AvisController extends AbstractController
                 }
                 if ($avis->getAvis() === Avis::DEFAVORABLE) {
                     try {
-                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisDefavorable($these, $avis);
+                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisDefavorable($this->entity, $avis);
                         $this->notifierService->trigger($notif);
                     } catch (\Notification\Exception\RuntimeException $e) {
                         // aucun destinataire, todo : cas à gérer !
@@ -134,61 +131,68 @@ class AvisController extends AbstractController
                 /** TODO ajouter un prédicat dans thèse ou soutenance ??? */
                 if (count($allAvis) === count($allRapporteurs)) {
                     try {
-                        $notif1 = $this->soutenanceNotificationFactory->createNotificationAvisRendus($these);
+                        $notif1 = $this->soutenanceNotificationFactory->createNotificationAvisRendus($this->entity);
                         $this->notifierService->trigger($notif1);
-                        $notif2 = $this->soutenanceNotificationFactory->createNotificationAvisRendusDirection($these);
+                        $notif2 = $this->soutenanceNotificationFactory->createNotificationAvisRendusDirection($this->entity);
                         $this->notifierService->trigger($notif2);
                     } catch (\Notification\Exception\RuntimeException $e) {
                         // aucun destinataire, todo : cas à gérer !
                     }
                 }
 
-                $this->redirect()->toRoute('soutenance/avis-soutenance/afficher', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
+                $this->redirect()->toRoute("soutenance_{$this->type}/avis-soutenance/afficher", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true);
             }
         }
+
+        $rapporteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+
         return new ViewModel([
             'form' => $form,
-            'these' => $these,
-            'rapporteur' => $membre->getActeur(),
+            'object' => $this->entity,
+//            'rapporteur' => $membre->getActeur(),
+            'rapporteur' => $rapporteur,
+            'typeProposition' => $this->type
         ]);
     }
 
     public function afficherAction()
     {
-        $these = $this->requestedThese();
+        $this->initializeFromType(false,false);
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
-        $rapporteur = $membre->getActeur();
+//        $rapporteur = $membre->getActeur();
+        $rapporteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
 
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         return new ViewModel([
-            'these' => $these,
+            'object' => $this->entity,
             'rapporteur' => $rapporteur,
             'membre' => $membre,
             'avis' => $avis,
-            'url' => $this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier()),
+            'url' => $this->type === Proposition::ROUTE_PARAM_PROPOSITION_THESE ?
+                $this->urlFichierThese()->telechargerFichierThese($this->entity, $avis->getFichier()) :
+                $this->urlFichierHDR()->telechargerFichierHDR($this->entity, $avis->getFichier()),
+            'typeProposition' => $this->type
         ]);
     }
 
     public function annulerAction()
     {
-        $these = $this->requestedThese();
+        $this->initializeFromType(false,false, false);
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
         /** @var Avis $avis */
         $avis = $this->getAvisService()->getAvisByMembre($membre);
         $this->getAvisService()->historiser($avis);
 
-        $this->redirect()->toRoute('soutenance/index-rapporteur', ['these' => $these->getId()], [], true);
+        $this->redirect()->toRoute("soutenance_{$this->type}/index-rapporteur", ['id' => $this->entity->getId()], [], true);
     }
-
 
     public function telechargerAction()
     {
-        $these = $this->requestedThese();
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
         $avis = $this->getAvisService()->getAvisByMembre($membre);
-        $fichier = $avis->getFichier();
+        $fichier = $avis->getFichier()?->getFichier();
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         try {

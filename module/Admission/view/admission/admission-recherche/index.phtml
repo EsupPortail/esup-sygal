@@ -159,7 +159,7 @@ echo $this->partial('admission/admission/partial/header', []); ?>
             foreach ($admissions as $admission): ?>
                 <tr>
                     <td><?php echo $admission->getIndividu()->getNomComplet() ?></td>
-                    <td><?php echo $admission->getEtat() ?>
+                    <td><?php echo $this->etatHelper($admission->getEtat(), null, "") ?>
                         <a href="<?php echo $this->url('admission/generer-statut-dossier', ['action' => 'generer-statut-dossier','admission' => $admission->getId()], [], true) ?>"
                            title="Appuyer pour avoir plus de détails"
                            data-bs-toggle="tooltip" data-bs-html="true" data-event="acces-statut-dossier" class="info_statut_dossier action ajax-modal">
@@ -172,15 +172,11 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                         </span>
                     </td>
                     <?php
-                    $etabInscription =  $admission?->getInscription()->first() && $admission->getInscription()->first()->getEtablissementInscription() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getLibelle() : null;
+                    $etabInscription =  $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription() : null;
                     echo "<td>";
-                    if($etabInscription){
-                        echo "<abbr title='";
-                        echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getLibelle() : null;
-                        echo "'>";
-                        echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEtablissementInscription()->getStructure()->getSourceCode() : null;
-                        echo "</abbr>";
-                    }
+                    if($etabInscription){ ?>
+                            <?php echo $this->structure($etabInscription, false) ?>
+                    <?php }
                     echo "</td>";
                     ?>
                     <td class="acteurs">
@@ -204,18 +200,14 @@ echo $this->partial('admission/admission/partial/header', []); ?>
                         <?php
                         $ecoleDoctorale = $admission?->getInscription()->first() ? $admission->getInscription()->first()->getEcoleDoctorale() : null;
                         if($ecoleDoctorale): ?>
-                            <abbr title="<?php echo $ecoleDoctorale->getStructure()->getLibelle() ?>">
-                                <?php echo $ecoleDoctorale->getStructure()->getSigle() ?: "Pas de sigle" ?>
-                            </abbr>
+                            <?php echo $this->structure($ecoleDoctorale, false) ?>
                         <?php endif ?>
                     </td>
                     <td>
                         <?php
                         $uniteRecherche = $admission?->getInscription()->first() ? $admission->getInscription()->first()->getUniteRecherche() : null;
                         if($uniteRecherche): ?>
-                            <abbr title="<?php echo $uniteRecherche->getStructure()->getLibelle() ?>">
-                                <?php echo $uniteRecherche->getStructure()->getCode(); ?>
-                            </abbr>
+                            <?php echo $this->structure($uniteRecherche, false) ?>
                         <?php endif ?>
                     </td>
                     <td>

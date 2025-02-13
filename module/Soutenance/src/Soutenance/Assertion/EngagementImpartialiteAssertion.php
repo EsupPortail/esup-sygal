@@ -2,19 +2,19 @@
 
 namespace Soutenance\Assertion;
 
-use These\Entity\Db\Acteur;
-use Application\Entity\Db\Role;
-use These\Entity\Db\These;
+use Application\Assertion\AbstractAssertion;
 use Application\Service\UserContextServiceAwareTrait;
-use Doctrine\Common\Collections\Collection;
-use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
-use Laminas\Permissions\Acl\Acl;
+use HDR\Entity\Db\HDR;
+use HDR\Service\HDRServiceAwareTrait;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Laminas\Permissions\Acl\Role\RoleInterface;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 
-class EngagementImpartialiteAssertion implements  AssertionInterface {
+class EngagementImpartialiteAssertion extends AbstractAssertion implements  AssertionInterface {
     use UserContextServiceAwareTrait;
+    use TheseServiceAwareTrait;
+    use HDRServiceAwareTrait;
 
     /**
      * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
@@ -31,29 +31,63 @@ class EngagementImpartialiteAssertion implements  AssertionInterface {
         return true;
     }
 
-    public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
+    /**
+     * @param string $controller
+     * @param string $action
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertController($controller, $action = null, $privilege = null): bool
     {
-        /** @var These $these */
-        $these = $resource;
-
-
-        switch ($privilege) {
-            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_SIGNER:
-                $utilisateur = $this->userContextService->getIdentityDb();
-                /** @var Collection $rapporteurs */
-                $rapporteurs = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
-                return $rapporteurs->map(function(Acteur $acteur) { return $acteur->getIndividu(); })->contains($utilisateur->getIndividu());
-                break;
-            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER:
-            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure());
-                break;
-            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_VISUALISER:
-                $role = $this->userContextService->getSelectedIdentityRole();
-                return ($role->getStructure() === $these->getEtablissement()->getStructure() || $role->getCode() === Role::CODE_OBSERVATEUR || $role->getCode() === Role::CODE_ADMIN_TECH);
-                break;
+        if (!parent::assertController($controller, $action, $privilege)) {
+            return false;
         }
+
+        $entity = $this->getRequestedEntity();
+
+        if($entity instanceof These){
+            if(!$this->userContextService->isStructureDuRoleRespecteeForThese($entity)) return false;
+        }elseif($entity instanceof HDR){
+            if(!$this->userContextService->isStructureDuRoleRespecteeForHDR($entity)) return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param These|HDR $entity
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
+    {
+
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
+        }
+
+        if($entity instanceof These){
+            return $this->userContextService->isStructureDuRoleRespecteeForThese($entity);
+        }elseif($entity instanceof HDR){
+            return $this->userContextService->isStructureDuRoleRespecteeForHDR($entity);
+        }
+
         return false;
+
+    }
+
+    protected function getRequestedEntity(): These|HDR|null
+    {
+
+        $entity = null;
+        if (($routeMatch = $this->getRouteMatch())) {
+            if ($routeMatch->getParam('these') !== null) {
+                $entity = $this->theseService->getRepository()->find($routeMatch->getParam('these'));
+            } else if ($routeMatch->getParam('hdr') !== null) {
+                $entity = $this->hdrService->getRepository()->find($routeMatch->getParam('hdr'));
+            }
+        }
+
+        return $entity;
     }
 }

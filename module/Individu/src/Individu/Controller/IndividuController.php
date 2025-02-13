@@ -2,6 +2,8 @@
 
 namespace Individu\Controller;
 
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
 use Admission\Service\Inscription\InscriptionServiceAwareTrait;
 use Application\Entity\Db\Role;
 use Application\Filter\NomCompletFormatter;
@@ -11,6 +13,7 @@ use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Candidat\Service\CandidatServiceAwareTrait;
 use Doctorant\Controller\Plugin\UrlDoctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
@@ -27,8 +30,8 @@ use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use These\Entity\Db\Acteur;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 
 /**
  * @property \Individu\Service\Search\IndividuSearchService $searchService
@@ -44,8 +47,10 @@ class IndividuController extends AbstractActionController implements SearchContr
     use UtilisateurServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
     use StructureServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
+    use ActeurHDRServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use CandidatServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use InscriptionServiceAwareTrait;
 
@@ -135,14 +140,14 @@ class IndividuController extends AbstractActionController implements SearchContr
         $roles = [];
 
         // rôles d'acteur
-        $acteurs = $this->acteurService->getRepository()->findActeursForIndividu($individu);
+        $acteurs = $this->acteurTheseService->getRepository()->findActeursForIndividu($individu);
         if ($acteurs) {
-            $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
-            $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
-            $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
-            $acteursRapporteurJury = $this->acteurService->filterActeursRapporteurJury($acteurs);
+            $acteursDirecteurThese = $this->acteurTheseService->filterActeursDirecteurThese($acteurs);
+            $acteursCoDirecteurThese = $this->acteurTheseService->filterActeursCoDirecteurThese($acteurs);
+            $acteursPresidentJury = $this->acteurTheseService->filterActeursPresidentJury($acteurs);
+            $acteursRapporteurJury = $this->acteurTheseService->filterActeursRapporteurJury($acteurs);
             $roles = array_merge($roles, array_map(
-                function (Acteur $a) {
+                function (ActeurThese $a) {
                     return $a->getRole();
                 },
                 array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
@@ -155,6 +160,26 @@ class IndividuController extends AbstractActionController implements SearchContr
                 ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
         }
 
+        $acteursHDR = $this->acteurHDRService->getRepository()->findActeursForIndividu($individu);
+        if ($acteursHDR) {
+            $acteursGarants = $this->acteurHDRService->filterActeursGarantHDR($acteursHDR);
+            $acteursPresidentJury = $this->acteurHDRService->filterActeursPresidentJury($acteursHDR);
+            $acteursRapporteurJury = $this->acteurHDRService->filterActeursRapporteurJury($acteursHDR);
+            $roles = array_merge($roles, array_map(
+                function (ActeurHDR $a) {
+                    return $a->getRole();
+                },
+                array_merge($acteursGarants, $acteursPresidentJury, $acteursRapporteurJury)
+            ));
+        }
+
+        $candidatHDR = $this->candidatService->getRepository()->findOneByIndividu($individu);
+        if ($candidatHDR) {
+            $roles[] = $this->applicationRoleService->getRepository()
+                ->findOneByCodeAndStructureConcrete(Role::CODE_HDR_CANDIDAT, $candidatHDR->getEtablissement());
+        }
+
+        //Module Admission
         $individuRoles = $this->applicationRoleService->findIndividuRolesByIndividu($individu);
         if($individuRoles){
             $individuPotentielDirecteurRole = $this->applicationRoleService->filterIndividuRolePotentielDirecteurThese($individuRoles);

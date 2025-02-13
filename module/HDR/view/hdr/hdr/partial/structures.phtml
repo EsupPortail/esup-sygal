@@ -1,0 +1,59 @@
+<?php
+/**
+ * @var HDR $hdr
+ * @var EtablissementRattachement[] $rattachements
+ */
+
+use HDR\Entity\Db\HDR;
+use Structure\Entity\Db\EtablissementRattachement;
+
+?>
+
+<dl class="row">
+
+    <dt class="col-md-3">
+        <?php echo $this->translate("Unité de recherche"); ?>
+    </dt>
+    <dd class="col-md-9">
+        <?php if ($hdr->getUniteRecherche()): ?>
+            <span class="text-structure ur"><?php echo $hdr->getUniteRecherche() ?></span>
+        <?php else: ?>
+            <span class="badge bg-danger text-white" style="font-size:unset">
+                <span class="icon icon-warning" style="padding-right: unset"></span>
+                <?php echo $this->translate("Aucune unité de recherche n'est renseignée") ?>
+            </span>
+        <?php endif; ?>
+    </dd>
+
+    <dt class="col-md-3 ps-4">
+        Établ. de rattachement de l'UR
+    </dt>
+    <dd class="col-md-9 ps-4">
+        <?php if (empty($rattachements)): ?>
+            <span class="badge bg-danger text-white" style="font-size:unset; margin:10px">
+                <span class="icon icon-warning" style="padding-right: unset"></span>
+                <?php echo $this->translate("Aucun établissement de rattachement renseigné") ?>
+            </span>
+        <?php else: ?>
+            <ul>
+                <?php foreach ($rattachements as $rattachement): ?>
+                    <li><?php echo $rattachement->getEtablissement()->getStructure() ?></li>
+                <?php endforeach ?>
+            </ul>
+        <?php endif ?>
+    </dd>
+
+<!--    <dt class="col-md-3">-->
+<!--        --><?php //echo $this->translate("École doctorale (ED)"); ?>
+<!--    </dt>-->
+<!--    <dd class="col-md-9">-->
+<!--        --><?php //if ($hdr->getEcoleDoctorale()): ?>
+<!--            <span class="text-structure ed">--><?php //echo $hdr->getEcoleDoctorale() ?><!--</span>-->
+<!--        --><?php //else: ?>
+<!--            <span class="badge bg-danger text-white" style="font-size:unset">-->
+<!--                <span class="icon icon-warning" style="padding-right: unset"></span>-->
+<!--                --><?php //echo $this->translate("Aucune école doctorale n'est renseignée") ?>
+<!--            </span>-->
+<!--        --><?php //endif ?>
+<!--    </dd>-->
+</dl>

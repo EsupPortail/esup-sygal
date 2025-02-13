@@ -1,7 +1,7 @@
 <?php
 
-use These\Entity\Db\Acteur;
-use Application\Entity\Db\Validation;
+use Acteur\Entity\Db\ActeurThese;
+use Validation\Entity\Db\ValidationThese;
 use These\Service\FichierThese\PdcData;
 use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Proposition;
@@ -9,8 +9,8 @@ use Soutenance\Entity\Proposition;
 /**
  * @var PhpRenderer             $this
  * @var Proposition $proposition
- * @var Validation[] $validations
- * @var Validation $validation
+ * @var ValidationThese[] $validations
+ * @var ValidationThese $validation
  * @var array $logos
  * @var int $nbCodirecteur
  * @var PdcData                 $informations
@@ -226,8 +226,8 @@ use Soutenance\Entity\Proposition;
     </tr>
     <?php
         /**
-         * @var Acteur[] $directeurs
-         * @var Acteur[] $codirecteurs
+         * @var ActeurThese[] $directeurs
+         * @var ActeurThese[] $codirecteurs
          */
         $directeurs = $informations->getDirecteurs();
         $codirecteurs = $informations->getCodirecteurs();

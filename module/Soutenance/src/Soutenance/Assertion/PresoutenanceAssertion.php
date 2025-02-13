@@ -9,7 +9,13 @@ use Application\Entity\Db\Role;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use HDR\Entity\Db\HDR;
+use HDR\Provider\Privileges\HDRPrivileges;
+use HDR\Service\HDRServiceAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionHDR;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
@@ -22,9 +28,10 @@ class PresoutenanceAssertion extends AbstractAssertion
     use UserContextServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use TheseServiceAwareTrait;
+    use HDRServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
 
-    private ?These $these = null;
+    private These|HDR|null $entity = null;
 
     /**
      * @param array $page
@@ -45,7 +52,7 @@ class PresoutenanceAssertion extends AbstractAssertion
     }
 
     /**
-     * @param These $entity
+     * @param These|HDR $entity
      * @param string $privilege
      * @return boolean
      */
@@ -55,15 +62,24 @@ class PresoutenanceAssertion extends AbstractAssertion
             return false;
         }
 
-        $this->these = $entity;
+        $this->entity = $entity;
 
         try {
+            if($this->entity instanceof These){
+                if(!$this->userContextService->isStructureDuRoleRespecteeForThese($this->entity)) return false;
+            }elseif($this->entity instanceof HDR){
+                if(!$this->userContextService->isStructureDuRoleRespecteeForHDR($this->entity)) return false;
+            }
 
             switch ($privilege) {
                 case PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
                 case PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION:
                     $role = $this->userContextService->getSelectedIdentityRole();
-                    return ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $this->these->getEtablissement()->getStructure());
+                    return (($role->getCode() === Role::CODE_BDD || Role::CODE_GEST_HDR) && $role->getStructure() === $this->entity->getEtablissement()->getStructure());
+                case HDRPrivileges::HDR_DONNER_RESULTAT:
+                    /** @var Proposition $p */
+                    $proposition = $this->entity->getCurrentProposition();
+                    if($proposition instanceof PropositionHDR && $proposition->getEtat()->getCode() !== Etat::VALIDEE) return false;
             }
 
 
@@ -89,14 +105,29 @@ class PresoutenanceAssertion extends AbstractAssertion
             return false;
         }
 
-        $this->these = $this->getRequestedThese();
+        $this->entity = $this->getRequestedEntity();
+        if ($this->entity === null) return false;
 
         try {
+            if($this->entity instanceof These){
+                if(!$this->userContextService->isStructureDuRoleRespecteeForThese($this->entity)) return false;
+            }elseif($this->entity instanceof HDR){
+                if(!$this->userContextService->isStructureDuRoleRespecteeForHDR($this->entity)) return false;
+            }
             switch ($action) {
-                case 'presoutenance':
-                    if ($this->these !== null) {
-                        $this->assertCanAccessInformationsPresoutenance($this->these);
-                    }
+//                case 'presoutenance':
+//                    if ($this->entity !== null) {
+//                        if($this->entity instanceof These){
+//                            return $this->userContextService->isStructureDuRoleRespecteeForThese($this->entity);
+//                        }elseif($this->entity instanceof HDR){
+//                            return $this->userContextService->isStructureDuRoleRespecteeForHDR($this->entity);
+//                        }
+//                    }
+//                    break;
+                case 'deliberation-jury':
+                    /** @var Proposition $p */
+                    $proposition = $this->entity->getCurrentProposition();
+                    if($proposition instanceof PropositionHDR && $proposition->getEtat()->getCode() !== Etat::VALIDEE) return false;
                     break;
             }
         } catch (FailedAssertionException $e) {
@@ -108,62 +139,18 @@ class PresoutenanceAssertion extends AbstractAssertion
 
         return true;
     }
-
-    private function assertCanAccessInformationsPresoutenance(These $these){
-        $role = $this->userContextService->getSelectedIdentityRole();
-        $individu = $this->userContextService->getIdentityIndividu();
-
-        if (!$role) {
-            return;
-        }
-
-        if ($role->isDoctorant()) {
-            $doctorant = $this->userContextService->getIdentityDoctorant();
-            $this->assertTrue(
-                $these->getDoctorant()->getId() === $doctorant->getId(),
-                "La thèse n'appartient pas au doctorant " . $doctorant
-            );
-        }
-        if ($roleMaisonDoctorat = $this->userContextService->getSelectedRoleBDD()) {
-            $this->assertTrue(
-                $these->getEtablissement()->getStructure()->getId() === $roleMaisonDoctorat->getStructure()->getId(),
-                "La thèse n'appartient pas à la maison du doctorat " . $roleMaisonDoctorat->getStructure()->getId()
-            );
-        }
-        elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
-            $this->assertTrue(
-                $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
-            );
-        }
-        elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
-            $this->assertTrue(
-                $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
-            );
-        } elseif ($role->isDirecteurThese()) {
-            $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-            $individus = [];
-            foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
-            $this->assertTrue(array_search($individu, $individus) !== false,
-                $individu." n'est pas le directeur de cette thèse");
-        } elseif ($role->getCode() === Role::CODE_CODIRECTEUR_THESE) {
-            $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
-            $individus = [];
-            foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
-            $this->assertTrue(array_search($individu, $individus) !== false,
-                $individu." n'est pas le co-directeur de cette thèse");
-        }
-    }
-
-    protected function getRequestedThese(): ?These
+    protected function getRequestedEntity(): These|HDR|null
     {
-        $these = null;
-        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('these')) {
-            $these = $this->theseService->getRepository()->find($id);
+        $entity = null;
+        if (($routeMatch = $this->getRouteMatch())) {
+            if($routeMatch->getParam('these') !== null){
+                $entity = $this->theseService->getRepository()->find($routeMatch->getParam('these'));
+            }else if($routeMatch->getParam('hdr') !== null){
+                $entity = $this->hdrService->getRepository()->find($routeMatch->getParam('hdr'));
+            }
         }
 
-        return $these;
+        return $entity;
     }
 
     protected function getRouteMatch(): ?RouteMatch

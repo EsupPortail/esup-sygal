@@ -2,6 +2,7 @@
 
 namespace RapportActivite;
 
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
 use Application\Constants;
 use Application\Entity\Db\Role;
 use Application\Filter\FinancementFormatter;
@@ -9,7 +10,6 @@ use Application\Filter\IdifyFilter;
 use Application\View\Renderer\PhpRenderer;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use These\Filter\ActeursFormatter;
 
 /**
  * @var PhpRenderer $this
@@ -20,15 +20,15 @@ use These\Filter\ActeursFormatter;
  * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
  */
 
-$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs = new ActeursTheseFormatter();
 $acteursFormatterDirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
-$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs = new ActeursTheseFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
-$acteursFormatterCoencadrants = new ActeursFormatter();
+$acteursFormatterCoencadrants = new ActeursTheseFormatter();
 $acteursFormatterCoencadrants->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_CO_ENCADRANT]));

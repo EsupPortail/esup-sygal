@@ -1,9 +1,9 @@
 <?php
 
+use Acteur\Filter\ActeurThese\ActeursTheseFormatter;
 use Application\Constants;
 use Application\Entity\Db\Role;
 use Application\Filter\FinancementFormatter;
-use These\Filter\ActeursFormatter;
 
 /**
  * @var \Application\View\Renderer\PhpRenderer $this
@@ -12,15 +12,15 @@ use These\Filter\ActeursFormatter;
  * @see \RapportActivite\Service\RapportActiviteService::createPageValidationDataForRapport() pour la génération de $data
  */
 
-$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs = new ActeursTheseFormatter();
 $acteursFormatterDirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
-$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs = new ActeursTheseFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
-$acteursFormatterCoencadrants = new ActeursFormatter();
+$acteursFormatterCoencadrants = new ActeursTheseFormatter();
 $acteursFormatterCoencadrants->asSeparated()
     ->paramDisplay(['role' => false, "qualite" => true, "etablissement" => true,])
     ->paramFilter((['role' => Role::CODE_CO_ENCADRANT]));

@@ -5,6 +5,8 @@ namespace Application\Authentication\Storage;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
+use Candidat\Entity\Db\Candidat;
+use Candidat\Service\CandidatServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
@@ -21,17 +23,23 @@ use UnicaenAuthentification\Authentication\Storage\ChainEvent;
  * - entité Doctorant si l'utilisateur authentifié est trouvé parmi les thésards,
  * - null sinon.
  *
+ *  Valeur associée à la clé KEY_CANDIDAT_HDR :
+ *  - entité Candidat si l'utilisateur authentifié est trouvé parmi les candidats HDR,
+ *  - null sinon.
+ *
   * @author Unicaen
  */
 class AppStorage implements ChainableStorage
 {
     use UtilisateurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use CandidatServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UserWrapperFactoryAwareTrait;
 
     const KEY_DB_UTILISATEUR = 'db';
     const KEY_DOCTORANT = 'doctorant';
+    const KEY_CANDIDAT_HDR = 'candidat_hdr';
 
     /**
      * @var UserWrapper
@@ -42,6 +50,11 @@ class AppStorage implements ChainableStorage
      * @var Doctorant
      */
     protected $doctorant;
+
+    /**
+     * @var Candidat
+     */
+    protected $candidatHDR;
 
     /**
      * @param ChainEvent $e
@@ -77,6 +90,11 @@ class AppStorage implements ChainableStorage
          * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table Doctorant.
          */
         $this->addDoctorantContents($e);
+
+        /**
+         * Collecte des données au cas où l'utilisateur connecté est trouvé dans la table Candidat.
+         */
+        $this->addCandidatHDRContents($e);
     }
 
     /**
@@ -125,6 +143,29 @@ class AppStorage implements ChainableStorage
         $this->doctorant = $this->doctorantService->findOneByUserWrapper($this->userWrapper);
 
         return $this->doctorant;
+    }
+
+    /**
+     * @param ChainEvent $e
+     */
+    protected function addCandidatHDRContents(ChainEvent $e)
+    {
+        try {
+            $e->addContents(self::KEY_CANDIDAT_HDR, $this->fetchCandidatHDR());
+        } catch (ExceptionInterface $e) {
+            throw new RuntimeException("Erreur imprévue rencontrée.", 0, $e);
+        }
+    }
+
+    protected function fetchCandidatHDR()
+    {
+        if (null !== $this->candidatHDR) {
+            return $this->candidatHDR;
+        }
+
+        $this->candidatHDR = $this->candidatService->findOneByUserWrapper($this->userWrapper);
+
+        return $this->candidatHDR;
     }
 
     public function write(ChainEvent $e)

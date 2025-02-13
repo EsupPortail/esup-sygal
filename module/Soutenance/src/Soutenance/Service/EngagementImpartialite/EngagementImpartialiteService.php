@@ -2,91 +2,117 @@
 
 namespace Soutenance\Service\EngagementImpartialite;
 
-use Doctrine\ORM\Query\Expr\Join;
-use Individu\Entity\Db\Individu;
-use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
+use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
+use HDR\Entity\Db\HDR;
+use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Membre;
-use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use Soutenance\Service\Validation\ValidationHDR\ValidationHDRServiceAwareTrait;
+use Soutenance\Service\Validation\ValidationThese\ValidationTheseServiceAwareTrait;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Entity\Db\ValidationHDR;
+use Validation\Entity\Db\ValidationThese;
 
-class EngagementImpartialiteService {
-    use ValidatationServiceAwareTrait;
+class EngagementImpartialiteService
+{
+    use ValidationTheseServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
+    use ActeurHDRServiceAwareTrait;
+    use ValidationHDRServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
     /**
      * @param Membre $membre
-     * @param These $these
-     * @return Validation
+     * @param These|HDR $entity
+     * @return ValidationThese|ValidationHDR
      */
-    public function create(Membre $membre, These $these)
+    public function create(Membre $membre, These|HDR $entity)
     {
-        $validation = $this->getValidationService()->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these, $membre->getIndividu());
+        $acteurService = $entity instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
+        $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
+        $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+        $validation = $validationService->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $entity, $acteur?->getIndividu());
         return $validation;
     }
 
     /**
      * @param Membre $membre
-     * @param These $these
-     * @return Validation
+     * @param These|HDR $entity
+     * @return ValidationThese|ValidationHDR
      */
-    public function createRefus(Membre $membre, These $these)
+    public function createRefus(Membre $membre, These|HDR $entity)
     {
-        $validation = $this->getValidationService()->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $these, $membre->getIndividu());
+        $acteurService = $entity instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
+        $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
+        $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+        $validation = $validationService->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $entity, $acteur?->getIndividu());
         return $validation;
     }
 
     /**
      * @param Membre $membre
-     * @return Validation
+     * @return ValidationThese|ValidationHDR
      */
     public function delete(Membre $membre)
     {
-        $these = $membre->getProposition()->getThese();
-        $validation = $this->getEngagementImpartialiteByMembre($these, $membre);
-        $validation = $this->getValidationService()->historiser($validation);
+        $entity = $membre->getProposition()->getObject();
+        $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
+
+        $validation = $this->getEngagementImpartialiteByMembre($entity, $membre);
+        $validation = $validationService->historiser($validation);
         return $validation;
     }
 
     /** REQUETE *******************************************************************************************************/
 
-    /**
-     * @param These $these
-     * @param Individu $individu
-     * @param $type
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder(These $these, Individu $individu, $type)
+    public function createQueryBuilder(These|HDR $entity, Individu $individu, string $typeValidation): QueryBuilder
     {
-        $qb = $this->getValidationService()->getEntityManager()->getRepository(Validation::class)->createQueryBuilder('validation')
-            ->addSelect('type')->join('validation.typeValidation', 'type')
+        $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
+
+        $qb = $validationService->getRepository()->createQueryBuilder('validation')
+            ->addSelect('v')->join('validation.validation', 'v')->andWhereNotHistorise('v')
+            ->addSelect('type')->join('v.typeValidation', 'type')
             ->andWhere('validation.histoDestruction is null')
             ->andWhere('type.code = :codeEngagement')
-            ->andWhere('validation.these = :these')
             ->andWhere('validation.individu = :individu')
-            ->setParameter('codeEngagement', $type)
-            ->setParameter('these', $these)
+            ->setParameter('codeEngagement', $typeValidation)
             ->setParameter('individu', $individu)
             ;
+        if($entity instanceof These) {
+            $qb->andWhere('validation.these = :these')
+            ->setParameter('these', $entity);
+
+        }else{
+            $qb->andWhere('validation.hdr = :hdr')
+                ->setParameter('hdr', $entity);
+        }
         return $qb;
     }
 
     /**
-     * @param These $these
+     * @param These|HDR $entity
      * @param Membre[] $rapporteurs
-     * @return Validation[] ==> clef: id de l'individu ayant validé <==
+     * @return ValidationThese[]|ValidationHDR[] ==> clef: id de l'individu ayant validé <==
      */
-    public function getEngagmentsImpartialiteByThese(These $these, array $rapporteurs): array
+    public function getEngagmentsImpartialiteByEntity(These|HDR $entity, array $rapporteurs): array
     {
-        $rapporteursIndividuIds = array_map(fn(Membre $m) => $m->getActeur()?->getIndividu()?->getId(), $rapporteurs);
+//        $rapporteursIndividuIds = array_map(fn(Membre $m) => $m->getActeur()?->getIndividu()?->getId(), $rapporteurs);
+        $rapporteursIndividuIds = array_map(function(Membre $m) {
+            $acteurService =  $m->getProposition()->getObject() instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
+            $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($m);
+            return $acteur?->getIndividu()?->getId();
+        }, $rapporteurs);
 
-        $qb = $this->getValidationService()->getRepository()->createQueryBuilder('v')
+        $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
+
+        $qb = $validationService->getRepository()->createQueryBuilder('v')
             ->andWhere('i IN (:individuIds)')->setParameter('individuIds', $rapporteursIndividuIds)
-            ->andWhere('t = :these')->setParameter('these', $these)
+            ->andWhere('t = :these')->setParameter('these', $entity)
             ->andWhere('tv.code = :code')->setParameter('code', TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE)
             ->andWhereNotHistorise('v');
         $validations = $qb->getQuery()->getResult();
@@ -100,15 +126,21 @@ class EngagementImpartialiteService {
     }
 
     /**
-     * @param These $these
+     * @param These|HDR $entity
      * @param Membre $membre
-     * @return Validation
+     * @return ValidationThese|ValidationHDR
      */
-    public function getEngagementImpartialiteByMembre(These $these, Membre $membre)
+    public function getEngagementImpartialiteByMembre(These|HDR $entity, Membre $membre)
     {
-        if ($membre === null OR $membre->getActeur() === null) return null;
-        $individu = $membre->getIndividu();
-        $qb = $this->createQueryBuilder($these, $individu, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE);
+        $acteurService = $entity instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
+//        if ($membre === null OR $membre->getActeur() === null) return null;
+        $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+        if ($acteur === null) {
+            return null;
+        }
+
+        $individu = $acteur->getIndividu();
+        $qb = $this->createQueryBuilder($entity, $individu, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE);
 
         try {
             $validation = $qb->getQuery()->getOneOrNullResult();
@@ -119,14 +151,16 @@ class EngagementImpartialiteService {
     }
 
     /**
-     * @param These $these
+     * @param These|HDR $entity
      * @param Membre $membre
-     * @return Validation
+     * @return ValidationThese|ValidationHDR
      */
-    public function getRefusEngagementImpartialiteByMembre(These $these, Membre $membre)
+    public function getRefusEngagementImpartialiteByMembre(These|HDR $entity, Membre $membre)
     {
-        $individu = $membre->getIndividu();
-        $qb = $this->createQueryBuilder($these, $individu, TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE);
+        $acteurService = $entity instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
+        $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+        $individu = $acteur?->getIndividu();
+        $qb = $this->createQueryBuilder($entity, $individu, TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE);
 
         try {
             $validation = $qb->getQuery()->getOneOrNullResult();
@@ -135,7 +169,4 @@ class EngagementImpartialiteService {
         }
         return $validation;
     }
-
-
-
 }

@@ -2,7 +2,8 @@
 
 namespace Soutenance\Service\Notification;
 
-use Application\Service\Email\EmailTheseService;
+use Acteur\Service\ActeurHDR\ActeurHDRService;
+use Application\Service\Email\EmailService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
@@ -12,8 +13,9 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Url\UrlService;
-use Application\Service\Validation\ValidationService;
-use These\Service\Acteur\ActeurService;
+use Soutenance\Service\Validation\ValidationHDR\ValidationHDRService;
+use Validation\Service\ValidationThese\ValidationTheseService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\These\TheseService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManager;
@@ -38,28 +40,34 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
         $factory = parent::__invoke($container);
 
         /**
-         * @var ActeurService $acteurService
-         * @var EmailTheseService $emailTheseService
+         * @var ActeurTheseService $acteurService
+         * @var ActeurHDRService $acteurHDRService
+         * @var EmailService $emailService
          * @var MembreService $membreService
          * @var RoleService $roleService
          * @var VariableService $variableService
          * @var TheseService $theseService
          * @var UtilisateurService $utilisateurService
-         * @var ValidationService $validationService
+         * @var ValidationTheseService $validationService
+         * @var ValidationHDRService $validationHDRService
          */
-        $acteurService = $container->get(ActeurService::class);
-        $emailTheseService = $container->get(EmailTheseService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
+        $acteurHDRService = $container->get(ActeurHDRService::class);
+        $emailService = $container->get(EmailService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
         $theseService = $container->get('TheseService');
-        $validationService = $container->get(ValidationService::class);
+        $validationService = $container->get(ValidationTheseService::class);
+        $validationHDRService = $container->get(ValidationHDRService::class);
 
-        $factory->setActeurService($acteurService);
-        $factory->setEmailTheseService($emailTheseService);
+        $factory->setActeurTheseService($acteurService);
+        $factory->setActeurHDRService($acteurHDRService);
+        $factory->setEmailService($emailService);
         $factory->setMembreService($membreService);
         $factory->setApplicationRoleService($roleService);
         $factory->setTheseService($theseService);
-        $factory->setValidationService($validationService);
+        $factory->setValidationTheseService($validationService);
+        $factory->setValidationHDRService($validationHDRService);
 
         /** @var RenduService $renduService */
         $renduService = $container->get(RenduService::class);

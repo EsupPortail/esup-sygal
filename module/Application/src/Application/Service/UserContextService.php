@@ -4,7 +4,9 @@ namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
 use Application\Entity\UserWrapperFactoryAwareTrait;
+use Candidat\Entity\Db\Candidat;
 use Doctorant\Entity\Db\Doctorant;
+use HDR\Entity\Db\HDR;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
@@ -69,6 +71,14 @@ class UserContextService extends BaseUserContextService
     /**
      * @return Role|null
      */
+    public function getSelectedRoleGarantHDR(): ?Role
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_HDR_GARANT);
+    }
+
+    /**
+     * @return Role|null
+     */
     public function getSelectedRoleCodirecteurThese(): ?Role
     {
         return $this->_getSelectedRoleForCode(Role::CODE_CODIRECTEUR_THESE);
@@ -106,6 +116,17 @@ class UserContextService extends BaseUserContextService
     public function getSelectedRoleAdministrateur()
     {
         return $this->_getSelectedRoleForCode(Role::CODE_ADMIN);
+    }
+
+    /**
+     * Si le rôle sélectionné correspond à celui de candidat HDR,
+     * retourne le rôle en question, sinon retourne null.
+     *
+     * @return RoleInterface|null
+     */
+    public function getSelectedRoleCandidatHDR()
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_HDR_CANDIDAT);
     }
 
     /**
@@ -183,7 +204,7 @@ class UserContextService extends BaseUserContextService
     }
 
     /**
-     * Retourne les données concernant l'utilisateur connecté, issues de la table des thésards, le cas échéant.
+     * Retourne les données concernant l'utilisateur connecté, ssi son rôle correspondant à celui de doctorant.
      *
      * @return Doctorant|null
      */
@@ -194,6 +215,20 @@ class UserContextService extends BaseUserContextService
         }
 
         return $identity[AppStorage::KEY_DOCTORANT];
+    }
+
+    /**
+     * Retourne les données concernant l'utilisateur connecté, ssi son rôle correspondant à celui de candidat HDR.
+     *
+     * @return \Candidat\Entity\Db\Candidat|null
+     */
+    public function getIdentityCandidatHDR(): Candidat|null
+    {
+        if (! $identity = $this->getIdentity()) {
+            return null;
+        }
+
+        return $identity[AppStorage::KEY_CANDIDAT_HDR];
     }
 
     /**
@@ -268,17 +303,20 @@ class UserContextService extends BaseUserContextService
     {
         $role = $this->getSelectedIdentityRole();
 
+        if($role->getCode() === Role::CODE_GEST_HDR) return false;
+
         if ($role->isTheseDependant()) {
             if ($role->isDoctorant()) {
                 $utilisateurEstAuteurDeLaThese = $these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
                 return $utilisateurEstAuteurDeLaThese;
-            }
-            elseif ($role->isDirecteurThese()) {
+            }elseif ($role->isActeurDeThese()) {
                 if ($individu = $this->getIdentityIndividu()) {
-                    return $these->hasActeurWithRole($individu, Role::CODE_DIRECTEUR_THESE);
+                    return $these->hasActeurWithRole($individu, $role->getCode());
                 }
                 return false;
             }
+        }elseif($role->isHDRDependant()){
+            return false;
         }
 
         elseif ($role->isStructureDependant()) {
@@ -293,6 +331,49 @@ class UserContextService extends BaseUserContextService
             elseif ($role->isUniteRechercheDependant()) {
                 // On ne voit que les thèses concernant son UR.
                 return $these->getUniteRecherche()->getStructure() === $role->getStructure();
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Teste si la structure sur laquelle porte le profil courant de l'utilisateur est compatible avec la HDR spécifiée.
+     *
+     * @param HDR $hdr
+     * @return bool
+     */
+    public function isStructureDuRoleRespecteeForHDR(HDR $hdr)
+    {
+        $role = $this->getSelectedIdentityRole();
+
+        if($role->getCode() === Role::CODE_BDD) return false;
+
+        if ($role->isHDRDependant()) {
+            if ($role->isCandidatHDR()) {
+                return $hdr->getCandidat()->getId() === $this->getIdentityCandidatHDR()->getId();
+            }elseif ($role->isActeurDeHDR()) {
+                if ($individu = $this->getIdentityIndividu()) {
+                    return $hdr->hasActeurWithRole($individu, $role->getCode());
+                }
+                return false;
+            }
+        }elseif($role->isTheseDependant()){
+            return false;
+        }
+
+        elseif ($role->isStructureDependant()) {
+            if ($role->isEtablissementDependant()) {
+                // On ne voit que les HDR de son établissement.
+                return $hdr->getEtablissement()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isEcoleDoctoraleDependant()) {
+                // On ne voit que les HDR concernant son ED.
+                return $hdr->getEcoleDoctorale()->getStructure() === $role->getStructure();
+            }
+            elseif ($role->isUniteRechercheDependant()) {
+                // On ne voit que les HDR concernant son UR.
+                return $hdr->getUniteRecherche()->getStructure() === $role->getStructure();
             }
         }
 

@@ -2,6 +2,9 @@
 
 namespace These\Fieldset\Direction;
 
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Hydrator\ActeurThese\ActeurTheseHydratorAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Entity\Db\Role;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Individu\Entity\Db\Individu;
@@ -9,21 +12,18 @@ use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Hydrator\AbstractHydrator;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
-use These\Hydrator\ActeurHydratorAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Form\Element\SearchAndSelect2 as SAS2;
 
 class DirectionHydrator extends AbstractHydrator
 {
     use IndividuServiceAwareTrait;
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
-    use ActeurHydratorAwareTrait;
+    use ActeurTheseHydratorAwareTrait;
 
     /**
      * @param \These\Entity\Db\These|object $object
@@ -56,9 +56,9 @@ class DirectionHydrator extends AbstractHydrator
      */
     private function extractDirecteur(These $these): array
     {
-        /** @var Acteur $directeur */
+        /** @var ActeurThese $directeur */
         if ($these->getId() !== null) {
-            $directeur = current($this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE)) ?: null;
+            $directeur = current($this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE)) ?: null;
         } else {
             $directeur = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->first() ?: null;
         }
@@ -80,10 +80,10 @@ class DirectionHydrator extends AbstractHydrator
     {
         $data = [];
 
-        /** @var Acteur[] $codirecteurs */
+        /** @var ActeurThese[] $codirecteurs */
         if ($these->getId() !== null) {
-            $codirecteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
-            usort($codirecteurs, Acteur::getOrdreComparisonFunction());
+            $codirecteurs = $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
+            usort($codirecteurs, ActeurThese::getOrdreComparisonFunction());
         } else {
             $codirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
         }
@@ -107,8 +107,8 @@ class DirectionHydrator extends AbstractHydrator
             $individuId = SAS2::extractIdFromValue($data['directeur-individu']["id"]);
             $individu = $this->individuService->getRepository()->find($individuId);
 
-            /** @var Acteur[] $directeursEnBdd */
-            $directeursEnBdd = $these->getId() ?  $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE) : [];
+            /** @var ActeurThese[] $directeursEnBdd */
+            $directeursEnBdd = $these->getId() ?  $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE) : [];
             foreach ($directeursEnBdd as $directeur) {
                 if ($directeur->getIndividu()?->getId() !== $individu->getId()) {
                     $directeur->historiser();
@@ -145,7 +145,7 @@ class DirectionHydrator extends AbstractHydrator
             }
         }
 
-        $codirsEnBdd = $these->getId() ?  $this->acteurService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE) : [];
+        $codirsEnBdd = $these->getId() ?  $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE) : [];
         foreach ($codirsEnBdd as $codirecteur) {
             if (array_search($codirecteur->getId(), $temoins) === false) {
                 $codirecteur->historiser();
@@ -153,9 +153,9 @@ class DirectionHydrator extends AbstractHydrator
         }
     }
 
-    private function extractActeur(Acteur $acteur, string $prefixe): array
+    private function extractActeur(ActeurThese $acteur, string $prefixe): array
     {
-        $dataActeur = $this->acteurHydrator->extract($acteur);
+        $dataActeur = $this->acteurTheseHydrator->extract($acteur);
 
         return [
             $prefixe . ($k = 'individu') => SAS2::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getIndividu()),
@@ -168,7 +168,7 @@ class DirectionHydrator extends AbstractHydrator
         ];
     }
 
-    private function hydrateActeur(Acteur $acteur, array $data, string $prefixe)
+    private function hydrateActeur(ActeurThese $acteur, array $data, string $prefixe)
     {
         $dataActeur = [
             ($k = 'individu') => SAS2::extractIdFromValue($data[$prefixe . $k]["id"]),
@@ -180,16 +180,16 @@ class DirectionHydrator extends AbstractHydrator
             ($k = 'exterieur') => $data[$prefixe . $k] ?? false,
         ];
 
-        $this->acteurHydrator->hydrate($dataActeur, $acteur);
+        $this->acteurTheseHydrator->hydrate($dataActeur, $acteur);
     }
 
-    private function addActeur(These $these, Individu $individu, string $role, Etablissement $etablissement): Acteur
+    private function addActeur(These $these, Individu $individu, string $role, Etablissement $etablissement): ActeurThese
     {
         $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete($role, $etablissement);
-        $acteur = $these->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $these) : null;
+        $acteur = $these->getId() ? $this->acteurTheseService->getRepository()->findActeurByIndividuAndThese($individu, $these) : null;
         if($role){
             if ($acteur === null) {
-                $acteur = $this->acteurService->newActeur($these, $individu, $role);
+                $acteur = $this->acteurTheseService->newActeurThese($these, $individu, $role);
                 $these->addActeur($acteur);
             } else {
                 $acteur->setRole($role);

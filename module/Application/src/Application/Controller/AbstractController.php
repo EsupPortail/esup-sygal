@@ -7,12 +7,15 @@ use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
+use Candidat\Controller\Plugin\UrlCandidat;
 use Depot\Controller\Plugin\Url\UrlDepotPlugin;
+use Depot\Controller\Plugin\UrlFichierHdr;
 use Depot\Controller\Plugin\UrlFichierThese;
 use Depot\Controller\Plugin\UrlWorkflow;
 use Doctorant\Controller\Plugin\UrlDoctorant;
 use Fichier\Controller\Plugin\Uploader\UploaderPlugin;
 use Fichier\Controller\Plugin\UrlFichier;
+use HDR\Entity\Db\HDR;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -35,8 +38,10 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method UrlDepotPlugin urlDepot()
  * @method UrlThesePlugin urlThese()
  * @method UrlDoctorant urlDoctorant()
+ * @method UrlCandidat urlCandidat()
  * @method UrlFichier urlFichier()
  * @method UrlFichierThese urlFichierThese()
+ * @method UrlFichierHDR urlFichierHDR()
  * @method UrlWorkflow urlWorkflow()
  * @method Mail mail()
  * @method ConfirmPlugin confirm()
@@ -86,6 +91,24 @@ class AbstractController extends AbstractActionController
         }
 
         return $these;
+    }
+
+    /**
+     * Retourne la HDR présente dans la requête courante.
+     *
+     * @return HDR
+     */
+    protected function requestedHDR(): HDR
+    {
+        /** @var RouteMatch $routeMatch */
+        $routeMatch = $this->getEvent()->getRouteMatch();
+
+        $hdr = $routeMatch->getHDR();
+        if ($hdr === null) {
+            throw new RuntimeException("HDR introuvable");
+        }
+
+        return $hdr;
     }
 
     /**

@@ -3,9 +3,9 @@
 use Application\Assertion\BaseAssertion;
 use Application\Constants;
 use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Depot\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
@@ -17,7 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string                                    $validerUrl
  * @var string                                    $devaliderUrl
  * @var TypeValidation                            $typeValidation
- * @var Validation[]                              $validations
+ * @var ValidationThese[]                              $validations
  * @var DepotVersionCorrigeeValidationPresident[] $attendues
  * @var Utilisateur[]                             $utilisateurs
  */

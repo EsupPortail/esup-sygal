@@ -4,7 +4,7 @@
  */
 
 use Application\Entity\Db\Role;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
 use These\Fieldset\Direction\DirectionFieldset;
 
@@ -35,10 +35,10 @@ use These\Fieldset\Direction\DirectionFieldset;
                         <?php if(!$estImportable){ ?>
                             <?php echo $this->formControlGroup($fs->get('directeur-qualite')); ?>
                         <?php }else{
-                            /** @var Acteur $directeur */
+                            /** @var ActeurThese $directeur */
                             $directeur = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->first();
                             echo "Qualité : ";
-                            echo trim($directeur?->getLibelleQualite()) !== null ? $directeur->getLibelleQualite() : "<i>Aucune qualité de renseignée</i>";
+                            echo trim($directeur?->getLibelleQualite()) !== null ? $directeur->getLibelleQualite() : "<i>Aucune qualité renseignée</i>";
                         } ?>
                     </div>
                 </div>
@@ -84,12 +84,12 @@ use These\Fieldset\Direction\DirectionFieldset;
                                 <?php echo $this->formControlGroup($fs->get('codirecteur' . $i . '-qualite')); ?>
                             <?php }else{
                                 $individuId = $fs->get('codirecteur' . $i . '-individu')->getValue();
-                                /** @var Acteur $coDirecteur */
+                                /** @var ActeurThese $coDirecteur */
                                 $coDirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
                                 foreach($coDirecteurs as $coDirecteur){
                                     if((int)$individuId === $coDirecteur->getIndividu()->getId()){
                                         echo "Qualité : ";
-                                        echo trim($coDirecteur->getLibelleQualite()) !== null ? $coDirecteur->getLibelleQualite() : "<i>Aucune qualité de renseignée</i>";
+                                        echo trim($coDirecteur->getLibelleQualite()) !== null ? $coDirecteur->getLibelleQualite() : "<i>Aucune qualité renseignée</i>";
                                     }
                                 }
                             } ?>

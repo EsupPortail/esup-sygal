@@ -35,11 +35,18 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     const CODE_CO_ENCADRANT = 'B';
 
     //
+    // rôles HDR-dépendants
+    //
+    const CODE_HDR_CANDIDAT = 'HDR_CANDIDAT';
+    const CODE_HDR_GARANT = 'HDR_GARANT';
+
+    //
     // rôles établissement-dépendants
     //
     const CODE_ADMIN = 'ADMIN';
     const CODE_BU = 'BU';
     const CODE_BDD = 'BDD'; // maison du doctorat
+    const CODE_GEST_HDR = 'HDR_GEST'; // maison du doctorat
     const CODE_OBSERVATEUR = "Observateur";
 
     //
@@ -109,6 +116,11 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     private $theseDependant = false;
 
     /**
+     * @var bool
+     */
+    private $hdrDependant = false;
+
+    /**
      * @var int
      */
     private $ordreAffichage;
@@ -135,9 +147,9 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isDirecteurThese(): bool
+    public function isCandidatHDR(): bool
     {
-        return $this->getCode() === self::CODE_DIRECTEUR_THESE;
+        return $this->getCode() === self::CODE_HDR_CANDIDAT;
     }
 
     public function isCodirecteurThese(): bool
@@ -148,11 +160,52 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
+    public function isDirecteurThese(): bool
+    {
+        return $this->getCode() === self::CODE_DIRECTEUR_THESE;
+    }
+
     public function isActeurDeThese(): bool
     {
         return in_array($this->getCode(), [
             self::CODE_DIRECTEUR_THESE,
             self::CODE_CODIRECTEUR_THESE,
+            self::CODE_MEMBRE_JURY,
+            self::CODE_PRESIDENT_JURY,
+            self::CODE_RAPPORTEUR_JURY,
+            self::CODE_RAPPORTEUR_ABSENT,
+            self::CODE_CO_ENCADRANT,
+        ]);
+    }
+
+    public function isGestionnaireDeThese(): bool
+    {
+        return in_array($this->getCode(), [
+            self::CODE_ADMIN,
+            self::CODE_BU,
+            self::CODE_BDD,
+            self::CODE_OBSERVATEUR,
+            self::CODE_RESP_ED,
+            self::CODE_GEST_ED,
+            self::CODE_RESP_UR,
+            self::CODE_GEST_UR,
+        ]);
+    }
+
+    public function isGestionnaireDeHDR(): bool
+    {
+        return in_array($this->getCode(), [
+            self::CODE_ADMIN,
+            self::CODE_GEST_HDR,
+            self::CODE_RESP_UR,
+            self::CODE_GEST_UR,
+        ]);
+    }
+
+    public function isActeurDeHDR(): bool
+    {
+        return in_array($this->getCode(), [
+            self::CODE_HDR_GARANT,
             self::CODE_MEMBRE_JURY,
             self::CODE_PRESIDENT_JURY,
             self::CODE_RAPPORTEUR_JURY,
@@ -246,6 +299,25 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     public function setTheseDependant($theseDependant = true)
     {
         $this->theseDependant = $theseDependant;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHDRDependant()
+    {
+        return $this->hdrDependant;
+    }
+
+    /**
+     * @param bool $hdrDependant
+     * @return self
+     */
+    public function setHDRDependant($hdrDependant = true)
+    {
+        $this->hdrDependant = $hdrDependant;
 
         return $this;
     }
@@ -361,6 +433,8 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
             Role::CODE_PRESIDENT_JURY,
             Role::CODE_RAPPORTEUR_JURY,
             Role::CODE_RAPPORTEUR_ABSENT,
+            Role::CODE_HDR_GARANT,
+            Role::CODE_HDR_CANDIDAT,
         ]);
     }
 }

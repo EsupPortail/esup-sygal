@@ -1,18 +1,18 @@
 <?php
 
-use These\Entity\Db\Acteur;
-use Application\Entity\Db\Validation;
+use Acteur\Entity\Db\ActeurThese;
+use Validation\Entity\Db\ValidationThese;
 use These\Provider\Privilege\PresidentJuryPrivileges;
 
 /**
  * @see \These\Controller\PresidentJuryController::indexAction()
- * @var Acteur[] $presidents
+ * @var ActeurThese[] $presidents
  */
 
 $this->headTitle("Gestion des comptes associés aux présidents du jury");
 
 
-function afficherActeur(Acteur $a) {
+function afficherActeur(ActeurThese $a) {
 
     $mailIndividu = $a->getIndividu()->getEmailPro();
 
@@ -31,7 +31,7 @@ function afficherActeur(Acteur $a) {
 
 }
 
-function afficherUtilisateur(Acteur $a) {
+function afficherUtilisateur(ActeurThese $a) {
     $utilisateurs = $a->getIndividu()->getUtilisateurs();
 
     if (empty($utilisateurs)) {
@@ -46,7 +46,7 @@ function afficherUtilisateur(Acteur $a) {
     return "<span style='color:darkgreen;' class='icon icon-oui' title='".$title."' data-bs-toggle='tooltip' data-bs-html='true'></span>";
 }
 
-function afficherMailIndividu(Acteur $a) {
+function afficherMailIndividu(ActeurThese $a) {
     if ($a->getIndividu() !== null AND $a->getIndividu()->getEmailPro() !== null) {
         return "<span class='icon icon-oui' style='color:darkgreen;' 
                     title='IndividuId:". $a->getIndividu()->getId(). "<br/>".
@@ -56,7 +56,7 @@ function afficherMailIndividu(Acteur $a) {
     return "<span class='icon icon-non iconly' style='color:darkred;' title='Pas d email lié à l individu'></span>";
 }
 
-function afficherMailMembre(Acteur $a) {
+function afficherMailMembre(ActeurThese $a) {
     if ($a->getMembre() !== null AND $a->getMembre()->getEmail() !== null) {
         return '<span class="icon icon-oui" style = "color:darkgreen;"
                 title = "PropositionId: '. $a->getMembre()->getProposition()->getId() . '<br/>' .
@@ -66,7 +66,7 @@ function afficherMailMembre(Acteur $a) {
     return '<span class="icon icon-non iconly" style="color:darkred;" title="Pas d email lié à un membre de soutenance"></span>';
 }
 
-function afficherThese(Acteur $a, $renderer) {
+function afficherThese(ActeurThese $a, $renderer) {
     $these = $a->getThese();
     $titre = htmlentities($these->getTitre(), ENT_QUOTES);
 
@@ -78,7 +78,7 @@ function afficherThese(Acteur $a, $renderer) {
     return $texte;
 }
 
-function afficherCorrection(Acteur $a) {
+function afficherCorrection(ActeurThese $a) {
     $these = $a->getThese();
     $correction = $these->getCorrectionAutorisee();
     $forcee = $these->getCorrectionAutoriseeForcee();
@@ -94,7 +94,7 @@ function afficherCorrection(Acteur $a) {
     return $texte;
 }
 
-function afficherCorrectionEffectuees(Acteur $a) {
+function afficherCorrectionEffectuees(ActeurThese $a) {
     $these = $a->getThese();
     $correction = $these->getValidations('DEPOT_THESE_CORRIGEE')->toArray();
 
@@ -105,8 +105,8 @@ function afficherCorrectionEffectuees(Acteur $a) {
     return "<span class='icon icon-oui' style='color:darkgreen;'></span>";
 }
 
-function afficherValidations(Acteur $a) {
-    /** @var Validation[] $validations */
+function afficherValidations(ActeurThese $a) {
+    /** @var ValidationThese[] $validations */
     $validations = $a->getThese()->getValidations('CORRECTION_THESE')->toArray();
     if (empty($validations)) {
         return "Aucune validation";

@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Proposition;
@@ -9,8 +9,8 @@ use These\Service\FichierThese\PdcData;
 /**
  * @var PhpRenderer             $this
  * @var Proposition $proposition
- * @var Validation[] $validations
- * @var Validation $validation
+ * @var ValidationThese[] $validations
+ * @var ValidationThese $validation
  * @var array $logos
  * @var int $nbCodirecteur
  * @var PdcData                 $informations

@@ -3,12 +3,12 @@
 namespace RapportActivite\Config;
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 
 class ModuleConfig
 {
@@ -117,7 +117,7 @@ class ModuleConfig
                     return
                         "$rapportAlias.fichier is null AND " .
                         "EXISTS (
-                            SELECT a_filter FROM " . Acteur::class . " a_filter 
+                            SELECT a_filter FROM " . ActeurThese::class . " a_filter 
                             JOIN a_filter.role r WITH r.code = '" . Role::CODE_CODIRECTEUR_THESE . "'
                             WHERE a_filter.histoDestruction is null AND a_filter.these = $rapportAlias.these
                         )";

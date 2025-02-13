@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest\Test\Asset;
 
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
 use Doctorant\Entity\Db\Doctorant;
@@ -18,9 +18,10 @@ use Depot\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Application\Entity\Db\ValiditeFichier;
 use Fichier\Entity\Db\VersionFichier;
 
@@ -70,9 +71,16 @@ class EntityAsset
         return $e;
     }
 
-    static public function newValidation(These $these, TypeValidation $type, Individu $individu = null)
+    static public function newValidation()
     {
-        $e = new Validation($type, $these, $individu);
+        $e = new Validation();
+
+        return $e;
+    }
+
+    static public function newValidationThese(Validation $validation, These $these, Individu $individu = null)
+    {
+        $e = new ValidationThese($validation, $these, $individu);
 
         return $e;
     }
@@ -220,7 +228,7 @@ class EntityAsset
 
     public static function newActeur(These $these, Source $source, Role $role, Individu $individu)
     {
-        $e = new Acteur();
+        $e = new ActeurThese();
         $e
             ->setThese($these)
             ->setRole($role)

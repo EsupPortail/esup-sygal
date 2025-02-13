@@ -1,0 +1,189 @@
+<?php
+
+/**
+ * @see PropositionHDRRechercheController::indexAction()
+ * @var Proposition[] $propositions
+ * @var Role $role
+ * @var Etablissement[] $etablissements
+ * @var EcoleDoctorale[] $ecoles
+ * @var UniteRecherche[] $unites
+ * @var Etat[] $etats
+ * @var integer $etablissementId
+ * @var integer $ecoleDoctoraleId
+ * @var integer $uniteRechercheId
+ * @var integer $etatId
+ */
+
+use Application\Entity\Db\Role;
+use HDR\Provider\Privileges\HDRPrivileges;
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
+use HDR\Entity\Db\HDR;
+
+$canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_CONSULTATION_FICHE));
+?>
+
+<h1 class="page-header">
+    Index des propositions en cours
+    <span class="badge bg-secondary">
+        <?php echo $propositions->getTotalItemCount(); ?>
+    </span>
+</h1>
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url('soutenances/recherche-hdr/filters', [], ['query' => $this->queryParams()], true); ?>
+    <div class="filters" id="proposition-filters" data-url="<?php echo $loadFiltersUrl ?>">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<?php if (count($propositions) > 0): ?>
+
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                Candidat
+            </th>
+            <th>
+                Garant
+            </th>
+            <th>
+                Structures
+            </th>
+            <th>
+                État
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($propositions as $proposition) : ?>
+            <?php
+            /** @var HDR $hdr **/
+            $hdr = $proposition->getObject();
+            $unite = $hdr->getUniteRecherche();
+            $canSuppression = ($this->isAllowed($hdr, PropositionPrivileges::PROPOSITION_SUPPRIMER_INFORMATIONS));
+            ?>
+            <tr>
+                <td>
+                    <?php if ($canVoirHDR) : ?>
+                        <?php echo $hdr->getCandidat()->getIndividu(); ?>
+                        <?php if ($proposition->getDate()) : ?>
+                            <br>
+                            Date de soutenance prévue : <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                <td>
+                    <?php foreach ($hdr->getEncadrements() as $encadrement) : ?>
+                        <?php echo $encadrement->getIndividu() ; ?>
+                        <br/>
+                    <?php endforeach; ?>
+                </td>
+                <td>
+                    <?php if ($hdr->getEtablissement()) : ?>
+                        <?php echo $this->structure($hdr->getEtablissement()); ?>
+                    <?php else : ?>
+                        <strong style="color:darkred;">
+                            Établissement  : Aucun
+                        </strong>
+                    <?php endif; ?>
+                    <br/>
+
+                    <?php if ($hdr->getUniteRecherche()) : ?>
+                        <?php echo $this->structure($hdr->getUniteRecherche()); ?>
+                    <?php else : ?>
+                        <!-- Gestion des unités de recherche -->
+                        <strong style="color:darkred;">
+                            Unité de recherche :
+                            Aucune
+                        </strong>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+                </td>
+                <td>
+                    <?php if ($canVoirHDR) : ?>
+                        <a  <?php /** @see \HDR\Controller\HDRController::detailIdentiteAction() */ ?>
+                                href="<?php echo $this->url('hdr/identite', ['hdr' => $hdr->getId()], [] ,true); ?>">
+                            Fiche de la HDR
+                        </a>
+                        <br/>
+                    <?php endif; ?>
+                    <a
+                        <?php /** @see \Soutenance\Controller\HDR\Proposition\PropositionHDRController::propositionAction() */ ?>
+                            href="<?php echo $this->url("soutenance_hdr/proposition", ['hdr' => $hdr->getId()], [], true); ?>"
+                            title="Visualiser la proposition de soutenance"
+                    >
+                        Proposition
+                    </a>
+                    <br/>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
+                            href="<?php echo $this->url("soutenance_hdr/presoutenance", ['hdr' => $hdr->getId()], [], true); ?>"
+                            title="Visualiser la préparation de la soutenance"
+                    >
+                        Présoutenance
+                    </a>
+                    <br/>
+                    <?php if ($canSuppression) : ?>
+                        <a
+                            <?php
+                            $returnUrl = $this->url('soutenances/index-structure-hdr', [], [], true);
+                            /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                                href="<?php echo $this->url("soutenance_hdr/proposition/suppression", ['hdr' => $hdr->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                                data-toggle="confirmationx" data-event="modification"
+                                title="Suppression des informations de la soutenance"
+                                data-message="Attention, cela supprimera l'ensemble des informations rentrées pour cette proposition de soutenance, êtes-vous sûr(e) ?">
+                            <span class="icon icon-delete"></span>
+                            Suppression
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+
+    <?php if ($propositions->containsRealSearchResult()): ?>
+        <p>Aucune proposition de soutenance trouvée.</p>
+    <?php else: ?>
+        <p class="text-info text-center"><i class="fa fa-bullhorn"></i> Ajustez les filtres et lancez la recherche...</p>
+    <?php endif ?>
+
+<?php endif ?>
+<style>
+    #proposition-filters {
+        min-width: 30px;
+        min-height: 120px;
+    }
+
+    span.structure {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        /*font-weight: 500;*/
+    }
+    span.etablissement {
+        /*color:darkred;*/
+    }
+
+    span.unite-recherche {
+        /*color:darkgreen;*/
+    }
+</style>
+
+<script>
+    $(function() {
+        $("#proposition-filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

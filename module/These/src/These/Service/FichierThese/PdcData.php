@@ -4,8 +4,8 @@ namespace These\Service\FichierThese;
 
 use DateTime;
 use Individu\Entity\Db\Individu;
+use Acteur\Entity\Db\ActeurThese;
 use Structure\Entity\Db\Etablissement;
-use These\Entity\Db\Acteur;
 
 /** Les informations ici sont des chaines de caractères */
 class PdcData
@@ -40,17 +40,17 @@ class PdcData
     private $libelleAssocie;
 
 
-    /** @var Acteur[] */
+    /** @var ActeurThese[] */
     private $directeurs;
-    /** @var Acteur[] */
+    /** @var ActeurThese[] */
     private $codirecteurs;
-    /** @var Acteur[] */
+    /** @var ActeurThese[] */
     private $coencadrants;
-    /** @var Acteur[] */
+    /** @var ActeurThese[] */
     private $rapporteurs;
-    /** @var Acteur[] */
+    /** @var ActeurThese[] */
     private $membres;
-    /** @var Acteur[] */
+    /** @var ActeurThese[] */
     private $jury;
 
     /** @var MembreData[] */
@@ -325,7 +325,7 @@ class PdcData
     }
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     public function getDirecteurs()
     {
@@ -333,7 +333,7 @@ class PdcData
     }
 
     /**
-     * @param Acteur[] $directeurs
+     * @param ActeurThese[] $directeurs
      * @return PdcData
      */
     public function setDirecteurs($directeurs)
@@ -343,7 +343,7 @@ class PdcData
     }
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     public function getCodirecteurs()
     {
@@ -351,7 +351,7 @@ class PdcData
     }
 
     /**
-     * @param Acteur[] $codirecteurs
+     * @param ActeurThese[] $codirecteurs
      * @return PdcData
      */
     public function setCodirecteurs($codirecteurs)
@@ -361,7 +361,7 @@ class PdcData
     }
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     public function getCoencadrants()
     {
@@ -369,7 +369,7 @@ class PdcData
     }
 
     /**
-     * @param Acteur[] $coencadrants
+     * @param ActeurThese[] $coencadrants
      * @return PdcData
      */
     public function setCoencadrants($coencadrants)
@@ -380,7 +380,7 @@ class PdcData
 
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     public function getRapporteurs()
     {
@@ -388,7 +388,7 @@ class PdcData
     }
 
     /**
-     * @param Acteur[] $rapporteurs
+     * @param ActeurThese[] $rapporteurs
      * @return PdcData
      */
     public function setRapporteurs($rapporteurs)
@@ -398,7 +398,7 @@ class PdcData
     }
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     public function getMembres() : array
     {
@@ -406,7 +406,7 @@ class PdcData
     }
 
     /**
-     * @param Acteur[] $membres
+     * @param ActeurThese[] $membres
      * @return PdcData
      */
     public function setMembres($membres)
@@ -416,7 +416,7 @@ class PdcData
     }
 
     /**
-     * @return Acteur[]
+     * @return ActeurThese[]
      */
     public function getJury(): array
     {
@@ -424,7 +424,7 @@ class PdcData
     }
 
     /**
-     * @param Acteur[] $jury
+     * @param ActeurThese[] $jury
      * @return PdcData
      */
     public function setJury(array $jury): PdcData
@@ -625,15 +625,15 @@ class PdcData
      */
     public function getSignataires() : array
     {
-        $membres = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getMembres());
+        $membres = array_map(function(ActeurThese $a) { return $a->getIndividu();}, $this->getMembres());
         //on affiche seulement les rapporteurs qui ne sont pas absent
-        $rapporteurs = array_map(function(Acteur $a) { return $a->getMembre() && $a->getMembre()->estMembre() ? $a->getIndividu() : null;}, $this->getRapporteurs());
+        $rapporteurs = array_map(function(ActeurThese $a) { return $a->getMembre() && $a->getMembre()->estMembre() ? $a->getIndividu() : null;}, $this->getRapporteurs());
         $rapporteurs = array_filter($rapporteurs, function($value) {
             return $value !== null;
         });
-        $directeurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getDirecteurs());
-        $codirecteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCodirecteurs());
-        $coencadrants = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCoencadrants());
+        $directeurs = array_map(function(ActeurThese $a) { return $a->getIndividu();}, $this->getDirecteurs());
+        $codirecteurs = array_map(function(ActeurThese $a) { return $a->getIndividu();}, $this->getCodirecteurs());
+        $coencadrants = array_map(function(ActeurThese $a) { return $a->getIndividu();}, $this->getCoencadrants());
 
         $signataires = array_diff(array_merge($membres, $rapporteurs), $directeurs, $codirecteurs, $coencadrants);
         usort($signataires, function(Individu $a, Individu $b) { return $a->getNomComplet() > $b->getNomComplet();});

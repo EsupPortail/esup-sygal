@@ -2,11 +2,11 @@
 
 namespace RapportActivite\Service\Operation;
 
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 use UnicaenAvis\Service\AvisService;
+use Validation\Service\ValidationService;
 
 class RapportActiviteOperationServiceFactory
 {
@@ -18,7 +18,7 @@ class RapportActiviteOperationServiceFactory
     {
         $service = new RapportActiviteOperationService();
 
-        /** @var \Application\Service\Validation\ValidationService $validationService */
+        /** @var \Validation\Service\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
         $service->setValidationService($validationService);
 

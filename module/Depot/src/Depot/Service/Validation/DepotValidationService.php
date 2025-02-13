@@ -2,10 +2,7 @@
 
 namespace Depot\Service\Validation;
 
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Depot\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
@@ -13,10 +10,16 @@ use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class DepotValidationService
 {
     use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
     public function getEntityManager(): EntityManager
@@ -38,19 +41,15 @@ class DepotValidationService
     /**
      * @param These $these
      * @param Individu $createur
-     * @return Validation
+     * @return ValidationThese
      */
-    public function validateRdvBu(These $these, Individu $createur): Validation
+    public function validateRdvBu(These $these, Individu $createur): ValidationThese
     {
-        $v = new Validation(
-            $this->validationService->findTypeValidationByCode(TypeValidation::CODE_RDV_BU),
-            $these,
-            $createur
-        );
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_RDV_BU);
+        $validationThese = new ValidationThese(new Validation($typeValidation), $these, $createur);
+        $this->validationTheseService->saveValidation($validationThese);
 
-        $this->validationService->saveValidation($v);
-
-        return $v;
+        return $validationThese;
     }
 
     /**
@@ -58,13 +57,13 @@ class DepotValidationService
      */
     public function unvalidateRdvBu(These $these)
     {
-        $qb = $this->validationService->getRepository()->createQueryBuilder('v')
+        $qb = $this->validationTheseService->getRepository()->createQueryBuilder('v')
             ->andWhere('tv.code = :tvcode')
             ->andWhere('v.these = :these')
             ->andWhere('v.histoDestruction is null')
             ->setParameter('these', $these)
             ->setParameter('tvcode', TypeValidation::CODE_RDV_BU);
-        /** @var Validation $v */
+        /** @var ValidationThese $v */
         $v = $qb->getQuery()->getOneOrNullResult();
 
         if (!$v) {
@@ -74,59 +73,53 @@ class DepotValidationService
 
         $v->historiser();
 
-        $this->validationService->saveValidation($v);
+        $this->validationTheseService->saveValidation($v);
     }
 
     /**
      * @param These $these
-     * @return Validation
+     * @return ValidationThese
      */
-    public function validateDepotTheseCorrigee(These $these): Validation
+    public function validateDepotTheseCorrigee(These $these): ValidationThese
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
 
-        $v = new Validation(
-            $this->validationService->findTypeValidationByCode(TypeValidation::CODE_DEPOT_THESE_CORRIGEE),
-            $these,
-            $individu);
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_DEPOT_THESE_CORRIGEE);
+        $validationThese = new ValidationThese(new Validation($typeValidation), $these, $individu);
+        $this->validationTheseService->saveValidation($validationThese);
 
-        $this->validationService->saveValidation($v);
-
-        return $v;
+        return $validationThese;
     }
 
     /**
      * @param These $these
-     * @return Validation
+     * @return ValidationThese
      */
-    public function validateVersionPapierCorrigee(These $these): Validation
+    public function validateVersionPapierCorrigee(These $these): ValidationThese
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
 
-        $v = new Validation(
-            $this->validationService->findTypeValidationByCode(TypeValidation::CODE_VERSION_PAPIER_CORRIGEE),
-            $these,
-            $individu);
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_VERSION_PAPIER_CORRIGEE);
+        $validationThese = new ValidationThese(new Validation($typeValidation), $these, $individu);
+        $this->validationTheseService->saveValidation($validationThese);
 
-        $this->validationService->saveValidation($v);
-
-        return $v;
+        return $validationThese;
     }
 
     /**
      * @param These $these
-     * @return Validation
+     * @return ValidationThese
      */
-    public function unvalidateDepotTheseCorrigee(These $these): Validation
+    public function unvalidateDepotTheseCorrigee(These $these): ValidationThese
     {
-        $qb = $this->validationService->getRepository()->createQueryBuilder('v')
+        $qb = $this->validationTheseService->getRepository()->createQueryBuilder('v')
             ->andWhereTheseIs($these)
             ->andWhereTypeIs($type = TypeValidation::CODE_DEPOT_THESE_CORRIGEE)
             ->andWhereNotHistorise();
         try {
-            /** @var Validation $v */
+            /** @var ValidationThese $v */
             $v = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException(
@@ -135,7 +128,7 @@ class DepotValidationService
 
         if ($v !== null) {
             $v->historiser();
-            $this->validationService->saveValidation($v);
+            $this->validationTheseService->saveValidation($v);
         }
 
         return $v;
@@ -143,34 +136,31 @@ class DepotValidationService
 
     /**
      * @param These $these
-     * @return Validation
+     * @return ValidationThese
      */
-    public function validateCorrectionThese(These $these): Validation
+    public function validateCorrectionThese(These $these): ValidationThese
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
 
-        $v = new Validation(
-            $this->validationService->findTypeValidationByCode(TypeValidation::CODE_CORRECTION_THESE),
-            $these,
-            $individu);
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_CORRECTION_THESE);
+        $validationThese = new ValidationThese(new Validation($typeValidation), $these, $individu);
+        $this->validationTheseService->saveValidation($validationThese);
 
-        $this->validationService->saveValidation($v);
-
-        return $v;
+        return $validationThese;
     }
 
     /**
      * @param These $these
-     * @return Validation
+     * @return ValidationThese
      */
-    public function unvalidateCorrectionThese(These $these): Validation
+    public function unvalidateCorrectionThese(These $these): ValidationThese
     {
-        $qb = $this->validationService->getRepository()->createQueryBuilder('v')
+        $qb = $this->validationTheseService->getRepository()->createQueryBuilder('v')
             ->andWhereTheseIs($these)
             ->andWhereTypeIs($type = TypeValidation::CODE_CORRECTION_THESE)
             ->andWhereNotHistorise();
-        /** @var Validation $v */
+        /** @var ValidationThese $v */
         $v = $qb->getQuery()->getOneOrNullResult();
 
         if (!$v) {
@@ -180,18 +170,17 @@ class DepotValidationService
 
         $v->historiser();
 
-        $this->validationService->saveValidation($v);
+        $this->validationTheseService->saveValidation($v);
 
         return $v;
     }
 
     /**
-     * @param These $these
      * @return \Depot\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident[]
      */
     public function getValidationsAttenduesPourCorrectionThese(These $these): array
     {
-        $repo = $this->validationService->getEntityManager()->getRepository(DepotVersionCorrigeeValidationPresident::class);
+        $repo = $this->validationTheseService->getEntityManager()->getRepository(DepotVersionCorrigeeValidationPresident::class);
         $qb = $repo->createQueryBuilder('va')
             ->addSelect('t, i')
             ->join('va.these', 't', Join::WITH, 't = :these')
@@ -202,26 +191,25 @@ class DepotValidationService
         return $qb->getQuery()->getResult();
     }
 
-    public function validatePageDeCouverture($these)
+    public function validatePageDeCouverture($these): ValidationThese
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
 
-        $v = new Validation(
-            $this->validationService->findTypeValidationByCode(TypeValidation::CODE_PAGE_DE_COUVERTURE),
-            $these,
-            $individu);
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_PAGE_DE_COUVERTURE);
+        $validationThese = new ValidationThese(new Validation($typeValidation), $these, $individu);
+        $this->validationTheseService->saveValidation($validationThese);
 
-        $this->validationService->saveValidation($v);
+        return $validationThese;
     }
 
     public function unvalidatePageDeCouverture($these)
     {
-        $qb = $this->validationService->getRepository()->createQueryBuilder('v')
+        $qb = $this->validationTheseService->getRepository()->createQueryBuilder('v')
             ->andWhereTheseIs($these)
             ->andWhereTypeIs($type = TypeValidation::CODE_PAGE_DE_COUVERTURE)
             ->andWhereNotHistorise();
-        /** @var Validation $v */
+        /** @var ValidationThese $v */
         try {
             $v = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
@@ -236,7 +224,7 @@ class DepotValidationService
 
         $v->historiser();
 
-        $this->validationService->saveValidation($v);
+        $this->validationTheseService->saveValidation($v);
 
         return $v;
     }

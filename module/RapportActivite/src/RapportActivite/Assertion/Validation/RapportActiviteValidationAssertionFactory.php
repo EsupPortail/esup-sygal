@@ -3,11 +3,11 @@
 namespace RapportActivite\Assertion\Validation;
 
 use Application\Assertion\AbstractAssertion;
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
+use Validation\Service\ValidationService;
 
 class RapportActiviteValidationAssertionFactory
 {
@@ -30,7 +30,7 @@ class RapportActiviteValidationAssertionFactory
         $assertion->setRapportActiviteService($rapportActiviteService);
         $assertion->setServiceMessageCollector($messageCollector);
 
-        /** @var ValidationService $validationService */
+        /** @var \Validation\Service\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
         $assertion->setValidationService($validationService);
 

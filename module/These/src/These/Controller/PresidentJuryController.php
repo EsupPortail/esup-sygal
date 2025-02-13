@@ -11,15 +11,15 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use These\Entity\Db\Acteur;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 
 /** @method FlashMessenger flashMessenger() **/
 
 class PresidentJuryController extends AbstractActionController
 {
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use TheseServiceAwareTrait;
     use AdresseMailFormAwareTrait;
@@ -28,8 +28,8 @@ class PresidentJuryController extends AbstractActionController
     public function indexAction() {
         $date = (new DateTime())->sub(new DateInterval('P4M'));
 
-        $presidents = $this->getActeurService()->getRepository()->findActeursPresidentDuJuryForThesesAvecCorrection();
-        $presidents = array_filter($presidents, function (Acteur $president) use ($date) { return $president->getThese()->getDateSoutenance() > $date;});
+        $presidents = $this->getActeurTheseService()->getRepository()->findActeursPresidentDuJuryForThesesAvecCorrection();
+        $presidents = array_filter($presidents, function (ActeurThese $president) use ($date) { return $president->getThese()->getDateSoutenance() > $date;});
 
         return new ViewModel([
             'presidents' => $presidents,
@@ -41,7 +41,7 @@ class PresidentJuryController extends AbstractActionController
      */
     public function notifierCorrectionAction()
     {
-        $president = $this->getActeurService()->getRequestedActeur($this, 'president');
+        $president = $this->getActeurTheseService()->getRequestedActeur($this, 'president');
         $these = $president->getThese();
 
         $resultArray = $this->depotService->notifierCorrectionsApportees($these);
@@ -54,7 +54,7 @@ class PresidentJuryController extends AbstractActionController
 
     public function ajouterMailAction()
     {
-        $president = $this->getActeurService()->getRequestedActeur($this, 'president');
+        $president = $this->getActeurTheseService()->getRequestedActeur($this, 'president');
 
         $membre = $this->getMembreService()->createDummyMembre();
         $form = $this->getAdresseMailForm();
@@ -66,8 +66,10 @@ class PresidentJuryController extends AbstractActionController
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $membre->setActeur($president);
+//                $membre->setActeur($president);
                 $this->getMembreService()->create($membre);
+                $president->setMembre($membre);
+                $this->acteurTheseService->save($president);
             }
         }
 
@@ -81,7 +83,7 @@ class PresidentJuryController extends AbstractActionController
 
     public function supprimerMailAction()
     {
-        $president = $this->getActeurService()->getRequestedActeur($this, 'president');
+        $president = $this->getActeurTheseService()->getRequestedActeur($this, 'president');
         $membre = $this->getMembreService()->getMembreByActeur($president);
         $this->getMembreService()->delete($membre);
         return $this->redirect()->toRoute('president-jury', [], [], true);

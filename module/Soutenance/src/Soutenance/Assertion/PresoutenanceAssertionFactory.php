@@ -4,6 +4,7 @@ namespace Soutenance\Assertion;
 
 use Application\Assertion\AbstractAssertion;
 use Application\Service\UserContextService;
+use HDR\Service\HDRService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -23,6 +24,7 @@ class PresoutenanceAssertionFactory {
          */
         $userContext = $container->get(UserContext::class);
         $theseService = $container->get(TheseService::class);
+        $hdrService = $container->get(HDRService::class);
         $messageCollector = $container->get('MessageCollector');
 
 
@@ -30,6 +32,7 @@ class PresoutenanceAssertionFactory {
         $assertion = new PresoutenanceAssertion();
         $assertion->setUserContextService($userContext);
         $assertion->setTheseService($theseService);
+        $assertion->setHDRService($hdrService);
         $assertion->setServiceMessageCollector($messageCollector);
         $this->injectCommons($assertion, $container);
 

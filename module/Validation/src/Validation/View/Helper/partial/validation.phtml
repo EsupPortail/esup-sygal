@@ -1,0 +1,31 @@
+<?php
+/**
+ * @var AbstractValidationEntity $validation
+ * @var bool $includeMailToLink
+ * @var string $color
+ * @var string $icon
+ */
+
+use Validation\Entity\Db\AbstractValidationEntity;
+
+?>
+
+<div class="card card-<?= $color ?> mt-2 mb-4">
+    <div class="corps">
+        <div class="icon" style="font-size: 2rem;">
+            <span class="<?= $icon ?>"></span>
+        </div>
+        <div class="text">
+            <p class="card-title mb-1"
+               style="font-size:1rem; font-weight: bold"><?= $validation->getValidation()->getTypeValidation() ?></p>
+            <p class="card-text mb-0">
+                par <?php echo $validation->getIndividu();
+                if ($includeMailToLink && ($email = $validation->getIndividu()->getEmailPro())) : ?>
+                    (<a href="mailto: <?= $email ?>"><?= $email ?></a>)
+                <?php endif; ?>,
+                <br>
+                le <?php echo $validation->getHistoCreation()->format(\Application\Constants::DATETIME_FORMAT); ?>
+            </p>
+        </div>
+    </div>
+</div>

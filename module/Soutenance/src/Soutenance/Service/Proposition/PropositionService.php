@@ -2,10 +2,10 @@
 
 namespace Soutenance\Service\Proposition;
 
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
+use Application\Constants;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
@@ -18,6 +18,8 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use HDR\Entity\Db\HDR;
+use Horodatage\Service\Horodatage\HorodatageServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Laminas\Cache\Exception\LogicException;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -28,13 +30,14 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
 use Soutenance\Rule\PropositionJuryRuleAwareTrait;
+use Soutenance\Entity\PropositionThese;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
-use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
-use Structure\Entity\Db\EcoleDoctorale;
+use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRServiceAwareTrait;
+use Soutenance\Service\Proposition\PropositionThese\PropositionTheseServiceAwareTrait;
+use Soutenance\Service\Validation\ValidationThese\ValidationTheseServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
@@ -42,8 +45,8 @@ use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 class PropositionService extends BaseService
 {
     use EntityManagerAwareTrait;
-    use ActeurServiceAwareTrait;
-    use ValidatationServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use SoutenanceNotificationFactoryAwareTrait;
@@ -52,6 +55,8 @@ class PropositionService extends BaseService
     use EtablissementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use PropositionTheseServiceAwareTrait;
+    use PropositionHDRServiceAwareTrait;
     use PropositionJuryRuleAwareTrait;
 
     public function getRepository(): DefaultEntityRepository
@@ -63,32 +68,6 @@ class PropositionService extends BaseService
     }
 
     /** GESTION DES ENTITES *******************************************************************************************/
-
-    public function create(These $these) : Proposition
-    {
-        $proposition = new Proposition($these);
-        $proposition->setEtat($this->findPropositionEtatByCode(Etat::EN_COURS));
-
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $proposition->setHistoCreateur($user);
-        $proposition->setHistoCreation($date);
-        $proposition->setHistoModificateur($user);
-        $proposition->setHistoModification($date);
-
-        try {
-            $this->getEntityManager()->persist($proposition);
-            $this->getEntityManager()->flush($proposition);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
-        }
-        return $proposition;
-    }
 
     public function update(Proposition $proposition) : Proposition
     {
@@ -147,7 +126,7 @@ class PropositionService extends BaseService
 
     /** REQUETES ******************************************************************************************************/
 
-    public function createQueryBuilder(): DefaultQueryBuilder
+    protected function createQueryBuilder(): DefaultQueryBuilder
     {
         return $this->getRepository()->createQueryBuilder("proposition")
             ->addSelect('etat')->join('proposition.etat', 'etat')
@@ -160,28 +139,13 @@ class PropositionService extends BaseService
             ->addSelect('structure_etab')->leftJoin('etablissement.structure', 'structure_etab')
             ->addSelect('membre')->leftJoin('proposition.membres', 'membre')
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
-            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
-            ->addSelect('amembre')->leftJoin('acteur.membre', 'amembre')
+//            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur') // n'existe plus
+//            ->addSelect('amembre')->leftJoin('acteur.membre', 'amembre')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
             ->andWhere('proposition.histoDestruction is null')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
         ;
-    }
-
-    public function find(?int $id): ?Proposition
-    {
-        $qb = $this->createQueryBuilder()
-            ->andWhere("proposition.id = :id")
-            ->setParameter("id", $id)
-        ;
-        try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("De multiples propositions identifiées [".$id."] ont été trouvées !");
-        }
-
-        return $result;
     }
 
     public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : ?Proposition
@@ -191,20 +155,18 @@ class PropositionService extends BaseService
         return $this->find($id);
     }
 
-    public function findOneForThese(These $these): ?Proposition
+    public function findOneForObject(These|HDR $object): ?Proposition
     {
-        $qb = $this->createQueryBuilder()
-            ->andWhere("proposition.these = :these")
-            ->setParameter("these", $these)
-        ;
-
         try {
-            $result = $qb->getQuery()->getOneOrNullResult();
+            if($object instanceof These){
+                $proposition = $this->propositionTheseService->getRepository()->findOneBy(['these' => $object]);
+            }else{
+                $proposition = $this->propositionHDRService->getRepository()->findOneBy(['hdr' => $object]);
+            }
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("De multiples propositions associé à la thèse [".$these->getId()."] ont été trouvées !");
+            throw new RuntimeException("De multiples propositions associé à la thèse/HDR [".$object->getId()."] ont été trouvées !");
         }
-
-        return $result;
+        return $proposition ?: null;
     }
 
     /**
@@ -227,50 +189,50 @@ class PropositionService extends BaseService
      *
      * @param Proposition $proposition
      */
-    public function annulerValidationsForProposition(Proposition $proposition)
-    {
-        $these = $proposition->getThese();
-        $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
-        foreach ($validations as $validation) {
-            $this->getValidationService()->historise($validation);
-            try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validation);
-                $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
-                // aucun destinataire, todo : cas à gérer !
-            }
-        }
-        $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
-        if ($validationED) {
-            $this->getValidationService()->historise($validationED);
-            try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationED);
-                $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
-                // aucun destinataire, todo : cas à gérer !
-            }
-        }
-        $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
-        if ($validationUR) {
-            $this->getValidationService()->historise($validationUR);
-            try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationUR);
-                $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
-                // aucun destinataire, todo : cas à gérer !
-            }
-        }
-        $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
-        if ($validationBDD) {
-            $this->getValidationService()->historise($validationBDD);
-            try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationBDD);
-                $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
-                // aucun destinataire, todo : cas à gérer !
-            }
-        }
-    }
+//    public function annulerValidationsForProposition(Proposition $proposition)
+//    {
+//        $these = $proposition->getThese();
+//        $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
+//        foreach ($validations as $validation) {
+//            $this->getValidationService()->historise($validation);
+//            try {
+//                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validation);
+//                $this->notifierService->trigger($notif);
+//            } catch (\Notification\Exception\RuntimeException $e) {
+//                // aucun destinataire, todo : cas à gérer !
+//            }
+//        }
+//        $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
+//        if ($validationED) {
+//            $this->getValidationService()->historise($validationED);
+//            try {
+//                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationED);
+//                $this->notifierService->trigger($notif);
+//            } catch (\Notification\Exception\RuntimeException $e) {
+//                // aucun destinataire, todo : cas à gérer !
+//            }
+//        }
+//        $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
+//        if ($validationUR) {
+//            $this->getValidationService()->historise($validationUR);
+//            try {
+//                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationUR);
+//                $this->notifierService->trigger($notif);
+//            } catch (\Notification\Exception\RuntimeException $e) {
+//                // aucun destinataire, todo : cas à gérer !
+//            }
+//        }
+//        $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
+//        if ($validationBDD) {
+//            $this->getValidationService()->historise($validationBDD);
+//            try {
+//                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationBDD);
+//                $this->notifierService->trigger($notif);
+//            } catch (\Notification\Exception\RuntimeException $e) {
+//                // aucun destinataire, todo : cas à gérer !
+//            }
+//        }
+//    }
 
     /**
      * @param Proposition|null $proposition
@@ -321,74 +283,16 @@ class PropositionService extends BaseService
     }
 
     /**
-     * @param These $these
-     * @return \Application\Entity\Db\Validation[]
-     */
-    public function findValidationSoutenanceForThese(These $these): array
-    {
-        $validations = [];
-
-        /** Recuperation de la validation du directeur de thèse */
-        $doctorants = [ $these->getDoctorant() ];
-        $validations[Role::CODE_DOCTORANT] = [];
-        foreach ($doctorants as $doctorant) {
-            $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $doctorant->getIndividu());
-            if ($validation) $validations[Role::CODE_DOCTORANT][] = $validation;
-        }
-
-
-        /** Recuperation de la validation du directeur de thèse */
-        $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
-        $validations[Role::CODE_DIRECTEUR_THESE] = [];
-        foreach ($directeurs as $directeur) {
-            $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $directeur->getIndividu());
-            if ($validation) $validations[Role::CODE_DIRECTEUR_THESE][] = $validation;
-        }
-
-        /** Recuperation de la validation du codirecteur de thèse */
-        $codirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
-        $validations[Role::CODE_CODIRECTEUR_THESE] = [];
-        foreach ($codirecteurs as $codirecteur) {
-            $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $codirecteur->getIndividu());
-            if ($validation) $validations[Role::CODE_CODIRECTEUR_THESE][] = $validation;
-        }
-
-        /** Recuperation de la validation de l'unite de recherche */
-        $validations[Role::CODE_RESP_UR] = [];
-        $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-        if (!empty($validation)) $validations[Role::CODE_RESP_UR][] = current($validation);
-
-        /** Recuperation de la validation de l'école doctorale */
-        $validations[Role::CODE_RESP_ED] = [];
-        $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
-        if (!empty($validation)) $validations[Role::CODE_RESP_ED][] = current($validation);
-
-        /** Recuperation de la validation du bureau des doctorats */
-        $validations[Role::CODE_BDD] = [];
-        $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        if (!empty($validation)) $validations[Role::CODE_BDD][] = current($validation);
-
-        /** Recuperation des engagement d'impartialite */
-        $validations['Impartialite'] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these);
-        $validations['Avis']        = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_AVIS_SOUTENANCE, $these);
-
-        $validations[TypeValidationSoutenance::CODE_VALIDATION_DECLARATION_HONNEUR] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidationSoutenance::CODE_VALIDATION_DECLARATION_HONNEUR, $these);
-        $validations[TypeValidationSoutenance::CODE_REFUS_DECLARATION_HONNEUR] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidationSoutenance::CODE_REFUS_DECLARATION_HONNEUR, $these);
-
-        return $validations;
-    }
-
-    /**
      * Genere la texte "M Pierre Denis, Le président de l'Universite de Xxxxx"
-     * @var These $these
+     * @var These|HDR $object
      * @return string
      */
-    public function generateLibelleSignaturePresidenceForThese(These $these): string
+    public function generateLibelleSignaturePresidence(These|HDR $object): string
     {
-        $ETB_LIB_NOM_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $these->getEtablissement());
-        $ETB_LIB_TIT_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $these->getEtablissement());
-        $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement());
-        $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement());
+        $ETB_LIB_NOM_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $object->getEtablissement());
+        $ETB_LIB_TIT_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $object->getEtablissement());
+        $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $object->getEtablissement());
+        $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $object->getEtablissement());
 
         $libelle  = "";
         $libelle .= $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
@@ -402,10 +306,10 @@ class PropositionService extends BaseService
     }
 
     /**
-     * @var These $these
+     * @var These|HDR $object
      * @return string[]
      */
-    public function findLogosForThese(These $these): array
+    public function findLogos(These|HDR $object): array
     {
         $logos = [];
         $logos['COMUE'] = null;
@@ -418,42 +322,12 @@ class PropositionService extends BaseService
         }
 
         try {
-            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure());
+            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($object->getEtablissement()->getStructure());
         } catch (StorageAdapterException $e) {
             $logos['ETAB'] = null;
         }
 
         return $logos;
-    }
-
-    /**
-     * @param These $these
-     * @param Individu $currentIndividu
-     * @param Role $currentRole
-     * @return boolean
-     */
-    public function isValidated(These $these, Individu $currentIndividu, Role $currentRole): bool
-    {
-        $validations = [];
-        switch($currentRole->getCode()) {
-            case Role::CODE_DOCTORANT :
-            case Role::CODE_DIRECTEUR_THESE :
-            case Role::CODE_CODIRECTEUR_THESE :
-                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
-                $validations = array_filter($validations, function (Validation $v) use ($currentIndividu) { return $v->getIndividu() === $currentIndividu;});
-                break;
-            case Role::CODE_RESP_UR :
-                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-                break;
-            case Role::CODE_RESP_ED :
-            case Role::CODE_GEST_ED :
-                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
-                break;
-            case Role::CODE_BDD :
-                $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-                break;
-        }
-        return !(empty($validations));
     }
 
     /**
@@ -483,7 +357,8 @@ class PropositionService extends BaseService
                 ;
                 break;
             case Role::CODE_BDD :
-                $qb = $qb
+            case Role::CODE_GEST_HDR :
+            $qb = $qb
                     ->andWhere('structure_etab.id = :structure')
                     ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
@@ -512,27 +387,6 @@ class PropositionService extends BaseService
         }
 
         return $array;
-    }
-
-    /**
-     * @param EcoleDoctorale $ecole
-     * @return \Soutenance\Entity\Proposition[]
-     */
-    public function findSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
-    {
-        $qb = $this->getRepository()->createQueryBuilder("proposition")
-            ->addSelect('etat')->join('proposition.etat', 'etat')
-            ->addSelect('these')->join('proposition.these', 'these')
-            ->addSelect('ecole')->leftJoin('these.ecoleDoctorale', 'ecole')
-            ->addSelect('structure_ed')->leftJoin('ecole.structure', 'structure_ed')
-            ->andWhereStructureIs($ecole->getStructure(), 'structure_ed')
-            ->andWhere('etat.code = :autorise')
-            ->andWhere('DATE_ADD(these.dateSoutenance, 1, \'YEAR\') > :date')
-            ->setParameter('autorise', Etat::VALIDEE)
-            ->setParameter('date', new DateTime())
-            ->orderBy('these.dateSoutenance', 'DESC');
-
-        return $qb->getQuery()->getResult();
     }
 
     /** PROPOSTITION ETAT  ********************************************************************************************/
@@ -573,23 +427,24 @@ class PropositionService extends BaseService
      *
      * @param Proposition $proposition
      */
-    public function addDirecteursAsMembres(Proposition $proposition)
-    {
-        $these = $proposition->getThese();
-        if ($these === null) throw new LogicException("Impossible d'ajout les directeurs comme membres : Aucun thèse de lié à la proposition id:" . $proposition->getId());
-
-        $encadrements = $this->getActeurService()->getRepository()->findEncadrementThese($these);
-        foreach ($encadrements as $encadrement) {
-            $this->getMembreService()->createMembre($proposition, $encadrement);
-        }
-    }
+//    public function addDirecteursAsMembres(Proposition $proposition)
+//    {
+//        $these = $proposition->getThese();
+//        if ($these === null) throw new LogicException("Impossible d'ajout les directeurs comme membres : Aucun thèse de lié à la proposition id:" . $proposition->getId());
+//
+//        $encadrements = $this->getActeurTheseService()->getRepository()->findEncadrementThese($these);
+//        foreach ($encadrements as $encadrement) {
+//            $this->getMembreService()->createMembre($proposition, $encadrement);
+//        }
+//    }
 
     public function initialisationDateRetour(Proposition $proposition)
     {
-        if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
+        if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance renseignée !");
         try {
             $renduRapport = $proposition->getDate();
-            $deadline = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR);
+            $categorieParametre = $proposition instanceof PropositionThese ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+            $deadline = $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DELAI_RETOUR);
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
 
             $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");

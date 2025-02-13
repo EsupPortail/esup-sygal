@@ -6,7 +6,7 @@ use Application\Controller\AbstractController;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
+use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 use Depot\Entity\Db\WfEtape;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctorant\Service\MissionEnseignement\MissionEnseignementServiceAwareTrait;
@@ -18,7 +18,7 @@ use These\Service\These\TheseServiceAwareTrait;
 class TheseController extends AbstractController
 {
     use TheseServiceAwareTrait;
-    use ValidationServiceAwareTrait;
+    use ValidationTheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use MailConfirmationServiceAwareTrait;
     use MissionEnseignementServiceAwareTrait;

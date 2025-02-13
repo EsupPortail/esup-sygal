@@ -7,6 +7,12 @@ use UnicaenUtilisateur\Entity\Db\AbstractUser;
 
 class Horodatage {
 
+    const HORODATAGE_TYPE_MODIFICATION = "Modification";
+    const HORODATAGE_TYPE_NOTIFICATION = "Notification";
+    const HORODATAGE_TYPE_VALIDATION = "Validation";
+    const HORODATAGE_TYPE_EDITION = "Édition";
+    const HORODATAGE_TYPE_ETAT = "État";
+
     private ?int $id = null;
     private ?DateTime $date = null;
     private ?AbstractUser $utilisateur = null;

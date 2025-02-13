@@ -47,7 +47,7 @@
 
         "unicaen/alerte": "^3.0",
         "unicaen/app": "^6.1.6",
-        "unicaen/auth-token": "^7.0",
+        "unicaen/auth-token": "^7.1",
         "unicaen/authentification": "^6.4",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "^4.0",
@@ -69,6 +69,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-0": {
+            "Acteur\\": "module/Acteur/src",
             "Admission\\": "module/Admission/src",
             "Application\\": "module/Application/src",
             "ComiteSuiviIndividuel\\": "module/ComiteSuiviIndividuel/src",
@@ -76,6 +77,8 @@
             "Doctorant\\": "module/Doctorant/src",
             "Fichier\\": "module/Fichier/src",
             "Formation\\": "module/Formation/src",
+            "HDR\\": "module/HDR/src",
+            "Candidat\\": "module/Candidat/src",
             "Import\\": "module/Import/src",
             "Indicateur\\": "module/Indicateur/src",
             "Individu\\": "module/Individu/src",
@@ -88,7 +91,8 @@
             "Structure\\": "module/Structure/src",
             "SygalApi\\": "vendor/unicaen/sygal-api/src",
             "These\\": "module/These/src",
-            "UnicaenAvis\\": "module/UnicaenAvis/src"
+            "UnicaenAvis\\": "module/UnicaenAvis/src",
+            "Validation\\": "module/Validation/src"
         }
     },
     "autoload-dev": {

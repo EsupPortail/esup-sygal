@@ -2,6 +2,8 @@
 
 namespace Application\Provider;
 
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
@@ -9,15 +11,18 @@ use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
+use Candidat\Entity\Db\Candidat;
+use Candidat\Service\CandidatServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use HDR\Entity\Db\HDR;
 use Individu\Entity\Db\IndividuRole;
 use Laminas\Authentication\AuthenticationService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenAuthentification\Provider\Identity\ChainableProvider;
 use UnicaenAuthentification\Provider\Identity\ChainEvent;
@@ -29,7 +34,8 @@ use UnicaenAuthentification\Provider\Identity\ChainEvent;
  */
 class IdentityProvider implements ProviderInterface, ChainableProvider
 {
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
+    use ActeurHDRServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use TheseServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -39,6 +45,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserWrapperFactoryAwareTrait;
+    use CandidatServiceAwareTrait;
 
     private $roles;
 
@@ -106,7 +113,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             [$roleAuthentifie],
             $this->getRolesFromActeur(),
             $this->getRolesFromIndividuRole(),
-            $this->getRolesFromDoctorant()
+            $this->getRolesFromDoctorant(),
+            $this->getRolesFromCandidatHDR()
         );
 
 // Lignes mises en commentaire car revient à considérer le rôle "BdD UCN" identique au rôle "BdD URN" !
@@ -129,17 +137,36 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $acteurs = $this->acteurService->getRepository()->findActeursForIndividu($individu);
+        $roles = [];
 
-        $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
-        $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
-        $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
-        $acteursRapporteurJury = $this->acteurService->filterActeursRapporteurJury($acteurs);
+        $acteurs = $this->acteurTheseService->getRepository()->findActeursForIndividu($individu);
+        if ($acteurs) {
+            $acteursDirecteurThese = $this->acteurTheseService->filterActeursDirecteurThese($acteurs);
+            $acteursCoDirecteurThese = $this->acteurTheseService->filterActeursCoDirecteurThese($acteurs);
+            $acteursPresidentJury = $this->acteurTheseService->filterActeursPresidentJury($acteurs);
+            $acteursRapporteurJury = $this->acteurTheseService->filterActeursRapporteurJury($acteurs);
+            $roles = array_merge($roles, array_map(
+                function (ActeurThese $a) {
+                    return $a->getRole();
+                },
+                array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
+            ));
+        }
 
-        return array_map(
-            function(Acteur $a) { return $a->getRole(); },
-            array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
-        );
+        $acteursHDR = $this->acteurHDRService->getRepository()->findActeursForIndividu($individu);
+        if ($acteursHDR) {
+            $acteursGarants = $this->acteurHDRService->filterActeursGarantHDR($acteursHDR);
+            $acteursPresidentJury = $this->acteurHDRService->filterActeursPresidentJury($acteursHDR);
+            $acteursRapporteurJury = $this->acteurHDRService->filterActeursRapporteurJury($acteursHDR);
+            $roles = array_merge($roles, array_map(
+                function (ActeurHDR $a) {
+                    return $a->getRole();
+                },
+                array_merge($acteursGarants, $acteursPresidentJury, $acteursRapporteurJury)
+            ));
+        }
+
+        return array_unique($roles);
     }
 
     /**
@@ -194,6 +221,33 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
 
         $role = $this->applicationRoleService->getRepository()
             ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
+
+        return [$role];
+    }
+
+    /**
+     * Rôles découlant de la présence de l'utilisateur dans la table Candidat_HDR et de l'existence d'une HDR pour
+     * ce candidat.
+     *
+     * @return Role[]
+     */
+    private function getRolesFromCandidatHDR(): array
+    {
+        /** @var Candidat|null $candidat */
+        $candidat = $this->candidatService->findOneByUserWrapper($this->userWrapper);
+
+        if (! $candidat) {
+            return [];
+        }
+
+        // le candidat doit avoir une HDR en cours ou soutenue
+        $hdrs = array_filter($candidat->getHDRs(), fn(HDR $hdr) => in_array($hdr->getEtatHDR(), [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]));
+        if (! $hdrs) {
+            return [];
+        }
+
+        $role = $this->applicationRoleService->getRepository()
+            ->findOneByCodeAndStructureConcrete(Role::CODE_HDR_CANDIDAT, $candidat->getEtablissement());
 
         return [$role];
     }

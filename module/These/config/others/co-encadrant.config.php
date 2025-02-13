@@ -2,7 +2,7 @@
 
 namespace These;
 
-use These\Assertion\Acteur\ActeurAssertion;
+use Acteur\Assertion\ActeurThese\ActeurTheseAssertion;
 use These\Assertion\These\TheseAssertion;
 use These\Controller\CoEncadrantController;
 use These\Controller\Factory\CoEncadrantControllerFactory;
@@ -27,7 +27,7 @@ return [
                             CoEncadrantPrivileges::COENCADRANT_GERER,
                         ],
                         'resources' => ['Acteur'],
-                        'assertion'  => ActeurAssertion::class,
+                        'assertion'  => ActeurTheseAssertion::class,
                     ],
                 ],
             ],
@@ -56,7 +56,7 @@ return [
                     'privileges' => [
                         CoEncadrantPrivileges::COENCADRANT_GERER,
                     ],
-                    'assertion'  => ActeurAssertion::class,
+                    'assertion'  => ActeurTheseAssertion::class,
                 ],
             ],
         ],

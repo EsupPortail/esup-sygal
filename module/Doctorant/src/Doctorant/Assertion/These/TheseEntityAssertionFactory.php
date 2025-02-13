@@ -2,7 +2,7 @@
 
 namespace Doctorant\Assertion\These;
 
-use Application\Service\Validation\ValidationService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
@@ -27,9 +27,9 @@ class TheseEntityAssertionFactory
         $theseService = $container->get(TheseService::class);
         $assertion->setTheseService($theseService);
 
-        /** @var \Application\Service\Validation\ValidationService $validationService */
-        $validationService = $container->get(ValidationService::class);
-        $assertion->setValidationService($validationService);
+        /** @var \Validation\Service\ValidationThese\ValidationTheseService $validationTheseService */
+        $validationTheseService = $container->get(ValidationTheseService::class);
+        $assertion->setValidationTheseService($validationTheseService);
 
         /** @var \Depot\Service\These\DepotService $depotService */
         $depotService = $container->get(DepotService::class);

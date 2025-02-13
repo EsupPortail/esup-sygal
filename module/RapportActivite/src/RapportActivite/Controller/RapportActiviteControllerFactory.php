@@ -3,7 +3,6 @@
 namespace RapportActivite\Controller;
 
 use Application\Service\AnneeUniv\AnneeUnivService;
-use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Inscription\InscriptionService as FormationInscriptionService;
@@ -14,16 +13,11 @@ use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
+use Validation\Service\ValidationService;
 
 class RapportActiviteControllerFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     *
-     * @return RapportActiviteController
-     *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -62,7 +56,7 @@ class RapportActiviteControllerFactory
         $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
         $controller->setRapportActiviteOperationRule($rapportActiviteOperationRule);
 
-        /** @var \Application\Service\Validation\ValidationService $validationService */
+        /** @var \Validation\Service\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
         $controller->setValidationService($validationService);
 

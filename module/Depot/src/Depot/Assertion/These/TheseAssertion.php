@@ -131,7 +131,7 @@ class TheseAssertion extends AbstractAssertion
                 return $this->isAllowed(new WfEtapeResource(WfEtape::CODE_RDV_BU_VALIDATION_BU, $this->these));
         }
 
-        return true;
+        return $this->userContextService->isStructureDuRoleRespecteeForThese($this->these);
     }
 
     protected function assertControllerAsDoctorant(): bool

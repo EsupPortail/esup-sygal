@@ -171,8 +171,8 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 
     <p class="lead">
         Voici les <em>rôles liés à cet établissement</em> et les individus auxquels ont été attribués ces rôles. <br>
-        NB : les rôles comme "Doctorant" ou "Directeur de thèse" ne sont pas liés à un établissement mais à une
-        thèse donc ne peuvent figurer sur cette page. <br>
+        NB : les rôles comme "Doctorant" ou "Directeur de thèse", "Candidat", "Garant" ne sont pas liés à un établissement mais à une
+        thèse/HDR donc ne peuvent figurer sur cette page. <br>
         <?php
         $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_LISTER));
         if ($canVisualiserIndividu): ?>

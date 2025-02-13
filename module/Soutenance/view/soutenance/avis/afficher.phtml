@@ -1,7 +1,9 @@
 <?php
 
 use Application\Constants;
-use These\Entity\Db\Acteur;
+use HDR\Entity\Db\HDR;
+use Soutenance\Entity\Proposition;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
@@ -10,16 +12,18 @@ use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 /**
  * @see \Soutenance\Controller\AvisController::afficherAction()
  *
- * @var These $these
- * @var Acteur $rapporteur
+ * @var These|HDR $object
+ * @var ActeurThese $rapporteur
  * @var Membre $membre
  * @var Avis $avis
  * @var string $url
+ * @var string $typeProposition
  */
 
 $this->headTitle("Avis de soutenance (".$avis->getId().")");
 
 $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
+$libelleEntite = $typeProposition === Proposition::ROUTE_PARAM_PROPOSITION_THESE ? "thèse" : "HDR";
 ?>
 
 <h1 class="page-header">
@@ -30,15 +34,20 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
     <div class="col-md-4">
         <div class="card">
             <div class="card-header bg-dark text-white">
-                Informations de la thèse
+                Informations de la <?=$libelleEntite?>
             </div>
 
             <div class="card-body">
                 <dl>
-                    <dt> Thèse </dt>
-                    <dd> <?php echo $these->getTitre(); ?> </dd>
-                    <dt> Doctorant </dt>
-                    <dd> <?php echo $these->getDoctorant()->getIndividu(); ?> </dd>
+                    <?php if($typeProposition === Proposition::ROUTE_PARAM_PROPOSITION_THESE): ?>
+                        <dt> Thèse </dt>
+                        <dd> <?php echo $object->getTitre(); ?> </dd>
+                        <dt> Doctorant </dt>
+                        <dd> <?php echo $object->getApprenant()->getIndividu(); ?> </dd>
+                    <?php else: ?>
+                        <dt> Candidat </dt>
+                        <dd> <?php echo $object->getApprenant()->getIndividu(); ?> </dd>
+                    <?php endif; ?>
                 </dl>
             </div>
         </div>
@@ -74,7 +83,7 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
                     <dt> Rapport de pré-soutenance</dt>
                     <dd>
                         <a href="<?php echo $url; ?>">
-                            <?php echo $avis->getFichier()->getNom(); ?>
+                            <?php echo $avis->getFichier()->getFichier()->getNom(); ?>
                         </a>
                     </dd>
                     <dt> Date de création </dt>
@@ -105,7 +114,7 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
 <div>
 <?php if ($canAnnuler) : ?>
     <div class="float-end">
-        <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+        <a href="<?php echo $this->url("soutenance_{$typeProposition}/index-rapporteur", ['id' => $object->getId()], [], true); ?>"
            class="btn btn-primary float-end" style="margin-left: 1rem;">
             <span class="icon icon-retour"></span>
                 Retour à l'index rapporteur
@@ -113,7 +122,7 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
     </div>
     <a
         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
-            href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
+            href="<?php echo $this->url("soutenance_{$typeProposition}/avis-soutenance/annuler", ['id' => $object->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
             class="btn btn-danger float-end"
             data-toggle="confirmationx"
             data-bs-toggle="tooltip"

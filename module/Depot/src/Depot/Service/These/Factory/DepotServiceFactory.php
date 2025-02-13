@@ -15,7 +15,7 @@ use Interop\Container\ContainerInterface;
 use Notification\Service\NotifierService;
 use Soutenance\Service\Membre\MembreService;
 use Structure\Service\Etablissement\EtablissementService;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
 use UnicaenAuthentification\Service\User as UserService;
@@ -31,7 +31,7 @@ class DepotServiceFactory
     public function __invoke(ContainerInterface $container): DepotService
     {
         /**
-         * @var ActeurService $acteurService
+         * @var ActeurTheseService $acteurService
          * @var DepotValidationService $depotValidationService
          * @var MembreService $membreService
          * @var NotifierService $notifierService
@@ -42,7 +42,7 @@ class DepotServiceFactory
          * @var UtilisateurService $utilisateurService
          * @var AuthorizeService $authorizeService
          */
-        $acteurService = $container->get(ActeurService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
         $depotValidationService = $container->get(DepotValidationService::class);
         $membreService = $container->get(MembreService::class);
         $notifierService = $container->get(NotifierService::class);
@@ -60,7 +60,7 @@ class DepotServiceFactory
         $fileService = $container->get(FichierStorageService::class);
 
         $service = new DepotService();
-        $service->setActeurService($acteurService);
+        $service->setActeurTheseService($acteurService);
         $service->setDepotValidationService($depotValidationService);
         $service->setMembreService($membreService);
         $service->setNotifierService($notifierService);

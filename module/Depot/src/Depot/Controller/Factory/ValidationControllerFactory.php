@@ -4,7 +4,6 @@ namespace Depot\Controller\Factory;
 
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
-use Application\Service\Validation\ValidationService;
 use Depot\Controller\ValidationController;
 use Depot\Process\Validation\DepotValidationProcess;
 use Depot\Service\Notification\DepotNotificationFactory;
@@ -14,6 +13,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
 use These\Service\These\TheseService;
+use Validation\Service\ValidationService;
 
 class ValidationControllerFactory implements FactoryInterface
 {

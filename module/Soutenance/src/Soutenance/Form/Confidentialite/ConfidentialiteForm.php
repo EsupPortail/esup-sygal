@@ -33,12 +33,12 @@ class ConfidentialiteForm extends Form
         $this->add(
             [
                 'type' => Checkbox::class,
-                'name' => 'huitclos',
+                'name' => 'huitClos',
                 'options' => [
                     'label' => "Soutenance en huis clos",
                 ],
                 'attributes' => [
-                    'id' => 'huitclos',
+                    'id' => 'huitClos',
                 ],
             ]
         );

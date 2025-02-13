@@ -3,11 +3,9 @@
 namespace RapportActivite\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\TypeValidation;
 use Application\Exporter\ExporterDataException;
 use Application\Filter\IdifyFilter;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Fichier\FileUtils;
@@ -29,6 +27,8 @@ use SplObjectStorage;
 use These\Entity\Db\These;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class RapportActiviteController extends AbstractController
 {

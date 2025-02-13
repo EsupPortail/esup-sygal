@@ -2,6 +2,8 @@
 
 namespace These;
 
+use Acteur\Hydrator\ActeurThese\ActeurTheseHydrator;
+use Acteur\Hydrator\ActeurThese\ActeurTheseHydratorFactory;
 use Application\Controller\Rapport\RapportCsiController;
 use Application\Controller\Rapport\RapportMiparcoursController;
 use Application\Navigation\ApplicationNavigationFactory;
@@ -18,8 +20,6 @@ use These\Controller\Factory\TheseRechercheControllerFactory;
 use These\Controller\Plugin\Url\UrlThesePluginFactory;
 use These\Controller\TheseController;
 use These\Controller\TheseRechercheController;
-use These\Hydrator\ActeurHydrator;
-use These\Hydrator\ActeurHydratorFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporter;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporterFactory;
@@ -280,17 +280,17 @@ return [
                                 'class' => 'divider',
                                 'separator' => true,
                             ],
-                            'page-rapporteur' => [
-                                'order' => 60,
-                                'label' => 'Dépôt du rapport',
-                                'route' => 'soutenance/index-rapporteur',
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
-                                'icon' => 'fas fa-clipboard',
-                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-rapporteur'),
-                            ],
+//                            'page-rapporteur' => [
+//                                'order' => 60,
+//                                'label' => 'Dépôt du rapport',
+//                                'route' => 'soutenance_these/index-rapporteur',
+//                                'withtarget' => true,
+//                                'paramsInject' => [
+//                                    'these',
+//                                ],
+//                                'icon' => 'fas fa-clipboard',
+//                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-rapporteur'),
+//                            ],
                         ],
                     ],
 
@@ -370,7 +370,7 @@ return [
     ],
     'hydrators' => array(
         'factories' => array(
-            ActeurHydrator::class => ActeurHydratorFactory::class,
+            ActeurTheseHydrator::class => ActeurTheseHydratorFactory::class,
         )
     ),
     'service_manager' => [

@@ -2,12 +2,12 @@
 
 namespace These\Service\Notification;
 
-use Application\Service\Email\EmailTheseServiceAwareTrait;
+use Application\Service\Email\EmailServiceAwareTrait;
 use Depot\Notification\PasDeMailPresidentJury;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
 use These\Notification\ChangementsResultatsThesesNotification;
 use These\Notification\ResultatTheseAdmisDoctorantNotification;
@@ -19,7 +19,7 @@ use These\Notification\ResultatTheseAdmisDoctorantNotification;
  */
 class TheseNotificationFactory extends NotificationFactory
 {
-    use EmailTheseServiceAwareTrait;
+    use EmailServiceAwareTrait;
 
     /**
      * Crée la notification concernant des changements quelconques de résultats de thèses.
@@ -30,12 +30,12 @@ class TheseNotificationFactory extends NotificationFactory
     {
         $these = current($data)['these'];
 
-        $emailsBdd = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+        $emailsBdd = $this->emailService->fetchEmailAspectsDoctorat($these);
         if (empty($emailsBdd)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la MDD (thèse {$these->getId()})");
         }
 
-        $emailsBu = $this->emailTheseService->fetchEmailAspectsBibliotheque($these);
+        $emailsBu = $this->emailService->fetchEmailAspectsBibliotheque($these);
         if (empty($emailsBu)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la BU (thèse {$these->getId()})");
         }
@@ -60,7 +60,7 @@ class TheseNotificationFactory extends NotificationFactory
             $these = $array['these'];
             /* @var These $these */
 
-            $emailsBdd = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+            $emailsBdd = $this->emailService->fetchEmailAspectsDoctorat($these);
             if (empty($emailsBdd)) {
                 throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
             }
@@ -84,7 +84,7 @@ class TheseNotificationFactory extends NotificationFactory
      */
     public function createNotificationDateButoirCorrectionDepassee(These $these): Notification
     {
-        $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+        $to = $this->emailService->fetchEmailAspectsDoctorat($these);
         if (empty($to)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
         }
@@ -106,12 +106,12 @@ class TheseNotificationFactory extends NotificationFactory
      * Notification à propos de l'absence de mail connu pour le président du jury.
      *
      * @param These $these
-     * @param Acteur $president
+     * @param ActeurThese $president
      * @return \Notification\Notification
      */
-    public function createNotificationPasDeMailPresidentJury(These $these, Acteur $president): Notification
+    public function createNotificationPasDeMailPresidentJury(These $these, ActeurThese $president): Notification
     {
-        $emailsBdd = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+        $emailsBdd = $this->emailService->fetchEmailAspectsDoctorat($these);
         if (empty($emailsBdd)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
         }

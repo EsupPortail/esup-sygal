@@ -1,0 +1,232 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\IndexController::indexRapporteurAction()
+ *
+ * @var Proposition $proposition
+ * @var HDR[] $hdrs
+ * @var Membre $membre
+ * @var ActeurHDR|null $acteurMembre
+ * @var boolean $depot
+ * @var HDR $hdr
+ * @var ValidationHDR $engagement
+ * @var Avis $avis
+ * @var string $telecharger
+ * @var string $typeProposition
+ */
+
+use Acteur\Entity\Db\ActeurHDR;
+use Application\Constants;
+use Application\Entity\Db\Role;
+use HDR\Entity\Db\HDR;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Validation\Entity\Db\ValidationHDR;
+
+$canEngagement = true;
+$canTelecharger = true;
+$canAvis = true;
+$canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges::AVIS_ANNULER):false;
+?>
+
+<?php /** Plusieurs HDR ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
+<?php if (isset($objects)) : ?>
+    <h1 class="page-header">
+        Index des soutenances / Index of the PhD defense
+    </h1>
+
+    <p class="lead">
+        Vous êtes actuellement rapporteur de plusieurs HDRs en cours.
+        Veuillez sélectionner la HDR sur laquelle vous souhaitez intervenir.
+    </p>
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th class="">               Candidat </th>
+                <th class="">               Encadrement </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($objects as $hdr) : ?>
+                <tr>
+                    <td>
+                        <a  <?php /** @see \Soutenance\Controller\IndexController::indexRapporteurAction()*/ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/index-rapporteur", ['id' => $hdr->getId()], [], true); ?>">
+                            <?php echo $hdr->getApprenant()->getIndividu(); ?>
+                        </a>
+                    </td>
+                    <td>
+                        <?php foreach ($hdr->getEncadrements() as $encadrement) : ?>
+                            <?php if ($encadrement->getRole()->getCode() !== Role::CODE_HDR_GARANT) echo "<i>"; ?>
+                            <?php echo $encadrement->getIndividu() ; ?>
+                            <?php if ($encadrement->getRole()->getCode() !== Role::CODE_HDR_GARANT) echo "</i>"; ?>
+                            <br/>
+                        <?php endforeach; ?>
+                    </td>
+
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+<?php else : ?>
+
+
+<h1 class="page-header">
+    Index de la soutenance / Index of the PhD defense
+    <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
+</h1>
+
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2> Proposition de jury / Jury Proposal </h2>
+    </div>
+    <div class="card-body">
+        <?php if ($proposition !== null) : ?>
+            <h3> Date et lieu </h3>
+            <?php if($proposition->getDate()): ?>
+                <p>La soutenance est prévue pour le <strong><?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?></strong>
+                    dans <strong><?php echo $proposition->getLieu(); ?></strong>.</p>
+            <?php else: ?>
+                <p>
+                    <span class="icon icon-warning"></span>
+                    Aucune date n'a encore été renseignée dans la proposition.
+                </p>
+            <?php endif; ?>
+            <h3> Jury </h3>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th> Dénomination </th>
+                        <th> Qualité </th>
+                        <th> Établissement </th>
+                        <th> Rôle </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php /** @var Membre $jury  */ ?>
+                    <?php foreach ($proposition->getMembres() as $jury) : ?>
+                        <tr>
+                            <td> <?php echo $jury->getDenomination(); ?> </td>
+                            <td> <?php echo ($jury->getQualite())?$jury->getQualite()->getLibelle():"Non définie"; ?> </td>
+                            <td> <?php echo $jury->getEtablissement(); ?> </td>
+                            <td> <?php echo $jury->getRole(); ?> </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            Aucune proposition de soutenance de trouvée.
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="box card">
+    <div class="card-header <?php echo ($engagement !== null)?"bg-success":"bg-warning"; ?> text-white">
+        <h2> Engagement d'impartialité / Impartiality Commitement </h2>
+    </div>
+    <div class="card-body">
+        <?php if ($engagement !== null) : ?>
+            <p>Vous avez signé l'engagement pour la HDR de <?php echo $hdr->getApprenant(); ?>.</p>
+            <?php echo $this->validation($engagement, "success") ?>
+        <?php else : ?>
+            <p class="lead">
+                Pour être enregistré comme rapporteur de HDR, vous devez signer l'engagement d'impartialité. <br/>
+            </p>
+            <p class="lead">
+                To be registered as external referee you must sign the impartiality commitment
+            </p>
+            <?php if ($membre) : ?>
+            <a
+                    <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
+                    href="<?php echo $this->url("soutenance_{$typeProposition}/engagement-impartialite", ['id' => $hdr->getId(), 'membre' => $membre->getId()], [], true); ?>"
+               class="btn btn-primary float-end"
+            >
+                <span class="icon icon-edit"></span>
+<!--                Signer / Sign-->
+                Accès à l'engagement d'impartialité / Access to the impartiality commitment
+            </a>
+            <?php endif; ?>
+
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="box card">
+    <div class="card-header <?php echo ($engagement !== null  && $avis !== null)?"bg-success":"bg-warning"; ?>">
+        <h2> Avis de soutenance / Notification on the PhD defense </h2>
+    </div>
+    <div class="card-body">
+    <?php if ($engagement !== null) : ?>
+            <?php if ($avis !== null) : ?>
+        <p>Vous avez rendu votre avis de soutenance pour la HDR de <?php echo $hdr->getApprenant()->getIndividu(); ?>.</p>
+
+            <div>
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header <?php echo ($avis->getAvis() === 'Favorable')?"bg-success":"bg-danger"; ?>">
+                            Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>Rendu le <?php echo $avis->getValidation()->getHistoModification()->format(Constants::DATETIME_FORMAT); ?> par <?php echo $avis->getValidation()->getIndividu(); ?></li>
+                            </ul>
+
+                            <dl>
+                                <?php if ($avis->getAvis() !== 'Favorable') : ?>
+                                    <dt> Motif de refus </dt>
+                                    <dd> <?php echo $avis->getMotif(); ?> </dd>
+                                <?php endif; ?>
+                            </dl>
+
+                            <a
+                                <?php /** @see TELECHARGEMENT FICHIER */ ?>
+                                href=" <?php echo $telecharger; ?>" >
+                                Pré-rapport de soutenance
+                            </a>
+                        </div>
+                    </div>
+
+                    <a
+                        <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
+                        href="<?php echo $this->url("soutenance_{$typeProposition}/avis-soutenance/annuler", ['id' => $hdr->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
+                        class="btn btn-danger" style="margin-top: 1rem;">
+                        <span class="icon icon-delete"></span>
+                        Annuler l'avis de soutenance
+                    </a>
+                    </div>
+                </div>
+            </div>
+            <?php else : ?>
+                <p class="lead">
+                    Afin de valider la soutenance de HDR de <?php echo $hdr->getApprenant()->getIndividu(); ?>, vous devez rendre votre
+                    avis de soutenance et votre pré-rapport de soutenance.
+                </p>
+                <div class="alert alert-<?php echo (new DateTime() > $proposition->getRenduRapport()) ? 'danger' : 'warning'; ?>" style="margin-left: 1rem !important;">
+                    <span class="icon icon-attention"></span>
+                    Attention, la date limite de rendu des pré-rapports est le <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?></strong>.
+                </div>
+            <?php if ($canAnnuler) : ?>
+            <div>
+                <a
+                    <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
+                    href="<?php echo $this->url("soutenance_{$typeProposition}/avis-soutenance", ['id' => $hdr->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
+                   class="btn btn-primary float-end"
+                >
+                    <span class="icon icon-edit"></span>
+                    Rendre l'avis de soutenance / Give our report
+                </a>
+            </div>
+            <?php endif; ?>
+
+            <?php endif; ?>
+        <?php else : ?>
+            <p class="lead">Pour pouvoir rendre votre avis de soutenance vous devez avoir signé l'engagement d'impartialité.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php endif; ?>

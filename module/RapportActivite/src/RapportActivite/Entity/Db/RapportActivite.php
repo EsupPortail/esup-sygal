@@ -4,7 +4,7 @@ namespace RapportActivite\Entity\Db;
 
 use Application\Constants;
 use Application\Entity\AnneeUniv;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

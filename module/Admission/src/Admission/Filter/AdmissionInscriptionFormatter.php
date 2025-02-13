@@ -86,7 +86,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
     }
 
     public function htmlifyResponsablesURCoDirecteur(array $responsables, bool $showMoreInformations = false){
-        $str = "<b>Aucune information de renseignée</b>";
+        $str = "<b>Aucune information renseignée</b>";
         if($responsables){
             $str = "<ul>";
                 foreach($responsables as $responsable){

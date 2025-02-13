@@ -3,7 +3,7 @@
 namespace Depot\Controller\Factory;
 
 use Application\EventRouterReplacer;
-use Application\Service\Validation\ValidationService;
+use Validation\Service\ValidationThese\ValidationTheseService;
 use Depot\Controller\FichierTheseController;
 use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\Notification\DepotNotificationFactory;
@@ -39,7 +39,7 @@ class FichierTheseControllerFactory
          * @var VersionFichierService $versionFichierService
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
-         * @var ValidationService     $validationService
+         * @var ValidationTheseService     $validationService
          * @var EventManager          $eventManager
          */
         $theseService = $container->get('TheseService');
@@ -49,7 +49,7 @@ class FichierTheseControllerFactory
         $versionFichierService = $container->get('VersionFichierService');
         $notificationService = $container->get(NotifierService::class);
         $individuService = $container->get(IndividuService::class);
-        $validationService = $container->get('ValidationService');
+        $validationService = $container->get(ValidationTheseService::class);
         $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
         $eventManager = $container->get('EventManager');
 
@@ -61,7 +61,7 @@ class FichierTheseControllerFactory
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
-        $controller->setValidationService($validationService);
+        $controller->setValidationTheseService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
 
         /** @var DepotService $depotService */

@@ -7,7 +7,7 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
 use Structure\Service\Etablissement\EtablissementService;
-use These\Service\Acteur\ActeurService;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use These\Service\These\TheseService;
 
 class TheseServiceFactory
@@ -19,10 +19,10 @@ class TheseServiceFactory
     public function __invoke(ContainerInterface $container): TheseService
     {
         /**
-         * @var ActeurService       $acteurService
+         * @var ActeurTheseService       $acteurService
          * @var MembreService       $membreService
          */
-        $acteurService = $container->get(ActeurService::class);
+        $acteurService = $container->get(ActeurTheseService::class);
         $membreService = $container->get(MembreService::class);
 
         /** @var EtablissementService $etablissementService */
@@ -34,7 +34,7 @@ class TheseServiceFactory
         $sourceService = $container->get(SourceService::class);
 
         $service = new TheseService();
-        $service->setActeurService($acteurService);
+        $service->setActeurTheseService($acteurService);
         $service->setMembreService($membreService);
         $service->setEtablissementService($etablissementService);
         $service->setFichierStorageService($fileService);

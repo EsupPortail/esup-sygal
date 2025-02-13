@@ -2,9 +2,10 @@
 /**
  * @see \Soutenance\Controller\PropositionController::confidentialiteAction()
  * @var ConfidentialiteForm $form
- * @var These $these
+ * @var These|HDR $object
  */
 
+use HDR\Entity\Db\HDR;
 use These\Entity\Db\These;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 
@@ -12,10 +13,10 @@ use Soutenance\Form\Confidentialite\ConfidentialiteForm;
 
 <?php
     echo $this->form()->openTag($form);
-    if ($these->getDateFinConfidentialite() === null) {
+    if ($object->getDateFinConfidentialite() === null) {
         echo $this->formControlGroup()->render($form->get('date'));
     }
-    echo $this->formControlGroup()->render($form->get('huitclos'));
+    echo $this->formControlGroup()->render($form->get('huitClos'));
     echo $this->formControlGroup()->render($form->get('submit'));
     echo $this->form()->closeTag();
 ?>

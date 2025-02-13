@@ -2,6 +2,10 @@
 
 namespace These\Controller;
 
+use Acteur\Entity\Db\ActeurThese;
+use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
+use Application\Entity\Db\Role;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use DateTime;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -19,10 +23,8 @@ use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use These\Service\Exporter\CoEncadrements\CoEncadrementsExporterAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
@@ -31,7 +33,7 @@ use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class CoEncadrantController extends AbstractActionController
 {
-    use ActeurServiceAwareTrait;
+    use ActeurTheseServiceAwareTrait;
     use CoEncadrantServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
@@ -42,6 +44,7 @@ class CoEncadrantController extends AbstractActionController
     use UniteRechercheServiceAwareTrait;
     use RenduServiceAwareTrait;
     use CoEncadrementsExporterAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(PhpRenderer $renderer): void
@@ -117,7 +120,9 @@ class CoEncadrantController extends AbstractActionController
                 /** @var Individu $individu */
                 $individu = $this->getIndividuService()->getRepository()->find($data['co-encadrant']['id']);
                 $etablissement = (isset($data['etablissement']['id']) && $data['etablissement']['id'] !== '') ? $this->getEtablissementService()->getRepository()->find($data['etablissement']['id']) : null;
-                $this->getActeurService()->ajouterCoEncradrant($these, $individu, $etablissement);
+                $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_CO_ENCADRANT, $these->getEtablissement());
+                $acteur = $this->acteurTheseService->newActeurThese($these, $individu, $role, $etablissement);
+                $this->acteurTheseService->save($acteur);
             }
         }
 
@@ -134,9 +139,9 @@ class CoEncadrantController extends AbstractActionController
         $these = $this->getTheseService()->getRepository()->find($theseId);
         $acteurId = $this->params()->fromRoute('co-encadrant');
 
-        /** @var Acteur $acteur */
-        $acteur = $this->getActeurService()->getRepository()->find($acteurId);
-        if ($acteur !== null and $acteur->getThese() === $these) $this->getActeurService()->delete($acteur);
+        /** @var ActeurThese $acteur */
+        $acteur = $this->getActeurTheseService()->getRepository()->find($acteurId);
+        if ($acteur !== null and $acteur->getThese() === $these) $this->getActeurTheseService()->delete($acteur);
 
         return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }

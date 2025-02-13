@@ -2,11 +2,10 @@
 
 namespace Depot\Controller;
 
+use Acteur\Entity\Db\ActeurThese;
 use Application\Controller\AbstractController;
-use Application\Entity\Db\TypeValidation;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Depot\Process\Validation\DepotValidationProcessAwareTrait;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
@@ -16,9 +15,10 @@ use Exception;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
-use These\Entity\Db\Acteur;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class ValidationController extends AbstractController
 {
@@ -157,7 +157,7 @@ class ValidationController extends AbstractController
         $these = $this->requestedThese();
 
         $utilisateurs = [];
-        /** @var Acteur $acteur */
+        /** @var ActeurThese $acteur */
         foreach ($these->getActeurs() as $acteur) {
             $individu = $acteur->getIndividu();
             $utilisateurs[$individu->getId()] = $this->utilisateurService->getRepository()->findByIndividu($individu); // ok
@@ -206,7 +206,7 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $tvCode = $validation->getTypeValidation()->getCode();
+            $tvCode = $validation->getValidation()->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
             if ($resultArray) {
                 if ($resultArray[0] === 'success') {

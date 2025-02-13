@@ -57,7 +57,7 @@ class ConvocationMembreNotification extends Notification
         $emailsBDD = $this->emailsAspectsDoctorat;
         $emailsBU = $this->emailsAspectsBibliotheque;
 
-        $doctorant = $this->these->getDoctorant();
+        $doctorant = $this->these->getApprenant();
         $individu = $doctorant->getIndividu();
 
         if ($this->estDevalidation) {
@@ -112,7 +112,7 @@ class ConvocationMembreNotification extends Notification
             if ($this->notifierDoctorant) {
                 $this->addSuccessMessage(sprintf(
                     "Un mail de notification vient d'être envoyé à %s avec copie à la Maison du doctorat (%s)",
-                    $this->these->getDoctorant(),
+                    $this->these->getApprenant(),
                     implode(', ', $this->getCc()),
                 ));
             } else {

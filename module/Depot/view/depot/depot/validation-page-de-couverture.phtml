@@ -3,7 +3,7 @@
 use Application\Assertion\BaseAssertion;
 use Application\Constants;use These\Controller\TheseController;
 use These\Entity\Db\These;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use These\Provider\Privilege\ThesePrivileges;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use These\Service\FichierThese\PdcData;
@@ -13,7 +13,7 @@ use UnicaenApp\Service\MessageCollector;
 /**
  * @var PhpRenderer $this
  * @var These       $these
- * @var Validation  $validation
+ * @var ValidationThese  $validation
  * @var string      $apercevoirPdcUrl
  * @var string      $refreshTheseUrl
  * @var string      $validerUrl
@@ -118,7 +118,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
     </div>
     <div class="card-body">
         <?php if ($validation): ?>
-            <?php echo $this->validation($validation) ?>
+            <?php echo $this->validation($validation, "success") ?>
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
                    class="btn btn-danger ajax-modal"

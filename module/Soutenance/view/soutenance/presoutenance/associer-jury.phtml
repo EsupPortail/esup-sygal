@@ -1,19 +1,20 @@
 <?php
 
-use These\Entity\Db\Acteur;
+use Acteur\Entity\Db\ActeurThese;
 use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 
 /**
  * @see \Soutenance\Controller\PresoutenanceController::associerJuryAction()
- * @var Acteur[] $acteurs
+ * @var ActeurThese[] $acteurs
  * @var Membre $membre
  * @var These $these
+ * @var string $typeProposition
  */
 
 ?>
 
-<form method="post" action="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>">
+<form method="post" action="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/associer-jury", ['id' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>">
     <select name="acteur" class="form-control">
         <option value="">Sélectionner un membre du jury ... </option>
         <?php foreach($acteurs as $acteur) : ?>

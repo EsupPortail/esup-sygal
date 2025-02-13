@@ -1,0 +1,255 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;use HDR\Entity\Db\HDR;use HDR\Provider\Privileges\HDRPrivileges;
+use Soutenance\Entity\Etat;
+use Soutenance\Entity\PropositionHDR;
+
+/**
+ * @var PhpRenderer  $this
+ * @var HDR        $hdr
+ * @var string $modifierEmailContactUrl
+ * @var string $modifierEmailContactConsentUrl
+ *
+ * @see \HDR\Controller\HDRController::detailIdentiteAction()
+ */
+
+$emailContactModifiedEvent = 'email-contact-modified-event';
+$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
+
+$canEditHDR = $this->isAllowed($hdr,HDRPrivileges::HDR_MODIFICATION_SES_HDRS) || $this->isAllowed($hdr,HDRPrivileges::HDR_MODIFICATION_TOUTES_HDRS) ;
+
+$modifierStructuresEvent = 'event-modifier-structures';
+$modifierDirectionEvent = 'event-modifier-direction';
+$modifierFinancementsEvent = 'event-modifier-financements';
+
+$isImportable = $hdr->getSource()->getImportable();
+
+$proposition = $hdr->getCurrentProposition();
+
+$etatHDRTextTooltip = "État de la HDR";
+switch ($hdr->getEtatHDR()){
+    case "E" :
+        $etatHDRClass = "en-cours";
+        $iconEtatHDR = "hourglass";
+        break;
+    case "A" :
+        $etatHDRClass = "abandonnee";
+        $iconEtatHDR = "cancel";
+        break;
+    case "U" :
+        $etatHDRClass = "transferee";
+        $iconEtatHDR = "export";
+        break;
+    case "S" :
+        if(!$hdr->getResultat()){
+            $etatHDRClass = "";
+            $iconEtatHDR = "";
+            $etatHDRTextTooltip = "Résultat inconnu";
+        }else{
+            $etatHDRClass = $hdr->getResultat() === 1 ? "admis" : "non-admis";
+            $iconEtatHDR = $hdr->getResultat() === 1 ? "ok" : "ko";
+            $etatHDRTextTooltip = $hdr->getResultatToString();
+        }
+        break;
+    default:
+        $etatHDRClass = "";
+}
+?>
+
+<?php $this->headTitle($this->translate("HDR"))->prepend($hdr->getCandidat()->getIndividu()->getNomUsuel()) ?>
+
+<?php echo $this->alertes()
+    ->addAlertesFromDatabase()
+    ->addAlertesFromFlashMessenger()
+    ->renderAsBootstrapToasts() ?>
+
+<div class="row informations-principales-these-header">
+    <div class="col-md-4">
+        <h1 class="page-header">
+            <?php echo $this->translate("HDR"); ?>
+            <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
+        </h1>
+    </div>
+    <?php if ($canEditHDR && !$isImportable): ?>
+        <div class="col-md-7">
+            <?php /**  @see \HDR\Controller\HDRSaisieController::modifierAction() */ ?>
+            <a href="<?php echo $this->url('hdr/modifier', ['hdr' => $hdr->getId()], [], true) ?>"
+               class="btn btn-primary">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier la HDR"); ?>
+            </a>
+            <?php if ($hdr->getEtatHDR() === HDR::ETAT_EN_COURS): ?>
+                <?php /**  @see \HDR\Controller\HDRController::demanderSaisieInfosSoutenanceAction() */ ?>
+                <a href="<?php echo $this->url('hdr/demander-saisie-infos-soutenance', ['hdr' => $hdr->getId()], [], true) ?>"
+                   data-bs-toggle = "tooltip"
+                   title="Envoi d'un mail au candidat indiquant qu'il peut dès à présent remplir les informations de sa proposition de soutenance"
+                   class="btn btn-primary float-end">
+                    <span class="icon icon-mail"></span>
+                    <?php echo $this->translate("Demander au candidat la saisie de ses informations de soutenance"); ?>
+                </a>
+            <?php endif ?>
+        </div>
+    <?php endif ?>
+</div>
+<div class="row informations-compl-these-div" style="padding-left:12px;">
+    <div class="col-md-6 informations-compl-these-card information-etat-these-card <?=$etatHDRClass?>-etat-these-card"
+         data-bs-toggle="tooltip" data-bs-original-title="<?=$etatHDRTextTooltip?>">
+        <span class="icon icon-<?=$iconEtatHDR?>"></span>
+        <h2><?= $hdr->getEtatHDRToString(); ?></h2>
+    </div>
+</div>
+
+<div class="box card">
+    <div class="card-header these-card-header text-white">
+        <h2 class="first">
+            <?php echo $this->translate("Généralités"); ?>
+        </h2>
+    </div>
+    <div class="card-body these-identite-body">
+        <?php echo $this->partial('hdr/hdr/partial/generalites', ["hdr" => $hdr, "canEditHDR" => $canEditHDR,
+            "isImportable" => $isImportable, "modifierEmailContactConsentUrl" => $modifierEmailContactConsentUrl,
+            "modifierEmailContactUrl" => $modifierEmailContactUrl]) ?>
+    </div>
+</div>
+
+<div class="box card">
+    <div class="card-header these-card-header text-white">
+        <h2 class="first">
+            <?php echo $this->translate("Structures"); ?>
+        </h2>
+    </div>
+    <div class="card-body these-identite-body">
+        <?php if ($canEditHDR && !$isImportable): ?>
+            <?php /**  @see \HDR\Controller\HDRSaisieController::structuresAction() */ ?>
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="structures"
+               href="<?php echo $this->url('hdr/modifier/structures', ['hdr' => $hdr->getId()], [], true) ?>"
+               data-event="<?php echo $modifierStructuresEvent ?>"
+            >
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier les structures"); ?>
+            </a>
+        <?php endif ?>
+        <?php echo $this->partial('hdr/hdr/partial/structures') ?>
+    </div>
+</div>
+
+<div class="box card">
+    <div class="card-header these-card-header text-white">
+        <h2 class="first">
+            <?php echo $this->translate("Garant"); ?>
+        </h2>
+    </div>
+    <div class="card-body these-identite-body">
+        <?php if ($canEditHDR && !$isImportable): ?>
+            <?php /**  @see \HDR\Controller\HDRSaisieController::directionAction() */ ?>
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="direction"
+               href="<?php echo $this->url('hdr/modifier/direction', ['hdr' => $hdr->getId()], [], true) ?>"
+               data-event="<?php echo $modifierDirectionEvent ?>"
+            >
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier le garant"); ?>
+            </a>
+        <?php endif ?>
+        <?php echo $this->partial('hdr/hdr/partial/direction') ?>
+    </div>
+</div>
+
+<?php if ($resultat = $hdr->getResultatToString() || $hdr->getDateAbandon() || $proposition?->getSoutenanceAutorisee() || $proposition?->getDate()): ?>
+    <div class="box card">
+        <div class="card-header these-card-header text-white">
+            <h2 class="first">
+                <?php echo $this->translate("Informations complémentaires"); ?>
+            </h2>
+        </div>
+
+        <div class="card-body these-identite-body">
+            <dl class="row these">
+                <div class="col-md-8">
+                    <?php if ($hdr->getDateAbandon()): ?>
+                        <dl>
+                            <dt class="col-md-3">Date d'abandon</dt>
+                            <dd class="col-md-9"><?php echo $hdr->getDateAbandonToString() ?></dd>
+                        </dl>
+                    <?php endif ?>
+
+                    <?php if ($proposition?->getSoutenanceAutorisee()): ?>
+                        <dl>
+                            <dt class="col-md-3">Soutenance autorisée</dt>
+                            <dd class="col-md-9">
+                                <?php if($proposition->getSoutenanceAutorisee() === true): ?>
+                                    <span class="badge bg-success text-white" style="font-size:unset">
+                                    <span class="icon icon-ok" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Oui") ?>
+                                </span>
+                                <?php elseif($proposition->getSoutenanceAutorisee() === false): ?>
+                                    <span class="badge bg-danger text-white" style="font-size:unset">
+                                    <span class="icon icon-ko" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Non") ?>
+                                </span>
+                                <?php endif; ?>
+                            </dd>
+                        </dl>
+                    <?php if ($proposition?->getEtat()->getCode() === Etat::VALIDEE && $proposition->getDate()): ?>
+                            <dl>
+                                <dt class="col-md-3">Date de soutenance</dt>
+                                <dd class="col-md-9"><?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?></dd>
+                            </dl>
+                        <?php endif ?>
+                    <?php endif ?>
+
+                    <?php if ($resultat = $hdr->getResultatToString()): ?>
+                        <dl>
+                            <dt class="col-md-3">Résultat</dt>
+                            <dd class="col-md-9">
+                                <?php if($hdr->getResultat() === 1): ?>
+                                <span class="badge bg-success text-white" style="font-size:unset">
+                                    <span class="icon icon-ok" style="padding-right: unset"></span>
+                                    <?php elseif($hdr->getResultat() === 0): ?>
+                                        <span class="badge bg-danger text-white" style="font-size:unset">
+                                            <span class="icon icon-ko" style="padding-right: unset"></span>
+                                    <?php endif; ?>
+                                    <?php echo $this->translate($resultat) ?>
+                                </span>
+                            </dd>
+                        </dl>
+                    <?php endif ?>
+                </div>
+            </dl>
+        </div>
+    </div>
+<?php endif; ?>
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    $(function () {
+        var body = $("body");
+
+        body.on("<?php echo $modifierStructuresEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        body.on("<?php echo $modifierDirectionEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+
+        body.on("<?php echo $emailContactModifiedEvent ?>", function (event) {
+            // L'email de contact vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+        body.on("<?php echo $emailContactConsentModifiedEvent ?>", function (event) {
+            // Le consentement vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+        });
+    });
+</script>
+

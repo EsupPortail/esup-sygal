@@ -2,10 +2,8 @@
 
 namespace RapportActivite\Service\Search;
 
-use Application\Entity\Db\TypeValidation;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Service\Financement\FinancementService;
-use Application\Service\Validation\ValidationService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
@@ -19,16 +17,13 @@ use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use These\Service\These\TheseSearchService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationThese\ValidationTheseService;
+use Validation\Service\ValidationService;
 
 class RapportActiviteSearchServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @param string $requestedName
-     * @param array|null $options
-     * @return RapportActiviteSearchService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -49,7 +44,7 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
          * @var TheseAnneeUnivService $theseAnneeUnivService
          * @var TheseSearchService $theseSearchService
          * @var RapportActiviteService $rapportActiviteService
-         * @var ValidationService $validationService
+         * @var ValidationTheseService $validationService
          */
         $structureService = $container->get(StructureService::class);
         $etablissementService = $container->get(EtablissementService::class);
@@ -57,8 +52,7 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $theseSearchService = $container->get(TheseSearchService::class);
         $rapportActiviteService = $container->get(RapportActiviteService::class);
-        $validationService = $container->get(ValidationService::class);
-        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
+        $validationService = $container->get(ValidationTheseService::class);
 
         $service->setFinancementService($financementService);
         $service->setAnneesUnivs($theseAnneeUnivService);
@@ -66,7 +60,6 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $service->setEtablissementService($etablissementService);
         $service->setTheseSearchService($theseSearchService);
         $service->setRapportActiviteService($rapportActiviteService);
-        $service->setTypeValidation($typeValidation);
 
         $service->setEtablissementTheseSearchFilter(EtablissementSearchFilter::newInstance());
         $service->setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter::newInstance());
@@ -82,9 +75,10 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $rapportActiviteOperationService = $container->get(RapportActiviteOperationService::class);
         $service->setRapportActiviteOperationService($rapportActiviteOperationService);
 
-        /** @var \Application\Service\Validation\ValidationService $validationService */
+        /** @var \Validation\Service\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
-        $service->setValidationService($validationService);
+        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
+        $service->setTypeValidation($typeValidation);
 
         return $service;
     }

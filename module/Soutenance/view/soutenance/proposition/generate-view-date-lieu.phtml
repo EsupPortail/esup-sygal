@@ -8,6 +8,7 @@ use Soutenance\Entity\Proposition;
  * @var Proposition $proposition
  * @var boolean $canModifier
  * @var string $FORMULAIRE_DELOCALISATION
+ * @var string $typeProposition
  */
 
 ?>
@@ -16,5 +17,6 @@ use Soutenance\Entity\Proposition;
 echo $this->partial('partial/date-et-lieu', [
     'proposition' => $proposition,
     'canModifier' => $canModifier,
-    'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION]);
+    'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
+    'typeProposition' => $typeProposition,]);
 ?>

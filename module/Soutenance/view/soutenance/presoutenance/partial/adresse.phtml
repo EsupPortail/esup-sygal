@@ -1,13 +1,18 @@
 <?php
+
 use Soutenance\Entity\Proposition;
-use These\Entity\Db\These;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 /**
-  * @var These $these
   * @var Proposition $proposition
-*/
+  * @var string $typeProposition
+ */
 
 $adresse = $proposition->getAdresseActive();
+$object = $proposition->getObject();
+
+$canDemanderAdresseExacte = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
+
 
 ?>
 
@@ -15,17 +20,22 @@ $adresse = $proposition->getAdresseActive();
     <?php echo $adresse->format(); ?>
 <?php else :?>
     <?php if ($proposition->getAdresse() !== null) : ?>
-        <div class="alert alert-warning"> Adresse récupérée de l'ancien système. </div>
-        <?php echo $proposition->getAdresse(); ?>
+        <div class="alert alert-info">
+            <span class="icon icon-info"></span>
+            Adresse récupérée de l'ancien système.
+        </div>
+        <p><?php echo $proposition->getAdresse(); ?></p>
     <?php else : ?>
         <p class="lead">L'adresse exacte n'a pas encore été saisie dans la partie proposition.</p>
     <?php endif; ?>
 
-    <?php /** @see \Soutenance\Controller\PropositionController::demanderAdresseAction() */ ?>
-    <a href="<?php echo $this->url('soutenance/proposition/demander-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
-       class="btn btn-info">
-        <span class="icon icon-notifier"></span>
-        Demander la saisie de l'adresse exacte
-    </a>
+    <?php if($canDemanderAdresseExacte) : ?>
+        <?php /** @see \Soutenance\Controller\PropositionController::demanderAdresseAction() */ ?>
+        <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/demander-adresse", ['id' => $object->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+           class="btn btn-info">
+            <span class="icon icon-notifier"></span>
+            Demander la saisie de l'adresse exacte
+        </a>
+    <?php endif; ?>
 <?php endif; ?>
 

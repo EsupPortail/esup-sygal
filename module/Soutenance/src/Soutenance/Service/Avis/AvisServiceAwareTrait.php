@@ -5,7 +5,7 @@ namespace  Soutenance\Service\Avis;
 trait AvisServiceAwareTrait {
 
     /** @var AvisService */
-    private $avisService;
+    protected $avisService;
 
     /**
      * @return AvisService

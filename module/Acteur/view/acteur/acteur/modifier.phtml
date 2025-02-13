@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * @see ActeurTheseController::modifierAction()
+ * @see ActeurHDRController::modifierAction()
+ * @var \Acteur\Form\ActeurThese\ActeurTheseForm|\Acteur\Form\ActeurHDR\ActeurHDRForm $form
+ * @var string $returnUrl
+ */
+
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
+
+$this->headTitle()->append("Acteur");
+
+$fieldset = $form->get('acteur');
+
+/** @var ActeurThese|ActeurHDR $acteur */
+$acteur = $form->getObject();
+$estImporte = $acteur->getSource()->getImportable();
+
+if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImportable()): ?>
+    <div class="row">
+        <div class="alert alert-warning">
+            <span class="icon icon-attention"></span>
+            Si le membre n'est pas connu de SyGAL, merci de bien vouloir <a data-event="modification-association-jury" href="<?php echo $this->url('individu/ajouter', [], ['query' => ['redirect' => $returnUrl]]); ?>">l'ajouter</a> dans l'application.
+        </div>
+    </div>
+<?php endif ?>
+
+<?php echo $this->form()->openTag($form->prepare()); ?>
+
+<div class="row">
+    <div class="col-md-3">
+        <?php echo $this->formControlGroup($fieldset->get('role')); ?>
+    </div>
+    <div class="col-md-3">
+        <?php echo $this->formControlGroup($fieldset->get('individu')); ?>
+    </div>
+    <div class="col-md-4">
+        <?php if ($fieldset->has('qualite')): ?>
+            <?php echo $this->formControlGroup($fieldset->get('qualite')); ?>
+        <?php elseif($estImporte): ?>
+            Qualité : <br>
+            <?php echo $acteur->getLibelleQualite(); ?>
+        <?php endif; ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3">
+        <div class="forcage from etablissementForce">
+            <div class="inputs">
+                <?php echo $this->formControlGroup($fieldset->get('etablissement')); ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <?php if ($fieldset->has('etablissementForce')): ?>
+            <div class="forcage to etablissementForce">
+                <a href="#" class="trigger forcer btn btn-secondary" title="Forcer l'établissement" style="display: none">Forcer...</a>
+                <a href="#" class="trigger deforcer" title="Supprimer le forçage" style="display: none"><span class="icon icon-non text-danger"></span></a>
+                <div class="inputs" style="display: none">
+                    <?php echo $this->formControlGroup($fieldset->get('etablissementForce')); ?>
+                </div>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-4">
+        <?php
+        if($acteur instanceof ActeurHDR) $fieldset->get('uniteRecherche')->setLabel("Unité de recherche (si membre de l'établissement d'inscription du candidat) :");
+        echo $this->formControlGroup($fieldset->get('uniteRecherche')); ?>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+
+<?php echo $this->formElement($form->get('csrf')); ?>
+<?php echo $this->formControlGroup($form->get('submit')); ?>
+
+<?php echo $this->form()->closeTag(); ?>
+
+
+<style>
+    .forcage .trigger.forcer {
+        margin-top: 1.45em;
+    }
+    .forcage .trigger.deforcer {
+        float: right;
+    }
+</style>
+
+<script>
+    $(function() {
+        $('select.selectpicker').selectpicker();
+
+        const widget = ForcageWidget.create('etablissementForce');
+        // surcharge nécessaire de la fonction "clearForcage()" car l'élément est un SearchAndSelect
+        // widget.clearForcage = function() {
+        //     $("#" + this.name).val('');
+        //     $("#" + this.name + "-autocomplete").val('');
+        // };
+        widget.init();
+    });
+</script>

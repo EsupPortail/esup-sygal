@@ -10,9 +10,9 @@ use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Parametre;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
+use Validation\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\Validation;
+use Validation\Entity\Db\ValidationThese;
 use Fichier\Entity\Db\VersionFichier;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use Doctrine\ORM\EntityManager;
@@ -218,7 +218,7 @@ class EntityProvider extends AbstractEntityProvider
      * @param These                 $these
      * @param TypeValidation|string $typeValidation
      * @param Individu              $individu
-     * @return Validation
+     * @return ValidationThese
      */
     public function validation(These $these, $typeValidation, Individu $individu = null)
     {
@@ -227,7 +227,7 @@ class EntityProvider extends AbstractEntityProvider
                 ->findOneBy(['code' => $typeValidation]);
         }
 
-        $entity = EntityAsset::newValidation($these, $typeValidation, $individu);
+        $entity = EntityAsset::newValidationThese($these, $typeValidation, $individu);
         $this->getEntityManager()->persist($entity);
 
         // $this->newEntities->push() inutile grâce au "delete cascade"

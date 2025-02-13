@@ -1,0 +1,225 @@
+<?php
+/**
+ * @var HDR $hdr
+ * @var string $mailContact
+ * @var string $modifierEmailContactConsentUrl
+ * @var string $modifierEmailContactUrl
+ * @var bool $isImportable
+ * @var bool $canEditHDR
+ */
+
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use HDR\Entity\Db\HDR;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use Individu\View\Helper\IndividuUsurpationHelper;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+
+$canVoirEmailContact = $this->isAllowed($hdr, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
+$canEditEmailContact = $this->isAllowed($hdr, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$canEditEmailContactConsent = $this->isAllowed($hdr, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+
+$emailContactModifiedEvent = 'email-contact-modified-event';
+$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
+$modifierGeneralitesEvent = 'event-modifier-generalites';
+?>
+
+<dl class="row generalites">
+    <div class="col-md-8">
+        <dl>
+            <dt class="col-md-3">
+                <?php echo $this->translate("Établissement d'inscription"); ?>
+            </dt>
+            <dd class="col-md-9">
+                <?php if ($hdr->getEtablissement()): ?>
+                    <?php echo $this->structure($hdr->getEtablissement()); ?>
+                <?php else: ?>
+                    <span class="badge bg-danger text-white" style="font-size:unset">
+                        <span class="icon icon-warning" style="padding-right: unset"></span>
+                        Aucun établissement n'est renseigné.
+                    </span>
+                <?php endif; ?>
+            </dd>
+        </dl>
+        <dl>
+            <dt class="col-md-3">
+                <?php echo $this->translate("Discipline SISE"); ?>
+            </dt>
+            <dd class="col-md-8">
+                <?php if($hdr->getDiscipline() === null) : ?>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Non renseignée
+                    </span>
+                <?php else: ?>
+                    <?php echo $hdr->getDiscipline() ?>
+                <?php endif; ?>
+            </dd>
+        </dl>
+        <dl>
+            <dt class="col-md-3">
+                <?php echo $this->translate("CNU"); ?>
+            </dt>
+            <dd class="col-md-8">
+                <?php if($hdr->getCnu() === null || $hdr->getCnu() === "") : ?>
+                    <span class="badge bg-secondary text-white" style="font-size:unset">
+                        <span class="icon icon-info" style="padding-right: unset"></span>
+                        Non renseignée
+                    </span>
+                <?php else: ?>
+                    <?php echo $hdr->getCnu() ?>
+                <?php endif; ?>
+            </dd>
+        </dl>
+        <dl>
+            <dt class="col-md-3">
+                <?php echo $this->translate("Confidentialité"); ?>
+            </dt>
+            <?php if ($hdr->etaitConfidentielle()): ?>
+                <dd class="col-md-9">Confidentielle, jusqu'au <?php echo $hdr->getDateFinConfidentialiteToString() ?></dd>
+            <?php elseif ($hdr->estConfidentielle()): ?>
+                <dd class="col-md-9 text-danger">
+                    <span class="badge bg-danger text-white" style="font-size:unset">
+                        <span class="fa fa-eye-slash" style="padding-right: unset"></span>
+                        Confidentielle, jusqu'au <?php echo $hdr->getDateFinConfidentialiteToString() ?>
+                    </span>
+                </dd>
+            <?php else: ?>
+                <dd class="col-md-9">
+                    <span class="badge bg-success text-white" style="font-size:unset">
+                        <span class="icon icon-voir" style="padding-right: unset"></span>
+                        Non confidentielle
+                    </span>
+                </dd>
+            <?php endif ?>
+        </dl>
+    </div>
+    <div class="col-md-4">
+        <?php if ($canEditHDR && !$isImportable): ?>
+            <?php /**  @see \HDR\Controller\HDRSaisieController::generalitesAction() */ ?>
+            <a type="button" class="btn btn-primary float-end action ajax-modal" data-domaine="generalites"
+               href="<?php echo $this->url('hdr/modifier/generalites', ['hdr' => $hdr->getId()], [], true) ?>"
+               data-event="<?php echo $modifierGeneralitesEvent ?>"
+            >
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier les généralités"); ?>
+            </a>
+        <?php endif ?>
+
+        <div class="box card float-end" style="width: 100%; box-sizing:border-box">
+            <div class="card-header these-card-header text-white">
+                <h2 class="first">
+                    <span class="fas fa-graduation-cap"></span>
+                    <?php echo $this->translate("Candidat"); ?>
+                </h2>
+            </div>
+            <div class="card-body these-identite-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <?php
+                        $nomComplet = $hdr->getCandidat()->getIndividu()->getNomComplet(true, true, true);
+                        $dateNaissance = $hdr->getCandidat()->getIndividu()->getDateNaissanceToString();
+                        echo !empty($dateNaissance) ? sprintf("%s (%s)", $nomComplet, $dateNaissance) : $nomComplet;
+                        ?>
+                        <?php
+                        $canVisualiserIndividu = $this->isAllowed($hdr->getCandidat()->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+                        $canVisualiserIndividu = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_CONSULTER));
+                        if ($canVisualiserIndividu) {
+                            echo " <a href='".$this->url('individu/voir', ['individu' => $hdr->getCandidat()->getIndividu()->getId()], [], true) ."'>";
+                            echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
+                        }
+                        ?>
+                        <?php
+                        // bouton d'usurpation d'identité
+                        $individuUsurpationHelper = $this->plugin('individuUsurpation'); /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+                        $individuUsurpationHelper->setIndividu($hdr->getCandidat()->getIndividu());
+                        echo $individuUsurpationHelper();
+                        ?>
+                    </li>
+
+                    <li class="list-group-item">
+                        <strong>
+                            <?php echo $this->translate("Nationalité :"); ?>
+                        </strong>
+                        <?php if ($hdr->getCandidat()->getIndividu() && $hdr->getCandidat()->getIndividu()->getPaysNationalite()): ?>
+                            <?php echo $hdr->getCandidat()->getIndividu()->getPaysNationalite()->getLibelleNationalite() ?> <br>
+                        <?php else: ?>
+                            <span class="badge bg-secondary text-white" style="font-size:unset">
+                                <span class="icon icon-info" style="padding-right: unset"></span>
+                                Non renseignée
+                            </span>
+                        <?php endif ?>
+                    </li>
+
+                    <li class="list-group-item">
+                        <strong>
+                            <?php echo $this->translate("N° étudiant :"); ?>
+                        </strong>
+                        <?php if ($hdr->getCandidat()->getNumeroEtudiant() !== null): ?>
+                            <?php echo $hdr->getCandidat()->getNumeroEtudiant() ?> <br>
+                        <?php else: ?>
+                            <span class="badge bg-secondary text-white" style="font-size:unset">
+                                <span class="icon icon-info" style="padding-right: unset"></span>
+                                Non renseigné
+                            </span>
+                        <?php endif ?>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>
+                            <?php echo $this->translate("Adresse électronique institutionnelle :"); ?>
+                        </strong>
+                        <?php if ($email = $hdr->getCandidat()->getIndividu()->getEmailPro()): ?>
+                            <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
+                        <?php else: ?>
+                            <span class="badge bg-secondary text-white" style="font-size:unset">
+                                <span class="icon icon-info" style="padding-right: unset"></span>
+                                Inconnue
+                            </span>
+                        <?php endif ?>
+
+                        <?php if ($canVoirEmailContact) : ?>
+                            <br>
+                            <strong>
+                                <?php echo $this->translate("Adresse de contact :"); ?>
+                            </strong>
+                            <?php if ($mailContact = $hdr->getCandidat()->getIndividu()->getEmailContact()): ?>
+                                <a href="mailto: <?php echo $mailContact = $hdr->getCandidat()->getIndividu()->getEmailContact() ?>"><?php echo $mailContact ?></a>
+                            <?php else: ?>
+                                <span class="badge bg-secondary text-white" style="font-size:unset">
+                                    <span class="icon icon-info" style="padding-right: unset"></span>
+                                    Non renseignée
+                                </span>
+                            <?php endif; ?>
+                            <?php if ($canEditEmailContact): ?>
+                                <a href="<?php echo $modifierEmailContactUrl ?>"
+                                   title="Modifer l'adresse de contact"
+                                   data-event="<?php echo $emailContactModifiedEvent ?>"
+                                   class="btn btn-secondary btn-sm ajax-modal">
+                                    <?php echo $this->translate(($mailContact ? "Modifier" : "Renseigner") .  " l'adresse de contact"); ?>
+                                </a>
+                            <?php endif ?>
+                            <?php if ($canEditEmailContactConsent): ?>
+                                <a href="<?php echo $modifierEmailContactConsentUrl ?>"
+                                   title="Votre consentement à utiliser l'adresse de contact"
+                                   data-event="<?php echo $emailContactConsentModifiedEvent ?>"
+                                   class="btn btn-secondary btn-sm ajax-modal">
+                                    <?php echo $this->translate("Consentement"); ?>
+                                </a>
+                            <?php endif ?>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</dl>
+
+<script>
+    $(function () {
+        var body = $("body");
+
+        body.on("<?php echo $modifierGeneralitesEvent ?>", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    })
+</script>

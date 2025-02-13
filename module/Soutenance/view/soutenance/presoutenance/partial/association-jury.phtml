@@ -2,25 +2,31 @@
 
 /**
  * @var Proposition $proposition
+ * @var Membre[] $membres
+ * @var ActeurThese[]|ActeurHDR[] $acteursMembres
+ * @var string $typeProposition
  * @var These $these
  * @var Membre[] $membresPouvantEtrePresidentDuJury
  */
 
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
 use Soutenance\Service\Horodatage\HorodatageService;
-use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
-$canAssocierMembreIndividu              = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
-$theseImportee = $these->getSource()->getImportable()
+$object = $proposition->getObject();
+$objectImportee = $object->getSource()->getImportable();
+
+$canAssocierMembreIndividu = $this->isAllowed($object, PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU);
 ?>
 
 <div class="box card">
     <div class="card-header bg-dark text-white">
         <div class="row">
             <div class="col-md-8">
-                <?php if($theseImportee): ?>
+                <?php if ($objectImportee): ?>
                     <h2> Association d'acteur SYGAL aux membres de jury </h2>
                 <?php else: ?>
                     <h2> Association d'individu SYGAL aux membres de jury </h2>
@@ -28,18 +34,20 @@ $theseImportee = $these->getSource()->getImportable()
             </div>
             <div class="col-md-4">
                 <p>
-<!--                    <a-->
-<!--                        --><?php ///** @see  \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
-<!--                        class="btn btn-secondary btn-sm"-->
-<!--                       id="refresh-these-button"-->
-<!--                       href="--><?php //echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?><!--"-->
-<!--                    ><span class="icon icon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de-->
-<!--                        --><?php //echo $these->getSource() ?><!--</a>-->
+                    <!--                    <a-->
+                    <!--                        --><?php ///** @see  \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
+                    <!--                        class="btn btn-secondary btn-sm"-->
+                    <!--                       id="refresh-these-button"-->
+                    <!--                       href="-->
+                    <?php //echo $this->urlThese()->refreshTheseUrl($object, $this->url"soutenance_{$typeProposition}/presoutenance', ['type'=> $typeProposition, 'id' => $object->getId()], [], true)); ?><!--"-->
+                    <!--                    ><span class="icon icon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de-->
+                    <!--                        --><?php //echo $object->getSource() ?><!--</a>-->
 
                 </p>
-<!--                <span class="small">-->
-<!--                    Dernière mise à jour : --><?php //echo $these->getHistoModification()->format(Constants::DATETIME_FORMAT) ?><!--.-->
-<!--                </span>-->
+                <!--                <span class="small">-->
+                <!--                    Dernière mise à jour : -->
+                <?php //echo $object->getHistoModification()->format(Constants::DATETIME_FORMAT) ?><!--.-->
+                <!--                </span>-->
 
             </div>
         </div>
@@ -48,7 +56,7 @@ $theseImportee = $these->getSource()->getImportable()
     <div class="card-body">
 
         <p class="lead">
-            <?php if($theseImportee) : ?>
+            <?php if ($objectImportee) : ?>
                 Tous les membres du jury doivent être associés à des acteurs enregistrés dans SyGAL.
             <?php else: ?>
                 Tous les membres (déclarés dans la composition du jury de la proposition de soutenance) doivent être associés à des individus enregistrés dans SyGAL.
@@ -58,50 +66,64 @@ $theseImportee = $these->getSource()->getImportable()
         <table class="table table-extra-condensed">
             <thead>
             <tr>
-                <th> Dénomination </th>
-                <th> Rôle </th>
-                <th> Qualité </th>
-                <th> Etablissement </th>
+                <th> Dénomination</th>
+                <th> Rôle</th>
+                <th> Qualité</th>
+                <th> Etablissement</th>
                 <th> Id <?php echo $this->appInfos()->nom ?> </th>
-                <th> Action </th>
+                <th> Action</th>
             </tr>
             </thead>
             <tbody>
-            <?php /** @var Membre $membre  */ ?>
-            <?php foreach ($proposition->getMembres() as $membre): ?>
+            <?php foreach ($membres as $membre): ?>
+                <?php $acteurMembre = $acteursMembres[$membre->getId()] ?? null ?>
                 <tr>
                     <td>    <?php echo $membre->getDenomination(); ?>                                                   </td>
                     <td>    <?php echo $membre->getRole(); ?>                                                           </td>
-                    <td>    <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?>    </td>
+                    <td>    <?php echo ($membre->getQualite()) ? $membre->getQualite()->getLibelle() : "Non définie"; ?>    </td>
                     <td>    <?php echo $membre->getEtablissement(); ?>                                                  </td>
-                    <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
+                    <td>    <?php echo ($acteurMembre) ? $acteurMembre->getId() . ' ' . $acteurMembre->getIndividu()->getNomComplet() : ''; ?>                  </td>
                     <td>
-                        <?php if($canAssocierMembreIndividu): ?>
-<!--                            --><?php //if ($membre->estRapporteur()) : ?>
-                                    <?php if (! $membre->getActeur()): ?>
-                                        <?php if ($theseImportee):
-                                            /** @see \Soutenance\Controller\PresoutenanceController::associerJuryAction() **/
-                                            $lienAssociationJury = $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>
-                                        <?php else:
-                                            /** @see \Soutenance\Controller\PresoutenanceController::associerJuryTheseSygalAction() **/
-                                            $lienAssociationJury = $this->url('soutenance/presoutenance/associer-jury-these-sygal', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>
-                                        <?php endif; ?>
-                                            <a  href="<?php echo $lienAssociationJury ?? null ?>"
-                                                class="action ajax-modal"
-                                                data-event="modification-association-jury"
-                                            >
-                                            <span class="fas fa-link" title="Associer un individu à un membre de jury"></span>
-                                        </a>
-                                    <?php else: ?>
-                                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::deassocierJuryAction() */ ?>
-                                            href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);; ?>"
-                                            data-toggle="confirmationx"
-                                        >
-                                            <span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
-                                                  data-bs-html="true" title="Casser l'association d'un individu à un membre de jury <br>(Une confirmation avant la suppression vous sera demandée)"></span>
-                                        </a>
-                                    <?php endif; ?>
-<!--                            --><?php //endif; ?>
+                        <?php if ($canAssocierMembreIndividu): ?>
+                            <?php if (!$acteurMembre): ?>
+                                <?php if ($objectImportee):
+                                    /** @see PresoutenanceController::associerJuryAction() * */
+                                    $lienAssociationJury = $this->url("soutenance_{$typeProposition}/presoutenance/associer-jury", ['id' => $object->getId(), 'membre' => $membre->getId()], [], true); ?>
+                                <?php else:
+                                    /** @see PresoutenanceTheseController::associerJurySygalAction() * */
+                                    /** @see PresoutenanceHDRController::associerJurySygalAction() * */
+                                    $lienAssociationJury = $this->url("soutenance_{$typeProposition}/presoutenance/associer-jury-sygal", ['id' => $object->getId(), 'membre' => $membre->getId()], [], true); ?>
+                                <?php endif; ?>
+                                <a href="<?php echo $lienAssociationJury ?>"
+                                   class="action ajax-modal"
+                                   data-event="modification-association-jury"
+                                >
+                                    <span class="fas fa-link" data-bs-toggle="tooltip"
+                                          title="Associer un individu au membre de jury <?= $membre->getDenomination() ?>"></span>
+                                </a>
+                            <?php else: ?>
+                                <a <?php /** @see \Soutenance\Controller\PresoutenanceController::deassocierJuryAction() */ ?>
+                                        href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/deassocier-jury", ['id' => $object->getId(), 'membre' => $membre->getId()], [], true);; ?>"
+                                        data-toggle="confirmationx"
+                                >
+                                    <span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
+                                          data-bs-html="true" title="Casser l'association d'un individu à un membre de jury <br>(Une confirmation avant la suppression vous sera demandée)"></span>
+                                </a>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php if (!$acteurMembre): ?>
+                                <span class="fas fa-link"
+                                      title="Vous n'avez pas les droits nécessaires pour lier ce membre à un acteur"
+                                      data-bs-toggle="tooltip"
+                                      style="color:lightgray;">
+                                    </span>
+                            <?php else: ?>
+                                <span class="icon icon-delete iconly"
+                                      data-bs-toggle="tooltip"
+                                      title="Vous n'avez pas les droits nécessaires pour casser l'association d'un individu à un membre de jury"
+                                      style="color:lightgray;">
+                                    </span>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>

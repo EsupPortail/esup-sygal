@@ -65,6 +65,7 @@ return [
 
         'Horodatage',
         'Structure',
+        'Acteur',
         'These',
         'Fichier',
         'Import',
@@ -86,6 +87,9 @@ return [
         'Substitution',
         'SygalApi',
         'SygalApiImpl',
+        'Validation',
+        'HDR',
+        'Candidat'
     ],
     'module_listener_options' => [
         'config_glob_paths'    => [

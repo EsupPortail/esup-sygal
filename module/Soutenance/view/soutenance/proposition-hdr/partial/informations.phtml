@@ -1,0 +1,160 @@
+<?php
+
+/**
+ * @var PropositionHDR $proposition
+ * @var string $FORMULAIRE_DELOCALISATION
+ * @var boolean $canModifier
+ * @var boolean $informationsOk
+ *
+ * @var IndividuRole[] $ecoleResponsables
+ * @var IndividuRole[] $uniteResponsables
+ * @var string[] $emailsAspectDoctorats
+ *
+ * @var ActeurHDR[] $garants
+ *
+ * @see \Soutenance\Controller\PropositionController::propositionAction()
+ */
+
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Provider\Privilege\ActeurPrivileges;
+use Individu\Entity\Db\IndividuRole;
+use Individu\View\Helper\IndividuUsurpationHelper;
+use Soutenance\Entity\PropositionHDR;
+
+$hdr = $proposition->getHDR();
+
+$unite = $hdr->getUniteRecherche();
+$ecole = $hdr->getEcoleDoctorale();
+$etablissement = $hdr->getEtablissement();
+
+// bouton d'usurpation d'identité
+/* @var $individuUsurpationHelper IndividuUsurpationHelper */
+$individuUsurpationHelper = $this->plugin('individuUsurpation');
+?>
+
+<div id="BOXDIV_INFORMATIONS">
+<div class="box card" >
+
+    <div class="card-header <?php echo ($informationsOk)?'bg-success':'bg-danger'; ?>">
+        <h2>
+             Informations sur les intervenants (Garants, Responsables d'UR, ...)
+        </h2>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Garant</h3>
+
+                <ul>
+                    <?php foreach ($garants as $acteur) : ?>
+                        <li>
+                            <strong><?php echo $acteur->getIndividu()->getNomComplet(); ?></strong>
+                            <?php if ($acteur->getRole()->estUsurpable() && ! isset($result['alerte-supann-id'])) {
+                                $individuUsurpationHelper->setIndividu($acteur->getIndividu());
+                                echo $individuUsurpationHelper();
+                            } ?>
+                            <br>
+                            <?php if ($email = $acteur->getIndividu()->getEmailProComplement()) : ?>
+                                <em title="Valeur forcée issue du complément d'individu"><a href="mailto:<?php echo $email ?>"><?php echo $email ?></a></em>
+                            <?php elseif ($email = $acteur->getIndividu()->getEmailPro()): ?>
+                                <a href="mailto:<?php echo $email ?>"><?php echo $email ?></a>
+                            <?php else: ?>
+                                <span class="text-danger">Adresse électronique manquante</span>
+                            <?php endif; ?>
+                            <?php if ($canModifier): ?>
+                                <?php if ($compl = $acteur->getIndividu()->getComplement()): ?>
+                                    <a href="<?php echo $this->url("individu-compl/modifier", ['individu-compl' => $compl->getId()], [], true); ?>"
+                                       class="ajax-modal" data-event="modification" title="Modifier ou supprimer un complément d'individu">
+                                        <span class="icon icon-edit"></span>
+                                    </a>
+                                <?php else: ?>
+                                    <a href="<?php echo $this->url("individu-compl/ajouter", ['individu' => $acteur->getIndividu()->getId()], [], true); ?>"
+                                       class="ajax-modal" data-event="modification" title="Créer un complément d'individu">
+                                        <span class="icon icon-plus"></span>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <p>
+                                Établ. :
+                                <span class="text-structure etablissement">
+                                    <?php echo $acteur->getEtablissement() ?: $etablissement ?: '<span class="text-danger">Établissement manquant</span>'; ?>
+                                </span>
+                                <br/>
+                                UR :
+                                <span class="text-structure ur">
+                                    <?php echo $acteur->getUniteRecherche() ?:  '<span class="text-danger">Unité de recherche manquante</span>'; ?>
+                                </span>
+                                <?php
+                                $canEditActeur =
+                                    $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES) ||
+                                    $this->isAllowed($acteur, ActeurPrivileges::MODIFIER_ACTEUR_SES_THESES);
+                                ?>
+                                <?php if ($canEditActeur): ?>
+                                    <a href="<?php echo $this->url('hdr/acteur/modifier', ['acteur' => $acteur->getId()], [], true) ?>"
+                                       class="ajax-modal" data-event="modification">
+                                        <span class='icon icon-edit iconly' title='Modifier cet acteur'></span></a>
+                                <?php endif ?>
+                            </p>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h3>Structures associées</h3>
+                    <dl>
+                        <dt> Unité de recherche </dt>
+                        <dd>
+                            <?php if (!$unite) : ?>
+                                <strong class="text-danger">Aucune unité de recherche !</strong>
+                            <?php else : ?>
+                                <?php echo $unite->getStructure()->getLibelle(); ?>
+                                    <?php if (empty($uniteResponsables)) : ?>
+                                        <div class="alert alert-danger">
+                                            <span class="icon icon-attention"></span>
+                                            Aucun responsable d'UR trouvé associé à l'établissement d'inscription (site)
+                                        </div>
+                                    <?php else : ?>
+                                        <ul>
+                                        <?php foreach ($uniteResponsables as $uniteResponsable) : ?>
+                                            <li>
+                                                <?php echo $uniteResponsable->getIndividu()->getNomComplet(); ?>
+                                                (<?php echo ($uniteResponsable->getIndividu()->getEmailPro())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                                <?php if (! isset($result['alerte-supann-id'])) {
+                                                    $individuUsurpationHelper->setIndividu($uniteResponsable->getIndividu());
+                                                    echo $individuUsurpationHelper();
+                                                } ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                            <?php endif; ?>
+                        </dd>
+                        <dt> Établissement </dt>
+                        <dd>
+                            <?php echo $etablissement->getStructure()->getLibelle(); ?>
+                            <?php if (empty($emailsAspectDoctorats)) : ?>
+                                <div class="alert alert-danger">
+                                    <span class="icon icon-attention"></span>
+                                    Aucun destinataire trouvé, une adresse générique doit être renseignée sur la fiche
+                                    de l'établissement d'inscription '<?php echo $etablissement->getStructure()->getLibelle(); ?>'
+                                    pour l'aspect "Doctorat".
+                                </div>
+                            <?php else : ?>
+                                <ul>
+                                    <?php foreach ($emailsAspectDoctorats as $emailsAspectDoctorat) : ?>
+                                        <li>
+                                            <?php echo $emailsAspectDoctorat; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </dd>
+                    </dl>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>

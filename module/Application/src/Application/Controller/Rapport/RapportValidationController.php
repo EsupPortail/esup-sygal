@@ -5,13 +5,13 @@ namespace Application\Controller\Rapport;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\RapportValidation;
-use Application\Entity\Db\TypeValidation;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
+use UnicaenApp\Exception\RuntimeException;
+use Validation\Entity\Db\TypeValidation;
+use Validation\Service\ValidationServiceAwareTrait;
 
 class RapportValidationController extends AbstractController
 {

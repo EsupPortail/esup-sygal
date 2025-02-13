@@ -267,7 +267,7 @@ return [
                         'type'          => Segment::class,
                         'options'       => [
                             /** @see \Application\Controller\UtilisateurController::ajouterTokenAction() */
-                            'route'       => '/ajouter-token/:utilisateur',
+                            'route'       => '/ajouter-token/:user', // NB : 'user' requis
                             'defaults'    => [
                                 'action' => 'ajouter-token',
                             ],

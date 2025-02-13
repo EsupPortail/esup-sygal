@@ -244,11 +244,9 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
             <ul>
                     <?php /** @var SessionStructureValide $structureComplemenaire */ ?>
                     <?php foreach ($session->getStructuresValides() as $structureComplemenaire) : ?>
-                        <li>
+                        <li style="margin-bottom:5px">
                             <span class=" <?php if ($structureComplemenaire->estHistorise()) echo " historise text-danger "; ?> ">
-                                <span class="formation-typage">Structure</span>
-                                <?php echo $structureComplemenaire->getStructure()->getLibelle(); ?>
-
+                                <?php echo $this->structure($structureComplemenaire->getStructure(), true); ?>
                                 <?php if ($canModifierSession) : ?>
                                 <?php /** @see \Formation\Controller\SessionStructureValideController::modifierStructureComplementaireAction() */ ?>
                                 <a href="<?php echo $this->url('formation/session/modifier-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>"

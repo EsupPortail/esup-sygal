@@ -59,7 +59,7 @@ class ImportService
 //        $theseId = $these->getId();
 //        $this->fetcherService->fetchRows('acteur', ['these' => $these]);
 //        /** @var TmpActeur[] $tmpActeurs */
-//        $tmpActeurs = $this->entityManager->getRepository(TmpActeur::class)->findBy(['theseId' => $sourceCodeThese]);
+//        $tmpActeurs = $this->entityManager->getRepository(TmpActeurThese::class)->findBy(['theseId' => $sourceCodeThese]);
 //        // individus acteurs
 //        $sourceCodeIndividus = [];
 //        foreach ($tmpActeurs as $tmpActeur) {

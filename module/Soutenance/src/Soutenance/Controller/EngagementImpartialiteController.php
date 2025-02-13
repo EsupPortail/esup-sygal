@@ -2,9 +2,9 @@
 
 namespace Soutenance\Controller;
 
-use Application\Controller\AbstractController;
-use Application\Entity\Db\Validation;
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
 use Laminas\View\Model\ViewModel;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
@@ -15,154 +15,139 @@ use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
+use Validation\Entity\Db\ValidationThese;
 
 /**
  * Class SoutenanceController
  * @package Soutenance\Controller
  */
 
-class EngagementImpartialiteController extends AbstractController
+class EngagementImpartialiteController extends AbstractSoutenanceController
 {
-    use ActeurServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use HorodatageServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use SoutenanceNotificationFactoryAwareTrait;
-    use PropositionServiceAwareTrait;
     use RenduServiceAwareTrait;
     use TemplateVariablePluginManagerAwareTrait;
 
     public function engagementImpartialiteAction() : ViewModel
     {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $this->initializeFromType(false);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $doctorantTemplateVariable = $this->getDoctorantTemplateVariable($these->getDoctorant());
         $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
 
-        $vars = [
-            'soutenanceMembre' => $soutenanceMembreTemplateVariable,
-            'doctorant' => $doctorantTemplateVariable,
-        ];
-        $texteEngagnement = $this->getRenduService()->generateRenduByTemplateCode(TexteTemplates::SOUTENANCE_ENGAGEMENT_IMPARTIALITE, $vars);
+        if($this->entity->getApprenant() instanceof Doctorant){
+            $apprenantTemplateVariable = $this->getDoctorantTemplateVariable($this->entity->getApprenant());
+            $vars = [
+                'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+                'doctorant' => $apprenantTemplateVariable,
+            ];
+            $texteEngagnement = $this->getRenduService()->generateRenduByTemplateCode(TexteTemplates::SOUTENANCE_THESE_ENGAGEMENT_IMPARTIALITE, $vars);
+        }else{
+            $apprenantTemplateVariable = $this->getCandidatTemplateVariable($this->entity->getApprenant());
+            $vars = [
+                'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+                'candidat' => $apprenantTemplateVariable,
+            ];
+            $texteEngagnement = $this->getRenduService()->generateRenduByTemplateCode(TexteTemplates::SOUTENANCE_HDR_ENGAGEMENT_IMPARTIALITE, $vars);
+        }
 
-        /** @var Validation $validation */
-        $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
-        if ($validation === null) $validation = $this->getEngagementImpartialiteService()->getRefusEngagementImpartialiteByMembre($these, $membre);
+        $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($this->entity, $membre);
+        if ($validation === null) $validation = $this->getEngagementImpartialiteService()->getRefusEngagementImpartialiteByMembre($this->entity, $membre);
 
         return new ViewModel([
-            'these' => $these,
-            'proposition' => $proposition,
+            'object' => $this->entity,
+            'proposition' => $this->proposition,
             'membre' => $membre,
             'validation' => $validation,
-            'encadrants' => $this->getActeurService()->getRepository()->findEncadrementThese($these),
-            'urlSigner' => $this->url()->fromRoute('soutenance/engagement-impartialite/signer', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
-            'urlRefuser' => $this->url()->fromRoute('soutenance/engagement-impartialite/refuser', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
-            'urlAnnuler' => $this->url()->fromRoute('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
+            'encadrants' => $this->acteurService instanceof ActeurTheseService ?
+                $this->acteurService->getRepository()->findEncadrementThese($this->entity) :
+                $this->acteurService->getRepository()->findEncadrementHDR($this->entity),
+            'urlSigner' => $this->url()->fromRoute("soutenance_{$this->type}/engagement-impartialite/signer", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true),
+            'urlRefuser' => $this->url()->fromRoute("soutenance_{$this->type}/engagement-impartialite/refuser", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true),
+            'urlAnnuler' => $this->url()->fromRoute("soutenance_{$this->type}/engagement-impartialite/annuler", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true),
 
             'texteEngagement' => $texteEngagnement,
+            'typeProposition' => $this->type,
         ]);
-    }
-
-    public function notifierRapporteursEngagementImpartialiteAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-
-        /** @var Membre $membre */
-        foreach ($proposition->getMembres() as $membre) {
-            if ($membre->getActeur() and $membre->estRapporteur()) {
-                $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
-                if (!$validation) {
-                    try {
-                        $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $membre);
-                        $this->notifierService->trigger($notif);
-                    } catch (RuntimeException $e) {
-                        throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
-                    }
-                }
-            }
-        }
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité");
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     public function notifierEngagementImpartialiteAction()
     {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $this->initializeFromType(false);
         $membre = $this->getMembreService()->getRequestedMembre($this);
+        $acteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
 
-        if ($membre->getActeur()) {
+//        if ($membre->getActeur()) {
+        if ($acteur) {
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $membre);
+                $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($this->entity, $membre);
                 $this->notifierService->trigger($notif);
             } catch (RuntimeException $e) {
                 throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
             }
         }
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité");
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de signature de l'engagement d'impartialité");
+        $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
     }
 
     public function signerEngagementImpartialiteAction()
     {
-        $these = $this->requestedThese();
+        $this->initializeFromType(false);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
+        $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($this->entity, $membre);
         if ($signature === null) {
-            $this->getEngagementImpartialiteService()->create($membre, $these);
+
+            $this->getEngagementImpartialiteService()->create($membre, $this->entity);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($these, $membre);
+                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($this->entity, $membre);
                 $this->notifierService->trigger($notif);
             } catch (RuntimeException $e) {
-                throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
+                throw new RuntimeException("L'envoi de la notification a échouée. " . $e->getMessage(), null, $e);
             }
         }
 
-        $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
+        $this->redirect()->toRoute("soutenance_{$this->type}/engagement-impartialite", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true);
     }
 
     public function refuserEngagementImpartialiteAction()
     {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $this->initializeFromType(false);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $this->getEngagementImpartialiteService()->createRefus($membre, $these);
-        $this->getPropositionService()->annulerValidationsForProposition($proposition);
+        $this->getEngagementImpartialiteService()->createRefus($membre, $this->entity);
+        $this->propositionService->annulerValidationsForProposition($this->proposition);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($these, $membre);
+            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($this->entity, $membre);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             throw new RuntimeException("Aucun mail trouvé");
         }
 
 
-        $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
+        $this->redirect()->toRoute("soutenance_{$this->type}/engagement-impartialite", ['id' => $this->entity->getId(), 'membre' => $membre->getId()], [], true);
     }
 
     public function annulerEngagementImpartialiteAction()
     {
-        $these = $this->requestedThese();
+        $this->initializeFromType(false);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        /** @var Validation[] $validations */
+        /** @var ValidationThese[] $validations */
         $this->getEngagementImpartialiteService()->delete($membre);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($these, $membre);
+            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($this->entity, $membre);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
         }
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
     }
 }

@@ -2,27 +2,31 @@
 
 namespace Soutenance\Assertion;
 
-use Application\Entity\Db\Role;
-use Soutenance\Provider\Parametre\SoutenanceParametres;
-use These\Entity\Db\These;
-use These\Service\These\TheseServiceAwareTrait;
+use Application\Assertion\AbstractAssertion;
+use Application\Assertion\Exception\FailedAssertionException;
 use Application\Service\UserContextServiceAwareTrait;
 use DateInterval;
 use DateTime;
-use Soutenance\Provider\Privilege\InterventionPrivileges;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Laminas\Permissions\Acl\Acl;
+use HDR\Entity\Db\HDR;
+use HDR\Service\HDRServiceAwareTrait;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Laminas\Permissions\Acl\Role\RoleInterface;
+use Soutenance\Entity\PropositionHDR;
+use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Parametre\These\SoutenanceParametres;
+use Soutenance\Provider\Privilege\InterventionPrivileges;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
-class InterventionAssertion implements  AssertionInterface
+class InterventionAssertion extends AbstractAssertion implements  AssertionInterface
 {
     use UserContextServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use HDRServiceAwareTrait;
 
     /**
      * !!!! Pour éviter l'erreur "Serialization of 'Closure' is not allowed"... !!!!
@@ -39,38 +43,107 @@ class InterventionAssertion implements  AssertionInterface
         return true;
     }
 
-    public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
+    public function assertEntity(ResourceInterface $entity = null, $privilege = null)
     {
-        /** @var These $these */
-        $these = $resource;
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
+        }
 
-        $interval = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_INTERVENTION);
+        /** @var These|HDR $entity */
+        $proposition = $this->getPropositionService()->findOneForObject($entity);
+        if($proposition instanceof PropositionThese){
+            $date_soutenance = ($entity->getDateSoutenance())?$entity->getDateSoutenance():$proposition->getDate();
+            $categorieCode = SoutenanceParametres::CATEGORIE;
+        }else if($proposition instanceof PropositionHDR){
+            $date_soutenance = $proposition->getDate();
+            $categorieCode = \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+        }
+
+        $interval = $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DELAI_INTERVENTION);
         $mini = (new DateTime())->sub(new DateInterval('P'.$interval.'D'));
         $maxi = (new DateTime())->add(new DateInterval('P'.$interval.'D'));
 
-        $user = $this->userContextService->getIdentityDb();
-        $role = $this->userContextService->getSelectedIdentityRole();
-        if ($role->getCode() === Role::CODE_ADMIN_TECH) return true;
-
         switch ($privilege) {
             case InterventionPrivileges::INTERVENTION_AFFICHER:
-                if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
-                if ($role->getCode() === Role::CODE_DIRECTEUR_THESE)return $this->getTheseService()->isDirecteur($these, $user->getIndividu());
-                if ($role->getCode() === Role::CODE_DIRECTEUR_THESE)return $this->getTheseService()->isCoDirecteur($these, $user->getIndividu());
-                if ($role->getCode() === Role::CODE_DOCTORANT)return $this->getTheseService()->isDoctorant($these, $user->getIndividu());
+                if($entity instanceof These){
+                    return $this->userContextService->isStructureDuRoleRespecteeForThese($entity);
+                }elseif($entity instanceof HDR){
+                    return $this->userContextService->isStructureDuRoleRespecteeForHDR($entity);
+                }
                 return false;
             case InterventionPrivileges::INTERVENTION_MODIFIER:
                 if ($date_soutenance < $mini OR $date_soutenance > $maxi) return false;
-                if ($role->getCode() === Role::CODE_BDD && $role->getStructure() === $these->getEtablissement()->getStructure()) return true;
-                if ($role->getCode() === Role::CODE_DIRECTEUR_THESE)return $this->getTheseService()->isDirecteur($these, $user->getIndividu());
-                if ($role->getCode() === Role::CODE_DIRECTEUR_THESE)return $this->getTheseService()->isCoDirecteur($these, $user->getIndividu());
+                if($entity instanceof These){
+                    return $this->userContextService->isStructureDuRoleRespecteeForThese($entity);
+                }elseif($entity instanceof HDR){
+                    return $this->userContextService->isStructureDuRoleRespecteeForHDR($entity);
+                }
                 return false;
         }
 
         return false;
     }
+    /**
+     * @param string $controller
+     * @param string $action
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertController($controller, $action = null, $privilege = null): bool
+    {
+        if (!parent::assertController($controller, $action, $privilege)) {
+            return false;
+        }
 
+        $this->entity = $this->getRequestedEntity();
+        $proposition = $this->getPropositionService()->findOneForObject($this->entity);
 
+        if ($this->entity !== null) {
+            if ($this->entity instanceof These){
+                return $this->userContextService->isStructureDuRoleRespecteeForThese($this->entity);
+            }elseif($this->entity instanceof HDR){
+                return $this->userContextService->isStructureDuRoleRespecteeForHDR($this->entity);
+            }
+        }
+        try {
+            switch ($action) {
+                case 'toggle-president-distanciel':
+                case 'ajouter-visioconference-tardive':
+                case 'supprimer-visioconference-tardive':
+                    if($this->entity instanceof These){
+                        $date_soutenance = ($this->entity->getDateSoutenance())?$this->entity->getDateSoutenance():$proposition->getDate();
+                    }else if($this->entity instanceof HDR){
+                        $date_soutenance = $proposition->getDate();
+                    }
+                    $categorieCode = ($proposition instanceof PropositionThese) ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+
+                    $interval = $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DELAI_INTERVENTION);
+                    $mini = (new DateTime())->sub(new DateInterval('P'.$interval.'D'));
+                    $maxi = (new DateTime())->add(new DateInterval('P'.$interval.'D'));
+                    if ($date_soutenance < $mini OR $date_soutenance > $maxi) return false;
+                break;
+            }
+        } catch (FailedAssertionException $e) {
+            if ($e->getMessage()) {
+                $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getRequestedEntity(): These|HDR|null
+    {
+        $entity = null;
+        if (($routeMatch = $this->getRouteMatch())) {
+            if($routeMatch->getParam('these') !== null){
+                $entity = $this->theseService->getRepository()->find($routeMatch->getParam('these'));
+            }else if($routeMatch->getParam('hdr') !== null){
+                $entity = $this->hdrService->getRepository()->find($routeMatch->getParam('hdr'));
+            }
+        }
+
+        return $entity;
+    }
 }

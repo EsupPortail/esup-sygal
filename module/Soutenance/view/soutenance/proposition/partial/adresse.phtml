@@ -2,14 +2,14 @@
 
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
-use These\Entity\Db\These;
 
 /**
- * @var These $these
  * @var Proposition $proposition
+ * @var string $typeProposition
  */
 
 $adresse = $proposition->getAdresseActive();
+$object = $proposition->getObject();
 ?>
 
 <div class="box card">
@@ -18,31 +18,29 @@ $adresse = $proposition->getAdresseActive();
     </div>
     <div class="card-body">
         <div>
-            <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS) : ?>
-                <div class="alert alert-info">
-                    <span class="icon icon-info"></span>
-                    <p><strong>Cette adresse exacte figurera sur les convocations et autres documents officiels.</strong></p>
-
-                    <p>Vous pouvez modifier celle-ci sans annulation du dossier tant que les convocations n'ont pas été éditées.</p>
-                </div>
+            <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
+                <p class="lead">
+                    <strong>Cette adresse exacte figurera sur les convocations et autres documents officiels.</strong>
+                </p>
+                <p class="lead">Vous pouvez modifier celle-ci sans annulation du dossier tant que les convocations n'ont pas été éditées.</p>
             <?php endif; ?>
             <?php if ($proposition->getEtat()->getCode() !== Etat::VALIDEE) : ?>
                 <?php if ($adresse === null) : ?>
                     <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/ajouter-adresse', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/ajouter-adresse", ['id' => $object->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
                         <span class="icon icon-ajouter"></span>
                         Ajouter une adresse
                     </a>
                 <?php else: ?>
                     <?php /** @see \Soutenance\Controller\PropositionController::modifierAdresseAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/modifier-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/modifier-adresse", ['id' => $object->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
                         <span class="icon icon-modifier"></span>
                         Modifier l'adresse
                     </a>
                     <?php /** @see \Soutenance\Controller\PropositionController::historiserAdresseAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/historiser-adresse', ['these' => $these->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
+                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/historiser-adresse", ['id' => $object->getId(), 'adresse' => $adresse->getId()], [], true); ?>"
                        class="btn btn-danger"
                        data-toggle="confirmationx"
                        data-bs-toggle="tooltip"
@@ -53,16 +51,18 @@ $adresse = $proposition->getAdresseActive();
                         Supprimer l'adresse
                     </a>
                 <?php endif; ?>
+            <?php else: ?>
+                <?php if ($adresse === null) : ?>
+                    <div class="alert alert-warning">
+                        <span class="icon icon-warning"></span>
+                        Aucune adresse exacte n'a été renseignée pour cette soutenance
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
         <?php if ($adresse !== null) : ?>
             <?php echo $adresse->format(); ?>
-        <?php else: ?>
-            <div class="alert alert-danger">
-                <span class="icon icon-attention"></span>
-                Aucune adresse de renseignée !
-            </div>
         <?php endif; ?>
     </div>
 </div>
