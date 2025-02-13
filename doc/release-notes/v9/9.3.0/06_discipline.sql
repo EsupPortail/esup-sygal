@@ -102,14 +102,14 @@ WITH mails_contacts AS (SELECT DISTINCT mail_confirmation.individu_id,
                         WHERE mail_confirmation.etat::text = 'C'::text),
      directeurs AS (SELECT a.these_id,
                            string_agg(concat(i.nom_usuel, ' ', i.prenom1), ' ; '::text) AS identites
-                    FROM acteur_these a
+                    FROM acteur a
                              JOIN role r ON a.role_id = r.id AND r.code::text = 'D'::text
                              JOIN individu i ON a.individu_id = i.id
                     WHERE a.histo_destruction IS NULL
                     GROUP BY a.these_id),
      codirecteurs AS (SELECT a.these_id,
                              string_agg(concat(i.nom_usuel, ' ', i.prenom1), ' ; '::text) AS identites
-                      FROM acteur_these a
+                      FROM acteur a
                                JOIN role r ON a.role_id = r.id AND (r.code::text = ANY
                                                                     (ARRAY ['C'::character varying::text, 'K'::character varying::text]))
                                JOIN individu i ON a.individu_id = i.id
@@ -117,7 +117,7 @@ WITH mails_contacts AS (SELECT DISTINCT mail_confirmation.individu_id,
                       GROUP BY a.these_id),
      coencadrants AS (SELECT a.these_id,
                              string_agg(concat(i.nom_usuel, ' ', i.prenom1), ' ; '::text) AS identites
-                      FROM acteur_these a
+                      FROM acteur a
                                JOIN role r ON a.role_id = r.id AND (r.code::text = ANY
                                                                     (ARRAY ['B'::character varying::text, 'N'::character varying::text]))
                                JOIN individu i ON a.individu_id = i.id
