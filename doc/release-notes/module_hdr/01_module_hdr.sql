@@ -471,121 +471,146 @@ from data
          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'hdr', 'telechargement-fichier'
-                           union
-                           select 'hdr', 'consultation-fiche'
-                           union
-                           select 'hdr', 'recherche'
-                           union
-                           select 'hdr', 'fichier-divers-consulter'
-                           union
-                           select 'hdr', 'consultation-de-ses-hdr'
-                           union
-                           select 'hdr', 'export-csv'
-                           union
-                           select 'soutenance', 'index-global'
-                           union
-                           select 'soutenance', 'index-acteur'
-                           union
-                           select 'soutenance', 'proposition-visualisation'
-                           union
-                           select 'soutenance', 'proposition-modification'
-                           union
-                           select 'soutenance', 'proposition-validation-acteur'
-                           union
-                           select 'soutenance', 'presoutenance-visualisation'
-                           union
-                           select 'soutenance', 'engagement-impartialite-visualiser'
-                           union
-                           select 'soutenance', 'avis-visualisation'
-                           union
-                           select 'soutenance_justificatif', 'justificatif_ajouter'
-                           union
-                           select 'soutenance_justificatif', 'justificatif_retirer'
-                           union)
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in (
-    'HDR_GARANT'
-    )
-         join unicaen_privilege_categorie cp on cp.CODE = data.categ
-         join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+-- INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+-- with data(categ, priv) as (select 'hdr', 'telechargement-fichier'
+--                            union
+--                            select 'hdr', 'consultation-fiche'
+--                            union
+--                            select 'hdr', 'recherche'
+--                            union
+--                            select 'hdr', 'fichier-divers-consulter'
+--                            union
+--                            select 'hdr', 'consultation-de-ses-hdr'
+--                            union
+--                            select 'hdr', 'export-csv'
+--                            union
+--                            select 'soutenance', 'index-global'
+--                            union
+--                            select 'soutenance', 'index-acteur'
+--                            union
+--                            select 'soutenance', 'proposition-visualisation'
+--                            union
+--                            select 'soutenance', 'proposition-modification'
+--                            union
+--                            select 'soutenance', 'proposition-validation-acteur'
+--                            union
+--                            select 'soutenance', 'presoutenance-visualisation'
+--                            union
+--                            select 'soutenance', 'engagement-impartialite-visualiser'
+--                            union
+--                            select 'soutenance', 'avis-visualisation'
+--                            union
+--                            select 'soutenance_justificatif', 'justificatif_ajouter'
+--                            union
+--                            select 'soutenance_justificatif', 'justificatif_retirer')
+-- select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+-- from data
+--          join PROFIL on profil.ROLE_ID in (
+--     'HDR_GARANT'
+--     )
+--          join unicaen_privilege_categorie cp on cp.CODE = data.categ
+--          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+-- where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+select privilege__grant_privileges_to_profiles('hdr', ARRAY['telechargement-fichier',
+    'consultation-fiche',
+    'recherche',
+    'fichier-divers-consulter',
+    'consultation-de-ses-hdr',
+    'export-csv'], ARRAY['HDR_GARANT']);
+select privilege__grant_privileges_to_profiles('soutenance', ARRAY['index-global',
+    'index-acteur',
+    'proposition-visualisation',
+    'proposition-modification',
+    'proposition-validation-acteur',
+    'presoutenance-visualisation',
+    'engagement-impartialite-visualiser',
+    'avis-visualisation'], ARRAY['HDR_GARANT']);
+select privilege__grant_privileges_to_profiles('soutenance_justificatif', ARRAY['justificatif_ajouter',
+    'justificatif_retirer'], ARRAY['HDR_GARANT']);
 
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'hdr', 'telechargement-fichier'
-                           union
-                           select 'hdr', 'consultation-fiche'
-                           union
-                           select 'hdr', 'fichier-divers-consulter'
-                           union
-                           select 'hdr', 'consultation-de-toutes-les-hdr'
-                           union
-                           select 'hdr', 'consultation-de-ses-hdr'
-                           union
-                           select 'hdr', 'export-csv')
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in (
-    'OBSERV'
-    )
-         join unicaen_privilege_categorie cp on cp.CODE = data.categ
-         join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+-- INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+-- with data(categ, priv) as (select 'hdr', 'telechargement-fichier'
+--                            union
+--                            select 'hdr', 'consultation-fiche'
+--                            union
+--                            select 'hdr', 'fichier-divers-consulter'
+--                            union
+--                            select 'hdr', 'consultation-de-toutes-les-hdr'
+--                            union
+--                            select 'hdr', 'consultation-de-ses-hdr'
+--                            union
+--                            select 'hdr', 'export-csv')
+-- select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+-- from data
+--          join PROFIL on profil.ROLE_ID in (
+--     'OBSERV'
+--     )
+--          join unicaen_privilege_categorie cp on cp.CODE = data.categ
+--          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+-- where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+select privilege__grant_privileges_to_profiles('hdr', ARRAY['telechargement-fichier',
+    'consultation-fiche',
+    'fichier-divers-consulter',
+    'consultation-de-toutes-les-hdr',
+    'consultation-de-ses-hdr',
+    'export-csv'], ARRAY['OBSERV']);
 
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'hdr', 'telechargement-fichier'
-                           union
-                           select 'hdr', 'export-csv')
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in (
-    'M'
-    )
-         join unicaen_privilege_categorie cp on cp.CODE = data.categ
-         join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+-- INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+-- with data(categ, priv) as (select 'hdr', 'telechargement-fichier'
+--                            union
+--                            select 'hdr', 'export-csv')
+-- select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+-- from data
+--          join PROFIL on profil.ROLE_ID in (
+--     'M'
+--     )
+--          join unicaen_privilege_categorie cp on cp.CODE = data.categ
+--          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+-- where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+select privilege__grant_privileges_to_profiles('hdr', ARRAY['telechargement-fichier', 'export-csv'], ARRAY['M']);
 
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'hdr', 'consultation-de-ses-hdr'
-                           union
-                           select 'hdr', 'telechargement-fichier'
-                           union
-                           select 'hdr', 'consultation-fiche')
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in (
-    'P'
-    )
-         join unicaen_privilege_categorie cp on cp.CODE = data.categ
-         join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'hdr', 'consultation-de-ses-hdr'
-                           union
-                           select 'hdr', 'telechargement-fichier'
-                           union
-                           select 'hdr', 'consultation-fiche'
-                           union
-                           select 'hdr', 'export-csv')
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in (
-    'R'
-    )
-         join unicaen_privilege_categorie cp on cp.CODE = data.categ
-         join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+-- INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+-- with data(categ, priv) as (select 'hdr', 'consultation-de-ses-hdr'
+--                            union
+--                            select 'hdr', 'telechargement-fichier'
+--                            union
+--                            select 'hdr', 'consultation-fiche')
+-- select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+-- from data
+--          join PROFIL on profil.ROLE_ID in (
+--     'P'
+--     )
+--          join unicaen_privilege_categorie cp on cp.CODE = data.categ
+--          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+-- where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+--
+--
+-- INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+-- with data(categ, priv) as (select 'hdr', 'consultation-de-ses-hdr'
+--                            union
+--                            select 'hdr', 'telechargement-fichier'
+--                            union
+--                            select 'hdr', 'consultation-fiche'
+--                            union
+--                            select 'hdr', 'export-csv')
+-- select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+-- from data
+--          join PROFIL on profil.ROLE_ID in (
+--     'R'
+--     )
+--          join unicaen_privilege_categorie cp on cp.CODE = data.categ
+--          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+-- where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
+select privilege__grant_privileges_to_profiles('hdr', ARRAY['consultation-de-ses-hdr', 'telechargement-fichier', 'consultation-fiche'], ARRAY['R', 'P']);
 
-insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
-select p2r.ROLE_ID, pp.PRIVILEGE_ID
-from PROFIL_TO_ROLE p2r
-         join profil pr on pr.id = p2r.PROFIL_ID
-         join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
-where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
-;
+-- insert into ROLE_PRIVILEGE (ROLE_ID, PRIVILEGE_ID)
+-- select p2r.ROLE_ID, pp.PRIVILEGE_ID
+-- from PROFIL_TO_ROLE p2r
+--          join profil pr on pr.id = p2r.PROFIL_ID
+--          join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = pr.id
+-- where not exists (select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
+-- ;
 
 UPDATE unicaen_parametre_categorie
 SET code = 'SOUTENANCE_THESE' where code = 'SOUTENANCE';
@@ -664,13 +689,42 @@ DROP COLUMN these_id;
 --Mise à jour du code des templates existants pour la thèse
 
 -- ATTENTION, A EXECUTER QU'UNE FOIS (code en commentaire ci-dessous)
--- UPDATE unicaen_renderer_template
--- SET code = REGEXP_REPLACE(code, '^SOUTENANCE_', 'SOUTENANCE_THESE_')
--- WHERE code LIKE 'SOUTENANCE_%';
+UPDATE unicaen_renderer_template
+SET code = REGEXP_REPLACE(code, '^SOUTENANCE_', 'SOUTENANCE_THESE_')
+WHERE --code LIKE 'SOUTENANCE_%';
+      code IN ('SOUTENANCE_AVIS_DEFAVORABLE',
+               'SOUTENANCE_AVIS_FAVORABLE',
+               'SOUTENANCE_CONVOCATION_DOCTORANT',
+               'SOUTENANCE_CONVOCATION_MEMBRE',
+               'SOUTENANCE_ENGAGEMENT_IMPARTIALITE',
+               'SOUTENANCE_FEU_VERT',
+               'SOUTENANCE_TOUS_AVIS_RENDUS',
+               'SOUTENANCE_TOUS_AVIS_RENDUS_DIRECTION',
+               'SOUTENANCE_VALIDATION_ACTEUR_DIRECT',
+               'SOUTENANCE_VALIDATION_ANNULEE',
+               'SOUTENANCE_VALIDATION_DEMANDE_ED',
+               'SOUTENANCE_VALIDATION_DEMANDE_ETAB',
+               'SOUTENANCE_VALIDATION_DEMANDE_UR'
+          );
 
 UPDATE unicaen_renderer_template
 SET code = 'SOUTENANCE_THESE_' || code
-WHERE code not LIKE 'SOUTENANCE_%' and namespace = 'Soutenance\Provider\Template';
+WHERE --code not LIKE 'SOUTENANCE_%' and namespace = 'Soutenance\Provider\Template';
+      code IN ('ANNULATION_ENGAGEMENT_IMPARTIALITE',
+               'CONNEXION_RAPPORTEUR',
+               'DEMANDE_ADRESSE_EXACTE',
+               'DEMANDE_ENGAGEMENT_IMPARTIALITE',
+               'DEMANDE_PRERAPPORT',
+               'DEMANDE_RAPPORT_SOUTENANCE',
+               'PROPOSITION_REFUS',
+               'PROPOSITION_SUPPRESSION',
+               'REFUS_ENGAGEMENT_IMPARTIALITE',
+               'SERMENT_DU_DOCTEUR',
+               'SIGNATURE_ENGAGEMENT_IMPARTIALITE',
+               'TRANSMETTRE_DOCUMENTS_DIRECTION',
+               'VALIDATION_SOUTENANCE_AVANT_PRESOUTENANCE',
+               'VALIDATION_SOUTENANCE_ENVOI_PRESOUTENANCE'
+      );
 
 INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps, document_css, namespace, engine) VALUES ('SOUTENANCE_HDR_TOUS_AVIS_RENDUS_GARANT', '<p>Courrier électronique adressé aux encadrants d''une HDR lorsque tous les avis sont rendus.</p>', 'mail', 'Tous les avis de soutenance de la HDR de VAR[Candidat#Denomination] ont été rendus.', e'<p>Bonjour,</p>
 <p>Les rapporteurs de la HDR de VAR[Candidat#Denomination] ont rendu leur rapport de pré-soutenance.</p>
