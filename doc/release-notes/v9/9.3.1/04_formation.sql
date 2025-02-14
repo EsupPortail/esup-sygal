@@ -16,7 +16,8 @@ select privilege__revoke_privileges_to_profiles('formation_formation', ARRAY['in
 
 drop view if exists v_formation_export ;
 create or replace view v_formation_export as
-SELECT f.id AS formation_id,
+SELECT m.libelle as module_libelle,
+       f.id AS formation_id,
        f.libelle AS formation_titre,
        sess.id AS session_id,
        ( SELECT string_agg((if.nom_patronymique::text || ' '::text) || if.prenom1::text, ','::text || chr(10)) AS string_agg
@@ -66,6 +67,7 @@ SELECT f.id AS formation_id,
 FROM formation_seance sea
          JOIN formation_session sess ON sea.session_id = sess.id AND sess.histo_destruction IS NULL
          JOIN formation_formation f ON sess.formation_id = f.id AND f.histo_destruction IS NULL
+         JOIN formation_module m ON m.id = f.module_id AND m.histo_destruction IS NULL
          JOIN structure ssr ON ssr.id = sess.site_id
          LEFT JOIN individu fir ON fir.id = f.responsable_id
          LEFT JOIN individu sir ON sir.id = sess.responsable_id
