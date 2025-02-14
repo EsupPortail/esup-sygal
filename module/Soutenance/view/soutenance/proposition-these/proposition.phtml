@@ -65,16 +65,23 @@ $this->headTitle("Proposition de soutenance");
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
+<?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+
 <p class="lead">
     Afin d'être validée et traitée par l'école doctorale, la proposition de soutenance doit être validée par tous les
     intervenants immédiats de la thèse (c'est-à-dire doctorant, directeur et co-directeur).
     Les règles de composition du jury sont rappelées dans la page d'accueil <q>Guide de la thèse</q>.
 </p>
-<div class="alert alert-warning">
-    <span class="icon icon-attention"></span>
-    En cas de modification de la proposition, toutes les validations seront annulées et la proposition devra être à nouveau
-    validée.
-</div>
+
+<?php if(!empty($validations) &&
+    $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN &&
+    !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))): ?>
+        <div class="alert alert-warning">
+            <span class="icon icon-attention"></span>
+            En cas de modification de la proposition, toutes les validations seront annulées et la proposition devra être à nouveau
+            validée.
+        </div>
+<?php endif; ?>
 
 <?php if ($canSuppression) : ?>
     <div class="box card">
@@ -106,11 +113,11 @@ $this->headTitle("Proposition de soutenance");
             </div>
         </div>
     </div>
-<?php endif; ?>
 
-<br>
-<div class="separator"></div>
-<br>
+    <br>
+    <div class="separator"></div>
+    <br>
+<?php endif; ?>
 
 <div class="INFORMATIONS"></div>
 <?php
@@ -201,6 +208,7 @@ echo $this->partial('partial/validations-acteurs', [
     'validationActeur' => $validationActeur,
 
     'isInformationsOk' => $informationsOk,
+    'justificatifsOk' => $justificatifsOk,
     'typeProposition' => $typeProposition,
 
 ]); ?>
@@ -244,7 +252,7 @@ if ($validations[Role::CODE_BDD]) {
     $validationMDD = current($validations[Role::CODE_BDD]);
 }
 
-if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and $canPresidence): ?>
+if ($validationMDD and $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT and $canPresidence): ?>
     <div class="box card">
         <div class="card-header bg-success">
             <h2 class="first"> Et ensuite ? </h2>
@@ -269,6 +277,11 @@ if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and
     </div>
 <?php endif; ?>
 
+<style>
+    .informations-compl-these-div{
+        margin-left: auto;
+    }
+</style>
 <script>
     let navbar = 50 + 5;
 

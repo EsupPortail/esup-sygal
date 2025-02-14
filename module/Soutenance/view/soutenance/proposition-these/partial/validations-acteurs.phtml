@@ -15,6 +15,7 @@
  * @var boolean $validationActeur
  *
  * @var bool $isInformationsOk
+ * @var bool $justificatifsOk
  * @var string $typeProposition
  */
 
@@ -37,9 +38,9 @@ $hasAttestation = !empty($attestationsIntegriteScientifique);
 $hasSursis = $proposition->hasSursis();
 
 $isDateOk = (new DateTime())->add(new DateInterval('P2M')) < $proposition->getDate() || $hasSursis;
-$isAllOk = $hasDeclaration && $hasAttestation && $isInformationsOk && $isIndicateursOk;
+$isAllOk = $hasDeclaration && $hasAttestation && $isInformationsOk && $isIndicateursOk && $justificatifsOk;
 
-if($proposition->getEtat()->getCode() === Etat::EN_COURS) $isAllOk = $isAllOk && $isDateOk;
+if($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) $isAllOk = $isAllOk && $isDateOk;
 
 $cssClass = "";
 
@@ -77,7 +78,7 @@ if ($isAllOk === false || $validatedCount === 0) {
     </div>
     <div class="card-body">
 
-        <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS && !$isAllOk) : ?>
+        <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN && !$isAllOk) : ?>
          <div class="alert alert-danger">
             <strong>
                 <span class="icon icon-attention"></span>

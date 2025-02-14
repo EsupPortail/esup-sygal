@@ -59,7 +59,7 @@ class PropositionTheseService extends PropositionService
     public function create(These $these) : PropositionThese
     {
         $propositionThese = new PropositionThese($these);
-        $propositionThese->setEtat($this->findPropositionEtatByCode(Etat::EN_COURS));
+        $propositionThese->setEtat($this->findPropositionEtatByCode(Etat::EN_COURS_SAISIE));
 
         try {
             $date = new DateTime();

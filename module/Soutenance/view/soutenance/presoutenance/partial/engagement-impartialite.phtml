@@ -23,12 +23,25 @@ use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Service\Horodatage\HorodatageService;
 
 $tousLesRapporteurs = true;
+$validatedCount = 0;
 foreach ($rapporteurs as $rapporteur) {
     $acteur = $acteursRapporteurs[$rapporteur->getId()] ?? null;
+    $engagement = ($acteur) ? ($engagements[$acteur->getIndividu()->getId()])?? null : null;
+    if($engagement) $validatedCount++;
     if ($acteur === null) {
         $tousLesRapporteurs = false;
         break;
     }
+}
+
+//si aucun engagement d'impartialité n'a encore été effectué
+if ($validatedCount === 0) {
+    $cssClass = "bg-danger";
+//Si le circuit de validations est déjà commencé
+} elseif ($validatedCount < count($acteursRapporteurs)) {
+    $cssClass = "bg-warning";
+} else {
+    $cssClass = "bg-success";
 }
 
 $object = $proposition->getObject();
@@ -37,7 +50,7 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($object, EngagementImparti
 ?>
 
 <div class="box card">
-    <div class="card-header <?= $tousLesEngagements === true ? "bg-success" : "bg-danger"?>">
+    <div class="card-header <?= $cssClass ?>">
         <h2> Engagements d'impartialité</h2>
     </div>
     <div class="card-body">

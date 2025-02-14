@@ -32,6 +32,8 @@ class EtatViewHelper extends AbstractHelper
         $etatCode = $etat instanceof Etat ? $etat->getCode() : $etat;
         switch ($etatCode){
             case Etat::CODE_EN_COURS_SAISIE :
+                $colorEtat = "#ffba00";
+                break;
             case Etat::CODE_EN_COURS_VALIDATION :
             case These::ETAT_EN_COURS :
                 $colorEtat = "#f1732d";
@@ -105,31 +107,31 @@ class EtatViewHelper extends AbstractHelper
         switch ($etatCode){
             case Etat::CODE_EN_COURS_SAISIE :
             case These::ETAT_EN_COURS :
-                $etatTheseTextTooltip = $etat instanceof Etat ? $etat->getLibelle() : "En cours";
+                $etatTextTooltip = $etat instanceof Etat ? $etat->getLibelle() : "En cours";
                 break;
             case Etat::CODE_VALIDE:
             case Etat::CODE_REJETE:
             case Etat::CODE_EN_COURS_VALIDATION :
-                $etatTheseTextTooltip = $etat->getLibelle();
+                $etatTextTooltip = $etat->getLibelle();
                 break;
             case Etat::CODE_ABANDONNE:
             case These::ETAT_ABANDONNEE:
-                $etatTheseTextTooltip = "Abandonnée";
+                $etatTextTooltip = "Abandonnée";
                 break;
             case These::ETAT_TRANSFEREE :
-                $etatTheseTextTooltip = "Transférée";
+                $etatTextTooltip = "Transférée";
                 break;
             case These::ETAT_SOUTENUE :
                 if(!$resultat){
-                    $etatTheseTextTooltip = "Soutenue (Résultat inconnu)";
+                    $etatTextTooltip = "Soutenue (Résultat inconnu)";
                 }else{
-                    $etatTheseTextTooltip = $resultatString;
+                    $etatTextTooltip = $resultatString;
                 }
                 break;
             default:
-                $etatTheseTextTooltip = "";
+                $etatTextTooltip = "";
         }
 
-        return $etatTheseTextTooltip;
+        return $etatTextTooltip;
     }
 }

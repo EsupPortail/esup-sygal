@@ -359,7 +359,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 //            //->setNamespace('presoutenance')
 //            ->addSuccessMessage("Le candidat a été notifié de la délibération du jury.");
 
-        if($resultat === HDR::RESULTAT_ADMIS){
+        if((int)$resultat === HDR::RESULTAT_ADMIS){
             $this->horodatageService->addHorodatage($this->proposition, HorodatageService::TYPE_ETAT, "Délibération positive");
         }else{
             $this->horodatageService->addHorodatage($this->proposition, HorodatageService::TYPE_ETAT, "Délibération négative");

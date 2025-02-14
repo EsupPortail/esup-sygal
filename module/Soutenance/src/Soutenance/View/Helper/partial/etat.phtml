@@ -8,6 +8,24 @@ use Soutenance\Entity\Etat;
  * @var array $options
  */
 
+switch ($etat->getCode()){
+    case Etat::EN_COURS_EXAMEN :
+    case Etat::EN_COURS_SAISIE :
+    case Etat::COMPLET :
+        $iconEtat = "hourglass";
+        break;
+    case Etat::REJETEE :
+        $iconEtat = "ko";
+        break;
+    case Etat::VALIDEE :
+        $iconEtat = "ok";
+        break;
+    case Etat::ETABLISSEMENT :
+        $iconEtat = "checked";
+        break;
+    default:
+        $iconEtat = "";
+}
 ?>
 
 <?php if ($etat === null) : ?>
@@ -15,27 +33,42 @@ use Soutenance\Entity\Etat;
         Pas d'état
 
 <?php else : ?>
-    <span class="badge <?php echo $etat->getCode(); ?>">
-        <?php echo $etat->getLibelle(); ?>
-    </span>
+        <div class="row informations-compl-these-div">
+            <div class="col-md-6 informations-compl-these-card information-etat-these-card <?=$etat->getCode()?>-etat-these-card"
+                 data-bs-toggle="tooltip" data-bs-original-title="État de la proposition">
+                <span class="icon icon-<?=$iconEtat?>"></span>
+                <h2><?= $etat->getLibelle(); ?></h2>
+            </div>
+        </div>
 <?php endif; ?>
 
 
 <style>
-    span.badge.<?php echo Etat::VALIDEE; ?> {
-        background: darkgreen;
+    div.information-etat-these-card.<?php echo Etat::VALIDEE; ?>-etat-these-card {
+        color: darkgreen;
+        border-left: 5px solid darkgreen;
+        min-width: 09%;
     }
-    span.badge.<?php echo Etat::REJETEE; ?> {
-        background: darkred;
+    div.information-etat-these-card.<?php echo Etat::REJETEE; ?>-etat-these-card {
+        color: darkred;
+        border-left: 5px solid darkred;
+        min-width: 09%;
     }
-    span.badge.<?php echo Etat::EN_COURS; ?> {
-        background: darkorange;
+    div.information-etat-these-card.<?php echo Etat::EN_COURS_EXAMEN; ?>-etat-these-card,
+    div.information-etat-these-card.<?php echo Etat::EN_COURS_SAISIE; ?>-etat-these-card{
+        color: darkorange;
+        border-left: 5px solid darkorange;
+        min-width: 09%;
     }
-    span.badge.<?php echo Etat::ETABLISSEMENT; ?> {
-        background: teal;
+    div.information-etat-these-card.<?php echo Etat::ETABLISSEMENT; ?>-etat-these-card {
+        color: teal;
+        border-left: 5px solid teal;
+        min-width: 09%;
     }
-    span.badge.<?php echo Etat::COMPLET; ?> {
-        background: dodgerblue;
+    div.information-etat-these-card.<?php echo Etat::COMPLET; ?>-etat-these-card {
+        color: dodgerblue;
+        border-left: 5px solid dodgerblue;
+        min-width: 09%;
     }
 </style>
 

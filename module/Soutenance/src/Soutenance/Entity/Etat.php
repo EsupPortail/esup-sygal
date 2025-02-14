@@ -10,7 +10,8 @@ class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
 {
     use HistoriqueAwareTrait;
 
-    const EN_COURS = 'EN_COURS';
+    const EN_COURS_SAISIE = 'EN_COURS_SAISIE';
+    const EN_COURS_EXAMEN = 'EN_COURS_EXAMEN';
     const ETABLISSEMENT = 'ETABLISSEMENT';
     const VALIDEE = 'VALIDEE';
     const REJETEE = 'REJETEE';

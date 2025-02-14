@@ -59,7 +59,7 @@ class PropositionHDRService extends PropositionService
     public function create(HDR $hdr): PropositionHDR
     {
         $propositionHDR = new PropositionHDR($hdr);
-        $propositionHDR->setEtat($this->findPropositionEtatByCode(Etat::EN_COURS));
+        $propositionHDR->setEtat($this->findPropositionEtatByCode(Etat::EN_COURS_SAISIE));
 
         try {
             $this->getEntityManager()->persist($propositionHDR);

@@ -77,6 +77,14 @@
   width:fit-content;
 }
 
+td .informations-compl-these-div{
+  .information-etat-these-card {
+    h2{
+      font-size: 10px;
+    }
+  }
+}
+
 .these-card-header{
   background-color: var(--primary-color)!important;
 }

@@ -223,7 +223,7 @@ class PropositionTheseAssertion implements  AssertionInterface {
                         return false;
                 }
             case PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE:
-                if ($proposition->getEtat()->getCode() !== Etat::EN_COURS && $proposition->getEtat()->getCode() !== Etat::ETABLISSEMENT) return false;
+                if ($proposition->getEtat()->getCode() !== Etat::EN_COURS_EXAMEN && $proposition->getEtat()->getCode() !== Etat::ETABLISSEMENT) return false;
                 switch ($role) {
                     case Role::CODE_BDD :
                         $validations_BDD  = $this->getValidationTheseService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);

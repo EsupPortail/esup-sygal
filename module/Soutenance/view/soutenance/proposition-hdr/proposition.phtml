@@ -68,13 +68,17 @@ $this->headTitle("Proposition de soutenance");
     <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
 </h1>
 
+<?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+
 <p class="lead">
     Afin d'être validée et traitée par l'établissement, la proposition de soutenance doit être validée par tous les
     intervenants immédiats de la HDR (c'est-à-dire candidat, garant).
 <!--    Les règles de composition du jury sont rappelées dans la page d'accueil <q>Guide de la HDR</q>.-->
 </p>
 
-<?php if(!empty($validations)): ?>
+<?php if(!empty($validations) &&
+    $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN &&
+    !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))): ?>
     <div class="alert alert-warning">
         <span class="icon icon-attention"></span>
         En cas de modification de la proposition, toutes les validations seront annulées et la proposition devra être à nouveau
@@ -188,7 +192,7 @@ echo $this->partial('partial/validations-acteurs', [
 
     'isInformationsOk' => $informationsOk,
     'typeProposition' => $typeProposition,
-
+    'justificatifsOk' => $justificatifsOk
 ]); ?>
 
 <?php
@@ -225,12 +229,12 @@ echo $this->partial('soutenance/proposition/partial/pre-rapports', [
 ?>
 
 <?php
-$validationMDD = null;
+$validationGestHDR = null;
 if (isset($validations[Role::CODE_GEST_HDR]) && $validations[Role::CODE_GEST_HDR]) {
-    $validationMDD = current($validations[Role::CODE_GEST_HDR]);
+    $validationGestHDR = current($validations[Role::CODE_GEST_HDR]);
 }
 
-if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and $canPresidence): ?>
+if ($validationGestHDR and $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT and $canPresidence): ?>
     <div class="box card">
         <div class="card-header bg-success">
             <h2 class="first"> Et ensuite ? </h2>
@@ -255,6 +259,12 @@ if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and
     </div>
 <?php endif; ?>
 </div>
+
+<style>
+    .informations-compl-these-div{
+        margin-left: auto;
+    }
+</style>
 <script>
     let navbar = 50 + 5;
 

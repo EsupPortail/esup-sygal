@@ -18,15 +18,7 @@ use Soutenance\Service\Horodatage\HorodatageService;
 
 $object = $proposition->getObject();
 
-$hasValidationUR = !empty($validations[Role::CODE_RESP_UR]);
-$hasValidationED = !$object instanceof These || !empty($validations[Role::CODE_RESP_ED]);
-$hasValidationEtab = $object instanceof These ? !empty($validations[Role::CODE_BDD]) : !empty($validations[Role::CODE_GEST_HDR]);
-$isAllOk = $hasValidationUR && $hasValidationED && $hasValidationEtab;
-
 $cssClass = "";
-if ($isAllOk === true) $cssClass = "bg-success";
-if ($isAllOk === false) $cssClass = "bg-danger";
-
 if($object instanceof These){
     // Rôles à valider
     $rolesToValidate = [
@@ -51,10 +43,10 @@ foreach ($rolesToValidate as $roleCode) {
 
 //Si tout n'est pas OK pour pour pouvoir valider
 //ou si tout est OK pour pour pouvoir valider mais qu'aucune validation n'a encore été effectuée
-if ($isAllOk === false || $validatedCount === 0) {
+if ($validatedCount === 0) {
     $cssClass = "bg-danger";
 //Si tout est OK pour pour pouvoir valider et que le circuit de validations est déjà commencé
-} elseif ($isAllOk === true && $validatedCount < count($rolesToValidate)) {
+} elseif ($validatedCount < count($rolesToValidate)) {
     $cssClass = "bg-warning";
 } else {
     $cssClass = "bg-success";
@@ -195,7 +187,7 @@ if ($isAllOk === false || $validatedCount === 0) {
                         <a <?php /** @see PropositionTheseController::revoquerStructureAction(); */ ?>
                             <?php /** @see PropositionHDRController::revoquerStructureAction(); */ ?>
                                 href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/revoquer-structure", ['id' => $object->getId()], [], true); ?>"
-                                class="btn btn-warning action ajax-modal" data-event="modification">
+                                class="btn btn-danger action ajax-modal" data-event="modification">
                             <span class="icon icon-unchecked"></span> Révoquer la validation
                         </a>
                     </p>

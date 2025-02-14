@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
 use Exception;
 use Fichier\Entity\Db\NatureFichier;
 use Individu\Entity\Db\Individu;
@@ -334,6 +335,11 @@ class PropositionTheseController extends PropositionController
         }
 
         $doctorant = $this->entity->getApprenant();
+        $validation = $this->validationService->findValidationPropositionSoutenanceByTheseAndIndividu($this->entity, $doctorant->getIndividu());
+        if($validation){
+            $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN));
+            $this->propositionService->update($this->proposition);
+        }
 
         /** @var ActeurThese[] $acteurs */
         $dirs = $this->entity->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
@@ -342,7 +348,12 @@ class PropositionTheseController extends PropositionController
 
         $allValidated = true;
         foreach ($acteurs as $acteur) {
-            if ($this->validationService->findValidationPropositionSoutenanceByTheseAndIndividu($this->entity, $acteur->getIndividu()) === null) {
+            $validation = $this->validationService->findValidationPropositionSoutenanceByTheseAndIndividu($this->entity, $acteur->getIndividu());
+            if($acteur instanceof Doctorant && $validation){
+                $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN));
+                $this->propositionService->update($this->proposition);
+            }
+            if ($validation === null) {
                 $allValidated = false;
                 break;
             }
@@ -465,7 +476,7 @@ class PropositionTheseController extends PropositionController
                         $this->validationService->historiser($v);
                     }
                 }
-                $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS);
+                $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN);
                 $this->proposition->setEtat($etat);
                 $this->propositionService->update($this->proposition);
             }

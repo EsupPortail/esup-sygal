@@ -78,7 +78,7 @@ switch ($hdr->getEtatHDR()){
                 <span class="icon icon-edit"></span>
                 <?php echo $this->translate("Modifier la HDR"); ?>
             </a>
-            <?php if ($hdr->getEtatHDR() === HDR::ETAT_EN_COURS): ?>
+            <?php if ($proposition?->getEtat()->getCode() === Etat::EN_COURS_SAISIE): ?>
                 <?php /**  @see \HDR\Controller\HDRController::demanderSaisieInfosSoutenanceAction() */ ?>
                 <a href="<?php echo $this->url('hdr/demander-saisie-infos-soutenance', ['hdr' => $hdr->getId()], [], true) ?>"
                    data-bs-toggle = "tooltip"

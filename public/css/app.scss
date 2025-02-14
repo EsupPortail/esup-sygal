@@ -608,6 +608,12 @@ input[type="checkbox"] {
   background-color: var(--secondary-color);
   border-radius: inherit;
 }
+td .text-structure {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding-bottom: revert!important;
+}
+
 .text-structure.etablissement:before {
   content: "\f19c";
 }

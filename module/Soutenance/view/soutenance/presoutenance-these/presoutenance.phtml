@@ -84,6 +84,8 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
+<?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+
 <?php echo $this->alertes()
     ->addAlertesFromFlashMessenger()
     ->renderAsBootstrapToasts()
@@ -311,7 +313,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
-            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS): ?>
+            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN): ?>
                 <p class="lead">
                     La direction de l'établissement n'a pas encore validé la proposition de soutenance
                 </p>
@@ -336,25 +338,31 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <!-- Feu vert ----------------------------------------------------------------------------------------------------->
 
     <?php
-    $bgcolor = "bg-danger";
-    if (!$tousLesAvis) $bgcolor = "bg-danger";
-    else {
-        switch ($proposition->getEtat()->getCode()) {
-            case Etat::VALIDEE :
-                $bgcolor = "bg-success";
-                break;
-            case Etat::REJETEE :
-                $bgcolor = "bg-danger";
-                break;
+    $cssClass = null;
+    if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) {
+        $bgcolor = "bg-dark";
+        $cssClass = "etape-encore-non-disponible";
+    }else{
+        $bgcolor = "bg-danger";
+        if (!$tousLesAvis) $bgcolor = "bg-danger";
+        else {
+            switch ($proposition->getEtat()->getCode()) {
+                case Etat::VALIDEE :
+                    $bgcolor = "bg-success";
+                    break;
+                case Etat::REJETEE :
+                    $bgcolor = "bg-danger";
+                    break;
+            }
         }
     }
     ?>
 
     <div class="box card">
-        <div class="card-header <?php echo $bgcolor; ?> text-white">
+        <div class="card-header <?php echo $bgcolor; ?> text-white <?= $cssClass ?>">
             <h2>  Validation finale de la proposition de soutenance </h2>
         </div>
-        <div class="card-body">
+        <div class="card-body <?= $cssClass ?>">
 
             <p class="lead"> Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé par l'établissement. </p>
             <?php if ($canFeuVert) : ?>
@@ -412,6 +420,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     div.adresse-block {
         border-left: 2px gray solid;
         padding: 0.5rem;
+    }
+    .informations-compl-these-div{
+        margin-left: auto;
+    }
+    .etape-encore-non-disponible{
+        opacity: 0.5;
     }
 </style>
 

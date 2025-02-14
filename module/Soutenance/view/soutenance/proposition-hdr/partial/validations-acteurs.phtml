@@ -15,6 +15,7 @@
  * @var boolean $validationActeur
  *
  * @var bool $isInformationsOk
+ * @var bool $justificatifsOk
  * @var string $typeProposition
  */
 
@@ -34,9 +35,9 @@ $object = $proposition->getObject();
 $hasSursis = $proposition->hasSursis();
 
 $isDateOk = (new DateTime())->add(new DateInterval('P2M')) < $proposition->getDate() || $hasSursis;
-$isAllOk = $isInformationsOk && $isIndicateursOk;
+$isAllOk = $isInformationsOk && $isIndicateursOk && $justificatifsOk;
 
-if($proposition->getEtat()->getCode() === Etat::EN_COURS) $isAllOk = $isAllOk && $isDateOk;
+if($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) $isAllOk = $isAllOk && $isDateOk;
 
 $cssClass = "";
 // Rôles à valider
@@ -71,7 +72,7 @@ if ($isAllOk === false || $validatedCount === 0) {
         </h2>
     </div>
     <div class="card-body">
-        <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) && !$isAllOk) : ?>
+        <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) && !$isAllOk) : ?>
          <div class="alert alert-danger">
             <strong>
                 <span class="icon icon-attention"></span>
@@ -85,7 +86,10 @@ if ($isAllOk === false || $validatedCount === 0) {
                 <li> La proposition de soutenance doit être recevable : date et lieu, composition du jury, ... </li>
             <?php endif; ?>
             <?php if (!$isDateOk): ?>
-                <li> Le délai de deux mois entre la date de validation et la date de soutenance est non respecté </li>
+                <li> Le délai de deux mois entre la date de validation et la date de soutenance est non respecté.</li>
+            <?php endif; ?>
+            <?php if (!$justificatifsOk): ?>
+                <li> Les justificatifs demandés n'ont pas tous été fournis. </li>
             <?php endif; ?>
             </ul>
          </div>

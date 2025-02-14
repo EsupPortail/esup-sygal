@@ -80,6 +80,8 @@ $canGenererDocument = $canFeuVert;
     <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
 </h1>
 
+<?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
+
 <?php echo $this->alertes()
     ->addAlertesFromFlashMessenger()
     ->renderAsBootstrapToasts()
@@ -212,7 +214,7 @@ $canGenererDocument = $canFeuVert;
                     <?php endif; ?>
                 <?php endif; ?>
 
-            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS): ?>
+            <?php elseif($proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN): ?>
                 <p class="lead">
                     La direction de l'établissement n'a pas encore validé la proposition de soutenance
                 </p>
@@ -232,25 +234,31 @@ $canGenererDocument = $canFeuVert;
     <!-- Feu vert ----------------------------------------------------------------------------------------------------->
 
     <?php
-    $bgcolor = "bg-danger";
-    if (!$tousLesAvis) $bgcolor = "bg-danger";
-    else {
-        switch ($proposition->getEtat()->getCode()) {
-            case Etat::VALIDEE :
-                $bgcolor = "bg-success";
-                break;
-            case Etat::REJETEE :
-                $bgcolor = "bg-danger";
-                break;
+    $cssClass = null;
+    if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) {
+        $bgcolor = "bg-dark";
+        $cssClass = "etape-encore-non-disponible";
+    }else{
+        $bgcolor = "bg-danger";
+        if (!$tousLesAvis) $bgcolor = "bg-danger";
+        else {
+            switch ($proposition->getEtat()->getCode()) {
+                case Etat::VALIDEE :
+                    $bgcolor = "bg-success";
+                    break;
+                case Etat::REJETEE :
+                    $bgcolor = "bg-danger";
+                    break;
+            }
         }
     }
     ?>
 
     <div class="box card">
-        <div class="card-header <?php echo $bgcolor; ?> text-white">
+        <div class="card-header <?php echo $bgcolor; ?> text-white <?= $cssClass ?>">
             <h2> Validation finale de la proposition de soutenance </h2>
         </div>
-        <div class="card-body">
+        <div class="card-body <?= $cssClass ?>">
             <p class="lead"> Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé
                 par l'établissement. </p>
             <?php if ($canFeuVert) : ?>
@@ -290,23 +298,29 @@ $canGenererDocument = $canFeuVert;
     </div>
 
     <?php
-    $bgcolor = "bg-danger";
-    if ($hdr->getResultat() === HDR::RESULTAT_ADMIS) {
-        $bgcolor = "bg-success";
-    }elseif($hdr->getResultat() === HDR::RESULTAT_AJOURNE) {
-        $bgcolor = "bg-danger";
+    $cssClass = null;
+    if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT || $proposition->getEtat()->getCode() === Etat::COMPLET || $proposition->getEtat()->getCode() === Etat::REJETEE) {
+        $bgcolor = "bg-dark";
+        $cssClass = "etape-encore-non-disponible";
     }else {
-        $bgcolor = "bg-warning";
+        $bgcolor = "bg-danger";
+        if ($hdr->getResultat() === HDR::RESULTAT_ADMIS) {
+            $bgcolor = "bg-success";
+        } elseif ($hdr->getResultat() === HDR::RESULTAT_AJOURNE) {
+            $bgcolor = "bg-danger";
+        } else {
+            $bgcolor = "bg-warning";
+        }
     }
 
     $canAjouterResultat = $this->isAllowed($hdr, HDRPrivileges::HDR_DONNER_RESULTAT);
     ?>
 
     <div class="box card">
-        <div class="card-header <?php echo $bgcolor; ?> text-white">
+        <div class="card-header <?php echo $bgcolor; ?> text-white <?= $cssClass ?>">
             <h2> Délibération suite à la soutenance </h2>
         </div>
-        <div class="card-body">
+        <div class="card-body <?= $cssClass ?>">
             <p class="lead">
                 À la suite de la soutenance, le jury délibère et statue sur la délivrance de la HDR.
             </p>
@@ -364,6 +378,12 @@ $canGenererDocument = $canFeuVert;
     div.adresse-block {
         border-left: 2px gray solid;
         padding: 0.5rem;
+    }
+    .informations-compl-these-div{
+        margin-left: auto;
+    }
+    .etape-encore-non-disponible{
+        opacity: 0.5;
     }
 </style>
 

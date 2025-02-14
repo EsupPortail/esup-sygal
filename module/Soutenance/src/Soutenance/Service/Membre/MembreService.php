@@ -202,7 +202,7 @@ class MembreService
             ->setParameter('rapporteurJury', Membre::RAPPORTEUR_JURY)
             ->addSelect('etat')->join('proposition.etat', 'etat')
             ->andWhere('etat.code = :EnCours')
-            ->setParameter('EnCours', Etat::EN_COURS)
+            ->setParameter('EnCours', Etat::EN_COURS_EXAMEN)
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
             ->andWhere('avis.id IS NULL')
             ->addSelect('these')->leftJoin('proposition.these', 'these')

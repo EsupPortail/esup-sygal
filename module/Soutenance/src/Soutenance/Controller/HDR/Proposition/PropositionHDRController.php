@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Candidat\Entity\Db\Candidat;
 use Exception;
 use HDR\Entity\Db\HDR;
 use HDR\Service\HDRService;
@@ -197,14 +198,19 @@ class PropositionHDRController extends PropositionController
         }
 
         $candidat = $this->entity->getCandidat();
-
+        $validation = $this->validationService->findValidationPropositionSoutenanceByHDRAndIndividu($this->entity, $candidat->getIndividu());
+        if($validation){
+            $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN));
+            $this->propositionService->update($this->proposition);
+        }
         /** @var ActeurHDR[] $acteurs */
         $garants = $this->entity->getActeursByRoleCode(Role::CODE_HDR_GARANT)->toArray();
         $acteurs = array_merge($garants, [$candidat]);
 
         $allValidated = true;
         foreach ($acteurs as $acteur) {
-            if ($this->validationService->findValidationPropositionSoutenanceByHDRAndIndividu($this->entity, $acteur->getIndividu()) === null) {
+            $validation = $this->validationService->findValidationPropositionSoutenanceByHDRAndIndividu($this->entity, $acteur->getIndividu());
+            if ($validation === null) {
                 $allValidated = false;
                 break;
             }
@@ -330,7 +336,7 @@ class PropositionHDRController extends PropositionController
                         $this->validationService->historiser($v);
                     }
                 }
-                $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS);
+                $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN);
                 $this->proposition->setEtat($etat);
                 $this->propositionService->update($this->proposition);
             }

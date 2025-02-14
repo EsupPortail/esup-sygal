@@ -238,10 +238,6 @@ h1.app-name {
 .table th {
   font-weight: bold; }
 
-/* Lignes alternées */
-.table tr:nth-child(even) {
-  background-color: #f2f2f2; }
-
 /* Survol des lignes */
 .table tr:hover {
   transition: background-color 0.3s ease; }

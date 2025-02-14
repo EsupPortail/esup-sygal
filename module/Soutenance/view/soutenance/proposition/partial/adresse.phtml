@@ -18,7 +18,7 @@ $object = $proposition->getObject();
     </div>
     <div class="card-body">
         <div>
-            <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
+            <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
                 <p class="lead">
                     <strong>Cette adresse exacte figurera sur les convocations et autres documents officiels.</strong>
                 </p>

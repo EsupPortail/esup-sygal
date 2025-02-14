@@ -54,7 +54,8 @@ class JustificatifAssertion implements AssertionInterface {
         }
 
         $depasse = $date_soutenance && new DateTime() > $date_soutenance;
-        $encours = ($proposition->getEtat()->getCode() === Etat::EN_COURS);
+        $enCoursSaisie = ($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE);
+        $enCoursExamen = ($proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN);
 
         $user = $this->userContextService->getIdentityDb();
         $role = $this->userContextService->getSelectedIdentityRole();
@@ -69,15 +70,15 @@ class JustificatifAssertion implements AssertionInterface {
                     case Role::CODE_GEST_HDR:
                         return ($role->getStructure() === $entity->getEtablissement()->getStructure());
                     case Role::CODE_DIRECTEUR_THESE :
-                        return ($encours AND !$depasse and $this->getTheseService()->isDirecteur($entity, $user->getIndividu()));
+                        return (($enCoursSaisie || $enCoursExamen) AND !$depasse and $this->getTheseService()->isDirecteur($entity, $user->getIndividu()));
                     case Role::CODE_CODIRECTEUR_THESE :
-                        return ($encours AND !$depasse and $this->getTheseService()->isCoDirecteur($entity, $user->getIndividu()));
+                        return (($enCoursSaisie || $enCoursExamen) AND !$depasse and $this->getTheseService()->isCoDirecteur($entity, $user->getIndividu()));
                     case Role::CODE_DOCTORANT :
-                        return ($encours AND !$depasse and $this->getTheseService()->isDoctorant($entity, $user->getIndividu()));
+                        return (($enCoursSaisie || $enCoursExamen) AND !$depasse and $this->getTheseService()->isDoctorant($entity, $user->getIndividu()));
                     case Role::CODE_HDR_CANDIDAT :
-                        return ($encours AND !$depasse and $this->hdrService->isCandidat($entity, $user->getIndividu()));
+                        return (($enCoursSaisie || $enCoursExamen) AND !$depasse and $this->hdrService->isCandidat($entity, $user->getIndividu()));
                     case Role::CODE_HDR_GARANT :
-                        return ($encours AND !$depasse and $this->hdrService->isGarant($entity, $user->getIndividu()));
+                        return (($enCoursSaisie || $enCoursExamen) AND !$depasse and $this->hdrService->isGarant($entity, $user->getIndividu()));
                 }
                 return false;
         }
