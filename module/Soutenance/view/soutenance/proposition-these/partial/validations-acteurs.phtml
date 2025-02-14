@@ -36,20 +36,15 @@ $object = $proposition->getObject();
 $hasDeclaration= !empty($validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR]);
 $hasAttestation = !empty($attestationsIntegriteScientifique);
 $hasSursis = $proposition->hasSursis();
-
 $isDateOk = (new DateTime())->add(new DateInterval('P2M')) < $proposition->getDate() || $hasSursis;
-$isAllOk = $hasDeclaration && $hasAttestation && $isInformationsOk && $isIndicateursOk && $justificatifsOk;
 
-if($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) $isAllOk = $isAllOk && $isDateOk;
-
-$cssClass = "";
+$isAllOk = $hasDeclaration && $hasAttestation && $isInformationsOk && $isIndicateursOk && $justificatifsOk !== false;
 
 // Rôles à valider
 $rolesToValidate = [
     Role::CODE_DOCTORANT,
     Role::CODE_DIRECTEUR_THESE,
 ];
-
 if(!$object->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->isEmpty()) $rolesToValidate[] = Role::CODE_CODIRECTEUR_THESE;
 
 $validatedCount = 0;
@@ -59,8 +54,15 @@ foreach ($rolesToValidate as $roleCode) {
     }
 }
 
+//Ne pas prendre compte de savoir si le délai est respecté, si toutes les validations ont été faites
+if(($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE ||
+    $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) &&
+    !($validatedCount === count($rolesToValidate)))  $isAllOk = $isAllOk && $isDateOk;
+
+
 //Si tout n'est pas OK pour pour pouvoir valider
 //ou si tout est OK pour pour pouvoir valider mais qu'aucune validation n'a encore été effectuée
+$cssClass = "";
 if ($isAllOk === false || $validatedCount === 0) {
     $cssClass = "bg-danger";
 //Si tout est OK pour pour pouvoir valider et que le circuit de validations est déjà commencé
@@ -100,6 +102,9 @@ if ($isAllOk === false || $validatedCount === 0) {
             <?php if (!$hasAttestation) : ?>
                 <li> L'attestation de suivi de la formation "Intégrité Scientifique" est manquante. </li>
             <?php endif; ?>
+                <?php if ($justificatifsOk === false): ?>
+                    <li> Les justificatifs demandés n'ont pas tous été fournis. </li>
+                <?php endif; ?>
             </ul>
          </div>
         <?php endif; ?>

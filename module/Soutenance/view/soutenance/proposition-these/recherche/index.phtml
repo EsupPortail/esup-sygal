@@ -134,7 +134,7 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
                 <?php if ($canSuppression) : ?>
                     <a
                         <?php
-                        $returnUrl = $this->url('soutenances/index-structure', [], [], true);
+                        $returnUrl = $this->url('soutenances/index-structure-these', [], [], true);
                         /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
                             href="<?php echo $this->url("soutenance_these/proposition/suppression", ['these' => $these->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                             data-toggle="confirmationx" data-event="modification"
@@ -150,6 +150,8 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<?php echo $paginationControl = $this->paginationControl($propositions, 'sliding', 'application/paginator.phtml', ['route' => 'soutenances/index-structure-these']) ?>
 
 <style>
     #proposition-filters {

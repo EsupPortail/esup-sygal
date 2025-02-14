@@ -153,6 +153,8 @@ $canVoirHDR = $this->isAllowed(HDRPrivileges::getResourceId(HDRPrivileges::HDR_C
         <?php endforeach; ?>
         </tbody>
     </table>
+
+    <?php echo $paginationControl = $this->paginationControl($propositions, 'sliding', 'application/paginator.phtml', ['route' => 'soutenances/index-structure-hdr']) ?>
 <?php else: ?>
 
     <?php if ($propositions->containsRealSearchResult()): ?>

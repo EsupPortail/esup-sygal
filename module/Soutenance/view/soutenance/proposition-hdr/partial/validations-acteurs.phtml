@@ -33,13 +33,9 @@ use Validation\Entity\Db\ValidationHDR;
 $object = $proposition->getObject();
 
 $hasSursis = $proposition->hasSursis();
-
 $isDateOk = (new DateTime())->add(new DateInterval('P2M')) < $proposition->getDate() || $hasSursis;
 $isAllOk = $isInformationsOk && $isIndicateursOk && $justificatifsOk;
 
-if($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) $isAllOk = $isAllOk && $isDateOk;
-
-$cssClass = "";
 // Rôles à valider
 $rolesToValidate = [
     Role::CODE_HDR_CANDIDAT,
@@ -53,8 +49,14 @@ foreach ($rolesToValidate as $roleCode) {
     }
 }
 
+//Ne pas prendre compte de savoir si le délai est respecté, si toutes les validations ont été faites
+if(($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE ||
+        $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) &&
+    !($validatedCount === count($rolesToValidate)))  $isAllOk = $isAllOk && $isDateOk;
+
 //Si tout n'est pas OK pour pouvoir valider
 //ou si tout est OK pour pouvoir valider mais qu'aucune validation n'a encore été effectuée
+$cssClass = "";
 if ($isAllOk === false || $validatedCount === 0) {
     $cssClass = "bg-danger";
 //Si tout est OK pour pouvoir valider et que le circuit de validations est déjà commencé
@@ -88,7 +90,7 @@ if ($isAllOk === false || $validatedCount === 0) {
             <?php if (!$isDateOk): ?>
                 <li> Le délai de deux mois entre la date de validation et la date de soutenance est non respecté.</li>
             <?php endif; ?>
-            <?php if (!$justificatifsOk): ?>
+            <?php if ($justificatifsOk === false): ?>
                 <li> Les justificatifs demandés n'ont pas tous été fournis. </li>
             <?php endif; ?>
             </ul>
