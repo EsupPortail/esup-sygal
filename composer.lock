@@ -11358,18 +11358,19 @@
         },
         {
             "name": "unicaen/authentification",
-            "version": "6.4.2",
+            "version": "6.4.4",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/authentification.git",
-                "reference": "aa165561da6de37e251ade5b62d45501c2e44f26"
+                "reference": "ece36a1156b70cfc656a49a07edb43b187c04feb"
             },
             "require": {
                 "apereo/phpcas": "1.6.*",
                 "ramsey/uuid": "^3.7",
                 "unicaen/app": "^6.0|^7.0",
                 "unicaen/bjy-authorize": "^6.0",
-                "unicaen/utilisateur": "^6.3|^7.0"
+                "unicaen/utilisateur": "^6.3|^7.0",
+                "unicaen/zfc-user": "^6.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.6"
@@ -11384,7 +11385,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen - Version Laminas",
-            "time": "2025-01-17T09:00:35+00:00"
+            "time": "2025-02-14T11:01:28+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -11988,22 +11989,20 @@
         },
         {
             "name": "unicaen/zfc-user",
-            "version": "6.0.1",
+            "version": "6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/zfc-user.git",
-                "reference": "fa0b8b14dd5ac677f0b2aab550de1d4decb61948"
+                "reference": "4ce038a5d5dc5773ece019014564081f5c660281"
             },
             "require": {
                 "laminas/laminas-authentication": "^2.9",
-                "laminas/laminas-crypt": "^3.6",
                 "laminas/laminas-db": "^2.13",
                 "laminas/laminas-form": "^3.1",
                 "laminas/laminas-http": "^2.15",
                 "laminas/laminas-hydrator": "^4.3",
                 "laminas/laminas-i18n": "^2.13",
                 "laminas/laminas-inputfilter": "^2.13",
-                "laminas/laminas-loader": "^2.8",
                 "laminas/laminas-modulemanager": "^2.11",
                 "laminas/laminas-mvc": "^3.3",
                 "laminas/laminas-mvc-plugin-flashmessenger": "^1.5",
@@ -12034,7 +12033,7 @@
                 ]
             },
             "description": "A generic user registration and authentication module for ZF2. Supports Laminas\\Db and Doctrine2.",
-            "time": "2023-12-18T16:14:37+00:00"
+            "time": "2025-01-29T08:18:07+00:00"
         },
         {
             "name": "webimpress/safe-writer",
