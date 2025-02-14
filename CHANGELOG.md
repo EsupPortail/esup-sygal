@@ -9,6 +9,7 @@ Journal des modifications
 - Accès aux rapports CSI et mi-parcours même lorsque la thèse est abandonnée
 - Module Soutenance : message informant des possibles présidents du jury (rang A) dans l'encart Association d'acteur SYGAL aux membres de jury.
 - Mise à jour des disciplines SISE.
+- Proposition du jury de soutenance : dès lors que la date de soutenance est passée, le jury est considéré comme valide quelques soient les valeurs des indicateurs.
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 - [FIX] Recherche textuelle d'individu selon le type : jointure avec doctorant/acteur au cas où individu.type est null. 
 - [FIX] Import des thèses : rétablissement du mapping libDiscipline => lib_int1_dis dans la config supprimé à tort.

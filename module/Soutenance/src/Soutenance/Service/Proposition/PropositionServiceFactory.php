@@ -5,6 +5,7 @@ namespace Soutenance\Service\Proposition;
 use Horodatage\Service\Horodatage\HorodatageService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Rule\PropositionJuryRule;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
@@ -65,6 +66,10 @@ class PropositionServiceFactory
 
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $service->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
+
+        /** @var PropositionJuryRule $propositionJuryRule */
+        $propositionJuryRule = $container->get(PropositionJuryRule::class);
+        $service->setPropositionJuryRule($propositionJuryRule);
 
         return $service;
     }
