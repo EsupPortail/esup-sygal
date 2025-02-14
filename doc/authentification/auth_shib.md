@@ -24,6 +24,16 @@ Exemple de configuration dans `config/autoload/xxxx.local.php` :
                 "<p><span class='glyphicon glyphicon-info-sign'></span> Cliquez sur le bouton ci-dessous pour accéder à l'authentification via la fédération d'identité.</p>" .
                 "<p><strong>Attention !</strong> Si vous possédez à la fois un compte Étudiant et un compte Personnel, vous devrez utiliser " .
                 "votre compte <em>Étudiant</em> pour vous authentifier...</p>",
+
+            /**
+             * URL de déconnexion.
+             */
+            'logout_url' => '/Shibboleth.sso/Logout?return=', // NB: '?return=' semble obligatoire!
+
+            /**
+             * Autoriser l'IDP à gérer la déconnexion ?
+             */
+            'idp_logout' => false,
                 
             /**
              * Simulation d'authentification d'un utilisateur.

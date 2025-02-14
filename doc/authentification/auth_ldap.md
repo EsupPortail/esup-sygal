@@ -98,12 +98,13 @@ l'attribut LDAP à utiliser pour extraire l'identifiant de connexion (login) d'u
 
 ```php
     'unicaen-auth' => [
-        /**
-         * Attribut LDAP utilisé pour extraire le username/login d'un utilisateur, *en minuscules*.
-         */
-        'ldap_username' => 'supannaliaslogin',
-        //'ldap_username' => 'uid',
-        
+        'ldap' => [
+            /**
+             * Attribut LDAP utilisé pour extraire le username/login d'un utilisateur, *en minuscules*.
+             */
+            'username' => 'supannaliaslogin',
+            //'username' => 'uid',
+        ],
         //...
     ],
 ```
