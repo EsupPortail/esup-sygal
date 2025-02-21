@@ -13,6 +13,7 @@ Journal des modifications
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 - [FIX] Recherche textuelle d'individu selon le type : jointure avec doctorant/acteur au cas où individu.type est null. 
 - [FIX] Import des thèses : rétablissement du mapping libDiscipline => lib_int1_dis dans la config supprimé à tort.
+- [FIX] Module Formation : icône de suppression invisible pour la suppression d'un formateur d'une session
 
 9.3.0
 -----
