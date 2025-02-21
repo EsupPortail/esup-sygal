@@ -7,7 +7,9 @@ use Acteur\Entity\Db\ActeurThese;
 use Individu\Entity\Db\Individu;
 use Laminas\Hydrator\AbstractHydrator;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 
 abstract class AbstractActeurHydrator extends AbstractHydrator
 {
@@ -15,14 +17,14 @@ abstract class AbstractActeurHydrator extends AbstractHydrator
 
     public function extract(object $object): array
     {
-        /** @var \Acteur\Entity\Db\ActeurThese|\Acteur\Entity\Db\ActeurHDR $object */
+        /** @var ActeurThese|ActeurHDR $object */
 
         $qualite = $object->getLibelleQualite() ? $this->qualiteService->findQualiteByLibelle($object->getLibelleQualite()) : null;
 
         $data = [];
         $data['individu'] = $object->getIndividu() ? $this->extractValue('individu', $object->getIndividu()) : null;
         $data['etablissement'] = $object->getEtablissement() ? $this->extractValue('etablissement', $object->getEtablissement()) : null;
-//        $data['ecoleDoctorale'] = $object->getEcoleDoctorale() ? $this->extractValue('ecoleDoctorale', $object->getEcoleDoctorale()) : null;
+        if($object instanceof ActeurThese) $data['ecoleDoctorale'] = $object->getEcoleDoctorale() ? $this->extractValue('ecoleDoctorale', $object->getEcoleDoctorale()) : null;
         $data['uniteRecherche'] = $object->getUniteRecherche() ? $this->extractValue('uniteRecherche', $object->getUniteRecherche()) : null;
         $data['qualite'] = $qualite?->getId();
         if($object instanceof ActeurThese) $data['principal'] = $object->isPrincipal();
@@ -33,7 +35,7 @@ abstract class AbstractActeurHydrator extends AbstractHydrator
 
     public function hydrate(array $data, object $object): ActeurThese|ActeurHDR
     {
-        /** @var \Acteur\Entity\Db\ActeurThese|\Acteur\Entity\Db\ActeurHDR $object */
+        /** @var ActeurThese|ActeurHDR $object */
 
         $qualiteLib = $data['qualite'];
         $principal = $data['principal'] ?? false;
@@ -43,16 +45,20 @@ abstract class AbstractActeurHydrator extends AbstractHydrator
         $individu = $this->hydrateValue('individu', $data['individu']);
         /** @var Etablissement $etablissement */
         $etablissement = $this->hydrateValue('etablissement', $data['etablissement']);
-        /** @var \Structure\Entity\Db\EcoleDoctorale $ecoleDoctorale */
-//        $ecoleDoctorale = $this->hydrateValue('ecoleDoctorale', $data['ecoleDoctorale']);
-        /** @var \Structure\Entity\Db\UniteRecherche $uniteRecherche */
+
+        /** @var UniteRecherche $uniteRecherche */
         $uniteRecherche = $this->hydrateValue('uniteRecherche', $data['uniteRecherche']);
 
         $qualite = $this->getQualiteService()->getQualite($qualiteLib);
 
+        if($object instanceof ActeurHDR){
+            /** @var EcoleDoctorale $ecoleDoctorale */
+            $ecoleDoctorale = $this->hydrateValue('ecoleDoctorale', $data['ecoleDoctorale']);
+            $object->setEcoleDoctorale($ecoleDoctorale);
+        }
+
         $object->setIndividu($individu);
         $object->setEtablissement($etablissement);
-//        $object->setEcoleDoctorale($ecoleDoctorale);
         $object->setUniteRecherche($uniteRecherche);
         $object->setQualite($qualite);
         $object->setPrincipal($principal);
