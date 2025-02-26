@@ -34,6 +34,7 @@ use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
+use Validation\Entity\Db\TypeValidation;
 
 /** @method FlashMessenger flashMessenger() */
 
@@ -103,7 +104,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         $this->initializeFromType(false, false);
 
         /** @var Membre[] $membres */
-        $membres = $this->proposition->getMembres();
+//        $membres = $this->proposition->getMembres();
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** Ici, on prépare la liste des acteurs correspondant aux différents rôles pour le Select du formulaire
@@ -142,17 +143,20 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         }
 
         $acteurs_libres = [];
+        /** @var ActeurThese|ActeurHDR $acteur */
         foreach ($acteurs as $acteur) {
-            $libre = true;
-            foreach ($membres as $membre_) {
-                $acteur_ = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre_);
-//                if ($membre_->getActeur() && $membre_->getActeur()->getId() === $acteur->getId()) {
-                if ($acteur_ && $acteur_->getId() === $acteur->getId()) {
-                    $libre = false;
-                    break;
-                }
-            }
-            if ($libre) $acteurs_libres[] = $acteur;
+            // à avoir si ça pose des problèmes
+            if(!$acteur->getMembre()) $acteurs_libres[] = $acteur;
+//            $libre = true;
+//            foreach ($membres as $membre_) {
+//                $acteur_ = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre_);
+////                if ($membre_->getActeur() && $membre_->getActeur()->getId() === $acteur->getId()) {
+//                if ($acteur_ && $acteur_->getId() === $acteur->getId()) {
+//                    $libre = false;
+//                    break;
+//                }
+//            }
+//            if ($libre) $acteurs_libres[] = $acteur;
         }
 
         $request = $this->getRequest();
@@ -183,10 +187,53 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             'title' => "Association de " . $membre->getDenomination() . " à un acteur " . $this->appInfos()->getNom(),
             'acteurs' => $acteurs_libres,
             'membre' => $membre,
-            'id' => $this->entity,
+            'entity' => $this->entity,
             'typeProposition' => $this->type
         ]);
         return $vm;
+    }
+
+    public function deassocierJuryAction() : Response
+    {
+        $this->initializeFromType();
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $acteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
+
+//        $acteurs = $this->acteurService->getRepository()->findActeurByHDR($this->entity);
+//        $a = null;
+//        foreach ($acteurs as $acteur_) {
+////            if ($acteur_ === $membre->getActeur()) $acteur = $acteur_;
+//            if ($acteur_ === $acteur) $a = $acteur_;
+//        }
+        if (!$acteur) throw new RuntimeException("Aucun acteur à deassocier !");
+
+//        //retrait dans membre de soutenance
+//        $membre->setActeur(null);
+//        $this->getMembreService()->update($membre);
+//        $acteur->setMembre($membre);
+        $acteur->setMembre(null);
+        $this->acteurService->save($acteur);
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+
+        if(!$this->entity->getSource()->getImportable()) $this->acteurService->historise($acteur);
+
+        $validation = $this->entity instanceof These ?
+            $this->validationService->getRepository()->findValidationByTheseAndCodeAndIndividu($this->entity, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu()) :
+            $this->validationService->getRepository()->findValidationByHDRAndCodeAndIndividu($this->entity, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
+
+        if ($validation !== null) {
+            $this->validationService->unsignEngagementImpartialite($validation);
+        }
+
+//        $utilisateur = $this->getMembreService()->getUtilisateur($membre);
+//        if ($utilisateur){
+//            try {
+//                $this->utilisateurService->supprimerUtilisateur($utilisateur);
+//            }catch (Exception $e) {
+//                throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
+//            }
+//        }
+        return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
     }
 
     protected function createUtilisateurRapporteur(ActeurThese|ActeurHDR $acteur, Membre $membre): void

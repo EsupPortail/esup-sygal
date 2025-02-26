@@ -32,7 +32,7 @@ class ActeurHDR extends AbstractActeur
         return $this->membre;
     }
 
-    public function setMembre(Membre $membre): static
+    public function setMembre(?Membre $membre): static
     {
         $this->membre = $membre;
 

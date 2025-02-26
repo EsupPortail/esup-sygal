@@ -121,45 +121,6 @@ class PresoutenanceHDRController extends PresoutenanceController
         return $vm;
     }
 
-    public function deassocierJuryAction() : Response
-    {
-        $this->initializeFromType();
-        $membre = $this->getMembreService()->getRequestedMembre($this);
-        $acteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
-
-        $acteurs = $this->acteurService->getRepository()->findActeurByHDR($this->entity);
-        $a = null;
-        foreach ($acteurs as $acteur_) {
-//            if ($acteur_ === $membre->getActeur()) $acteur = $acteur_;
-            if ($acteur_ === $acteur) $a = $acteur_;
-        }
-        if (!$a) throw new RuntimeException("Aucun acteur à deassocier !");
-
-//        //retrait dans membre de soutenance
-//        $membre->setActeur(null);
-//        $this->getMembreService()->update($membre);
-        $acteur->setMembre($membre);
-        $this->acteurService->save($acteur);
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
-
-        if(!$this->entity->getSource()->getImportable()) $this->acteurService->delete($acteur);
-
-        $validation = $this->validationHDRService->getRepository()->findValidationByHDRAndCodeAndIndividu($this->entity, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
-        if ($validation !== null) {
-            $this->validationHDRService->unsignEngagementImpartialite($validation);
-        }
-
-        $utilisateur = $this->getMembreService()->getUtilisateur($membre);
-        if ($utilisateur){
-            try {
-                $this->utilisateurService->supprimerUtilisateur($utilisateur);
-            }catch (Exception $e) {
-                throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
-            }
-        }
-        return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
-    }
-
     /**
      * Ici on affecte au membre des individus enregistrés dans SyGAL
      */
