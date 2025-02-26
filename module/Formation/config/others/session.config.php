@@ -82,6 +82,7 @@ return [
                     'controller' => SessionController::class,
                     'action' => [
                         'afficher-fiche',
+                        'justifier-absence'
                     ],
                     'roles' => [
                         'user',
@@ -340,6 +341,17 @@ return [
                                         /** @see SessionController::transmettreListeInscritsAction() */
                                         'controller'    => SessionController::class,
                                         'action'        => 'transmettre-liste-inscrits',
+                                    ],
+                                ],
+                            ],
+                            'justifier-absence' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/justifier-absence/:session/:doctorant',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'justifier-absence',
                                     ],
                                 ],
                             ],

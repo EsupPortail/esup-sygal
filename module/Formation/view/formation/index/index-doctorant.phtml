@@ -492,7 +492,10 @@ $now = new DateTime();
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php else :?>
-                            Pas de présence
+                            <a class="text-danger" href="<?php echo $this->url('formation/session/justifier-absence', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], [], true); ?>" target="_blank">
+                                <span class="icon icon-plus text-danger"></span>
+                                Justifier votre absence
+                            </a>
                         <?php endif; ?>
                     </td>
                 </tr>
