@@ -2,6 +2,8 @@
 
 namespace Soutenance\Service\Membre;
 
+use Application\Entity\Db\Profil;
+use Application\Entity\Db\Role;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use These\Entity\Db\Acteur;
 use Application\Service\UserContextServiceAwareTrait;
@@ -245,7 +247,15 @@ class MembreService {
             ->andWhereNotHistorise('membre')
             ->addOrderBy('membre.nom', 'ASC');
 
-        return $qb->getQuery()->getResult();
+        $directeurIndividu = $proposition->getThese()
+            ->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)
+            ->first()
+            ->getIndividu();
+
+        $membresSansDirectionThese = array_filter($qb->getQuery()->getResult(), fn($membre) =>
+            $membre->getActeur()->getIndividu() !== $directeurIndividu
+        );
+        return $membresSansDirectionThese;
     }
 
     /** FACADE ********************************************************************************************************/

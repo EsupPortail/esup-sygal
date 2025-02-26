@@ -3,6 +3,7 @@ Journal des modifications
 
 9.3.1
 -----
+- Module Admission/Saisie de thèse : Possibilité de choisir parmi tous les établissements présents dans l'application pour un co-directeur
 - Module Rapport d'activité : Affichage de toutes les informations suivies par le doctorant depuis sa première année 
 - Module Rapport d'activité : Amélioration de l'UI pour la consultation d'un rapport d'activité 
 - Module Formation : Permettre à un doctorant de s'inscrire à une autre session d'une même formation si la première session a été annulée
@@ -14,6 +15,7 @@ Journal des modifications
 - [FIX] Recherche textuelle d'individu selon le type : jointure avec doctorant/acteur au cas où individu.type est null. 
 - [FIX] Import des thèses : rétablissement du mapping libDiscipline => lib_int1_dis dans la config supprimé à tort.
 - [FIX] Module Formation : icône de suppression invisible pour la suppression d'un formateur d'une session
+- [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les directeurs de thèse
 
 9.3.0
 -----

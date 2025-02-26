@@ -30,6 +30,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
     private array $ecolesDoctorales;
     private array $unitesRecherche;
     private array $etablissementInscription;
+    private array $etablissements;
     private array $specialites;
     private array $qualites;
 
@@ -80,12 +81,25 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
         $this->unitesRecherche = $options;
     }
 
+    public function setEtablissements(array $etablissements): void
+    {
+        $options = [];
+        foreach ($etablissements as $etablissement) {
+            if(!$etablissement->estInscription() || $etablissement->estInscription() && $this->admissionService->canEtabAccessModuleAdmission($etablissement)) {
+                $sigle = $etablissement->getStructure()?->getSigle() ? " (" . $etablissement->getStructure()->getSigle() . ")" : null;
+                $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
+            }
+        }
+        $this->etablissements = $options;
+    }
+
     public function setEtablissementsInscription(array $etablissementsInscription): void
     {
         $options = [];
         foreach ($etablissementsInscription as $etablissementInscription) {
             if($this->admissionService->canEtabAccessModuleAdmission($etablissementInscription)){
-                $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle();
+                $sigle = $etablissementInscription->getStructure()?->getSigle() ? " (" . $etablissementInscription->getStructure()->getSigle() . ")" : null;
+                $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle() . $sigle;
             }
         }
         $this->etablissementInscription = $options;
@@ -115,7 +129,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
         $this->get('uniteRecherche')->setValueOptions($this->unitesRecherche);
         $this->get('uniteRechercheCoDirecteur')->setValueOptions($this->unitesRecherche);
         $this->get('etablissementInscription')->setValueOptions($this->etablissementInscription);
-        $this->get('etablissementRattachementCoDirecteur')->setValueOptions($this->etablissementInscription);
+        $this->get('etablissementRattachementCoDirecteur')->setValueOptions($this->etablissements);
         $this->get('fonctionDirecteurThese')->setValueOptions($this->qualites);
         $this->get('fonctionCoDirecteurThese')->setValueOptions($this->qualites);
         $this->get('paysCoTutelle')->setAutocompleteSource($this->urlPaysCoTutelle);

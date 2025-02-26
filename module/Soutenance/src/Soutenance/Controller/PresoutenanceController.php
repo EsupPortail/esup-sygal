@@ -290,14 +290,15 @@ class PresoutenanceController extends AbstractController
             $this->validationService->unsignEngagementImpartialite($validation);
         }
 
-        $utilisateur = $this->membreService->getUtilisateur($membre);
-        if ($utilisateur){
-            try {
-                $this->utilisateurService->supprimerUtilisateur($utilisateur);
-            }catch (Exception $e) {
-                throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
-            }
-        }
+        //introduit lors de la saisie de thèse, mais gros doute sur son utilité...
+//        $utilisateur = $this->membreService->getUtilisateur($membre);
+//        if ($utilisateur){
+//            try {
+//                $this->utilisateurService->supprimerUtilisateur($utilisateur);
+//            }catch (Exception $e) {
+//                throw new RuntimeException("Un problème est survenu en base de données", 0 , $e);
+//            }
+//        }
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 

@@ -54,6 +54,8 @@ class InscriptionFieldsetFactory
         $etablissementService = $container->get(EtablissementService::class);
         $etablissementsInscription = $etablissementService->getRepository()->findAllEtablissementsInscriptions();
         $fieldset->setEtablissementsInscription($etablissementsInscription);
+        $etablissements = $etablissementService->getRepository()->findAll();
+        $fieldset->setEtablissements($etablissements);
 
         $qualiteService = $container->get(QualiteService::class);
         $qualites = $qualiteService->getQualitesForAdmission();

@@ -30,9 +30,20 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
     const NBCODIR = 2;
 
     private string $urlAutocompleteIndividu;
+    private array $etablissementsInscription;
     private array $etablissements;
     private array $ecolesDoctorales;
     private array $unitesRecherche;
+
+    public function setEtablissementsInscriptions(array $etablissementsInscription): void
+    {
+        $options = [];
+        foreach ($etablissementsInscription as $etablissementInscription) {
+            $sigle = $etablissementInscription->getStructure()?->getSigle() ? " (".$etablissementInscription->getStructure()->getSigle().")" : null;
+            $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()?->getLibelle() . $sigle;
+        }
+        $this->etablissementsInscription = $options;
+    }
 
     public function setEtablissements(array $etablissements): void
     {
@@ -172,6 +183,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
             ]);
         $this->add($individu);
 
+        $etablissements = $prefixe === 'directeur' ? $this->etablissementsInscription : $this->etablissements;
         $this->add([
             'type' => ObjectSelect::class,
             'name' => $prefixe . '-etablissement',
@@ -179,7 +191,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'target_class' => Etablissement::class,
-                'value_options' => $this->etablissements,
+                'value_options' => $etablissements,
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [
