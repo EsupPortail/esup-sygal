@@ -117,8 +117,9 @@ class MembreService {
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
             ->addSelect('proposition')->join('membre.proposition', 'proposition')
             ->addSelect('qualite')->join('membre.qualite', 'qualite')
-            ->addSelect('acteur')->join('membre.acteur', 'acteur')
-            ->addSelect('individu')->join('acteur.individu', 'individu');
+            // le reste est en "left join" car le Membre peut ne pas encore être lié à un Acteur
+            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ->addSelect('individu')->leftJoin('acteur.individu', 'individu');
 
         return $qb;
     }
@@ -230,14 +231,21 @@ class MembreService {
      */
     public function findAllMembresPouvantEtrePresidentDuJury(Proposition $proposition) : array
     {
+        /** @var DefaultQueryBuilder $qb */
+        $qb = $this->entityManager->getRepository(Membre::class)->createQueryBuilder("membre")
+            ->addSelect('proposition')->join('membre.proposition', 'proposition')
+            ->addSelect('qualite')->join('membre.qualite', 'qualite')
+            ->addSelect('acteur')->join('membre.acteur', 'acteur') // NB : une Acteur doit avoir été associé au Membre
+            ->addSelect('individu')->join('acteur.individu', 'individu');
+
         // peuvent être président du jury les membres de rang A
-        $qb = $this->createQueryBuilder()
+        $qb
             ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
             ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
             ->andWhereNotHistorise('membre')
             ->addOrderBy('membre.nom', 'ASC');
 
-        return  $qb->getQuery()->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /** FACADE ********************************************************************************************************/
