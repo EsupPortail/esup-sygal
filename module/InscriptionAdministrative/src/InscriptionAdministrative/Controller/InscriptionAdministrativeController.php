@@ -5,23 +5,23 @@ namespace InscriptionAdministrative\Controller;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Process\Reception\ReceptionProcessAwareTrait;
-use InscriptionAdministrative\Process\Reception\ReceptionProcessResult;
-use InscriptionAdministrative\Rule\Reception\ReceptionRuleAwareTrait;
+use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManagerAwareTrait;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
-use RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 
 class InscriptionAdministrativeController extends AbstractController
 {
-    use ReceptionRuleAwareTrait;
     use InscriptionAdministrativeServiceAwareTrait;
     use AdmissionServiceAwareTrait;
+    use DoctorantServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
 
+    use ReceptionRulePluginManagerAwareTrait;
     use ReceptionProcessAwareTrait;
 
     private InscriptionAdministrative $inscriptionAdministrative;
@@ -35,16 +35,19 @@ class InscriptionAdministrativeController extends AbstractController
     {
         $id = $this->params('id');
 
-        /** @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscriptionAdministrative */
         $this->inscriptionAdministrative = $this->inscriptionAdministrativeService->getRepository()->findOneById($id);
+        $inscriptionAdministrativeApprenant = $this->inscriptionAdministrative->getInscriptionAdministrativeApprenant();
 
-        $admission = $this->admissionService->getRepository()->findOneByNumeroCandidature(
-            $this->inscriptionAdministrative->getNoCandidat()
-        );
+        $admission = $this->admissionService->getRepository()->findOneByNumeroCandidature($this->inscriptionAdministrative->getNoCandidat());
+        $doctorantTrouveAvecCode = $this->doctorantService->getRepository()->findOneByCodeApprenant($inscriptionAdministrativeApprenant->getCode());
+        $doctorantTrouveAvecINE = $this->doctorantService->getRepository()->findOneByIne($inscriptionAdministrativeApprenant->getINE());
 
         $vm = new ViewModel([
             'inscriptionAdministrative' => $this->inscriptionAdministrative,
+            'inscriptionAdministrativeApprenant' => $inscriptionAdministrativeApprenant,
             'admission' => $admission,
+            'doctorantTrouveAvecCode' => $doctorantTrouveAvecCode,
+            'doctorantTrouveAvecINE' => $doctorantTrouveAvecINE,
             'anneeUnivService' => $this->anneeUnivService,
         ]);
 
@@ -57,13 +60,13 @@ class InscriptionAdministrativeController extends AbstractController
     private function createReceptionProcessChildModel(): ViewModel
     {
         // Lancement de la Rule pour savoir si les conditions pour créer la thèse et le doctorant sont rassemblées.
-        $this->receptionRule->setInscriptionAdministrative($this->inscriptionAdministrative);
-        $this->receptionRule->execute();
+        $receptionRule = $this->receptionRulePluginManager->getRuleForInscriptionAdministrative($this->inscriptionAdministrative);
+        $receptionRule->execute();
 
         $childModel = new ViewModel();
         $childModel->setVariables([
             'inscriptionAdministrative' => $this->inscriptionAdministrative,
-            'receptionRule' => $this->receptionRule,
+            'receptionRule' => $receptionRule,
         ]);
         $childModel->setTemplate('inscription-administrative/inscription-administrative/partial/reception-process');
 
@@ -94,15 +97,6 @@ class InscriptionAdministrativeController extends AbstractController
 
 //        return $this->redirect()->toRoute('these/identite', ['these' => $result->getCreatedThese()->getId()]);
         return $this->redirect()->toRoute('inscription-administrative/voir', ['id' => $this->inscriptionAdministrative->getId()]);
-    }
-
-    private function runReceptionProcess(bool $dryRun = false): ReceptionProcessResult
-    {
-        $this->receptionProcess->setInscriptionAdministrative($this->inscriptionAdministrative);
-        $this->receptionProcess->setDryRun($dryRun);
-        $this->receptionProcess->run();
-
-        return $this->receptionProcess->getResult();
     }
 
     private function getRequestedInscriptionAdministrative(): ?InscriptionAdministrative

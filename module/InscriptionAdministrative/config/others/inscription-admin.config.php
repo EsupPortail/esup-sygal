@@ -12,6 +12,11 @@ use InscriptionAdministrative\Process\Reception\ReceptionProcess;
 use InscriptionAdministrative\Process\Reception\ReceptionProcessFactory;
 use InscriptionAdministrative\Rule\Reception\ReceptionRule;
 use InscriptionAdministrative\Rule\Reception\ReceptionRuleFactory;
+use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager;
+use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManagerFactory;
+use InscriptionAdministrative\Rule\Reception\StatutAnnulee\StatutAnnuleeRule;
+use InscriptionAdministrative\Rule\Reception\StatutValidee\StatutValideeRule;
+use InscriptionAdministrative\Rule\Reception\StatutValidee\StatutValideeRuleFactory;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceFactory;
 use InscriptionAdministrative\Service\Search\InscriptionAdministrativeSearchService;
@@ -160,7 +165,7 @@ return [
             InscriptionAdministrativeSearchService::class => InscriptionAdministrativeSearchServiceFactory::class,
             ImportProcessListener::class => ImportProcessListenerFactory::class,
             ReceptionProcess::class => ReceptionProcessFactory::class,
-            ReceptionRule::class => ReceptionRuleFactory::class,
+            ReceptionRulePluginManager::class => ReceptionRulePluginManagerFactory::class,
         ]
     ]
 ];

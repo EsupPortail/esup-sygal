@@ -6,7 +6,7 @@ use Application\Command\Exception\ShellCommandException;
 use Retraitement\Filter\Command\RetraitementShellCommandCines;
 use UnicaenApp\Exception\RuntimeException;
 
-class CinesCommandTest extends \PHPUnit_Framework_TestCase
+class CinesCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testCheckingResourcesDoesNotFail()
     {

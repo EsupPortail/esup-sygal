@@ -2,7 +2,7 @@
 
 namespace ApplicationFunctionalTest\Command;
 
-//class ValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCase
+//class ValidationFichierCinesCommandTest extends \PHPUnit\Framework\TestCase
 //{
 //    public function test_real_web_service_call_max_time()
 //    {

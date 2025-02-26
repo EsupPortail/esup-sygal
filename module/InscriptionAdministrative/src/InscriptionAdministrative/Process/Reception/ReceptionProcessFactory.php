@@ -5,7 +5,7 @@ namespace InscriptionAdministrative\Process\Reception;
 use Admission\Service\Admission\AdmissionService;
 use Doctorant\Service\DoctorantService;
 use Individu\Service\IndividuService;
-use InscriptionAdministrative\Rule\Reception\ReceptionRule;
+use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -22,9 +22,9 @@ class ReceptionProcessFactory implements FactoryInterface
         $em = $container->get('doctrine.entitymanager.orm_default');
         $service->setEntityManager($em);
 
-        /** @var ReceptionRule $receptionRule */
-        $receptionRule = $container->get(ReceptionRule::class);
-        $service->setReceptionRule($receptionRule);
+        /** @var \InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager $receptionRulePluginManager */
+        $receptionRulePluginManager = $container->get(ReceptionRulePluginManager::class);
+        $service->setReceptionRulePluginManager($receptionRulePluginManager);
 
         /** @var InscriptionAdministrativeService $inscriptionAdministrativeService */
         $inscriptionAdministrativeService = $container->get(InscriptionAdministrativeService::class);

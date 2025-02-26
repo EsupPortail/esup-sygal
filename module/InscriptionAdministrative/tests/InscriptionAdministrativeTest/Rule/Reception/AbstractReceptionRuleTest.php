@@ -2,54 +2,27 @@
 
 namespace InscriptionAdministrativeTest\Rule\Reception;
 
-use Admission\Entity\Db\Repository\AdmissionRepository;
-use Admission\Service\Admission\AdmissionService;
-use Doctorant\Entity\Db\Repository\DoctorantRepository;
-use Doctorant\Service\DoctorantService;
-use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
-use InscriptionAdministrative\Rule\Reception\ReceptionRule;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\Stub;
-use PHPUnit\Framework\TestCase;
-use These\Entity\Db\Repository\TheseRepository;
-use These\Service\These\TheseService;
+use InscriptionAdministrative\Rule\Reception\AbstractReceptionRule;
+use InscriptionAdministrative\Rule\Reception\ReceptionRuleInterface;
+use InvalidArgumentException;
 
-abstract class AbstractReceptionRuleTest extends TestCase
+class AbstractReceptionRuleTest extends ReceptionRuleAbstractTest
 {
-    protected DoctorantService|Stub $doctorantService;
-    protected TheseService|Stub $theseService;
-    protected AdmissionService|Stub $admissionService;
-
-    protected DoctorantRepository|Stub $doctorantRepository;
-    protected TheseRepository|Stub $theseRepository;
-    protected AdmissionRepository|Stub $admissionRepository;
-
-    protected InscriptionAdministrative|MockObject $ia;
-
-
-    protected function setUp(): void
+    public function test_inscription_sans_apprenant_throws_exception(): void
     {
-        $this->doctorantRepository = $this->createStub(DoctorantRepository::class);
-        $this->doctorantService = $this->createStub(DoctorantService::class);
-        $this->doctorantService->method('getRepository')->willReturn($this->doctorantRepository);
+        $this->ia->expects(static::once())->method('getInscriptionAdministrativeApprenant')->willReturn(null);
 
-        $this->theseRepository = $this->createStub(TheseRepository::class);
-        $this->theseService = $this->createStub(TheseService::class);
-        $this->theseService->method('getRepository')->willReturn($this->theseRepository);
+        $this->expectException(InvalidArgumentException::class);
 
-        $this->admissionRepository = $this->createStub(AdmissionRepository::class);
-        $this->admissionService = $this->createStub(AdmissionService::class);
-        $this->admissionService->method('getRepository')->willReturn($this->admissionRepository);
-
-        $this->ia = $this->createMock(InscriptionAdministrative::class);
+        $rule = $this->createRule();
+        $rule->setInscriptionAdministrative($this->ia);
+        $rule->execute();
     }
 
-    protected function createRule(): ReceptionRule
+    protected function createRule(): ReceptionRuleInterface
     {
-        $rule = new ReceptionRule();
-        $rule->setDoctorantService($this->doctorantService);
-        $rule->setTheseService($this->theseService);
-        $rule->setAdmissionService($this->admissionService);
+        $rule = $this->getMockForAbstractClass(AbstractReceptionRule::class);
+        $rule->setDoctorantUpdateEnabled();
 
         return $rule;
     }

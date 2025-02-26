@@ -4,8 +4,9 @@ namespace InscriptionAdministrative\Controller;
 
 use Admission\Service\Admission\AdmissionService;
 use Application\Service\AnneeUniv\AnneeUnivService;
+use Doctorant\Service\DoctorantService;
 use InscriptionAdministrative\Process\Reception\ReceptionProcess;
-use InscriptionAdministrative\Rule\Reception\ReceptionRule;
+use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use Psr\Container\ContainerInterface;
 
@@ -23,9 +24,9 @@ class InscriptionAdministrativeControllerFactory
         $inscriptionAdministrativeService = $container->get(InscriptionAdministrativeService::class);
         $controller->setInscriptionAdministrativeService($inscriptionAdministrativeService);
 
-        /** @var ReceptionRule $receptionRule */
-        $receptionRule = $container->get(ReceptionRule::class);
-        $controller->setReceptionRule($receptionRule);
+        /** @var \InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager $receptionRulePluginManager */
+        $receptionRulePluginManager = $container->get(ReceptionRulePluginManager::class);
+        $controller->setReceptionRulePluginManager($receptionRulePluginManager);
 
         /** @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService */
         $anneeUnivService = $container->get(AnneeUnivService::class);
@@ -34,6 +35,10 @@ class InscriptionAdministrativeControllerFactory
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);
         $controller->setAdmissionService($admissionService);
+
+        /** @var DoctorantService $doctorantService */
+        $doctorantService = $container->get(DoctorantService::class);
+        $controller->setDoctorantService($doctorantService);
 
         /** @var ReceptionProcess $receptionProcess */
         $receptionProcess = $container->get(ReceptionProcess::class);

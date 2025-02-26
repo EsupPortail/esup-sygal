@@ -4,9 +4,9 @@ namespace InscriptionAdministrative\Rule\Reception;
 
 trait ReceptionRuleAwareTrait
 {
-    protected ReceptionRule $receptionRule;
+    protected ReceptionRuleInterface $receptionRule;
 
-    public function setReceptionRule(ReceptionRule $receptionRule): void
+    public function setReceptionRule(ReceptionRuleInterface $receptionRule): void
     {
         $this->receptionRule = $receptionRule;
     }

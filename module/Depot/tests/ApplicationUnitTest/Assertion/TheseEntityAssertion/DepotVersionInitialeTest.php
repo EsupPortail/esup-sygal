@@ -9,7 +9,7 @@ use ApplicationUnitTest\TheseProphetTrait;
 use ApplicationUnitTest\UserContextServiceProphetTrait;
 use Prophecy\Prophet;
 
-class DepotVersionInitialeTest extends \PHPUnit_Framework_TestCase
+class DepotVersionInitialeTest extends \PHPUnit\Framework\TestCase
 {
     use TheseProphetTrait;
     use UserContextServiceProphetTrait;

@@ -8,13 +8,15 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Exception;
 use Individu\Service\IndividuServiceAwareTrait;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
 use InscriptionAdministrative\Entity\Db\Traits\InscriptionAdministrativeAwareTrait;
 use InscriptionAdministrative\Process\AbstractProcess;
-use InscriptionAdministrative\Rule\Reception\ReceptionRuleAwareTrait;
+use InscriptionAdministrative\Rule\Reception\ReceptionRuleInterface;
+use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManagerAwareTrait;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceAwareTrait;
-use RuntimeException;
+use InvalidArgumentException;
 use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
 use These\Service\These\TheseServiceAwareTrait;
@@ -24,7 +26,8 @@ use Webmozart\Assert\Assert;
 
 class ReceptionProcess extends AbstractProcess
 {
-    use ReceptionRuleAwareTrait;
+    use ReceptionRulePluginManagerAwareTrait;
+
     use InscriptionAdministrativeServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use DoctorantServiceAwareTrait;
@@ -42,25 +45,31 @@ class ReceptionProcess extends AbstractProcess
     private ?These $these = null;
     private ?TheseAnneeUniv $theseAnneeUniv = null;
 
+    private ReceptionRuleInterface $receptionRule;
+
     private ReceptionProcessResult $result;
+
+    public function setInscriptionAdministrative(InscriptionAdministrative $inscriptionAdministrative): void
+    {
+        $this->inscriptionAdministrative = $inscriptionAdministrative;
+
+        /** @var InscriptionAdministrativeApprenant $iaApprenant */
+        $iaApprenant = $this->inscriptionAdministrative->getInscriptionAdministrativeApprenant();
+        if ($iaApprenant === null) {
+            throw new InvalidArgumentException("Anomalie : l'IA n'est liée à aucun apprenant");
+        }
+
+        $this->inscriptionAdministrativeApprenant = $iaApprenant;
+    }
 
     /**
      * Point d'entrée.
      */
     public function run(): void
     {
-        $this->receptionRule->setInscriptionAdministrative($this->inscriptionAdministrative);
-        $this->receptionRule->execute();
+        $this->receptionRule = $this->receptionRulePluginManager->getRuleForInscriptionAdministrative($this->inscriptionAdministrative);
 
         $this->result = new ReceptionProcessResult();
-
-        /** @var InscriptionAdministrativeApprenant $iaApprenant */
-        $iaApprenant = $this->inscriptionAdministrative->getInscriptionAdministrativeApprenant();
-        if ($iaApprenant === null) {
-            throw new RuntimeException("Anomalie : l'IA n'est liée à aucun apprenant");
-        }
-
-        $this->inscriptionAdministrativeApprenant = $iaApprenant;
 
         $this->beginTransaction();
         try {
@@ -90,18 +99,20 @@ class ReceptionProcess extends AbstractProcess
      */
     private function process(): void
     {
+        $this->receptionRule->execute();
+
         if ($this->receptionRule->canCreateDoctorant()) {
-            $this->createDoctorantFromApprenant();
+            $this->createDoctorant();
         } else {
-            $this->doctorant = $this->receptionRule->getDoctorant();
+            $this->doctorant = $this->receptionRule->getFoundDoctorant();
         }
 
         if ($this->receptionRule->canUpdateDoctorant()) {
-            $this->updateDoctorantFromApprenant();
+            $this->updateDoctorant();
             // NB : la mise à jour complète du doctorant inclue la màj du code apprenant
         } else {
-            if ($this->receptionRule->canUpdateCodeApprenantDoctorantFromApprenant()) {
-                $this->updateCodeApprenantDoctorantFromApprenant();
+            if ($this->receptionRule->canUpdateCodeApprenantDoctorant()) {
+                $this->updateCodeApprenantDoctorant();
             }
         }
 
@@ -110,14 +121,14 @@ class ReceptionProcess extends AbstractProcess
         }
 
         if ($this->receptionRule->canCreateThese()) {
-            $this->admission = $this->receptionRule->getAdmission();
-            $this->createTheseFromAdmission();
+            $this->admission = $this->receptionRule->getFoundAdmission();
+            $this->createThese();
         } else {
-            $this->these = $this->receptionRule->getThese(); // évite de fetcher à nouveau la thèse
+            $this->these = $this->receptionRule->getFoundThese(); // évite de fetcher à nouveau la thèse
         }
 
         if ($this->receptionRule->canCreateTheseAnneeUniv()) {
-            $this->createTheseAnneeUnivFromInscriptionAdministrative();
+            $this->createTheseAnneeUniv();
         }
         if ($this->receptionRule->canLinkTheseAnneeUnivToInscriptionAdministrative()) {
             $this->linkTheseAnneeUnivToInscriptionAdministrative();
@@ -128,7 +139,13 @@ class ReceptionProcess extends AbstractProcess
         }
     }
 
-    private function createDoctorantFromApprenant(): void
+    public function getResult(): ReceptionProcessResult
+    {
+        return $this->result;
+    }
+
+
+    private function createDoctorant(): void
     {
         $etablissement = $this->inscriptionAdministrativeApprenant->getSource()->getEtablissement();
 
@@ -147,7 +164,7 @@ class ReceptionProcess extends AbstractProcess
         $this->result->setDoctorant($this->doctorant);
     }
 
-    private function updateDoctorantFromApprenant(): void
+    private function updateDoctorant(): void
     {
         $individu = $this->doctorant->getIndividu();
         $this->individuService->updateIndividuFromApprenant($individu, $this->inscriptionAdministrativeApprenant);
@@ -165,7 +182,7 @@ class ReceptionProcess extends AbstractProcess
         $this->result->setDoctorant($this->doctorant);
     }
 
-    private function createTheseFromAdmission(): void
+    private function createThese(): void
     {
         $this->these = $this->theseService->newTheseFromAdmission($this->admission, $this->doctorant);
         $this->theseService->saveThese($this->these);
@@ -180,7 +197,7 @@ class ReceptionProcess extends AbstractProcess
         $this->result->setCreatedThese($this->these);
     }
 
-    private function createTheseAnneeUnivFromInscriptionAdministrative(): void
+    private function createTheseAnneeUniv(): void
     {
         Assert::notNull($this->these, "Incohérence dans l'algo : une thèse devrait être dispo !"); // todo : généraliser ce type de vérif ?
 
@@ -203,7 +220,7 @@ class ReceptionProcess extends AbstractProcess
 
     private function linkTheseAnneeUnivToInscriptionAdministrative(): void
     {
-        $this->theseAnneeUniv = $this->receptionRule->getTheseAnneeUniv();
+        $this->theseAnneeUniv = $this->receptionRule->getFoundTheseAnneeUniv();
         $this->theseAnneeUniv->setInscriptionAdministrative($this->inscriptionAdministrative);
         $this->theseAnneeUnivService->save($this->theseAnneeUniv);
 
@@ -214,7 +231,7 @@ class ReceptionProcess extends AbstractProcess
         $this->result->addMessage($message, MessageAwareInterface::INFO);
     }
 
-    private function updateCodeApprenantDoctorantFromApprenant(): void
+    private function updateCodeApprenantDoctorant(): void
     {
         $codeApprenant = $this->inscriptionAdministrativeApprenant->getCode();
         $this->doctorant->setCodeApprenantInSource($codeApprenant);
@@ -255,24 +272,5 @@ class ReceptionProcess extends AbstractProcess
             $this->admission->getId(),
         );
         $this->result->addMessage($message, MessageAwareInterface::INFO);
-    }
-
-
-    /************************************************ IA annulée ****************************************************/
-
-    /**
-     * Cas d'une IA annulée.
-     */
-    private function processInscriptionAnnulee(): void
-    {
-        // ?
-    }
-
-
-    /************************************************ Communs ****************************************************/
-
-    public function getResult(): ReceptionProcessResult
-    {
-        return $this->result;
     }
 }

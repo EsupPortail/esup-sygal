@@ -5,7 +5,7 @@ namespace ApplicationFunctionalTest\Command;
 use Application\Command\CheckWSValidationFichierCinesCommand;
 use Application\Command\ShellCommandRunner;
 
-class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCase
+class CheckWSValidationFichierCinesCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function test_throws_exception_if_sample_file_not_found()
     {
@@ -124,7 +124,7 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
         return $filePath;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (file_exists($path = sys_get_temp_dir() . '/fake_script.sh')) {
             unlink($path);

@@ -1,6 +1,6 @@
 <?php
 
-namespace InscriptionAdministrative\Rule\Reception;
+namespace InscriptionAdministrative\Rule\Reception\StatutValidee;
 
 use Admission\Service\Admission\AdmissionService;
 use Doctorant\Service\DoctorantService;
@@ -10,11 +10,11 @@ use Psr\Container\ContainerInterface;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
-class ReceptionRuleFactory implements FactoryInterface
+class StatutValideeRuleFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): ReceptionRule
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): StatutValideeRule
     {
-        $rule = new ReceptionRule();
+        $rule = new StatutValideeRule();
 
         /** @var IndividuService $individuService */
         $individuService = $container->get(IndividuService::class);

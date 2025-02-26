@@ -145,7 +145,7 @@ create or replace view src_these as
 EOS;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -157,7 +157,7 @@ EOS;
     /**
      * @throws \Exception
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->restoreSrcTheseView();
 

@@ -1,6 +1,8 @@
 <?php
 /**
  * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant $inscriptionAdministrativeApprenant
+ * @var \Doctorant\Entity\Db\Doctorant|null $doctorantTrouveAvecCode
+ * @var \Doctorant\Entity\Db\Doctorant|null $doctorantTrouveAvecINE
  */
 ?>
 
@@ -24,9 +26,27 @@
     <dt class="col-md-5">Genre</dt>
     <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getGenre() ?: '-' ?></dd>
     <dt class="col-md-5"><abbr title="Code Apprenant <?php echo $inscriptionAdministrativeApprenant->getSource()->getCode() ?>">Code Apprenant</abbr></dt>
-    <dd class="col-md-7"><code><?php echo $inscriptionAdministrativeApprenant->getCode() ?></code></dd>
+    <dd class="col-md-7">
+        <code><?php echo $inscriptionAdministrativeApprenant->getCode() ?></code>
+        <div class="text-info text-sm">
+            <?php if ($doctorantTrouveAvecCode === null): ?>
+                <span class="icon icon-info"></span> Aucun doctorant trouvé avec ce code.
+            <?php else: ?>
+                <span class="icon icon-info"></span> Doctorant trouvé avec ce code.
+            <?php endif; ?>
+        </div>
+    </dd>
     <dt class="col-md-5">N° INE</dt>
-    <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getINE() ?></dd>
+    <dd class="col-md-7">
+        <?php echo $inscriptionAdministrativeApprenant->getINE() ?>
+        <div class="text-info text-sm">
+            <?php if ($doctorantTrouveAvecINE === null): ?>
+                <span class="icon icon-info"></span> Aucun doctorant trouvé avec cet INE.
+            <?php else: ?>
+                <span class="icon icon-info"></span> Doctorant trouvé avec cet INE.
+            <?php endif; ?>
+        </div>
+    </dd>
     <dt class="col-md-5">Adresse mail perso</dt>
     <dd class="col-md-7"><?php echo $inscriptionAdministrativeApprenant->getMailPersonnel() ?: '-' ?></dd>
     <!--            <dt class=col-md-5>mailUrgence</dt>-->

@@ -8,7 +8,7 @@ use DateTime;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 
-class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework_TestCase
+class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit\Framework\TestCase
 {
     public function test_retourne_date_null_si_date_butoire_null()
     {

@@ -1,99 +1,33 @@
 <?php
 
-namespace InscriptionAdministrative\Rule\Reception;
+namespace InscriptionAdministrative\Rule\Reception\StatutValidee;
 
 use Admission\Entity\Db\Admission;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Entity\AnneeUniv;
-use Application\MessageAwareTrait;
-use Application\Rule\RuleInterface;
-use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
-use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
-use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
-use InscriptionAdministrative\Entity\Db\Traits\InscriptionAdministrativeAwareTrait;
+use InscriptionAdministrative\Rule\Reception\AbstractReceptionRule;
 use InvalidArgumentException;
-use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
 use These\Service\These\TheseServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
-use UnicaenApp\Traits\MessageAwareInterface;
 
-class ReceptionRule implements RuleInterface
+class StatutValideeRule extends AbstractReceptionRule
 {
-    use MessageAwareTrait;
-
     use IndividuServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use TheseServiceAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
     use AdmissionServiceAwareTrait;
 
-    use InscriptionAdministrativeAwareTrait;
-
     const ANOMALIE_UNE_ADMISSION_EXISTE_POUR_LE_DOCTORANT_MAIS_ELLE_N_EST_PAS_VALIDEE =
         "Anomalie ? Une admission existe pour le doctorant  mais elle n'est pas validée.";
     const ANOMALIE_IA_CONCERNANT_UN_DOCTORANT_CONNU_CODE_APPRENANT_MAIS_N_AYANT_NI_THESE_NI_ADMISSION =
-        "Anomalie ? IA concernant un doctorant connu (code apprenant) mais n'ayant ni thèse ni admission";
+        "Anomalie ? IA concernant un doctorant connu (code apprenant) mais n'ayant ni thèse ni admission.";
     const PB_LE_DOCTORANT_POSSEDE_PLUSIEURS_THESES_EN_COURS =
         "Problème ! Le doctorant possède plusieurs thèses en cours.";
-
-    /**
-     * Active ou non la mise à jour du doctorant lorsque c'est possible.
-     * Mise à jour à partir des données "apprenant".
-     */
-    protected bool $doctorantUpdateEnabled;
-
-    private InscriptionAdministrativeApprenant $inscriptionAdministrativeApprenant;
-    private ?InscriptionAdministrativeDoctorant $inscriptionAdministrativeDoctorant;
-
-    private ?Admission $admission;
-    private ?Doctorant $doctorant;
-    private ?These $these;
-    private ?TheseAnneeUniv $theseAnneeUniv;
-
-    private bool $canCreateThese;
-    private bool $canCreateTheseAnneeUniv;
-    private bool $canCreateDoctorant;
-    private bool $canApplyCodeApprenantToDoctorant;
-    private bool $canCreateLinkInscriptionAdministrativeDoctorant;
-    private bool $canLinkAdmissionToDoctorant;
-    private bool $canLinkTheseAnneeUnivToInscriptionAdministrative;
-    private bool $canUpdateDoctorant;
-
-    private string $messageSeverityForAction = MessageAwareInterface::INFO;
-    private string $messageSeverityForWarning = MessageAwareInterface::WARNING;
-
-
-    public function setInscriptionAdministrative(InscriptionAdministrative $inscriptionAdministrative): void
-    {
-        $this->inscriptionAdministrative = $inscriptionAdministrative;
-        $this->reset();
-    }
-
-    protected function reset(): void
-    {
-        $this->canCreateThese = false;
-        $this->canCreateTheseAnneeUniv = false;
-        $this->canCreateDoctorant = false;
-        $this->canApplyCodeApprenantToDoctorant = false;
-        $this->canCreateLinkInscriptionAdministrativeDoctorant = false;
-        $this->canLinkAdmissionToDoctorant = false;
-        $this->canLinkTheseAnneeUnivToInscriptionAdministrative = false;
-        $this->canUpdateDoctorant = false;
-    }
-
-    /**
-     * Active ou non la mise à jour du doctorant lorsque c'est possible.
-     * Mise à jour à partir des données "apprenant".
-     */
-    public function setDoctorantUpdateEnabled(bool $doctorantUpdateEnabled = true): static
-    {
-        $this->doctorantUpdateEnabled = $doctorantUpdateEnabled;
-        return $this;
-    }
 
     /**
      * Point d'entrée.
@@ -102,40 +36,23 @@ class ReceptionRule implements RuleInterface
      */
     public function execute(): void
     {
-        $this->reset();
+        parent::execute();
 
-        /** @var InscriptionAdministrativeApprenant $iaApprenant */
-        $iaApprenant = $this->inscriptionAdministrative->getInscriptionAdministrativeApprenant();
-        if ($iaApprenant === null) {
-            throw new InvalidArgumentException("Anomalie : l'IA n'est liée à aucun apprenant");
-        }
-
-        $this->inscriptionAdministrativeApprenant = $iaApprenant;
-
-        // IA validée ou annulée ?
-        if ($this->inscriptionAdministrative->estValidee()) {
-            $this->processInscriptionValidee();
-        } elseif ($this->inscriptionAdministrative->estAnnulee()) {
-            $this->processInscriptionAnnulee();
-        } else {
+        if (!$this->inscriptionAdministrative->estValidee()) {
             throw new InvalidArgumentException("Statut inscription inattendu");
         }
+
+        $this->processInscriptionValidee();
     }
-
-
-
-    /****************************************************************************************************************
-     **                                               IA validée                                                   **
-     ****************************************************************************************************************/
 
     private function processInscriptionValidee(): void
     {
         // IA déjà liée à un doctorant ?
-        // (n'a pas de sens pour une IA en cours de réception mais pas très grave)
+        // (n'a pas de sens pour une IA en cours de réception mais pas très grave, on généralise)
         /** @var InscriptionAdministrativeDoctorant $iad */
         $this->inscriptionAdministrativeDoctorant = $this->inscriptionAdministrative->getInscriptionAdministrativeDoctorant();
         if ($this->inscriptionAdministrativeDoctorant !== null) {
-            $this->doctorant = $this->inscriptionAdministrativeDoctorant->getDoctorant();
+            $this->foundDoctorant = $this->inscriptionAdministrativeDoctorant->getDoctorant();
             /*** Un doctorant existe avec ce code apprenant ***/
             // la suite est la même que lorsqu'un doctorant est trouvé avec le code apprenant
             $this->processInscriptionDejaLieeAUnDoctorant();
@@ -144,10 +61,10 @@ class ReceptionRule implements RuleInterface
 
         // Doctorant existant avec le même code apprenant ?
         $codeApprenant = $this->inscriptionAdministrativeApprenant->getCode();
-        $this->doctorant = $this->doctorantService->getRepository()->findOneByCodeApprenant($codeApprenant);
-        if ($this->doctorant !== null) {
+        $this->foundDoctorant = $this->doctorantService->getRepository()->findOneByCodeApprenant($codeApprenant);
+        if ($this->foundDoctorant !== null) {
             /*** Un doctorant existe avec ce code apprenant ***/
-            $this->processDoctorantExistantAvecCodeApprenant();
+            $this->processDoctorantExistant();
         } else {
             /*** Aucun doctorant avec ce code apprenant ***/
             $this->processDoctorantInconnuAvecCodeApprenant();
@@ -161,33 +78,35 @@ class ReceptionRule implements RuleInterface
     private function processInscriptionDejaLieeAUnDoctorant(): void
     {
         // la suite est la même que lorsqu'un doctorant est trouvé avec le code apprenant
-        $this->processDoctorantExistantAvecCodeApprenant();
+        $this->processDoctorantExistant();
     }
 
     /**
      * Cas de figure où un doctroant existe avec le code apprenant figurant dans l'IA.
      */
-    private function processDoctorantExistantAvecCodeApprenant(): void
+    private function processDoctorantExistant(): void
     {
         // Mise à jour (si mécanisme activé) du doctorant à partir des données Apprenant
         if ($this->doctorantUpdateEnabled) {
-            $this->updateDoctorantFromApprenant();
+            $this->setCanUpdateDoctorant();
         }
 
         // Thèse existante pour ce doctorant ?
-        $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->doctorant);
+        $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->foundDoctorant);
         if (count($theses) === 0) {
             /*** Aucune these trouvée pour ce doctorant ***/
-            // Admission existante pour ce doctorant ?
-            $this->admission = $this->admissionService->getRepository()->findOneByDoctorant($this->doctorant);
+            $this->foundThese = null;
 
-            if ($this->admission !== null) {
-                if ($this->admission->getEtat()->getCode() === Admission::ETAT_VALIDE) {
+            // Admission existante pour ce doctorant ?
+            $this->foundAdmission = $this->admissionService->getRepository()->findOneByDoctorant($this->foundDoctorant);
+
+            if ($this->foundAdmission !== null) {
+                if ($this->foundAdmission->getEtat()->getCode() === Admission::ETAT_VALIDE) {
                     /*** L'admission est validée ***/
                     // Création de la thèse à partir de l'Admission
-                    $this->createTheseFromAdmission();
+                    $this->setCanCreateThese();
                     // Créer une TheseAnneeUniv
-                    $this->createTheseAnneeUniv();
+                    $this->setCanCreateTheseAnneeUniv();
                 } else {
                     /*** L'admission n'est pas encore validée : anomalie ? ***/
                     $this->addMessage(
@@ -206,34 +125,35 @@ class ReceptionRule implements RuleInterface
             /*** Thèses en cours trouvées ***/
             if (count($theses) > 1) {
                 /*** Plusieurs thèses en cours trouvées pour un même doctorant : pb pour gérer l'année universitaire ! ***/
+                $this->foundThese = $theses[0];
                 $this->addMessage(
                     self::PB_LE_DOCTORANT_POSSEDE_PLUSIEURS_THESES_EN_COURS . " L'année universitaire ne sera pas créée/màj.",
                     $this->messageSeverityForWarning
                 );
             } else {
                 /*** Une seule thèse : cool ***/
-                $this->these = $theses[0];
+                $this->foundThese = $theses[0];
                 $annee = $this->inscriptionAdministrative->getPeriodeAnneeUniversitaire();
                 $theseAnneeUnivExistante =
-                    $this->theseAnneeUnivService->getRepository()->findOneTheseAnneeUnivForTheseAndAnnee($this->these, $annee);
+                    $this->theseAnneeUnivService->getRepository()->findOneTheseAnneeUnivForTheseAndAnnee($this->foundThese, $annee);
                 if ($theseAnneeUnivExistante !== null) {
                     /*** Une année universitaire existe déjà pour cette thèse et cette année ***/
                     if ($theseAnneeUnivExistante->getInscriptionAdministrative() !== $this->inscriptionAdministrative) {
                         /*** L'IA liée est null ou différente ***/
                         /*** NB : on décide de ne pas distinguer les cas 'IA liée différente' et 'Aucune IA liée'. ***/
                         // Créer le lien TheseAnneeUniv-IA
-                        $this->linkTheseAnneeUnivToInscriptionAdministrative($theseAnneeUnivExistante);
+                        $this->setCanLinkTheseAnneeUnivToInscriptionAdministrative($theseAnneeUnivExistante);
                     }
                 } else {
                     /*** Pas d'année universitaire trouvée ***/
                     // Créer une TheseAnneeUniv
-                    $this->createTheseAnneeUniv();
+                    $this->setCanCreateTheseAnneeUniv();
                 }
             }
         }
 
         // Créer le lien IA-Doctorant si besoin
-        $this->createLinkInscriptionAdministrativeDoctorant();
+        $this->setCanCreateLinkInscriptionAdministrativeDoctorant();
     }
 
     /**
@@ -241,66 +161,69 @@ class ReceptionRule implements RuleInterface
      */
     private function processDoctorantInconnuAvecCodeApprenant(): void
     {
+        // doctorant inconnu => thèse inconnue
+        $this->foundThese = null;
+
         // Admission existante avec ce numéro candidat ?
         // (Remarque : Un numéro candidat est forcément présent, d'après le contrat d'interface Pégase.)
-        $this->admission = $this->admissionService->getRepository()->findOneByNumeroCandidature($this->inscriptionAdministrative->getNoCandidat());
+        $this->foundAdmission = $this->admissionService->getRepository()->findOneByNumeroCandidature($this->inscriptionAdministrative->getNoCandidat());
 
-        if ($this->admission !== null) {
+        if ($this->foundAdmission !== null) {
             /*** Admission trouvée avec ce numéro candidat ***/
-            if ($this->admission->getEtat()->getCode() !== Admission::ETAT_VALIDE) {
+            if ($this->foundAdmission->getEtat()->getCode() !== Admission::ETAT_VALIDE) {
                 /*** L'admission n'est pas validée ***/
                 // C'est anormal : rejet de l'IA !
                 throw new InvalidArgumentException("Admission non encore validée !");
             }
 
             // Admission déjà liée à un doctorant ?
-            if (($doctorant = $this->admission->getDoctorant()) !== null) {
+            if (($doctorant = $this->foundAdmission->getDoctorant()) !== null) {
                 /*** Admission déjà liée à un doctorant ***/
                 // Créer le lien IA-Doctorant si besoin
-                $this->doctorant = $doctorant;
-                $this->createLinkInscriptionAdministrativeDoctorant();
+                $this->foundDoctorant = $doctorant;
+                $this->setCanCreateLinkInscriptionAdministrativeDoctorant();
             } else {
                 /*** Admission non liée à un doctorant ***/
                 // Créer Doctorant
-                $this->createDoctorantFromApprenant();
+                $this->setCanCreateDoctorant();
                 // Créer These
-                $this->createTheseFromAdmission();
+                $this->setCanCreateThese();
                 // Créer une TheseAnneeUniv
-                $this->createTheseAnneeUniv();
+                $this->setCanCreateTheseAnneeUniv();
                 // Lier Admission au Doctorant
-                $this->linkAdmissionToDoctorant();
+                $this->setCanLinkAdmissionToDoctorant();
             }
         } else {
             /*** Aucune Admission trouvée avec ce numéro candidat ***/
             // Doctorant existant avec cet INE ?
-            $this->doctorant = $this->doctorantService->getRepository()->findOneByIne(
+            $this->foundDoctorant = $this->doctorantService->getRepository()->findOneByIne(
                 $this->inscriptionAdministrativeApprenant->getIne()
             );
 
-            if ($this->doctorant !== null) {
+            if ($this->foundDoctorant !== null) {
                 /*** Doctorant trouvé avec cet INE ***/
                 // (Remarque : Le doctorant peut avoir une thèse ou pas.)
                 // Renseigner le code apprenant du doctorant
-                $this->applyCodeApprenantToDoctorant();
+                $this->setCanUpdateCodeApprenantDoctorantFromApprenant();
                 // Mise à jour (si mécanisme activé) du doctorant à partir des données Apprenant
                 if ($this->doctorantUpdateEnabled) {
-                    $this->updateDoctorantFromApprenant();
+                    $this->setCanUpdateDoctorant();
                 }
                 // Créer le lien IA-Doctorant
-                $this->createLinkInscriptionAdministrativeDoctorant();
+                $this->setCanCreateLinkInscriptionAdministrativeDoctorant();
             } else {
                 /*** Aucun Doctorant trouvé avec cet INE ***/
                 // (Remarque : Pas possible de créer la Thèse sans Admission ! Elle devra être créée manuellement.)
                 // Créer Doctorant
-                $this->createDoctorantFromApprenant();
+                $this->setCanCreateDoctorant();
             }
         }
 
         // Créer le lien IA-Doctorant si besoin
-        $this->createLinkInscriptionAdministrativeDoctorant();
+        $this->setCanCreateLinkInscriptionAdministrativeDoctorant();
     }
 
-    private function createDoctorantFromApprenant(): void
+    private function setCanCreateDoctorant(): void
     {
         $message = "Création possible d'un doctorant à partir des données sur l'apprenant.";
         $this->addMessage($message, $this->messageSeverityForAction);
@@ -308,13 +231,13 @@ class ReceptionRule implements RuleInterface
         $this->canCreateDoctorant = true;
     }
 
-    private function updateDoctorantFromApprenant(): void
+    private function setCanUpdateDoctorant(): void
     {
         $diffIndividu = $this->individuService->diffIndividuFromApprenant(
-            $this->doctorant->getIndividu(),
+            $this->foundDoctorant->getIndividu(),
             $this->inscriptionAdministrativeApprenant);
         $diffDoctorant = $this->doctorantService->diffDoctorantFromApprenant(
-            $this->doctorant,
+            $this->foundDoctorant,
             $this->inscriptionAdministrativeApprenant);
 
         if (!empty($diffIndividu) || !empty($diffDoctorant)) {
@@ -331,7 +254,7 @@ class ReceptionRule implements RuleInterface
         }
     }
 
-    private function createTheseFromAdmission(): void
+    private function setCanCreateThese(): void
     {
         $message = "Création possible d'une nouvelle thèse pour le doctorant à partir du dossier d'admission.";
         $this->addMessage($message, $this->messageSeverityForAction);
@@ -339,7 +262,7 @@ class ReceptionRule implements RuleInterface
         $this->canCreateThese = true;
     }
 
-    private function createTheseAnneeUniv(): void
+    private function setCanCreateTheseAnneeUniv(): void
     {
         $message = sprintf(
             "Création possible de l'année universitaire %s pour la thèse, à partir de la période de l'inscription administrative.",
@@ -350,20 +273,20 @@ class ReceptionRule implements RuleInterface
         $this->canCreateTheseAnneeUniv = true;
     }
 
-    private function linkTheseAnneeUnivToInscriptionAdministrative(TheseAnneeUniv $theseAnneeUniv): void
+    private function setCanLinkTheseAnneeUnivToInscriptionAdministrative(TheseAnneeUniv $theseAnneeUniv): void
     {
         $message = sprintf(
             "Création possible du lien entre l'année universitaire %s de la thèse %s et l'inscription administrative.",
             $theseAnneeUniv,
-            $theseAnneeUniv->getThese()->getId()
+            $theseAnneeUniv->getThese()
         );
         $this->addMessage($message, $this->messageSeverityForAction);
 
-        $this->theseAnneeUniv = $theseAnneeUniv;
+        $this->foundTheseAnneeUniv = $theseAnneeUniv;
         $this->canLinkTheseAnneeUnivToInscriptionAdministrative = true;
     }
 
-    private function applyCodeApprenantToDoctorant(): void
+    private function setCanUpdateCodeApprenantDoctorantFromApprenant(): void
     {
         $codeApprenant = $this->inscriptionAdministrativeApprenant->getCode();
 
@@ -373,10 +296,10 @@ class ReceptionRule implements RuleInterface
         );
         $this->addMessage($message, $this->messageSeverityForAction);
 
-        $this->canApplyCodeApprenantToDoctorant = true;
+        $this->canUpdateCodeApprenantDoctorant = true;
     }
 
-    private function createLinkInscriptionAdministrativeDoctorant(): void
+    private function setCanCreateLinkInscriptionAdministrativeDoctorant(): void
     {
         // si le lien existe déjà, noop
         if ($this->inscriptionAdministrativeDoctorant !== null) {
@@ -389,109 +312,11 @@ class ReceptionRule implements RuleInterface
         $this->canCreateLinkInscriptionAdministrativeDoctorant = true;
     }
 
-    private function linkAdmissionToDoctorant(): void
+    private function setCanLinkAdmissionToDoctorant(): void
     {
         $message = "Création possible du lien entre l'admission et le doctorant.";
         $this->addMessage($message, $this->messageSeverityForAction);
 
         $this->canLinkAdmissionToDoctorant = true;
-    }
-
-
-
-    /****************************************************************************************************************
-     **                                                  IA annulée                                                **
-     ****************************************************************************************************************/
-
-    private function processInscriptionAnnulee(): void
-    {
-        // ??
-    }
-
-
-
-
-    /************************************************ Communs ****************************************************/
-
-    public function canCreateThese(): bool
-    {
-        return $this->canCreateThese;
-    }
-
-    public function canCreateTheseAnneeUniv(): bool
-    {
-        return $this->canCreateTheseAnneeUniv;
-    }
-
-    public function canCreateDoctorant(): bool
-    {
-        return $this->canCreateDoctorant;
-    }
-
-    public function canUpdateDoctorant(): bool
-    {
-        return $this->canUpdateDoctorant;
-    }
-
-    public function canUpdateCodeApprenantDoctorantFromApprenant(): bool
-    {
-        return $this->canApplyCodeApprenantToDoctorant;
-    }
-
-    public function canCreateLinkInscriptionAdministrativeDoctorant(): bool
-    {
-        return $this->canCreateLinkInscriptionAdministrativeDoctorant;
-    }
-
-    public function canLinkAdmissionToDoctorant(): bool
-    {
-        return $this->canLinkAdmissionToDoctorant;
-    }
-
-    public function canLinkTheseAnneeUnivToInscriptionAdministrative(): bool
-    {
-        return $this->canLinkTheseAnneeUnivToInscriptionAdministrative;
-    }
-
-    public function canPerformAnyAction(): bool
-    {
-        return $this->canCreateThese
-            || $this->canCreateTheseAnneeUniv
-            || $this->canCreateDoctorant
-            || $this->canUpdateDoctorant
-            || $this->canApplyCodeApprenantToDoctorant
-            || $this->canCreateLinkInscriptionAdministrativeDoctorant
-            || $this->canLinkAdmissionToDoctorant
-            || $this->canLinkTheseAnneeUnivToInscriptionAdministrative;
-    }
-
-    public function getDoctorant(): ?Doctorant
-    {
-        return $this->doctorant;
-    }
-
-    public function getAdmission(): ?Admission
-    {
-        return $this->admission;
-    }
-
-    public function getThese(): ?These
-    {
-        return $this->these;
-    }
-
-    public function getTheseAnneeUniv(): ?TheseAnneeUniv
-    {
-        return $this->theseAnneeUniv;
-    }
-
-    public function getMessagesForActions(): array
-    {
-        return $this->getMessages($this->messageSeverityForAction);
-    }
-
-    public function getMessagesForWarnings(): array
-    {
-        return $this->getMessages($this->messageSeverityForWarning);
     }
 }

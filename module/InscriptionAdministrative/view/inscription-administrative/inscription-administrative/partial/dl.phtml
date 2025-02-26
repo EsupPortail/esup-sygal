@@ -38,17 +38,12 @@ use Application\Constants;
     <dd class="col-md-8">
         <code><?php echo $noCandidat = $inscriptionAdministrative->getNoCandidat() ?></code>
         <?php if ($admission === null): ?>
-            <div class="text-warning">
-                <span class="icon icon-attention"></span> <strong>Avertissement</strong>
-                Aucun dossier d'admission ayant le même numéro de candidature que cette inscription
-                administrative importée
-                n'a été trouvé (<?php echo $noCandidat ?>).
+            <div class="text-warning text-sm">
+                <span class="icon icon-attention"></span> Aucun dossier d'admission trouvé avec ce numéro de candidature.
             </div>
         <?php else: ?>
-            <div class="text text-success">
-                <span class="icon icon-info"></span> <strong>Information</strong>
-                Un dossier d'admission existe avec le numéro de candidature figurant sur
-                cette inscription administrative importée (<?php echo $noCandidat ?>).
+            <div class="text text-success text-sm">
+                <span class="icon icon-info"></span> Dossier d'admission trouvé avec ce numéro de candidature.
                 <!-- TODO : remplacer par l'URL de consultation du dossier d'admission quand elle existera -->
                 <a href="<?php echo $this->url('admission/ajouter', ['action' => 'etudiant', 'individu' => $admission->getIndividu()->getId()]) ?>">
                     Accéder au dossier d'admission...

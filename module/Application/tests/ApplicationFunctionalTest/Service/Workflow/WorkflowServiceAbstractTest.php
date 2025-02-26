@@ -37,7 +37,7 @@ abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase
         $this->em()->flush($this->these);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->ep()->removeNewEntities();
     }

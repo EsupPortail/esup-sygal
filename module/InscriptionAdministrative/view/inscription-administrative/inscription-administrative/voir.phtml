@@ -4,7 +4,10 @@
  *
  * @var \Application\View\Renderer\PhpRenderer $this
  * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscriptionAdministrative
- * @var \Admission\Entity\Db\Admission $admission
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant $inscriptionAdministrativeApprenant
+ * @var \Admission\Entity\Db\Admission|null $admission
+ * @var \Doctorant\Entity\Db\Doctorant|null $doctorantTrouveAvecCode
+ * @var \Doctorant\Entity\Db\Doctorant|null $doctorantTrouveAvecINE
  * @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService
  */
 
@@ -15,8 +18,6 @@ $statutInscriptionClasses = [
     InscriptionAdministrative::STATUT_INSCRIPTION_VALIDE => 'success',
     InscriptionAdministrative::STATUT_INSCRIPTION_ANNULE => 'danger',
 ];
-
-$inscriptionAdministrativeApprenant = $inscriptionAdministrative->getInscriptionAdministrativeApprenant();
 
 $this->headTitle($this->translate("IA importée") . ' ' . $inscriptionAdministrativeApprenant->getNomDeNaissance());
 ?>
@@ -37,9 +38,7 @@ $this->headTitle($this->translate("IA importée") . ' ' . $inscriptionAdministra
 
     <div class="col-md-4">
         <h2 class="first">Apprenant</h2>
-        <?php echo $this->partial('inscription-administrative/inscription-administrative-apprenant/partial/dl', [
-            'inscriptionAdministrativeApprenant' => $inscriptionAdministrativeApprenant,
-        ]); ?>
+        <?php echo $this->partial('inscription-administrative/inscription-administrative-apprenant/partial/dl'); ?>
     </div>
 
     <div class="col-md-3">

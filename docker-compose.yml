@@ -44,6 +44,7 @@ services:
      - .:/app
      - /tmp:/tmp
      - /tmp/upload:/tmp/upload
+     - $HOME/.gitconfig:/root/.gitconfig
      - $HOME/.ssh:/root/.ssh
      - $HOME/.cache/composer:/root/.cache/composer
      - $HOME/.config/composer/auth.json:/root/.config/composer/auth.json
