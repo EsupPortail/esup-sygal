@@ -14,6 +14,7 @@
 use Acteur\Entity\Db\ActeurHDR;
 use Acteur\Entity\Db\ActeurThese;
 use Application\Constants;
+use Soutenance\Entity\Etat;
 use These\Entity\Db\These;
 use Validation\Entity\Db\ValidationHDR;
 use Validation\Entity\Db\ValidationThese;
@@ -34,14 +35,18 @@ foreach ($rapporteurs as $rapporteur) {
     }
 }
 
-//si aucun engagement d'impartialité n'a encore été effectué
-if ($validatedCount === 0) {
-    $cssClass = "bg-danger";
-//Si le circuit de validations est déjà commencé
-} elseif ($validatedCount < count($acteursRapporteurs)) {
-    $cssClass = "bg-warning";
-} else {
-    $cssClass = "bg-success";
+if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE){
+    $cssClass = "bg-dark";
+}else{
+    //si aucun engagement d'impartialité n'a encore été effectué
+    if ($validatedCount === 0) {
+        $cssClass = "bg-danger";
+    //Si le circuit de validations est déjà commencé
+    } elseif ($validatedCount < count($acteursRapporteurs)) {
+        $cssClass = "bg-warning";
+    } else {
+        $cssClass = "bg-success";
+    }
 }
 
 $object = $proposition->getObject();

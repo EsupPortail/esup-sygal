@@ -9,6 +9,7 @@ use Soutenance\Controller\These\Presoutenance\PresoutenanceTheseControllerFactor
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use These\Provider\Privilege\ThesePrivileges;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
@@ -27,6 +28,7 @@ return [
                             PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                             PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                             PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
+                            ThesePrivileges::THESE_DONNER_RESULTAT
                         ],
                         'resources' => ['These'],
                         'assertion' => PresoutenanceAssertion::class,
@@ -66,6 +68,14 @@ return [
                         'transmettre-documents-direction',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
+                ],
+                [
+                    'controller' => PresoutenanceTheseController::class,
+                    'action' => [
+                        'deliberation-jury',
+                    ],
+                    'privileges' => ThesePrivileges::THESE_DONNER_RESULTAT,
+                    'assertion' => PresoutenanceAssertion::class,
                 ],
                 [
                     'controller' => PresoutenanceTheseController::class,

@@ -20,6 +20,7 @@ use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Service\Adresse\AdresseService;
 use Soutenance\Service\Adresse\AdresseServiceFactory;
+use These\Provider\Privilege\ThesePrivileges;
 use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
@@ -67,7 +68,10 @@ return [
                     'action' => [
                         'deliberation-jury',
                     ],
-                    'privileges' => HDRPrivileges::HDR_DONNER_RESULTAT,
+                    'privileges' => [
+                        HDRPrivileges::HDR_DONNER_RESULTAT,
+                        ThesePrivileges::THESE_DONNER_RESULTAT
+                    ],
                     'assertion' => PresoutenanceAssertion::class,
                 ],
                 [

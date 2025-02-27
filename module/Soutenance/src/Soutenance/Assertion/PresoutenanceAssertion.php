@@ -18,6 +18,7 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Entity\PropositionHDR;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use These\Entity\Db\These;
+use These\Provider\Privilege\ThesePrivileges;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -77,9 +78,11 @@ class PresoutenanceAssertion extends AbstractAssertion
                     $role = $this->userContextService->getSelectedIdentityRole();
                     return (($role->getCode() === Role::CODE_BDD || Role::CODE_GEST_HDR) && $role->getStructure() === $this->entity->getEtablissement()->getStructure());
                 case HDRPrivileges::HDR_DONNER_RESULTAT:
+                case ThesePrivileges::THESE_DONNER_RESULTAT:
                     /** @var Proposition $p */
                     $proposition = $this->entity->getCurrentProposition();
-                    if($proposition instanceof PropositionHDR && $proposition->getEtat()->getCode() !== Etat::VALIDEE) return false;
+                    $estSaisieDansSygal = !$proposition->getObject()->getSource()->getImportable();
+                    if(!$estSaisieDansSygal || $proposition->getEtat()->getCode() !== Etat::VALIDEE) return false;
             }
 
 
@@ -127,7 +130,7 @@ class PresoutenanceAssertion extends AbstractAssertion
                 case 'deliberation-jury':
                     /** @var Proposition $p */
                     $proposition = $this->entity->getCurrentProposition();
-                    if($proposition instanceof PropositionHDR && $proposition->getEtat()->getCode() !== Etat::VALIDEE) return false;
+                    if($proposition->getEtat()->getCode() !== Etat::VALIDEE) return false;
                     break;
             }
         } catch (FailedAssertionException $e) {

@@ -1837,4 +1837,19 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         return $this->getDoctorant();
     }
+
+    /**
+     * @return PropositionThese
+     */
+    public function getCurrentProposition(): PropositionThese|null
+    {
+        $proposition = null;
+        foreach ($this->getPropositionsThese() as $p) {
+            if ($p->estNonHistorise()) {
+                $proposition = $p;
+                break;
+            }
+        }
+        return $proposition;
+    }
 }

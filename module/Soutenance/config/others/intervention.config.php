@@ -86,13 +86,8 @@ return [
                                         'order' => 250,
                                         'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
                                         'withtarget' => true,
-//                                        'paramsInject' => [
-//                                            'these',
-//                                        ],
                                         'paramsInject' => [
-                                            'type',
                                             'these',
-                                            'id',
                                         ],
                                     ],
                                 ],

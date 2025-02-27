@@ -132,9 +132,15 @@ $canGenererDocument = $canFeuVert;
             <?php echo $this->partial('soutenance/presoutenance/partial/date-de-retour'); ?>
         </div>
         <div class="col-lg-6">
-            <?php if (true): ?>
+            <?php
+            if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE){
+                $bgcolor = "bg-dark";
+            }else{
+                $bgcolor = $proposition->getAdresseActive() ? $bgcolor = "bg-success" : $bgcolor = "bg-danger";
+            }
+            if (true): ?>
                 <div class="box card">
-                    <div class="card-header <?= $proposition->getAdresseActive() ? "bg-success" : "bg-danger"; ?>">
+                    <div class="card-header <?= $bgcolor; ?>">
                         <h2>  Adresse exacte de la soutenance</h2>
                     </div>
                     <div class="card-body">
@@ -166,17 +172,24 @@ $canGenererDocument = $canFeuVert;
 
     <?php
     $bgcolor = "bg-danger";
+    $cssClass = "";
     $tousLesAvisSontFavorables = count(array_filter($avis, fn($avis) => $avis->getAvis() === 'Favorable')) === count($avis);
-    if (!$tousLesAvis || !$tousLesAvisSontFavorables) $bgcolor = "bg-danger";
-    else {
-        switch ($proposition->getEtat()->getCode()) {
-            case Etat::VALIDEE :
-            case Etat::COMPLET :
-                $bgcolor = "bg-success";
-                break;
-            case Etat::REJETEE :
-                $bgcolor = "bg-danger";
-                break;
+    if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat()->getCode() === Etat::REJETEE){
+        $bgcolor = "bg-dark";
+    }else{
+        if (!$tousLesAvis || !$tousLesAvisSontFavorables){
+            $bgcolor = "bg-dark";
+            $cssClass = "etape-encore-non-disponible";
+        } else {
+            switch ($proposition->getEtat()->getCode()) {
+                case Etat::VALIDEE :
+                case Etat::COMPLET :
+                    $bgcolor = "bg-success";
+                    break;
+                case Etat::REJETEE :
+                    $bgcolor = "bg-danger";
+                    break;
+            }
         }
     }
     ?>
@@ -220,14 +233,19 @@ $canGenererDocument = $canFeuVert;
                 </p>
             <?php endif; ?>
 
-            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
-
             <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET || $proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
-                <div class="bg-success text-white" style="padding-left:1rem; font-size: x-large; "> Dossier complet </div>
+                <span class="badge bg-success text-white" style="margin-left: 1rem !important; font-size: unset;">
+                        <span class="icon icon-checked"></span>
+                        Dossier complet
+                    </span>
             <?php elseif($proposition->getEtat()->getCode() === Etat::REJETEE): ?>
-                <div class="bg-danger text-white" style="padding-left:1rem; font-size: x-large; "> Dossier incomplet </div>
+                <span class="badge bg-danger text-white" style="margin-left: 1rem !important; font-size: unset;">
+                    <span class="icon icon-checked"></span>
+                        Dossier incomplet
+                </span>
             <?php endif; ?>
 
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
         </div>
     </div>
 

@@ -146,7 +146,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
                     <div class="float-end" style="margin-right: 1rem; margin-top:10px;">
                         <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                 href="<?php echo $this->url("soutenance_{$typeProposition}/intervention/toggle-president-distanciel", ['id' => $object->getId()], [], true); ?>" class="btn btn-primary action">
-                            <span class="icon icon-plus"></span> Président en distanciel
+                            <span class="icon icon-ajouter"></span> Président en distanciel
                         </a>
                     </div>
                     <?php endif; ?>
