@@ -6,10 +6,13 @@ APP_DIR=/app
 ETAB='UCN'
 
 ##### Import des données des établissements #####
-0,30 7-19 * * 1-5 root ETAB=$ETAB $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws.log  2>&1
+0,30 7-19 * * 1-5 root ETAB=$ETAB timeout 1h $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-run-import.log 2>&1
 
 ##### Traitements en fonction des résultats de l'import #####
-25,55 7-19 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --source=$ETAB::apogee >>/tmp/sygal-process-observed-import-results.log 2>&1
+25,55 7-19 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --source=$ETAB::apogee >>/tmp/cron-sygal-process-observed-import-results.log 2>&1
+
+##### Envoi vers STEP-STAR ######
+0 6 * * 1-5 root ETAB=$ETAB $APP_DIR/bin/run-envoi-step-star.sh >/tmp/cron-sygal-run-envoi-step-star.log 2>&1
 
 ##### Ménage dans /tmp #####
-0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/sygal_purge_temp_files.sh.log 2>&1
+0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/cron-sygal-purge_temp_files.sh.log 2>&1
