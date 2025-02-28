@@ -24,7 +24,8 @@ $navigationHelper = $this->navigation('navigation');
         <!-- Links -->
         <?php echo $this->headLink([
             'rel'  => 'shortcut icon',
-            'href' => $this->basePath('favicon.ico')]) ?>
+            'href' => $this->basePath(file_exists(APPLICATION_DIR . '/public/favicon.ico') ? 'favicon.ico' : 'favicon.dist.ico')
+        ]) ?>
         
         <!-- Scripts -->
         <?php echo $this->headScript(); ?>

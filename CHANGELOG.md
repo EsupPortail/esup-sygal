@@ -12,6 +12,7 @@ Journal des modifications
 - Mise à jour des disciplines SISE.
 - Proposition du jury de soutenance : dès lors que la date de soutenance est passée, le jury est considéré comme valide quelques soient les valeurs des indicateurs.
 - Mise à jour du fichier de config CRON d'exemple (doc/cron/sygal).
+- Fourniture d'un favicon par défaut `public/favicon.dist.ico` utilisé si `public/favicon.ico` n'a pas été créé.
 - [FIX] Warning: Undefined variable $url in module/Depot/view/depot/fichier-these/deposes.phtml
 - [FIX] Recherche textuelle d'individu selon le type : jointure avec doctorant/acteur au cas où individu.type est null. 
 - [FIX] Import des thèses : rétablissement du mapping libDiscipline => lib_int1_dis dans la config supprimé à tort.
