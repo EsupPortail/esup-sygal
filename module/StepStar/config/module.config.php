@@ -53,12 +53,35 @@ use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     /**
-     * Options du module StepStar.
+     * Config du module StepStar.
      */
     'step_star' => [
-        /**
-         * Options pour la génération du fichier XML intermédiaire (avant génération TEF).
-         */
+        //
+        // Options pour l'appel du web service Step-Star.
+        //
+        'api' => [
+            'soap_client' => [
+                'wsdl' => [
+                    'url' => 'https://host.theses.fr/path/to/DepotTEF.wsdl',
+                ],
+                'soap' => [
+                    'version' => SOAP_1_1, // cf. extension "php-soap"
+                    //'proxy_host' => 'proxy.domain.fr',
+                    //'proxy_port' => 3128,
+                ],
+            ],
+            'operations' => [
+                'deposer' => 'Depot',
+                'deposer_avec_zip' => 'DepotAvecZip',
+            ],
+            'params' => [
+                // identifiant STEP/STAR de l'établissement
+                'idEtablissement' => $etablissementStepStar = 'XXXX',
+            ],
+        ],
+        //
+        // Options pour la génération du fichier XML intermédiaire (avant génération TEF).
+        //
         'xml' => [
             // codes des types de financements correspondant à un contrat doctoral
             'codes_type_financ_contrat_doctoral' => [
@@ -92,17 +115,17 @@ return [
                 'libelle' => "Établissement co-accrédité",
             ],
         ],
-        /**
-         * Options pour la génération des fichiers au format TEF.
-         */
+        //
+        // Options pour la génération des fichiers au format TEF.
+        //
         'tef' => [
             // chemin du template twig permettant de générer le fichier de transformation XSL
             // (fichier XSL étant ensuite utilisé pour générer les fichiers TEF à partir du fichier XML intermédiaire)
             'xsl_template_path' => __DIR__ . '/xml2tef.xsl.twig',
             // paramètres nécessaires à la génération du fichier XSL à partir du template twig
             'xsl_template_params' => [
-                // identifiant STEP/STAR de l'établissement
-                'etablissementStepStar' => 'XXXX',
+                // identifiant STEP/STAR de l'établissement (identique à 'api.params.idEtablissement')
+                'etablissementStepStar' => $etablissementStepStar,
                 // identifiant "autorité SUDOC" de l'établissement de soutenance
                 'autoriteSudoc_etabSoutenance' => '123456789',
                 // noms de balises
@@ -116,47 +139,23 @@ return [
             // faut-il supprimer les répertoires/fichiers temporaires après la génération ?
             'clean_after_work' => false,
         ],
-        /**
-         * Options pour l'appel du web service Step-Star.
-         */
-        'api' => [
-            'soap_client' => [
-                'wsdl' => [
-                    'url' => 'https://xxxx/yyyyy.wsdl',
-                ],
-                'soap' => [
-                    'version' => SOAP_1_1, // cf. extension "php-soap"
-                    //'proxy_host' => 'proxy.unicaen.fr',
-                    //'proxy_port' => 3128,
-                ],
-            ],
-            'operations' => [
-//                'deposer' => 'deposer',
-//                'deposer_avec_zip' => 'deposerAvecZip',
-                'deposer' => 'Depot',
-                'deposer_avec_zip' => 'DepotAvecZip',
-            ],
-            'params' => [
-                // identifiant STEP/STAR de l'établissement (todo: identique à 'etablissementStepStar' ?)
-                'idEtablissement' => 'XXXX',
-            ],
-        ],
-        /**
-         * Options concernant les notifications
-         */
+        //
+        // Options concernant les notifications
+        //
         'notification' => [
             'templates' => [
                 'erreur_envoi' => __DIR__ . '/../view/step-star/notification/envois_en_erreur.phtml'
             ],
         ],
-        /**
-         * Options concernant la classification Dewey (sets OAI-PMH)
-         */
+        //
+        // Options concernant la classification Dewey (sets OAI-PMH)
+        //
         'oai' => [
             'sise_oai_set_file_path' => __DIR__ . '/../data/oai/siseOaiSet.xml',
             'oai_sets_file_path' => __DIR__ . '/../data/oai/oaiSets.xml', // https://www.theses.fr/schemas/tef/recommandation/oaiSets.xml
         ],
     ],
+
     'doctrine' => [
         'driver' => [
             'orm_default' => [

@@ -1,5 +1,5 @@
-Personnalisations de l'application
-==================================
+Configuration de l'application
+==============================
 
 
 Logo et lien de l'établissement
@@ -32,13 +32,18 @@ le site de l'établissement.
 Favicon
 -------
 
-- Créez le fichier `public/favicon.png` symbolisant votre établissement.
+Par défaut, c'est le fichier `public/favicon.dist.ico` qui est utilisé comme "favicon".
+
+Vous pouvez fournir le votre en créant un fichier `public/favicon.ico`.
+
+Ce fichier étant ignoré de l'outil de gestion de version (git), il sera préservé lors des mises à jour de l'application. 
 
 
 Fil d'actualités sur la page d'accueil
 ------------------
 
-Sur la page d'accueil, il est possible d'afficher des actualités fournies par une flux RSS .
+Sur la page d'accueil, il y a un menu "Actualités" (à gauche) menant à une page où il est possible d'afficher des 
+informations fournies par un flux RSS .
 
 - Dans le fichier de config `${APPLICATION_ENV}.local.php`, activez ou pas la consultation du flux et 
   renseignez son URL le cas échéant :
@@ -74,6 +79,12 @@ la génération PDF a ses limites (cf. https://github.com/mpdf/mpdf).
             ],
         ],
 ```
+
+
+Module Step/Star
+----------------
+
+Rendez-vous sur [cette page](step_star.md).
 
 
 Pages d'informations
