@@ -436,7 +436,7 @@ class XmlService
             self::EMAIL_PERSO_ETUDIANT => $emailPersoDoctorant,
             self::EMAIL_INSTITUTION_ETUDIANT => $emailInstitutionDoctorant,
             self::DATE_NAISSANCE_ETUDIANT => $this->formatDate($these['doctorant']['individu']['dateNaissance']),
-            self::SEXE_ETUDIANT => $this->formatSexe($these['doctorant']['individu']['civilite']),
+            self::SEXE_ETUDIANT => $this->formatSexe($these['doctorant']['individu']['civilite'] ?? null),
             self::NATIONALITE_DOCTORANT => $these['doctorant']['individu']['paysNationalite']['codeIsoAlpha2'] ?? null,
             self::TELEPHONE_DOCTORANT => null, // pas dispo
             self::ADRESSE_DOCTORANT => null, // pas dispo
@@ -656,7 +656,7 @@ class XmlService
         return null;
     }
 
-    private function formatSexe(string $civilite): ?string
+    private function formatSexe(?string $civilite): ?string
     {
         return [
             Individu::CIVILITE_M => 'M',

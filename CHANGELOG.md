@@ -16,6 +16,7 @@ Journal des modifications
 - [FIX] Import des thèses : rétablissement du mapping libDiscipline => lib_int1_dis dans la config supprimé à tort.
 - [FIX] Module Formation : icône de suppression invisible pour la suppression d'un formateur d'une session
 - [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les directeurs de thèse
+- [FIX] Module Step-Star : plantage de l'envoi de thèse manuel.
 
 9.3.0
 -----
