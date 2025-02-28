@@ -11,7 +11,7 @@ Documentation technique
 -----------------------
 
 - [Installation](INSTALL.md)
-- [Personnalisations](personnalisations.md)
+- [Configuration](configuration.md)
 - [Authentification](authentification/auth.md)
 - [Ligne de commande](cli.md)
 - [Base de données](database/README.md)
