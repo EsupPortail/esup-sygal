@@ -2,7 +2,7 @@
 
 namespace SygalApiImpl\V1\Rest\InscriptionAdministrative\Process;
 
-use Application\Service\Source\SourceService;
+use Application\Entity\Db\Source;
 use Application\SourceCodeStringHelper;
 use Psr\Container\ContainerInterface;
 use UnicaenDbImport\Service\ImportService;
@@ -30,9 +30,11 @@ class ImportProcessFactory
         $connection = $container->get('doctrine.connection.orm_default');
         $service->setDestinationConnection($connection);
 
-        /** @var \Application\Service\Source\SourceService $sourceService */
-        $sourceService = $container->get(SourceService::class);
-        $service->setSourceService($sourceService);
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $container->get('doctrine.entitymanager.orm_default');
+        /** @var \Application\Entity\Db\Repository\SourceRepository $sourceRepository */
+        $sourceRepository = $em->getRepository(Source::class);
+        $service->setSourceRepository($sourceRepository);
 
         /** @var \Application\SourceCodeStringHelper $sourceCodeHelper */
         $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);

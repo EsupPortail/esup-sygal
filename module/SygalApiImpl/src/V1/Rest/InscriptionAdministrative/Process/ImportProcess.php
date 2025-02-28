@@ -2,7 +2,7 @@
 
 namespace SygalApiImpl\V1\Rest\InscriptionAdministrative\Process;
 
-use Application\Service\Source\SourceServiceAwareTrait;
+use Application\Entity\Db\Repository\SourceRepositoryAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Exception;
 use Import\Filter\PrefixEtabColumnValueFilter;
@@ -10,8 +10,6 @@ use InvalidArgumentException;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerAwareTrait;
 use stdClass;
-use SygalApi\V1\Rest\InscriptionAdministrative\Extractor\DoctorantExtractor;
-use SygalApi\V1\Rest\InscriptionAdministrative\Extractor\IndividuExtractor;
 use SygalApi\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeApprenantExtractor;
 use SygalApi\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeExtractor;
 use SygalApiImpl\Event\InscriptionAdministrativeImportEvent;
@@ -21,7 +19,6 @@ use UnicaenDbImport\Config\ConfigException;
 use UnicaenDbImport\Connection\NoConnection;
 use UnicaenDbImport\Domain\Destination;
 use UnicaenDbImport\Domain\Import;
-use UnicaenDbImport\Domain\Operation;
 use UnicaenDbImport\Domain\Result;
 use UnicaenDbImport\Domain\Source;
 use UnicaenDbImport\Domain\Synchro;
@@ -31,19 +28,33 @@ class ImportProcess extends AbstractImportProcess implements EventManagerAwareIn
 {
     use EventManagerAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-    use SourceServiceAwareTrait;
+    use SourceRepositoryAwareTrait;
 
-    protected IndividuExtractor $individuExtractor;
-    protected DoctorantExtractor $doctorantExtractor;
     protected InscriptionAdministrativeExtractor $inscriptionAdministrativeExtractor;
     protected InscriptionAdministrativeApprenantExtractor $inscriptionAdministrativeApprenantExtractor;
 
+    protected PrefixEtabColumnValueFilter $prefixEtabColumnValueFilter;
+
     public function __construct()
     {
-        $this->individuExtractor = new IndividuExtractor();
-        $this->doctorantExtractor = new DoctorantExtractor();
-        $this->inscriptionAdministrativeExtractor = new InscriptionAdministrativeExtractor();
-        $this->inscriptionAdministrativeApprenantExtractor = new InscriptionAdministrativeApprenantExtractor();
+        $this->setInscriptionAdministrativeExtractor(new InscriptionAdministrativeExtractor());
+        $this->setInscriptionAdministrativeApprenantExtractor(new InscriptionAdministrativeApprenantExtractor());
+        $this->setPrefixEtabColumnValueFilter(new PrefixEtabColumnValueFilter());
+    }
+
+    public function setInscriptionAdministrativeExtractor(InscriptionAdministrativeExtractor $inscriptionAdministrativeExtractor): void
+    {
+        $this->inscriptionAdministrativeExtractor = $inscriptionAdministrativeExtractor;
+    }
+
+    public function setInscriptionAdministrativeApprenantExtractor(InscriptionAdministrativeApprenantExtractor $inscriptionAdministrativeApprenantExtractor): void
+    {
+        $this->inscriptionAdministrativeApprenantExtractor = $inscriptionAdministrativeApprenantExtractor;
+    }
+
+    public function setPrefixEtabColumnValueFilter(PrefixEtabColumnValueFilter $prefixEtabColumnValueFilter): void
+    {
+        $this->prefixEtabColumnValueFilter = $prefixEtabColumnValueFilter;
     }
 
     /**
@@ -53,8 +64,6 @@ class ImportProcess extends AbstractImportProcess implements EventManagerAwareIn
     {
         $this->beginTransaction();
         try {
-//            $this->importIndividu($data);
-//            $this->importDoctorant($data);
             $iaSourceCode = $this->importInscriptionAdministrative($data);
             $this->importInscriptionAdministrativeApprenant($data);
         } catch (ErrorDuringImportException $e) {
@@ -75,45 +84,45 @@ class ImportProcess extends AbstractImportProcess implements EventManagerAwareIn
         $this->events->triggerEvent($event);
     }
 
-    /**
-     * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
-     * @throws \Exception Erreur grave imprévue
-     *
-     * @deprecated Plus d'import brutal systématique d'Individu.
-     */
-    private function importIndividu(stdClass $data): void
-    {
-        $preparedData = $this->individuExtractor->extract($data);
-
-        $import = $this->createImportIndividu($preparedData);
-        $result = $this->runImport($import);
-        $this->handleResult($result, "l'import de l'individu");
-
-        $sourceId = $preparedData['source_id'];
-        $synchro = $this->createSynchroIndividu($sourceId);
-        $result = $this->runSynchro($synchro);
-        $this->handleResult($result, "la synchro de l'individu");
-    }
-
-    /**
-     * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
-     * @throws \Exception Erreur grave imprévue
-     *
-     * @deprecated Plus d'import brutal systématique de Doctorant.
-     */
-    private function importDoctorant(stdClass $data): void
-    {
-        $preparedData = $this->doctorantExtractor->extract($data);
-
-        $import = $this->createImportDoctorant($preparedData);
-        $result = $this->runImport($import);
-        $this->handleResult($result, "l'import du doctorant");
-
-        $sourceId = $preparedData['source_id'];
-        $synchro = $this->createSynchroDoctorant($sourceId);
-        $result = $this->runSynchro($synchro);
-        $this->handleResult($result, "la synchro du doctorant");
-    }
+//    /**
+//     * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
+//     * @throws \Exception Erreur grave imprévue
+//     *
+//     * @deprecated Plus d'import brutal systématique d'Individu.
+//     */
+//    private function importIndividu(stdClass $data): void
+//    {
+//        $preparedData = $this->individuExtractor->extract($data);
+//
+//        $import = $this->createImportIndividu($preparedData);
+//        $result = $this->runImport($import);
+//        $this->handleResult($result, "l'import de l'individu");
+//
+//        $sourceId = $preparedData['source_id'];
+//        $synchro = $this->createSynchroIndividu($sourceId);
+//        $result = $this->runSynchro($synchro);
+//        $this->handleResult($result, "la synchro de l'individu");
+//    }
+//
+//    /**
+//     * @throws \SygalApiImpl\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
+//     * @throws \Exception Erreur grave imprévue
+//     *
+//     * @deprecated Plus d'import brutal systématique de Doctorant.
+//     */
+//    private function importDoctorant(stdClass $data): void
+//    {
+//        $preparedData = $this->doctorantExtractor->extract($data);
+//
+//        $import = $this->createImportDoctorant($preparedData);
+//        $result = $this->runImport($import);
+//        $this->handleResult($result, "l'import du doctorant");
+//
+//        $sourceId = $preparedData['source_id'];
+//        $synchro = $this->createSynchroDoctorant($sourceId);
+//        $result = $this->runSynchro($synchro);
+//        $this->handleResult($result, "la synchro du doctorant");
+//    }
 
     /**
      * Configure et lance l'import de l'IA à partir des données reçues.
@@ -133,16 +142,16 @@ class ImportProcess extends AbstractImportProcess implements EventManagerAwareIn
         // Sans ça, pour que la jointure se fasse on serait obligé d'avoir en BDD toutes les ED dans la même Source
         // que les données importées (càd Pégase) ; on a pas envie de faire ça pour l'instant.
         $sourceId = $this->inscriptionAdministrativeExtractor->extractSourceId($data);
-        $source = $this->sourceService->getRepository()->findOneByCode($sourceId);
+        $source = $this->sourceRepository->findOneByCode($sourceId);
         if ($source === null) {
             throw new InvalidArgumentException("La source '$sourceId' spécifiée dans les données est introuvable");
         }
+        $etabSourceCode = $source->getEtablissement()->getSourceCode();
 
-        $import = $this->createImportInscriptionAdministrative($preparedData, $source->getEtablissement()->getSourceCode());
+        $import = $this->createImportInscriptionAdministrative($preparedData, $etabSourceCode);
         $result = $this->runImport($import);
         $this->handleResult($result, "l'import de l'inscription administrative");
 
-//        $sourceId = $preparedData['source_id'];
         $synchro = $this->createSynchroInscriptionAdministrative($sourceId);
         $result = $this->runSynchro($synchro);
         $this->handleResult($result, "la synchro de l'inscription administrative");
@@ -184,152 +193,157 @@ class ImportProcess extends AbstractImportProcess implements EventManagerAwareIn
         }
     }
 
-    private function createImportIndividu(array $data): Import
-    {
-        try {
-            $source = Source::fromConfig([
-                'name' => 'api',
-                'connection' => new NoConnection([$data]),
-                'select' => 'xxxxx',
-                'source_code_column' => 'source_code',
-                'column_value_filter' => [
-                    new ConcatColumnValueFilter([
-                        'column' => 'source_code', // colonne à transformer
-                        'columns' => ['source_id', 'source_code'], // colonnes dont les valeurs seront concaténées
-                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
-                    ]),
-                ],
-            ]);
-            $destination = Destination::fromConfig([
-                'name' => 'Application',
-                'table' => 'tmp_individu',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-                'id_strategy' => null,
-                'id_sequence' => null,
-            ]);
-
-            return Import::fromConfig([
-                'name' => 'api_import_individu',
-                'source' => $source,
-                'destination' => $destination,
-            ]);
-        } catch (ConfigException $e) {
-            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
-        }
-    }
-
-    private function createSynchroIndividu(string $sourceId): Synchro
-    {
-        $where = "d.source_id = ( select id from source where code = '$sourceId' )";
-
-        try {
-            $source = Source::fromConfig([
-                'name' => 'Application',
-                'code' => 'app',
-                'table' => 'src_individu',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-            ]);
-            $destination = Destination::fromConfig([
-                'name' => 'Application',
-                'table' => 'individu',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-                'where' => $where,
-                'id_strategy' => 'SEQUENCE',
-                'id_sequence' => null,
-            ]);
-
-            return Synchro::fromConfig([
-                'name' => 'api_synchro_individu',
-                'source' => $source,
-                'destination' => $destination,
-                'operations' => [
-                    Operation::OPERATION_INSERT,
-                    Operation::OPERATION_UPDATE,
-                    Operation::OPERATION_UNDELETE,
-                ],
-            ]);
-        } catch (ConfigException $e) {
-            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
-        }
-    }
-
-    private function createImportDoctorant(array $data): Import
-    {
-        try {
-            $source = Source::fromConfig([
-                'name' => 'api',
-                'connection' => new NoConnection([$data]),
-                'select' => 'xxxxx',
-                'source_code_column' => 'source_code',
-                'column_value_filter' => [
-                    new ConcatColumnValueFilter([
-                        'column' => 'source_code', // colonne à transformer
-                        'columns' => ['source_id', 'source_code'], // colonnes dont les valeurs seront concaténées
-                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
-                    ]),
-                    new ConcatColumnValueFilter([
-                        'column' => 'individu_id', // colonne à transformer
-                        'columns' => ['source_id', 'individu_id'], // colonnes dont les valeurs seront concaténées
-                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
-                    ]),
-                ],
-            ]);
-            $destination = Destination::fromConfig([
-                'name' => 'Application',
-                'table' => 'tmp_doctorant',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-                'id_strategy' => null,
-                'id_sequence' => null,
-            ]);
-
-            return Import::fromConfig([
-                'name' => 'api_import_doctorant',
-                'source' => $source,
-                'destination' => $destination,
-            ]);
-        } catch (ConfigException $e) {
-            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
-        }
-    }
-
-    private function createSynchroDoctorant(string $sourceId): Synchro
-    {
-        $where = "d.source_id = ( select id from source where code = '$sourceId' )";
-
-        try {
-            $source = Source::fromConfig([
-                'name' => 'Application',
-                'code' => 'app',
-                'table' => 'SRC_DOCTORANT',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-            ]);
-            $destination = Destination::fromConfig([
-                'name' => 'Application',
-                'table' => 'DOCTORANT',
-                'connection' => $this->destinationConnection,
-                'source_code_column' => 'source_code',
-                'where' => $where,
-                'id_strategy' => 'SEQUENCE',
-                'id_sequence' => null,
-            ]);
-
-            return Synchro::fromConfig([
-                'name' => 'api_synchro_doctorant',
-                'source' => $source,
-                'destination' => $destination,
-            ]);
-        } catch (ConfigException $e) {
-            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
-        }
-    }
+//    private function createImportIndividu(array $data): Import
+//    {
+//        try {
+//            $source = Source::fromConfig([
+//                'name' => 'api',
+//                'connection' => new NoConnection([$data]),
+//                'select' => 'xxxxx',
+//                'source_code_column' => 'source_code',
+//                'column_value_filter' => [
+//                    new ConcatColumnValueFilter([
+//                        'column' => 'source_code', // colonne à transformer
+//                        'columns' => ['source_id', 'source_code'], // colonnes dont les valeurs seront concaténées
+//                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
+//                    ]),
+//                ],
+//            ]);
+//            $destination = Destination::fromConfig([
+//                'name' => 'Application',
+//                'table' => 'tmp_individu',
+//                'connection' => $this->destinationConnection,
+//                'source_code_column' => 'source_code',
+//                'id_strategy' => null,
+//                'id_sequence' => null,
+//            ]);
+//
+//            return Import::fromConfig([
+//                'name' => 'api_import_individu',
+//                'source' => $source,
+//                'destination' => $destination,
+//            ]);
+//        } catch (ConfigException $e) {
+//            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
+//        }
+//    }
+//
+//    private function createSynchroIndividu(string $sourceId): Synchro
+//    {
+//        $where = "d.source_id = ( select id from source where code = '$sourceId' )";
+//
+//        try {
+//            $source = Source::fromConfig([
+//                'name' => 'Application',
+//                'code' => 'app',
+//                'table' => 'src_individu',
+//                'connection' => $this->destinationConnection,
+//                'source_code_column' => 'source_code',
+//            ]);
+//            $destination = Destination::fromConfig([
+//                'name' => 'Application',
+//                'table' => 'individu',
+//                'connection' => $this->destinationConnection,
+//                'source_code_column' => 'source_code',
+//                'where' => $where,
+//                'id_strategy' => 'SEQUENCE',
+//                'id_sequence' => null,
+//            ]);
+//
+//            return Synchro::fromConfig([
+//                'name' => 'api_synchro_individu',
+//                'source' => $source,
+//                'destination' => $destination,
+//                'operations' => [
+//                    Operation::OPERATION_INSERT,
+//                    Operation::OPERATION_UPDATE,
+//                    Operation::OPERATION_UNDELETE,
+//                ],
+//            ]);
+//        } catch (ConfigException $e) {
+//            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
+//        }
+//    }
+//
+//    private function createImportDoctorant(array $data): Import
+//    {
+//        try {
+//            $source = Source::fromConfig([
+//                'name' => 'api',
+//                'connection' => new NoConnection([$data]),
+//                'select' => 'xxxxx',
+//                'source_code_column' => 'source_code',
+//                'column_value_filter' => [
+//                    new ConcatColumnValueFilter([
+//                        'column' => 'source_code', // colonne à transformer
+//                        'columns' => ['source_id', 'source_code'], // colonnes dont les valeurs seront concaténées
+//                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
+//                    ]),
+//                    new ConcatColumnValueFilter([
+//                        'column' => 'individu_id', // colonne à transformer
+//                        'columns' => ['source_id', 'individu_id'], // colonnes dont les valeurs seront concaténées
+//                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
+//                    ]),
+//                ],
+//            ]);
+//            $destination = Destination::fromConfig([
+//                'name' => 'Application',
+//                'table' => 'tmp_doctorant',
+//                'connection' => $this->destinationConnection,
+//                'source_code_column' => 'source_code',
+//                'id_strategy' => null,
+//                'id_sequence' => null,
+//            ]);
+//
+//            return Import::fromConfig([
+//                'name' => 'api_import_doctorant',
+//                'source' => $source,
+//                'destination' => $destination,
+//            ]);
+//        } catch (ConfigException $e) {
+//            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
+//        }
+//    }
+//
+//    private function createSynchroDoctorant(string $sourceId): Synchro
+//    {
+//        $where = "d.source_id = ( select id from source where code = '$sourceId' )";
+//
+//        try {
+//            $source = Source::fromConfig([
+//                'name' => 'Application',
+//                'code' => 'app',
+//                'table' => 'SRC_DOCTORANT',
+//                'connection' => $this->destinationConnection,
+//                'source_code_column' => 'source_code',
+//            ]);
+//            $destination = Destination::fromConfig([
+//                'name' => 'Application',
+//                'table' => 'DOCTORANT',
+//                'connection' => $this->destinationConnection,
+//                'source_code_column' => 'source_code',
+//                'where' => $where,
+//                'id_strategy' => 'SEQUENCE',
+//                'id_sequence' => null,
+//            ]);
+//
+//            return Synchro::fromConfig([
+//                'name' => 'api_synchro_doctorant',
+//                'source' => $source,
+//                'destination' => $destination,
+//            ]);
+//        } catch (ConfigException $e) {
+//            throw new InvalidArgumentException("Mauvaise config dans " . __METHOD__ . " : " . $e->getMessage(), null, $e);
+//        }
+//    }
 
     private function createImportInscriptionAdministrative(array $data, string $codeEtablissement): Import
     {
+        $this->prefixEtabColumnValueFilter->setParams([
+            'column' => 'ecole_doct_id',
+            PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT => $codeEtablissement,
+        ]);
+
         try {
             $source = Source::fromConfig([
                 'name' => 'api',
@@ -359,10 +373,7 @@ class ImportProcess extends AbstractImportProcess implements EventManagerAwareIn
 //                        'columns' => ['source_id', 'ecole_doct_id'], // colonnes dont les valeurs seront concaténées
 //                        'separator' => $this->sourceCodeStringHelper->getSeparator(),
 //                    ]),
-                    new PrefixEtabColumnValueFilter([
-                        'column' => 'ecole_doct_id',
-                        PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT => $codeEtablissement,
-                    ]),
+                    $this->prefixEtabColumnValueFilter,
                 ],
             ]);
             $destination = Destination::fromConfig([

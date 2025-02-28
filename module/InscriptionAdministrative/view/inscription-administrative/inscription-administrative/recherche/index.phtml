@@ -47,6 +47,7 @@ $this->headTitle($this->translate("IA importées"));
     <table class="table table-bordered table-sm table-hover">
         <tr>
             <th>Id</th>
+            <th>Réception</th>
             <th>Source de<br>l'import</th>
             <th>No candidat</th>
             <th>Apprenant</th>
@@ -56,7 +57,6 @@ $this->headTitle($this->translate("IA importées"));
             <th>Date inscription</th>
             <th><abbr title="Année universitaire issue de la période">Année univ.</abbr></th>
             <th>Doctorant lié</th>
-            <th>Réception</th>
             <th>Dernière modif.</th>
             <th></th>
         </tr>
@@ -65,6 +65,7 @@ $this->headTitle($this->translate("IA importées"));
                 <td>
                     <a href="<?php echo $this->url('inscription-administrative/voir', ['id' => $ia['id']]) ?>"><?php echo $ia['id'] ?></span></a>
                 </td>
+                <td><?php echo $ia['histoCreation']->format(Constants::DATETIME_FORMAT_BR) ?></td>
                 <td><?php echo $ia['source']['code'] ?></td>
                 <td>
                     <?php echo $ia['noCandidat'] ?>
@@ -110,7 +111,6 @@ $this->headTitle($this->translate("IA importées"));
                         <span class="text text-danger">Aucun</span>
                     <?php endif; ?>
                 </td>
-                <td><?php echo $ia['histoCreation']->format(Constants::DATETIME_FORMAT_BR) ?></td>
                 <td><?php echo $ia['histoModification'] ? $ia['histoModification']->format(Constants::DATETIME_FORMAT_BR) : '-'?></td>
                 <td>
                     <?php if (count($ia['inscriptionAdministrativeApprenant']) > 1): ?>

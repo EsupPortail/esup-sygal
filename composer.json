@@ -51,7 +51,7 @@
         "unicaen/authentification": "^6.4",
         "unicaen/console": "^6.0",
         "unicaen/db-anonym": "^4.0",
-        "unicaen/db-import": "dev-release_7.2.0",
+        "unicaen/db-import": "^7.2",
         "unicaen/etat": "^6.0",
         "unicaen/faq": "^7.0",
         "unicaen/idref": "^2.0",
@@ -95,6 +95,9 @@
             "These\\": "module/These/src",
             "UnicaenAvis\\": "module/UnicaenAvis/src",
             "Validation\\": "module/Validation/src"
+        },
+        "psr-4": {
+            "SygalApiImpl\\": "module/SygalApiImpl/src"
         }
     },
     "autoload-dev": {
@@ -103,7 +106,7 @@
             "ApplicationUnitTest\\": "module/Application/tests/ApplicationUnitTest",
             "ImportTest\\": "module/Import/tests",
             "RetraitementTest\\": "module/Retraitement/test/RetraitementTest",
-            "SygalApiTest\\": "module/SygalApiImpl/tests/SygalApiTest",
+            "SygalApiImplTest\\": "module/SygalApiImpl/tests/SygalApiImplTest",
             "InscriptionAdministrativeTest\\": "module/InscriptionAdministrative/tests/InscriptionAdministrativeTest"
         }
     },

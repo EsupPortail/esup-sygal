@@ -11295,11 +11295,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "dev-release_7.2.0",
+            "version": "7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "4b23a5a934f19a9f373267ea5f114a5d022f6250"
+                "reference": "716280c01340b5a51566e5b297e321027f636081"
             },
             "require": {
                 "beberlei/assert": "^3.3",

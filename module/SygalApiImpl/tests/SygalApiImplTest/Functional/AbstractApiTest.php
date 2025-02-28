@@ -1,13 +1,8 @@
 <?php
 
-namespace SygalApiTest\Functional;
+namespace SygalApiImplTest\Functional;
 
 use ApplicationUnitTest\Controller\AbstractControllerTestCase;
-use RuntimeException;
-use Twig\Environment;
-use Twig\Error\Error;
-use Twig\Loader\FilesystemLoader;
-use Webmozart\Assert\Assert;
 
 abstract class AbstractApiTest extends AbstractControllerTestCase
 {
@@ -20,11 +15,6 @@ abstract class AbstractApiTest extends AbstractControllerTestCase
     protected string $apiUrl;
     protected string $curlHttpReturnCodePregPattern = '#^(.*);return=(\d+)$#';
 
-    protected string $jsonTemplateFilesDir;
-    protected string $jsonTemplateFileName;
-
-    static protected string $jsonOutputDirPath = '/tmp';
-
     protected string $cmd;
     protected array $cmdOutput;
     protected int $cmdReturnCode;
@@ -32,54 +22,20 @@ abstract class AbstractApiTest extends AbstractControllerTestCase
     protected string $curlJsonResponse;
     protected string $curlHttpReturnCode;
 
-    protected function generateJson(string $jsonFileNameNew, array $templateParams): void
-    {
-        $jsonFilePathNew = $this->computeJsonOutputFilePath($jsonFileNameNew);
-
-        $loader = new FilesystemLoader($this->jsonTemplateFilesDir);
-        $twig = new Environment($loader);
-        try {
-            $xslFileContent = $twig->render($this->jsonTemplateFileName, $templateParams);
-        } catch (Error $e) {
-            throw new RuntimeException("Erreur Twig rencontrée", null, $e);
-        }
-
-        Assert::false(file_exists($jsonFilePathNew), "Le fichier de sortie '$jsonFilePathNew' existe déjà");
-
-        file_put_contents($jsonFilePathNew, $xslFileContent);
-    }
-
     /**
-     * @deprecated
+     * @param string $jsonFilePath Chemin vers le fichier JSON à envoyer
      */
-    protected function replaceStringInFile(string $from, string $to, string $jsonFileName, string $jsonFileNameNew): void
+    protected function callApi(string $jsonFilePath): void
     {
-        $jsonFilePath = $this->computeJsonOutputFilePath($jsonFileName);
-        $jsonFilePathNew = $this->computeJsonOutputFilePath($jsonFileNameNew);
-
-        Assert::true(file_exists($jsonFilePath), "Le fichier d'entrée %s est introuvable");
-        Assert::false(file_exists($jsonFilePathNew), "Le fichier de sortie %s existe déjà");
-
-        file_put_contents($jsonFilePathNew, str_replace($from, $to, file_get_contents($jsonFilePath)));
-    }
-
-    protected function computeJsonOutputFilePath(string $jsonFileName, ?string $ouputDirPath = null): string
-    {
-        return ($ouputDirPath ?: static::$jsonOutputDirPath) . '/' . $jsonFileName . '.json';
-    }
-
-    /**
-     * @param string $jsonFileName
-     */
-    protected function callApi(string $jsonFileName): void
-    {
-        $jsonFilePath = $this->computeJsonOutputFilePath($jsonFileName);
         $this->cmd = $this->generateCurlCommand($jsonFilePath);
 
         //echo "Envoi du fichier '$jsonFileName'..." . PHP_EOL;
         exec($this->cmd, $output, $returnCode);
         $this->cmdOutput = $output;
         $this->cmdReturnCode = $returnCode;
+        fwrite(STDERR, "Commande : $this->cmd" . PHP_EOL);
+        fwrite(STDERR, "Output : " . implode(PHP_EOL, $output) . PHP_EOL);
+        fwrite(STDERR, "Return code : $returnCode" . PHP_EOL);
 
 //        var_dump($this->cmd,$output, $returnCode);
         if ($this->cmdReturnCode !== 0) {

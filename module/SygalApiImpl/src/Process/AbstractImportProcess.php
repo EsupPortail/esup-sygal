@@ -2,6 +2,7 @@
 
 namespace SygalApiImpl\Process;
 
+use Application\Process\AbstractProcess;
 use Doctrine\DBAL\Connection;
 use Exception;
 use RuntimeException;
@@ -14,7 +15,7 @@ use UnicaenDbImport\Service\Exception\DatabaseServiceException;
 use UnicaenDbImport\Service\ImportService;
 use UnicaenDbImport\Service\SynchroService;
 
-abstract class AbstractImportProcess
+abstract class AbstractImportProcess extends AbstractProcess
 {
     protected Connection $destinationConnection;
     protected ImportService $importService;
