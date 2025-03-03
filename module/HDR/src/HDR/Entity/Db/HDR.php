@@ -5,6 +5,7 @@ namespace HDR\Entity\Db;
 use Acteur\Entity\Db\AbstractActeur;
 use Application\Entity\Db\Discipline;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\VersionDiplome;
 use Candidat\Entity\Db\Candidat;
 use DateTime;
 use Depot\Entity\Db\FichierHDR;
@@ -76,6 +77,7 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
     private string $etatHDR = self::ETAT_EN_COURS;
 
     private ?Discipline $discipline = null;
+    private ?VersionDiplome $versionDiplome = null;
 
     /**
      * @var string
@@ -235,6 +237,18 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
     public function getDiscipline(): ?Discipline
     {
         return $this->discipline;
+    }
+
+    public function setVersionDiplome(?VersionDiplome $versionDiplome): static
+    {
+        $this->versionDiplome = $versionDiplome;
+
+        return $this;
+    }
+
+    public function getVersionDiplome(): ?VersionDiplome
+    {
+        return $this->versionDiplome;
     }
 
     /**

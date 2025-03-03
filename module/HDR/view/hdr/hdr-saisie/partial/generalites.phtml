@@ -35,6 +35,14 @@ use These\Fieldset\Generalites\GeneralitesFieldset;
                 </div>
             </div>
 
+            <?php if ($fs->has('versionDiplome')): ?>
+            <div class="row">
+                <div class="col-md-9">
+                    <?php echo $this->formControlGroup($fs->get('versionDiplome')) ?>
+                </div>
+            </div>
+            <?php endif ?>
+
             <div class="row">
                 <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('cnu')) ?>

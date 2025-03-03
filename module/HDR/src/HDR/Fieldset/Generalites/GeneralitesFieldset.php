@@ -2,7 +2,9 @@
 
 namespace HDR\Fieldset\Generalites;
 
+use Application\Entity\Db\VersionDiplome;
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
+use Application\Service\VersionDiplome\VersionDiplomeServiceAwareTrait;
 use HDR\Entity\Db\HDR;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Hidden;
@@ -13,15 +15,23 @@ use Laminas\Form\Fieldset;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\Callback;
+use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterface
 {
     use DisciplineServiceAwareTrait;
+    use VersionDiplomeServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
+    private ?Etablissement $etablissement = null;
     private string $urlAutocompleteIndividu;
+
+    public function setEtablissement(?Etablissement $etablissement): void
+    {
+        $this->etablissement = $etablissement;
+    }
 
     public function setUrlAutocompleteIndividu(string $urlAutocompleteIndividu): void
     {
@@ -73,6 +83,27 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
                 'data-bs-html' => 'true',
             ]
         ]);
+
+        if ($this->etablissement !== null) {
+            $this->add([
+                'type' => Select::class,
+                'name' => 'versionDiplome',
+                'options' => [
+                    'label' => "Version de diplôme :",
+                    'value_options' => array_map(
+                        fn(VersionDiplome $vdi) => $vdi->getLibelleLong(),
+                        $this->versionDiplomeService->getRepository()->findForEtablissement($this->etablissement)
+                    ),
+                    'empty_option' => "Sélectionner une version de diplôme",
+                ],
+                'attributes' => [
+                    'id' => 'versionDiplome',
+                    'class' => 'selectpicker show-menu-arrow',
+                    'data-live-search' => 'true',
+                    'data-bs-html' => 'true',
+                ]
+            ]);
+        }
 
         $this->add(
             (new Text('cnu'))
@@ -136,10 +167,7 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
         );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'datePremiereInscription' => [
@@ -150,6 +178,9 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
 //                'required' => true,
 //            ],
             'discipline' => [
+                'required' => false,
+            ],
+            'versionDiplome' => [
                 'required' => false,
             ],
             'cnu' => [

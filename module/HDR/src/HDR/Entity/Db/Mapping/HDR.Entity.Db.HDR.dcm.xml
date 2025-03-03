@@ -42,6 +42,11 @@
                 <join-column name="discipline_sise_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
+        <many-to-one field="versionDiplome" target-entity="Application\Entity\Db\VersionDiplome">
+            <join-columns>
+                <join-column name="version_diplome_id"/>
+            </join-columns>
+        </many-to-one>
 
         <one-to-many field="acteurs" target-entity="Acteur\Entity\Db\ActeurHDR" mapped-by="hdr"/>
         <one-to-many field="validations" target-entity="Validation\Entity\Db\ValidationHDR" mapped-by="hdr"/>

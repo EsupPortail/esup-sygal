@@ -3,6 +3,7 @@
 namespace HDR\Fieldset\Generalites;
 
 use Application\Service\Discipline\DisciplineService;
+use Application\Service\VersionDiplome\VersionDiplomeService;
 use Application\View\Renderer\PhpRenderer;
 use HDR\Entity\Db\HDR;
 use Interop\Container\ContainerInterface;
@@ -23,6 +24,10 @@ class GeneralitesFieldsetFactory
         /** @var DisciplineService $disciplineService */
         $disciplineService = $container->get(DisciplineService::class);
         $fieldset->setDisciplineService($disciplineService);
+
+        /** @var VersionDiplomeService $versionDiplomeService */
+        $versionDiplomeService = $container->get(VersionDiplomeService::class);
+        $fieldset->setVersionDiplomeService($versionDiplomeService);
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);

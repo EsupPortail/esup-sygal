@@ -24,6 +24,7 @@ class GeneralitesHydrator extends DoctrineObject
             'label' => $object->getCandidat()->getIndividu()->getPrenom() . ' ' . ($object->getCandidat()->getIndividu()->getNomUsuel() ?? $object->getCandidat()->getIndividu()->getNomPatronymique())
         ] : null;
         $data['discipline'] = $object->getDiscipline()?->getId();
+        $data['versionDiplome'] = $object->getVersionDiplome()?->getId();
 
         //Confidentialité
         $data['confidentialite'] = ($object->getDateFinConfidentialite() !== null) ? 1 : 0;
@@ -42,6 +43,7 @@ class GeneralitesHydrator extends DoctrineObject
         $data['candidat'] = $data['candidat']['id'] ?? null;
 
         $data['discipline'] = (isset($data['discipline']) && $data['discipline'] !== "") ? $data['discipline'] : null;
+        $data['versionDiplome'] = (isset($data['versionDiplome']) && $data['versionDiplome'] !== "") ? $data['versionDiplome'] : null;
 
         $data['resultat'] = (isset($data['resultat']) && $data['resultat'] !== "") ? $data['resultat'] : null;
 

@@ -977,4 +977,90 @@ INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_na
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('HDR#Discipline', '<p>Affiche le libellé de la discipline associée à la HDR</p>', 'hdr', 'getLibelleDiscipline');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('HDR#Encadrement', null, 'hdr', 'toStringEncadrement');
 
-INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('Url#ConvocationCandidat', NULL, 'Url', 'getSoutenanceConvocationCandidat');
+INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('Url#ConvocationCandidat', NULL, 'Url', 'getSoutenanceConvocationCandidat
+
+
+
+
+------------------------------------------------- Versions de diplômes -------------------------------------------------
+
+create table version_diplome(
+    id bigserial primary key,
+    source_id bigint default 1 not null constraint version_diplome_source_fk references source,
+    source_code varchar(64) not null,
+    etablissement_id bigint not null constraint version_diplome_etab_fk references etablissement,
+    code varchar(32) not null,
+    libelle_court varchar(64) not null,
+    libelle_long varchar(128) not null,
+    these_compatible boolean default false not null,
+    hdr_compatible boolean default false not null
+);
+
+create unique index version_diplome_source_code_un on version_diplome (source_code);
+
+alter table version_diplome add histo_creation timestamp default ('now'::text)::timestamp not null;
+alter table version_diplome add histo_createur_id bigint not null default 1 constraint version_diplome_hcfk references utilisateur;
+alter table version_diplome add histo_modification timestamp;
+alter table version_diplome add histo_modificateur_id bigint constraint version_diplome_hmfk references utilisateur;
+alter table version_diplome add histo_destruction timestamp;
+alter table version_diplome add histo_destructeur_id bigint constraint version_diplome_hdfk references utilisateur;
+
+----
+
+-- ULHN
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HAI','HAI','HDR AI','HDR AI',true from source s where s.code = 'ULHN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HLSH','HLSH','HDR Lettres Sciences Hu','HDR Lettres Sciences Hu',true from source s where s.code = 'ULHN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HST','HST','HDR SCIENCES','HDR SCIENCES',true from source s where s.code = 'ULHN::apogee';
+-- UCN
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HARTM','HARTM','HDR ARTS SPECT PLAST MUSI','HABILITATION A DIRIGER DES RECHERCHES EN ARTS DU SPECTACLE, ARTS PLASTIQUES, MUSICOLOGIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HCHIM','HCHIM','HDR CHIMIE','HABILITATION A DIRIGER DES RECHERCHES DE CHIMIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HGENC','HGENC','HDR GENIE CIVIL','HABILITATION A DIRIGER DES RECHERCHES DE GENIE CIVIL',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HGENP','HGENP','HDR GENIE PROCEDES','HABILITATION A DIRIGER DES RECHERCHES DE GENIE PROCEDES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HGEO','HGEO','HDR GEOGRAPHIE','HABILITATION A DIRIGER DES RECHERCHES DE GEOGRAPHIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HHIST','HHIST','HDR HISTOIRE','HABILITATION A DIRIGER DES RECHERCHES D''HISTOIRE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HINFO','HINFO','HDR INFORMATIQUE','HABILITATION A DIRIGER DES RECHERCHES D''INFORMATIQUE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HLLA','HLLA','HDR LANG. LITT. ANCIENNES','HABILITATION A DIRIGER DES RECHERCHES DE LANGUES ET LITTERATURES ANCIENNES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HLLE','HLLE','HDR LANG. LITT. ETRANGERE','HABILITATION A DIRIGER DES RECHERCHES DE LANGUES ET LITTERATURES ETRANGERES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HLLF','HLLF','HDR LANG. LITT. FRANCAISE','HABILITATION A DIRIGER DES RECHERCHES DE LANGUES ET  LITTERATURES FRANCAISES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HMATH','HMATH','HDR MATHEMATIQUES','HABILITATION A DIRIGER DES RECHERCHES DE MATHEMATIQUES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HMED','HMED','HDR MEDECINE','HABILITATION A DIRIGER DES RECHERCHES DE MEDECINE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HPHARM','HPHARM','HDR PHARMACIE','HABILITATION A DIRIGER DES RECHERCHES DE PHARMACIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HPHILO','HPHILO','HDR PHILOSOPHIE','HABILITATION A DIRIGER DES RECHERCHES DE PHILOSOPHIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HPHYS','HPHYS','HDR PHYSIQUE','HABILITATION A DIRIGER DES RECHERCHES en PHYSIQUE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HPSYCH','HPSYCH','HDR PSYCHOLOGIE','HABILITATION A DIRIGER DES RECHERCHES DE PSYCHOLOGIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCGES','HSCGES','HDR SCIENCES DE GESTION','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES DE GESTION',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCLANG','HSCLANG','HDR SCIENCES DU LANGAGE','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES DU LANGAGE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCECO','HSCECO','HDR SCIENCES ECONOMIQUES','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES ECONOMIQUES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCED','HSCED','HDR SCIENCES EDUCATION','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES DE L''EDUCATION',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCJUR','HSCJUR','HDR SCIENCES JURIDIQUES','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES JURIDIQUES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCPOL','HSCPOL','HDR SCIENCES POLITIQUES','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES POLITIQUES',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCTERR','HSCTERR','HDR SCIENCES TERRE','HABILITATION A DIRIGER DES RECHERCHES EN SCIENCES TERRE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSCVIE','HSCVIE','HDR SCIENCES VIE','HABILITATION A DIRIGER DES RECHERCHES DE SCIENCES VIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSOCIO','HSOCIO','HDR SOCIOLOGIE','HABILITATION A DIRIGER DES RECHERCHES en SOCIOLOGIE',true from source s where s.code = 'UCN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'HSTAPS','HSTAPS','HDR STAPS','HABILITATION A DIRIGER DES RECHERCHES DE STAPS',true from source s where s.code = 'UCN::apogee';
+-- URN
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'DDW90','DDW90','HDR Droit','Habilitation à Diriger des Recherches en Droit',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'LLW90','LLW90','HDR Lettres','Habilitation à Diriger des Recherches en Lettres',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'MMW90','MMW90','HDR Médecine','Habilitation à Diriger des Recherches en Médecine',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'SSW90','SSW90','HDR Sciences','Habilitation à Diriger des Recherches en Sciences',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'KKW90','KKW90','HDR Sciences APS','Habilitation à Diriger des Recherches en Sciences et Techniques des Activités Physiques et Sportives',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'DGS91','DGS91','HDR Sciences de Gestion','Habilitation à Diriger des Recherches en Sciences de Gestion',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'DDW91','DDW91','HDR Sciences Economiques','Habilitation à Diriger des Recherches en Sciences Economiques',true from source s where s.code = 'URN::apogee';
+insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'PPW90','PPW90','HDR SHS','Habilitation à Diriger des Recherches en Sciences Humaines et Sociales',true from source s where s.code = 'URN::apogee';
+
+/*
+-- Requête Apogée UCN : génération des INSERTs des versions de diplomes pour HDR
+select 'insert into version_diplome(etablissement_id,source_id,source_code,code,libelle_court,libelle_long,hdr_compatible) select s.etablissement_id,s.id,'''||
+       cod_dip||''','''||cod_dip||''','''||replace(lic_vdi,'''','''''')||''','''||replace(lib_web_vdi,'''','''''')||''',true ' ||
+       'from source s where s.code = ''UCN::apogee'';' sql
+from VERSION_DIPLOME
+where tem_ses_uni = 'O' and tem_res_ths_vdi = 'O'
+  and to_char(sysdate, 'YYYY') >= daa_deb_val_vdi
+  and to_char(sysdate, 'YYYY') <= daa_fin_val_vdi
+  and dur_ann_vdi = 1
+order by lic_vdi;
+*/
+
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('HDR#VersionDiplome', '<p>Affiche le libellé de la version de diplôme associée à l''HDR</p>', 'hdr', 'getLibelleVersionDiplome');
+
+alter table HDR add version_diplome_id bigint constraint hdr_version_diplome_fk references version_diplome(id) on delete no action;
