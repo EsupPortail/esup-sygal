@@ -3,6 +3,7 @@
 namespace HDR\Service;
 
 use Acteur\Service\ActeurHDR\ActeurHDRService;
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
 use Application\Service\Variable\VariableService;
@@ -37,8 +38,8 @@ class HDRServiceFactory
          * @var EtablissementService $etablissamentService
          * @var MembreService $membreService
          * @var UserContextService $userContextService
-         * @var HorodatageService $horodatageService
          * @var SourceService $sourceService
+         * @var AnneeUnivService $anneeUnivService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $acteurHDRService = $container->get(ActeurHDRService::class);
@@ -50,8 +51,8 @@ class HDRServiceFactory
         $etablissamentService = $container->get(EtablissementService::class);
         $membreService = $container->get(MembreService::class);
         $userContextService = $container->get('UserContextService');
-        $horodatageService = $container->get(HorodatageService::class);
         $sourceService = $container->get(SourceService::class);
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         $service = new HDRService();
         $service->setEntityManager($entityManager);
@@ -65,6 +66,7 @@ class HDRServiceFactory
         $service->setMembreService($membreService);
         $service->setUserContextService($userContextService);
         $service->setSourceService($sourceService);
+        $service->setAnneeUnivService($anneeUnivService);
 
         return $service;
     }

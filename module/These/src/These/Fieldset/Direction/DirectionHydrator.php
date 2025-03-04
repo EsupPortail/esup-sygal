@@ -109,18 +109,24 @@ class DirectionHydrator extends AbstractHydrator
 
             /** @var ActeurThese[] $directeursEnBdd */
             $directeursEnBdd = $these->getId() ?  $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_DIRECTEUR_THESE) : [];
-            foreach ($directeursEnBdd as $directeur) {
-                if ($directeur->getIndividu()?->getId() !== $individu->getId()) {
-                    $directeur->historiser();
+            foreach ($directeursEnBdd as $acteur) {
+                if ($acteur->getIndividu()?->getId() !== $individu->getId()) {
+                    $acteur->historiser();
+
+                    //on historise également l'acteur ayant le rôle Membre associé à l'individu
+                    $membreEnBdd = $this->acteurTheseService->getRepository()->findActeurByIndividuAndTheseAndRole($acteur->getIndividu(),$these, Role::CODE_MEMBRE_JURY);
+                    if($membreEnBdd) $membreEnBdd->historiser();
                 }
             }
 
             $etablissement = isset($data['directeur-etablissement']) ? $this->etablissementService->getRepository()->find($data['directeur-etablissement']) : new Etablissement();
-
-            $acteur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE, $etablissement);
-
             $prefixe = 'directeur-';
-            $this->hydrateActeur($acteur, $data, $prefixe);
+            $directeurActeur = $this->addActeur($these, $individu, Role::CODE_DIRECTEUR_THESE, $etablissement);
+            $this->hydrateActeur($directeurActeur, $data, $prefixe);
+
+            //ajout d'un deuxième acteur avec le rôle Membre pour le même individu
+            $membreActeur = $this->addActeur($these, $individu, Role::CODE_MEMBRE_JURY, $etablissement);
+            $this->hydrateActeur($membreActeur, $data, $prefixe);
         }
     }
 
@@ -142,13 +148,21 @@ class DirectionHydrator extends AbstractHydrator
                 $this->hydrateActeur($acteur, $data, $prefixe);
 
                 $temoins[] = $acteur->getId();
+
+                //ajout d'un deuxième acteur avec le rôle Membre pour le même individu
+                $membreActeur = $this->addActeur($these, $individu, Role::CODE_MEMBRE_JURY, $etablissement);
+                $this->hydrateActeur($membreActeur, $data, $prefixe);
             }
         }
 
         $codirsEnBdd = $these->getId() ?  $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE) : [];
-        foreach ($codirsEnBdd as $codirecteur) {
-            if (array_search($codirecteur->getId(), $temoins) === false) {
-                $codirecteur->historiser();
+        foreach ($codirsEnBdd as $acteur) {
+            if (array_search($acteur->getId(), $temoins) === false) {
+                $acteur->historiser();
+
+                //on historise également l'acteur ayant le rôle Membre associé à l'individu
+                $membreEnBdd = $this->acteurTheseService->getRepository()->findActeurByIndividuAndTheseAndRole($acteur->getIndividu(),$these, Role::CODE_MEMBRE_JURY);
+                if($membreEnBdd) $membreEnBdd->historiser();
             }
         }
     }
@@ -186,7 +200,7 @@ class DirectionHydrator extends AbstractHydrator
     private function addActeur(These $these, Individu $individu, string $role, Etablissement $etablissement): ActeurThese
     {
         $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete($role, $etablissement);
-        $acteur = $these->getId() ? $this->acteurTheseService->getRepository()->findActeurByIndividuAndThese($individu, $these) : null;
+        $acteur = $these->getId() ? $this->acteurTheseService->getRepository()->findActeurByIndividuAndTheseAndRole($individu, $these, $role) : null;
         if($role){
             if ($acteur === null) {
                 $acteur = $this->acteurTheseService->newActeurThese($these, $individu, $role);

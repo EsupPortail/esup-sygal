@@ -247,6 +247,7 @@ from etablissement e
 where e.histo_destruction is null and e.est_etab_inscription = true;
 
 update role set hdr_dep = true where code IN ('HDR_CANDIDAT', 'HDR_GARANT', 'HDR_GESTIONNAIRE', 'M', 'P', 'R', 'A', 'B');
+update role set ordre_affichage = 'aaa' where code IN ('HDR_GARANT');
 update role set attrib_auto = true where code IN ('HDR_CANDIDAT', 'HDR_GARANT');
 
 
@@ -962,7 +963,7 @@ INSERT INTO public.unicaen_renderer_template (code, description, document_type, 
                                                                                                                                                                 <ul>
                                                                                                                                                                 <li>la proposition de soutenance de HDR de VAR[Candidat#Denomination] a été complètement validée</li>
                                                                                                                                                                 <li>vous êtes gestionnaire HDR de l\'établissement d\'inscription du candidat.</li>
-                                                                                                                                                                </ul>', 'table { width:100%; } th { text-align:left; }', 'Soutenance\Provider\Template', 'default');' ||
+                                                                                                                                                                </ul>', 'table { width:100%; } th { text-align:left; }', 'Soutenance\Provider\Template', 'default');
 INSERT INTO public.unicaen_renderer_template (code, description, document_type, document_sujet, document_corps, document_css, namespace, engine) VALUES ('SOUTENANCE_HDR_DEMANDE_SAISIE_INFOS_SOUTENANCE', '<p>Courrier électronique envoyé au candidat afin de lui demander qu''ils renseignent les informations concernant sa proposition de soutenance</p>', 'mail', 'Vous pouvez dès à présent renseigner vos informations de soutenance', e'<p>Bonjour,</p>
 <p><em>Ceci est un mail envoyé automatiquement par l''application ESUP-SyGAL.</em></p>
 <p>La/le gestionnaire HDR a saisi l''ensemble des informations concernant votre HDR.</p>
@@ -975,7 +976,7 @@ INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_na
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('HDR#Discipline', '<p>Affiche le libellé de la discipline associée à la HDR</p>', 'hdr', 'getLibelleDiscipline');
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('HDR#Encadrement', null, 'hdr', 'toStringEncadrement');
 
-INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('Url#ConvocationCandidat', NULL, 'Url', 'getSoutenanceConvocationCandidat
+INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('Url#ConvocationCandidat', NULL, 'Url', 'getSoutenanceConvocationCandidat');
 
 
 

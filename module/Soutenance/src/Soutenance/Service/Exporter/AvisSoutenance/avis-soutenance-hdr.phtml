@@ -1,0 +1,258 @@
+<?php
+
+use Acteur\Entity\Db\ActeurHDR;
+use HDR\Service\FichierHDR\PdcData;
+use Soutenance\Entity\PropositionHDR;
+use Validation\Entity\Db\ValidationHDR;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer             $this
+ * @var PropositionHDR $proposition
+ * @var ValidationHDR[] $validations
+ * @var ValidationHDR $validation
+ * @var array $logos
+ * @var PdcData                 $informations
+ * @see
+ */
+?>
+
+<style>
+    body {
+        font-size: 9pt;
+    }
+    img {
+        height:2.5cm;
+    }
+
+    h1 {
+        font-size: x-large;
+    }
+    h2 {
+        font-size: large;
+    }
+
+    table {
+        width:100%;
+    }
+    table.composition {
+        border-collapse: collapse;
+    }
+    table.composition th{
+        border-bottom:solid 2px black;
+    }
+    table.composition td{
+        border-bottom:solid 1px gray;
+    }
+    table.composition tbody tr {
+        border-bottom: 1px gray solid ;
+    }
+
+    table.informations {
+    }
+    table.informations td.head {
+        width: 50%
+    }
+    table.informations td.info {
+        text-align: right;
+    }
+
+    div.signature {
+        position:relative;
+        /*top: 80%;*/
+        left:500px;
+    }
+</style>
+<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
+
+    <div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+        <?php if ($informations->getLogoEtablissement() !== null): ?>
+            <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+        <?php else : ?>
+            <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+        <?php endif; ?>
+    </div>
+
+    <h1 style="text-align:center; position:absolute; top: 60px; left: 25%" >
+        Arrêté du 23 novembre 1988 <br> relatif à l'habilitation à diriger des recherches <br/>
+        (modifié par arrêté le 25 avril 2002)
+    </h1>
+
+<br/>
+<br/>
+<br/>
+
+<h2 style="text-align:center;">
+    Désignation des rapporteurs et des membres du jury
+    <br/>
+    Autorisation de soutenance Habilitation à Diriger des Recherches
+    <br/>
+    Avis de soutenance
+</h2>
+
+    <br/>
+
+
+<p>
+    <strong>
+    <?php if ($informations->getCandidat() !== null): ?>
+        <?php echo $informations->getCandidat(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Candidat manquant
+        </span>
+    <?php endif; ?>
+    </strong>
+    présente ses travaux en soutenance le
+    <strong>
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Date manquante
+        </span>
+    <?php endif; ?>
+    </strong>
+    à l'adresse suivante : <br/>
+    <?php if ($proposition->getAdresseActive() !== null): ?>
+        <?php echo $proposition->getAdresseActive()->format(); ?>
+    <?php else : ?>
+        <?php if ($proposition->getAdresse() !== null) : ?>
+            <?php echo $proposition->getAdresse(); ?>
+        <?php else : ?>
+            <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+            <br/>
+        <?php endif; ?>
+    <?php endif; ?>
+</p>
+
+    <table class='jury'>
+        <tr>
+            <td>Unité de recherche : </td>
+            <td>
+                <?php if ($informations->getUniteRecherche() !== null): ?>
+                    <?php echo $informations->getUniteRecherche(); ?>
+                <?php else: ?>
+                    <span style='background-color:red;'> Unité de recherche manquante</span>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php
+        /**
+         * @var ActeurHDR[] $garants
+         */
+        $garants = $informations->getGarants();
+        ?>
+
+        <tr>
+            <td>Garant :</td>
+            <td>
+                <?php $first = true; ?>
+                <?php foreach ($garants as $garant) : ?>
+                    <?php if (!$first): ?>
+                        <br/>
+                    <?php endif; ?>
+                    <?php
+                    $first = false;
+                    $denomination = $garant->getIndividu()->getNomCompletFormatter()->avecCivilite()->f();
+                    $qualite = $garant->getLibelleQualite();
+                    ?>
+                    <?php echo $denomination . ", " . $qualite; ?>
+                <?php endforeach; ?>
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <p>
+        La soutenance
+        <?php if ($proposition && $proposition->isHuitClos() !== null): ?>
+            <?php if ($proposition->isHuitClos()) : ?>
+                se déroulera en huis clos.
+            <?php else : ?>
+                est publique.
+            <?php endif; ?>
+        <?php else: ?>
+            <span style='background-color:red;'> information sur l'aspect public manquante </span>
+        <?php endif; ?>
+    </p>
+
+    <br/>
+    <br/>
+
+    <!-- SECTION JURY ----------------------------------------------------------------------------------------------------->
+
+    <table class='jury'>
+        <tr>
+            <th colspan='3'>
+                Composition du jury
+            </th>
+        </tr>
+
+        <?php foreach ($informations->getActeursEnCouverture() as $acteur) : ?>
+            <tr>
+                <td> <?php echo $acteur->getDenomination(); ?> </td>
+                <td> <?php echo trim($acteur->getQualite()); ?>,  <?php echo $acteur->getEtablissement(); ?></td>
+                <td> <?php echo $acteur->getRole(); ?> </td>
+            </tr>
+        <?php endforeach; ?>
+
+    </table>
+
+
+<br/>
+
+    <!-- Avis finale -------------------------------------------------------------------------------------------------->
+
+    <table class='jury'>
+        <tr>
+            <th colspan='3'>
+                Avis de soutenance
+            </th>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td>
+                &#9744; Avis favorable <br/>
+                &#9744; Avis défavorable <br/>
+            </td>
+            <td style="border:solid black 1px;">
+                <br/>
+                <br/>
+                Motivation en cas d'avis défavorable : <br/>
+                <?php for($i = 0 ; $i < 8 ; $i++) : ?>
+                    <br/>
+                <?php endfor; ?>
+            </td>
+        </tr>
+    </table>
+
+
+    <br/>
+    <br/>
+    <br/>
+
+    <!-- Signature ---------------------------------------------------------------------------------------------------->
+
+
+
+
+<table>
+    <tr>
+        <td width="10%"></td>
+        <td>
+            Fait à ................., le ........................<br/>
+            Pour le Président et p.o.<br/>
+            Le Vice-Président Recherche
+        </td>
+    </tr>
+</table>
+
+<?php $a=1; ?>

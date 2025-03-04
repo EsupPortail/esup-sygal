@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Exporter\RapportSoutenance;
 
+use Soutenance\Entity\PropositionThese;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
@@ -30,7 +31,11 @@ class RapportSoutenancePdfExporter extends PdfExporter
 //        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('footer.phtml', null, $this->vars);
-        $this->addBodyScript('rapport-soutenance.phtml', false, $this->vars);
+        if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
+            $this->addBodyScript('rapport-soutenance-these.phtml', false, $this->vars);
+        }else{
+            $this->addBodyScript('rapport-soutenance-hdr.phtml', false, $this->vars);
+        }
         $this->addBodyScript('rapport-soutenance-2.phtml', true, $this->vars);
         $this->addBodyScript('rapport-soutenance-3.phtml', true, $this->vars);
         return PdfExporter::export($filename, $destination, $memoryLimit);

@@ -507,7 +507,7 @@ class PropositionTheseController extends PropositionController
         $codirecteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($this->entity, Role::CODE_CODIRECTEUR_THESE);
 
         /** @var Membre[] $membres */
-        $membres = $this->proposition->getMembres();
+        $membres = $this->proposition->getMembres()->toArray();
         $acteursMembres = $this->acteurService->getRepository()->findActeursForSoutenanceMembres($membres);
 
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance");

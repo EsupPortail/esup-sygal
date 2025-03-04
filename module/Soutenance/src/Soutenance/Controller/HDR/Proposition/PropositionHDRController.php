@@ -20,6 +20,7 @@ use Soutenance\Assertion\HDR\PropositionHDRAssertionAwareTrait;
 use Soutenance\Controller\PropositionController;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\PropositionHDR;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Provider\Parametre\HDR\SoutenanceParametres;
@@ -364,11 +365,17 @@ class PropositionHDRController extends PropositionController
         $autorisation = $this->verifierAutorisation($this->proposition, [PropositionPrivileges::PROPOSITION_PRESIDENCE]);
         if ($autorisation !== null) return $autorisation;
 
+        /** @var Membre[] $membres */
+        $membres = $this->proposition->getMembres()->toArray();
+        $acteursMembres = $this->acteurService->getRepository()->findActeursForSoutenanceMembres($membres);
+
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance");
 
         $exporter = new SignaturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $this->proposition,
+            'membres' => $membres,
+            'acteursMembres' => $acteursMembres,
             'validations' => $this->propositionService->findValidationSoutenanceForHDR($this->entity),
             'logos' => $this->propositionService->findLogos($this->entity),
             'libelle' => $this->propositionService->generateLibelleSignaturePresidence($this->entity),

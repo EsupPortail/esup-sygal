@@ -17,6 +17,11 @@ class ActeurHDRRepository extends AbstractActeurRepository
         return parent::findActeurByIndividuAndEntity($individu, $entity);
     }
 
+    public function findActeurByIndividuAndHDRAndRole(Individu $individu, HDR $entity, Role|string $role): ActeurHDR|null
+    {
+        return parent::findActeurByIndividuAndEntityAndRole($individu, $entity, $role);
+    }
+
     /**
      * @return ActeurHDR[]
      */

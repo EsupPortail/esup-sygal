@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Exporter\ProcesVerbal;
 
+use Soutenance\Entity\PropositionThese;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
@@ -30,8 +31,13 @@ class ProcesVerbalSoutenancePdfExporter extends PdfExporter
 //        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('footer.phtml');
-        $this->addBodyScript('proces-verbal-soutenance-1.phtml', false, $this->vars);
-        $this->addBodyScript('proces-verbal-soutenance-2.phtml', true, $this->vars);
+        if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
+            $this->addBodyScript('proces-verbal-soutenance-these-1.phtml', false, $this->vars);
+            $this->addBodyScript('proces-verbal-soutenance-these-2.phtml', true, $this->vars);
+        }else{
+            $this->addBodyScript('proces-verbal-soutenance-hdr-1.phtml', false, $this->vars);
+            $this->addBodyScript('proces-verbal-soutenance-hdr-2.phtml', true, $this->vars);
+        }
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }

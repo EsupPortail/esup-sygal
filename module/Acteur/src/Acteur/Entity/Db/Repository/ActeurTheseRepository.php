@@ -17,6 +17,11 @@ class ActeurTheseRepository extends AbstractActeurRepository
         return parent::findActeurByIndividuAndEntity($individu, $entity);
     }
 
+    public function findActeurByIndividuAndTheseAndRole(Individu $individu, These $entity, Role|string $role): ActeurThese|null
+    {
+        return parent::findActeurByIndividuAndEntityAndRole($individu, $entity, $role);
+    }
+
     /**
      * @return ActeurThese[]
      */

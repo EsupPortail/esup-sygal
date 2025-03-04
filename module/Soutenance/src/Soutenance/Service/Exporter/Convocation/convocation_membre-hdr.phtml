@@ -1,24 +1,24 @@
 <?php
 
-use Validation\Entity\Db\ValidationThese;
+use Acteur\Entity\Db\ActeurHDR;
 use Application\View\Renderer\PhpRenderer;
+use HDR\Entity\Db\HDR;
+use HDR\Service\FichierHDR\PdcData;
 use Soutenance\Entity\Proposition;
-use These\Entity\Db\These;
-use These\Service\FichierThese\PdcData;
+use Validation\Entity\Db\ValidationHDR;
 
 /**
  * @var PhpRenderer             $this
  * @var Proposition $proposition
- * @var ValidationThese[] $validations
- * @var ValidationThese $validation
+ * @var ValidationHDR[] $validations
+ * @var ValidationHDR $validation
  * @var array $logos
- * @var int $nbCodirecteur
  * @var PdcData                 $informations
- * @var These $these
+ * @var HDR $hdr
  * @var DateTime $date
  * @var string $ville
  * @var string $signature
- * @var \Acteur\Entity\Db\ActeurThese $acteur
+ * @var ActeurHDR $acteur
  *
  * @see \Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter::export()
  */
@@ -40,15 +40,6 @@ $civilite = null;
 </style>
 
 <div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
-    <?php if ($informations->getLogoCOMUE() !== null): ?>
-        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
-    <?php else : ?>
-        <span style='background-color:red;'>
-                Logo COMUE manquant
-            </span>
-    <?php endif; ?>
-</div>
-<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
     <?php if ($informations->getLogoEtablissement() !== null): ?>
         <img src="<?php echo $informations->getLogoEtablissement() ?>" />
     <?php else : ?>
@@ -96,24 +87,20 @@ Par décision en date du
                 Date manquante,
         </span>
 <?php endif; ?>
-le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure()->getLibelle(); ?> vous a
+le chef de l'établissement <?php echo  $hdr->getEtablissement()->getStructure()->getLibelle(); ?> vous a
 désigné<?php echo ($civilite === "Madame" ? 'e' : ($civilite === "Monsieur" ? '' : '·e')) ?>
- pour participer au jury devant examiner les travaux de <?php echo $these->getApprenant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
+ pour participer au jury devant examiner les travaux de <?php echo $hdr->getApprenant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
  en vue de l'obtention du diplôme : <br/>
-Doctorat en <?php echo $these->getDiscipline(); ?>.
-</p>
-
-<p>
-    Le titre des travaux est : <?php echo $these->getTitre(); ?>
+    Habilitation à Diriger des Recherches en <?php echo $hdr->getVersionDiplome(); ?>.
 </p>
 
 <?php
-$encadrement = array_merge($informations->getDirecteurs(), $informations->getCodirecteurs());
+$encadrement = $informations->getGarants();
 $texte_directeur = implode(" et ", $encadrement);
 ?>
 
 <p>
-    Les travaux sont dirigées par <?php echo $texte_directeur; ?>.
+    Les travaux sont dirigés par <?php echo $texte_directeur; ?>.
 </p>
 
 <p>
@@ -168,7 +155,7 @@ $texte_directeur = implode(" et ", $encadrement);
             <br/>
             <br/>
             Visa de l'établissement d'inscription du doctorant,<br/>
-            <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
+            <?php echo $hdr->getEtablissement()->getStructure()->getLibelle(); ?>
         </td>
     </tr>
     <tr>
@@ -182,6 +169,3 @@ $texte_directeur = implode(" et ", $encadrement);
         </td>
     </tr>
 </table>
-
-
-

@@ -2,7 +2,11 @@
 
 namespace Soutenance\Service\Exporter\Convocation;
 
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
 use Application\Entity\Db\Role;
+use HDR\Entity\Db\HDR;
+use Soutenance\Entity\PropositionThese;
 use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
@@ -35,17 +39,30 @@ class ConvocationPdfExporter extends PdfExporter
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
 
-        $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
-        $this->addBodyScript('empty.phtml');
+        if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
+            $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
 
-        /** @var These $these */
-        $these = $this->vars["these"];
-        /** @var \Acteur\Entity\Db\ActeurThese[] $jury */
-        $jury = $these->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
+            /** @var These $these */
+            $these = $this->vars["these"];
+            /** @var ActeurThese[] $jury */
+            $jury = $these->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
+        }else{
+            $this->addBodyScript('convocation_candidat.phtml', false, $this->vars);
+
+            /** @var HDR $hdr */
+            $hdr = $this->vars["hdr"];
+            /** @var ActeurHDR[] $jury */
+            $jury = $hdr->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
+        }
+        $this->addBodyScript('empty.phtml');
 
         foreach ($jury as $acteur) {
             $this->vars["acteur"] = $acteur;
-            $this->addBodyScript('convocation_membre.phtml', true, $this->vars);
+            if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
+                $this->addBodyScript('convocation_membre-these.phtml', true, $this->vars);
+            }else{
+                $this->addBodyScript('convocation_membre-hdr.phtml', true, $this->vars);
+            }
             $this->addBodyScript('empty.phtml');
         }
 
@@ -61,7 +78,11 @@ class ConvocationPdfExporter extends PdfExporter
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
 
-        $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
+        if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
+            $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
+        }else{
+            $this->addBodyScript('convocation_candidat.phtml', false, $this->vars);
+        }
 
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
@@ -76,8 +97,11 @@ class ConvocationPdfExporter extends PdfExporter
         $this->setFooterScript('empty.phtml');
 
         $this->vars["membre"] = $membre;
-        $this->addBodyScript('convocation_membre.phtml', false, $this->vars);
-
+        if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
+            $this->addBodyScript('convocation_membre-these.phtml', true, $this->vars);
+        }else{
+            $this->addBodyScript('convocation_membre-hdr.phtml', true, $this->vars);
+        }
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }

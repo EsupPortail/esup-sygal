@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Acteur\Entity\Db\ActeurHDR;
 use Acteur\Entity\Db\ActeurThese;
 use Application\Entity\Db\Profil;
+use Application\Entity\Db\Role;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -213,10 +214,20 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 //        $acteur->setMembre($membre);
         $acteur->setMembre(null);
         $this->acteurService->save($acteur);
+
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
-        if(!$this->entity->getSource()->getImportable()) $this->acteurService->historise($acteur);
+        //si l'entité a été saisie intégralement dans SyGAL, et ne provient pas d'un SI
+        if(!$this->entity->getSource()->getImportable()){
+            //on historise l'acteur
+            $this->acteurService->historise($acteur);
 
+            //vérification qu'il n'y ait pas d'autre acteur associé au même individu, et qui possède le rôle Membre
+            //si oui, on historise aussi
+            $entity = $this->entity instanceof These ? $acteur->getThese() : $acteur->getHDR();
+            $acteurMembre = $this->acteurService->getRepository()->findActeurByIndividuAndEntityAndRole($acteur->getIndividu(), $entity, Role::CODE_MEMBRE_JURY);
+            if($acteurMembre) $this->acteurService->historise($acteurMembre);
+        }
         $validation = $this->entity instanceof These ?
             $this->validationService->getRepository()->findValidationByTheseAndCodeAndIndividu($this->entity, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu()) :
             $this->validationService->getRepository()->findValidationByHDRAndCodeAndIndividu($this->entity, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());

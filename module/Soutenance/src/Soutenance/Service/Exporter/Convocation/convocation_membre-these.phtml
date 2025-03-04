@@ -1,0 +1,187 @@
+<?php
+
+use Validation\Entity\Db\ValidationThese;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
+use These\Service\FichierThese\PdcData;
+
+/**
+ * @var PhpRenderer             $this
+ * @var Proposition $proposition
+ * @var ValidationThese[] $validations
+ * @var ValidationThese $validation
+ * @var array $logos
+ * @var int $nbCodirecteur
+ * @var PdcData                 $informations
+ * @var These $these
+ * @var DateTime $date
+ * @var string $ville
+ * @var string $signature
+ * @var \Acteur\Entity\Db\ActeurThese $acteur
+ *
+ * @see \Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter::export()
+ */
+
+$date = new DateTime();
+
+$civilite = $acteur->getIndividu()?->getCiviliteToString() ?: null;
+$denomination = $acteur->getIndividu()?->getNomComplet() ?: $acteur->getDenomination();
+
+$civilite = null;
+?>
+
+<style>
+    .not-yet {
+        background-color: lightpink;
+        color: darkred;
+    }
+
+</style>
+
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoCOMUE() !== null): ?>
+        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo COMUE manquant
+            </span>
+    <?php endif; ?>
+</div>
+<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr>
+        <td width="80%"></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+<!--            <span class="not-yet">ADRESSE ETABLISSEMENT RATTACHEMENT</span> <br/>-->
+        </td>
+    </tr>
+</table>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<?php if ($civilite !== null OR $denomination !== null) : ?>
+<p>
+    <?php echo $civilite ?> <?php echo $denomination; ?>, <br/>
+</p>
+<?php endif; ?>
+
+<p>
+Par décision en date du
+<?php if ($date): ?>
+    <?php echo $date->format('d/m/Y'); ?>,
+<?php else: ?>
+    <span style='background-color:red;'>
+                Date manquante,
+        </span>
+<?php endif; ?>
+le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure()->getLibelle(); ?> vous a
+désigné<?php echo ($civilite === "Madame" ? 'e' : ($civilite === "Monsieur" ? '' : '·e')) ?>
+ pour participer au jury devant examiner les travaux de <?php echo $these->getApprenant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
+ en vue de l'obtention du diplôme : <br/>
+Doctorat en <?php echo $these->getDiscipline(); ?>.
+</p>
+
+<p>
+    Le titre des travaux est : <?php echo $these->getTitre(); ?>
+</p>
+
+<?php
+$encadrement = array_merge($informations->getDirecteurs(), $informations->getCodirecteurs());
+$texte_directeur = implode(" et ", $encadrement);
+?>
+
+<p>
+    Les travaux sont dirigés par <?php echo $texte_directeur; ?>.
+</p>
+
+<p>
+    La soutenance aura lieu le
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Date manquante,
+        </span>
+    <?php endif; ?> à l'adresse suivante : <br/>
+    <?php if ($proposition->getAdresseActive() !== null): ?>
+        <?php echo $proposition->getAdresseActive()->format(); ?>
+    <?php else : ?>
+        <?php if ($proposition->getAdresse() !== null) : ?>
+            <?php echo $proposition->getAdresse(); ?>
+        <?php else : ?>
+            <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+            <br/>
+        <?php endif; ?>
+    <?php endif; ?>
+</p>
+
+<p>
+    La soutenance <?php if ($proposition && $proposition->isHuitClos() !== null): ?>
+        <?php if ($proposition->isHuitClos()) : ?>
+            se déroulera en huis clos.
+        <?php else : ?>
+            sera publique.
+        <?php endif ; ?>
+    <?php else: ?>
+        <span style='background-color:red;'> information sur l'aspect public manquante </span>
+    <?php endif; ?>
+</p>
+
+<p>
+    Je vous prie d'agréer, <?php echo $civilite ?: "Madame, Monsieur" ?>, l'expression de mes salutations distinguées.
+</p>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table style='margin-left:auto;'>
+    <tr>
+        <td></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+            Visa de l'établissement d'inscription du doctorant,<br/>
+            <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+            <?php if ($signature) : ?>
+                <img id="logo" style="background-color: white; max-width: 50%;"
+                     src="<?php echo $signature ?>"/>
+            <?php endif; ?>
+        </td>
+    </tr>
+</table>
+
+
+

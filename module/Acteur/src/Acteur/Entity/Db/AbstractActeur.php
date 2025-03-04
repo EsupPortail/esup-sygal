@@ -183,7 +183,7 @@ abstract class AbstractActeur implements HistoriqueAwareInterface, ResourceInter
     }
 
     /**
-     * Prédicat testant cet un acteur est un membre du jury de thèse.
+     * Prédicat testant cet un acteur est un membre du jury de thèse/HDR.
      *
      * @return bool
      */

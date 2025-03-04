@@ -1,0 +1,203 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use HDR\Service\FichierHDR\PdcData;
+use Individu\Entity\Db\Individu;
+use Soutenance\Entity\Proposition;
+use Validation\Entity\Db\ValidationHDR;
+
+/**
+ * @var PhpRenderer             $this
+ * @var Proposition $proposition
+ * @var ValidationHDR[] $validations
+ * @var ValidationHDR $validation
+ * @var array $logos
+ * @var PdcData                 $informations
+ * @see
+ */
+?>
+
+<style>
+    body {
+        font-size: 9pt;
+    }
+
+    span.warning {
+        font-weight: bold;
+        color: darkred;
+    }
+
+    img {
+        height:2.5cm;
+    }
+
+    h1 {
+        font-size: x-large;
+    }
+    h2 {
+        font-size: large;
+    }
+    table {
+        width:100%;
+    }
+
+    table.recapitulatif {
+        border:solid 1px black;
+    }
+
+    table.recapitulatif td.head {
+        font-weight: bold;
+        width: 33.3%
+    }
+
+    table.composition {
+        border-collapse: collapse;
+    }
+
+    table.composition th{
+        border-bottom:solid 2px black;
+    }
+
+    table.composition td{
+        border-bottom:solid 1px gray;
+    }
+
+    table.composition tbody tr {
+        border-bottom: 1px gray solid ;
+    }
+
+    table.informations {
+    }
+
+    table.informations td.head {
+        width: 50%
+    }
+
+    table.informations td.info {
+        text-align: right;
+    }
+
+    table.validation {
+        border-collapse: collapse;
+    }
+
+    table.validation th{
+        border-bottom:solid 2px black;
+    }
+
+    table.validation td{
+        border-bottom:solid 1px gray;
+        margin: 1rem;
+    }
+
+    span.to-complete {
+        background-color: pink;
+        color: darkred;
+    }
+
+</style>
+<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
+
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
+<h1 style="text-align:center; position:absolute; top: 60px; left: 25%" >
+    Arrêté du 23 novembre 1988 <br> relatif à l'habilitation à diriger des recherches <br/>
+    (modifié par arrêté le 25 avril 2002)
+</h1>
+
+<br/>
+<br/>
+<br/>
+
+<h2 style="text-align:center;">
+    Année universitaire
+    <?php if ($informations->getAnneeUniversitaire() !== null) : ?>
+        <?php echo $informations->getAnneeUniversitaire(); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Année universitaire manquante
+        </span>
+    <?php endif; ?>
+    <br/>
+    <u>Procès-verbal de soutenance de HDR</u>
+</h2>
+
+
+    <table class="jury">
+        <tr>
+            <td style="width:50%;"> Nom du candidat </td>
+            <td> <?php echo $informations->getCandidat(); ?> </td>
+        </tr>
+    <tr>
+        <td> Date de soutenance </td>
+        <td> <?php if ($informations->getDate() !== null): ?>
+                <?php echo $informations->getDate(); ?>
+            <?php else : ?>
+                <span style='background-color:red;'>
+                    Date manquante
+                </span>
+            <?php endif; ?> </td>
+    </tr>
+    </table>
+    <table class="jury">
+        <tr>
+            <td style="width:50%;"> Résultat </td>
+            <td style=""> &#9744; Admis&middot;e </td>
+            <td style=""> &#9744; Ajourné&middot;e </td>
+        </tr>
+    </table>
+<table class="jury">
+    <tr>
+        <td style="width:33%;"> Nom du président de jury désigné </td>
+        <td> Mme / M ...................................................................................................
+        </td>
+    </tr>
+</table>
+
+<p>
+    Fait à ........................................, le ........................................
+</p>
+
+<p>
+    <strong>Noms et signatures des membres du jury</strong>
+</p>
+
+    <?php $position = 0; ?>
+    <table>
+
+    <?php
+    /** @var Individu $signataire */
+    foreach ($informations->getSignataires() as $signataire) :
+    ?>
+
+    <?php if ($position % 3 == 0 and $position !== 0) : ?>
+        </tr>
+    <?php endif; ?>
+    <?php if ($position % 3 == 0) : ?>
+        <tr>
+    <?php endif; ?>
+
+        <td>
+            <?php echo $signataire->getNomCompletFormatter()->avecCivilite()->f(); ?>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </td>
+
+    <?php $position++; ?>
+
+    <?php endforeach; ?>
+
+        </tr>
+    </table>

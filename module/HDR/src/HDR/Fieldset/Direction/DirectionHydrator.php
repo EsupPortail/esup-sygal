@@ -80,15 +80,21 @@ class DirectionHydrator extends AbstractHydrator
             foreach ($garantsEnBdd as $garant) {
                 if ($garant->getIndividu()?->getId() !== $individu->getId()) {
                     $garant->historiser();
+                    //on historise également l'acteur ayant le rôle Membre associé à l'individu
+                    $membreEnBdd = $this->acteurHDRService->getRepository()->findActeurByIndividuAndHDRAndRole($garant->getIndividu(), $hdr, Role::CODE_MEMBRE_JURY);
+                    if($membreEnBdd) $membreEnBdd->historiser();
                 }
             }
 
             $etablissement = isset($data['garant-etablissement']) ? $this->etablissementService->getRepository()->find($data['garant-etablissement']) : new Etablissement();
 
             $acteur = $this->addActeur($hdr, $individu, Role::CODE_HDR_GARANT, $etablissement);
-
             $prefixe = 'garant-';
             $this->hydrateActeur($acteur, $data, $prefixe);
+
+            //ajout d'un deuxième acteur avec le rôle Membre pour le même individu
+            $membreActeur = $this->addActeur($hdr, $individu, Role::CODE_MEMBRE_JURY, $etablissement);
+            $this->hydrateActeur($membreActeur, $data, $prefixe);
         }
     }
 
@@ -123,7 +129,7 @@ class DirectionHydrator extends AbstractHydrator
     private function addActeur(HDR $hdr, Individu $individu, string $role, Etablissement $etablissement): ActeurHDR
     {
         $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete($role, $etablissement);
-        $acteur = $hdr->getId() ? $this->acteurHDRService->getRepository()->findActeurByIndividuAndHDR($individu, $hdr) : null;
+        $acteur = $hdr->getId() ? $this->acteurHDRService->getRepository()->findActeurByIndividuAndHDRAndRole($individu, $hdr, $role) : null;
         if($role){
             if ($acteur === null) {
                 $acteur = $this->acteurHDRService->newActeurHDR($hdr, $individu, $role);

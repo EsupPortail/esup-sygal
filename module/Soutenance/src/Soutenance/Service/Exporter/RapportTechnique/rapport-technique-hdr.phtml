@@ -1,0 +1,233 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use HDR\Entity\Db\HDR;
+use HDR\Service\FichierHDR\PdcData;
+
+/**
+ * @var PhpRenderer             $this
+ * @see \Soutenance\Service\Exporter\AvisSoutenance\RapportTechniquePdfExporter
+ * @see PresoutenanceController::rapportTechniqueAction()
+ * @var HDR                   $hdr
+ * @var PdcData                 $informations
+ */
+?>
+
+<style>
+    body {
+        font-size: 9pt;
+    }
+
+    span.warning {
+        font-weight: bold;
+        color: darkred;
+    }
+
+    img {
+        height:2.5cm;
+    }
+
+    h1 {
+        font-size: x-large;
+    }
+    h2 {
+        font-size: large;
+    }
+    table {
+        width:100%;
+    }
+
+    table.recapitulatif {
+        border:solid 1px black;
+    }
+
+    table.recapitulatif td.head {
+        font-weight: bold;
+        width: 33.3%
+    }
+
+    table.composition {
+        border-collapse: collapse;
+    }
+
+    table.composition th{
+        border-bottom:solid 2px black;
+    }
+
+    table.composition td{
+        border-bottom:solid 1px gray;
+    }
+
+    table.composition tbody tr {
+        border-bottom: 1px gray solid ;
+    }
+
+    table.informations {
+    }
+
+    table.informations td.head {
+        width: 50%
+    }
+
+    table.informations td.info {
+        text-align: right;
+    }
+
+    table.validation {
+        border-collapse: collapse;
+    }
+
+    table.validation th{
+        border-bottom:solid 2px black;
+    }
+
+    table.validation td{
+        border-bottom:solid 1px gray;
+        margin: 1rem;
+    }
+
+    span.to-complete {
+        background-color: pink;
+        color: darkred;
+    }
+
+    div.signature {
+        position:relative;
+        /*top: 80%;*/
+        left:500px;
+    }
+
+    u {
+        text-decoration-style: dotted;
+    }
+</style>
+<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
+
+    <div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+        <?php if ($informations->getLogoEtablissement() !== null): ?>
+            <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+        <?php else : ?>
+            <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+        <?php endif; ?>
+    </div>
+
+    <h1 style="text-align:center; position:absolute; top: 60px; left: 25%" >
+        Arrêté du 23 novembre 1988 <br> relatif à l'habilitation à diriger des recherches <br/>
+        (modifié par arrêté le 25 avril 2002) <br/>
+        Rapport technique du Président du Jury <br/>
+    </h1>
+
+<br/>
+<br/>
+<br/>
+
+<h2 style="text-align:center;"> &nbsp;  </h2>
+
+
+
+<br/><br/>
+
+Rapport technique du Président du Jury pour : <br/>
+&#9744; une soutenance de HDR par voie partiellement dématérialisée pour une partie des membres en distanciel <br/>
+&#9744; une soutenance de HDR par voie intégralement dématérialisée pour l’ensemble des membres du jury <br/>
+&#9744; et/ou si le Président du Jury assiste à la soutenance en distanciel <br/>
+
+<br/><br/>
+
+<h3> Identification du Président du jury </h3>
+
+<br/>
+
+Je soussigné&middot;e M&middot;me :
+<u>
+    <?php for($i = 0 ; $i < 80 ; $i++) : ?>
+        &nbsp;
+    <?php endfor; ?>
+</u>
+<br/><br/>
+
+Fonction :
+<u>
+    <?php for($i = 0 ; $i < 90 ; $i++) : ?>
+        &nbsp;
+    <?php endfor; ?>
+</u>
+<br/><br/>
+
+Établissement :
+<u>
+<?php for($i = 0 ; $i < 85 ; $i++) : ?>
+    &nbsp;
+<?php endfor; ?>
+</u>
+<br/><br/>
+
+Unité de recherche :
+<u>
+<?php for($i = 0 ; $i < 81 ; $i++) : ?>
+    &nbsp;
+<?php endfor; ?>
+</u>
+<br/><br/>
+
+Président du jury de soutenance de HDR de <?php echo $hdr->getApprenant()->getIndividu()->getNomCompletFormatter()->avecCivilite()->f(); ?>
+<br/><br/>
+
+<h3> Déroulement de la soutenance </h3>
+
+<br/>
+
+Moyen technique utilisé pour la soutenance :
+<u>
+    <?php for($i = 0 ; $i < 62 ; $i++) : ?>
+        &nbsp;
+    <?php endfor; ?>
+</u>
+<br/><br/>
+
+Horaire de connexion pour la soutenance :
+<u>
+    <?php for($i = 0 ; $i < 64 ; $i++) : ?>
+        &nbsp;
+    <?php endfor; ?>
+</u>
+<br/><br/>
+
+Horaire de la délibération :
+<u>
+    <?php for($i = 0 ; $i < 77 ; $i++) : ?>
+        &nbsp;
+    <?php endfor; ?>
+</u>
+<br/><br/>
+
+<h3> Incidents éventuels: </h3>
+
+<br/><br/>
+<br/><br/>
+<br/><br/>
+<br/><br/>
+<br/><br/>
+<br/><br/>
+
+<p>
+Pour faire valoir ce que de droit,
+</p>
+
+<table>
+    <tr>
+    <td style="width:66%;"></td>
+    <td>
+        <p>
+            Fait à <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>, le <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+        </p>
+
+        <p>
+            Nom et signature du Président du jury,
+        </p>
+    </td>
+    </tr>
+</table>
+

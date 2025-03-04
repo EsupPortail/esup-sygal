@@ -196,12 +196,24 @@ class PresoutenanceTheseController extends PresoutenanceController
 //        $this->getMembreService()->update($membre);
         $acteur->setMembre($membre);
         $this->acteurService->save($acteur);
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
         //creation de l'utilisateur
         if ($membre->estRapporteur()) {
             $this->createUtilisateurRapporteur($acteur, $membre);
+
+            //quand c'est une thèse saisie dans SyGAL, on enregistre également un acteur avec le rôle Membre (ce qui était automatique quand cela provenait d'un SI)
+            //cet acteur sera supprimé en même temps que l'acteur comportant le rôle Rapporteur, si une dissociation est faite
+            if($acteur->getRole()->getCode() !== Role::CODE_RAPPORTEUR_ABSENT){
+                $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_MEMBRE_JURY, $this->entity->getEtablissement());
+                $acteurRoleMembre = $this->acteurService->newActeurThese($this->entity, $acteur->getIndividu(), $role);
+                $acteurRoleMembre->setQualite($acteur->getQualite());
+                $acteurRoleMembre->setEtablissement($acteur->getEtablissement());
+                $acteurRoleMembre->setUniteRecherche($acteur->getUniteRecherche());
+                $this->acteurService->save($acteurRoleMembre);
+            }
         }
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
     }
 

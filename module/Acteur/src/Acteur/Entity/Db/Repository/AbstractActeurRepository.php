@@ -282,4 +282,34 @@ abstract class AbstractActeurRepository extends DefaultEntityRepository
 
         return $acteurs;
     }
+
+    public function findActeurByIndividuAndEntityAndRole(Individu $individu, These|HDR $entity, Role|string $role): ActeurThese|ActeurHDR|null
+    {
+        $code = $role;
+        if ($role instanceof Role) {
+            $code = $role->getCode();
+        }
+
+        $qb = $this->createQueryBuilder('a')
+            ->addSelect('role')->join('a.role', 'role')
+            ->andWhereNotHistorise() // indispensable
+            ->andWhere('a.individu = :individu')
+            ->andWhere('role.code = :code')
+            ->setParameter('code', $code)
+            ->setParameter('individu', $individu)
+            ->orderBy('a.id', 'DESC');
+
+        if ($entity instanceof These) {
+            $qb->andWhere('a.these = :entity');
+        } else {
+            $qb->andWhere('a.hdr = :entity');
+        }
+        $qb->setParameter('entity', $entity);
+
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie : plusieurs acteurs pour les caractéristiques données", null, $e);
+        }
+    }
 }

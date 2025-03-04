@@ -191,6 +191,17 @@ class PresoutenanceHDRController extends PresoutenanceController
         //creation de l'utilisateur
         if ($membre->estRapporteur()) {
             $this->createUtilisateurRapporteur($acteur, $membre);
+
+            //quand c'est une HDR saisie dans SyGAL, on enregistre également un acteur avec le rôle Membre (ce qui était automatique quand cela provenait d'un SI)
+            //cet acteur sera supprimé en même temps que l'acteur comportant le rôle Rapporteur, si une dissociation est faite
+            if($acteur->getRole()->getCode() !== Role::CODE_RAPPORTEUR_ABSENT){
+                $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_MEMBRE_JURY, $this->entity->getEtablissement());
+                $acteurRoleMembre = $this->acteurService->newActeurHDR($this->entity, $acteur->getIndividu(), $role);
+                $acteurRoleMembre->setQualite($acteur->getQualite());
+                $acteurRoleMembre->setEtablissement($acteur->getEtablissement());
+                $acteurRoleMembre->setUniteRecherche($acteur->getUniteRecherche());
+                $this->acteurService->save($acteurRoleMembre);
+            }
         }
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
     }
@@ -267,7 +278,7 @@ class PresoutenanceHDRController extends PresoutenanceController
     #[NoReturn] public function convocationsAction(): void
     {
         $this->initializeFromType();
-        $signature = $this->findSignatureEcoleDoctorale($this->entity) ?: $this->findSignatureEtablissement($this->entity);
+        $signature = $this->findSignatureEtablissement($this->entity);
 
         $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
 

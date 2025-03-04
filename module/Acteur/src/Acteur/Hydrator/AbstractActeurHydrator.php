@@ -51,7 +51,7 @@ abstract class AbstractActeurHydrator extends AbstractHydrator
 
         $qualite = $this->getQualiteService()->getQualite($qualiteLib);
 
-        if($object instanceof ActeurHDR){
+        if($object instanceof ActeurThese){
             /** @var EcoleDoctorale $ecoleDoctorale */
             $ecoleDoctorale = $this->hydrateValue('ecoleDoctorale', $data['ecoleDoctorale']);
             $object->setEcoleDoctorale($ecoleDoctorale);

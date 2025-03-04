@@ -4,6 +4,7 @@ namespace These\Service\These;
 
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextService;
@@ -32,6 +33,7 @@ class TheseService extends BaseService
     use FichierStorageServiceAwareTrait;
     use ActeurTheseServiceAwareTrait;
     use MembreServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     /**
      * @return TheseRepository
@@ -55,6 +57,19 @@ class TheseService extends BaseService
 
     public function saveThese(These $these): These
     {
+        /** @var ActeurThese[] $membres */
+        $membres = $these->getActeursByRoleCode([
+            Role::CODE_MEMBRE_JURY,
+        ]);
+
+        foreach ($membres as $acteur) {
+            try {
+                $this->getEntityManager()->persist($acteur);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            }
+        }
+
         /** @var ActeurThese[] $direction */
         $direction = $these->getActeursByRoleCode([
             Role::CODE_DIRECTEUR_THESE,
@@ -178,13 +193,19 @@ class TheseService extends BaseService
         /** @var Proposition $proposition */
         $proposition = end($propositions);
 
-        if ($these->getDateSoutenance() !== null) {
-            $mois = (int) $these->getDateSoutenance()->format('m');
-            $annee = (int) $these->getDateSoutenance()->format('Y');
+        //à voir pour supprimer complètement si pas de remontée de la part des fonctionnels
+//        if ($these->getDateSoutenance() !== null) {
+//            $mois = (int) $these->getDateSoutenance()->format('m');
+//            $annee = (int) $these->getDateSoutenance()->format('Y');
+//
+//            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
+//            else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
+//            $pdcData->setAnneeUniversitaire($anneeUniversitaire);
+//        }
 
-            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
-            else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
-            $pdcData->setAnneeUniversitaire($anneeUniversitaire);
+        if ($proposition->getDate() !== null) {
+            $anneeUniv = $this->anneeUnivService->fromDate($proposition->getDate());
+            $pdcData->setAnneeUniversitaire($anneeUniv->getAnneeUnivToString());
         }
 
         /** informations générales */
@@ -201,7 +222,8 @@ class TheseService extends BaseService
         if ($these->getDoctorant()) {
             $pdcData->setDoctorant(mb_strtoupper($these->getDoctorant()->getIndividu()->getNomComplet()));
         }
-        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
+        if ($proposition->getDate()) $pdcData->setDate($proposition->getDate()->format("d/m/Y"));
+//        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
         /** cotutelle */
         $pdcData->setCotutuelle(false);

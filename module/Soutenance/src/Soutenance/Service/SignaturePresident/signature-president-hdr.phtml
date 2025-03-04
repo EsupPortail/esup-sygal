@@ -1,0 +1,316 @@
+<?php
+
+use Acteur\Entity\Db\ActeurHDR;
+use Application\Entity\Db\Role;
+use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+use Validation\Entity\Db\ValidationHDR;
+
+/**
+ * @var PhpRenderer             $this
+ * @var Proposition $proposition
+ * @var Membre[] $membres
+ * @var ActeurHDR[] $acteursMembres
+ * @var ValidationHDR[] $validations
+ * @var ValidationHDR $validation
+ * @var array $logos
+ * @var string $libelle
+ */
+
+$hdr = $proposition->getObject();
+$unite = ($hdr->getUniteRecherche())?$hdr->getUniteRecherche()->getStructure()->getLibelle():"Information manquante";
+?>
+
+<style>
+    body {
+        font-size: 9pt;
+    }
+
+    span.warning {
+        font-weight: bold;
+        color: darkred;
+    }
+
+    img {
+        height:2.5cm;
+    }
+
+    h1 {
+        font-size: x-large;
+    }
+    h2 {
+        margin-top: 0.5cm;
+        font-size: large;
+    }
+    table {
+        width:100%;
+    }
+
+    table.recapitulatif {
+        /*background-color: #5cb85c;*/
+        border:solid 1px black;
+    }
+
+    table.recapitulatif td.head {
+        font-weight: bold;
+        width: 33.3%
+    }
+
+    table.composition {
+        /*background-color: #7ACAFF;*/
+        border-collapse: collapse;
+    }
+
+    table.composition th{
+        border-bottom:solid 2px black;
+    }
+
+    table.composition td{
+        border-bottom:solid 1px gray;
+        /*margin-right: 0.5rem;*/
+        padding-right: 0.5rem;
+        font-size: 8pt;
+    }
+
+    table.composition tbody tr {
+        border-bottom: 1px gray solid ;
+    }
+
+    table.informations {
+        /*background-color: #f8efc0;*/
+    }
+
+    table.informations td.head {
+        width: 50%
+    }
+
+    table.informations td.info {
+        text-align: right;
+    }
+
+    table.validation {
+        /*background-color: #ffadad;*/
+        border-collapse: collapse;
+    }
+
+    table.validation th{
+        border-bottom:solid 2px black;
+    }
+
+    table.validation td{
+        border-bottom:solid 1px gray;
+        margin: 1rem;
+        font-size: 8pt;
+    }
+
+    table.validation td.validation {
+        text-align: right;
+    }
+
+</style>
+    <div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+        <img src="<?php echo $logos['ETAB']; ?>" />
+    </div>
+
+        <h1 style="position:absolute; top: 60px; left: 30%">
+            Proposition de soutenance
+        </h1>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<h2> Récapitulatif de la HDR et de la soutenance </h2>
+
+<table class="recapitulatif">
+    <tr>
+        <td class="head">Candidat : </td>
+        <td> <?php echo $hdr->getApprenant()->getIndividu()->getNomComplet(); ?> </td>
+    </tr>
+    <tr>
+        <td class="head"> Numéro étudiant : </td>
+        <td> <?php echo $hdr->getApprenant()->getNumeroEtudiant(); ?> </td>
+    </tr>
+    <tr>
+        <td class="head"> Date de la soutenance : </td>
+        <td>
+            <?php if($proposition->getDate()) : ?>
+                le <?php echo $proposition->getDate()->format("d/m/Y"); ?> à <?php echo $proposition->getDate()->format("H:i"); ?> <br/></td>
+            <?php else: ?>
+                <span class="warning"> Aucune date renseignée </span>
+            <?php endif; ?>
+    </tr>
+    <tr>
+        <td class="head">Lieu de la soutenance :</td>
+        <td>
+            <?php if($proposition->getLieu()) : ?>
+                <?php echo $proposition->getLieu(); ?>
+            <?php else : ?>
+                <span class="warning"> Aucun lieu renseigné </span>
+            <?php endif; ?>
+        </td>
+    </tr>
+</table>
+
+<h2>
+    Proposition de jury
+</h2>
+
+<table class="composition">
+    <thead>
+        <tr>
+            <th> Dénomination </th>
+            <th> Qualité </th>
+            <th> Rôle </th>
+            <th> Établissement/Organisme d'affectation </th>
+            <th> Visio </th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php /** @var Membre $membre */ ?>
+        <?php foreach ($membres as $membre) : ?>
+            <?php $acteurMembre = $acteursMembres[$membre->getId()] ?? null ?>
+            <tr>
+                <td> <?php echo $membre->getDenomination(); ?> </td>
+                <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
+                <td>
+                    <?php if ($membre->estRapporteur()) : ?>
+                        Rapporteur
+                    <?php else : ?>
+                        Membre du jury
+                    <?php endif; ?>
+                    <?php if ($acteurMembre && $acteurMembre->estGarant()) : ?>
+                        <br/> Garant de HDR
+                    <?php endif; ?>
+                </td>
+                <td> <?php echo $membre->getEtablissement(); ?> </td>
+                <td> <?php echo ($membre->isVisio())?"Oui":"Non"; ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php if ($proposition->getMembres()->isEmpty()) : ?>
+    <span class="warning"> Le jury ne contient pas de membre </span>
+<?php endif; ?>
+
+<h2>
+    Informations sur la HDR
+</h2>
+
+<table class="informations">
+    <tr>
+        <td class="head"> Soutenance hors de l'établissement d'inscription : </td>
+        <td class="info"> <?php echo ($proposition->isExterieur())?"Oui":"Non"; ?> </td>
+    </tr>
+    <tr>
+        <td class="head"> HDR confidentielle : </td>
+        <?php $dateFinConfidentialite = $hdr->getDateFinConfidentialite()??$proposition->getConfidentialite()??null; ?>
+        <td class="info"> <?php echo ($dateFinConfidentialite)?"Fin de confidentialité le ".$dateFinConfidentialite->format('d/m/Y'):"Non"; ?> </td>
+    </tr>
+    <tr>
+        <td class="head"> Soutenance en huis clos : </td>
+        <td class="info"> <?php echo ($proposition->isHuitClos())?"Oui":"Non"; ?> </td>
+    </tr>
+<!--    <tr>-->
+<!--        <td class="head"> Rédation de la HDR en anglais : </td>-->
+<!--        <td class="info"> --><?php //echo ($proposition->isManuscritAnglais())?"Oui":"Non"; ?><!-- </td>-->
+<!--    </tr>-->
+    <tr>
+        <td class="head"> Soutenance de la HDR en anglais : </td>
+        <td class="info"> <?php echo ($proposition->isSoutenanceAnglais())?"Oui":"Non"; ?> </td>
+    </tr>
+</table>
+
+<h2>
+    Validations accordées à la proposition de soutenance
+</h2>
+
+<table class="validation">
+    <thead>
+        <tr>
+            <th> Rôle </th>
+            <th> Complément </th>
+            <th> Dénomination </th>
+            <th> Avis </th>
+            <th> Date de validation </th>
+        </tr>
+    </thead>
+    <tbody >
+        <!-- Candidat -->
+        <?php if (!empty($validations[Role::CODE_HDR_CANDIDAT])): ?>
+            <?php foreach($validations[Role::CODE_HDR_CANDIDAT] as $validation) : ?>
+                <tr style="font-size:6pt;">
+                    <td > Candidat </td>
+                    <td></td>
+                    <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
+                    <td> Favorable </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <tr><td colspan="4"> <span class="warning">Aucune validation donnée par le candidat </span></td></tr>
+        <?php endif; ?>
+
+        <!-- Garant -->
+        <?php if (!empty($validations[Role::CODE_HDR_GARANT])): ?>
+            <?php foreach($validations[Role::CODE_HDR_GARANT] as $validation) : ?>
+                <tr>
+                    <td> Garant de HDR </td>
+                    <td></td>
+                    <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
+                    <td> Favorable </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <tr><td colspan="4"> <span class="warning">Aucune validation donnée par le garant </span></td></tr>
+        <?php endif; ?>
+
+        <!-- UR -->
+        <?php if ($validations[Role::CODE_RESP_UR]): ?>
+            <?php foreach($validations[Role::CODE_RESP_UR] as $validation) : ?>
+                <tr>
+                    <td> Directeur de l'unité de recherche </td>
+                    <td><?php echo $unite; ?></td>
+                    <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
+                    <td> Favorable </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="4"> <span class="warning"> Aucune validation de l'unité de recherche</span> </td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
+<h2> Validation par la présidence </h2>
+
+<table>
+    <tr>
+        <td style="width:20%;"> &#9744; Favorable </td>
+        <td> Motif du refus : </td>
+    </tr>
+    <tr>
+        <td> &#9744; Défavorable</td>
+    </tr>
+</table>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<span >
+
+    Fait à <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> , le <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+    <br/>
+    Signature de <?php echo $libelle; ?>
+
+</span>
+
+

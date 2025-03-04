@@ -1,0 +1,157 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use HDR\Entity\Db\HDR;
+use HDR\Service\FichierHDR\PdcData;
+use Soutenance\Entity\Proposition;
+use Validation\Entity\Db\ValidationHDR;
+
+/**
+ * @var PhpRenderer             $this
+ * @var Proposition $proposition
+ * @var ValidationHDR[] $validations
+ * @var ValidationHDR $validation
+ * @var array $logos
+ * @var PdcData                 $informations
+ * @var HDR $hdr
+ * @var DateTime $date
+ * @var string $ville
+ * @var string $signature
+ *
+ * @see \Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter::export()
+ */
+
+$date = new DateTime();
+
+$civilite = $hdr->getApprenant()->getIndividu()->getCiviliteToString() ?: null;
+?>
+
+<style>
+    .not-yet {
+        background-color: lightpink;
+        color: darkred;
+    }
+
+</style>
+
+<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+    <?php if ($informations->getLogoEtablissement() !== null): ?>
+        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+    <?php endif; ?>
+</div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<table>
+    <tr>
+        <td width="80%"></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+        </td>
+    </tr>
+</table>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<p>
+    <?php echo $civilite ?> <?php echo $hdr->getApprenant()->getIndividu()->getNomComplet(); ?>, <br/>
+</p>
+<p>
+    Par décision en date du
+    <?php if ($date): ?>
+        <?php echo $date->format('d/m/Y'); ?>,
+    <?php else: ?>
+        <span style='background-color:red;'>
+                Date manquante
+        </span>
+    <?php endif; ?>
+    vous avez été autorisé<?php echo ($civilite === "Madame" ? 'e' : ($civilite === "Monsieur" ? '' : '·e')) ?>
+    à présenter en soutenance
+    vos travaux en vue de l'obtention du diplôme : <br/>
+    HDR en <?php echo $hdr->getVersionDiplome(); ?>.
+</p>
+
+<p>
+    La soutenance aura lieu le
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
+    <?php else : ?>
+        <span style='background-color:red;'>
+                Date manquante,
+        </span>
+    <?php endif; ?> à l'adresse suivante : <br/>
+</p>
+<p style="margin-left: 3cm">
+    <?php if ($proposition->getAdresseActive() !== null): ?>
+        <?php echo $proposition->getAdresseActive()->format(); ?>
+    <?php else : ?>
+        <?php if ($proposition->getAdresse() !== null) : ?>
+            <?php echo $proposition->getAdresse(); ?>
+        <?php else : ?>
+        <span style='background-color:red;'>
+                    Adresse manquante
+            </span>
+        <br/>
+        <?php endif; ?>
+    <?php endif; ?>
+</p>
+
+<p>
+    La soutenance <?php if ($proposition && $proposition->isHuitClos() !== null): ?>
+        <?php if ($proposition->isHuitClos()) : ?>
+            se déroulera en huis clos.
+        <?php else : ?>
+            sera publique.
+        <?php endif ; ?>
+    <?php else: ?>
+        <span style='background-color:red;'> information sur l'aspect public manquante </span>
+    <?php endif; ?>
+</p>
+
+<p>
+    Je vous prie d'agréer, <?php echo $civilite ?: "Madame, Monsieur" ?>, l'expression de mes salutations distinguées.
+</p>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+<table style='margin-left:auto;'>
+    <tr>
+        <td></td>
+        <td>
+            À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
+            <br/>
+            <br/>
+            Visa de l'établissement d'inscription du candidat,<br/>
+            <?php echo $hdr->getEtablissement()->getStructure()->getLibelle(); ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+            <?php if ($signature) : ?>
+            <img id="logo" style="background-color: white; max-width: 50%;"
+                 src="<?php echo $signature ?>"/>
+            <?php endif; ?>
+        </td>
+    </tr>
+</table>
+
+
+
