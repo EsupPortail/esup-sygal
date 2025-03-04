@@ -3,7 +3,6 @@
 namespace HDR\Entity\Db;
 
 use Acteur\Entity\Db\AbstractActeur;
-use Application\Entity\Db\Discipline;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\VersionDiplome;
 use Candidat\Entity\Db\Candidat;
@@ -76,7 +75,6 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
      */
     private string $etatHDR = self::ETAT_EN_COURS;
 
-    private ?Discipline $discipline = null;
     private ?VersionDiplome $versionDiplome = null;
 
     /**
@@ -98,6 +96,10 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
      * @var Etablissement
      */
     private $etablissement;
+    /**
+     * @var Collection
+     */
+    private $etablissements;
 
     /**
      * @var DateTime
@@ -139,6 +141,7 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
         $this->propositionsHDR = new ArrayCollection();
         $this->acteurs = new ArrayCollection();
         $this->validations = new ArrayCollection();
+        $this->etablissements = new ArrayCollection();
     }
 
     /**
@@ -215,28 +218,27 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
         $this->etablissement = $etablissement;
     }
 
-    /**
-     * Set discipline.
-     *
-     * @param Discipline|null $discipline
-     *
-     * @return HDR
-     */
-    public function setDiscipline(Discipline $discipline = null): static
+    public function getEtablissements(): Collection
     {
-        $this->discipline = $discipline;
-
-        return $this;
+        return $this->etablissements;
     }
 
-    /**
-     * Get discipline.
-     *
-     * @return Discipline|null
-     */
-    public function getDiscipline(): ?Discipline
+    public function setEtablissements(Collection $etablissements): void
     {
-        return $this->discipline;
+        $this->etablissements = $etablissements;
+    }
+
+    public function addEtablissements(Collection $etablissements): void
+    {
+        foreach ($etablissements as $etablissement) {
+            $this->etablissements->add($etablissement);
+        }
+    }
+    public function removeEtablissements(Collection $etablissements): void
+    {
+        foreach ($etablissements as $etablissement) {
+            $this->etablissements->removeElement($etablissement);
+        }
     }
 
     public function setVersionDiplome(?VersionDiplome $versionDiplome): static

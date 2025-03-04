@@ -31,8 +31,8 @@ class StructuresFieldsetFactory
         $fieldset->setEcolesDoctorales($ecolesDoctorales);
         $unitesRecherche = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, ['structure.sigle', 'structure.libelle'], false);
         $fieldset->setUnitesRecherche($unitesRecherche);
-        $etablissements = $etablissementService->getRepository()->findAllEtablissementsInscriptions();
-        $fieldset->setEtablissements($etablissements);
+//        $etablissements = $etablissementService->getRepository()->findAllEtablissementsInscriptions();
+//        $fieldset->setEtablissements($etablissements);
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);

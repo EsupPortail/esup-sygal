@@ -27,6 +27,9 @@
                 <join-column name="etablissement_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
+        <many-to-many field="etablissements" target-entity="Structure\Entity\Db\Etablissement">
+
+        </many-to-many>
         <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
             <join-columns>
                 <join-column name="ecole_doct_id" referenced-column-name="id"/>
@@ -35,11 +38,6 @@
         <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
             <join-columns>
                 <join-column name="unite_rech_id" referenced-column-name="id"/>
-            </join-columns>
-        </many-to-one>
-        <many-to-one field="discipline" target-entity="Application\Entity\Db\Discipline" fetch="LAZY">
-            <join-columns>
-                <join-column name="discipline_sise_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="versionDiplome" target-entity="Application\Entity\Db\VersionDiplome">

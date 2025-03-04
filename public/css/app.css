@@ -507,6 +507,11 @@ div.filters {
 .bootstrap-select.form-control {
   border: 1px solid #ced4da !important; }
 
+.select2-container {
+  display: inherit !important; }
+  .select2-container .loading-results {
+    font-weight: bold; }
+
 div#these-filters {
   min-width: 30px;
   min-height: 170px; }

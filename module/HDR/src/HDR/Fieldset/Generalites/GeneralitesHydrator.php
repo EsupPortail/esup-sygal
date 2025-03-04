@@ -3,12 +3,22 @@
 namespace HDR\Fieldset\Generalites;
 
 use Application\Service\Source\SourceServiceAwareTrait;
+use Doctrine\Inflector\Inflector;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
+use Doctrine\Persistence\ObjectManager;
 use HDR\Entity\Db\HDR;
+use UnicaenApp\Hydrator\Strategy\GetIdStrategy;
 
 class GeneralitesHydrator extends DoctrineObject
 {
     use SourceServiceAwareTrait;
+
+    public function __construct(ObjectManager $objectManager, bool $byValue = true, ?Inflector $inflector = null)
+    {
+        parent::__construct($objectManager, $byValue, $inflector);
+
+        $this->addStrategy('etablissement', new GetIdStrategy());
+    }
 
     /**
      * @param object $object
@@ -23,7 +33,6 @@ class GeneralitesHydrator extends DoctrineObject
             'id' => $object->getCandidat()->getId(),
             'label' => $object->getCandidat()->getIndividu()->getPrenom() . ' ' . ($object->getCandidat()->getIndividu()->getNomUsuel() ?? $object->getCandidat()->getIndividu()->getNomPatronymique())
         ] : null;
-        $data['discipline'] = $object->getDiscipline()?->getId();
         $data['versionDiplome'] = $object->getVersionDiplome()?->getId();
 
         //Confidentialité
@@ -40,9 +49,8 @@ class GeneralitesHydrator extends DoctrineObject
     public function hydrate(array $data, object $object): object
     {
         //Nécessaire sinon Doctrine pense que c'est les données appartenant à un fieldset
-        $data['candidat'] = $data['candidat']['id'] ?? null;
+        $data['candidat'] = $data['candidat']['id'] ?? null; /** todo : utiliser {@see \UnicaenApp\Filter\SearchAndSelectFilter} dans le fieldset ! */
 
-        $data['discipline'] = (isset($data['discipline']) && $data['discipline'] !== "") ? $data['discipline'] : null;
         $data['versionDiplome'] = (isset($data['versionDiplome']) && $data['versionDiplome'] !== "") ? $data['versionDiplome'] : null;
 
         $data['resultat'] = (isset($data['resultat']) && $data['resultat'] !== "") ? $data['resultat'] : null;

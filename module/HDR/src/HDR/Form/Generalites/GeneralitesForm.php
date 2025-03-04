@@ -23,7 +23,7 @@ class GeneralitesForm extends Form
         $fieldset = $this->getFormFactory()->getFormElementManager()->get(GeneralitesFieldset::class);
         $fieldset->setName("generalites");
         $fieldset->setUseAsBaseFieldset(true);
-        $fieldset->setEtablissement($this->etablissement);
+//        $fieldset->setSelectedEtablissement($this->etablissement);
 
         $this
             ->add($fieldset)

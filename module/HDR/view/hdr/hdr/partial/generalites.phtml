@@ -42,21 +42,6 @@ $modifierGeneralitesEvent = 'event-modifier-generalites';
         </dl>
         <dl>
             <dt class="col-md-3">
-                <?php echo $this->translate("Discipline SISE"); ?>
-            </dt>
-            <dd class="col-md-8">
-                <?php if($hdr->getDiscipline() === null) : ?>
-                    <span class="badge bg-secondary text-white" style="font-size:unset">
-                        <span class="icon icon-info" style="padding-right: unset"></span>
-                        Non renseignée
-                    </span>
-                <?php else: ?>
-                    <?php echo $hdr->getDiscipline() ?>
-                <?php endif; ?>
-            </dd>
-        </dl>
-        <dl>
-            <dt class="col-md-3">
                 <?php echo $this->translate("Version de diplôme"); ?>
             </dt>
             <dd class="col-md-8">

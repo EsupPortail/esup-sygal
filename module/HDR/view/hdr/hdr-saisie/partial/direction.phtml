@@ -65,7 +65,7 @@ use HDR\Entity\Db\HDR;
         <script>
              $(function () {
                 $('[data-bs-toggle="tooltip"]').tooltip({});
-                 $("select").selectpicker();
+                 $('select.selectpicker').selectpicker(); // ne pas appliquer le selectpicker sur TOUS les <select> !
              });
         </script>
     <?php endif ?>

@@ -14,7 +14,7 @@ use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use HDR\Entity\Db\HDR;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Form\Element\SearchAndSelect2 as SAS2;
+use UnicaenApp\Form\Element\SearchAndSelect as SAS;
 
 class DirectionHydrator extends AbstractHydrator
 {
@@ -72,7 +72,7 @@ class DirectionHydrator extends AbstractHydrator
     {
         if(isset($data['garant-individu'])){
             /** @var Individu $individu */
-            $individuId = SAS2::extractIdFromValue($data['garant-individu']["id"]);
+            $individuId = SAS::extractIdFromValue($data['garant-individu']["id"]);
             $individu = $this->individuService->getRepository()->find($individuId);
 
             /** @var ActeurHDR[] $garantsEnBdd */
@@ -103,7 +103,7 @@ class DirectionHydrator extends AbstractHydrator
         $dataActeur = $this->acteurHDRHydrator->extract($acteur);
 
         return [
-            $prefixe . ($k = 'individu') => SAS2::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getIndividu()),
+            $prefixe . ($k = 'individu') => SAS::createValueFromIdAndLabel($dataActeur[$k], (string)$acteur->getIndividu()),
             $prefixe . ($k = 'etablissement') => $dataActeur[$k],
 //            $prefixe . ($k = 'ecoleDoctorale') => $dataActeur[$k],
             $prefixe . ($k = 'uniteRecherche') => $dataActeur[$k],
@@ -115,7 +115,7 @@ class DirectionHydrator extends AbstractHydrator
     private function hydrateActeur(ActeurHDR $acteur, array $data, string $prefixe)
     {
         $dataActeur = [
-            ($k = 'individu') => SAS2::extractIdFromValue($data[$prefixe . $k]["id"]),
+            ($k = 'individu') => SAS::extractIdFromValue($data[$prefixe . $k]["id"]),
             ($k = 'etablissement') => $data[$prefixe . $k],
 //            ($k = 'ecoleDoctorale') => $data[$prefixe . $k],
             ($k = 'uniteRecherche') => $data[$prefixe . $k],

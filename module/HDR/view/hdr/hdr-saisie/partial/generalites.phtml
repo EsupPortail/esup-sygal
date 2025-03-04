@@ -1,5 +1,6 @@
 <?php
 /**
+ * @var \Application\View\Renderer\PhpRenderer $this
  * @var Form $form
  */
 
@@ -19,7 +20,7 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
         echo $this->form()->openTag($form);
     ?>
     <div class="row these-saisie-form-section">
-        <div class="col-6">
+        <div class="col-8">
             <h3 class="these-saisie-title-section">
                 Informations générales
             </h3>
@@ -30,26 +31,34 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
             </div>
 
             <div class="row">
-                <div class="col-md-9">
-                    <?php echo $this->formControlGroup($fs->get('discipline')) ?>
+                <div id="etablissement-select2" class="col-md-9">
+                    <?php
+                    /** @var \UnicaenApp\Form\Element\Select2 $etablissementSelect */
+                    $etablissementSelect = $fs->get('etablissement');
+                    $etablissementSelect->setDropdownParent('$("#etablissement-select2")');
+                    echo $this->formControlGroup($etablissementSelect);
+                    ?>
                 </div>
             </div>
 
-            <?php if ($fs->has('versionDiplome')): ?>
             <div class="row">
-                <div class="col-md-9">
-                    <?php echo $this->formControlGroup($fs->get('versionDiplome')) ?>
+                <div id="versionDiplome-select2" class="col-md-9">
+                    <?php
+                    /** @var \UnicaenApp\Form\Element\Select2 $versionDiplomeSelect */
+                    $versionDiplomeSelect = $fs->get('versionDiplome');
+                    $versionDiplomeSelect->setDropdownParent('$("#versionDiplome-select2")');
+                    $formSelect2 = $this->formSelect2();
+                    //$formSelect2->setTemplateForDataAttribute('<small><code>%s</code></small>', 'extra');
+                    echo $this->formControlGroup($fs->get('versionDiplome'), $formSelect2);
+                    ?>
                 </div>
             </div>
-            <?php endif ?>
 
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('cnu')) ?>
                 </div>
             </div>
-
-            <br>
 
             <div class="row">
                 <h3 class="these-saisie-title-section">
@@ -94,7 +103,7 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
         <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
         <script>
-            $('select').selectpicker();
+            $('select.selectpicker').selectpicker(); // ne pas appliquer le selectpicker sur TOUS les <select> !
             $(function () {
                 $('[data-bs-toggle="tooltip"]').tooltip({});
             });
@@ -102,3 +111,32 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
     <?php endif ?>
 
 </fieldset>
+
+
+<script>
+    $(function () {
+        const $etablissementSelect2 = $('#etablissement');
+        const $versionDiplomeSelect2 = $("#versionDiplome");
+
+        const updateVersionDiplomeOptionsForSelectedEtablissement = function() {
+            // filtrage des versions de diplômes en fonction de l'établissement sélectionné
+            const sourcecode = $etablissementSelect2.select2('data')[0].sourcecode;
+            if (!sourcecode) {
+                $versionDiplomeSelect2.val('').attr('disabled', 'disabled');
+                return;
+            }
+            const $options = $versionDiplomeSelect2.find("option.etablissement");
+            const $optionsToShow = $options.filter('.' + sourcecode);
+            $options.attr('disabled', 'disabled');
+            $optionsToShow.removeAttr('disabled');
+            $versionDiplomeSelect2.trigger('change'); // NB #versionDiplome est un Select2
+        }
+        updateVersionDiplomeOptionsForSelectedEtablissement();
+
+        $etablissementSelect2
+            .on('select2:select', function (e) {
+                updateVersionDiplomeOptionsForSelectedEtablissement();
+                $versionDiplomeSelect2.val('').removeAttr('disabled').trigger('change');
+            });
+    });
+</script>

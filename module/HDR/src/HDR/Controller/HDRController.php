@@ -81,7 +81,7 @@ class HDRController extends AbstractController
         //export
         $headers = ['id', 'Civilité', 'Nom usuel', 'Prénom',
             'Nom patronymique', 'Date de naissance', 'Nationalité',
-            'Adresse électronique', 'Adresse électronique personnelle', 'Discipline', 'Version de diplôme',
+            'Adresse électronique', 'Adresse électronique personnelle', 'Version de diplôme',
             'Garant', 'Établissement', 'Unité de Recherche Code', 'Unité de Recherche',
             'Date d\'abandon', 'Date de soutenance', 'Date de fin de confidentialité',
             'État de la HDR', 'Autorisation à soutenir', 'Est confidentielle', 'Résultat'
@@ -110,7 +110,6 @@ class HDRController extends AbstractController
             $entry['Nationalité'] = $individu ? $individu->getPaysNationalite() : null;
             $entry["Adresse électronique"] = $individu ? $individu->getEmailPro() : null;
             $entry['Adresse électronique personnelle'] = $individu ? $individu->getEmailContact() : null;
-            $entry['Discipline'] = $hdr->getDiscipline() ? $hdr->getDiscipline()->getLibelle() : null;;
             $entry['Version de diplôme'] = $hdr->getVersionDiplome()?->getLibelleLong();
             $entry['Garant'] = $garant ?: null;
             $entry['Établissement'] = $hdr->getEtablissement();

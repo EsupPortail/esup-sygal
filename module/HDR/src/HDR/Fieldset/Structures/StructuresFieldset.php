@@ -22,19 +22,19 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
     use StructureServiceAwareTrait;
     use EntityManagerAwareTrait;
 
-    private array $etablissements;
+//    private array $etablissements;
     private array $ecolesDoctorales;
     private array $unitesRecherche;
 
-    public function setEtablissements(array $etablissements): void
-    {
-        $options = [];
-        foreach ($etablissements as $etablissement) {
-            $sigle = $etablissement->getStructure()?->getSigle() ? " (".$etablissement->getStructure()->getSigle().")" : null;
-            $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
-        }
-        $this->etablissements = $options;
-    }
+//    public function setEtablissements(array $etablissements): void
+//    {
+//        $options = [];
+//        foreach ($etablissements as $etablissement) {
+//            $sigle = $etablissement->getStructure()?->getSigle() ? " (".$etablissement->getStructure()->getSigle().")" : null;
+//            $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
+//        }
+//        $this->etablissements = $options;
+//    }
 
     public function setEcolesDoctorales(array $ecolesDoctorales): void
     {
@@ -60,22 +60,22 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
             'name' => 'id',
         ]);
 
-        $this->add([
-            'type' => ObjectSelect::class,
-            'name' => 'etablissement',
-            'options' => [
-                'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
-                'label_options' => [ 'disable_html_escape' => true, ],
-                'target_class' => Etablissement::class,
-                'value_options' => $this->etablissements,
-            ],
-            'attributes' => [
-                'id' => 'etablissement',
-                'class' => 'selectpicker show-menu-arrow',
-                'title' => "Sélectionner l'établissement",
-                'data-live-search' => 'true',
-            ],
-        ]);
+//        $this->add([
+//            'type' => ObjectSelect::class,
+//            'name' => 'etablissement',
+//            'options' => [
+//                'label' => "Établissement <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
+//                'label_options' => [ 'disable_html_escape' => true, ],
+//                'target_class' => Etablissement::class,
+//                'value_options' => $this->etablissements,
+//            ],
+//            'attributes' => [
+//                'id' => 'etablissement',
+//                'class' => 'selectpicker show-menu-arrow',
+//                'title' => "Sélectionner l'établissement",
+//                'data-live-search' => 'true',
+//            ],
+//        ]);
 
         $this->add([
             'type' => ObjectSelect::class,
@@ -144,19 +144,19 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
 //                    ],
 //                ],
 //            ],
-            'etablissement' => [
-                'required' => true,
-                'validators' => [
-                    [
-                        'name' => NotEmpty::class,
-                        'options' => [
-                            'messages' => [
-                                NotEmpty::IS_EMPTY => 'Veuillez sélectionner un établissement.',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+//            'etablissement' => [
+//                'required' => true,
+//                'validators' => [
+//                    [
+//                        'name' => NotEmpty::class,
+//                        'options' => [
+//                            'messages' => [
+//                                NotEmpty::IS_EMPTY => 'Veuillez sélectionner un établissement.',
+//                            ],
+//                        ],
+//                    ],
+//                ],
+//            ],
         ];
     }
 }

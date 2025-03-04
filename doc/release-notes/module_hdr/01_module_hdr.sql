@@ -1060,6 +1060,7 @@ where tem_ses_uni = 'O' and tem_res_ths_vdi = 'O'
 order by lic_vdi;
 */
 
+delete from unicaen_renderer_macro where variable_name = 'hdr' and methode_name = 'getLibelleDiscipline';
 INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('HDR#VersionDiplome', '<p>Affiche le libellé de la version de diplôme associée à l''HDR</p>', 'hdr', 'getLibelleVersionDiplome');
 
 alter table HDR add version_diplome_id bigint constraint hdr_version_diplome_fk references version_diplome(id) on delete no action;

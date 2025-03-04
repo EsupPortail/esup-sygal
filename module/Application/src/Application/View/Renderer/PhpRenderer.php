@@ -8,6 +8,7 @@ use Fichier\View\Helper\Fichier\FichierViewHelper;
 use Laminas\Form\ElementInterface;
 use Structure\Entity\Db\EcoleDoctorale;
 use These\Entity\Db\These;
+use UnicaenApp\Form\Element\Select2;
 use Validation\Entity\Db\ValidationThese;
 use Depot\Entity\Db\VWorkflow;
 use Application\View\Helper\Actualite\ActualiteViewHelper;
@@ -120,6 +121,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method \UnicaenApp\Form\View\Helper\FormElementCollection|string formElementCollection(ElementInterface $element = null, $wrap = true)
  * @method \UnicaenApp\Form\View\Helper\FormRowDateInfSup            formrowdateinfsup(\Laminas\Form\ElementInterface $element = null, $labelPosition = null, $renderErrors = null, $partial = null)
  * @method \UnicaenApp\Form\View\Helper\FormSearchAndSelect          formsearchandselect(\Laminas\Form\ElementInterface $element = null)
+ * @method \UnicaenApp\Form\View\Helper\FormSelect2|string           formSelect2(Select2 $element = null)
  * @method \UnicaenApp\Form\View\Helper\FormLdapPeople               formLdapPeople(\Laminas\Form\ElementInterface $element = null)
  * @method \UnicaenApp\Form\View\Helper\FormErrors|string            formErrors(\Laminas\Form\Form $form = null, $message = null)
  * @method \UnicaenApp\Form\View\Helper\Form                         form(\Laminas\Form\FormInterface $form = null)
@@ -154,7 +156,6 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method EcoleDoctoraleHelper  ed(EcoleDoctorale $ecole)
  *
  * @method UrlDepotHelper urlThese()
- * @method StructureSubstitHelper structureSubstitHelper()
  * @method FinancementFormatterHelper financementFormatter()
  *
  * @method ActualiteViewHelper actualite()

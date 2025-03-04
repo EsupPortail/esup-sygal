@@ -18,7 +18,7 @@ use Laminas\Form\Form;
             Structures encadrantes
         </h3>
         <?php
-        echo $this->formControlGroup($fs->get('etablissement'));
+//        echo $this->formControlGroup($fs->get('etablissement'));
 //        echo $this->formControlGroup($fs->get('ecoleDoctorale'));
         echo $this->formControlGroup($fs->get('uniteRecherche'));
         ?>
@@ -28,7 +28,7 @@ use Laminas\Form\Form;
         <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
         <script>
-            $('select').selectpicker();
+            $('select.selectpicker').selectpicker(); // ne pas appliquer le selectpicker sur TOUS les <select> !
             $(function () {
                 $('[data-bs-toggle="tooltip"]').tooltip({});
             });

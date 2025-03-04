@@ -15,11 +15,6 @@ class HDRTemplateVariable extends AbstractTemplateVariable
         $this->hdr = $hdr;
     }
 
-    public function getLibelleDiscipline(): ?string
-    {
-        return $this->hdr->getDiscipline()?->getLibelle();
-    }
-
     public function getLibelleVersionDiplome(): ?string
     {
         return $this->hdr->getVersionDiplome()?->getLibelleLong();

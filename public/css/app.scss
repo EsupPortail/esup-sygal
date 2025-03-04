@@ -787,6 +787,14 @@ div.filters {
   border: 1px solid #ced4da !important;
 }
 
+.select2-container {
+  display: inherit !important;
+
+  .loading-results {
+    font-weight: bold;
+  }
+}
+
 div#these-filters {
   min-width: 30px;
   min-height: 170px;
