@@ -209,8 +209,7 @@ insert into profil_to_role(profil_id, role_id)
 select p.id, r.id
 from role r
          join profil p on p.role_id = r.code
-where r.structure_id = p_structure_id
-  and not exists (select * from profil_to_role p2r where p2r.role_id = r.id)
+where not exists (select * from profil_to_role p2r where p2r.role_id = r.id)
 order by code;
 
 --
@@ -221,7 +220,6 @@ order by code;
 insert into role_privilege (role_id, privilege_id)
 select p2r.role_id, pp.privilege_id
 from profil_to_role p2r
-         join role r on p2r.role_id = r.id and r.structure_id = p_structure_id
          join profil pr on pr.id = p2r.profil_id
          join profil_privilege pp on pp.profil_id = pr.id
 where not exists ( select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
