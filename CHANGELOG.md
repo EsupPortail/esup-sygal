@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+9.4.0
+-----
+- Passage à PHP 8.2.
+- [FIX] Page des comptes utilisateurs : erreur 'Type of Application\Controller\UtilisateurController::$shibService must be UnicaenAuthentification\Service\ShibService'.
+
 9.3.1
 -----
 - Module Admission/Saisie de thèse : Possibilité de choisir parmi tous les établissements présents dans l'application pour un co-directeur
