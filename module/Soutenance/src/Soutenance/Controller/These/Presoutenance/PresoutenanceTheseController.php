@@ -110,6 +110,7 @@ class PresoutenanceTheseController extends PresoutenanceController
             'acteursMembres' => $acteursMembres,
             'rapporteurs' => $rapporteurs,
             'acteursRapporteurs' => $acteursRapporteurs,
+            'acteursPouvantEtrePresidentJury' => $this->acteurService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($this->proposition),
             'engagements' => $engagements,
             'adresse' => $this->proposition->getAdresseActive(),
             'avis' => $avis,

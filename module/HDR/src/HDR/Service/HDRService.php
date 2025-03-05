@@ -246,13 +246,6 @@ class HDRService extends BaseService
         if ($hdr->getUniteRecherche()) $pdcData->setUniteRecherche($hdr->getUniteRecherche()->getStructure()->getLibelle());
 
         // chemins vers les logos
-        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            try {
-                $pdcData->setLogoCOMUE($this->fichierStorageService->getFileForLogoStructure($comue->getStructure()));
-            } catch (StorageAdapterException $e) {
-                $pdcData->setLogoCOMUE(null);
-            }
-        }
         try {
             $pdcData->setLogoEtablissement($this->fichierStorageService->getFileForLogoStructure($hdr->getEtablissement()->getStructure()));
         } catch (StorageAdapterException $e) {

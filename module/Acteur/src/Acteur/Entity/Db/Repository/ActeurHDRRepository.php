@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use HDR\Entity\Db\HDR;
 use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 
@@ -94,6 +95,42 @@ class ActeurHDRRepository extends AbstractActeurRepository
 //
 //        return $qb->getQuery()->getResult();
 //    }
+
+    /**
+     * @return Membre[]
+     */
+    public function findAllActeursPouvantEtrePresidentDuJury(Proposition $proposition) : array
+    {
+        // peuvent être président du jury les membres de rang A
+//        $qb = $this->createQueryBuilder()
+//            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
+//            ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
+//            ->addOrderBy('membre.nom', 'ASC');
+
+        $qb = $this->createQueryBuilder("acteur")
+            ->addSelect('membre')->join('acteur.membre', 'membre')
+            ->addSelect('individu')->join('acteur.individu', 'individu')
+            ->addSelect('proposition')->join('membre.proposition', 'proposition')
+            ->addSelect('qualite')->join('membre.qualite', 'qualite');
+//            ->addSelect('acteur')->join('membre.acteur', 'acteur') // NB : une Acteur doit avoir été associé au Membre
+
+        // peuvent être président du jury les membres de rang A
+        $qb
+            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
+            ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
+            ->andWhereNotHistorise('membre')
+            ->addOrderBy('membre.nom', 'ASC');
+
+        $garantIndividu = $proposition->getObject()
+            ->getActeursByRoleCode(Role::CODE_HDR_GARANT)
+            ->first()
+            ->getIndividu();
+
+        $acteursSansGarant = array_filter($qb->getQuery()->getResult(), fn($acteur) =>
+            $acteur->getIndividu() !== $garantIndividu
+        );
+        return $acteursSansGarant;
+    }
 
     public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurHDR|null
     {

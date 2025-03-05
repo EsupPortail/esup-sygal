@@ -6,6 +6,7 @@ use Acteur\Entity\Db\ActeurThese;
 use Application\Entity\Db\Role;
 use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use These\Entity\Db\These;
@@ -93,6 +94,42 @@ class ActeurTheseRepository extends AbstractActeurRepository
             ->orderBy('t.dateSoutenance', 'DESC');
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Membre[]
+     */
+    public function findAllActeursPouvantEtrePresidentDuJury(Proposition $proposition) : array
+    {
+        // peuvent être président du jury les membres de rang A
+//        $qb = $this->createQueryBuilder()
+//            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
+//            ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
+//            ->addOrderBy('membre.nom', 'ASC');
+
+        $qb = $this->createQueryBuilder("acteur")
+            ->addSelect('membre')->join('acteur.membre', 'membre')
+            ->addSelect('individu')->join('acteur.individu', 'individu')
+            ->addSelect('proposition')->join('membre.proposition', 'proposition')
+            ->addSelect('qualite')->join('membre.qualite', 'qualite');
+//            ->addSelect('acteur')->join('membre.acteur', 'acteur') // NB : une Acteur doit avoir été associé au Membre
+
+        // peuvent être président du jury les membres de rang A
+        $qb
+            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
+            ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
+            ->andWhereNotHistorise('membre')
+            ->addOrderBy('membre.nom', 'ASC');
+
+        $directeurIndividu = $proposition->getObject()
+            ->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)
+            ->first()
+            ->getIndividu();
+
+        $acteursSansDirectionThese = array_filter($qb->getQuery()->getResult(), fn($acteur) =>
+            $acteur->getIndividu() !== $directeurIndividu
+        );
+        return $acteursSansDirectionThese;
     }
 
     public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurThese|null

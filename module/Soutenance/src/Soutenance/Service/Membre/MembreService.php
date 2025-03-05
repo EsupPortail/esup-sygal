@@ -6,6 +6,8 @@ use Acteur\Entity\Db\ActeurHDR;
 use Acteur\Entity\Db\ActeurThese;
 use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
 use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
+use Application\Entity\Db\Role;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
@@ -234,43 +236,6 @@ class MembreService
 //        }
 //        return $result;
         return $acteur->getMembre();
-    }
-
-    /**
-     * @return Membre[]
-     */
-    public function findAllMembresPouvantEtrePresidentDuJury(Proposition $proposition) : array
-    {
-        /** @var DefaultQueryBuilder $qb */
-        $qb = $this->entityManager->getRepository(Membre::class)->createQueryBuilder("membre")
-            ->addSelect('proposition')->join('membre.proposition', 'proposition')
-            ->addSelect('qualite')->join('membre.qualite', 'qualite')
-            ->addSelect('acteur')->join('membre.acteur', 'acteur') // NB : une Acteur doit avoir été associé au Membre
-            ->addSelect('individu')->join('acteur.individu', 'individu');
-
-        // peuvent être président du jury les membres de rang A
-        $qb
-            ->andWhere('proposition = :proposition')->setParameter('proposition', $proposition)
-            ->andWhere('qualite.rang = :rang')->setParameter('rang', 'A')
-            ->andWhereNotHistorise('membre')
-            ->addOrderBy('membre.nom', 'ASC');
-
-        $directeurIndividu = $proposition->getThese()
-            ->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)
-            ->first()
-            ->getIndividu();
-
-        $coDirecteursIndividu = $proposition->getThese()
-            ->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)
-            ->map(fn($acteur) => $acteur->getIndividu())
-            ->toArray();
-
-        $membresSansDirectionThese = array_filter($qb->getQuery()->getResult(), fn($membre) =>
-            $membre->getActeur()->getIndividu() !== $directeurIndividu &&
-            !in_array($membre->getActeur()->getIndividu(), $coDirecteursIndividu)
-        );
-
-        return $membresSansDirectionThese;
     }
 
     /** FACADE ********************************************************************************************************/

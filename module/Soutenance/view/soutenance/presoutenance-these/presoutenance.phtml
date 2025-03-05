@@ -2,13 +2,14 @@
 
 /**
  * @see PresoutenanceTheseController::presoutenanceAction()
- * @var These\Entity\Db\These $these
+ * @var These $these
  * @var Validation\Entity\Db\Validation $validationBDD
  * @var Soutenance\Entity\PropositionThese $proposition
  * @var ValidationThese $validationPDC
  * @var Membre[] $membres
  * @var ActeurThese[] $acteursMembres
  * @var Membre[] $rapporteurs
+ * @var ActeurThese[] $acteursPouvantEtrePresidentJury
  * @var ActeurThese[] $acteursRapporteurs
  * @var ValidationThese[] $engagements
  * @var Avis[] $avis
@@ -94,7 +95,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     ->renderAsBootstrapToasts()
 ?>
 
-<?php if (! $validationBDD) : ?>
+<?php if (!$validationBDD) : ?>
 
     <p class="lead text-danger">
         La proposition de soutenance n'a pas encore été validée.

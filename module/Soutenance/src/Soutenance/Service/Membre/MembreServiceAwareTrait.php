@@ -5,7 +5,7 @@ namespace  Soutenance\Service\Membre;
 trait MembreServiceAwareTrait {
 
     /** @var MembreService */
-    private $membreService;
+    protected $membreService;
 
     /**
      * @return MembreService

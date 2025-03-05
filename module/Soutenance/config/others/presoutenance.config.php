@@ -89,6 +89,8 @@ return [
                     'controller' => PresoutenanceController::class,
                     'action' => [
                         'associer-jury',
+                        'renseigner-president-jury',
+                        'dissocier-president-jury',
 //                        'deassocier-jury',
 //                        'associer-jury-sygal'
                     ],
@@ -333,6 +335,28 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'associer-jury-sygal',
+                                    ],
+                                ],
+                            ],
+                            'renseigner-president-jury' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/renseigner-president-jury/:acteur',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'renseigner-president-jury',
+                                    ],
+                                ],
+                            ],
+                            'dissocier-president-jury' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/dissocier-president-jury/:acteur',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'dissocier-president-jury',
                                     ],
                                 ],
                             ],

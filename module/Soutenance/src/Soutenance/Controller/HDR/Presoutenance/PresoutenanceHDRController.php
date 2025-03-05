@@ -104,6 +104,7 @@ class PresoutenanceHDRController extends PresoutenanceController
             'acteursRapporteurs' => $acteursRapporteurs,
             'membres' => $membres,
             'acteursMembres' => $acteursMembres,
+            'acteursPouvantEtrePresidentJury' => $this->acteurService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($this->proposition),
             'engagements' => $engagements,
             'adresse' => $this->proposition->getAdresseActive(),
             'avis' => $avis,

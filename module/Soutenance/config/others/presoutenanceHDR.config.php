@@ -85,7 +85,9 @@ return [
                     'action' => [
                         'associer-jury',
                         'deassocier-jury',
-                        'associer-jury-sygal'
+                        'associer-jury-sygal',
+                        'renseigner-president-jury',
+                        'dissocier-president-jury',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU,
                 ],

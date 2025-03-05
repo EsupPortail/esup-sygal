@@ -102,7 +102,7 @@ h2.modal-title {
   width: fit-content;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #2EA662;
+  background-color: #238523;
   color: white; }
   .card.card-success .corps {
     display: flex;
@@ -649,8 +649,8 @@ a.btn > span.icon {
   color: white; }
 
 .btn-success {
-  background-color: #2EA662;
-  border-color: #2EA662; }
+  background-color: #238523;
+  border-color: #238523; }
 
 .btn-danger {
   background-color: #d23544;
@@ -919,14 +919,14 @@ span.sas-highlight {
 
 .valide {
   font-weight: 600;
-  color: #2EA662; }
+  color: #238523; }
 
 span.badge.EN_COURS {
   background: #009ce4; }
 
 span.badge.VALIDEE,
 span.badge.badge-success {
-  background: #2EA662; }
+  background: #238523; }
 
 span.badge.REJETEE,
 span.badge.badge-error {

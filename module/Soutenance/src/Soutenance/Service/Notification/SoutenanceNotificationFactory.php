@@ -1433,10 +1433,10 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
         $validationTemplateVariable = $this->getValidationTemplateVariable($validation[0]);
         $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
-        $soutenanceMembreTemplateVariable->setMembresPouvantEtrePresidentDuJury(
-            $this->membreService->findAllMembresPouvantEtrePresidentDuJury($proposition)
-        );
         if ($entity instanceof These) {
+            $soutenanceMembreTemplateVariable->setMembresPouvantEtrePresidentDuJury(
+                $this->acteurTheseService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($proposition)
+            );
             $vars = [
                 'soutenanceProposition' => $soutenancePropositionTemplateVariable,
                 'these' => $entityTemplateVariable,
@@ -1447,6 +1447,9 @@ class SoutenanceNotificationFactory extends NotificationFactory
                 'Url' => $this->urlService,
             ];
         } else {
+            $soutenanceMembreTemplateVariable->setMembresPouvantEtrePresidentDuJury(
+                $this->acteurHDRService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($proposition)
+            );
             $vars = [
                 'soutenanceProposition' => $soutenancePropositionTemplateVariable,
                 'hdr' => $entityTemplateVariable,

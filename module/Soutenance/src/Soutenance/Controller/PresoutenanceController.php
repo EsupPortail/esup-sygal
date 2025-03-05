@@ -247,6 +247,45 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
     }
 
+    public function renseignerPresidentJuryAction() : ViewModel|Response
+    {
+        $this->initializeFromType();
+
+        $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_PRESIDENT_JURY, $this->entity->getEtablissement());
+
+        $acteur = $this->acteurService->getRequestedActeur($this);
+        $presidentJuryActeur = $this->entity instanceof These ?
+            $this->acteurService->newActeurThese($this->entity, $acteur->getIndividu(), $role) :
+            $this->acteurService->newActeurHDR($this->entity, $acteur->getIndividu(), $role) ;
+        $presidentJuryActeur->setQualite($acteur->getQualite());
+        $presidentJuryActeur->setEtablissement($acteur->getEtablissement());
+        $presidentJuryActeur->setUniteRecherche($acteur->getUniteRecherche());
+
+        try {
+            $this->acteurService->save($presidentJuryActeur);
+        }catch(RuntimeException) {
+            throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
+        }
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+        return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
+    }
+
+    public function dissocierPresidentJuryAction() : ViewModel|Response
+    {
+        $this->initializeFromType();
+        $acteur = $this->acteurService->getRequestedActeur($this);
+
+        try {
+            $this->acteurService->historise($acteur);
+        }catch(RuntimeException) {
+            throw new RuntimeException("Un problème est survenue lors de l'historisation en base d'un acteur");
+        }
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
+        return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
+    }
+
     protected function createUtilisateurRapporteur(ActeurThese|ActeurHDR $acteur, Membre $membre): void
     {
         $individu = $acteur->getIndividu() ?: throw new RuntimeException("Aucun individu associé à l'acteur !");
