@@ -40,7 +40,6 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
 use UnicaenAuthentification\Options\ModuleOptions;
-use UnicaenAuthentification\Service\ShibService;
 use UnicaenAuthentification\Service\User as AuthentificationUserService;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
@@ -85,11 +84,6 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
      */
     protected $authenticationService;
 
-    /**
-     * @var ShibService
-     */
-    protected $shibService;
-
     private CreationUtilisateurForm $creationUtilisateurForm;
 
     protected AuthentificationUserService $authentificationUserService;
@@ -113,14 +107,6 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
     public function setAuthenticationService(AuthenticationService $authenticationService)
     {
         $this->authenticationService = $authenticationService;
-    }
-
-    /**
-     * @param ShibService $shibService
-     */
-    public function setShibService(ShibService $shibService)
-    {
-        $this->shibService = $shibService;
     }
 
     public function setCreationUtilisateurForm(CreationUtilisateurForm $creationUtilisateurForm): void
