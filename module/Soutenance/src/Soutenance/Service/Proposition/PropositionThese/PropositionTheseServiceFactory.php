@@ -12,6 +12,7 @@ use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Rule\PropositionJuryRule;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Validation\ValidationThese\ValidationTheseService;
@@ -65,6 +66,10 @@ class PropositionTheseServiceFactory
 
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $service->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
+
+        /** @var PropositionJuryRule $propositionJuryRule */
+        $propositionJuryRule = $container->get(PropositionJuryRule::class);
+        $service->setPropositionJuryRule($propositionJuryRule);
 
         return $service;
     }

@@ -91,8 +91,8 @@ switch ($hdr->getEtatHDR()){
         </div>
     <?php endif ?>
 </div>
-<div class="row informations-compl-these-div" style="padding-left:12px;">
-    <div class="col-md-6 informations-compl-these-card information-etat-these-card <?=$etatHDRClass?>-etat-these-card"
+<div class="row informations-compl-div" style="padding-left:12px;">
+    <div class="col-md-6 informations-compl-card information-etat-card <?=$etatHDRClass?>-etat-card"
          data-bs-toggle="tooltip" data-bs-original-title="<?=$etatHDRTextTooltip?>">
         <span class="icon icon-<?=$iconEtatHDR?>"></span>
         <h2><?= $hdr->getEtatHDRToString(); ?></h2>

@@ -54,15 +54,6 @@ class PropositionJuryRule implements RuleInterface
         $emerites_max   =  (float) $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::RATIO_MAX_EMERITES);
         $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::EQUILIBRE_FEMME_HOMME));
 
-
-        $membre_min = $this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY);
-        $membre_max = $this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MAX_MEMBRE_JURY);
-        $rapporteur_min = $this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR);
-        $rangA_min = (float)$this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A);
-        $exterieur_min = (float)$this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR);
-        $emerites_max = (float)$this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MAX_EMERITES);
-        $parite_min = (float)$this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::EQUILIBRE_FEMME_HOMME);
-
         /** @var Membre $membre */
         foreach ($this->proposition->getMembres() as $membre) {
             $nbMembre++;
