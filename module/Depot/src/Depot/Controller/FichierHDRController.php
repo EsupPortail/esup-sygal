@@ -6,27 +6,19 @@ use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
-use Depot\Event\EventsInterface;
 use Depot\Service\FichierHDR\FichierHDRServiceAwareTrait;
-use Depot\Service\FichierThese\Exception\DepotImpossibleException;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
-use Exception;
 use Fichier\Entity\Db\Fichier;
-use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use HDR\Service\HDRServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
-use Laminas\Form\Element\Hidden;
-use Laminas\View\Model\JsonModel;
-use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
 
 class FichierHDRController extends AbstractController
 {
@@ -40,7 +32,6 @@ class FichierHDRController extends AbstractController
     use NotifierServiceAwareTrait;
     use DepotNotificationFactoryAwareTrait;
     use IndividuServiceAwareTrait;
-    use ValidationTheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
 

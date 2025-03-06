@@ -3,7 +3,6 @@
 namespace Soutenance\Service\Proposition;
 
 use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
-use Application\Constants;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Variable;
@@ -19,18 +18,14 @@ use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use HDR\Entity\Db\HDR;
-use Horodatage\Service\Horodatage\HorodatageServiceAwareTrait;
-use Individu\Entity\Db\Individu;
-use Laminas\Cache\Exception\LogicException;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Parametre\SoutenanceParametres;
-use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
-use Soutenance\Rule\PropositionJuryRuleAwareTrait;
 use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Parametre\These\SoutenanceParametres;
+use Soutenance\Rule\PropositionJuryRuleAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRServiceAwareTrait;

@@ -2,12 +2,12 @@
 
 namespace Soutenance\Service\Proposition;
 
+use Acteur\Service\ActeurThese\ActeurTheseService;
 use Horodatage\Service\Horodatage\HorodatageService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Rule\PropositionJuryRule;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
-use These\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\UserContextService;

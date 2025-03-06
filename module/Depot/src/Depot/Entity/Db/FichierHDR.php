@@ -16,12 +16,6 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 class FichierHDR implements ResourceInterface, HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
-    /**
-     * Tag marquant un fichier qui résulte d'un deuxième dépôt (après correction).
-     *
-     * 'V2' = Deuxième dépôt (après corrections)
-     */
-    const TAG_DEUXIEME_DEPOT = 'V2';
 
     const RESOURCE_ID = 'FichierHDR';
 

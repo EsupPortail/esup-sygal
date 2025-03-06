@@ -7,7 +7,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Candidat\Entity\Db\Candidat;
 use Exception;
 use HDR\Entity\Db\HDR;
 use HDR\Service\HDRService;
@@ -18,16 +17,13 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Assertion\HDR\PropositionHDRAssertionAwareTrait;
 use Soutenance\Controller\PropositionController;
-use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\PropositionHDR;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Provider\Parametre\HDR\SoutenanceParametres;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Soutenance\Provider\Template\PdfTemplates;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
-use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
@@ -93,7 +89,11 @@ class PropositionHDRController extends PropositionController
         /** Indicateurs --------------------------------------------------------------------------------------------- */
         $indicateurs = $this->propositionService->computeIndicateurForProposition($this->proposition);
         $juryOk = $this->propositionService->isJuryPropositionOk($this->proposition, $indicateurs);
-        if ($juryOk === false) $indicateurs["valide"] = false;
+        if ($juryOk === false){
+            $indicateurs["membresMail"]["valide"] = false;
+            $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
+            $indicateurs["valide"] = false;
+        }
         $isIndicateursOk = $this->propositionService->isPropositionOk($this->proposition, $indicateurs);
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */

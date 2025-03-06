@@ -13,7 +13,6 @@ use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Laminas\Permissions\Acl\Role\RoleInterface;
 use Soutenance\Entity\Etat;
-use Soutenance\Entity\Proposition;
 use Soutenance\Entity\PropositionHDR;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Validation\Entity\Db\TypeValidation;

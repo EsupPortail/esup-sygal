@@ -633,22 +633,6 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
         return self::$etatsLibelles[$this->etatHDR];
     }
 
-    public function hasVersionInitiale() {
-
-        /** @var FichierHDR $fichier */
-        foreach ($this->fichierHDRs as $fichierHDR) {
-            /** @var Fichier $fichier */
-            $fichier = $fichierHDR->getFichier();
-            $nature = $fichier->getNature()->getCode();
-            $version = $fichier->getVersion()->getCode();
-            if ($fichier->getHistoDestruction() === null
-                && $nature === NatureFichier::CODE_THESE_PDF
-                && $version === VersionFichier::CODE_ORIG)
-                return $fichierHDR;
-        }
-        return null;
-    }
-
     /**
      * Retourne :
      * - <code>1</code> si "admis" ;

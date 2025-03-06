@@ -2,9 +2,9 @@
 
 namespace HDR\Form\Direction;
 
+use HDR\Entity\Db\HDR;
 use Interop\Container\ContainerInterface;
 use Laminas\Hydrator\ReflectionHydrator;
-use These\Entity\Db\These;
 
 class DirectionFormFactory
 {
@@ -13,7 +13,7 @@ class DirectionFormFactory
         $form = new DirectionForm('Direction');
 
         $form->setHydrator(new ReflectionHydrator());
-        $form->setObject(new These());
+        $form->setObject(new HDR());
 
         return $form;
     }

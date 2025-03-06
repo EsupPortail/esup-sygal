@@ -7,7 +7,6 @@ use Soutenance\Assertion\EngagementImpartialiteAssertion;
 use Soutenance\Assertion\PresoutenanceAssertion;
 use Soutenance\Controller\HDR\Presoutenance\PresoutenanceHDRController;
 use Soutenance\Controller\HDR\Presoutenance\PresoutenanceHDRControllerFactory;
-use Soutenance\Controller\These\Presoutenance\PresoutenanceTheseController;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;

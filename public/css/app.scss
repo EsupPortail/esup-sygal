@@ -2,7 +2,6 @@ $filterFontSize: 11px;
 $uploadedFileFontSize: 80%;
 
 $infoColor: #009ce4;
-$successColor: #238523;
 $warningColor: #f1732d;
 $dangerColor: #d23544;
 
@@ -15,6 +14,7 @@ $navbarBackgroundColor: var(--primary-color);
   //--secondary-color:#337ab7;
   --primary-color:#337ab7;
   --secondary-color:#004980;
+  --successColor: #238523;
 }
 
 h1, h2, h3 {
@@ -162,7 +162,7 @@ h2.modal-title {
   width: fit-content;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: $successColor;
+  background-color: var(--successColor);
   color:white;
 
   .corps{
@@ -170,7 +170,7 @@ h2.modal-title {
     align-items: center;
     padding:1rem!important;
     .icon{
-      //color:$successColor;
+      //color:var(--successColor);
       font-size: 2rem;
       margin-right: 1rem !important;
     }
@@ -189,7 +189,7 @@ h2.modal-title {
     align-items: center;
     padding:1rem!important;
     .icon{
-      //color:$successColor;
+      //color:var(--successColor);
       font-size: 2rem;
       margin-right: 1rem !important;
     }
@@ -994,8 +994,8 @@ a.btn > span.icon {
   color: white;
 }
 .btn-success {
-  background-color: $successColor;
-  border-color: $successColor;
+  background-color: var(--successColor);
+  border-color: var(--successColor);
 }
 .btn-danger {
   background-color: $dangerColor;
@@ -1385,7 +1385,7 @@ span.sas-highlight {
 
 .valide {
   font-weight: 600;
-  color: $successColor;
+  color: var(--successColor);
 }
 
 span.badge.EN_COURS {
@@ -1394,7 +1394,7 @@ span.badge.EN_COURS {
 span.badge.VALIDEE,
 span.badge.badge-success
 {
-    background: $successColor;
+    background: var(--successColor);
   }
 span.badge.REJETEE,
 span.badge.badge-error

@@ -6,7 +6,8 @@ use Application\Rule\RuleInterface;
 use DateTime;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Provider\Parametre\SoutenanceParametres;
+use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Parametre\These\SoutenanceParametres;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class PropositionJuryRule implements RuleInterface
@@ -42,6 +43,17 @@ class PropositionJuryRule implements RuleInterface
         $nbExterieur = 0;
         $nbEmerites = 0;
         $nbRapporteur = 0;
+
+        $categorieCode = ($this->proposition instanceof PropositionThese) ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+
+        $membre_min     =  $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::NB_MIN_MEMBRE_JURY);
+        $membre_max     =  $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::NB_MAX_MEMBRE_JURY);
+        $rapporteur_min =  $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::NB_MIN_RAPPORTEUR);
+        $rangA_min      =  ((float) $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::RATIO_MIN_RANG_A));
+        $exterieur_min  =  ((float) $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::RATIO_MIN_EXTERIEUR));
+        $emerites_max   =  (float) $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::RATIO_MAX_EMERITES);
+        $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::EQUILIBRE_FEMME_HOMME));
+
 
         $membre_min = $this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY);
         $membre_max = $this->parametreService->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MAX_MEMBRE_JURY);

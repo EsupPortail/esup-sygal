@@ -3,24 +3,20 @@
 namespace Depot\Controller\Factory;
 
 use Application\EventRouterReplacer;
-use Validation\Service\ValidationThese\ValidationTheseService;
 use Depot\Controller\FichierHDRController;
-use Depot\Controller\FichierTheseController;
 use Depot\Service\FichierHDR\FichierHDRService;
-use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\Notification\DepotNotificationFactory;
-use HDR\Service\HDRService;
-use Notification\Service\NotifierService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\VersionFichier\VersionFichierService;
+use HDR\Service\HDRService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\Router\Http\TreeRouteStack;
-use These\Service\These\TheseService;
+use Notification\Service\NotifierService;
 
 class FichierHDRControllerFactory
 {
@@ -42,7 +38,6 @@ class FichierHDRControllerFactory
          * @var VersionFichierService $versionFichierService
          * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
-         * @var ValidationTheseService     $validationService
          * @var EventManager          $eventManager
          */
         $hdrService = $container->get(HDRService::class);
@@ -52,7 +47,6 @@ class FichierHDRControllerFactory
         $versionFichierService = $container->get('VersionFichierService');
         $notificationService = $container->get(NotifierService::class);
         $individuService = $container->get(IndividuService::class);
-        $validationService = $container->get(ValidationTheseService::class);
         $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
         $eventManager = $container->get('EventManager');
 
@@ -64,7 +58,6 @@ class FichierHDRControllerFactory
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
-        $controller->setValidationTheseService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
 
         /** @var DepotService $depotService */

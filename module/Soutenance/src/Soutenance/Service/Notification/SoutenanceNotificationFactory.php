@@ -22,7 +22,6 @@ use Notification\Notification;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
-use Soutenance\Entity\PropositionHDR;
 use Soutenance\Entity\PropositionThese;
 use Soutenance\Provider\Template\MailTemplates;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -1499,7 +1498,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             ];
             $mail = array_merge($entity->getDirecteursTheseEmails(), $entity->getCoDirecteursTheseEmails());
             if (count($mail) === 0) {
-                throw new RuntimeException("Aucun mail trouvés pour les directeurs de thèse");
+                throw new RuntimeException("Aucun mail trouvé pour les directeurs de thèse");
             }
         } else {
             $vars = [
@@ -1511,7 +1510,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             ];
             $mail = $entity->getGarantEmails();
             if (count($mail) === 0) {
-                throw new RuntimeException("Aucun mail trouvés pour le garant");
+                throw new RuntimeException("Aucun mail trouvé pour le garant");
             }
         }
 
@@ -1567,7 +1566,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_HDR_DEMANDE_ADRESSE_EXACTE, $vars) ;
         $emails = $this->emailService->fetchEmailActeursDirects($entity);
         if (count($emails) === 0) {
-            throw new RuntimeException("Aucun mail trouvés pour les acteurs directs");
+            throw new RuntimeException("Aucun mail trouvé pour les acteurs directs");
         }
 
         $notif = new Notification();

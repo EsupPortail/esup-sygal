@@ -47,13 +47,13 @@ class EtatViewHelper extends AbstractHelper
                 $colorEtat = "grey";
                 break;
             case Etat::CODE_VALIDE :
-                $colorEtat = "#2EA662";
+                $colorEtat = "var(--success-color)";
                 break;
             case These::ETAT_SOUTENUE :
                 if(!$resultat){
                     $colorEtat = "var(--primary-color)";
                 }else{
-                    $colorEtat = $resultat === 1 ? "#2EA662" : "#d23544";
+                    $colorEtat = $resultat === 1 ? "var(--success-color)" : "#d23544";
                 }
                 break;
             default:

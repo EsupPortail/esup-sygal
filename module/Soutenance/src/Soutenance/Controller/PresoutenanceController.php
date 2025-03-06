@@ -584,7 +584,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             $notif = $this->soutenanceNotificationFactory->createNotificationTransmettreDocumentsDirection($this->entity, $this->proposition);
             $this->notifierService->trigger($notif);
         } catch (\Notification\Exception\RuntimeException) {
-            // aucun destinataire, todo : cas à gérer !
+            throw new RuntimeException("Aucun mail trouvé pour le garant");
         }
 
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_NOTIFICATION, "Transmission des documents");

@@ -60,8 +60,8 @@
     min-width: 09%;
   }
   .admis-etat-card{
-    color: #2EA662;
-    border-left: 5px solid #2EA662;
+    color: var(--successColor);
+    border-left: 5px solid var(--successColor);
   }
   .transferee-etat-card{
     color: grey;

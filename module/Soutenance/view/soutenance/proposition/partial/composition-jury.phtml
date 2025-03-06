@@ -261,6 +261,15 @@ $object = $proposition->getObject();
                     </div>
                 <?php endif; ?>
             </div>
+            <div class="col-md-7">
+                <?php if (isset($indicateurs["membresMail"]["valide"]) && !$indicateurs["membresMail"]["valide"]):?>
+                    <div class="alert alert-danger">
+                        <span class="fas fa-exclamation-triangle"></span>
+                        <?php echo $indicateurs["membresMail"]["alerte"] ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <div class="col-md-4 float-end">
                 <?php if ($canModifier): ?>
                     <a  <?php /** @see \Soutenance\Controller\PropositionController::modifierMembreAction(); */ ?>

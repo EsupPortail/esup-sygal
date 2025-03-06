@@ -19,7 +19,7 @@ use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\PropositionHDR;
-use Soutenance\Provider\Parametre\These\SoutenanceParametres;
+use Soutenance\Provider\Parametre\HDR\SoutenanceParametres;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
