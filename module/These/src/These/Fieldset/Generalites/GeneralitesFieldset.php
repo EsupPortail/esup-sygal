@@ -97,9 +97,10 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
             'type' => Select::class,
             'name' => 'discipline',
             'options' => [
-                'label' => "Discipline :",
+                'label' => "Discipline <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :",
                 'value_options' => $this->disciplineService->getDisciplinesAsOptions("libelle", "ASC", "id", "420%"),
                 'empty_option' => "Sélectionner une discipline",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'discipline',
@@ -255,7 +256,7 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
 //                'required' => true,
 //            ],
             'discipline' => [
-                'required' => false,
+                'required' => true,
             ],
             'domaineHal' => [
                 'name' => 'domaineHal',

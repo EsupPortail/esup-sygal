@@ -123,11 +123,11 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
         return true;
     }
 
-    private function canInscrire(?Inscription $inscription): bool
+    private function canInscrire(?Inscription $inscriptionEnCours): bool
     {
-        if (!$this->scopeValide($inscription)) return false;
-        $doctorant = $inscription->getDoctorant();
-        $session = $inscription->getSession();
+        if (!$this->scopeValide($inscriptionEnCours)) return false;
+        $doctorant = $inscriptionEnCours->getDoctorant();
+        $sessionInscriptionEnCours = $inscriptionEnCours->getSession();
         $inscriptions = $this->inscriptionService->getRepository()->findInscriptionsByDoctorant($doctorant);
 
         /** @var Inscription $inscription */
@@ -141,13 +141,25 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
             //si la session demandée possède la même formation qu'une inscription possédée par l'étudiant,
             //on vérifie que l'année universitaire ne soit pas la même
             //sinon on refuse l'inscription, car l'étudiant ne peut pas s'inscrire sur une session appartenant à une formation déjà suivie sur la même année universitaire
-            if ($session && $session->getFormation() === $sessionInscriptionEnregistree->getFormation()) {
-                $sessionOuverteDateDebut = $session->getDateDebut();
+            if ($sessionInscriptionEnCours && $sessionInscriptionEnCours->getFormation() === $sessionInscriptionEnregistree->getFormation()) {
+                $sessionOuverteDateDebut = $sessionInscriptionEnCours->getDateDebut();
                 if ($sessionOuverteDateDebut) {
                     $premiereAnneeUnivSessionOuverte = $this->anneeUnivService->fromDate($sessionOuverteDateDebut)->getPremiereAnnee();
-                    // Si les années universitaires sont identiques, on interdit l'inscription et que la session n'a pas été annulée
-                    if ($premiereAnneeUnivSessionOuverte === $premiereAnneeUnivSessionInscription && $sessionInscriptionEnregistree->getEtat()->getCode() !== Etat::CODE_ANNULEE) {
-                        return false;
+                    $etatSessionInscriptionEnregistree = $sessionInscriptionEnregistree->getEtat()->getCode();
+                    // Si les années universitaires sont identiques, que la session précédente n'a pas été annulée, ni passée
+                    // que le doctorant n'était pas en liste principale alors que la session est close,
+                    // alors on interdit l'inscription
+                    if ($premiereAnneeUnivSessionOuverte === $premiereAnneeUnivSessionInscription) {
+                        if($etatSessionInscriptionEnregistree === Etat::CODE_ANNULEE){
+                            continue;
+                        }
+                        if ($etatSessionInscriptionEnregistree === Etat::CODE_CLOTURER) {
+                            if (in_array($inscription, $sessionInscriptionEnregistree->getListePrincipale())) {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
                     }
                 }
             }

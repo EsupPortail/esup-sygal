@@ -32,7 +32,10 @@ return [
                     'action' => [
                         'lister-fichiers',
                     ],
-                    'privileges' => DepotPrivileges::THESE_CONSULTATION_DEPOT,
+                    'privileges' => [
+                        DepotPrivileges::THESE_CONSULTATION_DEPOT,
+                        DepotPrivileges::THESE_FICHIER_DIVERS_CONSULTER
+                    ],
                     'assertion' => TheseAssertion::class,
                 ],
                 [
