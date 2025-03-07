@@ -24,7 +24,7 @@ class EncadrementFieldsetFactory
         /** @var PhpRenderer $renderer*/
         $renderer = $container->get('ViewRenderer');
         /** @see IndividuController::rechercherAction() */
-        $fieldset->setUrlCoEncadrant($renderer->url('individu/rechercher', [], ["query" => ['type' => Individu::TYPE_ACTEUR]], true));
+        $fieldset->setUrlCoEncadrant($renderer->url('individu/rechercher', [], [], true));
         $fieldset->setObject(new These());
 
         return $fieldset;
