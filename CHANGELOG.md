@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Passage à PHP 8.2.
 - [FIX] Page des comptes utilisateurs : erreur 'Type of Application\Controller\UtilisateurController::$shibService must be UnicaenAuthentification\Service\ShibService'.
+- [FIX] Envoi vers STEP-STAR : pas de balise INE du tout dans le fichier TEF si l'INE du doctorant est vide.
 
 9.3.1
 -----

@@ -190,9 +190,11 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                             </tef:autoriteExterne>
                                         </xsl:if>
 
-                                        <tef:autoriteExterne autoriteSource="INE">
-                                            <xsl:value-of select="CODE_INE"/>
-                                        </tef:autoriteExterne>
+                                        <xsl:if test="CODE_INE != ''">
+                                            <tef:autoriteExterne autoriteSource="INE">
+                                                <xsl:value-of select="CODE_INE"/>
+                                            </tef:autoriteExterne>
+                                        </xsl:if>
 
                                         <xsl:if test="PPN_DOCTORANT != ''">
                                             <tef:autoriteExterne autoriteSource="Sudoc">
