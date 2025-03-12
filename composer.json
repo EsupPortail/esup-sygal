@@ -46,7 +46,7 @@
         "webmozart/assert": "^1.3",
 
         "unicaen/alerte": "^3.0",
-        "unicaen/app": "dev-release_6.2.0 as 6.1.7",
+        "unicaen/app": "^6.2",
         "unicaen/auth-token": "^7.1",
         "unicaen/authentification": "^6.4",
         "unicaen/console": "^6.0",
