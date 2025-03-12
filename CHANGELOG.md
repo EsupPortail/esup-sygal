@@ -11,6 +11,7 @@ Journal des modifications
   - Si la première session est clôturée, et que le doctorant est non classé ou en liste complémentaire
 - [FIX] Page des comptes utilisateurs : erreur 'Type of Application\Controller\UtilisateurController::$shibService must be UnicaenAuthentification\Service\ShibService'.
 - [FIX] Envoi vers STEP-STAR : pas de balise INE du tout dans le fichier TEF si l'INE du doctorant est vide.
+- [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les co-directeurs de thèse
 
 9.3.1
 -----

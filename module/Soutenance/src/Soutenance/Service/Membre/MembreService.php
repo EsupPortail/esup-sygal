@@ -252,9 +252,16 @@ class MembreService {
             ->first()
             ->getIndividu();
 
+        $coDirecteursIndividu = $proposition->getThese()
+            ->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)
+            ->map(fn($acteur) => $acteur->getIndividu())
+            ->toArray();
+
         $membresSansDirectionThese = array_filter($qb->getQuery()->getResult(), fn($membre) =>
-            $membre->getActeur()->getIndividu() !== $directeurIndividu
+            $membre->getActeur()->getIndividu() !== $directeurIndividu &&
+            !in_array($membre->getActeur()->getIndividu(), $coDirecteursIndividu)
         );
+
         return $membresSansDirectionThese;
     }
 
