@@ -3,6 +3,7 @@
  * @var PhpRenderer $this
  * @var $fieldset
  * @var $fieldsetCharteDoctoratSignee
+ * @var $fieldsetConventionSignee
  * @var array $documents
  * @var AdmissionValidation $validation_charte_doctorat
  * @var string $returnUrl
@@ -98,7 +99,8 @@ $enCours = isset($admission) && $admission->getEtat()->getCode() === Etat::CODE_
                             'fieldset' => $fieldset,
                             'returnUrl' => $returnUrl,
                             'isOperationAllowedByRole' => $isOperationAllowedByRole,
-                            'role' => $role
+                            'role' => $role,
+                            'fieldsetConventionSignee' => $fieldsetConventionSignee,
                         ]); ?>
                     <?php endif ?>
                 </div>

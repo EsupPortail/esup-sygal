@@ -442,10 +442,12 @@ document.addEventListener("DOMContentLoaded", function() {
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
                         onload: (response => {
-                            if (inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE") {
-                                const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
-                                const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
-                                if (charteDoctoratSigneContainer && precisionsContainer) {
+                            if (inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE" || inputId === "ADMISSION_CONVENTION_SIGNEE") {
+                                if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE") documentSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                if(inputId === "ADMISSION_CONVENTION_SIGNEE") documentSigneContainer = document.getElementById("file-convention-signe-container");
+
+                                const precisionsContainer = documentSigneContainer.previousElementSibling;
+                                if (documentSigneContainer && precisionsContainer) {
                                     const icon = precisionsContainer.querySelector("i");
                                     if (icon) {
                                         icon.classList.add("fa-check-circle")
@@ -462,10 +464,12 @@ document.addEventListener("DOMContentLoaded", function() {
                         onerror: (response) =>
                             serverResponse = JSON.parse(response),
                         onload: (response => {
-                            if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE"){
-                                const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
-                                const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
-                                if(charteDoctoratSigneContainer && precisionsContainer){
+                            if (inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE" || inputId === "ADMISSION_CONVENTION_SIGNEE") {
+                                if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE") documentSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                if(inputId === "ADMISSION_CONVENTION_SIGNEE") documentSigneContainer = document.getElementById("file-convention-signe-container");
+
+                                const precisionsContainer = documentSigneContainer.previousElementSibling;
+                                if (documentSigneContainer && precisionsContainer) {
                                     const icon = precisionsContainer.querySelector("i");
                                     if(icon){
                                         icon.classList.remove("fa-check-circle")
@@ -513,10 +517,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                         dateTeleversementDiv.style.display = 'none';
                                         actionFileDiv.style.display = 'none';
                                     }
-                                    if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE"){
-                                        const charteDoctoratSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
-                                        const precisionsContainer = charteDoctoratSigneContainer.previousElementSibling;
-                                        if(charteDoctoratSigneContainer && precisionsContainer){
+                                    if (inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE" || inputId === "ADMISSION_CONVENTION_SIGNEE") {
+                                        if(inputId === "ADMISSION_CHARTE_DOCTORAT_SIGNEE") documentSigneContainer = document.getElementById("file-charte-doctorat-signe-container");
+                                        if(inputId === "ADMISSION_CONVENTION_SIGNEE") documentSigneContainer = document.getElementById("file-convention-signe-container");
+
+                                        const precisionsContainer = documentSigneContainer.previousElementSibling;
+                                        if (documentSigneContainer && precisionsContainer) {
                                             const icon = precisionsContainer.querySelector("i");
                                             if(icon){
                                                 icon.classList.remove("fa-check-circle")

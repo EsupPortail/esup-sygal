@@ -101,6 +101,7 @@ $returnUrl = $this->url('admission/ajouter', ['action' => "document",'individu' 
         'conventionFormationDoctoraleOperations' => $conventionFormationDoctoraleOperations,
         'conventionFormationDoctorale' => $conventionFormationDoctorale,
         'isOperationAllowedByRole' => $isOperationAllowedByRole,
+        'fieldsetConventionSignee' => $fieldset->get('conventionSignee'),
         'role' => $role
     ]);
     echo $this->partial('admission/partial/document/document', [

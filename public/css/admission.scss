@@ -429,7 +429,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   width: auto;
 }
 
-.acces-charte-doct-signee-btn{
+.acces-document-admission-signee-btn{
   color: #337ab7;
 }
 
@@ -448,7 +448,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
 
 #modalShowConventionFormationDoctorale #loading-indicator {
   position: absolute;
-  top: 55%;
+  top: 75%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgba(255, 255, 255, 0.8);
@@ -755,7 +755,7 @@ select[name="etudiant[anneeDobtentionDiplomeAutre]"], select[name="etudiant[anne
   //display: none;
 }
 
-.avisCompl, #file-charte-doctorat-signe-container, #upload-file-container{
+.avisCompl, #file-charte-doctorat-signe-container, #file-convention-signe-container, #upload-file-container{
   background-color: #f8f9fa;
   border-radius: 15px;
   padding: 20px;

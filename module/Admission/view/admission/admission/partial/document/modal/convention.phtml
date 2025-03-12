@@ -2,7 +2,7 @@
 /**
  * @var PhpRenderer $this
  * @var $fieldset
- * @var $fieldsetCharteDoctoratSignee
+ * @var $fieldsetConventionSignee
  * @var array $documents
  * @var string $returnUrl
  * @var Admission $admission
@@ -10,11 +10,13 @@
  * @var boolean $canTelechargerDocument
  * @var ConventionFormationDoctorale $conventionFormationDoctorale
  * @var array $conventionFormationDoctoraleOperations
+ * @var Role $role
  */
 
 use Admission\Entity\Db\Admission;
 use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Entity\Db\Inscription;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Individu\Entity\Db\Individu;
 
@@ -22,6 +24,9 @@ use Individu\Entity\Db\Individu;
 $inscription = $admission?->getInscription()->first();
 /** @var Individu $individu */
 $individu = $admission?->getIndividu()->getId();
+$natureFichierConventionSignee = $fieldsetConventionSignee?->getAttribute('id');
+$natureFichierConvention = $fieldset->getAttribute('id');
+$dejaTeleversee = array_key_exists($natureFichierConventionSignee, $documents);
 ?>
 <div class="modal fade" id="modalShowConventionFormationDoctorale" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -37,6 +42,77 @@ $individu = $admission?->getIndividu()->getId();
                         certifier avoir effectivement pris connaissance de son contenu à la fin du
                         document.
                     </p>
+                </div>
+                <?php
+                $class = $dejaTeleversee ? " success" : null;
+                $url = $this->url('admission/generer-convention-formation', ['admission' => $admission->getId()], [], true);
+                if($role->getCode() === Role::CODE_GEST_ED):
+                $texte =  "Une fois déposée par l'étudiant, vous devrez (gestionnaire de l'ED) <a href='".$url."'>télécharger</a>
+                la convention de formation doctorale afin d'effectuer de façon manuscrite, le circuit de signatures restant (présent à la fin du document).
+                <br>
+                Vous pourrez ensuite supprimer l'existante et la téléverser à ";
+                $class = " info";
+                elseif($role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT):
+                $texte =  "Une fois signée, vous devrez <a href='".$url."'>télécharger</a>
+                la convention de formation doctorale afin d'effectuer de façon manuscrite, le circuit de signatures jusqu'à la direction de l'unité de recherche (présent à la fin du document).
+                <br>
+                Vous pourrez ensuite la téléverser à ";
+                else:
+                $texte =  "Une fois signée, l'étudiant devra <a href='".$url."'>télécharger</a>
+                la convention de formation doctorale afin d'effectuer de façon manuscrite, le circuit de signatures restant (présent à la fin du document).
+                <br>
+                Il pourra ensuite la téléverser à";
+                endif;
+                ?>
+                <div class="precisions-action-container <?= $class ?>">
+                    <?php if($class === " success"): ?>
+                        <i class="fas fa-check-circle"></i>
+                    <?php elseif($class === " info"): ?>
+                        <i class="fas fa-exclamation-circle"></i>
+                    <?php else: ?>
+                        <i class="fas fa-info-circle"></i>
+                    <?php endif; ?>
+                    <p>
+                        <?= $texte ?>
+                        <a type="button" class="acces-document-admission-signee-btn" data-bs-target="#file-convention-signe-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="file-convention-signe-container">
+                            l'endroit prévu ici.
+                        </a>
+                    </p>
+                </div>
+                <?php $class = $dejaTeleversee ? " show" : null; ?>
+                <div class="collapse <?= $class ?> row subfield" id="file-convention-signe-container">
+                    <div class="col-lg-3 col-sm-12 filename-label">
+                        <?php echo $this->formlabel($fieldsetConventionSignee); ?>
+                    </div>
+                    <div class="col-lg-9 col-sm-12">
+                        <div class="row detail-file-container">
+                            <div class="col-lg-7 upload-file">
+                                <?php
+                                if($role->getCode() === Role::CODE_GEST_ED || $role->getRoleId() === Role::ROLE_ID_ADMISSION_CANDIDAT):
+                                    echo $this->formfile($fieldsetConventionSignee->setAttribute('disabled', false));
+                                else:
+                                    echo $this->formfile($fieldsetConventionSignee->setAttribute('disabled', true));;
+                                endif;
+                                ?>
+                            </div>
+                            <?php if($dejaTeleversee): ?>
+                                <div class="col-lg-3 date-televersement-container">
+                                    <p>Téléversé le
+                                        <?php
+                                        echo $documents[$natureFichierConventionSignee]['televersement'];
+                                        ?>
+                                    </p>
+                                </div>
+                                <?php if($canTelechargerDocument): ?>
+                                    <div class="col-lg-1 action-file-container">
+                                        <a href="<?php echo $this->url('admission/telecharger-document',['individu'=>$individu,'codeNatureFichier' => $natureFichierConventionSignee], [],true) ?>"
+                                           class="icon icon-download iconly"
+                                           title="Télécharger ?"></a>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-5 upload-file file-convention-formation-doctorale">
                     <div id="loading-indicator">

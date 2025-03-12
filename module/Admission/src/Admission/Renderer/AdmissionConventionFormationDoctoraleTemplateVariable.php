@@ -7,6 +7,7 @@ use Admission\Entity\Db\AdmissionAvis;
 use Admission\Entity\Db\AdmissionValidation;
 use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Entity\Db\Financement;
+use Admission\Entity\Db\Inscription;
 use Admission\Filter\AdmissionInscriptionFormatter;
 use Admission\Filter\AdmissionOperationsFormatter;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
@@ -180,5 +181,63 @@ class AdmissionConventionFormationDoctoraleTemplateVariable extends AbstractTemp
             ];
         }
         return $operationsFormatter->htmlifyOperations($operationsToPrint);
+    }
+
+    /**
+     * @noinspection PhpUnused (il s'agit d'une méthode utilisée par les macros)
+     */
+    public function getSignatairestoHtmlArray()
+    {
+        /** @var Inscription $inscription */
+        $inscription = $this->admission->getInscription()->first() ? $this->admission->getInscription()->first() : null;
+
+        $signatairesToPrint = [];
+        $signatairesToPrint[] = ["Le doctorant (". $this->admission->getIndividu().")", ""];
+        $signatairesToPrint[] = ["La direction de thèse (". $inscription->getDirecteur().")", $inscription->getCoDirection() ? "La co-direction de thèse (". $inscription->getCoDirecteur().")" : ""];
+
+        if ($inscription->getCoEncadrement()) {
+            $signatairesToPrint[] = [
+                "Le co-encadrement de thèse si validé en Cac restreint de l’établissement d’inscription",
+                "Le second co-encadrement de thèse si validé en Cac restreint de l’établissement d’inscription"
+            ];
+        }
+
+        $signatairesToPrint[] = [
+            "La direction de l’unité de recherche de la direction de thèse (". $inscription->getUniteRecherche()?->getStructure()->getSigle().")",
+            ($inscription->getCoDirection() && $inscription->getUniteRecherche() && $inscription->getUniteRecherche() !== $inscription->getUniteRechercheCoDirecteur())
+                ? "La direction de l’unité de recherche de la co-direction de thèse (". $inscription->getUniteRechercheCoDirecteur()?->getStructure()->getSigle().")"
+                : ""
+        ];
+
+        $signatairesToPrint[] = [
+            "La direction de l’école doctorale de la direction de thèse (". $inscription->getEcoleDoctorale()?->getStructure()->getSigle().")",
+            $inscription->getCoDirection() ? "La direction de l’école doctorale de la co-direction de thèse (si différent de l'établissement d'inscription)" : ""
+        ];
+
+        $signatairesToPrint[] = [
+            "La présidence ou direction de l’établissement d’inscription en doctorat (". $inscription->getEtablissementInscription()?->getStructure()->getSigle().")",
+            ($inscription->getEtablissementInscription() !== $inscription->getEtablissementLaboratoireRecherche())
+                ? "La présidence ou direction de l’établissement employeur du doctorant (si différent de l'établissement d'inscription)"
+                : ""
+        ];
+
+        $signatairesToPrint[] = ["La présidence de Normandie Université", ""];
+
+        $str = "<table id='signataires-convention'>";
+
+        foreach ($signatairesToPrint as [$signataire, $coSignataire]) {
+            $str .= "<tr>";
+            if ($coSignataire) {
+                $str .= "<td><b>Date : ………/………/……… <br>" . $signataire . "</b><br><i>(nom, prénom, signature)</i></td>";
+                $str .= "<td><b>Date : ………/………/……… <br>" . $coSignataire . "</b><br><i>(nom, prénom, signature)</i></td>";
+            } else {
+                $str .= "<td colspan='2'><b>Date : ………/………/……… <br>" . $signataire . "</b><br><i>(nom, prénom, signature)</i></td>";
+            }
+            $str .= "</tr>";
+        }
+
+        $str .= "</table>";
+
+        return $str;
     }
 }

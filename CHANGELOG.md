@@ -6,6 +6,7 @@ Journal des modifications
 - Passage à PHP 8.2.
 - Module Saisie Thèse : Renseignement de la discipline SISE rendue obligatoire
 - Accès donné aux directeurs d'ED à la page "dépôt fichier divers"
+- Module Admission : Les signataires concernés sont affichés à la fin du template de la convention de formation doctorale
 - Module Formation : Les doctorants peuvent maintenant se réinscrire à une session de formation dans de nouveaux cas : 
   - Si la première session est clôturée, et que le doctorant est non classé ou en liste complémentaire
 - [FIX] Page des comptes utilisateurs : erreur 'Type of Application\Controller\UtilisateurController::$shibService must be UnicaenAuthentification\Service\ShibService'.
