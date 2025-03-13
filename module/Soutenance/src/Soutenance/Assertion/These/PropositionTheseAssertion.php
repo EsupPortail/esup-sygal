@@ -148,8 +148,12 @@ class PropositionTheseAssertion implements  AssertionInterface {
                     case Role::CODE_ADMIN_TECH :
                         return true;
                     case Role::CODE_BDD :
+                        $etatObject = $these->getEtatThese() ;
+                        if($etatObject === These::ETAT_SOUTENUE) return false;
                         return ($these->getEtablissement()->getStructure() === $structure);
                     case Role::CODE_GEST_ED :
+                        $etatObject = $these->getEtatThese();
+                        if($etatObject === These::ETAT_SOUTENUE) return false;
                         return $structure === $these->getEcoleDoctorale()->getStructure();
                     default:
                         return false;

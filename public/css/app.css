@@ -2,7 +2,7 @@
 :root {
   --primary-color:#337ab7;
   --secondary-color:#004980;
-  --successColor: #238523; }
+  --success-color: #238523; }
 
 h1, h2, h3 {
   font-weight: bold; }
@@ -103,7 +103,7 @@ h2.modal-title {
   width: fit-content;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: var(--successColor);
+  background-color: var(--success-color);
   color: white; }
   .card.card-success .corps {
     display: flex;
@@ -655,8 +655,8 @@ a.btn > span.icon {
   color: white; }
 
 .btn-success {
-  background-color: var(--successColor);
-  border-color: var(--successColor); }
+  background-color: var(--success-color);
+  border-color: var(--success-color); }
 
 .btn-danger {
   background-color: #d23544;
@@ -925,14 +925,14 @@ span.sas-highlight {
 
 .valide {
   font-weight: 600;
-  color: var(--successColor); }
+  color: var(--success-color); }
 
 span.badge.EN_COURS {
   background: #009ce4; }
 
 span.badge.VALIDEE,
 span.badge.badge-success {
-  background: var(--successColor); }
+  background: var(--success-color); }
 
 span.badge.REJETEE,
 span.badge.badge-error {

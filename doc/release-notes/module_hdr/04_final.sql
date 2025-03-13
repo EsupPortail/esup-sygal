@@ -1,4 +1,20 @@
 -------------------- validations --------------------------
+-- Mise à jour de l'état des propositions n'ayant pas encore de validation
+UPDATE soutenance_proposition sp
+SET etat_id = (
+    SELECT id FROM soutenance_etat
+    where code = 'EN_COURS_SAISIE'
+)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM validation_these vt
+    WHERE vt.these_id = sp.these_id
+)
+  and type = 'SOUTENANCE_THESE_PROPOSITION'
+  and etat_id = (
+    SELECT id FROM soutenance_etat
+    where code = 'EN_COURS_EXAMEN'
+);
 
 create or replace view v_situ_depot_vc_valid_doct(these_id, valide) as
 SELECT vt.these_id,

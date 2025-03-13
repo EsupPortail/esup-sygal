@@ -140,60 +140,66 @@ $president = $proposition->getObject()->getActeursByRoleCode(Role::CODE_PRESIDEN
                 Seuls les membres du jury ci-dessus (associés à un acteur)
                  pourront être désignés président du jury de par leur statut de rang A
             </p>
-            <table class="table table-extra-condensed">
-                <thead>
-                <tr>
-                    <th> Dénomination</th>
-                    <th> Id <?php echo $this->appInfos()->nom ?> </th>
-                    <th> Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($acteursPouvantEtrePresidentJury as $acteur):
-                        $isPresident = $president && ($acteur->getIndividu() === $president->getIndividu());
-                    ?>
-                        <tr>
-                            <td>    <?php echo $acteur->getIndividu()->getNomComplet(); ?>                                                   </td>
-                            <td>    <?php echo $isPresident ? $president->getId() . ' ' . $president->getIndividu()->getNomComplet() : ''; ?>                  </td>
-                            <td>
-                                <?php if ($canAssocierMembreIndividu): ?>
-                                    <?php if ($aucunPresidentJuryDeclare): ?>
-                                        <a <?php /** @see PresoutenanceController::renseignerPresidentJuryAction() */ ?>
-                                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/renseigner-president-jury", ['id' => $object->getId(), 'acteur' => $acteur->getId()], [], true);?>"
-                                                data-toggle="confirmationx"
-                                        >
-                                            <span class="fas fa-link"></span>
-                                        </a>
-                                    <?php elseif($isPresident): ?>
-                                        <a <?php /** @see PresoutenanceController::dissocierPresidentJuryAction() */ ?>
-                                                href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/dissocier-president-jury", ['id' => $object->getId(), 'acteur' => $president->getId()], [], true);; ?>"
-                                                data-toggle="confirmationx"
-                                        >
-                                            <span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
-                                                  data-bs-html="true" title="Casser l'association d'un individu à un membre de jury <br>(Une confirmation avant la suppression vous sera demandée)"></span>
-                                        </a>
+            <?php if($acteursPouvantEtrePresidentJury): ?>
+                <table class="table table-extra-condensed">
+                    <thead>
+                    <tr>
+                        <th> Dénomination</th>
+                        <th> Id <?php echo $this->appInfos()->nom ?> </th>
+                        <th> Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($acteursPouvantEtrePresidentJury as $acteur):
+                            $isPresident = $president && ($acteur->getIndividu() === $president->getIndividu());
+                        ?>
+                            <tr>
+                                <td>    <?php echo $acteur->getIndividu()->getNomComplet(); ?>                                                   </td>
+                                <td>    <?php echo $isPresident ? $president->getId() . ' ' . $president->getIndividu()->getNomComplet() : ''; ?>                  </td>
+                                <td>
+                                    <?php if ($canAssocierMembreIndividu): ?>
+                                        <?php if ($aucunPresidentJuryDeclare): ?>
+                                            <a <?php /** @see PresoutenanceController::renseignerPresidentJuryAction() */ ?>
+                                                    href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/renseigner-president-jury", ['id' => $object->getId(), 'acteur' => $acteur->getId()], [], true);?>"
+                                                    data-toggle="confirmationx"
+                                            >
+                                                <span class="fas fa-link"></span>
+                                            </a>
+                                        <?php elseif($isPresident): ?>
+                                            <a <?php /** @see PresoutenanceController::dissocierPresidentJuryAction() */ ?>
+                                                    href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/dissocier-president-jury", ['id' => $object->getId(), 'acteur' => $president->getId()], [], true);; ?>"
+                                                    data-toggle="confirmationx"
+                                            >
+                                                <span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
+                                                      data-bs-html="true" title="Casser l'association d'un individu à un membre de jury <br>(Une confirmation avant la suppression vous sera demandée)"></span>
+                                            </a>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <?php if (!$aucunPresidentJuryDeclare): ?>
+                                            <span class="fas fa-link"
+                                                  title="Vous n'avez pas les droits nécessaires pour déclarer ce membre en tant que président du jury"
+                                                  data-bs-toggle="tooltip"
+                                                  style="color:lightgray;">
+                                                </span>
+                                        <?php elseif($isPresident): ?>
+                                            <span class="icon icon-delete iconly"
+                                                  data-bs-toggle="tooltip"
+                                                  title="Vous n'avez pas les droits nécessaires pour casser la déclaration de cet individu en tant que président du jury"
+                                                  style="color:lightgray;">
+                                                </span>
+                                        <?php endif; ?>
                                     <?php endif; ?>
-                                <?php else: ?>
-                                    <?php if (!$aucunPresidentJuryDeclare): ?>
-                                        <span class="fas fa-link"
-                                              title="Vous n'avez pas les droits nécessaires pour déclarer ce membre en tant que président du jury"
-                                              data-bs-toggle="tooltip"
-                                              style="color:lightgray;">
-                                            </span>
-                                    <?php elseif($isPresident): ?>
-                                        <span class="icon icon-delete iconly"
-                                              data-bs-toggle="tooltip"
-                                              title="Vous n'avez pas les droits nécessaires pour casser la déclaration de cet individu en tant que président du jury"
-                                              style="color:lightgray;">
-                                            </span>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="alert alert-warning">
+                    <span class="icon icon-attention"></span>
+                    Aucun membre (ci-dessus) déjà associé à un acteur ne peut être désigné président du jury
+                </div>
+            <?php endif; ?>
         <?php else : ?>
             <div class="text-info">
                 <span class="icon icon-info"></span> Pour information, seuls les membres du jury (associés à un acteur)

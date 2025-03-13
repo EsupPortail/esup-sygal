@@ -147,7 +147,6 @@ class IndexController extends AbstractSoutenanceController
                     'membre' => $membre,
                     'acteurMembre' => $acteurMembre,
                     'proposition' => $this->proposition,
-                    'depot' => $this->entity->hasVersionInitiale(),
                     'engagement' => $engagement,
                     'avis' => $avis,
                     'telecharger' => ($avis) ? $this->urlFichierHDR()->telechargerFichierHDR($this->entity, $avis->getFichier()) : null,

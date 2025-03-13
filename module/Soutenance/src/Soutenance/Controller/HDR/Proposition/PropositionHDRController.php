@@ -89,10 +89,14 @@ class PropositionHDRController extends PropositionController
         /** Indicateurs --------------------------------------------------------------------------------------------- */
         $indicateurs = $this->propositionService->computeIndicateurForProposition($this->proposition);
         $juryOk = $this->propositionService->isJuryPropositionOk($this->proposition, $indicateurs);
-        if ($juryOk === false){
-            $indicateurs["membresMail"]["valide"] = false;
-            $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
-            $indicateurs["valide"] = false;
+        if ($juryOk === false) $indicateurs["valide"] = false;
+        foreach ($this->proposition->getMembres() as $membre) {
+            if ($membre->getEmail() === null) {
+                $indicateurs["membresMail"]["valide"] = false;
+                $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
+                $indicateurs["valide"] = false;
+                break;
+            }
         }
         $isIndicateursOk = $this->propositionService->isPropositionOk($this->proposition, $indicateurs);
 
@@ -100,13 +104,12 @@ class PropositionHDRController extends PropositionController
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($this->proposition);
         $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($this->proposition, $justificatifs);
 
-
         /** Collècte des informations sur les individus liés -------------------------------------------------------- */
-        /** @var IndividuRole[] $ecoleResponsables */
-        $ecoleResponsables = [];
-        if ($this->entity->getEcoleDoctorale() !== null) {
-            $ecoleResponsables = $this->getApplicationRoleService()->findIndividuRoleByStructure($this->entity->getEcoleDoctorale()->getStructure(), null, $this->entity->getEtablissement());
-        }
+//        /** @var IndividuRole[] $ecoleResponsables */
+//        $ecoleResponsables = [];
+//        if ($this->entity->getEcoleDoctorale() !== null) {
+//            $ecoleResponsables = $this->getApplicationRoleService()->findIndividuRoleByStructure($this->entity->getEcoleDoctorale()->getStructure(), null, $this->entity->getEtablissement());
+//        }
         /** @var IndividuRole[] $uniteResponsables */
         $uniteResponsables = [];
         if ($this->entity->getUniteRecherche() !== null) {
@@ -130,13 +133,13 @@ class PropositionHDRController extends PropositionController
                 break;
             }
         }
-        if (empty($ecoleResponsables)) $informationsOk = false;
-        foreach ($ecoleResponsables as $ecoleResponsable) {
-            if ($ecoleResponsable->getIndividu()->getEmailPro() === null and $ecoleResponsable->getIndividu()->getComplement() === null) {
-                $informationsOk = false;
-                break;
-            }
-        }
+//        if (empty($ecoleResponsables)) $informationsOk = false;
+//        foreach ($ecoleResponsables as $ecoleResponsable) {
+//            if ($ecoleResponsable->getIndividu()->getEmailPro() === null and $ecoleResponsable->getIndividu()->getComplement() === null) {
+//                $informationsOk = false;
+//                break;
+//            }
+//        }
         if (empty($emailsAspectDoctorats)) $informationsOk = false;
 
         /** Paramètres ---------------------------------------------------------------------------------------------- */
@@ -168,7 +171,7 @@ class PropositionHDRController extends PropositionController
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
 
-            'ecoleResponsables' => $ecoleResponsables,
+//            'ecoleResponsables' => $ecoleResponsables,
             'uniteResponsables' => $uniteResponsables,
             'emailsAspectDoctorats' => $emailsAspectDoctorats,
             'informationsOk' => $informationsOk,

@@ -98,10 +98,14 @@ class PropositionTheseController extends PropositionController
         /** Indicateurs --------------------------------------------------------------------------------------------- */
         $indicateurs = $this->propositionService->computeIndicateurForProposition($this->proposition);
         $juryOk = $this->propositionService->isJuryPropositionOk($this->proposition, $indicateurs);
-        if ($juryOk === false){
-            $indicateurs["membresMail"]["valide"] = false;
-            $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
-            $indicateurs["valide"] = false;
+        if ($juryOk === false) $indicateurs["valide"] = false;
+        foreach ($this->proposition->getMembres() as $membre) {
+            if ($membre->getEmail() === null) {
+                $indicateurs["membresMail"]["valide"] = false;
+                $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
+                $indicateurs["valide"] = false;
+                break;
+            }
         }
         $isIndicateursOk = $this->propositionService->isPropositionOk($this->proposition, $indicateurs);
 

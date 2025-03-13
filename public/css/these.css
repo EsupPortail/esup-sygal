@@ -44,8 +44,8 @@
     border-left: 5px solid #f1732d;
     min-width: 09%; }
   .informations-compl-div .admis-etat-card {
-    color: var(--successColor);
-    border-left: 5px solid var(--successColor); }
+    color: var(--success-color);
+    border-left: 5px solid var(--success-color); }
   .informations-compl-div .transferee-etat-card {
     color: grey;
     border-left: 5px solid grey; }

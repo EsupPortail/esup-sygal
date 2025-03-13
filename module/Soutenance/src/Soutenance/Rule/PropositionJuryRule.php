@@ -117,7 +117,11 @@ class PropositionJuryRule implements RuleInterface
         $indicateurs["rang A"] = ["Nombre" => $nbRangA, "Ratio" => $ratioRangA];
         if (!$forcerValidite && ($ratioRangA < $rangA_min || !$nbMembre)) {
             $indicateurs["rang A"]["valide"] = false;
-            $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au minimum " . ($ratioRangA * 100) . '%';
+            if($ratioRangA === 0){
+                $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au moins la moitié du jury";
+            }else{
+                $indicateurs["rang A"]["alerte"] = "Le nombre de membres de rang A doit représenter au minimum " . ($ratioRangA * 100) . '%';
+            }
         } else {
             $indicateurs["rang A"]["valide"] = true;
         }
@@ -127,7 +131,11 @@ class PropositionJuryRule implements RuleInterface
         $indicateurs["exterieur"] = ["Nombre" => $nbExterieur, "Ratio" => $ratioExterieur];
         if (!$forcerValidite && ($ratioExterieur < $exterieur_min || !$nbMembre)) {
             $indicateurs["exterieur"]["valide"] = false;
-            $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au minimum " . ($ratioRangA * 100) . '%';
+            if($ratioExterieur === 0){
+                $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au moins la moitié du jury";
+            }else{
+                $indicateurs["exterieur"]["alerte"] = "Le nombre de membres extérieurs doit représenter au minimum " . ($ratioRangA * 100) . '%';
+            }
         } else {
             $indicateurs["exterieur"]["valide"] = true;
         }
@@ -159,7 +167,7 @@ class PropositionJuryRule implements RuleInterface
     private function isValiditeForcee(): bool
     {
         // dès lors que la date de soutenance est passée, tout est considéré comme valide !
-        return ($dateSoutenance = $this->proposition->getThese()->getDateSoutenance()) !== null
+        return ($dateSoutenance = $this->proposition->getDate()) !== null
             && $dateSoutenance->setTime(0,0) < new DateTime('today');
     }
 }

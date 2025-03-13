@@ -29,8 +29,8 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Service\Horodatage\HorodatageService;
 
+$object = $proposition->getObject();
 $canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_NOTIFIER));
-$canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
 
 $object = $proposition->getObject();
 
@@ -103,6 +103,7 @@ if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat
 
                         <?php
                         $acteur = $acteursRapporteurs[$rapporteur->getId()] ?? null;
+                        $canRevoquerAvisSoutenance = $this->isAllowed($acteur, AvisSoutenancePrivileges::AVIS_ANNULER);
                         $emailActeur = $acteur?->getEmail(true);
                         $avi = ($acteur !== null && isset($avis[$acteur->getIndividu()->getId()]))?$avis[$acteur->getIndividu()->getId()]:null;
 

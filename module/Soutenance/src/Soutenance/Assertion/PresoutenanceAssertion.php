@@ -75,6 +75,8 @@ class PresoutenanceAssertion extends AbstractAssertion
             switch ($privilege) {
                 case PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU:
                 case PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION:
+                    $etatObject = $this->entity instanceof These ? $this->entity->getEtatThese() : $this->entity->getEtatHDR();
+                    if($etatObject === These::ETAT_SOUTENUE || $etatObject === HDR::ETAT_SOUTENUE) return false;
                     $role = $this->userContextService->getSelectedIdentityRole();
                     return (($role->getCode() === Role::CODE_BDD || Role::CODE_GEST_HDR) && $role->getStructure() === $this->entity->getEtablissement()->getStructure());
                 case HDRPrivileges::HDR_DONNER_RESULTAT:

@@ -130,6 +130,8 @@ class AvisSoutenanceAssertion extends AbstractAssertion implements  AssertionInt
              * - le bdd de l'etablissement
              */
             case AvisSoutenancePrivileges::AVIS_ANNULER :
+                $etatObject = $object instanceof These ? $object->getEtatThese() : $object->getEtatHDR();
+                if($etatObject === These::ETAT_SOUTENUE || $etatObject === HDR::ETAT_SOUTENUE) return false;
         }
         return true;
     }

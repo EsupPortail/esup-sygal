@@ -1,6 +1,7 @@
 <?php
 
 use Fichier\Entity\Db\NatureFichier;
+use HDR\Entity\Db\HDR;
 use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\Justificatif\JustificatifForm;
@@ -8,7 +9,7 @@ use Soutenance\Form\Justificatif\JustificatifForm;
 /**
  * @see \Soutenance\Controller\JustificatifController::ajouterJustificatifAction()
  *
- * @var These $these
+ * @var These|HDR $object
  * @var JustificatifForm $form
  * @var array $justificatifs
  *
@@ -20,6 +21,36 @@ use Soutenance\Form\Justificatif\JustificatifForm;
  */
 
 $explications = [];
+
+if($object instanceof These){
+    $explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Justification du rang d'un membre de jury de nationalité étrangère</strong> <br/>".
+        "Téléchargez un CV court (1-2 page) résumant les principales fonctions (scientifiques, administratives, encadrements de doctorants) et productions scientifiques de la personne exerçant à l'étranger que vous souhaitez nommer comme rapporteur de votre thèse. ".
+        "Ce document permettra à l'établissement de vérifier si les qualifications de cette personne sont suffisantes pour lui accorder le statut de rapporteur d’une thèse en France.".
+        "</div>";
+    $explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
+        "L'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par une lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
+        "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse qui peut être téléchargé ici : ".
+        "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
+        "</div>";
+}else{
+    $explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Justification du rang d'un membre de jury de nationalité étrangère</strong> <br/>".
+        "Téléchargez un CV court (1-2 page) résumant les principales fonctions (scientifiques, administratives, encadrements de doctorants) et productions scientifiques de la personne exerçant à l'étranger que vous souhaitez nommer comme rapporteur de votre HDR. ".
+        "Ce document permettra à l'établissement de vérifier si les qualifications de cette personne sont suffisantes pour lui accorder le statut de rapporteur d’une HDR en France.".
+        "</div>";
+    $explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Usage de la langue anglaise pour la soutenance de la HDR</strong> <br/>".
+        "L'usage de la langue anglaise pour la soutenance de la HDR doit être motivé par une lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
+        "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la soutenance de la HDR qui peut être téléchargé ici : ".
+        "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la soutenance de la HDR.</a></i>" .
+        "</div>";
+}
 $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
     "<div class='alert alert-warning'>" .
         "<strong><span class='fas fa-info-circle'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
@@ -27,14 +58,8 @@ $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
     "</div>";
 $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='fas fa-info-circle'></span> Justification d'émeritat</strong> <br/>".
-    "Le justificatif d'émeritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
-    "</div>";
-$explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER] =
-    "<div class='alert alert-warning'>" .
-    "<strong><span class='fas fa-info-circle'></span> Justification du rang d'un membre de jury de nationalité étrangère</strong> <br/>".
-    "Téléchargez un CV court (1-2 page) résumant les principales fonctions (scientifiques, administratives, encadrements de doctorants) et productions scientifiques de la personne exerçant à l'étranger que vous souhaitez nommer comme rapporteur de votre thèse. ".
-    "Ce document permettra à l'établissement de vérifier si les qualifications de cette personne sont suffisantes pour lui accorder le statut de rapporteur d’une thèse en France.".
+    "<strong><span class='fas fa-info-circle'></span> Justification d'éméritat</strong> <br/>".
+    "Le justificatif d'éméritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
     "</div>";
 $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
     "<div class='alert alert-warning'>" .
@@ -55,13 +80,6 @@ $explications[NatureFichier::CODE_DEMANDE_LABEL] =
     "<strong><span class='fas fa-info-circle'></span> Demande de label européen</strong> <br/>".
     "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
     "<a href='". $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
-    "</div>";
-$explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
-    "<div class='alert alert-warning'>" .
-    "<strong><span class='fas fa-info-circle'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
-    "L'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par un lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
-    "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse qui peut être téléchargé ici : ".
-    "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     "<div class='alert alert-warning'>" .

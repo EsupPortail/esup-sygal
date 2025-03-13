@@ -1,15 +1,3 @@
--- Attention, dans la partie Templates Renderer,
--- une instruction est en commentaire, elle est à exécuter une seule fois
--- et avant le reste des instructions qui concernent Renderer
-
-
-
-
-
-
-
-
-
 --
 -- Single table inheritance
 --
@@ -66,25 +54,11 @@ create table fichier_hdr
 insert into soutenance_etat(id, code, libelle) values (nextval('soutenance_etat_id_seq'),'EN_COURS_SAISIE', 'En cours de saisie');
 update soutenance_etat set code = 'EN_COURS_EXAMEN' where code = 'EN_COURS';
 
--- Mise à jour de l'état des propositions n'ayant pas encore de validation
-UPDATE soutenance_proposition sp
-SET etat_id = (
-    SELECT id FROM soutenance_etat
-    where code = 'EN_COURS_SAISIE'
-)
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM validation_these vt
-    WHERE vt.these_id = sp.these_id
-)
-  and type = 'SOUTENANCE_THESE_PROPOSITION'
-  and etat_id = (
-    SELECT id FROM soutenance_etat
-    where code = 'EN_COURS_EXAMEN'
-);
 
 ALTER table soutenance_proposition
     add column type VARCHAR(255) NOT NULL default 'SOUTENANCE_THESE_PROPOSITION';
+ALTER TABLE soutenance_proposition
+    ALTER COLUMN these_id DROP NOT NULL;
 ALTER table soutenance_proposition
     add column hdr_id bigint REFERENCES hdr (id);
 ALTER table soutenance_proposition
@@ -707,7 +681,6 @@ DROP COLUMN these_id;
 
 --Mise à jour du code des templates existants pour la thèse
 
--- ATTENTION, A EXECUTER QU'UNE FOIS (code en commentaire ci-dessous)
 UPDATE unicaen_renderer_template
 SET code = REGEXP_REPLACE(code, '^SOUTENANCE_', 'SOUTENANCE_THESE_')
 WHERE --code LIKE 'SOUTENANCE_%';

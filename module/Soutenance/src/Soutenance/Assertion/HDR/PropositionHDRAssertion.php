@@ -129,6 +129,8 @@ class PropositionHDRAssertion implements  AssertionInterface {
                     case Role::CODE_ADMIN_TECH :
                         return true;
                     case Role::CODE_GEST_HDR :
+                        $etatObject = $hdr->getEtatHDR();
+                        if($etatObject === HDR::ETAT_SOUTENUE) return false;
                         return ($hdr->getEtablissement()->getStructure() === $structure);
                     default:
                         return false;

@@ -154,7 +154,7 @@ switch ($hdr->getEtatHDR()){
     </div>
 </div>
 
-<?php if ($resultat = $hdr->getResultatToString() || $hdr->getDateAbandon() || $proposition?->getSoutenanceAutorisee() || $proposition?->getDate()): ?>
+<?php if ($resultat = $hdr->getResultatToString() || $hdr->getDateAbandon() || $proposition?->getSoutenanceAutorisee() || ($proposition?->getEtat()->getCode() === Etat::VALIDEE && $proposition?->getDate())): ?>
     <div class="box card">
         <div class="card-header these-card-header text-white">
             <h2 class="first">

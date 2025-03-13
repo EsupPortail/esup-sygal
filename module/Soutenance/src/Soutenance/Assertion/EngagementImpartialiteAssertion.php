@@ -8,6 +8,7 @@ use HDR\Entity\Db\HDR;
 use HDR\Service\HDRServiceAwareTrait;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 
@@ -67,13 +68,18 @@ class EngagementImpartialiteAssertion extends AbstractAssertion implements  Asse
         }
 
         if($entity instanceof These){
-            return $this->userContextService->isStructureDuRoleRespecteeForThese($entity);
+            if(!$this->userContextService->isStructureDuRoleRespecteeForThese($entity)) return false;
         }elseif($entity instanceof HDR){
-            return $this->userContextService->isStructureDuRoleRespecteeForHDR($entity);
+            if(!$this->userContextService->isStructureDuRoleRespecteeForHDR($entity)) return false;
         }
 
-        return false;
+        switch ($privilege) {
+            case EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER:
+                $etatObject = $entity instanceof These ? $entity->getEtatThese() : $entity->getEtatHDR();
+                if ($etatObject === These::ETAT_SOUTENUE || $etatObject === HDR::ETAT_SOUTENUE) return false;
+        }
 
+        return true;
     }
 
     protected function getRequestedEntity(): These|HDR|null
