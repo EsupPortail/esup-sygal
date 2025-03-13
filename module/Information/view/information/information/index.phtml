@@ -8,7 +8,7 @@ use Fichier\Provider\Privilege\FichierPrivileges;
 use Information\Entity\Db\Information;
 use Information\Provider\Privilege\InformationPrivileges;
 
-$this->headTitle("Index des informations");
+$this->headTitle("Tableau de bord des informations");
 
 $canView    = true;
 $canEdit    = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));

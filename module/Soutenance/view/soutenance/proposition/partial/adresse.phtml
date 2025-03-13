@@ -29,7 +29,7 @@ $object = $proposition->getObject();
                     <?php /** @see \Soutenance\Controller\PropositionController::ajouterAdresseAction() */ ?>
                     <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/ajouter-adresse", ['id' => $object->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
                        class="btn btn-primary ajax-modal" data-event="modification">
-                        <span class="icon icon-ajouter"></span>
+                        <span class="icon icon-plus"></span>
                         Ajouter une adresse
                     </a>
                 <?php else: ?>

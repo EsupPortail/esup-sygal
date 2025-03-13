@@ -90,7 +90,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
         <div class="card-body">
 
             <?php if ($distanciel !== null) : ?>
-                <?php /** IL EXISTE UNE DECLARATATION DE DISTANCIEL POUR LE PRESIDENT  *****************************/ ?>
+                <?php /** IL EXISTE UNE DECLARATION DE DISTANCIEL POUR LE PRESIDENT  *****************************/ ?>
 
                 <?php /** DECLARATION ******************************************************************/ ?>
                 <div class="row">
@@ -135,7 +135,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
 
             <?php else: ?>
 
-                <?php /** AUCUNE DECLARATATION DE DISTANCIEL POUR LE PRESIDENT  ************************************/ ?>
+                <?php /** AUCUNE DECLARATION DE DISTANCIEL POUR LE PRESIDENT  ************************************/ ?>
                 <div class="row">
                     <div class="col-md-8">
                         <p class="lead">
@@ -153,7 +153,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
                 </div>
 
                 <div class="alert alert-warning">
-                    <span class="fas fa-exclamation-triangle"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une délégation de signature.
+                    <span class="fas fa-exclamation-triangle"></span> Si le président du jury est en distanciel, tous les membres du jury devront remplir une délégation de signature.
                 </div>
             <?php endif; ?>
         </div>
@@ -169,9 +169,9 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
             <div class="row">
                 <div class="col-md-8">
                     <?php if ($visios === null or empty($visios)) : ?>
-                        Aucune déclaration de visio-conférence tardive
+                        Aucune déclaration de visioconférence tardive
                     <?php else : ?>
-                        Liste des déclarations tardives d'un membre en visio-conférence :
+                        Liste des déclarations tardives d'un membre en visioconférence :
                         <ul>
                         <?php foreach ($visios as $visio) : ?>
                             <li>

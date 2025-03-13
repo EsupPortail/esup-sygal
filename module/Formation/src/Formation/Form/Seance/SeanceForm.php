@@ -81,7 +81,7 @@ class SeanceForm extends Form {
             'type' => Text::class,
             'name' => 'lien',
             'options' => [
-                'label' => "Lien pour la visio-conférence :",
+                'label' => "Lien pour la visioconférence :",
             ],
             'attributes' => [
                 'id' => 'lien',
@@ -92,7 +92,7 @@ class SeanceForm extends Form {
             'type' => Text::class,
             'name' => 'mot_de_passe',
             'options' => [
-                'label' => "Mot de passe pour la visio-conférence :",
+                'label' => "Mot de passe pour la visioconférence :",
             ],
             'attributes' => [
                 'id' => 'mot_de_passe',

@@ -266,17 +266,17 @@ class PropositionHDRService extends PropositionService
     }
 
     /**
-     * Les garants sont des membres par défauts du jury d'une HDR. Cette fonction permet d'ajouter
+     * Le garant est un membre par défaut du jury d'une HDR. Cette fonction permet d'ajouter
      * ceux-ci à une proposition.
      * NB: La proposition doit être liée à une HDR.
-     * NB: Les garants sans mail ne sont pas ajoutés automatiquement
+     * NB: Le garant sans mail n'est pas ajouté automatiquement
      *
      * @param PropositionHDR $proposition
      */
     public function addGarantsAsMembres(PropositionHDR $proposition)
     {
         $hdr = $proposition->getHDR();
-        if ($hdr === null) throw new LogicException("Impossible d'ajout les garants comme membres : Aucune HDR de liée à la proposition id:" . $proposition->getId());
+        if ($hdr === null) throw new LogicException("Impossible d'ajout le garant comme membre : Aucune HDR de liée à la proposition id:" . $proposition->getId());
 
         $encadrements = $this->acteurHDRService->getRepository()->findEncadrementHDR($hdr);
         foreach ($encadrements as $encadrement) {

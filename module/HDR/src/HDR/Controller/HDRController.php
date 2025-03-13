@@ -14,6 +14,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Template\MailTemplates;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\View\Model\CsvModel;
 
@@ -24,6 +25,7 @@ class HDRController extends AbstractController
     use HDRSearchServiceAwareTrait;
     use SoutenanceNotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
+    use UniteRechercheServiceAwareTrait;
 
     /**
      * @see HDRRechercheController::indexAction()
@@ -37,12 +39,19 @@ class HDRController extends AbstractController
     {
         $hdr = $this->requestedHDR();
 
+        $unite = $hdr->getUniteRecherche();
+        $rattachements = [];
+        if ($unite !== null) {
+            $rattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+        }
+
         $view = new ViewModel([
             'hdr' => $hdr,
             'modifierEmailContactUrl' => $this->urlCandidat()->modifierEmailContactUrl($hdr->getCandidat(), true),
             'modifierEmailContactConsentUrl' => $this->urlCandidat()->modifierEmailContactConsentUrl(
                 $hdr->getCandidat(),
                 $this->url()->fromRoute(null, [], [], true)),
+            'rattachements' => $rattachements
         ]);
         $view->setTemplate('hdr/hdr/identite');
 

@@ -647,12 +647,13 @@ a.btn > span.icon {
   color: white; }
 
 .btn-info, .btn-info.disabled {
-  background-color: #009ce4;
-  border-color: #009ce4;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
   color: #fff; }
 
-.btn-info:hover {
-  color: white; }
+.btn-info:hover, .btn-info:focus {
+  color: white;
+  background-color: var(--secondary-color); }
 
 .btn-success {
   background-color: var(--success-color);
@@ -928,7 +929,7 @@ span.sas-highlight {
   color: var(--success-color); }
 
 span.badge.EN_COURS {
-  background: #009ce4; }
+  background: #127EAF; }
 
 span.badge.VALIDEE,
 span.badge.badge-success {

@@ -12,6 +12,7 @@ use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 
 class HDRControllerFactory
 {
@@ -47,6 +48,10 @@ class HDRControllerFactory
         /** @var NotifierService $notifierService */
         $notifierService = $container->get(NotifierService::class);
         $controller->setNotifierService($notifierService);
+
+        /** @var UniteRechercheService $uniteRechercheService */
+        $uniteRechercheService = $container->get(UniteRechercheService::class);
+        $controller->setUniteRechercheService($uniteRechercheService);
 
         return $controller;
     }

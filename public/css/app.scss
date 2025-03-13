@@ -1,7 +1,7 @@
 $filterFontSize: 11px;
 $uploadedFileFontSize: 80%;
 
-$infoColor: #009ce4;
+$infoColor: #127EAF;
 $warningColor: #f1732d;
 $dangerColor: #d23544;
 
@@ -994,12 +994,13 @@ a.btn > span.icon {
 }
 
 .btn-info, .btn-info.disabled {
-  background-color: $infoColor;
-  border-color: $infoColor;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
   color: #fff;
 }
-.btn-info:hover {
+.btn-info:hover, .btn-info:focus {
   color: white;
+  background-color: var(--secondary-color);
 }
 .btn-success {
   background-color: var(--success-color);

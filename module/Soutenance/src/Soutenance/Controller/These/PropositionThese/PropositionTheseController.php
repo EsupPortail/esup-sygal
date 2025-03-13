@@ -5,6 +5,7 @@ namespace Soutenance\Controller\These\PropositionThese;
 use Acteur\Entity\Db\ActeurThese;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
+use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
@@ -34,6 +35,7 @@ use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionThese\PropositionTheseService;
 use Soutenance\Service\SignaturePresident\SignaturePresidentPdfExporter;
 use These\Entity\Db\These;
+use These\Renderer\TheseTemplateVariable;
 use These\Service\These\TheseService;
 use UnicaenApp\Exception\RuntimeException;
 use Validation\Entity\Db\TypeValidation;
@@ -57,6 +59,7 @@ class PropositionTheseController extends PropositionController
     use LabelEuropeenFormAwareTrait;
     use RefusFormAwareTrait;
     use ChangementTitreFormAwareTrait;
+    use TemplateVariablePluginManagerAwareTrait;
 
     use PropositionTheseAssertionAwareTrait;
 
@@ -555,10 +558,11 @@ class PropositionTheseController extends PropositionController
     {
         $this->initializeFromType();
 
+        /** @var TheseTemplateVariable $theseTemplateVariable */
+        $theseTemplateVariable = $this->templateVariablePluginManager->get('these');
+        $theseTemplateVariable->setThese($this->entity);
         $vars = [
-            'doctorant' => $this->entity->getApprenant(),
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
+            'these' => $theseTemplateVariable,
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::SOUTENANCE_THESE_SERMENT_DU_DOCTEUR, $vars);
         $comue = $this->etablissementService->fetchEtablissementComue();

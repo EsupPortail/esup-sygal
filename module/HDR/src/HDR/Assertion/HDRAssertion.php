@@ -4,12 +4,10 @@ namespace HDR\Assertion;
 
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\Entity\Db\Role;
 use Application\Service\UserContextServiceAwareTrait;
 use HDR\Entity\Db\HDR;
 use HDR\Provider\Privileges\HDRPrivileges;
 use HDR\Service\HDRServiceAwareTrait;
-use Individu\Entity\Db\Individu;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 class HDRAssertion extends AbstractAssertion
@@ -42,7 +40,7 @@ class HDRAssertion extends AbstractAssertion
 
         switch (true) {
             case $privilege === HDRPrivileges::HDR_MODIFICATION_SES_HDRS || $privilege === HDRPrivileges::HDR_MODIFICATION_TOUTES_HDRS :
-                if ($hdr->getEtatHDR() === HDR::ETAT_SOUTENUE) return false;
+                if ($hdr->getEtatHDR() === HDR::ETAT_SOUTENUE || $hdr->getEtatHDR() === HDR::ETAT_ABANDONNEE) return false;
                 return $this->userContextService->isStructureDuRoleRespecteeForHDR($this->hdr);
         }
 

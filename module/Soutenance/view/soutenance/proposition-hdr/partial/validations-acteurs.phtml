@@ -74,6 +74,9 @@ if ($isAllOk === false || $validatedCount === 0) {
         </h2>
     </div>
     <div class="card-body">
+        <p class="lead">Afin d'être validée et traitée par l'établissement, la proposition de soutenance doit être validée par tous les
+            intervenants immédiats de la HDR (c'est-à-dire candidat et garant).
+        </p>
         <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) && !$isAllOk) : ?>
          <div class="alert alert-danger">
             <strong>
