@@ -1,0 +1,68 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Form\Doctorant\DoctorantForm;
+use Laminas\Form\Element\Hidden;
+use UnicaenIdref\Domain\Index1;
+
+/**
+ * @var PhpRenderer $this
+ * @var DoctorantForm $form
+ *
+ * @see \Doctorant\Controller\DoctorantController::modifierAction()
+ */
+
+$doctorant = $form->getObject();
+$isCreation = $doctorant?->getId() === null;
+
+$form->setAttribute('class', 'row')->prepare();
+?>
+
+<?php $this->headTitle($title = $this->translate($isCreation ?
+    "Création d'un nouveau doctorant" :
+    "Modification du doctorant &laquo; $doctorant &raquo;"
+)) ?>
+
+<h1 class="page-header">
+    <?php echo $title ?>
+</h1>
+
+<?php if ($isCreation): ?>
+    <p class="lead text-warning">
+        <strong>Attention !</strong>
+        NB : prenez garde de ne créer un doctorant que si vous êtes certain·e qu'il n'existe pas déjà.
+        Dédoublonner des doctorants n'est pas chose facile.
+    </p>
+<?php endif ?>
+
+<?php echo $this->form()->openTag($form) ?>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('ine')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formHidden((new Hidden('nomUsuel'))->setValue($doctorant->getIndividu()->getNomUsuel())->setAttribute('id', 'nomUsuel')) ?>
+        <?php echo $this->formHidden((new Hidden('prenom1'))->setValue($doctorant->getIndividu()->getPrenom1())->setAttribute('id', 'prenom1')) ?>
+        <?php echo $this->formControlGroup($form->get('idRef')->setAttribute('id', 'idRef')) ?>
+    </div>
+    <div class="col-md-2">
+        <?php echo $this->idrefPopupTrigger([
+            ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+            ['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => ['nomUsuel', 'prenom1']],
+        ], 'idRef') ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <?php echo $this->formControlGroup($form->get('codeApprenantInSource')) ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <?php echo $this->formControlGroup($form->get('submit')) ?>
+    </div>
+</div>
+<?php echo $this->formElement($form->get('csrf')) ?>
+<?php echo $this->form()->closeTag() ?>

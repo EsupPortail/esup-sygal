@@ -103,13 +103,13 @@ class EntityAsset
 
         $e->setSource($source);
         $e->setSourceCode(uniqid());
-        $e->setDateNaissance(new \DateTime());
+        $e->getIndividu()->setDateNaissance(new \DateTime());
         $e->setNationalite('Terrien');
         $e->setEmail('doc.torant@mail.fr');
-        $e->setNomPatronymique(null);
-        $e->setNomUsuel('Hochon');
-        $e->setPrenom('Paul');
-        $e->setCivilite('M.');
+        $e->getIndividu()->setNomPatronymique(null);
+        $e->getIndividu()->setNomUsuel('Hochon');
+        $e->getIndividu()->setPrenom('Paul');
+        $e->getIndividu()->setCivilite('M.');
 
         return $e;
     }

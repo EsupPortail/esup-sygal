@@ -12,9 +12,6 @@ use Application\View\Renderer\PhpRenderer;
  *
  * @see \Doctorant\Controller\DoctorantController::voirAction()
  */
-
-$canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER);
-$canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
 ?>
 
 <?php $this->headTitle($this->translate("Doctorant"))->append($doctorant->getIndividu()->getNomComplet()) ?>
@@ -27,26 +24,37 @@ $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTOR
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <h2 class="nav-link active" id="fiche-tab" data-bs-toggle="tab" data-bs-target="#fiche" type="button" role="tab" aria-controls="fiche" aria-selected="true">Fiche</h2>
-    </li>
-    <li class="nav-item" role="presentation">
-        <h2 class="nav-link" id="theses-tab" data-bs-toggle="tab" data-bs-target="#theses" type="button" role="tab" aria-controls="theses" aria-selected="false">Thèse</h2>
-    </li>
-    <li class="nav-item" role="presentation">
-        <h2 class="nav-link" id="formations-tab" data-bs-toggle="tab" data-bs-target="#formations" type="button" role="tab" aria-controls="formations" aria-selected="false">Formations</h2>
-    </li>
-</ul>
+<div class="row">
+    <div class="col-11">
+        <div class="box card">
+            <div class="card-header bg-dark text-white">
+                <h2 class="first">Fiche</h2>
+            </div>
+            <div class="card-body">
+                <?php echo $this->partial('doctorant/doctorant/partial/fiche', ['doctorant' => $doctorant, 'horizontal' => true]) ?>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="fiche" role="tabpanel" aria-labelledby="fiche-tab">
-        <?php echo $this->partial('doctorant/doctorant/partial/fiche', ['doctorant' => $doctorant, 'horizontal' => true]) ?>
+<div class="row">
+    <div class="col-7">
+        <div class="box card">
+            <div class="card-header bg-dark text-white">
+                <h2 class="first">Thèse</h2>
+            </div>
+            <div class="card-body">
+                <?php echo $this->partial('doctorant/doctorant/partial/theses', ['doctorant' => $doctorant, 'theses' => $theses, 'horizontal' => true]) ?>
+            </div>
+        </div>
     </div>
-    <div class="tab-pane fade" id="theses" role="tabpanel" aria-labelledby="theses-tab">
-        <?php echo $this->partial('doctorant/doctorant/partial/theses', ['doctorant' => $doctorant, 'theses' => $theses, 'horizontal' => true]) ?>
+</div>
+
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2 class="first">Formations</h2>
     </div>
-    <div class="tab-pane fade" id="formations" role="tabpanel" aria-labelledby="formations-tab">
+    <div class="card-body">
         <?php echo $this->partial('doctorant/doctorant/partial/formations', ['doctorant' => $doctorant, 'inscriptions' => $inscriptions, 'horizontal' => true]) ?>
     </div>
 </div>

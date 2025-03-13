@@ -71,7 +71,9 @@ $canAjouter = false;//$this->isAllowed(Privileges::getResourceId(DoctorantPrivil
         <?php /** @var \Doctorant\Entity\Db\Doctorant $doctorant */
         foreach ($paginator as $doctorant): ?>
             <?php
-            $canConsulter = $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT) || $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN);
+            $canConsulter =
+                $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS) ||
+                $this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN);
             $canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER);
             $canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
             ?>

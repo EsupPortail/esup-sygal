@@ -11,55 +11,48 @@ use UnicaenSearch\Controller\SearchControllerTrait;
 use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Form\Doctorant\DoctorantForm;
+use Doctorant\Form\Doctorant\DoctorantFormAwareTrait;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use InvalidArgumentException;
+use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenAuthentification\Authentication\Adapter\Ldap as LdapAuthAdapter;
 
 /**
  * @property \Doctorant\Service\Search\DoctorantSearchService $searchService
  */
 class DoctorantController extends AbstractController implements SearchControllerInterface
 {
+    use DoctorantServiceAwareTrait;
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
     use TheseServiceAwareTrait;
 
-    use DoctorantServiceAwareTrait;
+    use DoctorantFormAwareTrait;
 
-    /** @var MailConfirmationService $mailConfirmationService */
-    private $mailConfirmationService;
+    private MailConfirmationService $mailConfirmationService;
 
     private MailConfirmationForm $mailConfirmationForm;
     private MailConsentementForm $mailConsentementForm;
 
-    /**
-     * @var LdapAuthAdapter
-     */
-    private $ldapAuthAdapter;
-
-    /**
-     * @param MailConfirmationService $mailConfirmationService
-     */
-    public function setMailConfirmationService(MailConfirmationService $mailConfirmationService)
+    public function setMailConfirmationService(MailConfirmationService $mailConfirmationService): void
     {
         $this->mailConfirmationService = $mailConfirmationService;
     }
 
-    /**
-     * @param MailConfirmationForm $mailConfirmationForm
-     */
-    public function setMailConfirmationForm(MailConfirmationForm $mailConfirmationForm)
+    public function setMailConfirmationForm(MailConfirmationForm $mailConfirmationForm): void
     {
         $this->mailConfirmationForm = $mailConfirmationForm;
     }
 
-    public function setMailConsentementForm(MailConsentementForm $mailConsentementForm)
+    public function setMailConsentementForm(MailConsentementForm $mailConsentementForm): void
     {
         $this->mailConsentementForm = $mailConsentementForm;
     }
@@ -83,7 +76,7 @@ class DoctorantController extends AbstractController implements SearchController
     {
         $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
         if ($doctorant === null) {
-            throw new \InvalidArgumentException("Individu introuvable.");
+            throw new InvalidArgumentException("Doctorant introuvable.");
         }
 
         $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
@@ -111,10 +104,41 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
-    /**
-     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
-     */
-    public function modifierEmailContactAction()
+    public function modifierAction(): Response|ViewModel
+    {
+        $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
+        if ($doctorant === null) {
+            throw new InvalidArgumentException("Doctorant introuvable.");
+        }
+
+        $this->doctorantForm->bind($doctorant);
+
+        $request = $this->getRequest();
+        $inModal = $this->params()->fromQuery('inModal', false);
+        $this->doctorantForm->setAttribute('action', $this->url()->fromRoute('doctorant/modifier', ['doctorant' => $doctorant->getId()], ["query" => ["inModal" => $inModal]]));
+
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $this->doctorantForm->setData($data);
+            if ($this->doctorantForm->isValid()) {
+                $doctorant = $this->doctorantForm->getData();
+                $this->doctorantService->saveDoctorant($doctorant);
+
+                $this->flashMessenger()->addSuccessMessage("Le doctorant &laquo; $doctorant &raquo; a été modifié avec succès.");
+
+                if (!$inModal) {
+                    return $this->redirect()->toRoute('doctorant/voir', ['doctorant' => $doctorant->getId()]);
+                }
+            }
+        }
+
+        return new ViewModel([
+            'form' => $this->doctorantForm,
+            'title' => "Modification des informations du doctorant &laquo; $doctorant &raquo;",
+        ]);
+    }
+
+    public function modifierEmailContactAction(): Response|ViewModel
     {
         $doctorant = $this->requestDoctorant();
         $force = (bool) $this->params()->fromQuery('force', false);
@@ -171,10 +195,7 @@ class DoctorantController extends AbstractController implements SearchController
         ]);
     }
 
-    /**
-     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
-     */
-    public function modifierEmailContactConsentAction()
+    public function modifierEmailContactConsentAction(): Response|ViewModel
     {
         $doctorant = $this->requestDoctorant();
         $redirect = $this->params()->fromQuery('redirect', '/');

@@ -5,7 +5,6 @@ namespace Doctorant\Assertion;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\Entity\Db\Role;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Doctorant\Entity\Db\Doctorant;
@@ -30,6 +29,7 @@ class DoctorantAssertion extends AbstractAssertion
         return $this->assertPage($page);
     }
 
+
     private function assertPage(array $page): bool
     {
         return true;
@@ -41,11 +41,11 @@ class DoctorantAssertion extends AbstractAssertion
             return false;
         }
 
-        if ($privilege === DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT) {
+        if ($privilege === DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS) {
             return true;
         }
 
-        $doctorant = $this->getRequestedDoctorant();
+        $entity = $this->getRequestedDoctorant();
 
         try {
             switch ($action) {
@@ -55,10 +55,16 @@ class DoctorantAssertion extends AbstractAssertion
 
                 case 'voir':
                 case 'consulter':
-                    if (!$this->assertEntity($doctorant, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
+                    if (!$this->assertEntity($entity, DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN)) {
                         return false;
                     }
+                    return true;
 
+                case 'modifier-email-contact':
+                case 'modifier-email-contact-consent':
+                    if (! $this->isUtilisateurEgaleCeDoctorant($entity)) {
+                        return false;
+                    }
                     return true;
             }
         } catch (FailedAssertionException $e) {
@@ -119,6 +125,13 @@ class DoctorantAssertion extends AbstractAssertion
 
                     return true;
 
+                case DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT:
+                case DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT: // NB : privilègie uitlisé aussi pour la modif du consentement
+                    if (! $this->isUtilisateurEgaleCeDoctorant($entity)) {
+                        return false;
+                    }
+                    return true;
+
                 default:
                     return false;
             }
@@ -129,6 +142,15 @@ class DoctorantAssertion extends AbstractAssertion
             }
             return false;
         }
+    }
+
+    protected function isUtilisateurEgaleCeDoctorant(Doctorant $doctorant): bool
+    {
+        if (($identity = $this->getIdentityDoctorant()) === null) {
+            return false;
+        }
+
+        return $doctorant->getId() === $identity->getId();
     }
 
     private function getRequestedDoctorant(): ?Doctorant

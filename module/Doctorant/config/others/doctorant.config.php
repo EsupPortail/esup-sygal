@@ -14,12 +14,16 @@ use Doctorant\Controller\DoctorantRechercheController;
 use Doctorant\Controller\DoctorantRechercheControllerFactory;
 use Doctorant\Controller\MissionEnseignementController;
 use Doctorant\Controller\MissionEnseignementControllerFactory;
+use Doctorant\Form\Doctorant\DoctorantForm;
+use Doctorant\Form\Doctorant\DoctorantFormFactory;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Form\MailConsentementFormFactory;
 use Doctorant\Form\MissionEnseignement\MissionEnseignementForm;
 use Doctorant\Form\MissionEnseignement\MissionEnseignementFormFactory;
 use Doctorant\Form\MissionEnseignement\MissionEnseignementHydrator;
 use Doctorant\Form\MissionEnseignement\MissionEnseignementHydratorFactory;
+use Doctorant\Hydrator\Doctorant\DoctorantHydrator;
+use Doctorant\Hydrator\Doctorant\DoctorantHydratorFactory;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
 use Doctorant\Service\DoctorantService;
@@ -43,17 +47,37 @@ return [
         'rule_providers'     => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
+                    //
+                    // sans passage par une assertion
+                    [
+                        'privileges' => [
+                            DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS,
+                            DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS,
+                        ],
+                        'resources' => ['Doctorant'],
+                    ],
+                    //
+                    // avec passage par une assertion
+//                    [
+//                        'privileges' => [
+//                            DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT,
+//                            DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT,
+//                        ],
+//                        'resources' => ['These'],
+//                        'assertion' => TheseAssertion::class,
+//                    ],
                     [
                         'privileges' => [
                             DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT,
                             DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT,
                         ],
-                        'resources' => ['These'],
-                        'assertion' => TheseAssertion::class,
+                        'resources' => ['Doctorant'],
+                        'assertion' => DoctorantAssertion::class,
                     ],
                     [
                         'privileges' => [
                             DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN,
+                            DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN,
                         ],
                         'resources' => ['Doctorant'],
                         'assertion' => DoctorantAssertion::class,
@@ -92,8 +116,20 @@ return [
                         'voir',
                     ],
                     'privileges' => [
-                        DoctorantPrivileges::DOCTORANT_CONSULTER_TOUT,
+                        DoctorantPrivileges::DOCTORANT_CONSULTER_TOUS,
                         DoctorantPrivileges::DOCTORANT_CONSULTER_SIEN,
+                    ],
+                    'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
+//                    'assertion'  => DoctorantAssertion::class,
+                ],
+                [
+                    'controller' => DoctorantController::class,
+                    'action' => [
+                        'modifier',
+                    ],
+                    'privileges' => [
+                        DoctorantPrivileges::DOCTORANT_MODIFIER_TOUS,
+                        DoctorantPrivileges::DOCTORANT_MODIFIER_SIEN,
                     ],
                     'roles' => 'user', //////////////////////////////////////// todo provisoire !!!!!!!!!!!!
 //                    'assertion'  => DoctorantAssertion::class,
@@ -359,12 +395,14 @@ return [
     ],
     'form_elements' => [
         'factories' => [
+            DoctorantForm::class => DoctorantFormFactory::class,
             MailConsentementForm::class => MailConsentementFormFactory::class,
             MissionEnseignementForm::class => MissionEnseignementFormFactory::class,
         ],
     ],
     'hydrators' => [
         'factories' => [
+            DoctorantHydrator::class => DoctorantHydratorFactory::class,
             MissionEnseignementHydrator::class => MissionEnseignementHydratorFactory::class,
         ],
     ],
