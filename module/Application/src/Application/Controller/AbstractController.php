@@ -94,7 +94,7 @@ class AbstractController extends AbstractActionController
     }
 
     /**
-     * Retourne la HDR présente dans la requête courante.
+     * Retourne l'HDR présente dans la requête courante.
      *
      * @return HDR
      */

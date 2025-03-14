@@ -80,7 +80,7 @@ $canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIF
             <?php endif ?>
             <th>
                 <a href="<?php echo $s = $this->sortable(HDRSorter::NAME_etatHDR); ?>"
-                   title="<?php echo $this->translate("État de la HDR");?> ">
+                   title="<?php echo $this->translate("État de l'HDR");?> ">
                     <?php echo $this->translate("État"); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
@@ -157,7 +157,7 @@ $canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIF
                 } ?>
                 <td>
                     <a href="<?php echo $this->url('hdr/identite', ['hdr' => $hdr->getId()], [], true) ?>"
-                       title="Accéder à la HDR #<?php echo $hdr->getId(); ?>"
+                       title="Accéder à l'HDR #<?php echo $hdr->getId(); ?>"
                        data-bs-toggle="tooltip" data-bs-html="true">
                         <span class="icon icon-voir"></span>
                     </a>
@@ -166,7 +166,7 @@ $canAddHDR = $this->isAllowed(Privileges::getResourceId(HDRPrivileges::HDR_MODIF
 //                    if($canSupprimerHDR){ ?>
 <!--                        <a href="--><?php //echo $this->url('hdr/supprimer',['action' => 'supprimer', 'hdr' => $hdr->getId()], [], true); ?><!--"-->
 <!--                           data-toggle="confirmationx" data-event="modification"-->
-<!--                           title="Suppression de la HDR #--><?php //echo $admission->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
+<!--                           title="Suppression de l'HDR #--><?php //echo $admission->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
 <!--                            <span class="icon icon-historiser text-danger"></span>-->
 <!--                        </a>-->
 <!--                    --><?php //} ?>

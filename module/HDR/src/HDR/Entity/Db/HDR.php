@@ -600,7 +600,7 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
             return $ft->getFichier() === $fichier;
         })->first();
         if (! $fichierHDR) {
-            throw new RuntimeException("Le fichier à supprimer est introuvable parmi les fichiers de la HDR");
+            throw new RuntimeException("Le fichier à supprimer est introuvable parmi les fichiers de l'HDR");
         }
 
         $this->removeFichierHDR($fichierHDR);

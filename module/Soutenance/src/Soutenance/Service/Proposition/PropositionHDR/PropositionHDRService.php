@@ -123,7 +123,7 @@ class PropositionHDRService extends PropositionService
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("De multiples propositions associé à la HDR [" . $hdr->getId() . "] ont été trouvées !");
+            throw new RuntimeException("De multiples propositions associé à l'HDR [" . $hdr->getId() . "] ont été trouvées !");
         }
 
         return $result;

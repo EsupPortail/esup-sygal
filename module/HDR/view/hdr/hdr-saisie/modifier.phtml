@@ -18,14 +18,14 @@ $form->prepare();
 ?>
 
 <h1 class="page-header">
-    <?php echo $this->translate("Modification de la HDR de") . " {$hdr->getCandidat()}" ?>
+    <?php echo $this->translate("Modification de l'HDR de") . " {$hdr->getCandidat()}" ?>
 </h1>
 
 <a type="button" class="btn btn-primary mb-4"
    href="<?php echo $this->url('hdr/identite', ['hdr' => $hdr->getId()], [], true) ?>"
 >
     <span class="icon icon-retour"></span>
-    <?php echo $this->translate("Retourner à la HDR"); ?>
+    <?php echo $this->translate("Retourner à l'HDR"); ?>
 </a>
 
 <?php if(isset($errorMessages) && is_array($errorMessages)){ ?>

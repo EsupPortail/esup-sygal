@@ -74,7 +74,7 @@ class FichierHDRService extends BaseService
     }
 
     /**
-     * Crée des fichiers concernant la soutenance de la HDR spécifiée, à partir des données d'upload fournies.
+     * Crée des fichiers concernant la soutenance de l'HDR spécifiée, à partir des données d'upload fournies.
      *
      * @param HDR $hdr HDR concernée
      * @param array $uploadResult Données résultant de l'upload de fichiers
@@ -118,7 +118,7 @@ class FichierHDRService extends BaseService
                 throw new DepotImpossibleException("Le format de fichier PDF n'est pas accepté pour les annexes");
             }
             if ($nature->estThesePdf() && $typeFichier !== FileUtils::MIME_TYPE_PDF) {
-                throw new DepotImpossibleException("Seul le format de fichier PDF est accepté pour la HDR");
+                throw new DepotImpossibleException("Seul le format de fichier PDF est accepté pour l'HDR");
             }
 
             $fichier = new Fichier();

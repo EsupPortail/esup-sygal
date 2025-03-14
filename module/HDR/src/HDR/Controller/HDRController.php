@@ -93,7 +93,7 @@ class HDRController extends AbstractController
             'Adresse électronique', 'Adresse électronique personnelle', 'Version de diplôme',
             'Garant', 'Établissement', 'Unité de Recherche Code', 'Unité de Recherche',
             'Date d\'abandon', 'Date de soutenance', 'Date de fin de confidentialité',
-            'État de la HDR', 'Autorisation à soutenir', 'Est confidentielle', 'Résultat'
+            'État de l\'HDR', 'Autorisation à soutenir', 'Est confidentielle', 'Résultat'
         ];
         $records = [];
         /** @var HDR $hdr */
@@ -127,7 +127,7 @@ class HDRController extends AbstractController
             $entry['Date d\'abandon'] = $hdr->getDateAbandonToString();
             $entry['Date de soutenance'] = $proposition ? $proposition->getDate()?->format('d/m/Y') : null;
             $entry['Date de fin de confidentialité'] = $hdr->getDateFinConfidentialiteToString();
-            $entry['État de la HDR'] = $hdr->getEtatHDRToString();
+            $entry['État de l\'HDR'] = $hdr->getEtatHDRToString();
             $entry['Autorisation à soutenir'] = $proposition->getSoutenanceAutorisee();
             $entry['Est confidentielle'] = $hdr->estConfidentielle() ? "O" : "N";
             $entry['Résultat'] = $hdr->getResultatToString();

@@ -31,7 +31,7 @@ class HDRSaisieForm extends Form
 
         $directionFieldset = $this->getFormFactory()->getFormElementManager()->get(DirectionFieldset::class);
         $directionFieldset->setName("direction");
-        $directionFieldset->setLabel("Garant de la HDR");
+        $directionFieldset->setLabel("Garant de l'HDR");
         $this->add($directionFieldset);
 
         $this

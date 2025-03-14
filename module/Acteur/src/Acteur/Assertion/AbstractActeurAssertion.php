@@ -77,6 +77,6 @@ abstract class AbstractActeurAssertion extends AbstractAssertion
 
     protected function getEntityLibelle(): string
     {
-        return $this->entity instanceof These ? "La thèse" : "la HDR";
+        return $this->entity instanceof These ? "La thèse" : "l'HDR";
     }
 }

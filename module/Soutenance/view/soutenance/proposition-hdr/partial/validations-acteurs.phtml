@@ -75,7 +75,7 @@ if ($isAllOk === false || $validatedCount === 0) {
     </div>
     <div class="card-body">
         <p class="lead">Afin d'être validée et traitée par l'établissement, la proposition de soutenance doit être validée par tous les
-            intervenants immédiats de la HDR (c'est-à-dire candidat et garant).
+            intervenants immédiats de l'HDR (c'est-à-dire candidat et garant).
         </p>
         <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN || $proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) && !$isAllOk) : ?>
          <div class="alert alert-danger">
@@ -85,7 +85,7 @@ if ($isAllOk === false || $validatedCount === 0) {
             </strong>
             <ul>
             <?php if (!$isInformationsOk) : ?>
-                <li> Au moins une information sur la direction ou l'encadrement de la HDR est manquante. </li>
+                <li> Au moins une information sur la direction ou l'encadrement de l'HDR est manquante. </li>
             <?php endif; ?>
             <?php if (!$isIndicateursOk): ?>
                 <li> La proposition de soutenance doit être recevable : date et lieu, composition du jury, ... </li>

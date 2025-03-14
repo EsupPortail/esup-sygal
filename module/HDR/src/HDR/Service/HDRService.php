@@ -71,7 +71,7 @@ class HDRService extends BaseService
             $this->getEntityManager()->persist($hdr);
             $this->getEntityManager()->flush($hdr);
         } catch (ORMException $e) {
-            throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la HDR !");
+            throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de l'HDR !");
         }
         return $hdr;
     }
@@ -91,14 +91,14 @@ class HDRService extends BaseService
         try {
             $this->getEntityManager()->flush($hdr);
         } catch (ORMException $e) {
-            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la HDR !");
+            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de l'HDR !");
         }
         return $hdr;
     }
 
     /**
      * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
-     * Si une clef est vide cela indique un problème associé à la HDR
+     * Si une clef est vide cela indique un problème associé à l'HDR
      *
      * @param HDR $hdr
      * @return PdcData
@@ -351,7 +351,7 @@ class HDRService extends BaseService
             $this->getEntityManager()->remove($hdr);
             $this->getEntityManager()->flush($hdr);
         } catch (ORMException $e) {
-            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la HDR !");
+            throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de l'HDR !");
         }
         return $hdr;
     }

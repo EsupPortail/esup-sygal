@@ -338,7 +338,7 @@ class UserContextService extends BaseUserContextService
     }
 
     /**
-     * Teste si la structure sur laquelle porte le profil courant de l'utilisateur est compatible avec la HDR spécifiée.
+     * Teste si la structure sur laquelle porte le profil courant de l'utilisateur est compatible avec l'HDR spécifiée.
      *
      * @param HDR $hdr
      * @return bool

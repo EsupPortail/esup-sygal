@@ -480,7 +480,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         }else{
             $emails = $this->emailService->fetchEmailGestionnairesHDR($entity);
             if (empty($emails)) {
-                throw new RuntimeException("Aucune adresse mail trouvée pour la/le gestionnaire HDR de la HDR {$entity->getId()}");
+                throw new RuntimeException("Aucune adresse mail trouvée pour la/le gestionnaire HDR de l'HDR {$entity->getId()}");
             }
             $vars = [
                 'hdr' => $entity,
@@ -663,7 +663,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_HDR_SIGNATURE_ENGAGEMENT_IMPARTIALITE, $vars);
             $emails = $this->emailService->fetchEmailGestionnairesHDR($entity);
             if (empty($emails)) {
-                throw new RuntimeException("Aucune adresse mail trouvée pour la/le gestionnaire HDR de la HDR {$entity->getId()}");
+                throw new RuntimeException("Aucune adresse mail trouvée pour la/le gestionnaire HDR de l'HDR {$entity->getId()}");
             }
         }
 
@@ -771,7 +771,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         }else{
             $emails = $this->emailService->fetchEmailGestionnairesHDR($entity);
             if (empty($emails)) {
-                throw new RuntimeException("Aucune adresse mail trouvée pour la/le gestionnaire HDR de la HDR {$entity->getId()}");
+                throw new RuntimeException("Aucune adresse mail trouvée pour la/le gestionnaire HDR de l'HDR {$entity->getId()}");
             }
             $vars = [
                 'hdr' => $entity,

@@ -166,7 +166,7 @@ class HDRSaisieController extends AbstractController
         $viewModel = new ViewModel([
             'hdr' => $hdr,
             'form' => $form,
-            'title' => "Modification de la HDR de ".$hdr->getCandidat()
+            'title' => "Modification de l'HDR de ".$hdr->getCandidat()
         ]);
         $viewModel->setTemplate("hdr/hdr-saisie/partial/$domaine");
 

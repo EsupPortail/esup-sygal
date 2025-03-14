@@ -109,7 +109,7 @@ class ActeurHDRAssertion extends AbstractActeurAssertion
 
     private function assertEtatHDR(HDR $hdr): void
     {
-        $this->assertTrue($hdr->getEtatHDR() == HDR::ETAT_EN_COURS, "la HDR doit être en cours");
+        $this->assertTrue($hdr->getEtatHDR() == HDR::ETAT_EN_COURS, "l'HDR doit être en cours");
     }
 
     private function getRequestedHDR(): ?HDR
@@ -137,13 +137,13 @@ class ActeurHDRAssertion extends AbstractActeurAssertion
             $candidat = $this->userContextService->getIdentityCandidatHDR();
             $this->assertTrue(
                 $this->entity->getCandidat()->getId() === $candidat->getId(),
-                "la HDR n'appartient pas au candidat " . $candidat
+                "l'HDR n'appartient pas au candidat " . $candidat
             );
         } elseif ($this->userContextService->getSelectedRoleGarantHDR()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $this->assertTrue(
                 $this->entity->hasActeurWithRole($individuUtilisateur, Role::CODE_HDR_GARANT),
-                "la HDR n'est pas dirigée par " . $individuUtilisateur
+                "l'HDR n'est pas dirigée par " . $individuUtilisateur
             );
         }
     }

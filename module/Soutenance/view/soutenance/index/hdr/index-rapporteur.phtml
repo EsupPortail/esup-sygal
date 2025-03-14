@@ -38,7 +38,7 @@ $canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges
 
     <p class="lead">
         Vous êtes actuellement rapporteur de plusieurs HDRs en cours.
-        Veuillez sélectionner la HDR sur laquelle vous souhaitez intervenir.
+        Veuillez sélectionner l'HDR sur laquelle vous souhaitez intervenir.
     </p>
 
     <table class="table table-sm">
@@ -129,7 +129,7 @@ $canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges
     </div>
     <div class="card-body">
         <?php if ($engagement !== null) : ?>
-            <p>Vous avez signé l'engagement pour la HDR de <?php echo $hdr->getApprenant(); ?>.</p>
+            <p>Vous avez signé l'engagement pour l'HDR de <?php echo $hdr->getApprenant(); ?>.</p>
             <?php echo $this->validation($engagement, "success") ?>
         <?php else : ?>
             <p class="lead">
@@ -161,7 +161,7 @@ $canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges
     <div class="card-body">
     <?php if ($engagement !== null) : ?>
             <?php if ($avis !== null) : ?>
-        <p>Vous avez rendu votre avis de soutenance pour la HDR de <?php echo $hdr->getApprenant()->getIndividu(); ?>.</p>
+        <p>Vous avez rendu votre avis de soutenance pour l'HDR de <?php echo $hdr->getApprenant()->getIndividu(); ?>.</p>
 
             <div>
                 <div class="col-md-5">
