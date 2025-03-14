@@ -277,6 +277,7 @@ class PresoutenanceTheseController extends PresoutenanceController
         $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
         $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
+            'proposition' => $this->proposition,
             'these' => $this->entity,
             'informations' => $pdcData,
         ]);

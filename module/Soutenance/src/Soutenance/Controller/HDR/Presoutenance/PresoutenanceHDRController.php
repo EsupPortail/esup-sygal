@@ -266,6 +266,7 @@ class PresoutenanceHDRController extends PresoutenanceController
         $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
         $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
+            'proposition' => $this->proposition,
             'hdr' => $this->entity,
             'informations' => $pdcData,
         ]);

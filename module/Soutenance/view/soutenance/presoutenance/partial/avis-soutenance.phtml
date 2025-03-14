@@ -189,11 +189,12 @@ if($proposition->getEtat()->getCode() === Etat::VALIDEE || $proposition->getEtat
 
                                     <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
                                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::revoquerAvisSoutenanceAction(); */ ?>
-                                            href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/revoquer-avis-soutenance", ['id' => $object->getId(), 'avis' => $avi->getId()], [], true); ?>">
-                                            <span class="icon icon-delete iconly"
+                                            href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/revoquer-avis-soutenance", ['id' => $object->getId(), 'avis' => $avi->getId()], [], true); ?>"
+                                            data-toggle="confirmationx">
+                                            <span class="icon icon-delete iconly text-danger"
                                                   data-bs-toggle="tooltip"
                                                   data-bs-html="true"
-                                                  title="Révoquer l'avis de soutenance">
+                                                  title="Révoquer l'avis de soutenance <br>(Une confirmation avant la suppression vous sera demandée)">
                                             </span>
                                         </a>
                                     <?php else: ?>

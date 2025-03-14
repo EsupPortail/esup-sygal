@@ -165,10 +165,12 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($object, EngagementImparti
                                 <?php if ($canRevoquerEngagementImpartialite) : ?>
                                     <?php if ($engagement) : ?>
                                         <a <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
-                                                href="<?php echo $this->url("soutenance_{$typeProposition}/engagement-impartialite/annuler", ['id' => $object->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
-                                        <span class="icon icon-delete iconly"
+                                                href="<?php echo $this->url("soutenance_{$typeProposition}/engagement-impartialite/annuler", ['id' => $object->getId(), 'membre' => $rapporteur->getId()], [], true); ?>"
+                                                data-toggle="confirmationx">
+                                        <span class="icon icon-delete iconly text-danger"
                                               data-bs-toggle="tooltip"
-                                              title="Révoquer l'engagement d'impartialité">
+                                              data-bs-html="true"
+                                              title="Révoquer l'engagement d'impartialité <br>(Une confirmation avant la suppression vous sera demandée)">
                                         </span>
                                         </a>
                                     <?php else: ?>
@@ -203,13 +205,13 @@ $canRevoquerEngagementImpartialite = $this->isAllowed($object, EngagementImparti
                                     <span class="icon icon-delete iconly" style="color:lightgray;"
                                           data-bs-toggle="tooltip"
                                           title="Révoquer l'engagement d'impartialité">
-                                </span>
+                                    </span>
                                 <?php else: ?>
                                     <span class="icon icon-delete iconly"
                                           title="Révoquer l'engagement d'impartialité"
                                           data-bs-toggle="tooltip"
                                           style="color:lightgray;">
-                                </span>
+                                    </span>
                                 <?php endif; ?>
 
                             <?php endif; ?>
