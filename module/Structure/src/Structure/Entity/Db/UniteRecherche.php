@@ -82,7 +82,12 @@ class UniteRecherche implements
 
     public function __toString(): string
     {
-        return ($this->structure->getSigle() ?: '???') . ' - ' . $this->structure->getLibelle();
+        $sigle = $this->structure->getSigle();
+
+        return implode(' -- ', array_filter([
+            $this->structure->getCode(),
+            $this->structure->getLibelle() . ($sigle ? sprintf(" (%s)", $sigle) : null),
+        ]));
     }
 
     /**
