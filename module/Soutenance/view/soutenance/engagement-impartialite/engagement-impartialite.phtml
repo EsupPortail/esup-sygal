@@ -72,6 +72,8 @@ $this->headTitle("Engagement d'impartialité portant sur la $libelleEntite de ".
                             <br/>
                         <?php endforeach; ?>
                     </dd>
+                    <dt class="col-md-5"> Discipline </dt>
+                    <dd class="col-md-5"> <?php echo $object->getDiscipline(); ?> </dd>
                 <?php else: ?>
                     <dt class="col-md-5"> Candidat / PhD Student</dt>
                     <dd class="col-md-5"> <?php echo $object->getCandidat(); ?> </dd>
@@ -85,9 +87,9 @@ $this->headTitle("Engagement d'impartialité portant sur la $libelleEntite de ".
                             <br/>
                         <?php endforeach; ?>
                     </dd>
+                    <dt class="col-md-5"> Version de diplôme </dt>
+                    <dd class="col-md-5"> <?php echo $object->getVersionDiplome(); ?> </dd>
                 <?php endif; ?>
-                <dt class="col-md-5"> Discipline </dt>
-                <dd class="col-md-5"> <?php echo $object->getDiscipline(); ?> </dd>
                 <dt class="col-md-5"> Date de la soutenance </dt>
                 <dd class="col-md-5"> <?php echo $proposition->getDate()->format("d/m/Y"); ?> </dd>
                 <dt class="col-md-5"> Lieu de la soutenance </dt>
