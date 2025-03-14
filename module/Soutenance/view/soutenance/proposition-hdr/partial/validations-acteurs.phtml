@@ -149,7 +149,8 @@ if ($isAllOk === false || $validatedCount === 0) {
                         <a
                             <?php /** @see \Soutenance\Controller\PropositionController::validerActeurAction(); */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/valider", ['id' => $object->getId()], [], true); ?>"
-                            class="btn btn-success action ">
+                            class="btn btn-success action "
+                            data-toggle="confirmationx">
                             <span class="icon icon-ok"></span>
                             Valider la proposition de soutenance
                         </a>
