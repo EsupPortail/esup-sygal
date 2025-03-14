@@ -16,7 +16,10 @@ use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 $denominationDoctorant = $object->getApprenant()->getIndividu()->__toString();
 $denominationRapporteur = $rapporteur->__toString();
-$titrePage = "Avis sur la soutenance de la thèse de ".$denominationDoctorant . " / Notification on the PhD defense ";
+
+$soutenanceObjetFr = $object instanceof These ? "la thèse" : "l'HDR";
+$soutenanceObjetEn = $object instanceof These ? "the PhD's" : "the Accreditation for PhD supervision's";
+$titrePage = "Avis sur la soutenance de $soutenanceObjetFr de " . $denominationDoctorant . " / Notification on $soutenanceObjetEn defense";
 $this->headTitle($titrePage);
 
 $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER);
@@ -39,7 +42,7 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
     <div class="card">
         <div class="card-header bg-dark text-white">
             <h2> Avis sur la soutenance et dépôt du pré-rapport de soutenance /
-                Notification on the PhD defense and uploading of the PhD report </h2>
+                Notification on the defense and uploading of the report </h2>
         </div>
         <div class="card-body">
 

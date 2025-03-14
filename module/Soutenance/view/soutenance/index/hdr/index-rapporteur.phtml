@@ -33,7 +33,7 @@ $canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges
 <?php /** Plusieurs HDR ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
 <?php if (isset($objects)) : ?>
     <h1 class="page-header">
-        Tableau de bord des soutenances / Dashboard of the PhD defense
+        Tableau de bord des soutenances / Dashboard of the defenses
     </h1>
 
     <p class="lead">
@@ -75,7 +75,7 @@ $canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges
 
 
 <h1 class="page-header">
-    Tableau de bord de la soutenance / Dashboard of the PhD defense
+    Tableau de bord de la soutenance / Dashboard of the defense
     <small><?php echo $this->partial('hdr/hdr/partial/titre') ?></small>
 </h1>
 
@@ -156,7 +156,7 @@ $canAnnuler = ($membre)?$this->isAllowed($acteurMembre, AvisSoutenancePrivileges
 
 <div class="box card">
     <div class="card-header <?php echo ($engagement !== null  && $avis !== null)?"bg-success":"bg-warning"; ?>">
-        <h2> Avis de soutenance / Notification on the PhD defense </h2>
+        <h2> Avis de soutenance / Notification on the defense </h2>
     </div>
     <div class="card-body">
     <?php if ($engagement !== null) : ?>

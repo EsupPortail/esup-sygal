@@ -44,7 +44,7 @@ class AvisForm extends Form {
             'type' => File::class,
             'name' => 'rapport',
             'options' => [
-                'label' => 'Déposez le rapport de soutenance / Upload the PhD report',
+                'label' => 'Déposez le rapport de soutenance / Upload the report',
             ],
         ]);
 
