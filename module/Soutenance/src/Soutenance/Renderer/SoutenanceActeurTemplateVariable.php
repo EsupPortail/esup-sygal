@@ -11,20 +11,8 @@ use Webmozart\Assert\Assert;
 
 class SoutenanceActeurTemplateVariable extends AbstractTemplateVariable
 {
-    private ActeurThese|ActeurHDR $acteur;
-
     /** @var ActeurThese[]|ActeurHDR[] */
     private array $acteursPouvantEtrePresidentDuJury;
-
-    public function setActeur(ActeurThese|ActeurHDR $acteur): void
-    {
-        $this->acteur = $acteur;
-    }
-
-    public function getDenomination(): string
-    {
-        return $this->acteur->getDenomination();
-    }
 
     /**
      * @param Membre[] $acteursPouvantEtrePresidentDuJury
@@ -35,11 +23,12 @@ class SoutenanceActeurTemplateVariable extends AbstractTemplateVariable
             throw new InvalidArgumentException("La liste des acteurs pouvant être président du jury ne peut être vide");
         }
 
-        if($this->acteur instanceof ActeurThese){
-            Assert::allIsInstanceOf($acteursPouvantEtrePresidentDuJury, ActeurThese::class);
-        }else{
-            Assert::allIsInstanceOf($acteursPouvantEtrePresidentDuJury, ActeurHDR::class);
-        }
+        array_map(function ($acteur) {
+            Assert::true(
+                $acteur instanceof ActeurThese || $acteur instanceof ActeurHDR,
+                'Tous les acteurs doivent être des instances de ActeurThese ou ActeurHDR'
+            );
+        }, $acteursPouvantEtrePresidentDuJury);
 
         $this->acteursPouvantEtrePresidentDuJury = $acteursPouvantEtrePresidentDuJury;
     }

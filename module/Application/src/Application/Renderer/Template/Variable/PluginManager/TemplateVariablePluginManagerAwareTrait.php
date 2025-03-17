@@ -178,11 +178,10 @@ trait TemplateVariablePluginManagerAwareTrait
         return $soutenanceMembreTemplateVariable;
     }
 
-    protected function getSoutenanceActeurTemplateVariable(ActeurThese|ActeurHDR $acteur): SoutenanceActeurTemplateVariable
+    protected function getSoutenanceActeurTemplateVariable(): SoutenanceActeurTemplateVariable
     {
         /** @var \Soutenance\Renderer\SoutenanceActeurTemplateVariable $soutenanceActeurTemplateVariable */
         $soutenanceActeurTemplateVariable = $this->templateVariablePluginManager->get('soutenanceActeur');
-        $soutenanceActeurTemplateVariable->setActeur($acteur);
         return $soutenanceActeurTemplateVariable;
     }
 

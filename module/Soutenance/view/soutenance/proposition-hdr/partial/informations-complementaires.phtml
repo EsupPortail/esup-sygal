@@ -14,7 +14,7 @@ use Soutenance\Service\Horodatage\HorodatageService;
 $hdr = $proposition->getHDR();
 ?>
 
-<div id="BOXDIV_INFORMATIONS">
+<div id="BOXDIV_INFORMATIONS_HDR">
     <div class="box card">
         <div class="card-header bg-dark text-white">
             <h2>
@@ -22,7 +22,7 @@ $hdr = $proposition->getHDR();
             </h2>
         </div>
         <div class="row card-body">
-            <!-- THESE EN ANGLAIS ----------------------------------------------------------------------------------------->
+            <!-- HDR EN ANGLAIS ----------------------------------------------------------------------------------------->
             <div class="col-md-8">
                 <dl>
                     <dt>HDR en anglais</dt>
@@ -41,7 +41,7 @@ $hdr = $proposition->getHDR();
                     <a <?php /** @see \Soutenance\Controller\PropositionController::anglaisAction(); */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/anglais", ['id' => $hdr->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
-                            data-event="edition-informations"
+                            data-event="edition-informations-hdr"
                     >
                         <span class="icon icon-plus"></span>
                         Renseigner HDR en anglais
@@ -85,7 +85,7 @@ $hdr = $proposition->getHDR();
                     <a <?php /** @see \Soutenance\Controller\PropositionController::confidentialiteAction(); */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/confidentialite", ['id' => $hdr->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
-                            data-event="edition-informations"
+                            data-event="edition-informations-hdr"
                     >
                         <span class="icon icon-plus"></span>
                         Renseigner un huis clos et/ou une confidentialité
@@ -100,6 +100,6 @@ $hdr = $proposition->getHDR();
                     </div>
                 <?php endif; ?>
             </div>
-        <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires"); ?>
+            <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires"); ?>
+        </div>
     </div>
-</div>

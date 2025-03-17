@@ -1391,7 +1391,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    public function createNotificationEnvoiConvocationMembre(ActeurThese|ActeurHDR $acteur, Proposition $proposition): Notification
+    public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition): Notification
     {
         $entity = $proposition->getObject();
         if($proposition instanceof PropositionThese){
@@ -1400,7 +1400,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
             $templateCode = MailTemplates::SOUTENANCE_HDR_CONVOCATION_CANDIDAT;
         }
 
-        $membre = $acteur->getMembre();
         //TODO
         $email = $membre->getEmail();
         $apprenant = $entity->getApprenant();
@@ -1435,7 +1434,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $etablissementTemplateVariable = $this->getStructureTemplateVariable($entity->getEtablissement());
         $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
         $validationTemplateVariable = $this->getValidationTemplateVariable($validation[0]);
-        $soutenanceActeurTemplateVariable = $this->getSoutenanceActeurTemplateVariable($acteur);
+        $soutenanceActeurTemplateVariable = $this->getSoutenanceActeurTemplateVariable();
         if ($entity instanceof These) {
             $soutenanceActeurTemplateVariable->setActeursPouvantEtrePresidentDuJury(
                 $this->acteurTheseService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($proposition)

@@ -15,7 +15,7 @@ use Soutenance\Service\Horodatage\HorodatageService;
 $these = $proposition->getThese();
 ?>
 
-<div id="BOXDIV_INFORMATIONS">
+<div id="BOXDIV_INFORMATIONS_THESE">
     <div class="box card">
         <div class="card-header bg-dark text-white">
             <h2>
@@ -55,7 +55,7 @@ $these = $proposition->getThese();
                     <a <?php /** @see PropositionTheseController::labelEuropeenAction(); */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/label-europeen", ['id' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
-                            data-event="edition-informations"
+                            data-event="edition-informations-these"
                     >
                         <?php if($proposition->isLabelEuropeen()): ?>
                             <span class="icon icon-minus"></span>
@@ -105,14 +105,14 @@ $these = $proposition->getThese();
                     <a  <?php /** @see PropositionController::anglaisAction() */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/anglais", ['id' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
-                            data-event="edition-informations"
+                            data-event="edition-informations-these"
                     >
                         <?php if ($proposition->isSoutenanceAnglais()) : ?>
                             <span class="icon icon-minus"></span>
                         <?php else: ?>
                             <span class="icon icon-plus"></span>
                         <?php endif; ?>
-                            Renseigner thèse en anglais
+                        Renseigner thèse en anglais
                     </a>
                 <?php endif; ?>
 
@@ -153,7 +153,7 @@ $these = $proposition->getThese();
                     <a <?php /** @see PropositionController::confidentialiteAction(); */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/confidentialite", ['id' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
-                            data-event="edition-informations"
+                            data-event="edition-informations-these"
                     >
                         <span class="icon icon-plus"></span>
                         Renseigner un huis clos et/ou une confidentialité
@@ -181,7 +181,7 @@ $these = $proposition->getThese();
                     <a <?php /** @see PropositionTheseController::changementTitreAction(); */ ?>
                             href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/changement-titre", ['id' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
-                            data-event="edition-informations"
+                            data-event="edition-informations-these"
                     >
                         <span class="icon icon-modifier"></span>
                         Modifier le titre de la thèse
