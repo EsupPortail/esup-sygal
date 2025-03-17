@@ -32,13 +32,13 @@ class LogSearchService extends SearchService
                 ->setData([These::ETAT_EN_COURS => "En cours", These::ETAT_SOUTENUE => "Soutenue"])
         );
         $this->addFilter(
-            EtablissementSearchFilter::newInstance()
+            (new EtablissementSearchFilter())
                 ->setLabel("Étab. Thèse")
                 ->setWhereField('etab_structure.code')
                 ->setDataProvider(fn() => $this->fetchEtablissements())
         );
         $this->addFilter(
-            DoctorantSearchFilter::newInstance()
+            new DoctorantSearchFilter()
         );
         $this->addFilter(
             (new SelectSearchFilter("Opération", 'operation'))

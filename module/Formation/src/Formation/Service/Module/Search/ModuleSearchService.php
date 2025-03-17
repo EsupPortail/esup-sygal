@@ -15,7 +15,7 @@ class ModuleSearchService extends SearchService
 
     const NAME_libelle = 'libelle';
 
-    public function init()
+    public function init(): void
     {
         $this->addFilters([
             $this->createLibelleFilter(),

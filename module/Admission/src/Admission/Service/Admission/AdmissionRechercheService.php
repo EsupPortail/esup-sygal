@@ -89,10 +89,7 @@ class AdmissionRechercheService extends SearchService
         return $qb;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function init()
+    public function init(): void
     {
         $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
             ->setDataProvider(function() {

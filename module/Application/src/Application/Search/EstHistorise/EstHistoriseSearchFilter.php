@@ -14,13 +14,8 @@ class EstHistoriseSearchFilter extends CheckboxSearchFilter
 {
     const NAME = 'estHistorise';
 
-    static public function newInstance(): self
-    {
-        return new self(
-            "Historisés inclus",
-            self::NAME
-        );
-    }
+    protected string $name = self::NAME;
+    protected string $label = "Historisés inclus";
 
     public function applyToQueryBuilder(QueryBuilder $qb): void
     {

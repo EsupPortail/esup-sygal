@@ -5,60 +5,58 @@ namespace Application\Search\Filter;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- *
- *
- * @author Unicaen
+ * Interface commune à tous les filtres de recherche.
  */
 interface SearchFilterInterface
 {
     /**
      * @param array $queryParams
      */
-    public function processQueryParams(array $queryParams);
+    public function processQueryParams(array $queryParams): void;
 
     /**
-     * @param QueryBuilder $qb
+     * Applique ce filtre au query builder spécifié.
      */
-    public function applyToQueryBuilder(QueryBuilder $qb);
+    public function applyToQueryBuilder(QueryBuilder $qb): void;
 
     /**
-     * @return string
+     * Retourne le petit nom de ce filtre (unique au sein d'un ensemble de filtres).
      */
     public function getName(): string;
 
     /**
-     * @param string $name
+     * Spécifie le petit nom de ce filtre (unique au sein d'un ensemble de filtres).
      */
     public function setName(string $name);
 
     /**
-     * @return string
+     * Retourne le label/intitulé de ce filtre, visible sur le formulaire de filtrage.
      */
     public function getLabel(): string;
 
     /**
-     * @param string $label
+     * Spécifie le label/intitulé de ce filtre, visible sur le formulaire de filtrage.
      */
     public function setLabel(string $label);
 
     /**
-     * @return null|string|array
+     * Retourne la valeur courante de ce filtre.
      */
     public function getValue();
 
     /**
-     * @param string|null $value
+     * Spécifie la valeur courante de ce filtre.
      */
-    public function setValue(string $value = null);
+    public function setValue($value);
 
     /**
-     * @return array
+     * Retourne la liste des attributs de ce filtre, ex : ['class' => 'selectpicker']
      */
     public function getAttributes(): array;
 
     /**
-     * @param array $attributes
-     * @param bool $overwrite
+     * Spécifie la liste des attributs de ce filtre, ex : ['class' => 'selectpicker'],
+     * avec/sans écrasement des attributs existants.
      */
-    public function setAttributes(array $attributes, $overwrite = false);
+    public function setAttributes(array $attributes, bool $overwrite = false);
 }

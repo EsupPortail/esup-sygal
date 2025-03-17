@@ -1,18 +1,16 @@
 <?php
 
-use Application\Search\Filter\TextSearchFilter;
-use These\Search\These\TheseTextSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var TextSearchFilter $filter
+ * @var \Application\Search\Filter\TextCriteriaSearchFilter $filter
  * @var array $queryParams
  */
 
-$name = $filter->getName();
-$text = $filter->getTextValue();
 $criteria = $filter->getCriteriaValue();
+
+$searchInputId = uniqid('search-input-');
 
 $title = htmlspecialchars(
     "<div class=\"these-search-input-help\">" .
@@ -22,24 +20,24 @@ $title = htmlspecialchars(
 ?>
 
 <div class="form-group">
-    <label class="form-label visually-hidden" for="search-input">Recherche d'une thèse (code, titre de la thèse ; code, nom, prénom de l'auteur) :</label>
+    <label class="form-label visually-hidden" for="<?php echo $searchInputId; ?>">Recherche textuelle</label>
     <div class="input-group">
         <span class="input-group-text"><span class="icon iconly icon-search"></span></span>
         <input type="search"
-               value="<?php echo $text; ?>"
-               name="<?php echo $name; ?>"
+               value="<?php echo $filter->getTextValue(); ?>"
+               name="<?php echo $filter->getName(); ?>"
                class="form-control filter"
-               id="search-input"
+               id="<?php echo $searchInputId; ?>"
                placeholder="<?php echo $this->translate("Entrez 2 caractères au moins...");?>"
                data-bs-content="<?php echo $title ?>">
         <div class="input-group-text">
-            <select multiple name="<?php echo $name; ?>Criteria[]" id="" class="selectpicker show-menu-arrow"
+            <select multiple name="<?php echo $filter->getCriteriaName(); ?>[]" id="" class="selectpicker show-menu-arrow"
                     title="Sélectionnez un critère..."
                     data-selected-text-format="count"
                     data-count-selected-text="{0} critères sélectionnés"
                     data-actions-box="true"
                     data-header="Critères sur lesquels portera la recherche textuelle">
-                <?php foreach (TheseTextSearchFilter::CRITERIA as $key => $label): ?>
+                <?php foreach ($filter->getAvailableCriteria() as $key => $label): ?>
                     <?php $isActive = in_array($key, $criteria); ?>
                     <option value="<?php echo $key ?>" <?php echo $isActive ? 'selected' : '' ?>><?php echo $label ?></option>
                 <?php endforeach ?>
@@ -50,6 +48,6 @@ $title = htmlspecialchars(
 
 <script>
     $(function() {
-        $("#search-input").popover({html: true, trigger: "hover", placement: "bottom"});
+        $("#<?php echo $searchInputId; ?>").popover({html: true, trigger: "hover", placement: "bottom"});
     });
 </script>

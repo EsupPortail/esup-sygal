@@ -10,29 +10,10 @@ class EtatAdmissionSearchFilter extends SelectSearchFilter
 {
     const NAME = 'etat';
 
-    /**
-     * @inheritDoc
-     */
-    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
-    {
-        parent::__construct($label, $name, $attributes, $defaultValue);
-    }
+    protected string $name = self::NAME;
+    protected string $label = "État";
 
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
-    {
-        return new self(
-            "État",
-            self::NAME
-        );
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(QueryBuilder $qb): void
     {
         $alias = 'admission'; // todo: rendre paramétrable
 

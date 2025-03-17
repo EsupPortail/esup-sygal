@@ -173,7 +173,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
                 $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
                 $filter->setData([$ed]);
                 $filter->setDefaultValueAsObject($ed);
-                $filter->setAllowsEmptyOption(false);
+                $filter->setAllowsEmptyValueOption(false);
             } elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
                 $filter->setVisible(false);
             }
@@ -197,7 +197,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
             if ($etab = $role->getStructure()?->getEtablissement()) {
                 $filter->setData([$etab]);
                 $filter->setDefaultValueAsObject($etab);
-                $filter->setAllowsEmptyOption(false);
+                $filter->setAllowsEmptyValueOption(false);
             }
         } else {
             throw new UnexpectedValueException(
@@ -219,7 +219,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
                 $ur = $roleUniteRecherche->getStructure()->getUniteRecherche();
                 $filter->setData([$ur]);
                 $filter->setDefaultValueAsObject($ur);
-                $filter->setAllowsEmptyOption(false);
+                $filter->setAllowsEmptyValueOption(false);
             } elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
                 $filter->setVisible(false);
             }

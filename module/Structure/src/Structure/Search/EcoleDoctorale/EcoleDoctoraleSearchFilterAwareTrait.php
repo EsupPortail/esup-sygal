@@ -15,7 +15,7 @@ trait EcoleDoctoraleSearchFilterAwareTrait
     public function getEcoleDoctoraleSearchFilter(): EcoleDoctoraleSearchFilter
     {
         if ($this->ecoleDoctoraleSearchFilter === null) {
-            $this->ecoleDoctoraleSearchFilter = EcoleDoctoraleSearchFilter::newInstance();
+            $this->ecoleDoctoraleSearchFilter = new EcoleDoctoraleSearchFilter();
         }
         return $this->ecoleDoctoraleSearchFilter;
     }

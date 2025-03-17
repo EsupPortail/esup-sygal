@@ -13,42 +13,27 @@ class EtablissementSearchFilter extends SelectSearchFilter
 {
     const NAME = 'etablissement';
 
-    /**
-     * Instancie un filtre par établissement
-     *
-     * @inheritDoc
-     */
-    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
-    {
-        parent::__construct($label, $name, $attributes, $defaultValue);
-    }
+    protected string $name = self::NAME;
+    protected string $label = "Étab. d'inscr.";
 
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
+    protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
-        return new self(
-            "Étab. d'inscr.",
-            self::NAME
-        );
-    }
+        // il ne peut y avoir qu'un seul champ pour ce filtre
+        $whereField = current($this->whereFields);
 
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
-    {
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
          * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;
          * - spécifier le champ sur lequel doit porter le 'where' via {@see \Application\Search\Filter\SearchFilter::setWhereField()}
          */
         $qb
-            ->andWhere($this->whereField . " = :etab_sourceCode")
+            ->andWhere($whereField . " = :etab_sourceCode")
             ->setParameter('etab_sourceCode', $this->getValue());
 
         if ($this->data !== null) {
             // garantit que l'étab éventuellement spécifié via $this->data est autorisé
             $sourceCodes = array_map(function(Etablissement $entity) { return $entity->getSourceCode(); }, $this->data);
-            $qb->andWhere($qb->expr()->in($this->whereField, $sourceCodes));
+            $qb->andWhere($qb->expr()->in($whereField, $sourceCodes));
         }
     }
 }

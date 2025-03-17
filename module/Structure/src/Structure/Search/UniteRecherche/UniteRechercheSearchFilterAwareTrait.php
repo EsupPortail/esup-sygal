@@ -15,7 +15,7 @@ trait UniteRechercheSearchFilterAwareTrait
     public function getUniteRechercheSearchFilter(): UniteRechercheSearchFilter
     {
         if ($this->uniteRechercheSearchFilter === null) {
-            $this->uniteRechercheSearchFilter = UniteRechercheSearchFilter::newInstance();
+            $this->uniteRechercheSearchFilter = new UniteRechercheSearchFilter();
         }
         return $this->uniteRechercheSearchFilter;
     }

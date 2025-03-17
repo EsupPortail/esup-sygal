@@ -15,7 +15,7 @@ trait DomaineScientifiqueSearchFilterAwareTrait
     public function getDomaineScientifiqueSearchFilter(): DomaineScientifiqueSearchFilter
     {
         if ($this->domaineScientifiqueSearchFilter === null) {
-            $this->domaineScientifiqueSearchFilter = DomaineScientifiqueSearchFilter::newInstance();
+            $this->domaineScientifiqueSearchFilter = new DomaineScientifiqueSearchFilter();
         }
         return $this->domaineScientifiqueSearchFilter;
     }
