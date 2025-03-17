@@ -24,14 +24,14 @@ $liveSearch = (bool) ($paramAttributes['liveSearch'] ?? false);
         data-bs-html="true"
 >
 
-<?php foreach ($filter->getOptions() as $data): ?>
+<?php foreach ($filter->getValueOptions() as $data): ?>
 
     <?php
     $value = $data['value'];
     $label = $data['label'];
     $subtext = $data['subtext'] ?? '';
     $class = $data['class'] ?? '';
-    $isActive = $value === $filter->getValue() || $filter->isSelectOptionActive($value, $queryParams);
+    $isActive = $value === $filter->getValue() || $filter->isSelectValueOptionActive($value, $queryParams);
     ?>
     <option <?php echo $isActive ? 'selected' : '' ?>
             value="<?php echo $value ?>"

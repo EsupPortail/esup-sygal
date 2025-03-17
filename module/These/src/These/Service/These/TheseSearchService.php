@@ -104,7 +104,7 @@ class TheseSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
             ->setDataProvider(function(SelectSearchFilter $filter) {
@@ -178,7 +178,7 @@ class TheseSearchService extends SearchService
             $etablissementInscrFilter,
             $ecoleDoctoraleFilter,
             $uniteRechercheFilter,
-            $origineFinancementFilter->setAllowsNoneOption(),
+            $origineFinancementFilter->setAllowsNoneValueOption(),
             $anneeFinancementFilter,
             $anneeCivile1ereInscriptionFilter,
             $anneeUniv1ereInscriptionFilter,

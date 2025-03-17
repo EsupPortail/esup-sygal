@@ -63,7 +63,7 @@ class EnqueteReponseSearchService extends SearchService
         ]);
     }
 
-    public function init()
+    public function init(): void
     {
         $this->siteFilter->setDataProvider(fn() => $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true));
         $this->responsableFilter->setDataProvider(fn() => $this->formationRepository->fetchListeResponsable());
@@ -93,7 +93,7 @@ class EnqueteReponseSearchService extends SearchService
 
     public function createSiteFilter(): EtablissementSearchFilter
     {
-        return EtablissementSearchFilter::newInstance()
+        return (new EtablissementSearchFilter())
             ->setName(self::NAME_site)
             ->setLabel("Site")
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
@@ -106,11 +106,14 @@ class EnqueteReponseSearchService extends SearchService
     private function createResponsableFilter(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter("Responsable", self::NAME_responsable);
-        $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, QueryBuilder $qb) {
-            $qb
-                ->andWhere("resp = :responsable")
-                ->setParameter('responsable', $filter->getValue());
-        });
+//        $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, QueryBuilder $qb) {
+//            $qb
+//                ->andWhere("resp = :responsable")
+//                ->setParameter('responsable', $filter->getValue());
+//        });
+        $filter
+            ->setWhereField('resp')
+            ->setAllowsNoneValueOption(); // équivalent (pour tester les dernières améliorations des *SearchFilter)
 
         return $filter;
     }

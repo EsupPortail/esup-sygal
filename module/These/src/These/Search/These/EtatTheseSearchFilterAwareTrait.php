@@ -15,7 +15,7 @@ trait EtatTheseSearchFilterAwareTrait
     public function getEtatTheseSearchFilter(): EtatTheseSearchFilter
     {
         if ($this->etatTheseSearchFilter === null) {
-            $this->etatTheseSearchFilter = EtatTheseSearchFilter::newInstance();
+            $this->etatTheseSearchFilter = new EtatTheseSearchFilter();
         }
         return $this->etatTheseSearchFilter;
     }

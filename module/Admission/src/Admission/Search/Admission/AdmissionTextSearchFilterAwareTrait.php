@@ -15,7 +15,7 @@ trait AdmissionTextSearchFilterAwareTrait
     public function getAdmissionTextSearchFilter(): AdmissionTextSearchFilter
     {
         if ($this->admissionTextSearchFilter === null) {
-            $this->admissionTextSearchFilter = AdmissionTextSearchFilter::newInstance();
+            $this->admissionTextSearchFilter = new AdmissionTextSearchFilter();
         }
         return $this->admissionTextSearchFilter;
     }

@@ -94,6 +94,6 @@ class PropositionTheseRechercheController extends AbstractController implements 
         $filter
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
-            ->setAllowsEmptyOption(false);
+            ->setAllowsEmptyValueOption(false);
     }
 }

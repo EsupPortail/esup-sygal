@@ -32,7 +32,7 @@ class IndividuSearchService extends SearchService
         return $qb;
     }
 
-    public function init()
+    public function init(): void
     {
         // filtre textuel
         $textFilter = new TextSearchFilter("Recherche textuelle", 'text');

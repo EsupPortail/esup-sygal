@@ -9,6 +9,10 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
 {
     const NAME = 'financement';
 
+    protected string $name = self::NAME;
+    protected string $label = "Orig. financ.";
+    protected array $attributes = ['liveSearch' => true];
+
     private ?AnneeFinancementSearchFilter $anneeFinancementSearchFilter = null;
 
     /**
@@ -18,15 +22,6 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
     {
         $this->anneeFinancementSearchFilter = $anneeFinancementSearchFilter;
         return $this;
-    }
-
-    static public function newInstance(): self
-    {
-        return new self(
-            "Orig. financ.",
-            self::NAME,
-            ['liveSearch' => true]
-        );
     }
 
     public function applyToQueryBuilder(QueryBuilder $qb): void

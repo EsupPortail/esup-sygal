@@ -2,8 +2,8 @@
 
 namespace Application\Search\Filter;
 
-use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 use Webmozart\Assert\Assert;
 
@@ -26,42 +26,12 @@ class SelectSearchFilter extends SearchFilter
      */
     protected array $options = [];
 
-    /**
-     * @var bool
-     */
     protected bool $allowsEmptyOption = true;
-
-    /**
-     * @var string
-     */
     protected string $emptyOptionLabel = "(Peu importe)";
-
-    /**
-     * @var bool
-     */
     protected bool $allowsNoneOption = false;
-
-    /**
-     * @var string
-     */
     protected string $noneOptionLabel = "(Non renseigné)";
 
-    /**
-     * @param string $label
-     * @param string $name
-     * @param array $attributes
-     * @param string|null $defaultValue
-     */
-    public function __construct(string $label, string $name, array $attributes = [], string $defaultValue = null)
-    {
-        parent::__construct($label, $name);
-
-        $this
-            ->setAttributes($attributes)
-            ->setDefaultValue($defaultValue);
-    }
-
-    public function setValue($value = null): SearchFilter
+    public function setValue($value): static
     {
         // si la liste de valeurs possibles est pré-remplie, verification que la valeur spécifiée est dedans.
         if ($value !== null && is_array($this->data)) {
@@ -83,7 +53,7 @@ class SelectSearchFilter extends SearchFilter
      * @param SearchFilterValueInterface|null $defaultValue
      * @return self
      */
-    public function setDefaultValueAsObject(SearchFilterValueInterface $defaultValue = null): self
+    public function setDefaultValueAsObject(SearchFilterValueInterface $defaultValue = null): static
     {
         return $this->setDefaultValue($defaultValue ? $defaultValue->createSearchFilterValueOption()['value'] : null);
     }
@@ -92,22 +62,27 @@ class SelectSearchFilter extends SearchFilter
      * @var callable|null
      */
     protected $dataProvider;
+
     /**
      * @param callable $dataProvider function(SelectSearchFilter $filter) { return []; }
      * @return self
      */
-    public function setDataProvider(callable $dataProvider): self
+    public function setDataProvider(callable $dataProvider): static
     {
         $this->dataProvider = $dataProvider;
 
         return $this;
     }
-    /**
-     * @return callable
-     */
-    public function getDataProvider(): ?callable
+
+    public function loadData(): array
     {
-        return $this->dataProvider;
+        if ($this->dataProvider === null) {
+            throw new RuntimeException("Aucun 'data provider' fourni pour le filtre '{$this->getName()}'");
+        }
+
+        $callable = $this->dataProvider;
+
+        return $callable($this);
     }
 
     public function canApplyToQueryBuilder(): bool
@@ -115,32 +90,38 @@ class SelectSearchFilter extends SearchFilter
         return $this->getValue() !== null; // '0' est une valeur valide
     }
 
-    /**
-     * Application de ce filtre au query builder spécifié, en utilisant le champ de condition.
-     *
-     * @param \Doctrine\ORM\QueryBuilder $qb
-     */
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+//    protected function generateQueryBuilderExprAndParamsFromWhereFields(array $whereFields): array
+//    {
+//        if ($this->getValue() === self::VALUE_NULL) {
+//            $params = []; // aucun paramètre de requête puisqu'on compare à NULL
+//
+//            $exprs = [];
+//            foreach ($whereFields as $field) {
+//                $exprs[] = sprintf("%s IS NULL", $field);
+//            }
+//
+//            return [$exprs, $params];
+//        }
+//
+//        return parent::generateQueryBuilderExprAndParamsFromWhereFields($whereFields);
+//    }
+
+    protected function generateParameterName(): ?string
     {
         if ($this->getValue() === self::VALUE_NULL) {
-            $qb->andWhere(sprintf("%s IS NULL", $this->whereField));
-        } else {
-            parent::applyToQueryBuilderUsingWhereField($qb);
+            // aucun paramètre DQL puisqu'on utilise 'is null'
+            return null;
         }
+
+        return parent::generateParameterName();
     }
 
-    /**
-     * Application par défaut de ce filtre au query builder spécifié, avec construction automatique du where.
-     *
-     * @param \Doctrine\ORM\QueryBuilder $qb
-     */
-    protected function applyToQueryBuilderByDefault(QueryBuilder $qb)
+    protected function generateComparisonTemplate(string $operand): string
     {
         if ($this->getValue() === self::VALUE_NULL) {
-            $alias = current($qb->getRootAliases());
-            $qb->andWhere(sprintf("%s.%s IS NULL", $alias, $this->getName()));
+            return "$operand is null";
         } else {
-            parent::applyToQueryBuilderByDefault($qb);
+            return parent::generateComparisonTemplate($operand);
         }
     }
 
@@ -154,11 +135,11 @@ class SelectSearchFilter extends SearchFilter
     public function createValueOptionsFromData(array $data): array
     {
         $options = [];
-        if ($this->allowsEmptyOption()) {
-            $options[] = static::valueOptionEmpty($this->getEmptyOptionLabel());
+        if ($this->allowsEmptyValueOption()) {
+            $options[] = static::valueOptionEmpty($this->getEmptyValueOptionLabel());
         }
-        if ($this->allowsNoneOption()) {
-            $options[] = static::valueOptionUnknown($this->getNoneOptionLabel());
+        if ($this->allowsNoneValueOption()) {
+            $options[] = static::valueOptionUnknown($this->getNoneValueOptionLabel());
         }
         foreach ($data as $key => $value) {
             $options[] = $this->createValueOption($value, $key);
@@ -186,13 +167,10 @@ class SelectSearchFilter extends SearchFilter
         return static::valueOption($valueToString, (string) $key);
     }
 
-    /**
-     * @return self
-     */
-    public function init(): SearchFilter
+    public function init(): static
     {
         // Si ce filtre n'autorise pas la sélection de l'option "vide", alors sélection de la 1ere valeur.
-        if (!$this->allowsEmptyOption() && is_array($this->data) && !empty($this->data)) {
+        if (!$this->allowsEmptyValueOption() && is_array($this->data) && !empty($this->data)) {
             $firstValue = reset($this->data);
             $this->setDefaultValue($firstValue->getId());
         }
@@ -216,7 +194,7 @@ class SelectSearchFilter extends SearchFilter
      * @param array $data
      * @return self
      */
-    public function setData(array $data): self
+    public function setData(array $data): static
     {
         $this->data = $data;
         return $this;
@@ -227,7 +205,7 @@ class SelectSearchFilter extends SearchFilter
      *
      * @return array
      */
-    public function getOptions(): array
+    public function getValueOptions(): array
     {
         return $this->options;
     }
@@ -238,7 +216,7 @@ class SelectSearchFilter extends SearchFilter
      * @param array $options
      * @return self
      */
-    public function setOptions(array $options): self
+    public function setValueOptions(array $options): static
     {
         $this->options = $options;
 
@@ -250,7 +228,7 @@ class SelectSearchFilter extends SearchFilter
      *
      * @return bool
      */
-    public function allowsEmptyOption(): bool
+    public function allowsEmptyValueOption(): bool
     {
         return $this->allowsEmptyOption;
     }
@@ -261,7 +239,7 @@ class SelectSearchFilter extends SearchFilter
      * @param bool $allowsEmptyOption
      * @return self
      */
-    public function setAllowsEmptyOption(bool $allowsEmptyOption = true): self
+    public function setAllowsEmptyValueOption(bool $allowsEmptyOption = true): static
     {
         $this->allowsEmptyOption = $allowsEmptyOption;
         return $this;
@@ -272,7 +250,7 @@ class SelectSearchFilter extends SearchFilter
      *
      * @return string
      */
-    public function getEmptyOptionLabel(): string
+    public function getEmptyValueOptionLabel(): string
     {
         return $this->emptyOptionLabel;
     }
@@ -283,7 +261,7 @@ class SelectSearchFilter extends SearchFilter
      * @param string $emptyOptionLabel
      * @return self
      */
-    public function setEmptyOptionLabel(string $emptyOptionLabel): self
+    public function setEmptyValueOptionLabel(string $emptyOptionLabel): static
     {
         $this->emptyOptionLabel = $emptyOptionLabel;
 
@@ -295,7 +273,7 @@ class SelectSearchFilter extends SearchFilter
      *
      * @return bool
      */
-    public function allowsNoneOption(): bool
+    public function allowsNoneValueOption(): bool
     {
         return $this->allowsNoneOption;
     }
@@ -306,7 +284,7 @@ class SelectSearchFilter extends SearchFilter
      * @param bool $allowsNoneOption
      * @return self
      */
-    public function setAllowsNoneOption(bool $allowsNoneOption = true): self
+    public function setAllowsNoneValueOption(bool $allowsNoneOption = true): static
     {
         $this->allowsNoneOption = $allowsNoneOption;
         return $this;
@@ -317,7 +295,7 @@ class SelectSearchFilter extends SearchFilter
      *
      * @return string
      */
-    public function getNoneOptionLabel(): string
+    public function getNoneValueOptionLabel(): string
     {
         return $this->noneOptionLabel;
     }
@@ -328,7 +306,7 @@ class SelectSearchFilter extends SearchFilter
      * @param string $noneOptionLabel
      * @return self
      */
-    public function setNoneOptionLabel(string $noneOptionLabel): self
+    public function setNoneValueOptionLabel(string $noneOptionLabel): static
     {
         $this->noneOptionLabel = $noneOptionLabel;
 
@@ -342,7 +320,7 @@ class SelectSearchFilter extends SearchFilter
      * @param string[] $queryParams valeurs des paramètres GET
      * @return bool
      */
-    public function isSelectOptionActive($optionValue, array $queryParams): bool
+    public function isSelectValueOptionActive(mixed $optionValue, array $queryParams): bool
     {
         $optionName = $this->getName();
 

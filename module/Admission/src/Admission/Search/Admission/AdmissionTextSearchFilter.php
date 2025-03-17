@@ -4,14 +4,10 @@ namespace Admission\Search\Admission;
 
 use Application\Search\Filter\TextCriteriaSearchFilter;
 
-/**
- *
- *
- * @author Unicaen
- */
 class AdmissionTextSearchFilter extends TextCriteriaSearchFilter
 {
-    const NAME = 'text';
+    protected string $name = 'text';
+    protected string $label = "Recherche de texte";
 
     const CRITERIA_titre = 'titre';
     const CRITERIA_numero_doctorant = 'doctorant-numero';
@@ -38,26 +34,5 @@ class AdmissionTextSearchFilter extends TextCriteriaSearchFilter
     /**
      * Critères possibles sur lesquels faire porter la recherche sur texte libre.
      */
-    protected $availableCriteria = self::CRITERIA;
-
-    /**
-     * TheseTextSearchFilter constructor.
-     * @param string $label
-     * @param string $name
-     */
-    protected function __construct(string $label, string $name)
-    {
-        parent::__construct($label, $name);
-    }
-
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
-    {
-        return new self(
-            "Recherche de texte",
-            self::NAME
-        );
-    }
+    protected array $availableCriteria = self::CRITERIA;
 }

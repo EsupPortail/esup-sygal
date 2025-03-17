@@ -6,74 +6,167 @@ use Doctrine\ORM\QueryBuilder;
 use Webmozart\Assert\Assert;
 
 /**
- *
- *
- * @author Unicaen
+ * Classe mère abstraite de tous les filtres de recherche.
  */
 abstract class SearchFilter implements SearchFilterInterface
 {
-    /**
-     * @var string
-     */
+    const OPERATOR_OR = 'OR';
+    const OPERATOR_AND = 'AND';
+
     protected string $name;
-
-    /**
-     * @var string
-     */
     protected string $label;
-
-    /**
-     * @var null|bool|string|array
-     */
-    protected $value;
-
-    /**
-     * @var string|bool
-     */
-    protected $defaultValue;
-
-    /**
-     * @var array
-     */
+    protected mixed $value;
+    protected mixed $defaultValue = null;
     protected array $attributes = [];
-
-    /**
-     * @var bool
-     */
     protected bool $visible = true;
 
     /**
-     * @var callable
+     * Callable appelé par le moteur pour appliquer ce filtre au query builder.
+     * @var callable|null
      */
-    protected $applyToQueryBuilderCallable;
+    protected $applyToQueryBuilderCallable = null;
 
     /**
-     * @var string|null
+     * Eventuels champs d'entités sur lesquel portent les tests de valeur, ainsi que l'opérateur logique à appliquer
+     * entre les tests correspondants.
+     * Ex : `[ ['f.nom', 'f.nomOriginal'] ]`, équivalent à `[ static::OPERATOR_OR => ['f.nom', 'f.nomOriginal'] ]`
      */
-    protected ?string $whereField = null;
+    protected ?array $whereFields = null;
 
     /**
-     * Indique si ce filtre doit impacter le query builder ou non.
-     */
-    protected bool $applyToQueryBuilder = true;
-
-    /**
-     * Constructor.
+     * Constructeur.
      *
-     * @param string $label
-     * @param string $name
+     * @param string|null $label Label/intitlulé du filtre, ex : "Nom du fichier"
+     * @param string|null $name Petit nom du filtre (unique), ex : 'nom_fichier'
+     * @param array $attributes Attributs de ce filtre, ex : ['class' => 'selectpicker']
+     * @param mixed $defaultValue Valeur par défaut de ce filtre
      */
-    public function __construct(string $label, string $name)
+    public function __construct(?string $label = null, ?string $name = null, array $attributes = [], mixed $defaultValue = null)
     {
-        $this
-            ->setLabel($label)
-            ->setName($name);
+        if ($label !== null) {
+            $this->setLabel($label);
+        }
+        if ($name !== null) {
+            $this->setName($name);
+        }
+
+        $this->setAttributes($attributes);
+        $this->setDefaultValue($defaultValue);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setValue($value): static
+    {
+        $this->value = $value;
+
+        return $this;
     }
 
     /**
-     * @return self
+     * Retourne la valeur par défaut (pré-remplie) de ce filtre.
      */
-    public function init(): self
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * Spécifie la valeur par défaut (pré-remplie) de ce filtre.
+     */
+    public function setDefaultValue(mixed $defaultValue = null): static
+    {
+        $this->defaultValue = $defaultValue;
+
+        return $this;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    public function setAttributes(array $attributes, bool $overwrite = false): static
+    {
+        $this->attributes = $overwrite ? $attributes : array_merge($this->attributes, $attributes);
+
+        return $this;
+    }
+
+    /**
+     * Indique si ce filtre est sensé être visible ou non.
+     */
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    /**
+     * Spécifie si ce filtre est sensé être visible ou non.
+     */
+    public function setVisible(bool $visible = true): static
+    {
+        $this->visible = $visible;
+        return $this;
+    }
+
+    /**
+     * Spécifie le champ sur lequel porte le test de valeur.
+     *
+     * @param string $whereField Ex : 'f.nom'
+     */
+    public function setWhereField(string $whereField): static
+    {
+        return $this->setWhereFields([$whereField]);
+    }
+
+    /**
+     * Spécifie les champs d'entités sur lesquel portent les tests de valeur, ainsi que l'opérateur logique à appliquer
+     * entre les tests correspondants.
+     *
+     * @param array $whereFields Liste des champs concernés, ex : ['f.nom', 'f.nomOriginal']
+     * @param string|null $operator Par défaut, c'est l'opérateur OR ({@see static::OPERATOR_OR})
+     */
+    public function setWhereFields(array $whereFields, ?string $operator = self::OPERATOR_OR): static
+    {
+        Assert::inArray($operator, [self::OPERATOR_AND, self::OPERATOR_OR]);
+
+        $this->whereFields = [$operator => $whereFields];
+
+        return $this;
+    }
+
+    /**
+     * Initialisation du filtre.
+     */
+    public function init(): static
     {
         // initialisations utiles
         // ...
@@ -82,10 +175,9 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @param callable $applyToQueryBuilderCallable
-     * @return self
+     * Spécifie le Callable appelé par le moteur pour appliquer ce filtre au query builder.
      */
-    public function setQueryBuilderApplier(callable $applyToQueryBuilderCallable): self
+    public function setQueryBuilderApplier(callable $applyToQueryBuilderCallable): static
     {
         $this->applyToQueryBuilderCallable = $applyToQueryBuilderCallable;
 
@@ -93,9 +185,9 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @param array $queryParams
+     * Applique ou exploite les 'query params' spécifiés.
      */
-    public function processQueryParams(array $queryParams)
+    public function processQueryParams(array $queryParams): void
     {
         $filterValue = $this->paramFromQueryParams($queryParams);
 
@@ -103,10 +195,10 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @param array  $queryParams
-     * @return string
+     * Cherche parmi les query params valués spécifiés si l'un correspond au nom de ce filtre,
+     * et retourne la valeur associée le cas échéant.
      */
-    protected function paramFromQueryParams(array $queryParams): ?string
+    public function paramFromQueryParams(array $queryParams): ?string
     {
         $name = $this->getName();
 
@@ -120,24 +212,16 @@ abstract class SearchFilter implements SearchFilterInterface
         return $queryParams[$name];
     }
 
-    /**
-     * Application de ce filtre au query builder spécifié.
-     *
-     * Cette méthode appelle le callable spécifié via {@see setQueryBuilderApplier()}.
-     * Mais elle peut être redéfinie dans les classes filles.
-     *
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(QueryBuilder $qb): void
     {
         if ($this->applyToQueryBuilderCallable !== null) {
             $this->applyToQueryBuilderUsingCallable($qb);
             return;
         }
 
-        if ($this->whereField !== null) {
-            // utilisation du champ de condition spécifié
-            $this->applyToQueryBuilderUsingWhereField($qb);
+        if ($this->whereFields !== null) {
+            // utilisation des champs de conditions spécifiés
+            $this->applyToQueryBuilderUsingWhereFields($qb);
         } else {
             // tentative de construction automatique du where
             $this->applyToQueryBuilderByDefault($qb);
@@ -149,172 +233,119 @@ abstract class SearchFilter implements SearchFilterInterface
      *
      * @param \Doctrine\ORM\QueryBuilder $qb
      */
-    protected function applyToQueryBuilderUsingCallable(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingCallable(QueryBuilder $qb): void
     {
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
         $applyToQueryBuilder($this, $qb);
     }
 
     /**
-     * Application de ce filtre au query builder spécifié, en utilisant le champ de condition.
-     *
-     * @param \Doctrine\ORM\QueryBuilder $qb
+     * Application de ce filtre au query builder spécifié, en utilisant le ou les champs de condition fourni·s.
      */
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
-        $qb
-            ->andWhere(sprintf("%s = :%s", $this->whereField, $paramName = uniqid('p')))
-            ->setParameter($paramName, $this->getValue());
+        if (is_int(key($this->whereFields))) {
+            $this->whereFields = [static::OPERATOR_OR => $this->whereFields];
+        }
+
+        $operator = key($this->whereFields);
+        $operator = is_int($operator) ? self::OPERATOR_OR : $operator;
+
+        $whereFields = $this->whereFields[$operator];
+
+        [$parts, $params] = $this->generateQueryBuilderExprAndParamsFromWhereFields($whereFields);
+        Assert::isArray($parts);
+        Assert::isArray($params);
+
+        if (count($parts) === 1) {
+            $expr = reset($parts);
+        } else {
+            $expr = $operator === static::OPERATOR_OR ?
+                $qb->expr()->orX(...$parts) :
+                $qb->expr()->andX(...$parts);
+        }
+        $qb->andWhere($expr);
+
+        foreach ($params as $paramName => $paramValue) {
+            $qb->setParameter($paramName, $paramValue);
+        }
     }
 
     /**
      * Application par défaut de ce filtre au query builder spécifié, avec construction automatique du where.
-     *
-     * @param \Doctrine\ORM\QueryBuilder $qb
      */
-    protected function applyToQueryBuilderByDefault(QueryBuilder $qb)
+    protected function applyToQueryBuilderByDefault(QueryBuilder $qb): void
     {
         $alias = current($qb->getRootAliases());
-        $qb
-            ->andWhere(sprintf("%s.%s = :%s", $alias, $this->getName(), $paramName = uniqid('p')))
-            ->setParameter($paramName, $this->getValue());
+        $template = $this->generateComparisonTemplate('%s.%s');
+
+        $paramName = $this->generateParameterName();
+        if ($paramName !== null) {
+            $qb
+                ->andWhere(sprintf($template, $alias, $this->getName(), $paramName))
+                ->setParameter($paramName, $this->generateComparisonValue());
+        } else {
+            $qb->andWhere(sprintf($template, $alias, $this->getName()));
+        }
     }
 
     /**
-     * @return bool
+     * Génère, à partir des champs de condition spécifié, les expressions DQL intermédiaires et les paramètres
+     * associés éventuels qui seront uilisés pour former la clause de filtrage.
+     *
+     * @param array $whereFields Ex: ['f.nom', 'f.nomOriginal']
+     * @return array Liste contenant 2 éléments : la liste des expressions DQL générées ; le tableau associatifs des paramètres éventuels.
+     * Ex : `[ ['f.nom = :p65df4', 'f.nomOriginal = :p324sd'], ['p65df4' => 'manuscrit', 'p324sd' => 'manuscrit']]`
+     */
+    protected function generateQueryBuilderExprAndParamsFromWhereFields(array $whereFields): array
+    {
+        $template = $this->generateComparisonTemplate('%s');
+
+        $exprs = [];
+        $params = [];
+        foreach ($whereFields as $field) {
+            $paramName = $this->generateParameterName();
+            if ($paramName !== null) {
+                $exprs[] = sprintf($template, $field, $paramName);
+                $params[$paramName] = $this->generateComparisonValue();
+            } else {
+                $exprs[] = sprintf($template, $field);
+            }
+        }
+
+        return [$exprs, $params];
+    }
+
+    /**
+     * Génère un nom de paramètre DQL ; ou `null` si aucun paramètre n'est nécessaire.
+     */
+    protected function generateParameterName(): ?string
+    {
+        return uniqid('p');
+    }
+
+    /**
+     * Génère le template de code DQL réalisant uniquement la comparaison, à partir de l'opérande (de gauche) spécifiée.
+     */
+    protected function generateComparisonTemplate(string $operand): string
+    {
+        return "$operand = :%s";
+    }
+
+    /**
+     * Génère le bout de code DQL correspondant uniquement à la valeur courante de ce filtre,
+     * exploité pour générer la comparaison.
+     */
+    public function generateComparisonValue(): mixed
+    {
+        return $this->getValue();
+    }
+
+    /**
+     * Indique si ce filtre peut être appliqué au query builder.
      */
     public function canApplyToQueryBuilder(): bool
     {
         return (bool) $this->getValue();
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     * @return self
-     */
-    public function setLabel(string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    /**
-     * @return null|bool|string|array
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param string|bool|null $value
-     * @return self
-     */
-    public function setValue($value = null): self
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return string|bool
-     */
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
-    }
-
-    /**
-     * @param string|bool|null $defaultValue
-     * @return self
-     */
-    public function setDefaultValue($defaultValue = null): self
-    {
-        $this->defaultValue = $defaultValue;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @param array $attributes
-     * @param bool $overwrite
-     * @return self
-     */
-    public function setAttributes(array $attributes, $overwrite = false): self
-    {
-        $this->attributes = $overwrite ? $attributes : array_merge($this->attributes, $attributes);
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isVisible(): bool
-    {
-        return $this->visible;
-    }
-
-    /**
-     * @param bool $visible
-     * @return self
-     */
-    public function setVisible(bool $visible = true): self
-    {
-        $this->visible = $visible;
-        return $this;
-    }
-
-    /**
-     * @param string $whereField
-     * @return self
-     */
-    public function setWhereField(string $whereField): self
-    {
-        $this->whereField = $whereField;
-
-        return $this;
-    }
-
-    protected function checkWhereField()
-    {
-        Assert::notNull($this->whereField, "Vous n'avez pas spécifié le champ sur lequel doit porter le 'where'");
     }
 }

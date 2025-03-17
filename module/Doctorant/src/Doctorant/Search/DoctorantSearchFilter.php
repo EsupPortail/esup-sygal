@@ -9,18 +9,10 @@ class DoctorantSearchFilter extends TextSearchFilter // todo : hériter de StrRe
 {
     const NAME = 'doctorant';
 
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
-    {
-        return new self("Doctorant", self::NAME);
-    }
+    protected string $name = self::NAME;
+    protected string $label = "Doctorant";
 
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(QueryBuilder $qb): void
     {
         $filterValue = $this->getValue();
         if ($filterValue === null) {

@@ -71,7 +71,7 @@ class RapportActiviteSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
@@ -567,8 +567,8 @@ class RapportActiviteSearchService extends SearchService
                 ->setDataProvider(function () {
                     return ['annuel' => "Annuel", 'finthese' => "Fin de contrat"];
                 })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
+                ->setEmptyValueOptionLabel("(Peu importe)")
+                ->setAllowsEmptyValueOption()
                 ->setQueryBuilderApplier([$this, 'applyFinalFilterToQueryBuilder']);
         }
 
@@ -583,8 +583,8 @@ class RapportActiviteSearchService extends SearchService
                 ->setDataProvider(function () {
                     return ['oui' => "Oui (nouveau module)", 'non' => "Non (ancien module)"];
                 })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
+                ->setEmptyValueOptionLabel("(Peu importe)")
+                ->setAllowsEmptyValueOption()
                 ->setQueryBuilderApplier([$this, 'applyDematerialiseFilterToQueryBuilder']);
         }
 
@@ -604,8 +604,8 @@ class RapportActiviteSearchService extends SearchService
                 ->setDataProvider(function () use ($valueOptions) {
                     return $valueOptions;
                 })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
+                ->setEmptyValueOptionLabel("(Peu importe)")
+                ->setAllowsEmptyValueOption()
                 ->setQueryBuilderApplier([$this, 'applyOperationAttendueSearchFilterToQueryBuilder']);
         }
 

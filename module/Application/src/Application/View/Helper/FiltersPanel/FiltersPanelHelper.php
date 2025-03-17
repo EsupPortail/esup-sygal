@@ -31,7 +31,7 @@ class FiltersPanelHelper extends AbstractHelper
      * @param mixed    $optionValue Valeur de l'<option>
      * @param string[] $queryParams valeurs des paramètres GET
      * @return bool
-     * @deprecated Utiliser à la place {@see SelectSearchFilter::isSelectOptionActive()}
+     * @deprecated Utiliser à la place {@see SelectSearchFilter::isSelectValueOptionActive()}
      */
     static public function isSelectOptionActive($optionName, $optionValue, $queryParams)
     {

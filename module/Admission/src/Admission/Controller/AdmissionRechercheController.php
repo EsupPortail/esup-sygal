@@ -154,7 +154,7 @@ class AdmissionRechercheController extends AbstractController implements SearchC
                 $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
                 $edFilter->setData([$ed]);
                 $edFilter->setDefaultValueAsObject($ed);
-                $edFilter->setAllowsEmptyOption(false);
+                $edFilter->setAllowsEmptyValueOption(false);
             }
         }
     }
@@ -169,7 +169,7 @@ class AdmissionRechercheController extends AbstractController implements SearchC
                 $ed = $roleUniteRecherche->getStructure()->getUniteRecherche();
                 $urFilter->setData([$ed]);
                 $urFilter->setDefaultValueAsObject($ed);
-                $urFilter->setAllowsEmptyOption(false);
+                $urFilter->setAllowsEmptyValueOption(false);
             }
         }
     }
@@ -199,6 +199,6 @@ class AdmissionRechercheController extends AbstractController implements SearchC
         $filter
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
-            ->setAllowsEmptyOption(false);
+            ->setAllowsEmptyValueOption(false);
     }
 }

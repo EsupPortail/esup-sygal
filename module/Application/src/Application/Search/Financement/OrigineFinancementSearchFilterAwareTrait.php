@@ -9,7 +9,7 @@ trait OrigineFinancementSearchFilterAwareTrait
     public function getOrigineFinancementSearchFilter(): OrigineFinancementSearchFilter
     {
         if ($this->origineFinancementSearchFilter === null) {
-            $this->origineFinancementSearchFilter = OrigineFinancementSearchFilter::newInstance();
+            $this->origineFinancementSearchFilter = new OrigineFinancementSearchFilter();
         }
         return $this->origineFinancementSearchFilter;
     }

@@ -60,11 +60,11 @@ class RapportSearchServiceFactory implements FactoryInterface
         $service->setRapportService($rapportService);
         $service->setTypeValidation($typeValidation);
 
-        $service->setEtablissementTheseSearchFilter(EtablissementSearchFilter::newInstance());
-        $service->setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter::newInstance());
-        $service->setUniteRechercheSearchFilter(UniteRechercheSearchFilter::newInstance());
-        $service->setEcoleDoctoraleSearchFilter(EcoleDoctoraleSearchFilter::newInstance());
-        $service->setAnneeRapportActiviteSearchFilter(AnneeRapportActiviteSearchFilter::newInstance());
+        $service->setEtablissementTheseSearchFilter(new EtablissementSearchFilter());
+        $service->setOrigineFinancementSearchFilter(new OrigineFinancementSearchFilter());
+        $service->setUniteRechercheSearchFilter(new UniteRechercheSearchFilter());
+        $service->setEcoleDoctoraleSearchFilter(new EcoleDoctoraleSearchFilter());
+        $service->setAnneeRapportActiviteSearchFilter(new AnneeRapportActiviteSearchFilter());
 
         return $service;
     }

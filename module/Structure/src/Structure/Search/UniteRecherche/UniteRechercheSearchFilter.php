@@ -13,32 +13,16 @@ class UniteRechercheSearchFilter extends SelectSearchFilter
 {
     const NAME = 'uniteRecherche';
 
-    /**
-     * @inheritDoc
-     */
-    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
+    protected string $name = self::NAME;
+    protected string $label = "Unit. rech.";
+    protected array $attributes = ['liveSearch' => true];
+    protected string $emptyOptionLabel = "Toutes";
+
+    protected function applyToQueryBuilderUsingWhereFields(QueryBuilder $qb): void
     {
-        parent::__construct($label, $name, $attributes, $defaultValue);
-    }
+        // il ne peut y avoir qu'un seul champ pour ce filtre
+        $whereField = current($this->whereFields);
 
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
-    {
-        $instance = new self(
-            "Unit. rech.",
-            self::NAME,
-            ['liveSearch' => true]
-        );
-
-        $instance->setEmptyOptionLabel("Toutes");
-
-        return $instance;
-    }
-
-    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
-    {
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
          * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;
@@ -46,17 +30,17 @@ class UniteRechercheSearchFilter extends SelectSearchFilter
          */
         $filterValue = $this->getValue();
         if ($filterValue === 'NULL') {
-            $qb->andWhere($this->whereField . " IS NULL");
+            $qb->andWhere($whereField . " IS NULL");
         } elseif ($filterValue) {
             $qb
-                ->andWhere($this->whereField . " = :ur_sourceCode")
+                ->andWhere($whereField . " = :ur_sourceCode")
                 ->setParameter('ur_sourceCode', $filterValue);
         }
 
         if ($this->data !== null) {
             // garantit que l'UR éventuellement spécifiée via $this->data est autorisée
             $sourceCodes = array_map(function(UniteRecherche $entity) { return $entity->getSourceCode(); }, $this->data);
-            $qb->andWhere($qb->expr()->in($this->whereField, $sourceCodes));
+            $qb->andWhere($qb->expr()->in($whereField, $sourceCodes));
         }
     }
 }
