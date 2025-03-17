@@ -1657,6 +1657,10 @@ p.avis-complem {
   text-decoration: line-through; /* Nom barré pour signaler l'historisation */
 }
 
+.doctorant-card.historise .text-structure {
+  background-color: unset!important;
+}
+
 td > a + a {
   margin-left: 4px; /* Ajoute de l'espace entre les <a> */
 }

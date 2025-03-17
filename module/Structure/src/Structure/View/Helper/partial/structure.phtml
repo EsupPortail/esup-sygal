@@ -5,11 +5,12 @@
  * @var string $structureLibelle
  * @var string $structureCode
  * @var bool $afficherLibelle
+ * @var bool $sansOmbre
  **/
 
 ?>
 
-<span class="text-structure <?= $typeStructureClass ?>" style="padding: 4px 4px 5px 0; background-color:white;"
+<span class="text-structure <?= $typeStructureClass ?>" style="padding: 4px 4px 5px 0; background-color:white; <?php echo $sansOmbre ? "box-shadow:unset;" : ""; ?>"
       data-bs-toggle="tooltip" data-bs-original-title="<?php echo $afficherLibelle ? "" : $structureLibelle ?>">
     <?php echo $afficherLibelle ? $structureLibelle : $structureCode ?>
 </span>
