@@ -36,11 +36,11 @@ use Individu\Entity\Db\Individu;
 use Individu\Renderer\IndividuTemplateVariable;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Renderer\SoutenanceActeurTemplateVariable;
 use Soutenance\Renderer\SoutenanceMembreTemplateVariable;
 use Soutenance\Renderer\SoutenancePropositionTemplateVariable;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Renderer\StructureTemplateVariable;
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Renderer\TheseTemplateVariable;
 use These\Renderer\ValidationTheseTemplateVariable;
@@ -176,6 +176,14 @@ trait TemplateVariablePluginManagerAwareTrait
         $soutenanceMembreTemplateVariable = $this->templateVariablePluginManager->get('soutenanceMembre');
         $soutenanceMembreTemplateVariable->setMembre($membre);
         return $soutenanceMembreTemplateVariable;
+    }
+
+    protected function getSoutenanceActeurTemplateVariable(ActeurThese|ActeurHDR $acteur): SoutenanceActeurTemplateVariable
+    {
+        /** @var \Soutenance\Renderer\SoutenanceActeurTemplateVariable $soutenanceActeurTemplateVariable */
+        $soutenanceActeurTemplateVariable = $this->templateVariablePluginManager->get('soutenanceActeur');
+        $soutenanceActeurTemplateVariable->setActeur($acteur);
+        return $soutenanceActeurTemplateVariable;
     }
 
 

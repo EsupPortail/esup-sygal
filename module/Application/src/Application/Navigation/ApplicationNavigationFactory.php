@@ -188,7 +188,11 @@ class ApplicationNavigationFactory extends NavigationFactory
             if ($this->role !== null && $this->role->isActeurDeHDR()) {
                 $hdrs = $this->hdrService->getRepository()->findHDRByActeur($this->individu, $this->role, [HDR::ETAT_EN_COURS, HDR::ETAT_SOUTENUE]);
                 $newPages = $this->createPageMesHDR($protoPage, $hdrs);
-                $page['pages'][$key]['pages'] = $newPages;
+                if($newPages){
+                    $page['pages'][$key]['pages'] = $newPages;
+                }else{
+                    unset($page['pages'][$key]);
+                }
             } else {
                 unset($page['pages'][$key]);
             }

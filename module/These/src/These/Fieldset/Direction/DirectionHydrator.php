@@ -143,6 +143,9 @@ class DirectionHydrator extends AbstractHydrator
                 $individu = $this->individuService->getRepository()->find($individuId);
 
                 $etablissement = isset($data[$prefixe.'etablissement']) ? $this->etablissementService->getRepository()->find($data[$prefixe.'etablissement']) : new Etablissement();
+                //permet de gérer le cas ou l'établissement du co-directeur n'est pas un établissement d'inscription
+                //et donc éviter que cela plante lors de la création de l'acteur avec un rôle qui n'existe pas
+                if(!$etablissement->estInscription()) $etablissement = $these->getEtablissement();
                 $acteur = $this->addActeur($these, $individu, Role::CODE_CODIRECTEUR_THESE, $etablissement);
                 $acteur->setOrdre($i);
                 $this->hydrateActeur($acteur, $data, $prefixe);

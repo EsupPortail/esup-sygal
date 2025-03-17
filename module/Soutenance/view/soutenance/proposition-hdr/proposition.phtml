@@ -309,7 +309,7 @@ if ($validationGestHDR and $proposition->getEtat()->getCode() === Etat::ETABLISS
                 let top = $('div#COMPOSITION_JURY').offset().top - navbar;
                 window.scrollTo(0, top);
             },
-            "edition-informations": function (event) {
+            "edition-informations-hdr": function (event) {
                 event.div.modal('hide');
                 //$.ajax({
                 //    type: "POST",
@@ -326,8 +326,20 @@ if ($validationGestHDR and $proposition->getEtat()->getCode() === Etat::ETABLISS
                 //});
 
                 window.location.reload();
-                // let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
-                // window.scrollTo(0, top);
+                let top = $('div#BOXDIV_INFORMATIONS_HDR').offset().top - navbar;
+                window.scrollTo(0, top);
+            },
+            "ajout-justificatif": function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+                let top = $('div#BOXDIV_FICHIERS').offset().top - navbar;
+                window.scrollTo(0, top);
+            },
+            "edition-adresse": function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+                let top = $('div#BOXDIV_ADRESSE_EXACTE').offset().top - navbar;
+                window.scrollTo(0, top);
             },
             "edition-confidentialite": function (event) {
                 event.div.modal('hide');

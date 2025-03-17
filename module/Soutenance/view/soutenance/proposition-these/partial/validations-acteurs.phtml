@@ -80,7 +80,7 @@ if ($isAllOk === false || $validatedCount === 0) {
     </div>
     <div class="card-body">
 
-        <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN && !$isAllOk) : ?>
+        <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) && !$isAllOk) : ?>
          <div class="alert alert-danger">
             <strong>
                 <span class="icon icon-attention"></span>

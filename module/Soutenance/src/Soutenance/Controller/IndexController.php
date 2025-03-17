@@ -110,16 +110,17 @@ class IndexController extends AbstractSoutenanceController
 
         if ($this->entity !== null) {
             /** @var Membre[] $membres */
-            $membres = $this->proposition->getMembres()->toArray();
+            $membres = $this->proposition?->getMembres()->toArray();
             $membre = null;
-            foreach ($membres as $membre_) {
-                $acteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre_);
+            if(is_array($membres)){
+                foreach ($membres as $membre_) {
+                    $acteur = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre_);
 //                if ($membre_->getActeur() && $membre_->getActeur()->getIndividu() === $individu) {
-                if ($acteur && $acteur->getIndividu() === $individu) {
-                    $membre = $membre_;
+                    if ($acteur && $acteur->getIndividu() === $individu) {
+                        $membre = $membre_;
+                    }
                 }
             }
-
 
             $acteurMembre = $membre ? $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre) : null;
             $engagement = ($membre)?$this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($this->entity, $membre):null;

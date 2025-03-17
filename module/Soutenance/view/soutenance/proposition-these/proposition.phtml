@@ -327,29 +327,61 @@ if ($validationMDD and $proposition->getEtat()->getCode() === Etat::ETABLISSEMEN
                 let top = $('div#COMPOSITION_JURY').offset().top - navbar;
                 window.scrollTo(0, top);
             },
-            "edition-informations": function (event) {
+            "edition-informations-intervenants": function (event) {
                 event.div.modal('hide');
                 //$.ajax({
                 //    type: "POST",
                 //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>//",
                 //    beforeSend:
                 //        function () {
-                //            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
                 //        },
                 //    success:
                 //        function(retour){
                 //            let texte = "ok";
-                //            $("div#BOXDIV_INFORMATIONS").html(retour);
+                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html(retour);
                 //        }
                 //});
 
                 window.location.reload();
-                // let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
-                // window.scrollTo(0, top);
+                let top = $('div#BOXDIV_INFORMATIONS_INTERVENANTS').offset().top - navbar;
+                window.scrollTo(0, top);
+            },
+            "edition-informations-these": function (event) {
+                event.div.modal('hide');
+                //$.ajax({
+                //    type: "POST",
+                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>//",
+                //    beforeSend:
+                //        function () {
+                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                //        },
+                //    success:
+                //        function(retour){
+                //            let texte = "ok";
+                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html(retour);
+                //        }
+                //});
+
+                window.location.reload();
+                let top = $('div#BOXDIV_INFORMATIONS_THESE').offset().top - navbar;
+                window.scrollTo(0, top);
+            },
+            "ajout-justificatif": function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+                let top = $('div#BOXDIV_FICHIERS').offset().top - navbar;
+                window.scrollTo(0, top);
             },
             "edition-confidentialite": function (event) {
                 event.div.modal('hide');
                 window.location.reload();
+            },
+            "edition-adresse": function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+                let top = $('div#BOXDIV_ADRESSE_EXACTE').offset().top - navbar;
+                window.scrollTo(0, top);
             },
             "refus-proposition": function (event) {
                 event.div.modal('hide');

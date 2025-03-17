@@ -20,14 +20,11 @@
         <?php echo $this->formHidden($form->get('security')); ?>
         <?php echo $this->formControlGroup($form->get('submit')); ?>
         <?php echo $this->form()->closeTag(); ?>
-        <script>
-            $(document).on('click', '.collection-add-link', function() {
-                $('select').selectpicker();
-            });
-            $('select').selectpicker();
-            $(function () {
-                $('[data-bs-toggle="tooltip"]').tooltip({});
-            });
-        </script>
     <?php endif ?>
+    <script>
+        $(document).on('click', '.collection-add-link', function() {
+            $('select').selectpicker();
+            $('[data-bs-toggle="tooltip"]').tooltip({});
+        });
+    </script>
 </fieldset>

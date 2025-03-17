@@ -2,6 +2,8 @@
 
 namespace Soutenance\Service\Notification;
 
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
 use Acteur\Service\ActeurHDR\ActeurHDRServiceAwareTrait;
 use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\Entity\Db\Role;
@@ -1389,7 +1391,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         return $notif;
     }
 
-    public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition): Notification
+    public function createNotificationEnvoiConvocationMembre(ActeurThese|ActeurHDR $acteur, Proposition $proposition): Notification
     {
         $entity = $proposition->getObject();
         if($proposition instanceof PropositionThese){
@@ -1397,6 +1399,8 @@ class SoutenanceNotificationFactory extends NotificationFactory
         }else{
             $templateCode = MailTemplates::SOUTENANCE_HDR_CONVOCATION_CANDIDAT;
         }
+
+        $membre = $acteur->getMembre();
         //TODO
         $email = $membre->getEmail();
         $apprenant = $entity->getApprenant();
@@ -1431,29 +1435,29 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $etablissementTemplateVariable = $this->getStructureTemplateVariable($entity->getEtablissement());
         $soutenancePropositionTemplateVariable = $this->getSoutenancePropositionTemplateVariable($proposition);
         $validationTemplateVariable = $this->getValidationTemplateVariable($validation[0]);
-        $soutenanceMembreTemplateVariable = $this->getSoutenanceMembreTemplateVariable($membre);
+        $soutenanceActeurTemplateVariable = $this->getSoutenanceActeurTemplateVariable($acteur);
         if ($entity instanceof These) {
-            $soutenanceMembreTemplateVariable->setMembresPouvantEtrePresidentDuJury(
+            $soutenanceActeurTemplateVariable->setActeursPouvantEtrePresidentDuJury(
                 $this->acteurTheseService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($proposition)
             );
             $vars = [
                 'soutenanceProposition' => $soutenancePropositionTemplateVariable,
                 'these' => $entityTemplateVariable,
                 'doctorant' => $apprenantTemplateVariable,
-                'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+                'soutenanceActeur' => $soutenanceActeurTemplateVariable,
                 'validation' => $validationTemplateVariable,
                 'etablissement' => $etablissementTemplateVariable,
                 'Url' => $this->urlService,
             ];
         } else {
-            $soutenanceMembreTemplateVariable->setMembresPouvantEtrePresidentDuJury(
+            $soutenanceActeurTemplateVariable->setActeursPouvantEtrePresidentDuJury(
                 $this->acteurHDRService->getRepository()->findAllActeursPouvantEtrePresidentDuJury($proposition)
             );
             $vars = [
                 'soutenanceProposition' => $soutenancePropositionTemplateVariable,
                 'hdr' => $entityTemplateVariable,
                 'candidat' => $apprenantTemplateVariable,
-                'soutenanceMembre' => $soutenanceMembreTemplateVariable,
+                'soutenanceActeur' => $soutenanceActeurTemplateVariable,
                 'validation' => $validationTemplateVariable,
                 'etablissement' => $etablissementTemplateVariable,
                 'Url' => $this->urlService,

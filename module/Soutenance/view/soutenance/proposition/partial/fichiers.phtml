@@ -33,89 +33,91 @@ foreach ($proposition->getMembres() as $membre) {
     if ($justificatifsOk === false)  $cssClass = "bg-danger";
 ?>
 
-<div class="box card">
-    <div class="card-header <?php echo $cssClass; ?>">
-        <h2> Fichiers associés à la proposition</h2>
-    </div>
-    <div class="card-body">
+<div id="BOXDIV_FICHIERS">
+    <div class="box card">
+        <div class="card-header <?php echo $cssClass; ?>">
+            <h2> Fichiers associés à la proposition</h2>
+        </div>
+        <div class="card-body">
 
-        <?php if ($justificatifs === [] && $justificatifsOk === true) : ?>
-            <div class="alert alert-info">
-                <span class="icon icon-info"></span>
-                Aucun justificatif n'est encore demandé au vu des informations renseignées
-            </div>
-         <?php endif; ?>
-        <?php if ($canModifier) : ?>
-            <a href="<?php echo $this->url("soutenance_{$typeProposition}/justificatif/ajouter-justificatif", ['id' => $object->getId()], [], true); ?>"
-               class="btn btn-primary ajax-modal" data-event="modification">
-                <span class="icon icon-televerser"></span>
-                Téléverser un justificatif
-            </a>
-        <?php endif; ?>
+            <?php if ($justificatifs === [] && $justificatifsOk === true) : ?>
+                <div class="alert alert-info">
+                    <span class="icon icon-info"></span>
+                    Aucun justificatif n'est encore demandé au vu des informations renseignées
+                </div>
+             <?php endif; ?>
+            <?php if ($canModifier) : ?>
+                <a href="<?php echo $this->url("soutenance_{$typeProposition}/justificatif/ajouter-justificatif", ['id' => $object->getId()], [], true); ?>"
+                   class="btn btn-primary ajax-modal" data-event="ajout-justificatif">
+                    <span class="icon icon-televerser"></span>
+                    Téléverser un justificatif
+                </a>
+            <?php endif; ?>
 
-        <?php if ($justificatifsOk !== true) : ?>
-            <div class="alert alert-warning float-end">
-                <span class="fas fa-exclamation-triangle"></span>
-                <?php if ($object instanceof HDR) : ?>
-                    Liste des justificatifs manquants (<b>à déposer par le candidat</b>):
-                <?php else:; ?>
-                    Liste des justificatifs manquants :
-                <?php endif; ?>
-            <ul>
-            <?php foreach ($justificatifs as $justificatif) : ?>
-                <?php if($justificatif['justificatif'] === null) : ?>
-                    <li>
-                        <?php echo $justificatif['label'] ?>
-                        <?php if (isset($justificatif['membre'])) : ?>
-                            -
-                            <?php
-                                /** @var Membre $membre */
-                                $membre = $justificatif['membre'];
-                                echo $membre->getDenomination();
-                            ?>
-                        <?php endif; ?>
-                    </li>
+            <?php if ($justificatifsOk !== true) : ?>
+                <div class="alert alert-warning float-end">
+                    <span class="fas fa-exclamation-triangle"></span>
+                    <?php if ($object instanceof HDR) : ?>
+                        Liste des justificatifs manquants (<b>à déposer par le candidat</b>):
+                    <?php else:; ?>
+                        Liste des justificatifs manquants :
+                    <?php endif; ?>
+                <ul>
+                <?php foreach ($justificatifs as $justificatif) : ?>
+                    <?php if($justificatif['justificatif'] === null) : ?>
+                        <li>
+                            <?php echo $justificatif['label'] ?>
+                            <?php if (isset($justificatif['membre'])) : ?>
+                                -
+                                <?php
+                                    /** @var Membre $membre */
+                                    $membre = $justificatif['membre'];
+                                    echo $membre->getDenomination();
+                                ?>
+                            <?php endif; ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                </ul>
+                </div>
+            <?php endif; ?>
+
+            <?php
+            $typesJustificatif = [
+                NatureFichier::CODE_JUSTIFICATIF_HDR => NatureFichier::LABEL_JUSTIFICATIF_HDR,
+                NatureFichier::CODE_JUSTIFICATIF_EMERITAT => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
+                NatureFichier::CODE_JUSTIFICATIF_ETRANGER => NatureFichier::LABEL_JUSTIFICATIF_ETRANGER,
+                NatureFichier::CODE_DELOCALISATION_SOUTENANCE => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
+                NatureFichier::CODE_DELEGUATION_SIGNATURE => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
+                NatureFichier::CODE_LANGUE_ANGLAISE => NatureFichier::LABEL_LANGUE_ANGLAISE,
+                NatureFichier::CODE_DEMANDE_LABEL => NatureFichier::LABEL_DEMANDE_LABEL,
+                NatureFichier::CODE_DEMANDE_CONFIDENT => NatureFichier::LABEL_DEMANDE_CONFIDENT,
+                NatureFichier::CODE_AUTRES_JUSTIFICATIFS => NatureFichier::LABEL_AUTRES_JUSTIFICATIFS,
+            ];
+            ?>
+
+            <?php foreach ($typesJustificatif as $code => $label): ?>
+                <?php
+                    $liste = array_filter($justificatifs, function($j) use ($code) {
+                        return ($j["type"] === $code AND $j["justificatif"] !== null) AND $j["justificatif"]->estNonHistorise();}); ?>
+                <?php if (!empty($liste)) : ?>
+                    <h4>
+                        <?php echo $label; ?>
+                        <span class="badge bg-secondary"><?php echo count($liste); ?></span>
+                    </h4>
+                    <?php /** @var Justificatif $justificatif */
+                    foreach($liste as $justificatif) :
+                            $retour = $this->url("soutenance_{$typeProposition}/proposition", ['id' => $object->getId()], ['force_canonical' => true], true);
+                            /** @see \Soutenance\Controller\InterventionController::retirerAction() */
+                            $urlSuppressionJustificatif = $this->url("soutenance_{$typeProposition}/justificatif/retirer",
+                                ['id' => $object->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
+                                ["query" => ["retour" => $retour]],
+                                true); ?>
+                            <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichier, $urlSuppressionJustificatif, $canModifier, ['court' => true]); ?>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             <?php endforeach; ?>
-            </ul>
-            </div>
-        <?php endif; ?>
-
-        <?php
-        $typesJustificatif = [
-            NatureFichier::CODE_JUSTIFICATIF_HDR => NatureFichier::LABEL_JUSTIFICATIF_HDR,
-            NatureFichier::CODE_JUSTIFICATIF_EMERITAT => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
-            NatureFichier::CODE_JUSTIFICATIF_ETRANGER => NatureFichier::LABEL_JUSTIFICATIF_ETRANGER,
-            NatureFichier::CODE_DELOCALISATION_SOUTENANCE => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
-            NatureFichier::CODE_DELEGUATION_SIGNATURE => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
-            NatureFichier::CODE_LANGUE_ANGLAISE => NatureFichier::LABEL_LANGUE_ANGLAISE,
-            NatureFichier::CODE_DEMANDE_LABEL => NatureFichier::LABEL_DEMANDE_LABEL,
-            NatureFichier::CODE_DEMANDE_CONFIDENT => NatureFichier::LABEL_DEMANDE_CONFIDENT,
-            NatureFichier::CODE_AUTRES_JUSTIFICATIFS => NatureFichier::LABEL_AUTRES_JUSTIFICATIFS,
-        ];
-        ?>
-
-        <?php foreach ($typesJustificatif as $code => $label): ?>
-            <?php
-                $liste = array_filter($justificatifs, function($j) use ($code) {
-                    return ($j["type"] === $code AND $j["justificatif"] !== null) AND $j["justificatif"]->estNonHistorise();}); ?>
-            <?php if (!empty($liste)) : ?>
-                <h4>
-                    <?php echo $label; ?>
-                    <span class="badge bg-secondary"><?php echo count($liste); ?></span>
-                </h4>
-                <?php /** @var Justificatif $justificatif */
-                foreach($liste as $justificatif) :
-                        $retour = $this->url("soutenance_{$typeProposition}/proposition", ['id' => $object->getId()], ['force_canonical' => true], true);
-                        /** @see \Soutenance\Controller\InterventionController::retirerAction() */
-                        $urlSuppressionJustificatif = $this->url("soutenance_{$typeProposition}/justificatif/retirer",
-                            ['id' => $object->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
-                            ["query" => ["retour" => $retour]],
-                            true); ?>
-                        <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichier, $urlSuppressionJustificatif, $canModifier, ['court' => true]); ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        <?php endforeach; ?>
+        </div>
     </div>
 </div>
 

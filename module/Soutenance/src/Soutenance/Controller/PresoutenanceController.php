@@ -524,7 +524,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
                 if ($email === null or trim($email) === '') $email = $membre->getEmail();
                 try {
                     /** @see PresoutenanceController::convocationMembreAction() */
-                    $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($membre, $this->proposition);
+                    $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($acteur, $this->proposition);
                     $this->notifierService->trigger($notif);
                 } catch (\Notification\Exception\RuntimeException) {
                     // aucun destinataire, todo : cas à gérer !
