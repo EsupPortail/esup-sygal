@@ -212,13 +212,24 @@ replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
-# other data
+# other data : roles sans structure liée
 #
 i=$((i+1))
 OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
 # role
 printf "copy role from stdin with (FORMAT CSV, delimiter '|', HEADER);\n" > $OUTPUT_FILE && \
 psql -c "copy (select * from role where structure_id is null) to STDOUT with (FORMAT CSV, delimiter '|', HEADER);" >> $OUTPUT_FILE && \
+printf "\.\n" >> $OUTPUT_FILE
+echo "> $OUTPUT_FILE"
+
+#
+# other data : fichiers communs ayant un id permanent (ex : CHARTE-DE-DEPOT-ET-DIFFUSION-DES-THESES)
+#
+i=$((i+1))
+OUTPUT_FILE=$OUTPUT_DIR/sql/02_other/$(printf "%02d_%s.sql" $i $NAME_INSERT_DATA)
+# role
+printf "copy fichier from stdin with (FORMAT CSV, delimiter '|', HEADER);\n" > $OUTPUT_FILE && \
+psql -c "copy (select f.* from fichier f, nature_fichier nf where f.permanent_id is not null and nature_id = nf.id and nf.code = 'COMMUNS') to STDOUT with (FORMAT CSV, delimiter '|', HEADER);" >> $OUTPUT_FILE && \
 printf "\.\n" >> $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 

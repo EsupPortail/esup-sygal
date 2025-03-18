@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.5 (Debian 15.5-0+deb12u1)
--- Dumped by pg_dump version 16.3 (Ubuntu 16.3-1.pgdg20.04+1)
+-- Dumped by pg_dump version 16.4 (Ubuntu 16.4-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -50,6 +50,19 @@ CREATE TYPE public.avis_enum AS ENUM (
 
 
 ALTER TYPE public.avis_enum OWNER TO :dbuser;
+
+--
+-- Name: template_engine_enum; Type: TYPE; Schema: public; Owner: :dbuser
+--
+
+CREATE TYPE public.template_engine_enum AS ENUM (
+    'default',
+    'laminas',
+    'twig'
+);
+
+
+ALTER TYPE public.template_engine_enum OWNER TO :dbuser;
 
 --
 -- Name: app_source_id(); Type: FUNCTION; Schema: public; Owner: :dbuser
@@ -286,18 +299,18 @@ CREATE FUNCTION public.privilege__grant_privilege_to_profile(categorycode charac
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  -- insertion dans 'profil_privilege' (si pas déjà fait)
-  insert into profil_privilege (privilege_id, profil_id)
-  select p.id as privilege_id, profil.id as profil_id
-  from profil
-         join categorie_privilege cp on cp.code = categoryCode
-         join privilege p on p.categorie_id = cp.id and p.code = privilegeCode
-  where profil.role_id = profileroleid
-    and not exists(
-          select * from profil_privilege where privilege_id = p.id and profil_id = profil.id
+    -- insertion dans 'profil_privilege' (si pas déjà fait)
+    insert into profil_privilege (privilege_id, profil_id)
+    select p.id as privilege_id, profil.id as profil_id
+    from profil
+             join unicaen_privilege_categorie cp on cp.code = categoryCode
+             join unicaen_privilege_privilege p on p.categorie_id = cp.id and p.code = privilegeCode
+    where profil.role_id = profileroleid
+      and not exists(
+        select * from profil_privilege where privilege_id = p.id and profil_id = profil.id
     );
 
-  perform privilege__update_role_privilege();
+    perform privilege__update_role_privilege();
 END;
 $$;
 
@@ -319,8 +332,8 @@ BEGIN
                     insert into profil_privilege (privilege_id, profil_id)
                     select p.id as privilege_id, profil.id as profil_id
                     from profil
-                             join categorie_privilege cp on cp.code = categoryCode
-                             join privilege p on p.categorie_id = cp.id and p.code = v_priv_code
+                             join unicaen_privilege_categorie cp on cp.code = categoryCode
+                             join unicaen_privilege_privilege p on p.categorie_id = cp.id and p.code = v_priv_code
                     where profil.role_id = v_prof_role_id
                     on conflict do nothing;
                 end loop;
@@ -340,21 +353,21 @@ CREATE FUNCTION public.privilege__revoke_privilege_to_profile(categorycode chara
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  delete
-  from profil_privilege pp1
-  where exists(
-                select *
-                from profil_privilege pp
-                       join profil on pp.profil_id = profil.id and role_id = profileRoleId
-                       join privilege p on pp.privilege_id = p.id
-                       join categorie_privilege cp on p.categorie_id = cp.id
-                where p.code = privilegeCode
-                  and cp.code = categoryCode
-                  and pp.profil_id = pp1.profil_id
-                  and pp.privilege_id = pp1.privilege_id
-          );
+    delete
+    from profil_privilege pp1
+    where exists(
+        select *
+        from profil_privilege pp
+                 join profil on pp.profil_id = profil.id and role_id = profileRoleId
+                 join unicaen_privilege_privilege p on pp.privilege_id = p.id
+                 join unicaen_privilege_categorie cp on p.categorie_id = cp.id
+        where p.code = privilegeCode
+          and cp.code = categoryCode
+          and pp.profil_id = pp1.profil_id
+          and pp.privilege_id = pp1.privilege_id
+    );
 
-  perform privilege__update_role_privilege();
+    perform privilege__update_role_privilege();
 END;
 $$;
 
@@ -379,8 +392,8 @@ BEGIN
                         select *
                         from profil_privilege pp
                                  join profil on pp.profil_id = profil.id and role_id = v_prof_role_id
-                                 join privilege p on pp.privilege_id = p.id
-                                 join categorie_privilege cp on p.categorie_id = cp.id
+                                 join unicaen_privilege_privilege p on pp.privilege_id = p.id
+                                 join unicaen_privilege_categorie cp on p.categorie_id = cp.id
                         where p.code = v_priv_code
                           and cp.code = categoryCode
                           and pp.profil_id = pp1.profil_id
@@ -403,29 +416,115 @@ CREATE FUNCTION public.privilege__update_role_privilege() RETURNS void
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  -- création des 'role_privilege' manquants d'après le contenu de 'profil_to_role' et de 'profil_privilege'
-  insert into role_privilege (role_id, privilege_id)
-  select p2r.role_id, pp.privilege_id
-  from profil_to_role p2r
-         join profil pr on pr.id = p2r.profil_id
-         join profil_privilege pp on pp.profil_id = pr.id
-  where not exists(
-          select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
+    -- Création des 'role_privilege' manquants d'après le contenu de 'profil_to_role' et de 'profil_privilege'
+    insert into role_privilege (role_id, privilege_id)
+    select p2r.role_id, pp.privilege_id
+    from profil_to_role p2r
+             join profil pr on pr.id = p2r.profil_id
+             join profil_privilege pp on pp.profil_id = pr.id
+    where not exists(
+        select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
     );
 
-  -- suppression des 'role_privilege' en trop d'après le contenu de 'profil_to_role' et de 'profil_privilege'
-  delete from role_privilege rp
-  where not exists (
-          select *
-          from profil_to_role p2r
-                 join profil_privilege pp on pp.profil_id = p2r.profil_id
-          where rp.role_id = p2r.role_id and rp.privilege_id = pp.privilege_id
+    -- Suppression des 'role_privilege' existant à tort : suppression de toute attribution de privilège à un rôle lié à un profil
+    -- (via 'profil_to_role') mais dont ce dernier ne possède par ce privilège.
+    -- ATTENTION : ne pas faire de suppression des 'role_privilege' en trop d'après uniquement le contenu de 'profil_to_role' et de 'profil_privilege'
+    -- parce que des rôles ne sont associés à aucun profil (ex: "Authentifié") et ces derniers se verraient retirer tous leurs privilèges !
+    with priv_attribue_a_un_role_ayant_un_profil_nayant_pas_ce_priv as (
+        select rp.role_id, rp.privilege_id, r.libelle as role_libelle, r.structure_id, p.libelle as privilege_libelle
+        from role_privilege rp
+                 join unicaen_privilege_privilege p on rp.privilege_id = p.id
+                 join role r on rp.role_id = r.id
+                 join profil_to_role p2r on r.id = p2r.role_id
+        where not exists(select * from profil_privilege pp where pp.profil_id = p2r.profil_id and pp.privilege_id = p.id)
+    )
+    delete from role_privilege rp
+    where (rp.role_id, rp.privilege_id) in (
+        select role_id, privilege_id from priv_attribue_a_un_role_ayant_un_profil_nayant_pas_ce_priv
     );
 END;
 $$;
 
 
 ALTER FUNCTION public.privilege__update_role_privilege() OWNER TO :dbuser;
+
+--
+-- Name: role__create_roles_from_profils_for_structure(bigint); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.role__create_roles_from_profils_for_structure(p_structure_id bigint) RETURNS void
+    LANGUAGE plpgsql
+    AS $$begin
+    --
+    -- Procédure de création des rôles manquants à partir des profils structure-dépendants,
+    -- pour la structure spécifiée.
+    --
+
+    insert into role (
+        id,
+        code,
+        libelle,
+        source_code,
+        source_id,
+        role_id,
+        histo_createur_id,
+        these_dep,
+        structure_id,
+        type_structure_dependant_id
+    )
+    select
+        nextval('role_id_seq'),
+        p.role_id,
+        p.libelle,
+        s.source_code || '::' || p.role_id,
+        app_source_id(),
+        p.libelle || ' ' || case when ts.code = 'etablissement' then s.source_code else s.code end,
+        app_utilisateur_id(),
+        p.these_dep,
+        s.id,
+        s.type_structure_id
+    from structure s
+             join type_structure ts on s.type_structure_id = ts.id
+             join profil p on p.structure_type = s.type_structure_id
+    where s.id = p_structure_id
+    on conflict on constraint role_code_structure_uindex do update
+        set these_dep = excluded.these_dep,
+            libelle = excluded.libelle
+    ;
+
+    --
+    -- Création des profil_to_role manquants
+    --
+    insert into profil_to_role(profil_id, role_id)
+    select p.id, r.id
+    from role r
+             join profil p on p.role_id = r.code
+    where r.structure_id = p_structure_id
+      and not exists (select * from profil_to_role p2r where p2r.role_id = r.id)
+    order by code;
+
+    --
+    -- Attribution automatique des privilèges aux rôles, d'après ce qui est spécifié dans :
+    --   - PROFIL_TO_ROLE (profils appliqués à chaque rôle) et
+    --   - PROFIL_PRIVILEGE (privilèges accordés à chaque profil).
+    --
+    insert into role_privilege (role_id, privilege_id)
+    select p2r.role_id, pp.privilege_id
+    from profil_to_role p2r
+             join role r on p2r.role_id = r.id and r.structure_id = p_structure_id
+             join profil pr on pr.id = p2r.profil_id
+             join profil_privilege pp on pp.profil_id = pr.id
+    where not exists ( select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id)
+    order by pr.role_id
+    ;
+
+    -- ATTENTION : ne pas faire de suppression des 'role_privilege' en trop d'après le contenu de 'profil_to_role' et de 'profil_privilege'
+    -- parce que des rôles ne sont associés à aucun profil (ex: "Authentifié") et ces derniers se verraient retirer tous leurs privilèges !
+end
+$$;
+
+
+ALTER FUNCTION public.role__create_roles_from_profils_for_structure(p_structure_id bigint) OWNER TO :dbuser;
 
 --
 -- Name: str_reduce(text); Type: FUNCTION; Schema: public; Owner: :dbuser
@@ -435,14 +534,89 @@ CREATE FUNCTION public.str_reduce(str text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 BEGIN
---     RETURN utl_raw.cast_to_varchar2(str COLLATE "binary_ai");
---     return unaccent_string(str);
-    return lower(public.unaccent(str));
+    -- return lower(public.unaccent(str));
+    return lower(public.unaccent(replace(replace(str, chr(10), ''), chr(13), '')));
 END;
 $$;
 
 
 ALTER FUNCTION public.str_reduce(str text) OWNER TO :dbuser;
+
+--
+-- Name: structure_roles_update_trigger_on_ecole_doct(); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.structure_roles_update_trigger_on_ecole_doct() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$begin
+    --
+    -- Fonction du trigger permettant de réagir aux ajouts de structures afin de créer les rôles manquants.
+    --
+    if TG_OP = 'INSERT' or TG_OP = 'UPDATE' then
+        raise notice '[Trigger % on %] Creation des roles pour l''ED %', TG_NAME, TG_TABLE_NAME, new.id;
+        -- création des rôles manquants
+        perform role__create_roles_from_profils_for_structure(new.structure_id);
+        return new;
+    else
+        return coalesce(new, old);
+    end if;
+end
+$$;
+
+
+ALTER FUNCTION public.structure_roles_update_trigger_on_ecole_doct() OWNER TO :dbuser;
+
+--
+-- Name: structure_roles_update_trigger_on_etablissement(); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.structure_roles_update_trigger_on_etablissement() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$begin
+    --
+    -- Fonction du trigger permettant de réagir aux ajouts de structures afin de créer les rôles manquants.
+    --
+    if (TG_OP = 'INSERT' or TG_OP = 'UPDATE') and new.est_etab_inscription = true then
+        -- on s'intéresse seulement aux établissements d'inscription
+        if (new.est_etab_inscription = false) then
+            return new;
+        end if;
+        raise notice '[Trigger % on %] Creation des roles pour l''Etablissement %', TG_NAME, TG_TABLE_NAME, new.id;
+        -- création des rôles manquants
+        perform role__create_roles_from_profils_for_structure(new.structure_id);
+        return new;
+    else
+        return coalesce(new, old);
+    end if;
+end
+$$;
+
+
+ALTER FUNCTION public.structure_roles_update_trigger_on_etablissement() OWNER TO :dbuser;
+
+--
+-- Name: structure_roles_update_trigger_on_unite_rech(); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.structure_roles_update_trigger_on_unite_rech() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$begin
+    --
+    -- Fonction du trigger permettant de réagir aux ajouts de structures afin de créer les rôles manquants.
+    --
+    if TG_OP = 'INSERT' or TG_OP = 'UPDATE' then
+        raise notice '[Trigger % on %] Creation des roles pour l''UR %', TG_NAME, TG_TABLE_NAME, new.id;
+        -- création des rôles manquants
+        perform role__create_roles_from_profils_for_structure(new.structure_id);
+        return new;
+    else
+        return coalesce(new, old);
+    end if;
+end
+$$;
+
+
+ALTER FUNCTION public.structure_roles_update_trigger_on_unite_rech() OWNER TO :dbuser;
 
 --
 -- Name: substit__set_enabled_engine(boolean); Type: PROCEDURE; Schema: public; Owner: :dbuser
@@ -1688,7 +1862,9 @@ CREATE TABLE public.individu (
     npd_force character varying(256),
     est_substituant_modifiable boolean DEFAULT true NOT NULL,
     synchro_undelete_enabled boolean DEFAULT true NOT NULL,
-    synchro_update_on_deleted_enabled boolean DEFAULT false NOT NULL
+    synchro_update_on_deleted_enabled boolean DEFAULT false NOT NULL,
+    apatride boolean DEFAULT false NOT NULL,
+    pays_naissance_id bigint
 );
 
 
@@ -1827,8 +2003,6 @@ ALTER FUNCTION public.substit_npd_structure(structure public.structure) OWNER TO
 
 CREATE TABLE public.unite_rech (
     id bigint NOT NULL,
-    etab_support character varying(500),
-    autres_etab character varying(500),
     source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
@@ -2674,6 +2848,28 @@ $_$;
 ALTER FUNCTION public.substit_update_substitution_if_exists(type character varying, p_substitue record) OWNER TO :dbuser;
 
 --
+-- Name: these_rech_compute_haystack(character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.these_rech_compute_haystack(eds_code character varying, urs_code character varying, t_titre character varying, d_source_code character varying, id_nom_patronymique character varying, id_nom_usuel character varying, id_prenom1 character varying, a_agg character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$begin
+    return btrim(str_reduce(
+            'code-ed{' || COALESCE(eds_code, '') || '} ' ||
+            'code-ur{' || COALESCE(urs_code, '') || '} ' ||
+            'titre{' || t_titre || '} ' ||
+            'doctorant-numero{' || substr(d_source_code, "position"(d_source_code, '::') + 2) || '} ' ||
+            'doctorant-nom{' || id_nom_patronymique || ' ' || id_nom_usuel || '} ' ||
+            'doctorant-prenom{' || id_prenom1 || '} ' ||
+            'directeur-nom{' || a_agg || '} '
+        ));
+end;
+$$;
+
+
+ALTER FUNCTION public.these_rech_compute_haystack(eds_code character varying, urs_code character varying, t_titre character varying, d_source_code character varying, id_nom_patronymique character varying, id_nom_usuel character varying, id_prenom1 character varying, a_agg character varying) OWNER TO :dbuser;
+
+--
 -- Name: tmp__substit_update__logos_substit_structure(); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
@@ -2748,7 +2944,7 @@ CREATE FUNCTION public.transfert_these(fromtheseid bigint, totheseid bigint, exc
     v_except_tables varchar[] = ARRAY['acteur', 'financement', 'these_annee_univ', 'titre_acces'];
 BEGIN
     if excepttables is not null then
-        v_except_tables = excepttables;
+        v_except_tables = array_cat(v_except_tables, excepttables);
     end if;
 
     raise info 'Transfert des infos liées à la thèse % vers la thèse %...', fromtheseid, totheseid;
@@ -2764,11 +2960,12 @@ BEGIN
                 lower(table_name) <> all(v_except_tables)
         order by table_name
         loop
+            raise info '  - %.% :', v_data.table_name, v_data.column_name;
             execute 'update '||v_data.table_name||' set '||v_data.column_name||' = $1 where '||v_data.column_name||' = $2 returning id'
                 using totheseid, fromtheseid
                 into v_id;
             if v_id is null then
-                raise info '  - %.% : rien à faire', v_data.table_name, v_data.column_name;
+                raise info 'rien à faire';
                 continue;
             end if;
             insert into transfert_these_log(table_name, column_name, from_id, to_id)
@@ -2860,16 +3057,16 @@ CREATE PROCEDURE public.unicaen_indicateur_recreate_matviews()
     v_template varchar = 'create materialized view %s as %s';
 begin
     raise notice '%', 'Création des vues matérialisées manquantes...';
-    for v_result in
-        select i.* from indicateur i
-            left join pg_matviews mv on schemaname = 'public' and matviewname = 'mv_indicateur_'||i.id
-        where mv.matviewname is null
-        order by mv.matviewname
-        loop
+for v_result in
+select i.* from indicateur i
+                    left join pg_matviews mv on schemaname = 'public' and matviewname = 'mv_indicateur_'||i.id
+where mv.matviewname is null
+order by i.id
+    loop
             v_name = 'mv_indicateur_'||v_result.id;
-            execute format(v_template, v_name, v_result.requete);
-            raise notice '%', format('- %s', v_name);
-        end loop;
+raise notice '%', format('- %s...', v_name);
+execute format(v_template, v_name, v_result.requete);
+end loop;
     raise notice '%', 'Terminé.';
 end
 $$;
@@ -2887,7 +3084,6 @@ CREATE TABLE public.acteur (
     these_id bigint NOT NULL,
     role_id bigint NOT NULL,
     qualite character varying(200),
-    lib_role_compl character varying(200),
     source_code character varying(64) NOT NULL,
     source_id bigint NOT NULL,
     histo_createur_id bigint NOT NULL,
@@ -2899,7 +3095,12 @@ CREATE TABLE public.acteur (
     etablissement_id bigint,
     unite_rech_id bigint,
     etablissement_force_id bigint,
-    refonte_site boolean DEFAULT false NOT NULL
+    refonte_site boolean DEFAULT false NOT NULL,
+    acteur_ecoledoct_id bigint,
+    principal boolean DEFAULT false NOT NULL,
+    exterieur boolean DEFAULT false NOT NULL,
+    ordre smallint DEFAULT 1 NOT NULL,
+    qualite_id bigint
 );
 
 
@@ -2932,7 +3133,9 @@ CREATE TABLE public.admission_admission (
     histo_modificateur_id bigint,
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone
+    histo_destruction timestamp without time zone,
+    numero_candidature character varying(10),
+    doctorant_id bigint
 );
 
 
@@ -3129,7 +3332,7 @@ CREATE TABLE public.admission_etudiant (
     adresse_ligne4_complement character varying(38),
     adresse_code_postal bigint,
     adresse_code_commune character varying(5),
-    adresse_cp_ville_etrangere character varying(10),
+    adresse_cp_ville_etrangere character varying(38),
     numero_telephone1 character varying(20),
     numero_telephone2 character varying(20),
     courriel character varying(254),
@@ -3148,7 +3351,6 @@ CREATE TABLE public.admission_etudiant (
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
     histo_destruction timestamp without time zone,
-    numero_candidat character varying(10),
     code_commune_naissance character varying(5),
     libelle_commune_naissance character varying(50),
     adresse_nom_commune character varying(60)
@@ -3198,7 +3400,8 @@ CREATE TABLE public.admission_financement (
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
     histo_destruction timestamp without time zone,
-    etablissement_partenaire character varying(100)
+    etablissement_partenaire character varying(100),
+    financement_compl_id bigint
 );
 
 
@@ -3290,6 +3493,47 @@ ALTER SEQUENCE public.admission_inscription_id_seq OWNER TO :dbuser;
 --
 
 ALTER SEQUENCE public.admission_inscription_id_seq OWNED BY public.admission_inscription.id;
+
+
+--
+-- Name: admission_transmission; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.admission_transmission (
+    id bigint NOT NULL,
+    admission_id bigint,
+    code_voeu character varying(25),
+    code_periode character varying(25),
+    histo_createur_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id bigint,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.admission_transmission OWNER TO :dbuser;
+
+--
+-- Name: admission_transmission_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.admission_transmission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.admission_transmission_id_seq OWNER TO :dbuser;
+
+--
+-- Name: admission_transmission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.admission_transmission_id_seq OWNED BY public.admission_transmission.id;
 
 
 --
@@ -3488,18 +3732,63 @@ CREATE SEQUENCE public.attestation_id_seq
 ALTER SEQUENCE public.attestation_id_seq OWNER TO :dbuser;
 
 --
--- Name: categorie_privilege; Type: TABLE; Schema: public; Owner: :dbuser
+-- Name: autorisation_inscription; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
-CREATE TABLE public.categorie_privilege (
+CREATE TABLE public.autorisation_inscription (
     id bigint NOT NULL,
-    code character varying(150) NOT NULL,
-    libelle character varying(200) NOT NULL,
-    ordre bigint
+    individu_id bigint NOT NULL,
+    these_id bigint,
+    rapport_id bigint,
+    annee_univ bigint NOT NULL,
+    tem_autor_inscription boolean NOT NULL,
+    commentaires text,
+    histo_createur_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id bigint,
+    histo_destruction timestamp without time zone
 );
 
 
-ALTER TABLE public.categorie_privilege OWNER TO :dbuser;
+ALTER TABLE public.autorisation_inscription OWNER TO :dbuser;
+
+--
+-- Name: autorisation_inscription_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.autorisation_inscription_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.autorisation_inscription_id_seq OWNER TO :dbuser;
+
+--
+-- Name: autorisation_inscription_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.autorisation_inscription_id_seq OWNED BY public.autorisation_inscription.id;
+
+
+--
+-- Name: unicaen_privilege_categorie; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_privilege_categorie (
+    id bigint NOT NULL,
+    code character varying(150) NOT NULL,
+    libelle character varying(200) NOT NULL,
+    ordre bigint,
+    namespace character varying(255)
+);
+
+
+ALTER TABLE public.unicaen_privilege_categorie OWNER TO :dbuser;
 
 --
 -- Name: categorie_privilege_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -3519,7 +3808,7 @@ ALTER SEQUENCE public.categorie_privilege_id_seq OWNER TO :dbuser;
 -- Name: categorie_privilege_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
 --
 
-ALTER SEQUENCE public.categorie_privilege_id_seq OWNED BY public.categorie_privilege.id;
+ALTER SEQUENCE public.categorie_privilege_id_seq OWNED BY public.unicaen_privilege_categorie.id;
 
 
 --
@@ -3894,7 +4183,14 @@ ALTER SEQUENCE public.diffusion_id_seq OWNER TO :dbuser;
 CREATE TABLE public.discipline_sise (
     id bigint NOT NULL,
     code character varying(50) NOT NULL,
-    libelle character varying(100) NOT NULL
+    libelle character varying(256) NOT NULL,
+    up_to_date boolean DEFAULT false NOT NULL,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_createur_id bigint DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id bigint,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint
 );
 
 
@@ -4042,11 +4338,33 @@ ALTER SEQUENCE public.domaine_hal_id_seq OWNED BY public.domaine_hal.id;
 
 CREATE TABLE public.domaine_hal_these (
     these_id bigint NOT NULL,
-    domaine_id bigint NOT NULL
+    domaine_id bigint NOT NULL,
+    id bigint NOT NULL
 );
 
 
 ALTER TABLE public.domaine_hal_these OWNER TO :dbuser;
+
+--
+-- Name: domaine_hal_these_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.domaine_hal_these_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.domaine_hal_these_id_seq OWNER TO :dbuser;
+
+--
+-- Name: domaine_hal_these_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.domaine_hal_these_id_seq OWNED BY public.domaine_hal_these.id;
+
 
 --
 -- Name: domaine_scientifique; Type: TABLE; Schema: public; Owner: :dbuser
@@ -4484,7 +4802,8 @@ CREATE TABLE public.formation_formation (
     histo_destructeur_id integer,
     histo_destruction timestamp without time zone,
     objectif text,
-    programme text
+    programme text,
+    fiche_id bigint
 );
 
 
@@ -4707,7 +5026,8 @@ CREATE TABLE public.formation_session (
     histo_modification timestamp without time zone,
     histo_destructeur_id integer,
     histo_destruction timestamp without time zone,
-    date_fermeture_inscription timestamp without time zone
+    date_fermeture_inscription timestamp without time zone,
+    date_publication timestamp without time zone
 );
 
 
@@ -5389,19 +5709,13 @@ CREATE TABLE public.these (
     doctorant_id bigint NOT NULL,
     ecole_doct_id bigint,
     unite_rech_id bigint,
-    besoin_expurge boolean DEFAULT false NOT NULL,
-    cod_unit_rech character varying(50),
     correc_autorisee character varying(30),
-    date_autoris_soutenance timestamp without time zone,
     date_fin_confid timestamp without time zone,
     date_prem_insc timestamp without time zone,
-    date_prev_soutenance timestamp without time zone,
     date_soutenance timestamp without time zone,
     etat_these character varying(20),
-    lib_disc character varying(200),
     lib_etab_cotut character varying(100),
     lib_pays_cotut character varying(40),
-    lib_unit_rech character varying(200),
     resultat smallint,
     soutenance_autoris character varying(1),
     tem_avenant_cotut character varying(1),
@@ -5420,7 +5734,11 @@ CREATE TABLE public.these (
     correc_effectuee character varying(30) DEFAULT 'null'::character varying,
     correc_date_butoir_avec_sursis date,
     code_sise_disc character varying(64),
-    source_code_sav character varying(64)
+    etab_cotut_id bigint,
+    pays_cotut_id bigint,
+    discipline_sise_id bigint,
+    resaisir_autorisation_diffusion_depot_version_corrigee boolean,
+    resaisir_attestations_depot_version_corrigee boolean
 );
 
 
@@ -5432,6 +5750,133 @@ ALTER TABLE public.these OWNER TO :dbuser;
 
 COMMENT ON TABLE public.these IS 'Thèses par établissement.';
 
+
+--
+-- Name: type_validation; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.type_validation (
+    id bigint NOT NULL,
+    code character varying(50) NOT NULL,
+    libelle character varying(100)
+);
+
+
+ALTER TABLE public.type_validation OWNER TO :dbuser;
+
+--
+-- Name: utilisateur; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.utilisateur (
+    id bigint NOT NULL,
+    username character varying(255),
+    email character varying(255),
+    display_name character varying(100),
+    password character varying(128) NOT NULL,
+    state bigint DEFAULT 1 NOT NULL,
+    last_role_id bigint,
+    individu_id bigint,
+    password_reset_token character varying(256),
+    created_at timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    nom character varying(128),
+    prenom character varying(128)
+);
+
+
+ALTER TABLE public.utilisateur OWNER TO :dbuser;
+
+--
+-- Name: TABLE utilisateur; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.utilisateur IS 'Comptes utilisateurs s''étant déjà connecté à l''application + comptes avec mot de passe local.';
+
+
+--
+-- Name: validation; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.validation (
+    id bigint NOT NULL,
+    type_validation_id bigint NOT NULL,
+    these_id bigint NOT NULL,
+    individu_id bigint,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_createur_id bigint DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint DEFAULT 1 NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint
+);
+
+
+ALTER TABLE public.validation OWNER TO :dbuser;
+
+--
+-- Name: mv_demo_these; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE MATERIALIZED VIEW public.mv_demo_these AS
+ WITH doctorant_usurpable(id) AS (
+         SELECT d.id
+           FROM (public.doctorant d
+             JOIN public.utilisateur u ON ((u.individu_id = d.individu_id)))
+          WHERE (d.histo_destruction IS NULL)
+        )
+( SELECT t.id,
+    'Thèse soutenue, pas de demande de correction'::text AS description
+   FROM (public.these t
+     JOIN doctorant_usurpable d ON ((t.doctorant_id = d.id)))
+  WHERE ((t.histo_destruction IS NULL) AND ((t.etat_these)::text = 'S'::text) AND (NOT (EXISTS ( SELECT
+           FROM (public.validation v
+             JOIN public.type_validation tv ON ((v.type_validation_id = tv.id)))
+          WHERE (((tv.code)::text = 'CORRECTION_THESE'::text) AND (v.histo_destruction IS NULL) AND (v.these_id = t.id))))))
+  ORDER BY t.date_soutenance DESC
+ LIMIT 5)
+UNION ALL
+( SELECT t.id,
+    'Thèse soutenue, corrections demandées'::text AS description
+   FROM (public.these t
+     JOIN doctorant_usurpable d ON ((t.doctorant_id = d.id)))
+  WHERE ((t.histo_destruction IS NULL) AND ((t.etat_these)::text = 'S'::text) AND (EXISTS ( SELECT
+           FROM (public.validation v
+             JOIN public.type_validation tv ON ((v.type_validation_id = tv.id)))
+          WHERE (((tv.code)::text = 'CORRECTION_THESE'::text) AND (v.histo_destruction IS NULL) AND (v.these_id = t.id)))))
+  ORDER BY t.date_soutenance DESC
+ LIMIT 5)
+UNION ALL
+( SELECT t.id,
+    'Thèse en cours, proposition de soutenance non validée'::text AS description
+   FROM (public.these t
+     JOIN doctorant_usurpable d ON ((t.doctorant_id = d.id)))
+  WHERE ((t.histo_destruction IS NULL) AND ((t.etat_these)::text = 'E'::text) AND (EXTRACT(year FROM t.date_prem_insc) = (EXTRACT(year FROM CURRENT_TIMESTAMP) - (3)::numeric)) AND (NOT (EXISTS ( SELECT
+           FROM (public.validation v
+             JOIN public.type_validation tv ON ((v.type_validation_id = tv.id)))
+          WHERE (((tv.code)::text = 'PROPOSITION_SOUTENANCE'::text) AND (v.histo_destruction IS NULL) AND (v.these_id = t.id))))))
+  ORDER BY t.date_prem_insc
+ LIMIT 5)
+UNION ALL
+( SELECT t.id,
+    'Thèse soutenue, proposition de soutenance validée, page de couverture validée, Rdv BU non validé'::text AS description
+   FROM (public.these t
+     JOIN doctorant_usurpable d ON ((t.doctorant_id = d.id)))
+  WHERE ((t.histo_destruction IS NULL) AND ((t.etat_these)::text = 'E'::text) AND (EXTRACT(year FROM t.date_prem_insc) = (EXTRACT(year FROM CURRENT_TIMESTAMP) - (3)::numeric)) AND (EXISTS ( SELECT
+           FROM (public.validation v
+             JOIN public.type_validation tv ON ((v.type_validation_id = tv.id)))
+          WHERE (((tv.code)::text = 'PROPOSITION_SOUTENANCE'::text) AND (v.histo_destruction IS NULL) AND (v.these_id = t.id)))) AND (EXISTS ( SELECT
+           FROM (public.validation v
+             JOIN public.type_validation tv ON ((v.type_validation_id = tv.id)))
+          WHERE (((tv.code)::text = 'PAGE_DE_COUVERTURE'::text) AND (v.histo_destruction IS NULL) AND (v.these_id = t.id)))) AND (NOT (EXISTS ( SELECT
+           FROM (public.validation v
+             JOIN public.type_validation tv ON ((v.type_validation_id = tv.id)))
+          WHERE (((tv.code)::text = 'RDV_BU'::text) AND (v.histo_destruction IS NULL) AND (v.these_id = t.id))))))
+  ORDER BY t.date_prem_insc
+ LIMIT 5)
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW public.mv_demo_these OWNER TO :dbuser;
 
 --
 -- Name: these_annee_univ; Type: TABLE; Schema: public; Owner: :dbuser
@@ -5522,7 +5967,7 @@ ALTER TABLE public.soutenance_proposition OWNER TO :dbuser;
 CREATE TABLE public.soutenance_qualite (
     id bigint NOT NULL,
     libelle character varying(128) NOT NULL,
-    rang character varying(1) NOT NULL,
+    rang character varying(1),
     hdr character varying(1) NOT NULL,
     emeritat character varying(1) NOT NULL,
     histo_creation timestamp without time zone NOT NULL,
@@ -5537,39 +5982,6 @@ CREATE TABLE public.soutenance_qualite (
 
 
 ALTER TABLE public.soutenance_qualite OWNER TO :dbuser;
-
---
--- Name: type_validation; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.type_validation (
-    id bigint NOT NULL,
-    code character varying(50) NOT NULL,
-    libelle character varying(100)
-);
-
-
-ALTER TABLE public.type_validation OWNER TO :dbuser;
-
---
--- Name: validation; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.validation (
-    id bigint NOT NULL,
-    type_validation_id bigint NOT NULL,
-    these_id bigint NOT NULL,
-    individu_id bigint,
-    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_createur_id bigint DEFAULT 1 NOT NULL,
-    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint DEFAULT 1 NOT NULL,
-    histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint
-);
-
-
-ALTER TABLE public.validation OWNER TO :dbuser;
 
 --
 -- Name: nature_fichier; Type: TABLE; Schema: public; Owner: :dbuser
@@ -5627,7 +6039,7 @@ CREATE TABLE public.role (
     source_code character varying(64) NOT NULL,
     source_id bigint NOT NULL,
     role_id character varying(64) NOT NULL,
-    is_default boolean DEFAULT false,
+    is_default boolean DEFAULT false NOT NULL,
     ldap_filter character varying(255),
     attrib_auto boolean DEFAULT false NOT NULL,
     these_dep boolean DEFAULT false NOT NULL,
@@ -5678,7 +6090,7 @@ CREATE MATERIALIZED VIEW public.mv_recherche_these AS
      LEFT JOIN public.structure eds ON ((ed.structure_id = eds.id)))
      LEFT JOIN public.unite_rech ur ON ((t.unite_rech_id = ur.id)))
      LEFT JOIN public.structure urs ON ((ur.structure_id = urs.id)))
-     LEFT JOIN public.acteur a ON ((a.these_id = t.id)))
+     LEFT JOIN acteurs a ON ((a.these_id = t.id)))
      LEFT JOIN public.individu ia ON ((ia.id = a.individu_id)))
   WITH NO DATA;
 
@@ -5887,10 +6299,10 @@ CREATE SEQUENCE public.pays_id_seq
 ALTER SEQUENCE public.pays_id_seq OWNER TO :dbuser;
 
 --
--- Name: privilege; Type: TABLE; Schema: public; Owner: :dbuser
+-- Name: unicaen_privilege_privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
-CREATE TABLE public.privilege (
+CREATE TABLE public.unicaen_privilege_privilege (
     id bigint NOT NULL,
     categorie_id bigint NOT NULL,
     code character varying(150) NOT NULL,
@@ -5899,7 +6311,7 @@ CREATE TABLE public.privilege (
 );
 
 
-ALTER TABLE public.privilege OWNER TO :dbuser;
+ALTER TABLE public.unicaen_privilege_privilege OWNER TO :dbuser;
 
 --
 -- Name: privilege_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -5919,7 +6331,7 @@ ALTER SEQUENCE public.privilege_id_seq OWNER TO :dbuser;
 -- Name: privilege_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
 --
 
-ALTER SEQUENCE public.privilege_id_seq OWNED BY public.privilege.id;
+ALTER SEQUENCE public.privilege_id_seq OWNED BY public.unicaen_privilege_privilege.id;
 
 
 --
@@ -5932,11 +6344,19 @@ CREATE TABLE public.profil (
     role_id character varying(100) NOT NULL,
     structure_type bigint,
     description character varying(1024),
-    ordre bigint DEFAULT 0
+    ordre bigint DEFAULT 0,
+    these_dep boolean DEFAULT false NOT NULL
 );
 
 
 ALTER TABLE public.profil OWNER TO :dbuser;
+
+--
+-- Name: COLUMN profil.these_dep; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.profil.these_dep IS 'Indique si ce profil s''adresse à un rôle thèse-dépendant ';
+
 
 --
 -- Name: profil_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -5958,7 +6378,8 @@ ALTER SEQUENCE public.profil_id_seq OWNER TO :dbuser;
 
 CREATE TABLE public.profil_privilege (
     privilege_id bigint NOT NULL,
-    profil_id bigint NOT NULL
+    profil_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -5970,7 +6391,8 @@ ALTER TABLE public.profil_privilege OWNER TO :dbuser;
 
 CREATE TABLE public.profil_to_role (
     profil_id bigint NOT NULL,
-    role_id bigint NOT NULL
+    role_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -6283,7 +6705,8 @@ ALTER SEQUENCE public.role_id_seq OWNED BY public.role.id;
 
 CREATE TABLE public.role_privilege (
     role_id bigint NOT NULL,
-    privilege_id bigint NOT NULL
+    privilege_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -6749,8 +7172,7 @@ CREATE VIEW public.src_acteur AS
             t.id AS these_id,
             r.id AS role_id,
             eact.id AS etablissement_id,
-            tmp.lib_cps AS qualite,
-            tmp.lib_roj_compl AS lib_role_compl
+            tmp.lib_cps AS qualite
            FROM (((((public.tmp_acteur tmp
              JOIN public.source src ON ((src.id = tmp.source_id)))
              JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)))
@@ -6765,8 +7187,7 @@ CREATE VIEW public.src_acteur AS
             t.id AS these_id,
             r_pj.id AS role_id,
             eact.id AS etablissement_id,
-            tmp.lib_cps AS qualite,
-            NULL::character varying AS lib_role_compl
+            tmp.lib_cps AS qualite
            FROM ((((((public.tmp_acteur tmp
              JOIN public.source src ON ((src.id = tmp.source_id)))
              JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)))
@@ -6783,8 +7204,7 @@ CREATE VIEW public.src_acteur AS
             t.id AS these_id,
             r.id AS role_id,
             eact.id AS etablissement_id,
-            tmp.lib_cps AS qualite,
-            NULL::character varying AS lib_role_compl
+            tmp.lib_cps AS qualite
            FROM (((((public.tmp_acteur tmp
              JOIN public.source src ON ((src.id = tmp.source_id)))
              JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)))
@@ -6799,8 +7219,7 @@ CREATE VIEW public.src_acteur AS
     pre.role_id,
     COALESCE(isub.to_id, pre.individu_id) AS individu_id,
     COALESCE(esub.to_id, pre.etablissement_id) AS etablissement_id,
-    pre.qualite,
-    pre.lib_role_compl
+    pre.qualite
    FROM ((pre
      LEFT JOIN public.substit_individu isub ON ((isub.from_id = pre.individu_id)))
      LEFT JOIN public.substit_etablissement esub ON ((esub.from_id = pre.etablissement_id)));
@@ -6945,11 +7364,11 @@ CREATE VIEW public.src_domaine_hal AS
     tmp.fr_domain_s,
     tmp.en_domain_s,
     tmp.level_i,
-    ( SELECT tmp_domaine_hal.id
-           FROM public.tmp_domaine_hal
-          WHERE (tmp_domaine_hal.docid = tmp.parent_id)) AS parent_id
-   FROM (public.tmp_domaine_hal tmp
-     JOIN public.source src ON ((src.id = tmp.source_id)));
+    tmp_parent.id AS parent_id
+   FROM ((public.tmp_domaine_hal tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     LEFT JOIN public.tmp_domaine_hal tmp_parent ON ((tmp_parent.docid = tmp.parent_id)))
+  ORDER BY tmp.level_i;
 
 
 ALTER VIEW public.src_domaine_hal OWNER TO :dbuser;
@@ -7483,13 +7902,11 @@ CREATE VIEW public.src_these AS
             d.id AS doctorant_id,
             ed.id AS ecole_doct_id,
             ur.id AS unite_rech_id,
+            disc.id AS discipline_sise_id,
             tmp.lib_ths AS titre,
             tmp.eta_ths AS etat_these,
             (tmp.cod_neg_tre)::numeric AS resultat,
-            tmp.code_sise_disc,
-            tmp.lib_int1_dis AS lib_disc,
             tmp.dat_deb_ths AS date_prem_insc,
-            tmp.dat_prev_sou AS date_prev_soutenance,
             tmp.dat_sou_ths AS date_soutenance,
             tmp.dat_fin_cfd_ths AS date_fin_confid,
             tmp.lib_etab_cotut,
@@ -7501,14 +7918,14 @@ CREATE VIEW public.src_these AS
                     ELSE tmp.correction_effectuee
                 END)::character varying(30) AS correc_effectuee,
             tmp.tem_sou_aut_ths AS soutenance_autoris,
-            tmp.dat_aut_sou_ths AS date_autoris_soutenance,
             tmp.tem_avenant_cotut,
             tmp.dat_abandon AS date_abandon,
             tmp.dat_transfert_dep AS date_transfert
-           FROM ((((((public.tmp_these tmp
+           FROM (((((((public.tmp_these tmp
              JOIN public.source src ON ((src.id = tmp.source_id)))
              JOIN public.etablissement e ON ((e.id = src.etablissement_id)))
              JOIN public.doctorant d ON (((d.source_code)::text = (tmp.doctorant_id)::text)))
+             LEFT JOIN public.discipline_sise disc ON (((disc.code)::text = (tmp.code_sise_disc)::text)))
              LEFT JOIN public.ecole_doct ed ON (((ed.source_code)::text = (tmp.ecole_doct_id)::text)))
              LEFT JOIN public.unite_rech ur ON (((ur.source_code)::text = (tmp.unite_rech_id)::text)))
              LEFT JOIN version_corrigee_deposee vcd ON (((vcd.source_code)::text = (tmp.source_code)::text)))
@@ -7520,13 +7937,11 @@ CREATE VIEW public.src_these AS
     COALESCE(esub.to_id, pre.etablissement_id) AS etablissement_id,
     COALESCE(edsub.to_id, pre.ecole_doct_id) AS ecole_doct_id,
     COALESCE(ursub.to_id, pre.unite_rech_id) AS unite_rech_id,
+    pre.discipline_sise_id,
     pre.titre,
     pre.etat_these,
     pre.resultat,
-    pre.code_sise_disc,
-    pre.lib_disc,
     pre.date_prem_insc,
-    pre.date_prev_soutenance,
     pre.date_soutenance,
     pre.date_fin_confid,
     pre.lib_etab_cotut,
@@ -7534,7 +7949,6 @@ CREATE VIEW public.src_these AS
     pre.correc_autorisee,
     pre.correc_effectuee,
     pre.soutenance_autoris,
-    pre.date_autoris_soutenance,
     pre.tem_avenant_cotut,
     pre.date_abandon,
     pre.date_transfert
@@ -8121,6 +8535,38 @@ CREATE SEQUENCE public.these_id_seq
 ALTER SEQUENCE public.these_id_seq OWNER TO :dbuser;
 
 --
+-- Name: these_rech; Type: VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE VIEW public.these_rech AS
+ WITH acteurs AS (
+         SELECT a_1.these_id,
+            string_agg(COALESCE((ia.nom_usuel)::text, ''::text), ' '::text) AS agg
+           FROM (((public.acteur a_1
+             JOIN public.these t_1 ON (((a_1.these_id = t_1.id) AND (t_1.histo_destruction IS NULL))))
+             JOIN public.role r ON (((a_1.role_id = r.id) AND ((r.code)::text = ANY ((ARRAY['D'::character varying, 'K'::character varying])::text[])))))
+             JOIN public.individu ia ON (((ia.id = a_1.individu_id) AND (ia.histo_destruction IS NULL))))
+          WHERE (a_1.histo_destruction IS NULL)
+          GROUP BY a_1.these_id
+        )
+ SELECT ('now'::text)::timestamp without time zone AS date_creation,
+    t.source_code AS code_these,
+    d.source_code AS code_doctorant,
+    ed.source_code AS code_ecole_doct,
+    public.these_rech_compute_haystack(eds.code, urs.code, t.titre, d.source_code, id.nom_patronymique, id.nom_usuel, id.prenom1, (a.agg)::character varying) AS haystack
+   FROM (((((((public.these t
+     JOIN public.doctorant d ON ((d.id = t.doctorant_id)))
+     JOIN public.individu id ON ((id.id = d.individu_id)))
+     LEFT JOIN public.ecole_doct ed ON ((t.ecole_doct_id = ed.id)))
+     LEFT JOIN public.structure eds ON ((ed.structure_id = eds.id)))
+     LEFT JOIN public.unite_rech ur ON ((t.unite_rech_id = ur.id)))
+     LEFT JOIN public.structure urs ON ((ur.structure_id = urs.id)))
+     LEFT JOIN acteurs a ON ((a.these_id = t.id)));
+
+
+ALTER VIEW public.these_rech OWNER TO :dbuser;
+
+--
 -- Name: titre_acces; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -8140,7 +8586,9 @@ CREATE TABLE public.titre_acces (
     histo_modificateur_id bigint,
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone
+    histo_destruction timestamp without time zone,
+    etab_id bigint,
+    pays_id bigint
 );
 
 
@@ -9187,7 +9635,9 @@ CREATE TABLE public.unicaen_parametre_parametre (
     description text,
     valeurs_possibles text,
     valeur text,
-    ordre integer DEFAULT 9999
+    ordre integer DEFAULT 9999,
+    affichable boolean DEFAULT true NOT NULL,
+    modifiable boolean DEFAULT true NOT NULL
 );
 
 
@@ -9298,7 +9748,8 @@ CREATE TABLE public.unicaen_renderer_template (
     document_sujet text NOT NULL,
     document_corps text NOT NULL,
     document_css text,
-    namespace character varying(256)
+    namespace character varying(256),
+    engine public.template_engine_enum DEFAULT 'default'::public.template_engine_enum NOT NULL
 );
 
 
@@ -9323,6 +9774,100 @@ ALTER SEQUENCE public.unicaen_renderer_template_id_seq OWNER TO :dbuser;
 --
 
 ALTER SEQUENCE public.unicaen_renderer_template_id_seq OWNED BY public.unicaen_renderer_template.id;
+
+
+--
+-- Name: unicaen_utilisateur_role; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_utilisateur_role (
+    id integer NOT NULL,
+    role_id character varying(64) NOT NULL,
+    libelle character varying(255) NOT NULL,
+    description text NOT NULL,
+    is_default boolean DEFAULT false NOT NULL,
+    is_auto boolean DEFAULT false NOT NULL,
+    parent_id integer,
+    ldap_filter character varying(255) DEFAULT NULL::character varying,
+    accessible_exterieur boolean DEFAULT true NOT NULL,
+    displayed boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_utilisateur_role OWNER TO :dbuser;
+
+--
+-- Name: unicaen_utilisateur_role_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_utilisateur_role_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.unicaen_utilisateur_role_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_utilisateur_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_utilisateur_role_id_seq OWNED BY public.unicaen_utilisateur_role.id;
+
+
+--
+-- Name: unicaen_utilisateur_role_linker; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_utilisateur_role_linker (
+    user_id integer NOT NULL,
+    role_id integer NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_utilisateur_role_linker OWNER TO :dbuser;
+
+--
+-- Name: unicaen_utilisateur_user; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_utilisateur_user (
+    id integer NOT NULL,
+    username character varying(255) NOT NULL,
+    display_name character varying(255) NOT NULL,
+    email character varying(255),
+    password character varying(128) DEFAULT 'application'::character varying NOT NULL,
+    state boolean DEFAULT true NOT NULL,
+    password_reset_token character varying(256),
+    last_role_id integer
+);
+
+
+ALTER TABLE public.unicaen_utilisateur_user OWNER TO :dbuser;
+
+--
+-- Name: unicaen_utilisateur_user_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_utilisateur_user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.unicaen_utilisateur_user_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_utilisateur_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_utilisateur_user_id_seq OWNED BY public.unicaen_utilisateur_user.id;
 
 
 --
@@ -9471,35 +10016,6 @@ CREATE SEQUENCE public.user_token_id_seq
 ALTER SEQUENCE public.user_token_id_seq OWNER TO :dbuser;
 
 --
--- Name: utilisateur; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.utilisateur (
-    id bigint NOT NULL,
-    username character varying(255),
-    email character varying(255),
-    display_name character varying(100),
-    password character varying(128) NOT NULL,
-    state bigint DEFAULT 1 NOT NULL,
-    last_role_id bigint,
-    individu_id bigint,
-    password_reset_token character varying(256),
-    created_at timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    nom character varying(128),
-    prenom character varying(128)
-);
-
-
-ALTER TABLE public.utilisateur OWNER TO :dbuser;
-
---
--- Name: TABLE utilisateur; Type: COMMENT; Schema: public; Owner: :dbuser
---
-
-COMMENT ON TABLE public.utilisateur IS 'Comptes utilisateurs s''étant déjà connecté à l''application + comptes avec mot de passe local.';
-
-
---
 -- Name: utilisateur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
@@ -9552,24 +10068,18 @@ CREATE VIEW public.v_diff_acteur AS
                     WHEN (((d.qualite)::text <> (s.qualite)::text) OR ((d.qualite IS NULL) AND (s.qualite IS NOT NULL)) OR ((d.qualite IS NOT NULL) AND (s.qualite IS NULL))) THEN 1
                     ELSE 0
                 END AS u_qualite,
-                CASE
-                    WHEN (((d.lib_role_compl)::text <> (s.lib_role_compl)::text) OR ((d.lib_role_compl IS NULL) AND (s.lib_role_compl IS NOT NULL)) OR ((d.lib_role_compl IS NOT NULL) AND (s.lib_role_compl IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_lib_role_compl,
             s.source_id AS s_source_id,
             s.these_id AS s_these_id,
             s.role_id AS s_role_id,
             s.individu_id AS s_individu_id,
             s.etablissement_id AS s_etablissement_id,
             s.qualite AS s_qualite,
-            s.lib_role_compl AS s_lib_role_compl,
             d.source_id AS d_source_id,
             d.these_id AS d_these_id,
             d.role_id AS d_role_id,
             d.individu_id AS d_individu_id,
             d.etablissement_id AS d_etablissement_id,
-            d.qualite AS d_qualite,
-            d.lib_role_compl AS d_lib_role_compl
+            d.qualite AS d_qualite
            FROM ((public.acteur d
              FULL JOIN public.src_acteur s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
              JOIN public.source src ON (((src.id = COALESCE(s.source_id, d.source_id)) AND (src.importable = true))))
@@ -9583,23 +10093,20 @@ CREATE VIEW public.v_diff_acteur AS
     diff.u_individu_id,
     diff.u_etablissement_id,
     diff.u_qualite,
-    diff.u_lib_role_compl,
     diff.s_source_id,
     diff.s_these_id,
     diff.s_role_id,
     diff.s_individu_id,
     diff.s_etablissement_id,
     diff.s_qualite,
-    diff.s_lib_role_compl,
     diff.d_source_id,
     diff.d_these_id,
     diff.d_role_id,
     diff.d_individu_id,
     diff.d_etablissement_id,
-    diff.d_qualite,
-    diff.d_lib_role_compl
+    diff.d_qualite
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_these_id) + diff.u_role_id) + diff.u_individu_id) + diff.u_etablissement_id) + diff.u_qualite) + diff.u_lib_role_compl))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_source_id + diff.u_these_id) + diff.u_role_id) + diff.u_individu_id) + diff.u_etablissement_id) + diff.u_qualite))));
 
 
 ALTER VIEW public.v_diff_acteur OWNER TO :dbuser;
@@ -10442,6 +10949,10 @@ CREATE VIEW public.v_diff_these AS
                     ELSE 0
                 END AS u_unite_rech_id,
                 CASE
+                    WHEN ((d.discipline_sise_id <> s.discipline_sise_id) OR ((d.discipline_sise_id IS NULL) AND (s.discipline_sise_id IS NOT NULL)) OR ((d.discipline_sise_id IS NOT NULL) AND (s.discipline_sise_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_discipline_sise_id,
+                CASE
                     WHEN (((d.titre)::text <> (s.titre)::text) OR ((d.titre IS NULL) AND (s.titre IS NOT NULL)) OR ((d.titre IS NOT NULL) AND (s.titre IS NULL))) THEN 1
                     ELSE 0
                 END AS u_titre,
@@ -10454,21 +10965,9 @@ CREATE VIEW public.v_diff_these AS
                     ELSE 0
                 END AS u_resultat,
                 CASE
-                    WHEN (((d.code_sise_disc)::text <> (s.code_sise_disc)::text) OR ((d.code_sise_disc IS NULL) AND (s.code_sise_disc IS NOT NULL)) OR ((d.code_sise_disc IS NOT NULL) AND (s.code_sise_disc IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_code_sise_disc,
-                CASE
-                    WHEN (((d.lib_disc)::text <> (s.lib_disc)::text) OR ((d.lib_disc IS NULL) AND (s.lib_disc IS NOT NULL)) OR ((d.lib_disc IS NOT NULL) AND (s.lib_disc IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_lib_disc,
-                CASE
                     WHEN ((d.date_prem_insc <> s.date_prem_insc) OR ((d.date_prem_insc IS NULL) AND (s.date_prem_insc IS NOT NULL)) OR ((d.date_prem_insc IS NOT NULL) AND (s.date_prem_insc IS NULL))) THEN 1
                     ELSE 0
                 END AS u_date_prem_insc,
-                CASE
-                    WHEN ((d.date_prev_soutenance <> s.date_prev_soutenance) OR ((d.date_prev_soutenance IS NULL) AND (s.date_prev_soutenance IS NOT NULL)) OR ((d.date_prev_soutenance IS NOT NULL) AND (s.date_prev_soutenance IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_date_prev_soutenance,
                 CASE
                     WHEN ((d.date_soutenance <> s.date_soutenance) OR ((d.date_soutenance IS NULL) AND (s.date_soutenance IS NOT NULL)) OR ((d.date_soutenance IS NOT NULL) AND (s.date_soutenance IS NULL))) THEN 1
                     ELSE 0
@@ -10498,10 +10997,6 @@ CREATE VIEW public.v_diff_these AS
                     ELSE 0
                 END AS u_soutenance_autoris,
                 CASE
-                    WHEN ((d.date_autoris_soutenance <> s.date_autoris_soutenance) OR ((d.date_autoris_soutenance IS NULL) AND (s.date_autoris_soutenance IS NOT NULL)) OR ((d.date_autoris_soutenance IS NOT NULL) AND (s.date_autoris_soutenance IS NULL))) THEN 1
-                    ELSE 0
-                END AS u_date_autoris_soutenance,
-                CASE
                     WHEN (((d.tem_avenant_cotut)::text <> (s.tem_avenant_cotut)::text) OR ((d.tem_avenant_cotut IS NULL) AND (s.tem_avenant_cotut IS NOT NULL)) OR ((d.tem_avenant_cotut IS NOT NULL) AND (s.tem_avenant_cotut IS NULL))) THEN 1
                     ELSE 0
                 END AS u_tem_avenant_cotut,
@@ -10518,13 +11013,11 @@ CREATE VIEW public.v_diff_these AS
             s.etablissement_id AS s_etablissement_id,
             s.ecole_doct_id AS s_ecole_doct_id,
             s.unite_rech_id AS s_unite_rech_id,
+            s.discipline_sise_id AS s_discipline_sise_id,
             s.titre AS s_titre,
             s.etat_these AS s_etat_these,
             s.resultat AS s_resultat,
-            s.code_sise_disc AS s_code_sise_disc,
-            s.lib_disc AS s_lib_disc,
             s.date_prem_insc AS s_date_prem_insc,
-            s.date_prev_soutenance AS s_date_prev_soutenance,
             s.date_soutenance AS s_date_soutenance,
             s.date_fin_confid AS s_date_fin_confid,
             s.lib_etab_cotut AS s_lib_etab_cotut,
@@ -10532,7 +11025,6 @@ CREATE VIEW public.v_diff_these AS
             s.correc_autorisee AS s_correc_autorisee,
             s.correc_effectuee AS s_correc_effectuee,
             s.soutenance_autoris AS s_soutenance_autoris,
-            s.date_autoris_soutenance AS s_date_autoris_soutenance,
             s.tem_avenant_cotut AS s_tem_avenant_cotut,
             s.date_abandon AS s_date_abandon,
             s.date_transfert AS s_date_transfert,
@@ -10541,13 +11033,11 @@ CREATE VIEW public.v_diff_these AS
             d.etablissement_id AS d_etablissement_id,
             d.ecole_doct_id AS d_ecole_doct_id,
             d.unite_rech_id AS d_unite_rech_id,
+            d.discipline_sise_id AS d_discipline_sise_id,
             d.titre AS d_titre,
             d.etat_these AS d_etat_these,
             d.resultat AS d_resultat,
-            d.code_sise_disc AS d_code_sise_disc,
-            d.lib_disc AS d_lib_disc,
             d.date_prem_insc AS d_date_prem_insc,
-            d.date_prev_soutenance AS d_date_prev_soutenance,
             d.date_soutenance AS d_date_soutenance,
             d.date_fin_confid AS d_date_fin_confid,
             d.lib_etab_cotut AS d_lib_etab_cotut,
@@ -10555,7 +11045,6 @@ CREATE VIEW public.v_diff_these AS
             d.correc_autorisee AS d_correc_autorisee,
             d.correc_effectuee AS d_correc_effectuee,
             d.soutenance_autoris AS d_soutenance_autoris,
-            d.date_autoris_soutenance AS d_date_autoris_soutenance,
             d.tem_avenant_cotut AS d_tem_avenant_cotut,
             d.date_abandon AS d_date_abandon,
             d.date_transfert AS d_date_transfert
@@ -10571,13 +11060,11 @@ CREATE VIEW public.v_diff_these AS
     diff.u_etablissement_id,
     diff.u_ecole_doct_id,
     diff.u_unite_rech_id,
+    diff.u_discipline_sise_id,
     diff.u_titre,
     diff.u_etat_these,
     diff.u_resultat,
-    diff.u_code_sise_disc,
-    diff.u_lib_disc,
     diff.u_date_prem_insc,
-    diff.u_date_prev_soutenance,
     diff.u_date_soutenance,
     diff.u_date_fin_confid,
     diff.u_lib_etab_cotut,
@@ -10585,7 +11072,6 @@ CREATE VIEW public.v_diff_these AS
     diff.u_correc_autorisee,
     diff.u_correc_effectuee,
     diff.u_soutenance_autoris,
-    diff.u_date_autoris_soutenance,
     diff.u_tem_avenant_cotut,
     diff.u_date_abandon,
     diff.u_date_transfert,
@@ -10594,13 +11080,11 @@ CREATE VIEW public.v_diff_these AS
     diff.s_etablissement_id,
     diff.s_ecole_doct_id,
     diff.s_unite_rech_id,
+    diff.s_discipline_sise_id,
     diff.s_titre,
     diff.s_etat_these,
     diff.s_resultat,
-    diff.s_code_sise_disc,
-    diff.s_lib_disc,
     diff.s_date_prem_insc,
-    diff.s_date_prev_soutenance,
     diff.s_date_soutenance,
     diff.s_date_fin_confid,
     diff.s_lib_etab_cotut,
@@ -10608,7 +11092,6 @@ CREATE VIEW public.v_diff_these AS
     diff.s_correc_autorisee,
     diff.s_correc_effectuee,
     diff.s_soutenance_autoris,
-    diff.s_date_autoris_soutenance,
     diff.s_tem_avenant_cotut,
     diff.s_date_abandon,
     diff.s_date_transfert,
@@ -10617,13 +11100,11 @@ CREATE VIEW public.v_diff_these AS
     diff.d_etablissement_id,
     diff.d_ecole_doct_id,
     diff.d_unite_rech_id,
+    diff.d_discipline_sise_id,
     diff.d_titre,
     diff.d_etat_these,
     diff.d_resultat,
-    diff.d_code_sise_disc,
-    diff.d_lib_disc,
     diff.d_date_prem_insc,
-    diff.d_date_prev_soutenance,
     diff.d_date_soutenance,
     diff.d_date_fin_confid,
     diff.d_lib_etab_cotut,
@@ -10631,12 +11112,11 @@ CREATE VIEW public.v_diff_these AS
     diff.d_correc_autorisee,
     diff.d_correc_effectuee,
     diff.d_soutenance_autoris,
-    diff.d_date_autoris_soutenance,
     diff.d_tem_avenant_cotut,
     diff.d_date_abandon,
     diff.d_date_transfert
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((((((((((((diff.u_source_id + diff.u_doctorant_id) + diff.u_etablissement_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_titre) + diff.u_etat_these) + diff.u_resultat) + diff.u_code_sise_disc) + diff.u_lib_disc) + diff.u_date_prem_insc) + diff.u_date_prev_soutenance) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_lib_etab_cotut) + diff.u_lib_pays_cotut) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_date_autoris_soutenance) + diff.u_tem_avenant_cotut) + diff.u_date_abandon) + diff.u_date_transfert))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((((((((((((((diff.u_source_id + diff.u_doctorant_id) + diff.u_etablissement_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_discipline_sise_id) + diff.u_titre) + diff.u_etat_these) + diff.u_resultat) + diff.u_date_prem_insc) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_lib_etab_cotut) + diff.u_lib_pays_cotut) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_tem_avenant_cotut) + diff.u_date_abandon) + diff.u_date_transfert))));
 
 
 ALTER VIEW public.v_diff_these OWNER TO :dbuser;
@@ -11160,8 +11640,8 @@ CREATE VIEW public.v_extract_theses AS
     substr((d.source_code)::text, (strpos((d.source_code)::text, '::'::text) + 2)) AS num_etudiant,
     th.source_code AS num_these,
     th.titre,
-    th.code_sise_disc,
-    th.lib_disc,
+    disc.code AS code_sise_disc,
+    disc.libelle AS lib_disc,
     dirs.identites AS dirs,
     codirs.identites AS codirs,
     coencs.identites AS coencs,
@@ -11183,7 +11663,6 @@ CREATE VIEW public.v_extract_theses AS
     to_char(th.date_prem_insc, 'DD/MM/YYYY'::text) AS date_prem_insc,
     to_char(th.date_abandon, 'DD/MM/YYYY'::text) AS date_abandon,
     to_char(th.date_transfert, 'DD/MM/YYYY'::text) AS date_transfert,
-    to_char(th.date_prev_soutenance, 'DD/MM/YYYY'::text) AS date_prev_soutenance,
     to_char(th.date_soutenance, 'DD/MM/YYYY'::text) AS date_soutenance,
     to_char(th.date_fin_confid, 'DD/MM/YYYY'::text) AS date_fin_confid,
     round(((((th.date_soutenance)::date - (th.date_prem_insc)::date))::numeric / 30.5), 2) AS duree_these_mois,
@@ -11230,13 +11709,14 @@ CREATE VIEW public.v_extract_theses AS
             WHEN (rcsi.annee IS NOT NULL) THEN concat(rcsi.annee, '/', (rcsi.annee + 1))
             ELSE NULL::text
         END AS dernier_rapport_csi
-   FROM ((((((((((((((((((((((public.these th
+   FROM (((((((((((((((((((((((public.these th
      JOIN public.doctorant d ON ((th.doctorant_id = d.id)))
      JOIN public.individu di ON ((d.individu_id = di.id)))
      LEFT JOIN public.individu_compl dic ON (((di.id = dic.individu_id) AND (dic.histo_destruction IS NULL))))
      LEFT JOIN mails_contacts mc ON ((mc.individu_id = di.id)))
      JOIN public.etablissement e ON ((d.etablissement_id = e.id)))
      JOIN public.structure se ON ((e.structure_id = se.id)))
+     LEFT JOIN public.discipline_sise disc ON ((disc.id = th.discipline_sise_id)))
      LEFT JOIN public.ecole_doct ed ON ((th.ecole_doct_id = ed.id)))
      LEFT JOIN public.structure sed ON ((ed.structure_id = sed.id)))
      LEFT JOIN public.unite_rech ur ON ((th.unite_rech_id = ur.id)))
@@ -12638,6 +13118,13 @@ ALTER TABLE ONLY public.admission_inscription ALTER COLUMN id SET DEFAULT nextva
 
 
 --
+-- Name: admission_transmission id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.admission_transmission ALTER COLUMN id SET DEFAULT nextval('public.admission_transmission_id_seq'::regclass);
+
+
+--
 -- Name: admission_type_validation id; Type: DEFAULT; Schema: public; Owner: :dbuser
 --
 
@@ -12659,10 +13146,10 @@ ALTER TABLE ONLY public.admission_verification ALTER COLUMN id SET DEFAULT nextv
 
 
 --
--- Name: categorie_privilege id; Type: DEFAULT; Schema: public; Owner: :dbuser
+-- Name: autorisation_inscription id; Type: DEFAULT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.categorie_privilege ALTER COLUMN id SET DEFAULT nextval('public.categorie_privilege_id_seq'::regclass);
+ALTER TABLE ONLY public.autorisation_inscription ALTER COLUMN id SET DEFAULT nextval('public.autorisation_inscription_id_seq'::regclass);
 
 
 --
@@ -12698,6 +13185,13 @@ ALTER TABLE ONLY public.doctorant_mission_enseignement ALTER COLUMN id SET DEFAU
 --
 
 ALTER TABLE ONLY public.domaine_hal ALTER COLUMN id SET DEFAULT nextval('public.domaine_hal_id_seq'::regclass);
+
+
+--
+-- Name: domaine_hal_these id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.domaine_hal_these ALTER COLUMN id SET DEFAULT nextval('public.domaine_hal_these_id_seq'::regclass);
 
 
 --
@@ -12817,13 +13311,6 @@ ALTER TABLE ONLY public.individu_compl ALTER COLUMN id SET DEFAULT nextval('publ
 --
 
 ALTER TABLE ONLY public.individu_role_etablissement ALTER COLUMN id SET DEFAULT nextval('public.individu_role_etablissement_id_seq'::regclass);
-
-
---
--- Name: privilege id; Type: DEFAULT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.privilege ALTER COLUMN id SET DEFAULT nextval('public.privilege_id_seq'::regclass);
 
 
 --
@@ -13044,6 +13531,20 @@ ALTER TABLE ONLY public.unicaen_parametre_parametre ALTER COLUMN id SET DEFAULT 
 
 
 --
+-- Name: unicaen_privilege_categorie id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_privilege_categorie ALTER COLUMN id SET DEFAULT nextval('public.categorie_privilege_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_privilege_privilege id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_privilege_privilege ALTER COLUMN id SET DEFAULT nextval('public.privilege_id_seq'::regclass);
+
+
+--
 -- Name: unicaen_renderer_macro id; Type: DEFAULT; Schema: public; Owner: :dbuser
 --
 
@@ -13062,6 +13563,20 @@ ALTER TABLE ONLY public.unicaen_renderer_rendu ALTER COLUMN id SET DEFAULT nextv
 --
 
 ALTER TABLE ONLY public.unicaen_renderer_template ALTER COLUMN id SET DEFAULT nextval('public.unicaen_renderer_template_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_utilisateur_role id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_utilisateur_role ALTER COLUMN id SET DEFAULT nextval('public.unicaen_utilisateur_role_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_utilisateur_user id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_utilisateur_user ALTER COLUMN id SET DEFAULT nextval('public.unicaen_utilisateur_user_id_seq'::regclass);
 
 
 --

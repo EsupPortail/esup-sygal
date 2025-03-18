@@ -14,11 +14,11 @@ from type_structure ts
 where {ETAB_COMUE} = 1
 ;
 
-insert into etablissement (id, structure_id, domaine, source_id, source_code, est_comue, histo_createur_id, histo_modificateur_id)
+insert into etablissement (id, structure_id, domaine, source_id, source_code, est_comue, est_membre, histo_createur_id, histo_modificateur_id)
 select
   nextval('etablissement_id_seq'), s.id,
   '{ETAB_COMUE_DOMAINE}', --> domaine à personnaliser
-  1, 'COMUE', true, 1, 1
+  1, 'COMUE', true, false, 1, 1
 from structure s
 where s.source_code = 'COMUE'
 ;
