@@ -167,7 +167,7 @@ class PropositionJuryRule implements RuleInterface
     private function isValiditeForcee(): bool
     {
         // dès lors que la date de soutenance est passée, tout est considéré comme valide !
-        return ($dateSoutenance = $this->proposition->getDate()) !== null
+        return ($dateSoutenance = clone $this->proposition->getDate()) !== null
             && $dateSoutenance->setTime(0,0) < new DateTime('today');
     }
 }
