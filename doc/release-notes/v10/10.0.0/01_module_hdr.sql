@@ -635,11 +635,11 @@ FROM (VALUES ('NB_MIN_RAPPORTEUR', 'Nombre minimal de rapporteurs', NULL, 'Numbe
               '<p>N''est que indicatif car ne peut &ecirc;tre <em>enforced</em> dans certaines disciplines.</p>',
               'String', '0', 400),
              ('DOC_DELEGATION_SIGNATURE', 'Formulaire de délégation de signature', NULL, 'String',
-              '/fichier/telecharger/permanent/DEMANDE_DELEGATION_SIGNATURE', 2200),
+              '/fichier/telecharger/permanent/DEMANDE_DELEGATION_SIGNATURE_HDR', 2200),
              ('DOC_DELOCALISATION', 'Formulaire de délocalisation de la soutenance', NULL, 'String',
-              '/fichier/telecharger/permanent/DEMANDE_DELOCALISATION_SOUTENANCE', 2100),
+              '/fichier/telecharger/permanent/DEMANDE_DELOCALISATION_SOUTENANCE_HDR', 2100),
              ('DOC_CONFIDENTIALITE', 'Formulaire de demande de confidentialité', NULL, 'String',
-              '/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE', 2500),
+              '/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE_HDR', 2500),
              ('DELAI_INTERVENTION', 'Délai permettant aux garants d''intervenir [-j jour:+j jour]', NULL, 'Number',
               '21', 1200)
      )
