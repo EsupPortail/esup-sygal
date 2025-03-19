@@ -194,6 +194,9 @@ class TheseService extends BaseService
         $titre = str_replace("\n",' ', $titre);
         $pdcData->setTitre($titre);
         $pdcData->setSpecialite((string)$these->getDiscipline());
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            $pdcData->setComue($comue);
+        }
         if ($these->getEtablissement()) {
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
         }

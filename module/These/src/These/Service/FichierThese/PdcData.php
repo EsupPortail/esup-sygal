@@ -4,6 +4,7 @@ namespace These\Service\FichierThese;
 
 use DateTime;
 use Individu\Entity\Db\Individu;
+use Structure\Entity\Db\Etablissement;
 use These\Entity\Db\Acteur;
 
 /** Les informations ici sont des chaines de caractères */
@@ -12,6 +13,7 @@ class PdcData
     private ?string $titre = null;
     /** @var string */
     private $specialite;
+    private ?Etablissement $comue;
     /** @var string */
     private $etablissement;
     /** @var string */
@@ -146,6 +148,17 @@ class PdcData
     public function setSpecialite($specialite)
     {
         $this->specialite = $specialite;
+        return $this;
+    }
+
+    public function getComue(): ?Etablissement
+    {
+        return $this->comue;
+    }
+
+    public function setComue(?Etablissement $comue): static
+    {
+        $this->comue = $comue;
         return $this;
     }
 

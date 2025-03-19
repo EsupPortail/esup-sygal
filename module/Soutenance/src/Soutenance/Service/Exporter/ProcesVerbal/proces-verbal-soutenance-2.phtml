@@ -97,38 +97,58 @@ use These\Service\FichierThese\PdcData;
     }
 
 </style>
-<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
 
-<div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
-    <?php if ($informations->getLogoCOMUE() !== null): ?>
-        <img src="<?php echo $informations->getLogoCOMUE() ?>" />
-    <?php else : ?>
-        <span style='background-color:red;'>
+<?php if ($comue = $informations->getComue()): ?>
+
+    <div style="width:25%; float:left; position:absolute; top: 20px; left: 20px">
+        <?php if ($informations->getLogoCOMUE() !== null): ?>
+            <img src="<?php echo $informations->getLogoCOMUE() ?>" />
+        <?php else : ?>
+            <span style='background-color:red;'>
                 Logo COMUE manquant
             </span>
-    <?php endif; ?>
-</div>
-<div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
-    <?php if ($informations->getLogoEtablissement() !== null): ?>
-        <img src="<?php echo $informations->getLogoEtablissement() ?>" />
-    <?php else : ?>
-        <span style='background-color:red;'>
+        <?php endif; ?>
+    </div>
+    <div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+        <?php if ($informations->getLogoEtablissement() !== null): ?>
+            <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+        <?php else : ?>
+            <span style='background-color:red;'>
                 Logo ETAB manquant
         </span>
-    <?php endif; ?>
-</div>
+        <?php endif; ?>
+    </div>
 
-<h1 style="text-align:center; position:absolute; top: 60px; left: 30%" >
-    COMUE Normandie Université <br/>
-    Arrêté du 25 mai 2016
-</h1>
+    <h1 style="text-align:center; position:absolute; top: 60px; left: 30%" >
+        COMUE <?php echo $comue ?> <br/>
+        Arrêté du 25 mai 2016
+    </h1>
+
+<?php else: ?>
+
+    <div style="width:25%; float:right; position:absolute; top: 20px; right: 20px ">
+        <?php if ($informations->getLogoEtablissement() !== null): ?>
+            <img src="<?php echo $informations->getLogoEtablissement() ?>" />
+        <?php else : ?>
+            <span style='background-color:red;'>
+                Logo ETAB manquant
+        </span>
+        <?php endif; ?>
+    </div>
+
+    <h1 style="text-align:center; position:absolute; top: 60px; left: 30%" >
+        <?php echo $informations->getEtablissement() ?> <br/>
+        Arrêté du 25 mai 2016
+    </h1>
+
+<?php endif; ?>
 
 <br/>
 <br/>
 <br/>
 
 <h2 style="text-align:center;">
-    Année université
+    Année universitaire
     <?php if ($informations->getAnneeUniversitaire() !== null) : ?>
         <?php echo $informations->getAnneeUniversitaire(); ?>
     <?php else : ?>

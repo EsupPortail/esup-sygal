@@ -21,6 +21,7 @@ on cachera le message orange pour les rôles suivants :
 - [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les co-directeurs de thèse
 - [FIX] Envoi de mail (créé à partir de Renderer) pouvait planter si une structure ne possédait pas de sigle
 - [FIX] Suppression des mentions en dur de l'université ou de la COMUE de Normandie.
+- [FIX] Génération PDF (rapports, avis et PV de soutenance) : l'existence d'une COMUE était prise à tort pour acquise.
 
 9.3.1
 -----
