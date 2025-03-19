@@ -13,6 +13,7 @@ Journal des modifications
 - [FIX] Envoi vers STEP-STAR : pas de balise INE du tout dans le fichier TEF si l'INE du doctorant est vide.
 - [FIX] Envoi vers STEP-STAR : retour au même 'Content ID' qu'aux 1er envois (utilisation de doctorant.individu.supannId) car c'est l'identifiant unique STEP-STAR et il doit être immuable. 
 - [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les co-directeurs de thèse
+- [FIX] Envoi de mail (créé à partir de Renderer) pouvait planter si une structure ne possédait pas de sigle
 
 9.3.1
 -----

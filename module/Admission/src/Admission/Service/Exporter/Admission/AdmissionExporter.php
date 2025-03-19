@@ -70,8 +70,8 @@ class AdmissionExporter{
             $entry = [];
             /** @var Etudiant $etudiant */
             $etudiant = $admission->getEtudiant()->first();
-            if($sexe = $etudiant->getSexe()){
-                $sexe = rtrim($etudiant->getSexe(), '.') === "M" ? "M" : "F";
+            if($sexe = $admission->getIndividu()->getCivilite()){
+                $sexe = rtrim($sexe, '.') === "M" ? "M" : "F";
             }
             $entry['numero_candidat'] = $admission->getNumeroCandidature();
             $entry['sexe'] = $sexe;

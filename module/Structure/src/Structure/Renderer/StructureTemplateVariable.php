@@ -17,7 +17,7 @@ class StructureTemplateVariable extends AbstractTemplateVariable
     /** @noinspection PhpUnused */
     public function getSigle(): string
     {
-        return $this->structureConcrete->getStructure()->getSigle();
+        return $this->structureConcrete->getStructure()->getSigle() ?? "";
     }
 
     /** @noinspection PhpUnused */
