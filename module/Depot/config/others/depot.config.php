@@ -60,6 +60,7 @@ return [
                         'privileges' => [
                             DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
                             DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS,
+                            DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS,
                             DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
                             DepotPrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
                             DepotPrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,

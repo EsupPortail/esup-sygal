@@ -30,6 +30,7 @@ $canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourc
 $canEditThese = $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_SES_THESES) || $this->isAllowed($these,ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES) ;
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
+$canConsulterInformationsCorrectionAttendue = $this->isAllowed($these, DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS);
 
 $modifierStructuresEvent = 'event-modifier-structures';
 $modifierDirectionEvent = 'event-modifier-direction';
@@ -316,51 +317,62 @@ switch ($these->getEtatThese()){
                         $canEditForcageCorrectionAutorisee = false;
                     }
                 }
+
                 ?>
                 <dl>
-                    <dt class="col-md-3 <?php echo $class ?>"><?php echo $titre ?></dt>
-                    <dd class="col-md-9 <?php echo $class ?>">
-                        <p>
-                            <?php echo $reponse ?>
-                            <?php if ($canEditForcageCorrectionAutorisee): ?>
-                                <?php if ($these->isCorrectionAutoriseeForcee()): ?>
-                                    <em>Cette valeur est forcée.</em>
+                    <?php if($canConsulterInformationsCorrectionAttendue) : ?>
+                        <dt class="col-md-3 <?php echo $class ?>"><?php echo $titre ?></dt>
+                        <dd class="col-md-9 <?php echo $class ?>">
+                            <p>
+                                <?php echo $reponse ?>
+                                <?php if ($canEditForcageCorrectionAutorisee): ?>
+                                    <?php if ($these->isCorrectionAutoriseeForcee()): ?>
+                                        <em>Cette valeur est forcée.</em>
+                                    <?php endif ?>
+                                    <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info btn-forcage-correction ajax-modal"
+                                       data-event="event-correction-autorisee-forcee-modified"
+                                       title="Forçage du témoin de corrections attendues"
+                                    >Forçage</a>
                                 <?php endif ?>
-                                <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info btn-forcage-correction ajax-modal"
-                                   data-event="event-correction-autorisee-forcee-modified"
-                                   title="Forçage du témoin de corrections attendues"
-                                >Forçage</a>
+                            </p>
+                            <?php if ($these->isCorrectionAutorisee()): ?>
+                                <?php if ($dateSoutenance = $these->getDateSoutenance()): ?>
+                                    <p>
+                                        Date butoir :
+                                        <?php if ($these->getDateButoirDepotVersionCorrigeeAvecSursis()): ?>
+                                            <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?> (sursis inclus)
+                                        <?php else: ?>
+                                            <abbr title="<?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> après la date de soutenance">
+                                                <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
+                                            </abbr>
+                                        <?php endif ?>
+                                        <?php if ($this->isAllowed($these, DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
+                                            <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                                               data-event="event-sursis-correction-modified"
+                                               title="Accorder un sursis"
+                                            >
+                                                <span class="fa fa-clock"></span>
+                                                Accorder un sursis
+                                            </a>
+                                        <?php endif ?>
+                                    </p>
+                                <?php endif ?>
                             <?php endif ?>
-                        </p>
-                        <?php if ($these->isCorrectionAutorisee()): ?>
-                            <?php if ($dateSoutenance = $these->getDateSoutenance()): ?>
+                            <?php if ($message): ?>
                                 <p>
-                                    Date butoir :
-                                    <?php if ($these->getDateButoirDepotVersionCorrigeeAvecSursis()): ?>
-                                        <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?> (sursis inclus)
-                                    <?php else: ?>
-                                        <abbr title="<?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> après la date de soutenance">
-                                            <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
-                                        </abbr>
-                                    <?php endif ?>
-                                    <?php if ($this->isAllowed($these, DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
-                                        <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
-                                           data-event="event-sursis-correction-modified"
-                                           title="Accorder un sursis"
-                                        >
-                                            <span class="fa fa-clock"></span>
-                                            Accorder un sursis
-                                        </a>
-                                    <?php endif ?>
+                                    <?php echo $message ?>
                                 </p>
                             <?php endif ?>
-                        <?php endif ?>
-                        <?php if ($message): ?>
+                        </dd>
+                    <?php else:
+                        $class = null; ?>
+                        <dt class="col-md-3 <?php echo $class ?>"><?php echo $titre ?></dt>
+                        <dd class="col-md-9 <?php echo $class ?>">
                             <p>
-                                <?php echo $message ?>
+                                <?php echo $reponse ?>
                             </p>
-                        <?php endif ?>
-                    </dd>
+                        </dd>
+                    <?php endif; ?>
                 </dl>
             </div>
         </dl>

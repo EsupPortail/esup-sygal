@@ -77,5 +77,6 @@ line;enabled;privilege;isTheseEnCours;isTheseSoutenue;isCorrectionAttendue;isDat
 78;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
 79;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
 80;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+83;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;

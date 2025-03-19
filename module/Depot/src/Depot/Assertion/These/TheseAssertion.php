@@ -4,6 +4,7 @@ namespace Depot\Assertion\These;
 
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
+use Application\Entity\Db\Role;
 use Application\Service\UserContextService;
 use Depot\Acl\WfEtapeResource;
 use Depot\Entity\Db\WfEtape;
@@ -79,6 +80,20 @@ class TheseAssertion extends AbstractAssertion
                 return $this->isAllowed(new WfEtapeResource(WfEtape::CODE_RDV_BU_VALIDATION_BU, $these));
             case $privilege === DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE:
                 return $this->theseEntityAssertion->isStructureDuRoleRespectee();
+            case $privilege === DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS:
+                if(!$this->theseEntityAssertion->isStructureDuRoleRespectee()) return false;
+                $role = $this->userContextService->getSelectedIdentityRole();
+                if (!$role) return false;
+                if($these->estSoutenue() && $these->getCorrectionEffectuee() === "O"){
+                    switch($role->getCode()){
+                        case Role::CODE_DOCTORANT:
+                        case Role::CODE_DIRECTEUR_THESE:
+                        case Role::CODE_CODIRECTEUR_THESE:
+                        case Role::CODE_RESP_UR:
+                        case Role::CODE_GEST_UR:
+                            return false;
+                    }
+                }
         }
 
         return true;

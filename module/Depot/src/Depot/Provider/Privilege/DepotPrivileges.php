@@ -15,6 +15,7 @@ class DepotPrivileges extends Privileges
      */
     const THESE_SAISIE_CORREC_AUTORISEE_FORCEE      = 'these-saisie-correc-autorisee-forcee';
     const THESE_CORREC_AUTORISEE_ACCORDER_SURSIS    = 'these-accorder-sursis-correction';
+    const THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS    = 'these-consultation-correction-autorisee-informations';
 
     /**
      * Page de couverture

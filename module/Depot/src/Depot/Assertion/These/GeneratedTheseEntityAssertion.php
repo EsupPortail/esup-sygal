@@ -11,7 +11,7 @@ use Application\Assertion\Exception\UnexpectedPrivilegeException as UnexpectedPr
  * module/Depot/data/TheseEntityAssertion.csv'.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 15/01/2024 14:36:43
+ * @date 19/03/2025 11:26:22
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -518,17 +518,24 @@ abstract class GeneratedTheseEntityAssertion
             return true;
         }
 
-        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS) {
         //--------------------------------------------------------------------------------------
             /* line 81 */
             $this->linesTrace[] = '/* line 81 */';
             return true;
         }
 
-        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
             /* line 82 */
             $this->linesTrace[] = '/* line 82 */';
+            return true;
+        }
+
+        if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */) {
+        //--------------------------------------------------------------------------------------
+            /* line 83 */
+            $this->linesTrace[] = '/* line 83 */';
             return true;
         }
 
@@ -704,8 +711,9 @@ line;enabled;privilege;isTheseEnCours;isTheseSoutenue;isCorrectionAttendue;isDat
 78;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;1:0;;;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
 79;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
 80;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+81;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_CONSULTATION_CORREC_AUTORISEE_INFORMATIONS;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+82;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+83;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 EOT;
     }
 }
