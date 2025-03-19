@@ -280,7 +280,7 @@ class AdmissionService extends BaseService
     }
 
     /**
-     * Genere la texte "M XXXX XXXXX, Le président de l'Universite de Caen Normandie"
+     * Genere la texte "M XXXX XXXXX, Le président de l'Universite de Xxxx"
      * @var Admission $admission
      * @return string
      */

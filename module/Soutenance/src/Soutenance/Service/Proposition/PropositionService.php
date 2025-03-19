@@ -379,7 +379,7 @@ class PropositionService extends BaseService
     }
 
     /**
-     * Genere la texte "M Pierre Denis, Le président de l'Universite de Caen Normandie"
+     * Genere la texte "M Pierre Denis, Le président de l'Universite de Xxxxx"
      * @var These $these
      * @return string
      */

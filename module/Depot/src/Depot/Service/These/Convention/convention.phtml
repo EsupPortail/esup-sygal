@@ -13,6 +13,7 @@ use These\Entity\Db\These;
  * @var string      $libEtablissement
  * @var string      $libEtablissementA
  * @var string      $libEtablissementLe
+ * @var Etablissement|null $comue
  *
  * @var Etablissement $etablissement
  * @var string $logo
@@ -35,14 +36,14 @@ use These\Entity\Db\These;
 <div style="text-align: center; margin-bottom: 30px;">
     <h1>CONVENTION DE MISE EN LIGNE<br>D'UNE THÈSE SOUTENUE</h1>
 
-    <img src="<?php echo $logo; ?>" height="100px" alt="Logo de Normandie Université" />
-<!--    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />-->
+    <img src="<?php echo $logo; ?>" height="100px" alt="Logo de l'établissement ou de la COMUE" />
+<!--    <img src="var:logo" height="100px" alt="Logo de l'établissement ou de la COMUE" />-->
 </div>
 
 <p>
     En application de la Charte de dépôt et de diffusion des thèses votée par le
-    Conseil Académique de Normandie Université le 28/11/2016, il est convenu ce qui suit
-    entre Normandie Université, représentée par le chef d'établissement,
+    Conseil Académique de <?php echo $comue ?: ($libEtablissementLe . $libEtablissement) ?>, il est convenu ce qui suit
+    entre <?php echo $comue ?: ($libEtablissementLe . $libEtablissement) ?>, structure représentée par le chef d'établissement,
     et l’auteur identifié ci-dessous :
 </p>
 <p>

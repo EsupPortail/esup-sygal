@@ -1427,6 +1427,7 @@ class DepotController extends AbstractController
             'libEtablissementA'  => $libEtablissementA,
             'libEtablissementLe' => $libEtablissementLe,
             'libEtablissementDe' => $libEtablissementDe,
+            'comue'              => $this->etablissementService->fetchEtablissementComue(),
         ]);
         $exporter->export('Convention_MEL.pdf');
         exit;

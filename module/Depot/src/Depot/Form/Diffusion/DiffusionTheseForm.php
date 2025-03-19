@@ -230,7 +230,7 @@ class DiffusionTheseForm extends Form
             'type'       => 'Checkbox',
             'name'       => 'certifCharteDiff',
             'options'    => [
-                'label'              => "L'auteur certifie avoir pris connaissance de la charte de dépôt et de diffusion des thèses de Normandie Université",
+                'label'              => "L'auteur certifie avoir pris connaissance de la charte de dépôt et de diffusion des thèses",
                 'use_hidden_element' => true,
                 'unchecked_value'    => '' // indispensable car validateur NotEmpty
             ],

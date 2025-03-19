@@ -78,6 +78,7 @@ class IndexController extends AbstractController
 
         return new ViewModel([
             'theses' => $theses,
+            'comue' => $this->etablissementService->fetchEtablissementComue(),
         ]);
     }
 

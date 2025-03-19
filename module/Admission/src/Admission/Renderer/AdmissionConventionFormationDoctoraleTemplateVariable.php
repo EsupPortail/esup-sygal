@@ -221,7 +221,7 @@ class AdmissionConventionFormationDoctoraleTemplateVariable extends AbstractTemp
                 : ""
         ];
 
-        $signatairesToPrint[] = ["La présidence de Normandie Université", ""];
+        $signatairesToPrint[] = ["La présidence", ""];
 
         $str = "<table id='signataires-convention'>";
 

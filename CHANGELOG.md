@@ -20,6 +20,7 @@ on cachera le message orange pour les rôles suivants :
 - [FIX] Envoi vers STEP-STAR : retour au même 'Content ID' qu'aux 1er envois (utilisation de doctorant.individu.supannId) car c'est l'identifiant unique STEP-STAR et il doit être immuable. 
 - [FIX] Module Soutenance : la liste des membres du jury pouvant être président de jury affichait les co-directeurs de thèse
 - [FIX] Envoi de mail (créé à partir de Renderer) pouvait planter si une structure ne possédait pas de sigle
+- [FIX] Suppression des mentions en dur de l'université ou de la COMUE de Normandie.
 
 9.3.1
 -----

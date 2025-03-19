@@ -4,6 +4,7 @@
  * @see \Soutenance\Controller\IndexController::indexActeurAction()
  *
  * @var These[] $theses
+ * @var \Structure\Entity\Db\Etablissement|null $comue
  */
 
 use These\Entity\Db\These;
@@ -36,9 +37,9 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 
 <strong>Attention, votre jury doit respecter les règles suivantes :</strong>
     <ul>
-        <li> le jury doit inclure deux rapporteurs, extérieurs aux établissements membres de la ComUE Normandie Université, et soit de rang A (Professeur des universités, Directeur de recherche, ...), soit d’un niveau équivalent (Professeur ou personnalité exerçant à l’étranger qui peuvent justifier d’un statut équivalent), soit de rang B détenteur d’une HDR (Maître de Conférence-HDR, Chargé de Recherche-HDR) ;</li>
+        <li> le jury doit inclure deux rapporteurs, extérieurs <?php echo $comue ? "aux établissements membres de $comue" : "à l'établissement d'inscription" ?>, et soit de rang A (Professeur des universités, Directeur de recherche, ...), soit d’un niveau équivalent (Professeur ou personnalité exerçant à l’étranger qui peuvent justifier d’un statut équivalent), soit de rang B détenteur d’une HDR (Maître de Conférence-HDR, Chargé de Recherche-HDR) ;</li>
         <li> au moins la moitié des membres doivent être de rang A (Professeur des universités, Directeur de recherche, ...) ou équivalents (Professeur ou personnalité à l’étranger qui peuvent justifier d’un statut équivalent) ; </li>
-        <li> au moins la moitié des membres doivent être extérieurs aux établissements membres de la ComUE Normandie Université. </li>
+        <li> au moins la moitié des membres doivent être extérieurs <?php echo $comue ? "aux établissements membres de $comue" : "à l'établissement d'inscription" ?>. </li>
     </ul>
 
     <u>N.B. :</u> En fonction des disciplines, le jury doit respecter un équilibre entre hommes et femmes..

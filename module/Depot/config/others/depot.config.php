@@ -1085,7 +1085,7 @@ return [
 
                     "<p>La thèse est consultable sur internet via le portail national des thèses (<a href=\"http://www.theses.fr\">www.theses.fr</a>), " .
                     "sans authentification. La thèse peut également être accessible depuis des plateformes de diffusion choisies par " .
-                    "Normandie Université dans le cadre de sa politique de valorisation scientifique " .
+                    "l'établissement d'inscription dans le cadre de sa politique de valorisation scientifique " .
                     "(exemple : <a href=\"http://tel.archives-ouvertes.fr\">http://tel.archives-ouvertes.fr</a>). </p>" =>
                         function (Diffusion $d) {
                             return $d->getAutorisMel() === (int)Diffusion::AUTORISATION_OUI_IMMEDIAT;

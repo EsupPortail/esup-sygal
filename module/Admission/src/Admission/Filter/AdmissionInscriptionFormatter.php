@@ -34,7 +34,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
             $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
             $pays = $inscription->getPaysCoTutelle() ? $inscription->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
             $str = "- Vu la convention de co-tutelle internationale de thèse entre l’établissement <b>".
-                $etablissementInscription."</b> (Normandie) et <b>".$pays."</b>";
+                $etablissementInscription."</b> et <b>".$pays."</b>";
             return $str;
         }
     }
@@ -110,8 +110,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
             $etablissementLaboratoireUR = $inscription->getEtablissementLaboratoireRecherche();
             $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
             $etablissementPartenaire = $etablissementPartenaire ?: " <b>(Aucune information déclarée concernant l'employeur)</b>";
-            $str = "- Vu la convention de collaboration entre l’employeur <b>".$etablissementPartenaire."</b>, le salarié doctorant, l’établissement d’inscription <b>".$etablissementInscription."</b>
-            (Normandie)";
+            $str = "- Vu la convention de collaboration entre l’employeur <b>".$etablissementPartenaire."</b>, le salarié doctorant, l’établissement d’inscription <b>".$etablissementInscription."</b>";
 
             if ($inscription->getEtablissementLaboratoireRecherche()) {
                 $str .= " et, l’établissement hébergeant le laboratoire de recherche

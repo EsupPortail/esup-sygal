@@ -6,8 +6,8 @@ return [
             'accueil' => [
                 'pages' => [
                     'doctorat' => [
-                        'label' => 'Le doctorat en Normandie',
-                        'title' => "Informations sur le doctorat et sa gestion en Normandie"
+                        'label' => 'Le doctorat',
+                        'title' => "Informations sur le doctorat et sa gestion"
                     ],
                     'ecoles-doctorales' => [
                         'label' => 'Les Ecoles Doctorales normandes',
