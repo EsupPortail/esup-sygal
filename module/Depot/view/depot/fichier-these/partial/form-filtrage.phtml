@@ -13,9 +13,10 @@ use Application\View\Renderer\PhpRenderer;
  * @param array $queryParams
  * @return string
  */
-$urlFiltrer = function ($paramName, $paramValue, $queryParams) {
+$that = $this;
+$urlFiltrer = function ($paramName, $paramValue, $queryParams) use ($that) {
     $queryParams[$paramName] = $paramValue;
-    return $this->url('fichier/deposes', [], ['query' => $queryParams], true);
+    return $that->url('fichier/deposes', [], ['query' => $queryParams], true);
 };
 
 /**

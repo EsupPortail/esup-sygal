@@ -17,10 +17,11 @@ use Application\View\Renderer\PhpRenderer;
  * @param array  $queryParams
  * @return string
  */
-$urlFiltrer = function ($paramName, $paramValue, $queryParams) {
+$that = $this;
+$urlFiltrer = function ($paramName, $paramValue, $queryParams) use ($that) {
     $queryParams[$paramName] = $paramValue;
 
-    return $this->url('gestion-privilege', [], ['query' => $queryParams], true);
+    return $that->url('gestion-privilege', [], ['query' => $queryParams], true);
 };
 
 echo $this->filterPanel([

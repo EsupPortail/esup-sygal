@@ -15,10 +15,11 @@ use Application\View\Renderer\PhpRenderer;
  * @param array  $queryParams
  * @return string
  */
-$urlFiltrer = function ($paramName, $paramValue, $queryParams) {
+$that = $this;
+$urlFiltrer = function ($paramName, $paramValue, $queryParams) use ($that) {
     $queryParams[$paramName] = $paramValue;
 
-    return $this->url('profil', [], ['query' => $queryParams], true);
+    return $that->url('profil', [], ['query' => $queryParams], true);
 };
 
 echo $this->filterPanel([
