@@ -14,6 +14,7 @@ on cachera le message orange pour les rôles suivants :
   - Doctorant
   - Direction/Co-direction de thèse
   - Responsable/Gestionnaire UR
+- Script de purge des fichiers/répertoires temporaires : inclusion de ceux générés par le module StepStar et datant de plus de 14j.
 - [FIX] Page des comptes utilisateurs : erreur 'Type of Application\Controller\UtilisateurController::$shibService must be UnicaenAuthentification\Service\ShibService'.
 - [FIX] Envoi vers STEP-STAR : pas de balise INE du tout dans le fichier TEF si l'INE du doctorant est vide.
 - [FIX] Envoi vers STEP-STAR : retour au même 'Content ID' qu'aux 1er envois (utilisation de doctorant.individu.supannId) car c'est l'identifiant unique STEP-STAR et il doit être immuable. 

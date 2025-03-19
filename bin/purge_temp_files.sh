@@ -2,6 +2,10 @@
 
 TMPDIR=/tmp
 
+# motifs des fichiers à supprimer s'ils datent de plus de 14j :
+patterns14j=(
+    'sygal_stepstar_*'         # fichiers/répertoires temporaires générés par le module StepStar
+)
 # motifs des fichiers à supprimer s'ils datent de plus de 7j :
 patterns7j=(
     'sygal_fusion_*.pdf' # résultat de fusion de la page de couverture et de la thèse
@@ -17,14 +21,20 @@ patterns1j=(
     'run-sql-*'                # logs d'exécution d'instructions SQL (import)
 )
 
+echo "Suppression des fichiers de plus de 14j..."
+for pattern in ${patterns14j[*]}
+do
+    find ${TMPDIR}/${pattern} -maxdepth 1 -type f -mtime +14 -exec rm -rf {} \;
+done
+
 echo "Suppression des fichiers de plus de 7j..."
 for pattern in ${patterns7j[*]}
 do
-    find ${TMPDIR}/${pattern} -maxdepth 1 -type f -mtime +7 -exec rm {} \;
+    find ${TMPDIR}/${pattern} -maxdepth 1 -type f -mtime +7 -exec rm -rf {} \;
 done
 
 echo "Suppression des fichiers de plus de 1j..."
 for pattern in ${patterns1j[*]}
 do
-    find ${TMPDIR}/${pattern} -maxdepth 1 -type f -mtime +1 -exec rm {} \;
+    find ${TMPDIR}/${pattern} -maxdepth 1 -type f -mtime +1 -exec rm -rf {} \;
 done
