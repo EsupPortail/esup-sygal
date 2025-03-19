@@ -68,7 +68,7 @@ PGPASSWORD='xxxxxx' \
 - Emplacement de la doc concernant l'install de la bdd :
 
 ```bash
-export DB_DOC_DIR="../../doc/database"
+export DB_DOC_DIR="../../../doc/database"
 ```
 
 - Diff avec la doc actuelle, exemple :
