@@ -6,7 +6,6 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
-use Application\Service\AnomalieServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
@@ -25,7 +24,6 @@ class IndicateurController extends AbstractActionController {
     use IndividuServiceAwareTrait;
     use TheseServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use AnomalieServiceAwareTrait;
     use IndicateurServiceAwareTrait;
     use StructureServiceAwareTrait;
 
