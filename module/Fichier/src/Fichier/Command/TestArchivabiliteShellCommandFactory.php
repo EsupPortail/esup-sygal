@@ -7,6 +7,10 @@ use Webmozart\Assert\Assert;
 
 class TestArchivabiliteShellCommandFactory
 {
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): TestArchivabiliteShellCommand
     {
         $config = $container->get('config');
@@ -18,6 +22,14 @@ class TestArchivabiliteShellCommandFactory
         Assert::keyExists($options, 'script_path', "La clé %s est introuvable dans la config 'archivabilite'");
         $scriptPath = $config['sygal']['archivabilite']['script_path'];
 
-        return new TestArchivabiliteShellCommand($scriptPath, $options);
+        $wsUrl =  $options['ws_url'] ?? null;
+
+        $command = new TestArchivabiliteShellCommand($scriptPath, $options);
+
+        if ($wsUrl !== null) {
+            $command->setUrl($wsUrl);
+        }
+
+        return $command;
     }
 }

@@ -19,10 +19,16 @@ return [
                 'css_file_path' => APPLICATION_DIR . '/module/Depot/view/depot/depot/page-de-couverture/pagedecouverture.css',
             ],
         ],
+        //
+        // Options pour le test d'archivabilité du manuscrit de thèse (fait appel au web service "Facile" du CINES).
+        //
         'archivabilite' => [
+            // URL du web service "Facile" du CINES
+            'ws_url' => 'https://facile.cines.fr/xml',
+            // activation et config du proxy éventuel
             'proxy' => [
                 'enabled' => true,
-                'proxy_host' => 'http://proxy.unicaen.fr',
+                'proxy_host' => 'http://proxy.domain.fr',
                 'proxy_port' => 3128,
             ],
         ],

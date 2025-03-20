@@ -11,17 +11,11 @@ class TestArchivabiliteShellCommand extends ShellCommand
     /**
      * @var string Chemin absolu du script à exécuter.
      */
-    protected $scriptPath;
+    protected string $scriptPath;
 
-    /**
-     * @var string
-     */
-    protected $url;
+    protected ?string $url = null;
 
-    /**
-     * @var int
-     */
-    protected $maxExecutionTime;
+    protected ?int $maxExecutionTime = null;
 
     /**
      * @var array
@@ -37,41 +31,30 @@ class TestArchivabiliteShellCommand extends ShellCommand
     }
 
     /**
-     * ValidationFichierCinesCommand constructor.
+     * Constructeur.
      *
-     * @param null $scriptPath Chemin absolu du script à exécuter.
+     * @param string $scriptPath Chemin absolu du script à exécuter.
      * @param array $options
      */
-    public function __construct($scriptPath = null, array $options = [])
+    public function __construct(string $scriptPath, array $options = [])
     {
         $this->scriptPath = $scriptPath;
         $this->options = $options;
     }
 
-    /**
-     * @param string $url
-     * @return self
-     */
     public function setUrl(string $url): self
     {
         $this->url = $url;
         return $this;
     }
 
-    /**
-     * @param int|null $maxExecutionTime
-     * @return self
-     */
-    public function setMaxExecutionTime(int $maxExecutionTime = null): self
+    public function setMaxExecutionTime(?int $maxExecutionTime): self
     {
         $this->maxExecutionTime = $maxExecutionTime;
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function generateCommandLine()
+    public function generateCommandLine(): void
     {
         $command = sprintf('%s %s --file "%s" %s %s',
             $this->generateEnvVarsString(),
@@ -105,11 +88,6 @@ class TestArchivabiliteShellCommand extends ShellCommand
         return implode(' ', $envVars);
     }
 
-    /**
-     * @param array $output
-     * @param int $returnCode
-     * @return \Fichier\Command\TestArchivabiliteShellCommandResult
-     */
     public function createResult(array $output, int $returnCode): ShellCommandResult
     {
         return new TestArchivabiliteShellCommandResult($output, $returnCode);

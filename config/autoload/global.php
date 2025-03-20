@@ -40,10 +40,17 @@ $config = [
                 'css_file_path' => APPLICATION_DIR . '/module/Depot/view/depot/depot/page-de-couverture/pagedecouverture.css',
             ],
         ],
-        // Options pour le test d'archivabilité
+        //
+        // Options pour le test d'archivabilité du manuscrit de thèse (fait appel au web service "Facile" du CINES).
+        //
         'archivabilite' => [
+            // URL du web service "Facile" du CINES
+            'ws_url' => 'https://facile.cines.fr/xml',
+            // emplacement du script bash testant la réponse du ws
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',
-            'script_path'          => __DIR__ . '/../../bin/validation_cines.sh',
+            // emplacement du script bash réalisant l'appel du ws
+            'script_path' => __DIR__ . '/../../bin/validation_cines.sh',
+            // activation et config du proxy éventuel
             'proxy' => [
                 'enabled' => false,
                 //'proxy_host' => 'http://proxy.unicaen.fr',

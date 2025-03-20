@@ -1,6 +1,6 @@
 # Sonde nagios / shinken pour FACILE
 
-Mail d'Alexandre GRANIER (granier@cines.fr) du 16/12/2016 :
+Mail du CINES ranier@cines.fr) du 16/12/2016 :
 
     Bonjour,
     
@@ -31,5 +31,4 @@ Mail d'Alexandre GRANIER (granier@cines.fr) du 16/12/2016 :
     CINES, Centre Informatique National de l’Enseignement Supérieur
     950, rue de Saint Priest
     34097 MONTPELLIER cedex 5
-    Tél. : 04 67 14 14 73
 
