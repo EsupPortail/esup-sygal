@@ -43,7 +43,7 @@ return [
                 'data_tabs' => [
                     FormationStatsXlsxExport::FORMATION_DATA_TAB => [
                         'view_name' => 'v_formation_export',
-                        'view_columns' => 'formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
+                        'view_columns' => 'module_libelle formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
                     ],
                     FormationStatsXlsxExport::ENQUETE_DATA_TAB => [
                         'view_name' => 'v_formation_enquete_export',
@@ -54,24 +54,24 @@ return [
         ],
     ],
 
-    'xlsx_exports' => [
-        FormationStatsXlsxExport::class => [
-            'factory' => FormationStatsXlsxExportFactory::class,
-            'alias' => FormationStatsXlsxExport::CODE,
-            'writer_class' => ExcelDataTablesXlsxWriter::class,
-            'input_file_path' => __DIR__ . '/../../resources/formation_stats_export.xlsx',
-            'data_tabs' => [
-                FormationStatsXlsxExport::FORMATION_DATA_TAB => [
-                    'view_name' => 'v_formation_export',
-                    'view_columns' => 'formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
-                ],
-                FormationStatsXlsxExport::ENQUETE_DATA_TAB => [
-                    'view_name' => 'v_formation_enquete_export',
-                    'view_columns' => 'formation_id	formation_libelle	session_id	question_categorie	question_libelle	reponse_niveau	reponse_commentaire	reponse_date',
-                ],
-            ],
-        ],
-    ],
+//    'xlsx_exports' => [
+//        FormationStatsXlsxExport::class => [
+//            'factory' => FormationStatsXlsxExportFactory::class,
+//            'alias' => FormationStatsXlsxExport::CODE,
+//            'writer_class' => ExcelDataTablesXlsxWriter::class,
+//            'input_file_path' => __DIR__ . '/../../resources/formation_stats_export.xlsx',
+//            'data_tabs' => [
+//                FormationStatsXlsxExport::FORMATION_DATA_TAB => [
+//                    'view_name' => 'v_formation_export',
+//                    'view_columns' => 'formation_id	formation_titre	session_id	session_intervenants	session_modalite	session_type	session_structures_valides	session_etab_orga	session_responsable	session_nb_nonclasses	session_nb_liste_princ	session_nb_liste_compl	seance_id	seance_annee_debut	seance_debut	seance_fin	seance_nb_h	seance_nb_presents	seance_nb_absents	seance_nb_presents_etab',
+//                ],
+//                FormationStatsXlsxExport::ENQUETE_DATA_TAB => [
+//                    'view_name' => 'v_formation_enquete_export',
+//                    'view_columns' => 'formation_id	formation_libelle	session_id	question_categorie	question_libelle	reponse_niveau	reponse_commentaire	reponse_date',
+//                ],
+//            ],
+//        ],
+//    ],
 
     'bjyauthorize' => [
         'rule_providers' => [

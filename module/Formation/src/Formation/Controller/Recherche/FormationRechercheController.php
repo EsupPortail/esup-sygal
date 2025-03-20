@@ -82,6 +82,7 @@ class FormationRechercheController extends AbstractRechercheController
         }
 
         $export->setContext($context);
+        //$export->exportToFile(sys_get_temp_dir().'/formation.xlsx');
         $export->exportToClient();
         exit(0);
     }
