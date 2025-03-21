@@ -57,6 +57,7 @@
         "unicaen/idref": "^2.0",
         "unicaen/ldap": "^6.0",
         "unicaen/livelog": "^4.0",
+        "unicaen/maintenance-mode": "^1.0",
         "unicaen/parametre": "^6.0",
         "unicaen/pdf": "^6.1",
         "unicaen/renderer": "^7.0",

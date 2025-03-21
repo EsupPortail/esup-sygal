@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3049e0f77c34db901e830c158dc81df4",
+    "content-hash": "5f79d1636b984d0483a8c01dda6549f2",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11404,6 +11404,33 @@
             },
             "description": "Module d'envoi de mail",
             "time": "2024-12-06T10:51:41+00:00"
+        },
+        {
+            "name": "unicaen/maintenance-mode",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/maintenance-mode.git",
+                "reference": "22aac810da8ca2318cd56480560b4a5eb8a54102"
+            },
+            "require": {
+                "php": ">=8.0",
+                "unicaen/app": "^6.0 || ^7.0"
+            },
+            "bin": [
+                "bin/unicaen-maintenance-mode"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "UnicaenMaintenanceMode\\": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module Unicaen pour activer/désactiver le mode maintenance d'une application",
+            "time": "2025-03-21T14:33:48+00:00"
         },
         {
             "name": "unicaen/parametre",

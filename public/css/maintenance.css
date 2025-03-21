@@ -1,0 +1,16 @@
+/**
+ * Styles pour la page du mode maintenance
+ */
+div.unicaen-maintenance-mode {
+  text-align: center;
+  padding-top: 80px;
+  margin: auto;
+  width: 60%; }
+  div.unicaen-maintenance-mode h1 {
+    font-size: 250%;
+    color: #d23544; }
+  div.unicaen-maintenance-mode p {
+    font-size: 150%;
+    font-weight: 400; }
+
+/*# sourceMappingURL=maintenance.css.map */

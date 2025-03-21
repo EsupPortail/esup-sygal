@@ -1,0 +1,33 @@
+<?php
+
+return [
+    //
+    // Options de fonctionnement du module unicaen/maintenance-mode.
+    //
+    'unicaen-maintenance-mode' => [
+        // Message à afficher sur la page informant que l'appli est en maintenance
+        'message' => "L'application est temporairement indisponible pour des raisons de maintenance, veuillez nous excuser pour la gêne occasionnée.",
+
+        // Le mode console est-il aussi concerné par le mode maintenance (TRUE: oui, FALSE: non)
+        'include_cli' => false,
+
+        // Liste blanche des adresses IP clientes à laisser passer
+        'white_list' => [
+            // Formats possibles : [ REMOTE_ADDR ] ou [ REMOTE_ADDR, HTTP_X_FORWARDED_FOR ]
+            // exemples :
+            // ['127.0.0.1'], // localhost
+            // ['172.17.0.1'], // Docker container
+            // ['195.220.135.97', '194.199.107.33'], // Via proxy
+        ],
+    ],
+
+    //
+    // Feuilles CSS éventuelles propres à l'application.
+    //
+    'public_files' => [
+        'stylesheets' => [
+            '999_app_css' => '/css/charte.css', // attention à la clé (utilisée pour ordonner)
+            '999_maintenance_css' => '/css/maintenance.css', // attention à la clé (utilisée pour ordonner)
+        ],
+    ],
+];

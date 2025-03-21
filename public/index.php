@@ -21,5 +21,11 @@ if (file_exists(APPLICATION_DIR . '/config/development.config.php')) {
     $appConfig = Laminas\Stdlib\ArrayUtils::merge($appConfig, include APPLICATION_DIR . '/config/development.config.php');
 }
 
+// Mode maintenance
+if (file_exists(APPLICATION_DIR . '/config/maintenance.config.php')) {
+    // NB : la config du module maintenance *remplace* la config de l'application !
+    $appConfig = include APPLICATION_DIR . '/config/maintenance.config.php';
+}
+
 // Run the application!
 Laminas\Mvc\Application::init($appConfig)->run();

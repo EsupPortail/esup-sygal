@@ -1,0 +1,36 @@
+<?php
+
+return [
+    //
+    // Seuls modules activés.
+    //
+    'modules' => [
+        'Laminas\I18n',
+        'Laminas\Navigation',
+        'Laminas\Router',
+
+        'UnicaenApp',
+        'UnicaenMaintenanceMode',
+    ],
+
+    //
+    // Seules configs chargées.
+    //
+    'module_listener_options' => [
+        'config_glob_paths'    => [
+            'config/autoload/maintenance.local.php',
+        ],
+        'module_paths' => [
+            __DIR__ . '/../module',
+            __DIR__ . '/../vendor',
+        ],
+    ],
+
+    //
+    // Précautions : aucun log d'erreur.
+    //
+    'view_manager' => [
+        'display_not_found_reason' => false,
+        'display_exceptions' => false,
+    ]
+];
