@@ -582,7 +582,7 @@ abstract class PropositionController extends AbstractSoutenanceController
         $vm->setVariables([
             'proposition' => $this->proposition,
             'validations' => $validations,
-            'typeProposition' => $this->proposition,
+            'typeProposition' => $this->type,
             'isIndicateursOk' => $isIndicateursOk,
         ]);
         return $vm;

@@ -127,6 +127,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
                                             href="<?php echo $this->url("soutenance_{$typeProposition}/justificatif/ajouter", ['id' => $object->getId(), "proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
                                             class="btn btn-sm btn-primary ajax-modal" data-event='modification' style="margin: 1px;">
                                     <span class="icon icon-upload"></span> Déposer le justificatif </a>
+                                <br>
                                 <?php endif; ?>
                             <?php endif; ?>
                     <?php endforeach; ?>
