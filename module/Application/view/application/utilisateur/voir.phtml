@@ -144,6 +144,7 @@ $canEdit = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPriv
             <?php echo $this->translate("Jeton d'authentification") ?>
             <div class="float-end">
                 <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
+                    'route' => null,
                     'redirect' => $redirect,
                     'user' => $utilisateur->getId(),
                 ]) ?>
