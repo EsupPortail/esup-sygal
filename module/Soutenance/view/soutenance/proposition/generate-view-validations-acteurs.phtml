@@ -1,0 +1,75 @@
+<?php
+
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
+use Candidat\Entity\Db\Candidat;
+use Depot\Controller\Plugin\UrlFichierThese;
+use Doctorant\Entity\Db\Doctorant;
+use Soutenance\Entity\Justificatif;
+use Soutenance\Entity\PropositionHDR;
+use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Privilege\JustificatifPrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Validation\Entity\Db\ValidationHDR;
+use Validation\Entity\Db\ValidationThese;
+
+/**
+ * @see PropositionController::generateViewValidationsActeursAction()
+ *
+ * @var PropositionThese|PropositionHDR $proposition
+ * @var ValidationThese[]|ValidationHDR[] $validations
+ * @var Justificatif[] $attestationsIntegriteScientifique
+ * @var boolean $isIndicateursOk
+ * @var boolean $justificatifsOk ,
+ * @var Doctorant|Candidat $apprenant ,
+ * @var ActeurThese[] $directeurs
+ * @var ActeurHDR[] $garants
+ * @var boolean $validationActeur
+ * @var bool $informationsOk
+ * @var UrlFichierThese $urlFichier ,
+ * @var string $typeProposition
+ */
+
+$object = $proposition->getObject();
+$canModifierJustificatif = ($this->isAllowed($object, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
+$canValiderActeur = $isIndicateursOk && ($justificatifsOk !== false) && ($informationsOk !== false) && $this->isAllowed($object, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+$canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
+
+if($proposition instanceof PropositionThese){
+    echo $this->partial('soutenance/proposition-these/partial/validations-acteurs', [
+        'proposition' => $proposition,
+        'validations' => $validations,
+        'canValiderActeur' => $canValiderActeur,
+        'canSursis' => $canSursis,
+
+        'attestationsIntegriteScientifique' => $attestationsIntegriteScientifique,
+
+        'isIndicateursOk' => $isIndicateursOk,
+        'doctorant' => $apprenant,
+        'directeurs' => $directeurs,
+        'validationActeur' => $validationActeur,
+
+        'isInformationsOk' => $informationsOk,
+        'justificatifsOk' => $justificatifsOk,
+        'typeProposition' => $typeProposition,
+    ]);
+}else{
+    echo $this->partial('soutenance/proposition-hdr/partial/validations-acteurs', [
+        'proposition' => $proposition,
+        'validations' => $validations,
+        'canValiderActeur' => $canValiderActeur,
+        'canSursis' => $canSursis,
+
+        'attestationsIntegriteScientifique' => $attestationsIntegriteScientifique,
+
+        'isIndicateursOk' => $isIndicateursOk,
+        'candidat' => $apprenant,
+        'garants' => $garants,
+        'validationActeur' => $validationActeur,
+
+        'isInformationsOk' => $informationsOk,
+        'justificatifsOk' => $justificatifsOk,
+        'typeProposition' => $typeProposition,
+    ]);
+}
+?>

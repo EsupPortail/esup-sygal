@@ -29,6 +29,7 @@ use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
 use Soutenance\Service\SignaturePresident\SignaturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidationHDR\ValidationHDRServiceAwareTrait;
+use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 use Validation\Entity\Db\ValidationHDR;
 
@@ -197,8 +198,10 @@ class PropositionHDRController extends PropositionController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationValidationProposition($this->entity, $validation);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
-            // aucun destinataire , todo : cas à gérer !
+            $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la proposition de soutenance vient d'être validé
+            <br><br> <b>Envoyé :</b> aux acteurs directs");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (aux acteurs directs) indiquant que la proposition de soutenance vient d'être validé. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
 
         $candidat = $this->entity->getCandidat();
@@ -223,8 +226,10 @@ class PropositionHDRController extends PropositionController
             try {
                 $notif = $this->soutenanceNotificationFactory->createNotificationUniteRechercheProposition($this->entity);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
-                // aucun destinataire , todo : cas à gérer !
+                $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé à l'unité de recherche afin qu'elle valide à son tour la proposition de soutenance
+                <br><br> <b>Envoyé :</b> à l'unité de recherche");
+            } catch (Throwable $e) {
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné à l'unité de recherche. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
             }
         }
 
@@ -253,12 +258,15 @@ class PropositionHDRController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($this->entity);
                     if (empty($notif->getTo())) {
-                        throw new RuntimeException(
-                            "Aucune adresse mail trouvée pour la gestion HDR de l'établissement d'inscription '{$this->entity->getEtablissement()}'");
+                        $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné au gestionnaire HDR. <br><br> <b>Message d'erreur</b> : Aucune adresse mail trouvée pour les aspects HDR de l'établissement d'inscription ({$this->entity->getEtablissement()})");
+//                        throw new RuntimeException(
+//                            "Aucune adresse mail trouvée pour la gestion HDR de l'établissement d'inscription '{$this->entity->getEtablissement()}'");
                     }
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé au gestionnaire HDR afin qu'il valide à son tour la proposition de soutenance
+                    <br><br> <b>Envoyé :</b> au gestionnaire HDR");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné au gestionnaire HDR. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
                 break;
             case Role::CODE_GEST_HDR:
@@ -266,40 +274,28 @@ class PropositionHDRController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPropositionValidee($this->entity);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la proposition est complète et part pour saisie en présoutenance.
+                    <br><br> <b>Envoyé :</b> aux acteurs directs et aux structures");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (aux acteurs directs et aux structures) indiquant que la proposition était validée. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPresoutenance($this->entity);
                     $this->notifierService->trigger($notif);
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la thèse peut débuter le circuit de présoutenance.
+                    <br><br> <b>Envoyé :</b> au gestionnaire HDR");
                 } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (au gestionnaire HDR) indiquant que la thèse peut débuter le circuit de présoutenance. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
 
                 $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::ETABLISSEMENT));
                 $this->propositionService->update($this->proposition);
                 break;
             default :
-                $this->validationService->validateValidationBDD($this->entity, $individu);
-                try {
-                    $notif = $this->soutenanceNotificationFactory->createNotificationPropositionValidee($this->entity);
-                    $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
-                }
-                try {
-                    $notif = $this->soutenanceNotificationFactory->createNotificationPresoutenance($this->entity);
-                    $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
-                }
-
-                $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::ETABLISSEMENT));
-                $this->propositionService->update($this->proposition);
+                $this->flashMessenger()->addErrorMessage("Le role [" . $role->getCode() . "] ne peut pas valider cette proposition.");
         }
 
         return $this->redirect()->toRoute("soutenance_{$this->type}/proposition", ['id' => $this->entity->getId()], [], true);
-
     }
 
     public function revoquerStructureAction(): ViewModel
@@ -343,6 +339,7 @@ class PropositionHDRController extends PropositionController
                 $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN);
                 $this->proposition->setEtat($etat);
                 $this->propositionService->update($this->proposition);
+                $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
             }
         }
 

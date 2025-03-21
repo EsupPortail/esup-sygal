@@ -9,6 +9,7 @@ use These\Entity\Db\These;
  * @see \Soutenance\Controller\PropositionController::modifierMembreAction()
  * @var MembreForm $form
  * @var Proposition $proposition
+ * @var bool $validationsDejaEffectuees
  */
 
 $object = $proposition->getObject();
@@ -16,6 +17,13 @@ $object = $proposition->getObject();
 
 
 <?php
+if(isset($validationsDejaEffectuees) && $validationsDejaEffectuees): ?>
+    <div class="alert alert-warning">
+        <span class="icon icon-attention"></span>
+        En cas de modification de la proposition, toutes les validations seront annulées et la proposition devra être à nouveau
+        validée.
+    </div>
+<?php endif;
 echo $this->form()->openTag($form);
 echo $this->formControlGroup($form->get('sexe'));
 echo $this->formControlGroup($form->get('prenom'));

@@ -100,6 +100,9 @@ return [
                         'generate-view-date-lieu',
                         'generate-view-jury',
                         'generate-view-informations',
+                        'generate-view-fichiers',
+                        'generate-view-validations-acteurs',
+                        'generate-view-validations-structures'
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],
@@ -349,6 +352,42 @@ return [
                                         /** @see PropositionController::generateViewInformationsAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'generate-view-informations',
+                                    ],
+                                ],
+                            ],
+                            'generate-view-fichiers' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/generate-view-fichiers',
+                                    'defaults' => [
+                                        /** @see PropositionController::generateViewFichiersAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'generate-view-fichiers',
+                                    ],
+                                ],
+                            ],
+                            'generate-view-validations-acteurs' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/generate-view-validations-acteurs',
+                                    'defaults' => [
+                                        /** @see PropositionController::generateViewValidationsActeursAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'generate-view-validations-acteurs',
+                                    ],
+                                ],
+                            ],
+                            'generate-view-validations-structures' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/generate-view-validations-structures',
+                                    'defaults' => [
+                                        /** @see PropositionController::generateViewValidationsStructuresAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'generate-view-validations-structures',
                                     ],
                                 ],
                             ],

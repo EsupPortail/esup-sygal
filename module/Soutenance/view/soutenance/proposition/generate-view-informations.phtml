@@ -1,6 +1,7 @@
 <?php
 
 use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionThese;
 
 /**
  * @see \Soutenance\Controller\PropositionController::generateViewInformationsAction()
@@ -10,15 +11,28 @@ use Soutenance\Entity\Proposition;
  * @var string $FORMULAIRE_DEMANDE_LABEL
  * @var string $FORMULAIRE_DEMANDE_ANGLAIS
  * @var string $FORMULAIRE_DEMANDE_CONFIDENTIALITE
+ * @var string $typeProposition
  */
 
 ?>
 
 <?php
-echo $this->partial('partial/informations-complementaires', [
-    'proposition' => $proposition,
-    'canModifier' => $canModifier,
-    'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
-    'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
-    'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE]);
+if($proposition instanceof PropositionThese){
+    echo $this->partial('soutenance/proposition-these/partial/informations-complementaires', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
+        'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+        'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
+        'typeProposition' => $typeProposition
+    ]);
+}else{
+    echo $this->partial('soutenance/proposition-hdr/partial/informations-complementaires', [
+        'proposition' => $proposition,
+        'canModifier' => $canModifier,
+        'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+        'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
+        'typeProposition' => $typeProposition
+    ]);
+}
 ?>

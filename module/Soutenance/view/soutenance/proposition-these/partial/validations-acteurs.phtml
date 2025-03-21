@@ -72,76 +72,56 @@ if ($isAllOk === false || $validatedCount === 0) {
     $cssClass = "bg-success";
 }
 ?>
-<div class="box card">
-    <div class="card-header <?php echo $cssClass; ?>">
-        <h2>
-            Validation de la proposition de soutenance
-        </h2>
-    </div>
-    <div class="card-body">
+<div id="BOXDIV_VALIDATIONS_ACTEURS">
+    <div class="box card">
+        <div class="card-header <?php echo $cssClass; ?>">
+            <h2>
+                Validation de la proposition de soutenance
+            </h2>
+        </div>
+        <div class="card-body">
 
-        <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) && !$isAllOk) : ?>
-         <div class="alert alert-danger">
-            <strong>
-                <span class="icon icon-attention"></span>
-                Au moins une information ou validation est manquante ; ceci bloque la validation de votre proposition.
-            </strong>
-            <ul>
-            <?php if (!$isInformationsOk) : ?>
-                <li> Au moins une information sur la direction ou l'encadrement de la thèse est manquante. </li>
-            <?php endif; ?>
-            <?php if (!$isIndicateursOk): ?>
-                <li> La proposition de soutenance doit être recevable : date et lieu, composition du jury, ... </li>
-            <?php endif; ?>
-            <?php if (!$isDateOk): ?>
-                <li> Le délai de deux mois entre la date de validation et la date de soutenance est non respecté </li>
-            <?php endif; ?>
-            <?php if (!$hasDeclaration) : ?>
-                <li> La déclaration sur l'honneur de non-plagiat doit être validée avant de permettre la validation de la proposition. </li>
-            <?php endif; ?>
-            <?php if (!$hasAttestation) : ?>
-                <li> L'attestation de suivi de la formation "Intégrité Scientifique" est manquante. </li>
-            <?php endif; ?>
-                <?php if ($justificatifsOk === false): ?>
-                    <li> Les justificatifs demandés n'ont pas tous été fournis. </li>
-                <?php endif; ?>
-            </ul>
-         </div>
-        <?php endif; ?>
-
-        <div class="row">
-            <div class="col-md-8" >
-                <h4>
-                    Liste des validations
-                </h4>
+            <?php if (($proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE || $proposition->getEtat()->getCode() === Etat::EN_COURS_EXAMEN) && !$isAllOk) : ?>
+             <div class="alert alert-danger">
+                <strong>
+                    <span class="icon icon-attention"></span>
+                    Au moins une information ou validation est manquante ; ceci bloque la validation de votre proposition.
+                </strong>
                 <ul>
-                    <!-- Validation du doctorant -->
-                    <li>
-                        <?php echo $doctorant->getIndividu(); ?>
-                        <br/>
-                        <?php if ($validations[Role::CODE_DOCTORANT]) : ?>
-                            <?php $validation = current($validations[Role::CODE_DOCTORANT]); ?>
-                            <span class="badge bg-success">
-                                <span class="icon icon-checked"></span>
-                                Validée
-                            </span>
-                            Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
-                        <?php else: ?>
-                            <span class="badge bg-secondary"> Aucune validation</span>
-                        <?php endif; ?>
-                    </li>
-                    <!-- Validation des directeurs -->
-                    <?php
-                    $validationsDirecteurs = array_merge($validations[Role::CODE_DIRECTEUR_THESE], $validations[Role::CODE_CODIRECTEUR_THESE]); ?>
-                    <?php foreach ($directeurs as $directeur): ?>
-                        <?php $validation = current(array_filter($validationsDirecteurs, function (ValidationThese $v) use ($directeur) {
-                            return $v->getIndividu()->getId() === $directeur->getIndividu()->getId();
-                        })); ?>
+                <?php if (!$isInformationsOk) : ?>
+                    <li> Au moins une information sur la direction ou l'encadrement de la thèse est manquante. </li>
+                <?php endif; ?>
+                <?php if (!$isIndicateursOk): ?>
+                    <li> La proposition de soutenance doit être recevable : date et lieu, composition du jury, ... </li>
+                <?php endif; ?>
+                <?php if (!$isDateOk): ?>
+                    <li> Le délai de deux mois entre la date de validation et la date de soutenance est non respecté </li>
+                <?php endif; ?>
+                <?php if (!$hasDeclaration) : ?>
+                    <li> La déclaration sur l'honneur de non-plagiat doit être validée avant de permettre la validation de la proposition. </li>
+                <?php endif; ?>
+                <?php if (!$hasAttestation) : ?>
+                    <li> L'attestation de suivi de la formation "Intégrité Scientifique" est manquante. </li>
+                <?php endif; ?>
+                    <?php if ($justificatifsOk === false): ?>
+                        <li> Les justificatifs demandés n'ont pas tous été fournis. </li>
+                    <?php endif; ?>
+                </ul>
+             </div>
+            <?php endif; ?>
+
+            <div class="row">
+                <div class="col-md-8" >
+                    <h4>
+                        Liste des validations
+                    </h4>
+                    <ul>
+                        <!-- Validation du doctorant -->
                         <li>
-                            <?php echo $directeur->getIndividu(); ?>
-                            (<?php echo $directeur->getRole()->getLibelle(); ?>)
+                            <?php echo $doctorant->getIndividu(); ?>
                             <br/>
-                            <?php if ($validation) : ?>
+                            <?php if ($validations[Role::CODE_DOCTORANT]) : ?>
+                                <?php $validation = current($validations[Role::CODE_DOCTORANT]); ?>
                                 <span class="badge bg-success">
                                     <span class="icon icon-checked"></span>
                                     Validée
@@ -151,36 +131,58 @@ if ($isAllOk === false || $validatedCount === 0) {
                                 <span class="badge bg-secondary"> Aucune validation</span>
                             <?php endif; ?>
                         </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
+                        <!-- Validation des directeurs -->
+                        <?php
+                        $validationsDirecteurs = array_merge($validations[Role::CODE_DIRECTEUR_THESE], $validations[Role::CODE_CODIRECTEUR_THESE]); ?>
+                        <?php foreach ($directeurs as $directeur): ?>
+                            <?php $validation = current(array_filter($validationsDirecteurs, function (ValidationThese $v) use ($directeur) {
+                                return $v->getIndividu()->getId() === $directeur->getIndividu()->getId();
+                            })); ?>
+                            <li>
+                                <?php echo $directeur->getIndividu(); ?>
+                                (<?php echo $directeur->getRole()->getLibelle(); ?>)
+                                <br/>
+                                <?php if ($validation) : ?>
+                                    <span class="badge bg-success">
+                                        <span class="icon icon-checked"></span>
+                                        Validée
+                                    </span>
+                                    Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary"> Aucune validation</span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
 
-            <div class="col-md-4" >
-                <?php if ($canValiderActeur AND $isAllOk) : ?>
-                        <a
-                            <?php /** @see PropositionHDRController::validerActeurAction() */ ?>
-                            <?php /** @see PropositionTheseController::validerActeurAction() */ ?>
-                            href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/valider", ['id' => $object->getId()], [], true); ?>"
-                            class="btn btn-success action "
-                            data-toggle="confirmationx">
-                            <span class="icon icon-ok"></span>
-                            Valider la proposition de soutenance
+                <div class="col-md-4" >
+                    <?php if ($canValiderActeur AND $isAllOk) : ?>
+                            <a
+                                <?php /** @see PropositionHDRController::validerActeurAction() */ ?>
+                                <?php /** @see PropositionTheseController::validerActeurAction() */ ?>
+                                href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/valider", ['id' => $object->getId()], [], true); ?>"
+                                class="btn btn-success action "
+                                data-toggle="confirmationx">
+                                <span class="icon icon-ok"></span>
+                                Valider la proposition de soutenance
+                            </a>
+                    <?php endif; ?>
+                    <?php if ($canSursis) : ?>
+                        <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
+                        <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/sursis", ['id' => $object->getId()], [], true); ?>" class="btn btn-danger action">
+                            <?php if (!$proposition->hasSursis()) : ?>
+                                <span class="fa fa-clock"></span>
+                                Accorder un sursis
+                            <?php else : ?>
+                                <span class="icon icon-minus"></span>
+                                Retirer le sursis
+                            <?php endif; ?>
                         </a>
-                <?php endif; ?>
-                <?php if ($canSursis) : ?>
-                    <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
-                    <a href="<?php echo $this->url("soutenance_{$typeProposition}/proposition/sursis", ['id' => $object->getId()], [], true); ?>" class="btn btn-danger action">
-                        <?php if (!$proposition->hasSursis()) : ?>
-                            <span class="fa fa-clock"></span>
-                            Accorder un sursis
-                        <?php else : ?>
-                            <span class="icon icon-minus"></span>
-                            Retirer le sursis
-                        <?php endif; ?>
-                    </a>
 
-                    <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Sursis"); ?>
-                <?php endif; ?>
+                        <?php echo $this->horodatagesParType($proposition, HorodatageService::TYPE_ETAT, "Sursis"); ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

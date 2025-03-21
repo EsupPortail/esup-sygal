@@ -50,7 +50,7 @@ class PresoutenanceHDRController extends PresoutenanceController
     use ActeurHDRFormAwareTrait;
 
     /** @var PhpRenderer */
-    private PhpRenderer $renderer;
+    protected PhpRenderer $renderer;
 
     /**
      * @param PhpRenderer $renderer
@@ -207,102 +207,11 @@ class PresoutenanceHDRController extends PresoutenanceController
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
     }
 
-    /** Document pour la signature en présidence */
-    #[NoReturn] public function procesVerbalSoutenanceAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new ProcesVerbalSoutenancePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'hdr' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_proces_verbal.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Procès verbal");
-        exit;
-    }
-
-    #[NoReturn] public function avisSoutenanceAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new AvisSoutenancePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'hdr' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_avis_soutenance.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance");
-        exit;
-    }
-
-    #[NoReturn] public function rapportSoutenanceAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'hdr' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_rapport_soutenance.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance");
-        exit;
-    }
-
-    #[NoReturn] public function rapportTechniqueAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'hdr' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_rapport_technique.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Rapport technique");
-        exit;
-    }
-
-    /** Document pour la signature en présidence */
-    #[NoReturn] public function convocationsAction(): void
-    {
-        $this->initializeFromType();
-        $signature = $this->findSignatureEtablissement($this->entity);
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-
-        $validationMDD = $this->validationHDRService->getRepository()->findValidationByCodeAndHDR(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $ville = $this->getVille($this->entity->getEtablissement());
-
-        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'hdr' => $this->entity,
-            'informations' => $pdcData,
-            'date' => $dateValidation,
-            'ville' => $ville,
-            'signature' => $signature,
-        ]);
-        $exporter->export($this->entity->getId() . '_convocation.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Convocations");
-        exit;
-    }
+    /**
+     *
+     * Génération des documents liés à la présoutenance
+     *
+     */
 
     #[NoReturn] public function convocationCandidatAction(): void
     {
@@ -326,33 +235,6 @@ class PresoutenanceHDRController extends PresoutenanceController
             'signature' => $signature,
         ]);
         $exporter->exportDoctorant($this->entity->getId() . '_convocation.pdf');
-        exit;
-    }
-
-    #[NoReturn] public function convocationMembreAction(): void
-    {
-        $this->initializeFromType();
-        $membre = $this->getMembreService()->getRequestedMembre($this);
-        $signature = $this->findSignatureEcoleDoctorale($this->entity) ?: $this->findSignatureEtablissement($this->entity);
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-
-        $validationMDD = $this->validationHDRService->getRepository()->findValidationByCodeAndHDR(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $ville = $this->getVille($this->entity->getEtablissement());
-
-        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'hdr' => $this->entity,
-            'informations' => $pdcData,
-            'date' => $dateValidation,
-            'ville' => $ville,
-            'signature' => $signature,
-            'membre' => $membre,
-        ]);
-        $exporter->exportMembre($membre, $this->entity->getId() . '_convocation.pdf');
         exit;
     }
 }

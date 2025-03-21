@@ -12,6 +12,7 @@ use HDR\Service\HDRService;
 use HDR\Service\HDRServiceAwareTrait;
 use InvalidArgumentException;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 use Soutenance\Entity\PropositionHDR;
 use Soutenance\Entity\PropositionThese;
@@ -82,5 +83,16 @@ abstract class AbstractSoutenanceController extends AbstractController
     protected function isThese(): bool
     {
         return $this->type === Proposition::ROUTE_PARAM_PROPOSITION_THESE;
+    }
+
+    protected function annulerValidationsForProposition(): void
+    {
+        $this->propositionService->annulerValidationsForProposition($this->proposition);
+
+        $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_SAISIE);
+        $this->proposition->setEtat($etat);
+        $this->propositionService->update($this->proposition);
+
+        $this->flashMessenger()->addInfoMessage("Suite à cette action, les validations associées à la proposition ont toutes été annulées.");
     }
 }

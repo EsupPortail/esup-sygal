@@ -105,12 +105,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
     <?php if ($canSimulerRemonter) : ?>
         <div>
-            <?php /** @see \Soutenance\Controller\PresoutenanceController::genererSimulationAction() */ ?>
+            <?php /** @see PresoutenanceTheseController::genererSimulationAction() */ ?>
             <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/generer-simulation", ['id' => $these->getId()], [], true); ?>" class="btn btn-warning action text-white">
                 Simulation de la remontée SI
             </a>
 
-            <?php /** @see \Soutenance\Controller\PresoutenanceController::nettoyerSimulationAction() */ ?>
+            <?php /** @see PresoutenanceTheseController::nettoyerSimulationAction() */ ?>
             <a href="<?php echo $this->url("soutenance_{$typeProposition}/presoutenance/nettoyer-simulation", ['id' => $these->getId()], [], true); ?>" class="btn btn-warning action text-white">
                 Nettoyer la simulation
             </a>

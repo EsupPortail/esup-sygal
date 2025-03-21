@@ -37,6 +37,7 @@ use Soutenance\Service\SignaturePresident\SignaturePresidentPdfExporter;
 use These\Entity\Db\These;
 use These\Renderer\TheseTemplateVariable;
 use These\Service\These\TheseService;
+use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 use Validation\Entity\Db\TypeValidation;
 use Validation\Entity\Db\ValidationThese;
@@ -95,7 +96,6 @@ class PropositionTheseController extends PropositionController
         /** @var Utilisateur $currentUser */
         $currentUser = $this->userContextService->getDbUser();
         $currentIndividu = $currentUser->getIndividu();
-
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
         /** Indicateurs --------------------------------------------------------------------------------------------- */
@@ -219,7 +219,9 @@ class PropositionTheseController extends PropositionController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
+            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                $this->annulerValidationsForProposition();
+            }
         }
 
         $vm = new ViewModel();
@@ -227,6 +229,8 @@ class PropositionTheseController extends PropositionController
         $vm->setVariables([
             'title' => 'Renseignement d\'un label européen',
             'form' => $form,
+            'validationsDejaEffectuees' => !($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) &&
+            !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))
         ]);
         return $vm;
     }
@@ -246,7 +250,9 @@ class PropositionTheseController extends PropositionController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
+            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                $this->annulerValidationsForProposition();
+            }
         }
 
         $vm = new ViewModel();
@@ -254,6 +260,8 @@ class PropositionTheseController extends PropositionController
         $vm->setVariables([
             'title' => 'Changement du titre de la thèse',
             'form' => $form,
+            'validationsDejaEffectuees' => !($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) &&
+            !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))
         ]);
         return $vm;
     }
@@ -324,7 +332,12 @@ class PropositionTheseController extends PropositionController
             $this->validationService->historiser($refu);
         }
 
-        if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
+        if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+            $this->annulerValidationsForProposition();
+            $this->flashMessenger()->addSuccessMessage("La déclaration de non-plagiat a bien été révoquée.");
+        }else{
+            $this->flashMessenger()->addSuccessMessage("La déclaration de non-plagiat a bien été révoquée.");
+        }
 
         return $this->redirect()->toRoute("soutenance_{$this->type}/proposition", ['id' => $this->entity->getId()], [], true);
     }
@@ -341,8 +354,10 @@ class PropositionTheseController extends PropositionController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationValidationProposition($this->entity, $validation);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
-            // aucun destinataire , todo : cas à gérer !
+            $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la proposition de soutenance vient d'être validé
+            <br><br> <b>Envoyé :</b> aux acteurs directs");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (aux acteurs directs) indiquant que la proposition de soutenance vient d'être validé. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
 
         $doctorant = $this->entity->getApprenant();
@@ -373,8 +388,10 @@ class PropositionTheseController extends PropositionController
             try {
                 $notif = $this->soutenanceNotificationFactory->createNotificationUniteRechercheProposition($this->entity);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException $e) {
-                // aucun destinataire , todo : cas à gérer !
+                $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé à l'unité de recherche afin qu'elle valide à son tour la proposition de soutenance
+                <br><br> <b>Envoyé :</b> à l'unité de recherche");
+            } catch (Throwable $e) {
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné à l'unité de recherche. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
             }
         }
 
@@ -403,8 +420,10 @@ class PropositionTheseController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationEcoleDoctoraleProposition($this->entity);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé afin qu'elle valide à son tour la proposition de soutenance
+                    <br><br> <b>Envoyé :</b> à l'école doctorale");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné à l'école doctorale. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
                 break;
             case Role::CODE_RESP_ED :
@@ -413,12 +432,16 @@ class PropositionTheseController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($this->entity);
                     if (empty($notif->getTo())) {
-                        throw new RuntimeException(
-                            "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$this->entity->getEtablissement()}'");
+                        $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné à la maison du doctorat. <br><br> <b>Message d'erreur</b> : Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription ({$this->entity->getEtablissement()})");
+//                        throw new RuntimeException(
+//                            "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$this->entity->getEtablissement()}'");
+                    }else{
+                        $this->notifierService->trigger($notif);
+                        $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé à la maison du doctorat afin qu'elle valide à son tour la proposition de soutenance
+                        <br><br> <b>Envoyé :</b> à la maison du doctorat");
                     }
-                    $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné à la maison du doctorat. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
                 break;
             case Role::CODE_BDD :
@@ -426,25 +449,28 @@ class PropositionTheseController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPropositionValidee($this->entity);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la proposition est complète et part pour saisie en présoutenance.
+                    <br><br> <b>Envoyé :</b> aux acteurs directs et aux structures");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (aux acteurs directs et aux structures) indiquant que la proposition était validée. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPresoutenance($this->entity);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException $e) {
-                    // aucun destinataire , todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la thèse peut débuter le circuit de présoutenance.
+                    <br><br> <b>Envoyé :</b> à la maison du doctorat");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (à la maison du doctorat) indiquant que la thèse peut débuter le circuit de présoutenance. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
 
                 $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::ETABLISSEMENT));
                 $this->propositionService->update($this->proposition);
                 break;
             default :
-                throw new RuntimeException("Le role [" . $role->getCode() . "] ne peut pas valider cette proposition.");
+                $this->flashMessenger()->addErrorMessage("Le role [" . $role->getCode() . "] ne peut pas valider cette proposition.");
         }
 
         return $this->redirect()->toRoute("soutenance_{$this->type}/proposition", ['id' => $this->entity->getId()], [], true);
-
     }
 
     public function revoquerStructureAction(): ViewModel
@@ -490,6 +516,7 @@ class PropositionTheseController extends PropositionController
                 $etat = $this->propositionService->findPropositionEtatByCode(Etat::EN_COURS_EXAMEN);
                 $this->proposition->setEtat($etat);
                 $this->propositionService->update($this->proposition);
+                $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
             }
         }
 

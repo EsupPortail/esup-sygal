@@ -2,6 +2,7 @@
 
     use Acteur\Entity\Db\ActeurHDR;
     use Application\Entity\Db\Role;
+    use Application\View\Renderer\PhpRenderer;
     use Candidat\Entity\Db\Candidat;
     use Depot\Controller\Plugin\UrlFichierHDR;
     use HDR\Entity\Db\HDR;
@@ -16,7 +17,7 @@
     /**
  * @see \Soutenance\Controller\HDR\Proposition\PropositionHDRController::propositionAction()
  *
-* // * @var \Application\View\Renderer\PhpRenderer $this
+ * @var PhpRenderer $this
  *
  * @var HDR $hdr
  * @var PropositionHDR $proposition
@@ -273,7 +274,7 @@ if ($validationGestHDR and $proposition->getEtat()->getCode() === Etat::ETABLISS
                 event.div.modal('hide');
                 $.ajax({
                     type: "POST",
-                    <?php /** @see \Soutenance\Controller\PropositionController::generateViewDateLieuAction() */ ?>
+                    <?php /** @see PropositionController::generateViewDateLieuAction() */ ?>
                     url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-date-lieu", ['id' => $hdr->getId()], [], true); ?>",
                     beforeSend:
                         function () {
@@ -285,49 +286,97 @@ if ($validationGestHDR and $proposition->getEtat()->getCode() === Etat::ETABLISS
                         }
                 });
 
-                // window.location.reload();
-                // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
-                // window.scrollTo(0,top);
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsActeursAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-acteurs", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des acteurs de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html(retour);
+                        }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsStructuresAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-structures", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des structures de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html(retour);
+                        }
+                });
             },
             "edition-membre": function (event) {
                 event.div.modal('hide');
-                //$.ajax({
-                //    type: "POST",
-                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-jury', ["these" => $hdr->getId()], [], true); ?>//",
-                //    beforeSend:
-                //        function () {
-                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée au jury.</div><br/>");
-                //        },
-                //    success:
-                //        function(retour){
-                //            let texte = "ok";
-                //            $("div#BOXDIV_JURY").html(retour);
-                //        }
-                //});
-
                 window.location.reload();
                 let top = $('div#COMPOSITION_JURY').offset().top - navbar;
                 window.scrollTo(0, top);
             },
             "edition-informations-hdr": function (event) {
                 event.div.modal('hide');
-                //$.ajax({
-                //    type: "POST",
-                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations', ["these" => $hdr->getId()], [], true); ?>//",
-                //    beforeSend:
-                //        function () {
-                //            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
-                //        },
-                //    success:
-                //        function(retour){
-                //            let texte = "ok";
-                //            $("div#BOXDIV_INFORMATIONS").html(retour);
-                //        }
-                //});
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewInformationsAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_INFORMATIONS_HDR").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux informations sur la HDR et la soutenance.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_INFORMATIONS_HDR").html(retour);
+                        }
+                });
 
-                window.location.reload();
-                let top = $('div#BOXDIV_INFORMATIONS_HDR').offset().top - navbar;
-                window.scrollTo(0, top);
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewFichiersAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-fichiers", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_FICHIERS").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux fichiers associés à la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_FICHIERS").html(retour);
+                        }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsActeursAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-acteurs", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des acteurs de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html(retour);
+                        }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsStructuresAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-structures", ['id' => $hdr->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des structures de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html(retour);
+                        }
+                });
             },
             "ajout-justificatif": function (event) {
                 event.div.modal('hide');
@@ -340,10 +389,6 @@ if ($validationGestHDR and $proposition->getEtat()->getCode() === Etat::ETABLISS
                 window.location.reload();
                 let top = $('div#BOXDIV_ADRESSE_EXACTE').offset().top - navbar;
                 window.scrollTo(0, top);
-            },
-            "edition-confidentialite": function (event) {
-                event.div.modal('hide');
-                window.location.reload();
             },
             "refus-proposition": function (event) {
                 event.div.modal('hide');

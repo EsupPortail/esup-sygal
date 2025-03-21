@@ -16,6 +16,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
+use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 use Validation\Entity\Db\TypeValidation;
 use Validation\Service\ValidationServiceAwareTrait;
@@ -46,9 +47,14 @@ class ValidationController extends AbstractController
                 $this->depotValidationService->validatePageDeCouverture($these);
                 $successMessage = "Validation de la page de couverture enregistrée avec succès.";
 
-                // notification
-                $notification = $this->depotNotificationFactory->createNotificationValidationPageDeCouverture($these, $action);
-                $this->notifierService->trigger($notification);
+                try {
+                    // notification
+                    $notification = $this->depotNotificationFactory->createNotificationValidationPageDeCouverture($these, $action);
+                    $this->notifierService->trigger($notification);
+                    $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée au doctorant");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
+                }
             }
             elseif ($action === 'devalider') {
                 $this->depotValidationService->unvalidatePageDeCouverture($these);

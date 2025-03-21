@@ -1,0 +1,40 @@
+<?php
+
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
+use Candidat\Entity\Db\Candidat;
+use Depot\Controller\Plugin\UrlFichierThese;
+use Doctorant\Entity\Db\Doctorant;
+use Soutenance\Entity\Justificatif;
+use Soutenance\Entity\PropositionHDR;
+use Soutenance\Entity\PropositionThese;
+use Soutenance\Provider\Privilege\JustificatifPrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Validation\Entity\Db\ValidationHDR;
+use Validation\Entity\Db\ValidationThese;
+
+/**
+ * @see PropositionController::generateViewValidationsStructuresAction()
+ *
+ * @var PropositionThese|PropositionHDR $proposition
+ * @var ValidationThese[]|ValidationHDR[] $validations
+ * @var bool $isIndicateursOk
+ * @var string $typeProposition
+ */
+
+$object = $proposition->getObject();
+$canStructureValider = $isIndicateursOk && $this->isAllowed($object, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
+    $this->isAllowed($object, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
+    $this->isAllowed($object, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+$canStructureRevoquer = $isIndicateursOk && $this->isAllowed($object, PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE);
+$canPresidence = $this->isAllowed($object, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+
+echo $this->partial('partial/validations-structures', [
+    'proposition' => $proposition,
+    'validations' => $validations,
+    'canStructureValider' => $canStructureValider,
+    'canStructureRevoquer' => $canStructureRevoquer,
+    'canPresidence' => $canPresidence,
+    'typeProposition' => $typeProposition,
+]);
+?>

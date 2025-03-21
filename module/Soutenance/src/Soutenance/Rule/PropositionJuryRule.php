@@ -34,7 +34,7 @@ class PropositionJuryRule implements RuleInterface
 
     public function computeIndicateurs(): void
     {
-        $forcerValidite = $this->isValiditeForcee();
+        $forcerValidite = $this->proposition->getDate() && $this->isValiditeForcee();
 
         $nbMembre = 0;
         $nbFemme = 0;

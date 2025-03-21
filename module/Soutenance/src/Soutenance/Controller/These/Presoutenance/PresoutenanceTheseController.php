@@ -55,7 +55,7 @@ class PresoutenanceTheseController extends PresoutenanceController
     use ActeurTheseFormAwareTrait;
 
     /** @var PhpRenderer */
-    private PhpRenderer $renderer;
+    protected PhpRenderer $renderer;
 
     /**
      * @param PhpRenderer $renderer
@@ -197,9 +197,11 @@ class PresoutenanceTheseController extends PresoutenanceController
 //        $this->getMembreService()->update($membre);
         $acteur->setMembre($membre);
         $this->acteurService->save($acteur);
+        $this->flashMessenger()->addSuccessMessage($membre->getDenomination()." a bien été associé à un acteur.");
 
         //creation de l'utilisateur
         if ($membre->estRapporteur()) {
+            $this->createUtilisateurRapporteur($acteur, $membre);
             $this->createUtilisateurRapporteur($acteur, $membre);
 
             //quand c'est une thèse saisie dans SyGAL, on enregistre également un acteur avec le rôle Membre (ce qui était automatique quand cela provenait d'un SI)
@@ -218,104 +220,7 @@ class PresoutenanceTheseController extends PresoutenanceController
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
     }
 
-    /** Document pour la signature en présidence */
-    #[NoReturn] public function procesVerbalSoutenanceAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new ProcesVerbalSoutenancePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_proces_verbal.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Procès verbal");
-        exit;
-    }
-
-    #[NoReturn] public function avisSoutenanceAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new AvisSoutenancePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_avis_soutenance.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance");
-        exit;
-    }
-
-    #[NoReturn] public function rapportSoutenanceAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_rapport_soutenance.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance");
-        exit;
-    }
-
-    #[NoReturn] public function rapportTechniqueAction(): void
-    {
-        $this->initializeFromType();
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-        $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
-            'informations' => $pdcData,
-        ]);
-        $exporter->export($this->entity->getId() . '_rapport_technique.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Rapport technique");
-        exit;
-    }
-
-    /** Document pour la signature en présidence */
-    #[NoReturn] public function convocationsAction(): void
-    {
-        $this->initializeFromType();
-        $signature = $this->findSignatureEcoleDoctorale($this->entity) ?: $this->findSignatureEtablissement($this->entity);
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-
-        $validationMDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $ville = $this->getVille($this->entity->getEtablissement());
-
-        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
-            'informations' => $pdcData,
-            'date' => $dateValidation,
-            'ville' => $ville,
-            'signature' => $signature,
-        ]);
-        $exporter->export($this->entity->getId() . '_convocation.pdf');
-
-        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Convocations");
-        exit;
-    }
-
-    private function findSignatureEcoleDoctorale(These $object): ?string
+    protected function findSignatureEcoleDoctorale(These $object): ?string
     {
         $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
             $object->getEcoleDoctorale()->getStructure(),
@@ -333,6 +238,12 @@ class PresoutenanceTheseController extends PresoutenanceController
             throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);
         }
     }
+
+    /**
+     *
+     * Génération des documents liés à la présoutenance
+     *
+     */
 
     #[NoReturn] public function convocationDoctorantAction(): void
     {
@@ -356,33 +267,6 @@ class PresoutenanceTheseController extends PresoutenanceController
             'signature' => $signature,
         ]);
         $exporter->exportDoctorant($this->entity->getId() . '_convocation.pdf');
-        exit;
-    }
-
-    #[NoReturn] public function convocationMembreAction(): void
-    {
-        $this->initializeFromType();
-        $membre = $this->getMembreService()->getRequestedMembre($this);
-        $signature = $this->findSignatureEcoleDoctorale($this->entity) ?: $this->findSignatureEtablissement($this->entity);
-
-        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
-
-        $validationMDD = $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $ville = $this->getVille($this->entity->getEtablissement());
-
-        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $this->proposition,
-            'these' => $this->entity,
-            'informations' => $pdcData,
-            'date' => $dateValidation,
-            'ville' => $ville,
-            'signature' => $signature,
-            'membre' => $membre,
-        ]);
-        $exporter->exportMembre($membre, $this->entity->getId() . '_convocation.pdf');
         exit;
     }
 

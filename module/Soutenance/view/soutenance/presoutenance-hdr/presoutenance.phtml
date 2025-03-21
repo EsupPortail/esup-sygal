@@ -2,6 +2,7 @@
 
 /**
  * @see PresoutenanceHDRController::presoutenanceAction()
+ * @var PhpRenderer $this
  * @var HDR $hdr
  * @var Validation\Entity\Db\Validation $validationBDD
  * @var Soutenance\Entity\Proposition $proposition
@@ -22,6 +23,7 @@
  */
 
 use Acteur\Entity\Db\ActeurHDR;
+use Application\View\Renderer\PhpRenderer;
 use Depot\Controller\Plugin\UrlFichierHDR;
 use HDR\Entity\Db\HDR;
 use HDR\Provider\Privileges\HDRPrivileges;

@@ -53,6 +53,9 @@ return [
                         'generate-view-date-lieu',
                         'generate-view-jury',
                         'generate-view-informations',
+                        'generate-view-fichiers',
+                        'generate-view-validations-acteurs',
+                        'generate-view-validations-structures'
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
                 ],

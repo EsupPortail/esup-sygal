@@ -1,0 +1,31 @@
+<?php
+
+use Depot\Controller\Plugin\UrlFichierThese;
+use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\JustificatifPrivileges;
+
+/**
+ * @see PropositionController::generateViewFichiersAction()
+ *
+ * @var Proposition $proposition
+ * @var boolean $canModifierJustificatif
+ * @var array $justificatifs ,
+ * @var boolean $justificatifsOk ,
+ * @var UrlFichierThese $urlFichier ,
+ * @var string $typeProposition
+ */
+
+$object = $proposition->getObject();
+$canModifierJustificatif = ($this->isAllowed($object, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
+?>
+
+<?php
+echo $this->partial('partial/fichiers', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifierJustificatif,
+    'justificatifs' => $justificatifs,
+    'justificatifsOk' => $justificatifsOk,
+    'urlFichier' => $urlFichier,
+    'typeProposition' => $typeProposition
+]);
+?>

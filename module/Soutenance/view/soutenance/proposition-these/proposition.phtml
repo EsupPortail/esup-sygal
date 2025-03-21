@@ -303,79 +303,103 @@ if ($validationMDD and $proposition->getEtat()->getCode() === Etat::ETABLISSEMEN
                         }
                 });
 
-                // window.location.reload();
-                // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
-                // window.scrollTo(0,top);
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsActeursAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-acteurs", ['id' => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des acteurs de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html(retour);
+                        }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsStructuresAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-structures", ['id' => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des structures de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html(retour);
+                        }
+                });
             },
             "edition-membre": function (event) {
                 event.div.modal('hide');
-                //$.ajax({
-                //    type: "POST",
-                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>//",
-                //    beforeSend:
-                //        function () {
-                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée au jury.</div><br/>");
-                //        },
-                //    success:
-                //        function(retour){
-                //            let texte = "ok";
-                //            $("div#BOXDIV_JURY").html(retour);
-                //        }
-                //});
-
                 window.location.reload();
                 let top = $('div#COMPOSITION_JURY').offset().top - navbar;
                 window.scrollTo(0, top);
             },
-            "edition-informations-intervenants": function (event) {
-                event.div.modal('hide');
-                //$.ajax({
-                //    type: "POST",
-                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>//",
-                //    beforeSend:
-                //        function () {
-                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
-                //        },
-                //    success:
-                //        function(retour){
-                //            let texte = "ok";
-                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html(retour);
-                //        }
-                //});
-
-                window.location.reload();
-                let top = $('div#BOXDIV_INFORMATIONS_INTERVENANTS').offset().top - navbar;
-                window.scrollTo(0, top);
-            },
             "edition-informations-these": function (event) {
                 event.div.modal('hide');
-                //$.ajax({
-                //    type: "POST",
-                //    url : "<?php //echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>//",
-                //    beforeSend:
-                //        function () {
-                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
-                //        },
-                //    success:
-                //        function(retour){
-                //            let texte = "ok";
-                //            $("div#BOXDIV_INFORMATIONS_INTERVENANTS").html(retour);
-                //        }
-                //});
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewInformationsAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-informations", ['id' => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_INFORMATIONS_THESE").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux informations sur la thèse et la soutenance.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_INFORMATIONS_THESE").html(retour);
+                        }
+                });
 
-                window.location.reload();
-                let top = $('div#BOXDIV_INFORMATIONS_THESE').offset().top - navbar;
-                window.scrollTo(0, top);
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewFichiersAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-fichiers", ['id' => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_FICHIERS").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux fichiers associés à la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_FICHIERS").html(retour);
+                        }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsActeursAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-acteurs", ['id' => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des acteurs de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_ACTEURS").html(retour);
+                        }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    <?php /** @see PropositionController::generateViewValidationsStructuresAction() */ ?>
+                    url: "<?php echo $this->url("soutenance_{$typeProposition}/proposition/generate-view-validations-structures", ['id' => $these->getId()], [], true); ?>",
+                    beforeSend:
+                        function () {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée aux validations des structures de la proposition.</div><br/>");
+                        },
+                    success:
+                        function (retour) {
+                            $("div#BOXDIV_VALIDATIONS_STRUCTURES").html(retour);
+                        }
+                });
             },
             "ajout-justificatif": function (event) {
                 event.div.modal('hide');
                 window.location.reload();
                 let top = $('div#BOXDIV_FICHIERS').offset().top - navbar;
                 window.scrollTo(0, top);
-            },
-            "edition-confidentialite": function (event) {
-                event.div.modal('hide');
-                window.location.reload();
             },
             "edition-adresse": function (event) {
                 event.div.modal('hide');

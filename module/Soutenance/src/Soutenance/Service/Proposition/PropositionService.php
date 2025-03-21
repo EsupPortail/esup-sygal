@@ -13,7 +13,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;

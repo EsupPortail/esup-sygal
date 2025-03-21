@@ -2,8 +2,13 @@
 
 namespace Soutenance\Controller;
 
+use Acteur\Entity\Db\ActeurHDR;
+use Acteur\Entity\Db\ActeurThese;
+use Application\Entity\Db\Utilisateur;
 use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
+use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Individu\Entity\Db\IndividuRole;
 use Information\Service\InformationServiceAwareTrait;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
@@ -14,6 +19,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Assertion\HDR\PropositionHDRAssertionAwareTrait;
 use Soutenance\Assertion\These\PropositionTheseAssertionAwareTrait;
 use Soutenance\Entity\Adresse;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Entity\PropositionThese;
@@ -32,6 +38,7 @@ use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
+use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
@@ -92,7 +99,7 @@ abstract class PropositionController extends AbstractSoutenanceController
                 $this->update($request, $form, $this->proposition);
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
                 $this->propositionService->initialisationDateRetour($this->proposition);
-                if (!$canModifierGestion) $this->propositionService->annulerValidationsForProposition($this->proposition);
+                if (!$canModifierGestion) $this->annulerValidationsForProposition();
             }
         }
 
@@ -101,6 +108,8 @@ abstract class PropositionController extends AbstractSoutenanceController
         $vm->setVariables([
             'form' => $form,
             'title' => 'Renseigner la date et le lieu de la soutenance',
+            'validationsDejaEffectuees' => !($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) &&
+            !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))
         ]);
         return $vm;
     }
@@ -135,7 +144,13 @@ abstract class PropositionController extends AbstractSoutenanceController
                     $this->getMembreService()->create($membre);
                 }
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
-                if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
+
+                if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                    $this->annulerValidationsForProposition();
+                    $this->flashMessenger()->addSuccessMessage("Le membre a bien été mis à jour.");
+                }else{
+                    $this->flashMessenger()->addSuccessMessage("Le membre a bien été mis à jour.");
+                }
             }
         }
 
@@ -144,6 +159,8 @@ abstract class PropositionController extends AbstractSoutenanceController
         $vm->setVariables([
             'form' => $form,
             'proposition' => $this->proposition,
+            'validationsDejaEffectuees' => !($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) &&
+            !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)),
             'title' => 'Renseigner les informations sur un membre du jury',
         ]);
         return $vm;
@@ -158,8 +175,11 @@ abstract class PropositionController extends AbstractSoutenanceController
 
         $membre = $this->getMembreService()->getRequestedMembre($this);
         if ($membre) {
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
             $this->getMembreService()->delete($membre);
+            $this->flashMessenger()->addSuccessMessage("Le membre a bien été supprimé.");
+            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                $this->annulerValidationsForProposition();
+            }
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
         }
 
@@ -181,7 +201,9 @@ abstract class PropositionController extends AbstractSoutenanceController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
+            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                $this->annulerValidationsForProposition();
+            }
         }
 
         $vm = new ViewModel();
@@ -189,6 +211,8 @@ abstract class PropositionController extends AbstractSoutenanceController
         $vm->setVariables([
             'title' => 'Renseignement de l\'utilisation de l\'anglais',
             'form' => $form,
+            'validationsDejaEffectuees' => !($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) &&
+            !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))
         ]);
         return $vm;
     }
@@ -208,7 +232,9 @@ abstract class PropositionController extends AbstractSoutenanceController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->propositionService->annulerValidationsForProposition($this->proposition);
+            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                $this->annulerValidationsForProposition();
+            }
         }
 
         $vm = new ViewModel();
@@ -217,6 +243,8 @@ abstract class PropositionController extends AbstractSoutenanceController
             'title' => 'Renseignement des informations relatives à la confidentialité',
             'form' => $form,
             'object' => $this->entity,
+            'validationsDejaEffectuees' => !($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) &&
+            !$this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER_GESTION))
         ]);
         return $vm;
     }
@@ -251,7 +279,7 @@ abstract class PropositionController extends AbstractSoutenanceController
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['motif'] !== null) {
-                $this->propositionService->annulerValidationsForProposition($this->proposition);
+                $this->annulerValidationsForProposition();
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_VALIDATION, "Structures");
 
                 $currentUser = $this->userContextService->getIdentityIndividu();
@@ -285,8 +313,13 @@ abstract class PropositionController extends AbstractSoutenanceController
         $data = $request->getPost();
         $form->setData($data);
         if ($form->isValid()) {
-            $this->propositionService->update($proposition);
+            try {
+                $this->propositionService->update($proposition);
+            } catch(RuntimeException $e) {
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de la mise à jour de la proposition. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
+            }
         }
+        $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
         return $proposition;
     }
 
@@ -370,16 +403,187 @@ abstract class PropositionController extends AbstractSoutenanceController
         $this->initializeFromType();
 
         $categorieParametre = $this->proposition instanceof PropositionThese ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+        $formulaireDemandeLabel = $this->proposition instanceof PropositionThese ? $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_LABEL_EUROPEEN) : null;
 
         $vm = new ViewModel();
         $vm->setTerminal(true);
+        $vm->setTemplate("soutenance/proposition/generate-view-informations");
         $vm->setVariables([
             'object' => $this->entity,
             'proposition' => $this->proposition,
-            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_LABEL_EUROPEEN),
+            'FORMULAIRE_DEMANDE_LABEL' => $formulaireDemandeLabel,
             'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_CONFIDENTIALITE),
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+            'typeProposition' => $this->type,
+        ]);
+        return $vm;
+    }
+
+    public function generateViewFichiersAction(): ViewModel
+    {
+        $this->initializeFromType();
+
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($this->proposition);
+        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($this->proposition, $justificatifs);
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setTemplate("soutenance/proposition/generate-view-fichiers");
+        $vm->setVariables([
+            'object' => $this->entity,
+            'proposition' => $this->proposition,
+            'justificatifs' => $justificatifs,
+            'justificatifsOk' => $justificatifsOk,
+            'urlFichier' => $this->proposition instanceof PropositionThese ? $this->urlFichierThese() : $this->urlFichierHDR(),
+            'typeProposition' => $this->type,
+        ]);
+        return $vm;
+    }
+
+    public function generateViewValidationsActeursAction(): ViewModel
+    {
+        $this->initializeFromType();
+
+        /** @var Utilisateur $currentUser */
+        $currentUser = $this->userContextService->getDbUser();
+        $currentIndividu = $currentUser->getIndividu();
+        $currentRole = $this->userContextService->getSelectedIdentityRole();
+
+        /** Indicateurs --------------------------------------------------------------------------------------------- */
+        $indicateurs = $this->propositionService->computeIndicateurForProposition($this->proposition);
+        $juryOk = $this->propositionService->isJuryPropositionOk($this->proposition, $indicateurs);
+        if ($juryOk === false) $indicateurs["valide"] = false;
+        foreach ($this->proposition->getMembres() as $membre) {
+            if ($membre->getEmail() === null) {
+                $indicateurs["membresMail"]["valide"] = false;
+                $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
+                $indicateurs["valide"] = false;
+                break;
+            }
+        }
+        $isIndicateursOk = $this->propositionService->isPropositionOk($this->proposition, $indicateurs);
+
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($this->proposition);
+        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($this->proposition, $justificatifs);
+
+        /** Collècte des informations sur les individus liés -------------------------------------------------------- */
+        if($this->proposition instanceof PropositionThese){
+            /** @var IndividuRole[] $ecoleResponsables */
+            $ecoleResponsables = [];
+            if ($this->entity->getEcoleDoctorale() !== null) {
+                $ecoleResponsables = $this->getApplicationRoleService()->findIndividuRoleByStructure($this->entity->getEcoleDoctorale()->getStructure(), null, $this->entity->getEtablissement());
+            }
+        }
+
+        /** @var IndividuRole[] $uniteResponsables */
+        $uniteResponsables = [];
+        if ($this->entity->getUniteRecherche() !== null) {
+            $uniteResponsables = $this->getApplicationRoleService()->findIndividuRoleByStructure($this->entity->getUniteRecherche()->getStructure(), null, $this->entity->getEtablissement());
+        }
+
+        $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($this->entity);
+        $emailsAspectDoctorats = $notif->getTo();
+        $informationsOk = true;
+        if($this->proposition instanceof PropositionThese){
+            $directeurs = $this->acteurService->getRepository()->findEncadrementThese($this->entity);
+            usort($directeurs, ActeurThese::getComparisonFunction());
+            foreach ($directeurs as $directeur) {
+                if ($directeur->getIndividu()->getEmailPro() === null and $directeur->getIndividu()->getComplement() === null) {
+                    $informationsOk = false;
+                    break;
+                }
+            }
+        }else{
+            $garants = $this->acteurService->getRepository()->findEncadrementHDR($this->entity);
+            usort($garants, ActeurHDR::getComparisonFunction());
+            foreach ($garants as $garant) {
+                if ($garant->getIndividu()->getEmailPro() === null and $garant->getIndividu()->getComplement() === null) {
+                    $informationsOk = false;
+                    break;
+                }
+            }
+        }
+
+        if (empty($uniteResponsables)) $informationsOk = false;
+        foreach ($uniteResponsables as $uniteResponsable) {
+            if ($uniteResponsable->getIndividu()->getEmailPro() === null and $uniteResponsable->getIndividu()->getComplement() === null) {
+                $informationsOk = false;
+                break;
+            }
+        }
+        if($this->proposition instanceof PropositionThese) {
+            if (empty($ecoleResponsables)) $informationsOk = false;
+            foreach ($ecoleResponsables as $ecoleResponsable) {
+                if ($ecoleResponsable->getIndividu()->getEmailPro() === null and $ecoleResponsable->getIndividu()->getComplement() === null) {
+                    $informationsOk = false;
+                    break;
+                }
+            }
+        }
+        if (empty($emailsAspectDoctorats)) $informationsOk = false;
+
+        $validations = $this->proposition->getObject() instanceof These ?
+            $this->propositionService->findValidationSoutenanceForThese($this->entity) :
+            $this->propositionService->findValidationSoutenanceForHDR($this->entity);
+
+        /** Récupération des éléments liés au bloc 'intégrité scientifique' */
+        $attestationsIntegriteScientifique = $this->getJustificatifService()->getJustificatifsByPropositionAndNature($this->proposition, NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE);
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setTemplate("soutenance/proposition/generate-view-validations-acteurs");
+        $vm->setVariables([
+            'proposition' => $this->proposition,
+            'validations' => $validations,
+
+            'attestationsIntegriteScientifique' => $attestationsIntegriteScientifique,
+
+            'isIndicateursOk' => $isIndicateursOk,
+            'apprenant' => $this->entity->getApprenant(),
+            'directeurs' => $directeurs ?? null,
+            'garants' => $garants ?? null,
+            'validationActeur' => $this->propositionService->isValidated($this->entity, $currentIndividu, $currentRole),
+
+            'informationsOk' => $informationsOk,
+            'justificatifsOk' => $justificatifsOk,
+            'typeProposition' => $this->type,
+        ]);
+        return $vm;
+    }
+
+    public function generateViewValidationsStructuresAction(): ViewModel
+    {
+        $this->initializeFromType();
+
+        $validations = $this->proposition->getObject() instanceof These ?
+            $this->propositionService->findValidationSoutenanceForThese($this->entity) :
+            $this->propositionService->findValidationSoutenanceForHDR($this->entity);
+
+        /** Indicateurs --------------------------------------------------------------------------------------------- */
+        $indicateurs = $this->propositionService->computeIndicateurForProposition($this->proposition);
+        $juryOk = $this->propositionService->isJuryPropositionOk($this->proposition, $indicateurs);
+        if ($juryOk === false) $indicateurs["valide"] = false;
+        foreach ($this->proposition->getMembres() as $membre) {
+            if ($membre->getEmail() === null) {
+                $indicateurs["membresMail"]["valide"] = false;
+                $indicateurs["membresMail"]["alerte"] = "Chaque membre renseigné dans la composition du jury doit avoir un mail";
+                $indicateurs["valide"] = false;
+                break;
+            }
+        }
+        $isIndicateursOk = $this->propositionService->isPropositionOk($this->proposition, $indicateurs);
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setTemplate("soutenance/proposition/generate-view-validations-structures");
+        $vm->setVariables([
+            'proposition' => $this->proposition,
+            'validations' => $validations,
+            'typeProposition' => $this->proposition,
+            'isIndicateursOk' => $isIndicateursOk,
         ]);
         return $vm;
     }
@@ -402,6 +606,7 @@ abstract class PropositionController extends AbstractSoutenanceController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getAdresseService()->create($adresse);
+                $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
                 exit();
             }
         }
@@ -428,6 +633,7 @@ abstract class PropositionController extends AbstractSoutenanceController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getAdresseService()->update($adresse);
+                $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
                 exit();
             }
         }
@@ -446,6 +652,7 @@ abstract class PropositionController extends AbstractSoutenanceController
 
         $adresse = $this->getAdresseService()->getRequestedAdresse($this);
         $this->getAdresseService()->historise($adresse);
+        $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
 
         $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
@@ -458,6 +665,7 @@ abstract class PropositionController extends AbstractSoutenanceController
 
         $adresse = $this->getAdresseService()->getRequestedAdresse($this);
         $this->getAdresseService()->restore($adresse);
+        $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
 
         $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
@@ -468,6 +676,7 @@ abstract class PropositionController extends AbstractSoutenanceController
     {
         $this->initializeFromType();
         $adresse = $this->getAdresseService()->getRequestedAdresse($this);
+        $this->flashMessenger()->addSuccessMessage("La proposition a bien été mise à jour.");
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -495,12 +704,15 @@ abstract class PropositionController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAdresse($this->proposition);
             if (empty($notif->getTo())) {
-                throw new RuntimeException(
-                    "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$this->entity->getEtablissement()}'");
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné au doctorant ainsi qu'aux encadrants de la thèse. <br><br> <b>Message d'erreur</b> : Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription ({$this->entity->getEtablissement()})");
+//                        throw new RuntimeException(
+//                            "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$this->entity->getEtablissement()}'");
+            }else{
+                $this->notifierService->trigger($notif);
+                $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée.");
             }
-            $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
-            // aucun destinataire , todo : cas à gérer !
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail destiné au doctorant ainsi qu'aux encadrants de la thèse. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
 
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);

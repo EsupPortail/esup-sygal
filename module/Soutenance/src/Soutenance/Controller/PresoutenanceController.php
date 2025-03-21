@@ -15,6 +15,7 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use HDR\Entity\Db\HDR;
 use Individu\Service\IndividuServiceAwareTrait;
+use JetBrains\PhpStorm\NoReturn;
 use Laminas\Http\Response;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
@@ -26,6 +27,11 @@ use Soutenance\Entity\Proposition;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
+use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
+use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
+use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -33,6 +39,7 @@ use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
+use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
 use Validation\Entity\Db\TypeValidation;
@@ -57,17 +64,6 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 
     use DateRenduRapportFormAwareTrait;
 
-    /** @var PhpRenderer */
-    private PhpRenderer $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer(PhpRenderer $renderer): void
-    {
-        $this->renderer = $renderer;
-    }
-
     public function dateRenduRapportAction() : ViewModel
     {
         $this->initializeFromType(false, false);
@@ -82,6 +78,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->propositionService->update($this->proposition);
+                $this->flashMessenger()->addSuccessMessage("La date du rendu a bien été modifiée");
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Date de rendu");
             }
         }
@@ -174,6 +171,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 //            $this->getMembreService()->update($membre);
             $acteur->setMembre($membre);
             $this->acteurService->save($acteur);
+            $this->flashMessenger()->addSuccessMessage($membre->getDenomination()." a bien été associé à un acteur.");
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
             //creation de l'utilisateur
@@ -214,7 +212,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 //        $acteur->setMembre($membre);
         $acteur->setMembre(null);
         $this->acteurService->save($acteur);
-
+        $this->flashMessenger()->addSuccessMessage($membre->getDenomination()." a bien été dissocié de son acteur.");
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
         //si l'entité a été saisie intégralement dans SyGAL, et ne provient pas d'un SI
@@ -267,6 +265,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
         }
 
+        $this->flashMessenger()->addSuccessMessage("Le président du jury a bien été enregistré.");
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
     }
@@ -282,6 +281,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             throw new RuntimeException("Un problème est survenue lors de l'historisation en base d'un acteur");
         }
 
+        $this->flashMessenger()->addSuccessMessage("Le président du jury a bien été supprimé.");
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['these' => $this->entity->getId()], [], true);
     }
@@ -301,8 +301,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationConnexionRapporteur($this->proposition, $membre);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException) {
-            // aucun destinataire, todo : cas à gérer !
+            $this->flashMessenger()->addSuccessMessage("Un mail lui a été envoyé, indiquant qu'il/elle peut dès à présent se connecter sur la plateforme.");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (à l'acteur) indiquant qu'il/elle peut dès à présent se connecter sur la plateforme. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
     }
 
@@ -329,8 +330,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAvisSoutenance($this->entity, $rapporteur);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException) {
-                    // aucun destinataire, todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée.");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
             }
         }
@@ -379,12 +381,11 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($this->proposition);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException) {
-            // aucun destinataire, todo : cas à gérer !
+            $this->flashMessenger()->addSuccessMessage("La notification indiquant que la soutenance est acceptée a bien été envoyée. 
+               <br><br> <b>Envoyé :</b> aux acteurs directs, au responsable de l'ED, au responsable de l'UR");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
-        $this->flashMessenger()
-            //->setNamespace('presoutenance')
-            ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
 
         $this->horodatageService->addHorodatage($this->proposition, HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance");
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
@@ -411,12 +412,10 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationStopperDemarcheSoutenance($this->entity);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException) {
-                    // aucun destinataire, todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée.");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
-                $this->flashMessenger()
-                    //->setNamespace('presoutenance')
-                    ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
                 $this->horodatageService->addHorodatage($this->proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance");
                 exit();
@@ -508,8 +507,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationApprenant($doctorant, $this->proposition);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException) {
-            // aucun destinataire, todo : cas à gérer !
+            $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée au doctorant.");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification au doctorant. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
 
         //membres
@@ -526,8 +526,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
                     /** @see PresoutenanceController::convocationMembreAction() */
                     $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($membre, $this->proposition);
                     $this->notifierService->trigger($notif);
-                } catch (\Notification\Exception\RuntimeException) {
-                    // aucun destinataire, todo : cas à gérer !
+                    $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée à {$membre->getDenomination()}.");
+                } catch (Throwable $e) {
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification à {$membre->getDenomination()}. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
             }
         }
@@ -546,8 +547,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
             try {
                 $notif = $this->soutenanceNotificationFactory->createNotificationNotificationRapporteurRetard($membre);
                 $this->notifierService->trigger($notif);
-            } catch (\Notification\Exception\RuntimeException) {
-                // aucun destinataire, todo : cas à gérer !
+                $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée à {$membre->getDenomination()}.");
+            } catch (Throwable $e) {
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification à {$membre->getDenomination()}. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
             }
         }
         exit();
@@ -566,8 +568,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
                     try {
                         $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($this->entity, $membre);
                         $this->notifierService->trigger($notif);
-                    } catch (\Notification\Exception\RuntimeException $e) {
-                        throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
+                        $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée à {$membre->getDenomination()}.");
+                    } catch (Throwable $e) {
+                        $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification à {$membre->getDenomination()}. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                     }
                 }
             }
@@ -583,11 +586,153 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationTransmettreDocumentsDirection($this->entity, $this->proposition);
             $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException) {
-            throw new RuntimeException("Aucun mail trouvé pour le garant");
+            $this->flashMessenger()->addSuccessMessage("Une notification a bien été envoyée, indiquant que le doctorant peut dès à présent déposer sa thèse dans l'application
+            <br><br> <b>Envoyé :</b> au doctorant, au directeur de thèse");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
 
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_NOTIFICATION, "Transmission des documents");
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['hdr' => $this->entity->getId()], [], true);
+    }
+
+    /**
+     *
+     * Génération des documents liés à la présoutenance
+     *
+     */
+
+    /** Document pour la signature en présidence */
+    #[NoReturn] public function procesVerbalSoutenanceAction(): void
+    {
+        $this->initializeFromType();
+
+        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
+        $exporter = new ProcesVerbalSoutenancePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $this->proposition,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($this->entity->getId() . '_proces_verbal.pdf');
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Procès verbal");
+        exit;
+    }
+
+    #[NoReturn] public function avisSoutenanceAction(): void
+    {
+        $this->initializeFromType();
+
+        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
+        $exporter = new AvisSoutenancePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $this->proposition,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($this->entity->getId() . '_avis_soutenance.pdf');
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance");
+        exit;
+    }
+
+    #[NoReturn] public function rapportSoutenanceAction(): void
+    {
+        $this->initializeFromType();
+
+        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
+        $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $this->proposition,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($this->entity->getId() . '_rapport_soutenance.pdf');
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance");
+        exit;
+    }
+
+    #[NoReturn] public function rapportTechniqueAction(): void
+    {
+        $this->initializeFromType();
+
+        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
+        $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $this->proposition,
+            'these' => $this->entity,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($this->entity->getId() . '_rapport_technique.pdf');
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Rapport technique");
+        exit;
+    }
+
+    #[NoReturn] public function convocationsAction(): void
+    {
+        $this->initializeFromType();
+        if($this->entity instanceof These){
+            $signature = $this->findSignatureEcoleDoctorale($this->entity) ?: $this->findSignatureEtablissement($this->entity);
+        }else{
+            $signature = $this->findSignatureEtablissement($this->entity);
+        }
+
+        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
+
+        $validationMDD = $this->entity instanceof These ?
+            $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity) :
+            $this->validationHDRService->getRepository()->findValidationByCodeAndHDR(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity);
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
+
+        $ville = $this->getVille($this->entity->getEtablissement());
+
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $this->proposition,
+            'these' => $this->entity,
+            'hdr' => $this->entity,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
+            'signature' => $signature,
+        ]);
+        $exporter->export($this->entity->getId() . '_convocation.pdf');
+
+        $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_EDITION, "Convocations");
+        exit;
+    }
+
+    #[NoReturn] public function convocationMembreAction(): void
+    {
+        $this->initializeFromType();
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        if($this->entity instanceof These){
+            $signature = $this->findSignatureEcoleDoctorale($this->entity) ?: $this->findSignatureEtablissement($this->entity);
+        }else{
+            $signature = $this->findSignatureEtablissement($this->entity);
+        }
+
+        $pdcData = $this->entityService->fetchInformationsPageDeCouverture($this->entity);
+
+        $validationMDD = $this->entity instanceof These ?
+            $this->validationService->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity) :
+            $this->validationHDRService->getRepository()->findValidationByCodeAndHDR(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $this->entity);
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
+
+        $ville = $this->getVille($this->entity->getEtablissement());
+
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $this->proposition,
+            'these' => $this->entity,
+            'hdr' => $this->entity,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
+            'signature' => $signature,
+            'membre' => $membre,
+        ]);
+        $exporter->exportMembre($membre, $this->entity->getId() . '_convocation.pdf');
+        exit;
     }
 }

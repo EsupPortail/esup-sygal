@@ -8,6 +8,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Laminas\View\Model\ViewModel;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Provider\Template\TexteTemplates;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
@@ -15,6 +16,7 @@ use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
+use Throwable;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 use Validation\Entity\Db\ValidationThese;
 
@@ -87,8 +89,9 @@ class EngagementImpartialiteController extends AbstractSoutenanceController
             try {
                 $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($this->entity, $membre);
                 $this->notifierService->trigger($notif);
-            } catch (RuntimeException $e) {
-                throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
+                $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée à {$membre->getDenomination()}.");
+            } catch (Throwable $e) {
+                $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification à {$membre->getDenomination()}. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
             }
         }
 
@@ -122,7 +125,7 @@ class EngagementImpartialiteController extends AbstractSoutenanceController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $this->getEngagementImpartialiteService()->createRefus($membre, $this->entity);
-        $this->propositionService->annulerValidationsForProposition($this->proposition);
+        $this->annulerValidationsForProposition();
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($this->entity, $membre);
             $this->notifierService->trigger($notif);
@@ -144,8 +147,9 @@ class EngagementImpartialiteController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($this->entity, $membre);
             $this->notifierService->trigger($notif);
-        } catch (RuntimeException $e) {
-            throw new RuntimeException("Aucun mail trouvé pour le rapporteur [".$membre->getDenomination()."]");
+            $this->flashMessenger()->addSuccessMessage("La notification a bien été envoyée à {$membre->getDenomination()}.");
+        } catch (Throwable $e) {
+            $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification à {$membre->getDenomination()}. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
 
         $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
