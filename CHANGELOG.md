@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+9.4.1
+-----
+- [FIX] Module Rapports d'activité : erreur 'invalid iterator' sur la page de création d'un rapport (provoquée par le passage à PHP 8.1+).
+
 9.4.0
 -----
 - Passage à PHP 8.2.

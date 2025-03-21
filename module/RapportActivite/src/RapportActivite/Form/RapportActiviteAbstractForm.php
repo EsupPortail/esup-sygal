@@ -49,8 +49,10 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
     {
         $valuesOptions = [];
 
-        /** @var \Application\Entity\AnneeUnivInterface $anneeUniv */
-        while ($anneeUniv = $this->anneesUnivs->current()) {
+        $this->anneesUnivs->rewind();
+        while ($this->anneesUnivs->valid()) {
+            /** @var \Application\Entity\AnneeUnivInterface $anneeUniv */
+            $anneeUniv = $this->anneesUnivs->current();
             $infos = $this->anneesUnivs->getInfo();
             $data = [
                 'value' => $anneeUniv->getPremiereAnnee(),
