@@ -24,6 +24,7 @@ use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionThese;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
@@ -586,8 +587,9 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationTransmettreDocumentsDirection($this->entity, $this->proposition);
             $this->notifierService->trigger($notif);
-            $this->flashMessenger()->addSuccessMessage("Une notification a bien été envoyée, indiquant que le doctorant peut dès à présent déposer sa thèse dans l'application
-            <br><br> <b>Envoyé :</b> au doctorant, au directeur de thèse");
+            $message = $this->proposition instanceof PropositionThese ? "Les documents ont bien été envoyés par mail <br><br> <b>Envoyé :</b> au directeur de thèse" :
+                "Les documents ont bien été envoyés par mail <br><br> <b>Envoyé :</b> au garant";
+            $this->flashMessenger()->addSuccessMessage($message);
         } catch (Throwable $e) {
             $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi de la notification. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
         }
@@ -660,6 +662,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         $exporter->setVars([
             'proposition' => $this->proposition,
             'these' => $this->entity,
+            'hdr' => $this->entity,
             'informations' => $pdcData,
         ]);
         $exporter->export($this->entity->getId() . '_rapport_technique.pdf');

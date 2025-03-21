@@ -99,7 +99,7 @@ abstract class PropositionController extends AbstractSoutenanceController
                 $this->update($request, $form, $this->proposition);
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
                 $this->propositionService->initialisationDateRetour($this->proposition);
-                if (!$canModifierGestion) $this->annulerValidationsForProposition();
+                if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$canModifierGestion) $this->annulerValidationsForProposition();
             }
         }
 
@@ -145,7 +145,7 @@ abstract class PropositionController extends AbstractSoutenanceController
                 }
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
 
-                if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+                if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                     $this->annulerValidationsForProposition();
                     $this->flashMessenger()->addSuccessMessage("Le membre a bien été mis à jour.");
                 }else{
@@ -177,7 +177,7 @@ abstract class PropositionController extends AbstractSoutenanceController
         if ($membre) {
             $this->getMembreService()->delete($membre);
             $this->flashMessenger()->addSuccessMessage("Le membre a bien été supprimé.");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+            if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                 $this->annulerValidationsForProposition();
             }
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
@@ -201,7 +201,7 @@ abstract class PropositionController extends AbstractSoutenanceController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+            if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                 $this->annulerValidationsForProposition();
             }
         }
@@ -232,7 +232,7 @@ abstract class PropositionController extends AbstractSoutenanceController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+            if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                 $this->annulerValidationsForProposition();
             }
         }

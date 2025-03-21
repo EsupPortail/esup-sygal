@@ -12,6 +12,7 @@ use Soutenance\Entity\Intervention;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Entity\PropositionThese;
 use Soutenance\Provider\Parametre\These\SoutenanceParametres;
 use Soutenance\Service\Intervention\InterventionServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
@@ -48,6 +49,7 @@ class InterventionController extends AbstractSoutenanceController
             $membres[$membre->getId()] = $membre;
         }
 
+        $categorieCode = ($this->proposition instanceof PropositionThese) ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
         return new ViewModel([
             'object' => $this->entity,
             'distanciel' => (!empty($distanciels)) ? current($distanciels) : null,
@@ -56,7 +58,7 @@ class InterventionController extends AbstractSoutenanceController
             'membres' => $membres,
             'justificatifs' => $justificatifs,
             'urlFichier' => $this->type === Proposition::ROUTE_PARAM_PROPOSITION_THESE ? $this->urlFichierThese(): $this->urlFichierHDR(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
             'typeProposition' => $this->type,
         ]);
     }

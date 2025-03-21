@@ -219,7 +219,7 @@ class PropositionTheseController extends PropositionController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+            if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                 $this->annulerValidationsForProposition();
             }
         }
@@ -250,7 +250,7 @@ class PropositionTheseController extends PropositionController
         if ($request->isPost()) {
             $this->update($request, $form, $this->proposition);
             $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
-            if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+            if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                 $this->annulerValidationsForProposition();
             }
         }
@@ -332,7 +332,7 @@ class PropositionTheseController extends PropositionController
             $this->validationService->historiser($refu);
         }
 
-        if (!$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
+        if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
             $this->annulerValidationsForProposition();
             $this->flashMessenger()->addSuccessMessage("La déclaration de non-plagiat a bien été révoquée.");
         }else{

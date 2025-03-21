@@ -282,10 +282,10 @@ class PropositionHDRController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPresoutenance($this->entity);
                     $this->notifierService->trigger($notif);
-                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la thèse peut débuter le circuit de présoutenance.
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la HDR peut débuter le circuit de présoutenance.
                     <br><br> <b>Envoyé :</b> au gestionnaire HDR");
                 } catch (\Notification\Exception\RuntimeException $e) {
-                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (au gestionnaire HDR) indiquant que la thèse peut débuter le circuit de présoutenance. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (au gestionnaire HDR) indiquant que la HDR peut débuter le circuit de présoutenance. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
 
                 $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::ETABLISSEMENT));
