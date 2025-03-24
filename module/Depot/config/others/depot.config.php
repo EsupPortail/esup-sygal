@@ -753,7 +753,7 @@ return [
                                     'these',
                                 ],
                                 'icon' => 'fas fa-copy',
-//                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-fichiers'),
+                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-depot-divers'),
 //                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
 //                                'visible' => TheseAssertion::class,
                             ],

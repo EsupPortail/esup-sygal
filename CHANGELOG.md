@@ -6,6 +6,7 @@ Journal des modifications
 - Utilisation de la nouvelle bibliothèque unicaen/maintenance-mode.
 - [FIX] Module Rapports d'activité : erreur 'invalid iterator' sur la page de création d'un rapport (provoquée par le passage à PHP 8.1+).
 - [FIX] Fiche utilisateur : l'URL du bouton de création de token était erroné.
+- [FIX] Rétablissement de la ressource ACL associée au menu 'Dépôt fichiers divers'.
 
 9.4.0
 -----
