@@ -147,6 +147,8 @@ EOS;
 
     public function setUp(): void
     {
+        $this->applicationConfigPath = __DIR__ . '/../../../../config/application.config.php';
+
         parent::setUp();
 
 //        // forçage du proriétaire et des permissions requis pour éviter l'erreur "Bad permissions"
