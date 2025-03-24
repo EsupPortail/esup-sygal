@@ -11411,7 +11411,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/maintenance-mode.git",
-                "reference": "22aac810da8ca2318cd56480560b4a5eb8a54102"
+                "reference": "1785d23084b3f037c15ab13eb52f11bea9bf82c3"
             },
             "require": {
                 "php": ">=8.0",
@@ -11430,7 +11430,7 @@
                 ]
             },
             "description": "Module Unicaen pour activer/désactiver le mode maintenance d'une application",
-            "time": "2025-03-21T14:33:48+00:00"
+            "time": "2025-03-24T08:45:25+00:00"
         },
         {
             "name": "unicaen/parametre",
