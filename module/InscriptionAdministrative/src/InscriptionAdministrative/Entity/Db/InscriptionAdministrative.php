@@ -17,7 +17,7 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
  ********************************************************************************************************************
  *
  * Données *non remaniées* issues de la synchro spécifiée dans la classe
- * {@see \SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\ImportProcess}
+ * {@see \SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\InscriptionAdministrativeImportProcess}
  *
  * NB : l'id de l'inscription administrative est forgé (côté Pégase) à partir des attributs suivants :
  * - la structure organisationnelle (code UAI, ex : 'ETAB00'),

@@ -8,7 +8,7 @@ use InscriptionAdministrative\Rule\Reception\ReceptionRuleInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-abstract class ReceptionRuleAbstractTest extends TestCase
+abstract class ReceptionRuleAbstract extends TestCase
 {
     protected InscriptionAdministrative|MockObject $ia;
     protected InscriptionAdministrativeApprenant|MockObject $iaApprenant;

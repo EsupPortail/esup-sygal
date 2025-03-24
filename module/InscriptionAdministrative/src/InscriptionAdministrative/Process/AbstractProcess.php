@@ -25,7 +25,7 @@ abstract class AbstractProcess
             $this->entityManager->getConnection()->setNestTransactionsWithSavepoints(true);
             $this->entityManager->getConnection()->beginTransaction();
         } catch (\Doctrine\DBAL\Exception $e) {
-            throw new RuntimeException("Echec de l'ouverture d'une transaction en bdd", null, $e);
+            throw new RuntimeException("Echec de l'ouverture d'une transaction en bdd", 0, $e);
         }
     }
 
@@ -35,7 +35,7 @@ abstract class AbstractProcess
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
         } catch (Exception $e) {
-            $exception = new RuntimeException("Echec du commit en bdd, rollback.", null, $e);
+            $exception = new RuntimeException("Echec du commit en bdd, rollback.", 0, $e);
             $this->rollback($exception);
             throw $exception;
         }

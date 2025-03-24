@@ -1,6 +1,6 @@
 <?php
 
-namespace SygalApiImplTest\Functional\InscriptionAdministrative;
+namespace SygalApiImplTest;
 
 use RuntimeException;
 use stdClass;
@@ -12,10 +12,15 @@ use Webmozart\Assert\Assert;
 trait InscriptionAdministrativeJsonTrait
 {
     static protected string $jsonOutputDirPath = '/tmp';
+    static protected string $jsonTemplateFilesDir;
 
     protected string $jsonOriginalFileName = 'inscr_admin';
-    protected string $jsonTemplateFilesDir = __DIR__ . '/json';
     protected string $jsonTemplateFileName = 'inscr_admin.json.twig';
+
+    public static function setJsonTemplateFilesDir(string $jsonTemplateFilesDir): void
+    {
+        self::$jsonTemplateFilesDir = $jsonTemplateFilesDir;
+    }
 
     public static function setJsonOutputDirPath(string $jsonOutputDirPath): void
     {
@@ -40,7 +45,7 @@ trait InscriptionAdministrativeJsonTrait
     {
         $jsonFilePath = $this->computeJsonOutputFilePath($jsonFileName);
 
-        $loader = new FilesystemLoader($this->jsonTemplateFilesDir);
+        $loader = new FilesystemLoader(self::$jsonTemplateFilesDir);
         $twig = new Environment($loader);
         try {
             $content = $twig->render($this->jsonTemplateFileName, $templateParams);

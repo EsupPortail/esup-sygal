@@ -8,6 +8,7 @@ use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Locale;
 use SygalApiImplTest\Functional\AbstractApiTest;
+use SygalApiImplTest\InscriptionAdministrativeJsonTrait;
 
 class InscriptionAdministrativeApiTest extends AbstractApiTest
 {

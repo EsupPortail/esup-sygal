@@ -16,8 +16,9 @@ use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
 use InscriptionAdministrative\Rule\Reception\StatutValidee\StatutValideeRule;
-use InscriptionAdministrativeTest\Rule\Reception\ReceptionRuleAbstractTest;
+use InscriptionAdministrativeTest\Rule\Reception\ReceptionRuleAbstract;
 use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use These\Entity\Db\Repository\TheseAnneeUnivRepository;
 use These\Entity\Db\Repository\TheseRepository;
@@ -27,55 +28,67 @@ use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use UnicaenApp\Traits\MessageAwareInterface;
 
-class StatutValideeRuleTest extends ReceptionRuleAbstractTest
+class StatutValideeRuleTest extends ReceptionRuleAbstract
 {
     protected InscriptionAdministrativeDoctorant|Stub $iaDoctorant;
 
-    protected IndividuService|Stub $individuService;
-    protected DoctorantService|Stub $doctorantService;
-    protected TheseService|Stub $theseService;
-    protected TheseAnneeUnivService|Stub $theseAnneeUnivService;
-    protected AdmissionService|Stub $admissionService;
+    protected IndividuService|MockObject $individuService;
+    protected DoctorantService|MockObject $doctorantService;
+    protected TheseService|MockObject $theseService;
+    protected TheseAnneeUnivService|MockObject $theseAnneeUnivService;
+    protected AdmissionService|MockObject $admissionService;
 
-    protected IndividuRepository|Stub $individuRepository;
-    protected DoctorantRepository|Stub $doctorantRepository;
-    protected TheseRepository|Stub $theseRepository;
-    protected TheseAnneeUnivRepository|Stub $theseAnneeUnivRepository;
-    protected AdmissionRepository|Stub $admissionRepository;
+    protected IndividuRepository|MockObject $individuRepository;
+    protected DoctorantRepository|MockObject $doctorantRepository;
+    protected TheseRepository|MockObject $theseRepository;
+    protected TheseAnneeUnivRepository|MockObject $theseAnneeUnivRepository;
+    protected AdmissionRepository|MockObject $admissionRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->individuRepository = $this->createStub(IndividuRepository::class);
-        $this->individuService = $this->createStub(IndividuService::class);
+        $this->individuRepository = $this->createMock(IndividuRepository::class);
+        $this->individuService = $this->createMock(IndividuService::class);
         $this->individuService->method('getRepository')->willReturn($this->individuRepository);
 
-        $this->doctorantRepository = $this->createStub(DoctorantRepository::class);
-        $this->doctorantService = $this->createStub(DoctorantService::class);
+        $this->doctorantRepository = $this->createMock(DoctorantRepository::class);
+        $this->doctorantService = $this->createMock(DoctorantService::class);
         $this->doctorantService->method('getRepository')->willReturn($this->doctorantRepository);
 
-        $this->theseRepository = $this->createStub(TheseRepository::class);
-        $this->theseService = $this->createStub(TheseService::class);
+        $this->theseRepository = $this->createMock(TheseRepository::class);
+        $this->theseService = $this->createMock(TheseService::class);
         $this->theseService->method('getRepository')->willReturn($this->theseRepository);
 
-        $this->theseAnneeUnivRepository = $this->createStub(TheseAnneeUnivRepository::class);
-        $this->theseAnneeUnivService = $this->createStub(TheseAnneeUnivService::class);
+        $this->theseAnneeUnivRepository = $this->createMock(TheseAnneeUnivRepository::class);
+        $this->theseAnneeUnivService = $this->createMock(TheseAnneeUnivService::class);
         $this->theseAnneeUnivService->method('getRepository')->willReturn($this->theseAnneeUnivRepository);
 
-        $this->admissionRepository = $this->createStub(AdmissionRepository::class);
-        $this->admissionService = $this->createStub(AdmissionService::class);
+        $this->admissionRepository = $this->createMock(AdmissionRepository::class);
+        $this->admissionService = $this->createMock(AdmissionService::class);
         $this->admissionService->method('getRepository')->willReturn($this->admissionRepository);
 
         $this->iaApprenant = $this->createMock(InscriptionAdministrativeApprenant::class);
         $this->iaDoctorant = $this->createMock(InscriptionAdministrativeDoctorant::class);
 
         $this->ia->method('estValidee')->willReturn(true);
-        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+    }
+
+    public function test_inscription_sans_apprenant_throws_exception(): void
+    {
+        $rule = $this->createRule();
+
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn(null);
+        $rule->setInscriptionAdministrative($this->ia);
+
+        $this->expectException(InvalidArgumentException::class);
+        $rule->execute();
     }
 
     public function test_throws_exception_with_inscription_non_validee(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         $this->expectException(InvalidArgumentException::class);
 
         $ia = $this->createMock(InscriptionAdministrative::class);
@@ -89,6 +102,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_deja_lie_et_ayant_une_these_avec_annee_univ_existante(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA déjà liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
@@ -157,6 +172,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_deja_lie_et_ayant_une_these_sans_annee_univ(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA déjà liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
@@ -223,6 +240,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_deja_lie_et_ayant_plusieurs_theses(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA déjà liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
@@ -285,6 +304,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_deja_lie_et_admission_validee(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA déjà liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
@@ -358,6 +379,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_deja_lie_et_admission_non_validee(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA déjà liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
@@ -433,6 +456,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_deja_lie_et_sans_admission(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA déjà liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
@@ -502,6 +527,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_ayant_une_these(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -572,6 +599,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_avec_admission_validee(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -647,6 +676,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_liee_et_admission_non_validee(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -727,6 +758,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_sans_admission(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -801,6 +834,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_et_admission_validee_avec_doctorant_lie(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -870,6 +905,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_et_admission_validee_sans_doctorant_lie(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -938,6 +975,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_avec_admission_non_validee_par_numero_candidat(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -962,6 +1001,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_mais_trouve_avec_ine_sans_admission(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 
@@ -1031,6 +1072,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstractTest
 
     public function test_doctorant_non_lie_et_introuvable_et_sans_admission(): void
     {
+        $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
+
         // IA non encore liée à un doctorant
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn(null);
 

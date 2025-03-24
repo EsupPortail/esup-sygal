@@ -37,7 +37,7 @@ class ReceptionProcessTest extends TestCase
     {
         $this->ia->expects(self::once())->method('getInscriptionAdministrativeApprenant')->willReturn($this->createStub(InscriptionAdministrativeApprenant::class));
 
-        $rule = $this->getMockForAbstractClass(ReceptionRuleInterface::class);
+        $rule = $this->getMockBuilder(ReceptionRuleInterface::class)->getMock();
         $rule->method('canCreateDoctorant')->willReturn(false);
         $rule->method('canUpdateDoctorant')->willReturn(false);
         $rule->method('canUpdateCodeApprenantDoctorant')->willReturn(false);

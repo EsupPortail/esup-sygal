@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./vendor/autoload.php" colors="true" cacheResultFile="/tmp">
+<phpunit bootstrap="./vendor/autoload.php" colors="true" cacheDirectory="/tmp">
+
     <testsuites>
         <testsuite name="Application">
             <directory>./module/Application/tests</directory>
@@ -25,39 +26,23 @@
         </testsuite>
     </testsuites>
 
-    <coverage cacheDirectory="/tmp"
-              includeUncoveredFiles="true"
-              processUncoveredFiles="true"
+    <source>
+        <include>
+            <directory suffix=".php">./module/Application</directory>
+            <directory suffix=".php">./module/Retraitement</directory>
+            <directory suffix=".php">./module/Import</directory>
+            <directory suffix=".php">./module/SygalApiImpl</directory>
+            <directory suffix=".php">./module/InscriptionAdministrative</directory>
+        </include>
+    </source>
+
+    <coverage includeUncoveredFiles="true"
               pathCoverage="false"
               ignoreDeprecatedCodeUnits="true"
               disableCodeCoverageIgnore="true">
-        <include>
-            <directory suffix=".php">./module/InscriptionAdministrative/src/InscriptionAdministrative/Rule</directory>
-        </include>
         <report>
             <html outputDirectory="./tmp/coverage" lowUpperBound="50" highLowerBound="90"/>
         </report>
     </coverage>
 
-    <logging>
-        <!--<log type="junit" target="/tmp/phpunit/logs/junit.xml" />-->
-        <!--<log type="coverage-clover" target="/tmp/phpunit/logs/clover.xml" />-->
-        <!--<log type="coverage-html" target="/tmp/phpunit/coverage" />-->
-    </logging>
-
-<!--    <filter>-->
-<!--        <whitelist processUncoveredFilesFromWhitelist="true">-->
-<!--            <directory suffix=".php">./module/Import</directory>-->
-<!--        </whitelist>-->
-<!--    </filter>-->
-
-    <!--
-    <groups>
-        <exclude>
-            <group>disable</group>
-            <group>integration</group>
-            <group>integration-sqlserver</group>
-        </exclude>
-    </groups>
-    -->
 </phpunit>

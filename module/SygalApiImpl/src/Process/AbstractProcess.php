@@ -2,7 +2,6 @@
 
 namespace SygalApiImpl\Process;
 
-use Application\Process\AbstractProcess;
 use Doctrine\DBAL\Connection;
 use Exception;
 use RuntimeException;
@@ -15,7 +14,7 @@ use UnicaenDbImport\Service\Exception\DatabaseServiceException;
 use UnicaenDbImport\Service\ImportService;
 use UnicaenDbImport\Service\SynchroService;
 
-abstract class AbstractImportProcess extends AbstractProcess
+abstract class AbstractProcess extends \Application\Process\AbstractProcess
 {
     protected Connection $destinationConnection;
     protected ImportService $importService;
@@ -49,7 +48,7 @@ abstract class AbstractImportProcess extends AbstractProcess
         try {
             return $this->importService->runImport($import);
         } catch (DatabaseServiceException $e) {
-            throw new Exception("Une erreur est survenue lors de l'import : " . $e->getMessage(), null, $e);
+            throw new Exception("Une erreur est survenue lors de l'import : " . $e->getMessage(), 0, $e);
         }
     }
 
@@ -61,7 +60,7 @@ abstract class AbstractImportProcess extends AbstractProcess
         try {
             return $this->synchroService->runSynchro($synchro);
         } catch (DatabaseServiceException $e) {
-            throw new Exception("Une erreur est survenue lors de la synchro : " . $e->getMessage(), null, $e);
+            throw new Exception("Une erreur est survenue lors de la synchro : " . $e->getMessage(), 0, $e);
         }
     }
 
@@ -72,7 +71,7 @@ abstract class AbstractImportProcess extends AbstractProcess
             $this->destinationConnection->setNestTransactionsWithSavepoints(true);
             $this->destinationConnection->beginTransaction();
         } catch (\Doctrine\DBAL\Exception $e) {
-            throw new RuntimeException("Echec de l'ouverture d'une transaction en bdd", null, $e);
+            throw new RuntimeException("Echec de l'ouverture d'une transaction en bdd", 0, $e);
         }
     }
 
@@ -81,7 +80,7 @@ abstract class AbstractImportProcess extends AbstractProcess
         try {
             $this->destinationConnection->commit();
         } catch (\Doctrine\DBAL\Exception $e) {
-            $exception = new RuntimeException("Echec du commit en bdd, rollback.", null, $e);
+            $exception = new RuntimeException("Echec du commit en bdd, rollback.", 0, $e);
             $this->rollback($exception);
         }
     }
@@ -92,7 +91,7 @@ abstract class AbstractImportProcess extends AbstractProcess
             $this->destinationConnection->rollback();
         } catch (\Doctrine\DBAL\Exception $e) {
             throw new RuntimeException(
-                sprintf("Echec du rollback en bdd (raison du rollback : %s)", $reason->getMessage()), null, $e
+                sprintf("Echec du rollback en bdd (raison du rollback : %s)", $reason->getMessage()), 0, $e
             );
         }
     }

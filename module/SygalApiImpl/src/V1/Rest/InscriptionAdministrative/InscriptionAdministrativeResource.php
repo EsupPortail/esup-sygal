@@ -5,11 +5,11 @@ namespace SygalApiImpl\V1\Rest\InscriptionAdministrative;
 use Exception;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use RuntimeException;
-use SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\ImportProcessAwareTrait;
+use SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\InscriptionAdministrativeImportProcessAwareTrait;
 
 class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdministrative\InscriptionAdministrativeResource
 {
-    use ImportProcessAwareTrait;
+    use InscriptionAdministrativeImportProcessAwareTrait;
 
     /**
      * Create a resource
@@ -22,7 +22,7 @@ class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdm
         $this->logger->debug(json_encode($data, JSON_PRETTY_PRINT));
 
         try {
-            $this->importFacade->import($data);
+            $this->inscriptionAdministrativeImportProcess->import($data);
         } catch (Exception $e) {
             error_log($e);
             return new ApiProblem(500, new RuntimeException(
