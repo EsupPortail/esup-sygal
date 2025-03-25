@@ -91,6 +91,10 @@ $config = [
                 ],
             ],
         ],
+        // Options concernant les inscriptions administratives (IA)
+        'inscription_administrative' => [
+            'run_reception_process_after_import_process' => false,
+        ],
     ],
     'import' => [
 

@@ -15,11 +15,11 @@
         <testsuite name="Rule">
             <directory>./module/Application/tests/ApplicationUnitTest/Rule</directory>
         </testsuite>
-<!--        <testsuite name="SygalApi">-->
-<!--            <directory>./module/SygalApiImpl/tests/SygalApiTest/Functional</directory>-->
-<!--        </testsuite>-->
         <testsuite name="SygalApiImpl">
             <directory>./module/SygalApiImpl/tests/SygalApiImplTest/V1</directory>
+        </testsuite>
+        <testsuite name="SygalApiImpl/Functional">
+            <directory>./module/SygalApiImpl/tests/SygalApiImplTest/Functional</directory>
         </testsuite>
         <testsuite name="InscriptionAdministrative">
             <directory>./module/InscriptionAdministrative/tests/InscriptionAdministrativeTest</directory>

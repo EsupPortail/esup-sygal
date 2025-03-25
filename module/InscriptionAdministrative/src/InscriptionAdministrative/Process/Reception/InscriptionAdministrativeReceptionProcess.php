@@ -24,7 +24,7 @@ use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
 use Webmozart\Assert\Assert;
 
-class ReceptionProcess extends AbstractProcess
+class InscriptionAdministrativeReceptionProcess extends AbstractProcess
 {
     use ReceptionRulePluginManagerAwareTrait;
 
@@ -47,7 +47,7 @@ class ReceptionProcess extends AbstractProcess
 
     private ReceptionRuleInterface $receptionRule;
 
-    private ReceptionProcessResult $result;
+    private InscriptionAdministrativeReceptionProcessResult $result;
 
     public function setInscriptionAdministrative(InscriptionAdministrative $inscriptionAdministrative): void
     {
@@ -69,7 +69,7 @@ class ReceptionProcess extends AbstractProcess
     {
         $this->receptionRule = $this->receptionRulePluginManager->getRuleForInscriptionAdministrative($this->inscriptionAdministrative);
 
-        $this->result = new ReceptionProcessResult();
+        $this->result = new InscriptionAdministrativeReceptionProcessResult();
 
         $this->beginTransaction();
         try {
@@ -139,7 +139,7 @@ class ReceptionProcess extends AbstractProcess
         }
     }
 
-    public function getResult(): ReceptionProcessResult
+    public function getResult(): InscriptionAdministrativeReceptionProcessResult
     {
         return $this->result;
     }

@@ -12,11 +12,11 @@ use Psr\Container\ContainerInterface;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
-class ReceptionProcessFactory implements FactoryInterface
+class InscriptionAdministrativeReceptionProcessFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): ReceptionProcess
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): InscriptionAdministrativeReceptionProcess
     {
-        $service = new ReceptionProcess();
+        $service = new InscriptionAdministrativeReceptionProcess();
 
         /** @var \Doctrine\ORM\EntityManager $em */
         $em = $container->get('doctrine.entitymanager.orm_default');

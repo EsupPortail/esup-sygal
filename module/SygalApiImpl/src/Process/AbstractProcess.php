@@ -85,14 +85,12 @@ abstract class AbstractProcess extends \Application\Process\AbstractProcess
         }
     }
 
-    protected function rollback(Exception $reason): void
+    protected function rollback(?Exception $reason = null): void
     {
         try {
             $this->destinationConnection->rollback();
         } catch (\Doctrine\DBAL\Exception $e) {
-            throw new RuntimeException(
-                sprintf("Echec du rollback en bdd (raison du rollback : %s)", $reason->getMessage()), 0, $e
-            );
+            throw new RuntimeException("Echec du rollback en bdd" . ($reason ? sprintf(" (raison du rollback : %s)", $reason->getMessage()) : ""), 0, $e);
         }
     }
 }

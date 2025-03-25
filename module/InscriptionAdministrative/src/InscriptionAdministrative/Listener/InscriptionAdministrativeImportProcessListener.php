@@ -2,7 +2,7 @@
 
 namespace InscriptionAdministrative\Listener;
 
-use InscriptionAdministrative\Process\Reception\ReceptionProcessAwareTrait;
+use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcessAwareTrait;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceAwareTrait;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
@@ -10,11 +10,22 @@ use Laminas\EventManager\ListenerAggregateTrait;
 use RuntimeException;
 use SygalApiImpl\Event\InscriptionAdministrativeImportEvent;
 
-class ImportProcessListener implements ListenerAggregateInterface
+class InscriptionAdministrativeImportProcessListener implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
     use InscriptionAdministrativeServiceAwareTrait;
-    use ReceptionProcessAwareTrait;
+    use InscriptionAdministrativeReceptionProcessAwareTrait;
+
+    protected bool $runReceptionProcessAfterImportProcess = false;
+
+    /**
+     * Active ou non l'automaticité du traitement de l'IA (par le service {@see InscriptionAdministrativeReceptionProcess})
+     * lorsque l'événement {@see InscriptionAdministrativeImportEvent} est reçu.
+     */
+    public function setRunReceptionProcessAfterImportProcess(bool $runReceptionProcessAfterImportProcess): void
+    {
+        $this->runReceptionProcessAfterImportProcess = $runReceptionProcessAfterImportProcess;
+    }
 
     public function attach(EventManagerInterface $events, $priority = 1): void
     {
@@ -34,7 +45,9 @@ class ImportProcessListener implements ListenerAggregateInterface
             throw new RuntimeException("Impossible de trouver l'IA ayant le source code " . $iaSourceCode);
         }
 
-        $this->receptionProcess->setInscriptionAdministrative($ia);
-//        $this->receptionProcess->run();
+        if ($this->runReceptionProcessAfterImportProcess) {
+            $this->inscriptionAdministrativeReceptionProcess->setInscriptionAdministrative($ia);
+            $this->inscriptionAdministrativeReceptionProcess->run();
+        }
     }
 }

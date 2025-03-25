@@ -7,7 +7,7 @@ use Application\Controller\AbstractController;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
-use InscriptionAdministrative\Process\Reception\ReceptionProcessAwareTrait;
+use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcessAwareTrait;
 use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManagerAwareTrait;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceAwareTrait;
 use Laminas\Http\Response;
@@ -22,7 +22,7 @@ class InscriptionAdministrativeController extends AbstractController
     use AnneeUnivServiceAwareTrait;
 
     use ReceptionRulePluginManagerAwareTrait;
-    use ReceptionProcessAwareTrait;
+    use InscriptionAdministrativeReceptionProcessAwareTrait;
 
     private InscriptionAdministrative $inscriptionAdministrative;
 
@@ -81,9 +81,9 @@ class InscriptionAdministrativeController extends AbstractController
         $this->inscriptionAdministrative = $this->getRequestedInscriptionAdministrative();
 
         // Lancement du process pour créer la thèse et/ou le doctorant.
-        $this->receptionProcess->setInscriptionAdministrative($this->inscriptionAdministrative);
-        $this->receptionProcess->run();
-        $result = $this->receptionProcess->getResult();
+        $this->inscriptionAdministrativeReceptionProcess->setInscriptionAdministrative($this->inscriptionAdministrative);
+        $this->inscriptionAdministrativeReceptionProcess->run();
+        $result = $this->inscriptionAdministrativeReceptionProcess->getResult();
         if (!$result->isSuccess()) {
             $e = $result->getException();
             $this->flashMessenger()->addErrorMessage("Erreur survenue pendant l'opération ! " . $e?->getMessage());

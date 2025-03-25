@@ -19,9 +19,9 @@ class InscriptionAdministrativeResourceFactory
         $logger = $container->get('inscription_resource_logger');
         $resource->setLogger($logger);
 
-        /** @var \SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\InscriptionAdministrativeImportProcess $importFacade */
-        $importFacade = $container->get(InscriptionAdministrativeImportProcess::class);
-        $resource->setInscriptionAdministrativeImportProcess($importFacade);
+        /** @var \SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\InscriptionAdministrativeImportProcess $importProcess */
+        $importProcess = $container->get(InscriptionAdministrativeImportProcess::class);
+        $resource->setInscriptionAdministrativeImportProcess($importProcess);
 
         return $resource;
     }

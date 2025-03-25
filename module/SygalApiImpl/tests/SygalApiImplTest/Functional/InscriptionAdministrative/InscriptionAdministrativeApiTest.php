@@ -7,12 +7,12 @@ use Faker\Factory;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use Locale;
-use SygalApiImplTest\Functional\AbstractApiTest;
-use SygalApiImplTest\InscriptionAdministrativeJsonTrait;
+use SygalApiImplTest\Functional\AbstractApiControllerTestCase;
+use SygalApiImplTest\V1\Rest\InscriptionAdministrative\InscriptionAdministrativeJsonDataProvider;
 
-class InscriptionAdministrativeApiTest extends AbstractApiTest
+class InscriptionAdministrativeApiTest extends AbstractApiControllerTestCase
 {
-    use InscriptionAdministrativeJsonTrait;
+    static protected InscriptionAdministrativeJsonDataProvider $jsonDataProvider;
 
     const instancePegasePrefix = 'PEGAZ_';
     const anneeUniv1 = 2022;
@@ -20,24 +20,15 @@ class InscriptionAdministrativeApiTest extends AbstractApiTest
     const anneeUniv3 = 2024;
 
     protected string $applicationConfigPath = __DIR__ . '/../../../../../../config/application.config.php';
-
+    protected string $jsonOriginalFileName = 'inscr_admin';
     protected string $apiUrl = 'https://localhost/api/v1/inscription-administrative'; // inside container
-
-//    protected string $jsonOriginalFileName = 'inscr_admin';
-//    protected string $jsonTemplateFilesDir = __DIR__ . '/json';
-//    protected string $jsonTemplateFileName = 'inscr_admin.json.twig';
 
     protected bool $cleanAfterTest = false;
 
     public static function setUpBeforeClass(): void
     {
-        parent::setUpBeforeClass();
-
-        static::$jsonOutputDirPath = uniqid('/tmp/sygal_unit_tests_');
-        mkdir(static::$jsonOutputDirPath);
-        //echo "Répertoire des fichiers JSON : " . static::$jsonOutputDirPath . PHP_EOL;
-
-        static::$testSourceCode = static::instancePegasePrefix . rand(1000, 9999);
+        self::$jsonDataProvider = new InscriptionAdministrativeJsonDataProvider(__DIR__ . '/json');
+        self::$testSourceCode = self::instancePegasePrefix . rand(1000, 9999);
     }
 
     /**
@@ -109,7 +100,7 @@ class InscriptionAdministrativeApiTest extends AbstractApiTest
          *******************************************************************/
 
         $jsonFileNameNew = $this->jsonOriginalFileName . "_$annee";
-        $jsonFilePath = $this->generateJsonFile($jsonFileNameNew, $context);
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
         $this->callApi($jsonFilePath);
 
         $ia = $this->em()->getRepository(InscriptionAdministrative::class)->findOneBy([
@@ -123,138 +114,138 @@ class InscriptionAdministrativeApiTest extends AbstractApiTest
         return $context;
     }
 
-//    /**
-//     * @depends testCanReceiveInscriptionAnneeN
-//     * @throws \Doctrine\ORM\Exception\NotSupported
-//     */
-//    public function testCanReceiveInscriptionAnneeNp1(array $context): array
-//    {
-//        $noCandidat = $context['noCandidat'];
-//        $annee = $context['annee'];
-//
-//        /*******************************************************************
-//         * inscription 2023
-//         *******************************************************************/
-//
-//        $anneeNew = static::anneeUniv2;
-//        $context['annee'] = $anneeNew;
-//
-//        $jsonFileNameNew = $this->jsonOriginalFileName . "_$anneeNew";
-//        $jsonFilePath = $this->generateJson($jsonFileNameNew, $context);
-//        $this->callApi($jsonFilePath);
-//
-//        $ia = $this->em()->getRepository(InscriptionAdministrative::class)->findOneBy([
-//            'noCandidat' => $noCandidat,
-//            'periodeAnneeUniversitaire' => $anneeNew,
-//        ]);
-//        $this->assertNotNull($ia, "IA $anneeNew non trouvée");
-//        $iaa = $this->em()->getRepository(InscriptionAdministrativeApprenant::class)->findOneBy(['inscriptionAdministrative' => $ia->getId()]);
-//        $this->assertNotNull($iaa, "IA $anneeNew non trouvé");
-//
-//        return $context;
-//    }
-//
-//    /**
-//     * @depends testCanReceiveInscriptionAnneeNp1
-//     * @throws \Doctrine\ORM\Exception\NotSupported
-//     */
-//    public function testCanReceiveInscriptionAnneeNp2(array $context)
-//    {
-//        $noCandidat = $context['noCandidat'];
-//
-//        /*******************************************************************
-//         * inscription 2024
-//         *******************************************************************/
-//
-//        $anneeNew = static::anneeUniv3;
-//        $context['annee'] = $anneeNew;
-//
-//        $jsonFileNameNew = $this->jsonOriginalFileName . "_$anneeNew";
-//        $jsonFilePath = $this->generateJson($jsonFileNameNew, $context);
-//        $this->callApi($jsonFilePath);
-//
-//        $ia = $this->em()->getRepository(InscriptionAdministrative::class)->findOneBy([
-//            'noCandidat' => $noCandidat,
-//            'periodeAnneeUniversitaire' => $anneeNew,
-//        ]);
-//        $this->assertNotNull($ia, "IA $anneeNew non trouvée");
-//        $iaa = $this->em()->getRepository(InscriptionAdministrativeApprenant::class)->findOneBy(['inscriptionAdministrative' => $ia->getId()]);
-//        $this->assertNotNull($iaa, "IA $anneeNew non trouvé");
-//
-//        return $context;
-//    }
-//
-//    /**
-//     * @throws \Doctrine\ORM\Exception\NotSupported
-//     * @throws \Doctrine\ORM\NonUniqueResultException
-//     */
-//    public function testChangementCodeApprenantCreeUneNouvelleInscription()
-//    {
-//        $context = $this->getInitialContext();
-//
-//        $noCandidat = $context['noCandidat'];
-//        $codeApprenant = $context['codeApprenant'];
-//
-//        $context['annee'] = $annee = static::anneeUniv3;
-//
-//        /*******************************************************************
-//         * inscription 2024
-//         *******************************************************************/
-//
-//        $jsonFileNameNew = $this->jsonOriginalFileName . "_{$annee}_avant_chg_code_apprenant";
-//        $jsonFilePath = $this->generateJson($jsonFileNameNew, $context);
-//        $this->callApi($jsonFilePath);
-//
-//        /** @var \InscriptionAdministrative\Entity\Db\Repository\InscriptionAdministrativeRepository $repo */
-//        $repo = $this->em()->getRepository(InscriptionAdministrative::class);
-//
-//        /** @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $ia1 */
-//        $ia1 = $repo->createQueryBuilder('ia')
-//            ->andWhere('ia.noCandidat = :noCandidat')->setParameter('noCandidat', $noCandidat)
-//            ->andWhere('ia.periodeAnneeUniversitaire = :periodeAnneeUniversitaire')->setParameter('periodeAnneeUniversitaire', $annee)
-//            ->andWhere('iaa.code = :codeApprenant')->setParameter('codeApprenant', $codeApprenant)
-//            ->getQuery()->getOneOrNullResult();
-//        if ($ia1 === null) {
-//            $this->markTestSkipped("IA de départ introuvable !");
-//        }
-//
-//        /*******************************************************************************************
-//         * inscription sur la même année mais avec un autre code apprenant (cas rare)
-//         *******************************************************************************************/
-//
-//        $codeApprenantNew = $codeApprenant . 'X';
-//        $context['codeApprenant'] = $codeApprenantNew;
-//
-//        $jsonFileNameNew = $this->jsonOriginalFileName . "_{$annee}_chg_code_apprenant";
-//        $jsonFilePath = $this->generateJson($jsonFileNameNew, $context);
-//        $this->callApi($jsonFilePath);
-//
-//        // refetch IA 2024
-//        $ia1 = $repo->createQueryBuilder('ia')
-//            ->andWhere('ia.noCandidat = :noCandidat')->setParameter('noCandidat', $noCandidat)
-//            ->andWhere('ia.periodeAnneeUniversitaire = :periodeAnneeUniversitaire')->setParameter('periodeAnneeUniversitaire', $annee)
-//            ->andWhere('iaa.code = :codeApprenant')->setParameter('codeApprenant', $codeApprenant)
-//            ->getQuery()->getOneOrNullResult();
-//        $this->assertNotNull(
-//            $ia1,
-//            "L'IA $annee ayant le code apprenant $codeApprenant et le numero candidat $noCandidat devrait toujours exister"
-//        );
-//        $this->assertNull(
-//            $ia1->getHistoModification(),
-//            "L'IA $annee ayant le code apprenant $codeApprenant et le numero candidat $noCandidat ne devrait pas avoir été modifiée"
-//        );
-//
-//        // fetch IA 2
-//        $ia2 = $repo->createQueryBuilder('ia')
-//            ->andWhere('ia.noCandidat = :noCandidat')->setParameter('noCandidat', $noCandidat)
-//            ->andWhere('ia.periodeAnneeUniversitaire = :periodeAnneeUniversitaire')->setParameter('periodeAnneeUniversitaire', $annee)
-//            ->andWhere('iaa.code = :codeApprenant')->setParameter('codeApprenant', $codeApprenantNew)
-//            ->getQuery()->getOneOrNullResult();
-//        $this->assertNotNull(
-//            $ia2,
-//            "On devrait trouver une IA $annee ayant le code apprenant $codeApprenantNew et le numero candidat $noCandidat ne devrait pas avoir été modifiée"
-//        );
-//    }
+    /**
+     * @depends testCanReceiveInscriptionAnneeN
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     */
+    public function testCanReceiveInscriptionAnneeNp1(array $context): array
+    {
+        $noCandidat = $context['noCandidat'];
+        $annee = $context['annee'];
+
+        /*******************************************************************
+         * inscription 2023
+         *******************************************************************/
+
+        $anneeNew = static::anneeUniv2;
+        $context['annee'] = $anneeNew;
+
+        $jsonFileNameNew = $this->jsonOriginalFileName . "_$anneeNew";
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
+        $this->callApi($jsonFilePath);
+
+        $ia = $this->em()->getRepository(InscriptionAdministrative::class)->findOneBy([
+            'noCandidat' => $noCandidat,
+            'periodeAnneeUniversitaire' => $anneeNew,
+        ]);
+        $this->assertNotNull($ia, "IA $anneeNew non trouvée");
+        $iaa = $this->em()->getRepository(InscriptionAdministrativeApprenant::class)->findOneBy(['inscriptionAdministrative' => $ia->getId()]);
+        $this->assertNotNull($iaa, "IA $anneeNew non trouvé");
+
+        return $context;
+    }
+
+    /**
+     * @depends testCanReceiveInscriptionAnneeNp1
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     */
+    public function testCanReceiveInscriptionAnneeNp2(array $context)
+    {
+        $noCandidat = $context['noCandidat'];
+
+        /*******************************************************************
+         * inscription 2024
+         *******************************************************************/
+
+        $anneeNew = static::anneeUniv3;
+        $context['annee'] = $anneeNew;
+
+        $jsonFileNameNew = $this->jsonOriginalFileName . "_$anneeNew";
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
+        $this->callApi($jsonFilePath);
+
+        $ia = $this->em()->getRepository(InscriptionAdministrative::class)->findOneBy([
+            'noCandidat' => $noCandidat,
+            'periodeAnneeUniversitaire' => $anneeNew,
+        ]);
+        $this->assertNotNull($ia, "IA $anneeNew non trouvée");
+        $iaa = $this->em()->getRepository(InscriptionAdministrativeApprenant::class)->findOneBy(['inscriptionAdministrative' => $ia->getId()]);
+        $this->assertNotNull($iaa, "IA $anneeNew non trouvé");
+
+        return $context;
+    }
+
+    /**
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function testChangementCodeApprenantCreeUneNouvelleInscription()
+    {
+        $context = $this->getInitialContext();
+
+        $noCandidat = $context['noCandidat'];
+        $codeApprenant = $context['codeApprenant'];
+
+        $context['annee'] = $annee = static::anneeUniv3;
+
+        /*******************************************************************
+         * inscription 2024
+         *******************************************************************/
+
+        $jsonFileNameNew = $this->jsonOriginalFileName . "_{$annee}_avant_chg_code_apprenant";
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
+        $this->callApi($jsonFilePath);
+
+        /** @var \InscriptionAdministrative\Entity\Db\Repository\InscriptionAdministrativeRepository $repo */
+        $repo = $this->em()->getRepository(InscriptionAdministrative::class);
+
+        /** @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $ia1 */
+        $ia1 = $repo->createQueryBuilder('ia')
+            ->andWhere('ia.noCandidat = :noCandidat')->setParameter('noCandidat', $noCandidat)
+            ->andWhere('ia.periodeAnneeUniversitaire = :periodeAnneeUniversitaire')->setParameter('periodeAnneeUniversitaire', $annee)
+            ->andWhere('iaa.code = :codeApprenant')->setParameter('codeApprenant', $codeApprenant)
+            ->getQuery()->getOneOrNullResult();
+        if ($ia1 === null) {
+            $this->markTestSkipped("IA de départ introuvable !");
+        }
+
+        /*******************************************************************************************
+         * inscription sur la même année mais avec un autre code apprenant (cas rare)
+         *******************************************************************************************/
+
+        $codeApprenantNew = $codeApprenant . 'X';
+        $context['codeApprenant'] = $codeApprenantNew;
+
+        $jsonFileNameNew = $this->jsonOriginalFileName . "_{$annee}_chg_code_apprenant";
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
+        $this->callApi($jsonFilePath);
+
+        // refetch IA 2024
+        $ia1 = $repo->createQueryBuilder('ia')
+            ->andWhere('ia.noCandidat = :noCandidat')->setParameter('noCandidat', $noCandidat)
+            ->andWhere('ia.periodeAnneeUniversitaire = :periodeAnneeUniversitaire')->setParameter('periodeAnneeUniversitaire', $annee)
+            ->andWhere('iaa.code = :codeApprenant')->setParameter('codeApprenant', $codeApprenant)
+            ->getQuery()->getOneOrNullResult();
+        $this->assertNotNull(
+            $ia1,
+            "L'IA $annee ayant le code apprenant $codeApprenant et le numero candidat $noCandidat devrait toujours exister"
+        );
+        $this->assertNull(
+            $ia1->getHistoModification(),
+            "L'IA $annee ayant le code apprenant $codeApprenant et le numero candidat $noCandidat ne devrait pas avoir été modifiée"
+        );
+
+        // fetch IA 2
+        $ia2 = $repo->createQueryBuilder('ia')
+            ->andWhere('ia.noCandidat = :noCandidat')->setParameter('noCandidat', $noCandidat)
+            ->andWhere('ia.periodeAnneeUniversitaire = :periodeAnneeUniversitaire')->setParameter('periodeAnneeUniversitaire', $annee)
+            ->andWhere('iaa.code = :codeApprenant')->setParameter('codeApprenant', $codeApprenantNew)
+            ->getQuery()->getOneOrNullResult();
+        $this->assertNotNull(
+            $ia2,
+            "On devrait trouver une IA $annee ayant le code apprenant $codeApprenantNew et le numero candidat $noCandidat ne devrait pas avoir été modifiée"
+        );
+    }
 
     /**
      * @throws \Doctrine\ORM\Exception\NotSupported
@@ -275,7 +266,7 @@ class InscriptionAdministrativeApiTest extends AbstractApiTest
          *******************************************************************/
 
         $jsonFileNameNew = $this->jsonOriginalFileName . "_{$annee}_chg_ine_avant";
-        $jsonFilePath = $this->generateJsonFile($jsonFileNameNew, $context);
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
         $this->callApi($jsonFilePath);
 
         /** @var \InscriptionAdministrative\Entity\Db\Repository\InscriptionAdministrativeRepository $repo */
@@ -301,7 +292,7 @@ class InscriptionAdministrativeApiTest extends AbstractApiTest
         $context['ine'] = $ineNew;
 
         $jsonFileNameNew = $this->jsonOriginalFileName . "_{$annee}_chg_ine_apres";
-        $jsonFilePath = $this->generateJsonFile($jsonFileNameNew, $context);
+        $jsonFilePath = self::$jsonDataProvider->generateJsonFile($jsonFileNameNew, $context);
         $this->callApi($jsonFilePath);
 
         // refetch IA pour verif modif INE

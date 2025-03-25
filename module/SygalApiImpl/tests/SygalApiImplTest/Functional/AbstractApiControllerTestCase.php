@@ -4,7 +4,7 @@ namespace SygalApiImplTest\Functional;
 
 use ApplicationUnitTest\Controller\AbstractControllerTestCase;
 
-abstract class AbstractApiTest extends AbstractControllerTestCase
+abstract class AbstractApiControllerTestCase extends AbstractControllerTestCase
 {
     protected string $applicationConfigPath = __DIR__ . '/../../../../../../config/application.config.php';
     protected $traceError = true;

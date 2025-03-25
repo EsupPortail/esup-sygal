@@ -12,7 +12,10 @@ class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdm
     use InscriptionAdministrativeImportProcessAwareTrait;
 
     /**
-     * Create a resource
+     * Réception d'une Inscription Administrative (create <=> POST).
+     *
+     * Arrivée ici, les données sont valides (d'après la validation OpenAPI),
+     * cf. {@see \SygalApi\Validator\OpenApi\OpenApiContentValidationManager}
      *
      * @param  \stdClass $data
      * @return ApiProblem|void
@@ -24,10 +27,12 @@ class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdm
         try {
             $this->inscriptionAdministrativeImportProcess->import($data);
         } catch (Exception $e) {
-            error_log($e);
-            return new ApiProblem(500, new RuntimeException(
-                "Une erreur est survenue lors de l'import de l'inscription administrative : " . $e->getMessage(), null, $e
-            ));
+            $exception = new RuntimeException(
+                "Une erreur est survenue lors du traitement d'une inscription administrative : " . $e->getMessage(), null, $e
+            );
+            error_log($exception);
+
+            return new ApiProblem(500, $exception);
         }
     }
 }

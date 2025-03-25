@@ -1140,7 +1140,6 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $rule->setTheseService($this->theseService);
         $rule->setTheseAnneeUnivService($this->theseAnneeUnivService);
         $rule->setAdmissionService($this->admissionService);
-        $rule->setDoctorantUpdateEnabled();
 
         return $rule;
     }

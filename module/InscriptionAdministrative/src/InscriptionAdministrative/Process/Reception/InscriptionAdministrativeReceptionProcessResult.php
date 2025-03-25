@@ -8,7 +8,7 @@ use InscriptionAdministrative\Process\ProcessResult;
 use These\Entity\Db\These;
 use These\Entity\Db\TheseAnneeUniv;
 
-class ReceptionProcessResult extends ProcessResult
+class InscriptionAdministrativeReceptionProcessResult extends ProcessResult
 {
     private ?Admission $foundAdmissionValidee = null;
     private ?Doctorant $doctorant = null;

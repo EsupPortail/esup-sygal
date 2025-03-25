@@ -74,7 +74,6 @@ class StatutAutreRuleTest extends ReceptionRuleAbstract
     protected function createRule(): ReceptionRuleInterface
     {
         $rule = new StatutAutreRule();
-        $rule->setDoctorantUpdateEnabled();
 
         return $rule;
     }

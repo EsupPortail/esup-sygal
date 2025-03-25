@@ -62,7 +62,6 @@ class StatutAnnuleeRuleTest extends ReceptionRuleAbstract
     protected function createRule(): StatutAnnuleeRule
     {
         $rule = new StatutAnnuleeRule();
-        $rule->setDoctorantUpdateEnabled();
 
         return $rule;
     }

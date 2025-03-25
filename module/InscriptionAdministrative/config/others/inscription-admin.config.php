@@ -6,17 +6,12 @@ use InscriptionAdministrative\Controller\InscriptionAdministrativeController;
 use InscriptionAdministrative\Controller\InscriptionAdministrativeControllerFactory;
 use InscriptionAdministrative\Controller\Recherche\InscriptionAdministrativeRechercheController;
 use InscriptionAdministrative\Controller\Recherche\InscriptionAdministrativeRechercheControllerFactory;
-use InscriptionAdministrative\Listener\ImportProcessListener;
-use InscriptionAdministrative\Listener\ImportProcessListenerFactory;
-use InscriptionAdministrative\Process\Reception\ReceptionProcess;
-use InscriptionAdministrative\Process\Reception\ReceptionProcessFactory;
-use InscriptionAdministrative\Rule\Reception\ReceptionRule;
-use InscriptionAdministrative\Rule\Reception\ReceptionRuleFactory;
+use InscriptionAdministrative\Listener\InscriptionAdministrativeImportProcessListener;
+use InscriptionAdministrative\Listener\InscriptionAdministrativeImportProcessListenerFactory;
+use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcess;
+use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcessFactory;
 use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager;
 use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManagerFactory;
-use InscriptionAdministrative\Rule\Reception\StatutAnnulee\StatutAnnuleeRule;
-use InscriptionAdministrative\Rule\Reception\StatutValidee\StatutValideeRule;
-use InscriptionAdministrative\Rule\Reception\StatutValidee\StatutValideeRuleFactory;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceFactory;
 use InscriptionAdministrative\Service\Search\InscriptionAdministrativeSearchService;
@@ -163,8 +158,8 @@ return [
         'factories' => [
             InscriptionAdministrativeService::class => InscriptionAdministrativeServiceFactory::class,
             InscriptionAdministrativeSearchService::class => InscriptionAdministrativeSearchServiceFactory::class,
-            ImportProcessListener::class => ImportProcessListenerFactory::class,
-            ReceptionProcess::class => ReceptionProcessFactory::class,
+            InscriptionAdministrativeImportProcessListener::class => InscriptionAdministrativeImportProcessListenerFactory::class,
+            InscriptionAdministrativeReceptionProcess::class => InscriptionAdministrativeReceptionProcessFactory::class,
             ReceptionRulePluginManager::class => ReceptionRulePluginManagerFactory::class,
         ]
     ]

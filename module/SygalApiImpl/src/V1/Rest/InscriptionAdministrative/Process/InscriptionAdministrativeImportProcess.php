@@ -10,8 +10,8 @@ use InvalidArgumentException;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerAwareTrait;
 use stdClass;
-use SygalApi\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeApprenantExtractor;
-use SygalApi\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeExtractor;
+use SygalApiImpl\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeApprenantExtractor;
+use SygalApiImpl\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeExtractor;
 use SygalApiImpl\Event\InscriptionAdministrativeImportEvent;
 use SygalApiImpl\Exception\ErrorDuringImportException;
 use SygalApiImpl\Process\AbstractProcess;
@@ -24,6 +24,9 @@ use UnicaenDbImport\Domain\Source;
 use UnicaenDbImport\Domain\Synchro;
 use UnicaenDbImport\Filter\ColumnValue\ConcatColumnValueFilter;
 
+/**
+ * Process chargé de l'import dans la BDD de l'IA reçue via l'API.
+ */
 class InscriptionAdministrativeImportProcess extends AbstractProcess implements EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
@@ -58,12 +61,16 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
     }
 
     /**
+     * @param \stdClass $data Données IA reçues via l'API, cf {@see }
      * @throws \SygalApiImpl\Exception\ErrorDuringImportException
      */
     public function import(stdClass $data): void
     {
         $this->beginTransaction();
         try {
+            // Les données reçues sont éclatées dans 2 entités :
+            // - InscriptionAdministrative
+            // - InscriptionAdministrativeApprenant
             $iaSourceCode = $this->importInscriptionAdministrative($data);
             $this->importInscriptionAdministrativeApprenant($data);
         } catch (ErrorDuringImportException $e) {
@@ -78,7 +85,7 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
         // tout s'est bien passé, commit.
         $this->commit();
 
-        // déclenchement d'un événement signalant la fin du traitement des données reçues
+        // déclenchement d'un événement signalant la fin de l'import de l'IA
         $event = new InscriptionAdministrativeImportEvent();
         $event->setInscriptionAdministrativeSourceCode($iaSourceCode);
         $this->events->triggerEvent($event);
@@ -188,7 +195,7 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
             ]);
 
             return Import::fromConfig([
-                'name' => 'api_import_inscription',
+                'name' => 'api_import_inscription_administrative',
                 'source' => $source,
                 'destination' => $destination,
             ]);
@@ -260,7 +267,7 @@ class InscriptionAdministrativeImportProcess extends AbstractProcess implements 
             ]);
 
             return Synchro::fromConfig([
-                'name' => 'api_synchro_inscription',
+                'name' => 'api_synchro_inscription_administrative',
                 'source' => $source,
                 'destination' => $destination,
             ]);
