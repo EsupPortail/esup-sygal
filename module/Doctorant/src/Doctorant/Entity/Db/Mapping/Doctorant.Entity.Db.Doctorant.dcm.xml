@@ -33,7 +33,7 @@
         <one-to-many field="theses" target-entity="These\Entity\Db\These" mapped-by="doctorant"/>
 
         <many-to-many field="substitues" target-entity="Doctorant\Entity\Db\Doctorant">
-            <join-table name="doctorant_substit">
+            <join-table name="substit_doctorant">
                 <join-columns>
                     <join-column name="to_id" referenced-column-name="id" />
                 </join-columns>
