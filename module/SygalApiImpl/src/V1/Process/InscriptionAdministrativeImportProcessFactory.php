@@ -1,6 +1,6 @@
 <?php
 
-namespace SygalApiImpl\V1\Rest\InscriptionAdministrative\Process;
+namespace SygalApiImpl\V1\Process;
 
 use Application\Entity\Db\Source;
 use Application\SourceCodeStringHelper;

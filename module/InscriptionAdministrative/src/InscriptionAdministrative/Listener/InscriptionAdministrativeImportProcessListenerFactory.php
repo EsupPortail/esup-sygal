@@ -2,6 +2,7 @@
 
 namespace InscriptionAdministrative\Listener;
 
+use InscriptionAdministrative\Config\ModuleConfig;
 use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcess;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -10,15 +11,16 @@ class InscriptionAdministrativeImportProcessListenerFactory implements FactoryIn
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): InscriptionAdministrativeImportProcessListener
     {
-        $service = new InscriptionAdministrativeImportProcessListener();
+        $listener = new InscriptionAdministrativeImportProcessListener();
+
+        /** @var ModuleConfig $moduleConfig */
+        $moduleConfig = $container->get(ModuleConfig::class);
 
         /** @var InscriptionAdministrativeReceptionProcess $receptionProcess */
         $receptionProcess = $container->get(InscriptionAdministrativeReceptionProcess::class);
-        $service->setInscriptionAdministrativeReceptionProcess($receptionProcess);
+        $listener->setInscriptionAdministrativeReceptionProcess($receptionProcess);
+        $listener->setRunReceptionProcessAfterImport($moduleConfig->getRunReceptionProcessAfterImport());
 
-        $config = $container->get('config')['sygal']['inscription_administrative'] ?? [];
-        $service->setRunReceptionProcessAfterImportProcess($config['run_reception_process_after_import_process'] ?? false);
-
-        return $service;
+        return $listener;
     }
 }

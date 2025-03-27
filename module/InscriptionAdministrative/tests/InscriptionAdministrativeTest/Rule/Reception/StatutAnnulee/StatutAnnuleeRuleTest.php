@@ -53,8 +53,18 @@ class StatutAnnuleeRuleTest extends ReceptionRuleAbstract
         $rule->setInscriptionAdministrative($this->ia);
         $rule->execute();
 
+        $canPerformAnyAction =
+            $rule->canCreateDoctorant() ||
+            $rule->canUpdateDoctorant() ||
+            $rule->canCreateThese() ||
+            $rule->canCreateTheseAnneeUniv() ||
+            $rule->canUpdateCodeApprenantDoctorant() ||
+            $rule->canLinkAdmissionToDoctorant() ||
+            $rule->canCreateLinkInscriptionAdministrativeDoctorant() ||
+            $rule->canLinkTheseAnneeUnivToInscriptionAdministrative();
+
         static::assertFalse(
-            $rule->canPerformAnyAction(),
+            $canPerformAnyAction,
             "La règle ne devrait pas répondre qu'on peut réaliser la moindre action"
         );
     }

@@ -18,6 +18,7 @@ use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
 use InscriptionAdministrative\Rule\Reception\StatutValidee\StatutValideeRule;
 use InscriptionAdministrativeTest\Rule\Reception\ReceptionRuleAbstract;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use These\Entity\Db\Repository\TheseAnneeUnivRepository;
@@ -100,20 +101,31 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $rule->execute();
     }
 
-    public function test_doctorant_deja_lie_et_ayant_une_these_avec_annee_univ_existante(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_deja_lie_et_ayant_une_these_avec_annee_univ_existante(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
         // IA déjà liée à un doctorant
-        $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
-
-        // diff existant avec doctorant/individu lié
         $individu = $this->createStub(Individu::class);
         $doctorant = $this->createStub(Doctorant::class);
         $doctorant->method('getIndividu')->willReturn($individu);
         $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
+
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // These Existante Pour Doctorant Lie
         $these = $this->createStub(These::class);
@@ -133,7 +145,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -160,30 +172,37 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle devrait répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertSame($rule->getFoundThese(), $these);
         static::assertSame($rule->getFoundTheseAnneeUniv(), $tau);
     }
 
-    public function test_doctorant_deja_lie_et_ayant_une_these_sans_annee_univ(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_deja_lie_et_ayant_une_these_sans_annee_univ(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
         // IA déjà liée à un doctorant
-        $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
-
-        // diff existant avec doctorant/individu lié
         $individu = $this->createStub(Individu::class);
         $doctorant = $this->createStub(Doctorant::class);
         $doctorant->method('getIndividu')->willReturn($individu);
         $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
+
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // These Existante Pour Doctorant Lie
         $these = $this->createStub(These::class);
@@ -202,7 +221,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -229,29 +248,36 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertSame($rule->getFoundThese(), $these);
     }
 
-    public function test_doctorant_deja_lie_et_ayant_plusieurs_theses(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_deja_lie_et_ayant_plusieurs_theses(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
         // IA déjà liée à un doctorant
-        $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
-
-        // diff existant avec doctorant/individu lié
         $individu = $this->createStub(Individu::class);
         $doctorant = $this->createStub(Doctorant::class);
         $doctorant->method('getIndividu')->willReturn($individu);
         $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
+
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // These Existante Pour Doctorant Lie
         $these1 = $this->createStub(These::class);
@@ -267,7 +293,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -294,19 +320,25 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
     }
 
-    public function test_doctorant_deja_lie_et_admission_validee(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_deja_lie_et_admission_validee(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
         // IA déjà liée à un doctorant
+        $individu = $this->createStub(Individu::class);
+        $doctorant = $this->createStub(Doctorant::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
+        $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
         // These Inexistante Pour Doctorant Lie
@@ -321,13 +353,14 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $etatAdmission->method('getCode')->willReturn(Admission::ETAT_VALIDE);
         $admission->method('getEtat')->willReturn($etatAdmission);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant = $this->createStub(Doctorant::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // Annee Univ existante pour la These liée
         $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
@@ -341,7 +374,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertTrue(
@@ -368,20 +401,26 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertNotNull($rule->getFoundAdmission());
     }
 
-    public function test_doctorant_deja_lie_et_admission_non_validee(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_deja_lie_et_admission_non_validee(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
         // IA déjà liée à un doctorant
+        $individu = $this->createStub(Individu::class);
+        $doctorant = $this->createStub(Doctorant::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
+        $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
         // These Inexistante Pour Doctorant Lie
@@ -396,13 +435,14 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $etatAdmission->method('getCode')->willReturn('AUTRE CHOSE QUE VALIDE');
         $admission->method('getEtat')->willReturn($etatAdmission);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant = $this->createStub(Doctorant::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         $rule = $this->createRule();
         $rule->setInscriptionAdministrative($this->ia);
@@ -418,7 +458,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -445,20 +485,26 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertNotNull($rule->getFoundAdmission());
     }
 
-    public function test_doctorant_deja_lie_et_sans_admission(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_deja_lie_et_sans_admission(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
         // IA déjà liée à un doctorant
+        $individu = $this->createStub(Individu::class);
+        $doctorant = $this->createStub(Doctorant::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
+        $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
         $this->ia->expects(static::once())->method('getInscriptionAdministrativeDoctorant')->willReturn($this->iaDoctorant);
 
         // These Inexistante Pour Doctorant Lie
@@ -467,13 +513,14 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         // Admission inexistante
         $this->admissionRepository->method('findOneByDoctorant')->willReturn(null);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant = $this->createStub(Doctorant::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->iaDoctorant->method('getDoctorant')->willReturn($doctorant);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         $rule = $this->createRule();
         $rule->setInscriptionAdministrative($this->ia);
@@ -489,7 +536,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -516,16 +563,18 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertNull($rule->getFoundAdmission());
     }
 
-    public function test_doctorant_non_lie_ayant_une_these(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_non_lie_ayant_une_these(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
@@ -534,17 +583,22 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
 
         // doctorant existant avec ce code apprenant
         $doctorant = $this->createStub(Doctorant::class);
+        $individu = $this->createStub(Individu::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
         $this->doctorantRepository->method('findOneByCodeApprenant')->willReturn($doctorant);
 
         // These Existante Pour Doctorant Lie
         $these = $this->createMock(These::class);
         $this->theseRepository->method('findThesesByDoctorant')->willReturn([$these]);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // Annee Univ existante pour la These liée
         $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
@@ -560,7 +614,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -587,17 +641,19 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle devrait répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertSame($rule->getFoundThese(), $these);
         static::assertSame($rule->getFoundTheseAnneeUniv(), $tau);
     }
 
-    public function test_doctorant_non_lie_avec_admission_validee(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_non_lie_avec_admission_validee(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
@@ -606,6 +662,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
 
         // doctorant existant avec ce code apprenant
         $doctorant = $this->createMock(Doctorant::class);
+        $individu = $this->createStub(Individu::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
         $this->doctorantRepository->method('findOneByCodeApprenant')->willReturn($doctorant);
 
         // These Inexistante Pour Doctorant Lie
@@ -620,11 +678,14 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $etatAdmission->method('getCode')->willReturn(Admission::ETAT_VALIDE);
         $admission->method('getEtat')->willReturn($etatAdmission);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // Annee Univ existante pour la These liée
         $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
@@ -638,7 +699,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertTrue(
@@ -665,16 +726,18 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertNotNull($rule->getFoundAdmission());
     }
 
-    public function test_doctorant_non_liee_et_admission_non_validee(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_non_liee_et_admission_non_validee(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
@@ -683,6 +746,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
 
         // doctorant existant avec ce code apprenant
         $doctorant = $this->createMock(Doctorant::class);
+        $individu = $this->createStub(Individu::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
         $this->doctorantRepository->method('findOneByCodeApprenant')->willReturn($doctorant);
 
         // These Inexistante Pour Doctorant Lie
@@ -697,11 +762,14 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $etatAdmission->method('getCode')->willReturn('AUTRE CHOSE QUE VALIDE');
         $admission->method('getEtat')->willReturn($etatAdmission);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // Annee Univ existante pour la These liée
         $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
@@ -720,7 +788,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -747,16 +815,18 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertNotNull($rule->getFoundAdmission());
     }
 
-    public function test_doctorant_non_lie_sans_admission(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_non_lie_sans_admission(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
@@ -765,6 +835,8 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
 
         // doctorant existant avec ce code apprenant
         $doctorant = $this->createMock(Doctorant::class);
+        $individu = $this->createStub(Individu::class);
+        $doctorant->method('getIndividu')->willReturn($individu);
         $this->doctorantRepository->method('findOneByCodeApprenant')->willReturn($doctorant);
 
         // These Inexistante Pour Doctorant Lie
@@ -773,11 +845,14 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         // Admission inexistante
         $this->admissionRepository->method('findOneByDoctorant')->willReturn(null);
 
-        // diff existant avec doctorant/individu lié
-        $individu = $this->createStub(Individu::class);
-        $doctorant->method('getIndividu')->willReturn($individu);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // Annee Univ existante pour la These liée
         $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
@@ -796,7 +871,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -823,16 +898,18 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNotNull($rule->getFoundDoctorant());
         static::assertNull($rule->getFoundAdmission());
     }
 
-    public function test_doctorant_non_lie_et_admission_validee_avec_doctorant_lie(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_non_lie_et_admission_validee_avec_doctorant_lie(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
@@ -850,10 +927,17 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $etatAdmission = $this->createStub(Etat::class);
         $etatAdmission->method('getCode')->willReturn(Admission::ETAT_VALIDE);
         $admission->method('getEtat')->willReturn($etatAdmission);
-
-        // admission déjà liée à un doctorant
         $doctorant = $this->createStub(Doctorant::class);
         $admission->method('getDoctorant')->willReturn($doctorant);
+
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         // Annee Univ existante pour la These liée
         $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
@@ -893,10 +977,6 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         static::assertFalse(
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
-        );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
         );
 
         static::assertNotNull($rule->getFoundDoctorant());
@@ -964,10 +1044,6 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
         );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
-        );
 
         static::assertNull($rule->getFoundDoctorant());
         static::assertNotNull($rule->getFoundAdmission());
@@ -999,7 +1075,13 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         $rule->execute();
     }
 
-    public function test_doctorant_non_lie_mais_trouve_avec_ine_sans_admission(): void
+    /**
+     * @param bool $doctorantApprenantDiff Indique s'il y a ou non un diff entre les données doctorant et les données apprenant
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    #[TestWith([false])]
+    #[TestWith([true])]
+    public function test_doctorant_non_lie_mais_trouve_avec_ine_sans_admission(bool $doctorantApprenantDiff): void
     {
         $this->ia->method('getInscriptionAdministrativeApprenant')->willReturn($this->iaApprenant);
 
@@ -1014,16 +1096,18 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
 
         // doctorant trouvé avec cet INE
         $doctorant = $this->createMock(Doctorant::class);
-        $this->doctorantRepository->method('findOneByIne')->willReturn($doctorant);
-
-        // diff existant avec doctorant/individu lié
         $individu = $this->createStub(Individu::class);
         $doctorant->method('getIndividu')->willReturn($individu);
-        $this->individuService->expects(static::once())->method('diffIndividuFromApprenant')->with($individu, $this->iaApprenant)->willReturn(['field' => 'new value']);
-        $this->doctorantService->expects(static::once())->method('diffDoctorantFromApprenant')->with($doctorant, $this->iaApprenant)->willReturn([]);
+        $this->doctorantRepository->method('findOneByIne')->willReturn($doctorant);
 
-        // Annee Univ existante pour la These liée
-//        $this->ia->method('getPeriodeAnneeUniversitaire')->willReturn(2024);
+        // diff avec doctorant/individu lié
+        if ($doctorantApprenantDiff) {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn(['nomUsuel' => ['hochon', 'hauchon']]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn(['ine' => ['1234', '1235']]);
+        } else {
+            $this->individuService->method('diffIndividuFromApprenant')->willReturn([]);
+            $this->doctorantService->method('diffDoctorantFromApprenant')->willReturn([]);
+        }
 
         $rule = $this->createRule();
         $rule->setInscriptionAdministrative($this->ia);
@@ -1034,7 +1118,7 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
             "La règle ne devrait pas répondre qu'on peut créer le doctorant"
         );
         static::assertTrue(
-            $rule->canUpdateDoctorant(),
+            $rule->canUpdateDoctorant() === $doctorantApprenantDiff,
             "La règle devrait répondre qu'on peut mettre à jour le doctorant"
         );
         static::assertFalse(
@@ -1060,10 +1144,6 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         static::assertFalse(
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
-        );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
         );
 
         static::assertNotNull($rule->getFoundDoctorant());
@@ -1121,10 +1201,6 @@ class StatutValideeRuleTest extends ReceptionRuleAbstract
         static::assertFalse(
             $rule->canLinkTheseAnneeUnivToInscriptionAdministrative(),
             "La règle ne devrait pas répondre qu'on peut lier l'inscription à l'année universitaire"
-        );
-        static::assertTrue(
-            $rule->canPerformAnyAction(),
-            "La règle devrait répondre qu'on peut réaliser une action"
         );
 
         static::assertNull($rule->getFoundDoctorant());

@@ -8,6 +8,8 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Exception;
 use Individu\Service\IndividuServiceAwareTrait;
+use InscriptionAdministrative\Config\Reception\ReceptionConfig;
+use InscriptionAdministrative\Config\Reception\ReceptionConfigAwareTrait;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
@@ -26,6 +28,7 @@ use Webmozart\Assert\Assert;
 
 class InscriptionAdministrativeReceptionProcess extends AbstractProcess
 {
+    use ReceptionConfigAwareTrait;
     use ReceptionRulePluginManagerAwareTrait;
 
     use InscriptionAdministrativeServiceAwareTrait;
@@ -48,6 +51,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
     private ReceptionRuleInterface $receptionRule;
 
     private InscriptionAdministrativeReceptionProcessResult $result;
+
+    private bool $commitRequired = false;
 
     public function setInscriptionAdministrative(InscriptionAdministrative $inscriptionAdministrative): void
     {
@@ -74,7 +79,9 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         $this->beginTransaction();
         try {
             $this->process();
-            $this->commit();
+            if ($this->commitRequired) {
+                $this->commit();
+            }
             $this->result->setSuccess(true);
         } catch (Exception $e) {
             $this->result->setSuccess(false);
@@ -101,6 +108,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
     {
         $this->receptionRule->execute();
 
+        $this->commitRequired = false;
+
         if ($this->receptionRule->canCreateDoctorant()) {
             $this->createDoctorant();
         } else {
@@ -108,8 +117,10 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         }
 
         if ($this->receptionRule->canUpdateDoctorant()) {
-            $this->updateDoctorant();
-            // NB : la mise à jour complète du doctorant inclue la màj du code apprenant
+            if ($this->getUpdateDoctorantIfPossible()) {
+                $this->updateDoctorant();
+                // NB : la mise à jour complète du doctorant inclue la màj du code apprenant
+            }
         } else {
             if ($this->receptionRule->canUpdateCodeApprenantDoctorant()) {
                 $this->updateCodeApprenantDoctorant();
@@ -139,6 +150,14 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         }
     }
 
+    /**
+     * Proxy pour {@see ReceptionConfig::getUpdateDoctorantIfPossible()}.
+     */
+    public function getUpdateDoctorantIfPossible(): bool
+    {
+        return $this->receptionConfig->getUpdateDoctorantIfPossible();
+    }
+
     public function getResult(): InscriptionAdministrativeReceptionProcessResult
     {
         return $this->result;
@@ -162,6 +181,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         $this->result->addMessage($message, MessageAwareInterface::INFO);
         $this->result->setIsDoctorantCreated(true);
         $this->result->setDoctorant($this->doctorant);
+
+        $this->commitRequired = true;
     }
 
     private function updateDoctorant(): void
@@ -180,6 +201,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         $this->result->addMessage($message, MessageAwareInterface::INFO);
         $this->result->setIsDoctorantUpdated(true);
         $this->result->setDoctorant($this->doctorant);
+
+        $this->commitRequired = true;
     }
 
     private function createThese(): void
@@ -195,6 +218,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         $this->result->addMessage($message, MessageAwareInterface::INFO);
         $this->result->setIsTheseCreated(true);
         $this->result->setCreatedThese($this->these);
+
+        $this->commitRequired = true;
     }
 
     private function createTheseAnneeUniv(): void
@@ -216,6 +241,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
         $this->result->addMessage($message, MessageAwareInterface::INFO);
         $this->result->setIsTheseAnneeUnivCreated(true);
         $this->result->setCreatedTheseAnneeUniv($this->theseAnneeUniv);
+
+        $this->commitRequired = true;
     }
 
     private function linkTheseAnneeUnivToInscriptionAdministrative(): void
@@ -229,6 +256,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
             $this->theseAnneeUniv,
         );
         $this->result->addMessage($message, MessageAwareInterface::INFO);
+
+        $this->commitRequired = true;
     }
 
     private function updateCodeApprenantDoctorant(): void
@@ -242,6 +271,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
             $this->doctorant->getId(),
         );
         $this->result->addMessage($message, MessageAwareInterface::INFO);
+
+        $this->commitRequired = true;
     }
 
     private function createLinkInscriptionAdministrativeDoctorant(): void
@@ -260,6 +291,8 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
             $this->inscriptionAdministrativeApprenant->getId()
         );
         $this->result->addMessage($message, MessageAwareInterface::INFO);
+
+        $this->commitRequired = true;
     }
 
     private function linkAdmissionToDoctorant(): void
@@ -272,5 +305,7 @@ class InscriptionAdministrativeReceptionProcess extends AbstractProcess
             $this->admission->getId(),
         );
         $this->result->addMessage($message, MessageAwareInterface::INFO);
+
+        $this->commitRequired = true;
     }
 }

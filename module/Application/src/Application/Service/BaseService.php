@@ -2,14 +2,14 @@
 
 namespace Application\Service;
 
+use Application\Constants;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use DateTime;
 use Doctrine\ORM\EntityManager;
-use Exception;
-use InvalidArgumentException;
-use RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
+use Webmozart\Assert\Assert;
 
 abstract class BaseService implements EntityManagerAwareInterface
 {
@@ -52,54 +52,42 @@ abstract class BaseService implements EntityManagerAwareInterface
     }
 
     /**
-     * Calcule le "changeset" d'une entité (propriétés dont la valeur a changé)
-     * si on lui applique l'update spécifié.
+     * Calcule le diff (en terme de valeur d'attributs) entre 2 entités.
      *
-     * @param object $entity Entity concernée
-     * @param array $fields Champs à prendre en compte, sinon ils sont tous pris en compte
-     * @param callable $updateEntityCallable Callable de l'update à réaliser
-     * @return array<string, array<mixed, mixed>>
+     * @param object $entity1 1ere entité
+     * @param object $entity2 2eme entité
+     * @param array|null $fieldNames Champs à prendre en compte, sinon ils sont tous pris en compte
+     *
+     * @return array Ex : [ 'prenom1' => ['Paul', 'Paule'], 'nomUsuel' => ['Hochon', 'Hauchon'] ]
      */
-    protected function computeDiffForUpdate(object $entity, callable $updateEntityCallable, array $fields = []): array
+    protected function computeEntityDiff(object $entity1, object $entity2, ?array $fieldNames = null): array
     {
-        $entityManager = $this->getEntityManager();
-        $uow = $entityManager->getUnitOfWork();
-        if ($uow->getEntityChangeSet($entity)) {
-            throw new InvalidArgumentException("Opération impossible car l'entité est en cours de modification");
+        $metadata = $this->entityManager->getClassMetadata($this->getRepository()->getClassName());
+
+        if ($fieldNames === null) {
+            $fieldNames = $metadata->getFieldNames();
         }
+        Assert::notEmpty($fieldNames);
 
-        // application provisoire de l'update UNIQUEMENT pour pouvoir calculer le "changeset" Doctrine
-        $updateEntityCallable($entity);
-
-        // calcul du changeset
-        $entityClass = get_class($entity);
-        $metadata = $entityManager->getClassMetadata($entityClass);
-        $uow->recomputeSingleEntityChangeSet($metadata, $entity);
-        $changeset = $uow->getEntityChangeSet($entity);
-
-        // refresh de l'entité pour annuler l'update
-        try {
-            $entityManager->refresh($entity);
-        } catch (Exception $e) {
-            throw new RuntimeException("Refresh impossible ! " . $e->getMessage(), null, $e);
-        }
-
-        // mise en forme du résultat
-        if (!$fields) {
-            $fields = $metadata->getFieldNames();
-        }
-        $fieldsWithChanges = [];
-        foreach ($fields as $field) {
-            if (!array_key_exists($field, $changeset)) {
-                continue;
+        $stringify = function($item) {
+            if ($item instanceof DateTime) {
+                return $item->format(Constants::DATETIME_FORMAT);
             }
-            $oldValue = $changeset[$field][0];
-            $newValue = $changeset[$field][1];
-            if ($oldValue <> $newValue) {
-                $fieldsWithChanges[$field] = [$oldValue, $newValue];
+            return (string)$item;
+        };
+
+        $diff = [];
+        foreach ($fieldNames as $fieldName) {
+            $individuFieldValue = $metadata->getFieldValue($entity1, $fieldName);
+            $individuFromApprenantFieldValue = $metadata->getFieldValue($entity2, $fieldName);
+            if ($individuFieldValue <> $individuFromApprenantFieldValue) {
+                $diff[$fieldName] = [
+                    $stringify($individuFieldValue),
+                    $stringify($individuFromApprenantFieldValue)
+                ];
             }
         }
 
-        return $fieldsWithChanges;
+        return $diff;
     }
 }

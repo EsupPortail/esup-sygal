@@ -57,6 +57,8 @@ $this->headTitle($this->translate("IA importée") . ' ' . $inscriptionAdministra
                         <dd><?php echo $iad->getDoctorant()->getId() ?></dd>
                         <dt>Identité</dt>
                         <dd><?php echo $iad->getDoctorant() ?></dd>
+                        <dt>INE</dt>
+                        <dd><?php echo $iad->getDoctorant()->getIne() ?></dd>
                         <dt>Lien créé le</dt>
                         <dd><?php echo $iad->getHistoCreation()?->format(Constants::DATETIME_FORMAT) ?></dd>
                     </dl>

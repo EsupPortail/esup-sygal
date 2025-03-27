@@ -1,9 +1,8 @@
 <?php
 
-namespace SygalApiImpl\V1\Rest\InscriptionAdministrative\Extractor;
+namespace SygalApiImpl\V1\Extractor;
 
 use stdClass;
-use SygalApiImpl\V1\Extractor\AbstractExtractor;
 
 class InscriptionAdministrativeApprenantExtractor extends AbstractExtractor
 {

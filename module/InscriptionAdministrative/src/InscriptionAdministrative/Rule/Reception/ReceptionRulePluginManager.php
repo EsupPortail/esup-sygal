@@ -21,6 +21,27 @@ class ReceptionRulePluginManager extends AbstractPluginManager
         StatutAutreRule::class => StatutAutreRuleFactory::class,
     ];
 
+//    /**
+//     * @throws \Psr\Container\ContainerExceptionInterface
+//     * @throws \Psr\Container\NotFoundExceptionInterface
+//     */
+//    public function get($name, ?array $options = null): ReceptionRuleInterface
+//    {
+//        /** @var \InscriptionAdministrative\Rule\Reception\ReceptionRuleInterface $rule */
+//        $rule = parent::get($name, $options);
+//
+//        /** @var ModuleConfig $moduleConfig */
+//        $moduleConfig = $this->creationContext->get(ModuleConfig::class);
+//
+//        // ...
+//
+//        return $rule;
+//    }
+
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function getRuleForInscriptionAdministrative(InscriptionAdministrative $ia): ReceptionRuleInterface
     {
         if ($ia->estValidee()) {

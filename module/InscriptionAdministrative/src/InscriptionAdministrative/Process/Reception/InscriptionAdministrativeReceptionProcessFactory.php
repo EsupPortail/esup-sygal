@@ -5,6 +5,7 @@ namespace InscriptionAdministrative\Process\Reception;
 use Admission\Service\Admission\AdmissionService;
 use Doctorant\Service\DoctorantService;
 use Individu\Service\IndividuService;
+use InscriptionAdministrative\Config\ModuleConfig;
 use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -49,6 +50,10 @@ class InscriptionAdministrativeReceptionProcessFactory implements FactoryInterfa
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);
         $service->setAdmissionService($admissionService);
+
+        /** @var ModuleConfig $moduleConfig */
+        $moduleConfig = $container->get(ModuleConfig::class);
+        $service->setReceptionConfig($moduleConfig->getReception());
 
         return $service;
     }

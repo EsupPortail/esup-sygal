@@ -36,8 +36,6 @@ class StatutValideeRuleFactory implements FactoryInterface
         $admissionService = $container->get(AdmissionService::class);
         $rule->setAdmissionService($admissionService);
 
-        $rule->setDoctorantUpdateEnabled();
-
         return $rule;
     }
 }

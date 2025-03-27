@@ -2,36 +2,64 @@
 /**
  * @var \Application\View\Renderer\PhpRenderer $this
  * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscriptionAdministrative
- * @var \InscriptionAdministrative\Rule\Reception\ReceptionRule $receptionRule
+ * @var \InscriptionAdministrative\Rule\Reception\AbstractReceptionRule $receptionRule
+ * @var bool $updateDoctorantIfPossible
  */
+
+$actionMessages = $receptionRule->getMessagesForActions();
+$warningMessages = $receptionRule->getMessagesForWarnings();
+
+$canUpdateDoctorant = $receptionRule->canUpdateDoctorant();
+// la règle indique que la màj de doctorant est possible mais la config l'empêche : màj impossible.
+if ($canUpdateDoctorant && !$updateDoctorantIfPossible) {
+    array_unshift(
+        $warningMessages,
+        "Même si la mise à jour du doctorant à partir des données de l'apprenant est possible (cf. message ci-dessus), 
+        l'application a été configurée pour ne pas autoriser cette mise à jour automatique."
+    );
+    $canUpdateDoctorant = false;
+}
+
+$canPerformAnyAction =
+    $receptionRule->canCreateDoctorant() ||
+    $canUpdateDoctorant ||
+    $receptionRule->canCreateThese() ||
+    $receptionRule->canCreateTheseAnneeUniv() ||
+    $receptionRule->canUpdateCodeApprenantDoctorant() ||
+    $receptionRule->canLinkAdmissionToDoctorant() ||
+    $receptionRule->canCreateLinkInscriptionAdministrativeDoctorant() ||
+    $receptionRule->canLinkTheseAnneeUnivToInscriptionAdministrative();
 
 ?>
 
-<?php if ($receptionRule->canPerformAnyAction()): ?>
+<?php if ($actionMessages): ?>
 
     <div class="alert alert-success">
-        <span class="icon icon-info"></span> <strong>Information</strong> <br>
+        <span class="icon icon-info"></span> <strong>Informations</strong> <br>
         <ul>
-            <?php foreach ($receptionRule->getMessagesForActions() as $message): ?>
-                <li><?php echo $message ?></li>
+            <?php foreach ($actionMessages as $message): ?>
+                <li><?php echo str_replace(PHP_EOL, '<br>', $message) ?></li>
             <?php endforeach ?>
         </ul>
-        <a data-toggle="confirmationx"
-           class="btn btn-primary"
-           href="<?php echo $this->url('inscription-administrative/process', ['id' => $inscriptionAdministrative->getId()]) ?>">
-            Ok, faisons-le...
-        </a>
+
+        <?php if ($canPerformAnyAction): ?>
+            <a data-toggle="confirmationx"
+               class="btn btn-primary"
+               href="<?php echo $this->url('inscription-administrative/process', ['id' => $inscriptionAdministrative->getId()]) ?>">
+                Ok, faisons-le...
+            </a>
+        <?php endif; ?>
     </div>
 
 <?php endif; ?>
 
-<?php if ($messages = $receptionRule->getMessagesForWarnings()): ?>
+<?php if ($warningMessages): ?>
 
     <div class="alert alert-warning">
-        <span class="icon icon-info"></span> <strong>Information</strong>
+        <span class="icon icon-info"></span> <strong>Avertissements</strong>
         <ul>
-            <?php foreach ($messages as $message): ?>
-                <li><?php echo $message ?></li>
+            <?php foreach ($warningMessages as $message): ?>
+                <li><?php echo str_replace(PHP_EOL, '<br>', $message) ?></li>
             <?php endforeach ?>
         </ul>
     </div>

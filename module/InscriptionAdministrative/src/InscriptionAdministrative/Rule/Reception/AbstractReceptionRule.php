@@ -37,12 +37,6 @@ abstract class AbstractReceptionRule implements ReceptionRuleInterface
     protected bool $canLinkTheseAnneeUnivToInscriptionAdministrative;
     protected bool $canUpdateDoctorant;
 
-    /**
-     * Active ou non la mise à jour du doctorant lorsque c'est possible.
-     * Mise à jour à partir des données "apprenant".
-     */
-    protected bool $doctorantUpdateEnabled;
-
     protected string $messageSeverityForAction = MessageAwareInterface::INFO;
     protected string $messageSeverityForWarning = MessageAwareInterface::WARNING;
 
@@ -65,16 +59,6 @@ abstract class AbstractReceptionRule implements ReceptionRuleInterface
     }
 
     /**
-     * Active ou non la mise à jour du doctorant lorsque c'est possible.
-     * Mise à jour à partir des données "apprenant".
-     */
-    public function setDoctorantUpdateEnabled(bool $doctorantUpdateEnabled = true): static
-    {
-        $this->doctorantUpdateEnabled = $doctorantUpdateEnabled;
-        return $this;
-    }
-
-    /**
      * Point d'entrée.
      *
      * @see doc/integration_flux_inscrip_admin.drawio
@@ -90,19 +74,6 @@ abstract class AbstractReceptionRule implements ReceptionRuleInterface
         }
 
         $this->inscriptionAdministrativeApprenant = $iaApprenant;
-    }
-
-
-    public function canPerformAnyAction(): bool
-    {
-        return $this->canCreateDoctorant
-            || $this->canUpdateDoctorant
-            || $this->canCreateThese
-            || $this->canCreateTheseAnneeUniv
-            || $this->canUpdateCodeApprenantDoctorant
-            || $this->canLinkAdmissionToDoctorant
-            || $this->canCreateLinkInscriptionAdministrativeDoctorant
-            || $this->canLinkTheseAnneeUnivToInscriptionAdministrative;
     }
 
     public function canCreateThese(): bool

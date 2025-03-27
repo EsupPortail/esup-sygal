@@ -4,7 +4,6 @@ namespace Application;
 
 use Application\Entity\Db\Source;
 use Application\Navigation\NavigationFactoryFactory;
-use Import\Filter\PrefixEtabColumnValueFilter;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 use Retraitement\Filter\Command\RetraitementShellCommandMines;
@@ -90,10 +89,6 @@ $config = [
                     'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.css',
                 ],
             ],
-        ],
-        // Options concernant les inscriptions administratives (IA)
-        'inscription_administrative' => [
-            'run_reception_process_after_import_process' => false,
         ],
     ],
     'import' => [

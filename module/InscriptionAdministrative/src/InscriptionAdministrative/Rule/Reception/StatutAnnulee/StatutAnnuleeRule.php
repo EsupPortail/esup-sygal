@@ -20,10 +20,10 @@ class StatutAnnuleeRule extends AbstractReceptionRule
             throw new InvalidArgumentException("Statut inscription inattendu");
         }
 
-        $this->processInscriptionAnnulee();
+        $this->process();
     }
 
-    private function processInscriptionAnnulee(): void
+    private function process(): void
     {
         // ??
     }

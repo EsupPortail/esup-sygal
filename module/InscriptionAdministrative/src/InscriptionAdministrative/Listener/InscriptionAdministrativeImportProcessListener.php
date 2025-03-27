@@ -13,18 +13,19 @@ use SygalApiImpl\Event\InscriptionAdministrativeImportEvent;
 class InscriptionAdministrativeImportProcessListener implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
+
     use InscriptionAdministrativeServiceAwareTrait;
     use InscriptionAdministrativeReceptionProcessAwareTrait;
 
-    protected bool $runReceptionProcessAfterImportProcess = false;
+    protected bool $runReceptionProcessAfterImport = false;
 
     /**
      * Active ou non l'automaticité du traitement de l'IA (par le service {@see InscriptionAdministrativeReceptionProcess})
      * lorsque l'événement {@see InscriptionAdministrativeImportEvent} est reçu.
      */
-    public function setRunReceptionProcessAfterImportProcess(bool $runReceptionProcessAfterImportProcess): void
+    public function setRunReceptionProcessAfterImport(bool $runReceptionProcessAfterImport): void
     {
-        $this->runReceptionProcessAfterImportProcess = $runReceptionProcessAfterImportProcess;
+        $this->runReceptionProcessAfterImport = $runReceptionProcessAfterImport;
     }
 
     public function attach(EventManagerInterface $events, $priority = 1): void
@@ -45,7 +46,7 @@ class InscriptionAdministrativeImportProcessListener implements ListenerAggregat
             throw new RuntimeException("Impossible de trouver l'IA ayant le source code " . $iaSourceCode);
         }
 
-        if ($this->runReceptionProcessAfterImportProcess) {
+        if ($this->runReceptionProcessAfterImport) {
             $this->inscriptionAdministrativeReceptionProcess->setInscriptionAdministrative($ia);
             $this->inscriptionAdministrativeReceptionProcess->run();
         }

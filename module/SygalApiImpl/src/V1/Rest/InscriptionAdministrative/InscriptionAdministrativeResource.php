@@ -5,7 +5,7 @@ namespace SygalApiImpl\V1\Rest\InscriptionAdministrative;
 use Exception;
 use Laminas\ApiTools\ApiProblem\ApiProblem;
 use RuntimeException;
-use SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\InscriptionAdministrativeImportProcessAwareTrait;
+use SygalApiImpl\V1\Process\InscriptionAdministrativeImportProcessAwareTrait;
 
 class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdministrative\InscriptionAdministrativeResource
 {

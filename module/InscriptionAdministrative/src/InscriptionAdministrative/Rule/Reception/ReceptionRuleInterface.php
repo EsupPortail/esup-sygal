@@ -14,17 +14,9 @@ interface ReceptionRuleInterface extends RuleInterface
     public function setInscriptionAdministrative(InscriptionAdministrative $inscriptionAdministrative): void;
 
     /**
-     * Active ou non la mise à jour du doctorant lorsque c'est possible.
-     * Mise à jour à partir des données "apprenant".
-     */
-    public function setDoctorantUpdateEnabled(bool $doctorantUpdateEnabled = true): static;
-
-    /**
      * Point d'entrée.
      */
     public function execute(): void;
-
-    public function canPerformAnyAction(): bool;
 
     public function canCreateThese(): bool;
     public function canCreateTheseAnneeUniv(): bool;

@@ -4,6 +4,14 @@ use Laminas\Log\Logger;
 use Laminas\Log\PsrLoggerAbstractAdapterFactory;
 
 return [
+    'sygal' => [
+        'sygal_api' => [
+            'inscription_administrative' => [
+
+            ],
+        ],
+    ],
+
     'service_manager' => [
         'abstract_factories' => [
             PsrLoggerAbstractAdapterFactory::class,

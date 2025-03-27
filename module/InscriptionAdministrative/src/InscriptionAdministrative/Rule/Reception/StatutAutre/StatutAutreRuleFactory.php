@@ -11,8 +11,6 @@ class StatutAutreRuleFactory implements FactoryInterface
     {
         $rule = new StatutAutreRule();
 
-        $rule->setDoctorantUpdateEnabled();
-
         return $rule;
     }
 }

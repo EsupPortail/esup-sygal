@@ -162,26 +162,27 @@ class IndividuService extends BaseService
      * à partir de ceux de l'apprenant spécifié.
      */
     public function diffIndividuFromApprenant(
-        Individu                           $individu,
-        InscriptionAdministrativeApprenant $apprenant): array
+        Individu $individu,
+        InscriptionAdministrativeApprenant $apprenant,
+        ?array $fieldNames = null): array
     {
-        $callable = function() use ($individu, $apprenant) {
-            // update provisoire du doctorant UNIQUEMENT pour pouvoir calculer le "changeset" Doctrine
-            $this->initIndividuFromApprenant($individu, $apprenant);
-        };
+        $individuFromApprenant = new Individu();
+        $this->initIndividuFromApprenant($individuFromApprenant, $apprenant);
 
-        $fields = [
-            'civilite',
-            'nomPatronymique',
-            'nomUsuel',
-            'prenom1',
-            'prenom2',
-            'prenom3',
-            'dateNaissance',
-            'paysNationalite',
-        ];
+        if ($fieldNames === null) {
+            $fieldNames = [
+                'civilite',
+                'nomPatronymique',
+                'nomUsuel',
+                'prenom1',
+                'prenom2',
+                'prenom3',
+                'dateNaissance',
+                'paysNationalite',
+            ];
+        }
 
-        return $this->computeDiffForUpdate($individu, $callable, $fields);
+        return $this->computeEntityDiff($individu, $individuFromApprenant, $fieldNames);
     }
 
     /**

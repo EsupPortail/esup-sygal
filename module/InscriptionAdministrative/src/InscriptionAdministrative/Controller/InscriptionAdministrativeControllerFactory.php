@@ -5,6 +5,8 @@ namespace InscriptionAdministrative\Controller;
 use Admission\Service\Admission\AdmissionService;
 use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctorant\Service\DoctorantService;
+use Individu\Service\IndividuService;
+use InscriptionAdministrative\Config\ModuleConfig;
 use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcess;
 use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManager;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
@@ -36,6 +38,10 @@ class InscriptionAdministrativeControllerFactory
         $admissionService = $container->get(AdmissionService::class);
         $controller->setAdmissionService($admissionService);
 
+        /** @var IndividuService $individuService */
+        $individuService = $container->get(IndividuService::class);
+        $controller->setIndividuService($individuService);
+
         /** @var DoctorantService $doctorantService */
         $doctorantService = $container->get(DoctorantService::class);
         $controller->setDoctorantService($doctorantService);
@@ -43,6 +49,10 @@ class InscriptionAdministrativeControllerFactory
         /** @var InscriptionAdministrativeReceptionProcess $receptionProcess */
         $receptionProcess = $container->get(InscriptionAdministrativeReceptionProcess::class);
         $controller->setInscriptionAdministrativeReceptionProcess($receptionProcess);
+
+        /** @var ModuleConfig $moduleConfig */
+        $moduleConfig = $container->get(ModuleConfig::class);
+        $controller->setModuleConfig($moduleConfig);
 
         return $controller;
     }

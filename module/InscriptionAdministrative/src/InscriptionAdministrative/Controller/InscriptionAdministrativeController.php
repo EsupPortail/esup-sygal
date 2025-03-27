@@ -6,6 +6,8 @@ use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Controller\AbstractController;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
+use InscriptionAdministrative\Config\ModuleConfigAwareTrait;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
 use InscriptionAdministrative\Process\Reception\InscriptionAdministrativeReceptionProcessAwareTrait;
 use InscriptionAdministrative\Rule\Reception\ReceptionRulePluginManagerAwareTrait;
@@ -16,8 +18,11 @@ use UnicaenApp\Traits\MessageAwareInterface;
 
 class InscriptionAdministrativeController extends AbstractController
 {
+    use ModuleConfigAwareTrait;
+
     use InscriptionAdministrativeServiceAwareTrait;
     use AdmissionServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
 
@@ -59,7 +64,7 @@ class InscriptionAdministrativeController extends AbstractController
 
     private function createReceptionProcessChildModel(): ViewModel
     {
-        // Lancement de la Rule pour savoir si les conditions pour créer la thèse et le doctorant sont rassemblées.
+        // Lancement de la Rule pour savoir si les conditions pour créer/màj la thèse, le doctorant, etc sont rassemblées.
         $receptionRule = $this->receptionRulePluginManager->getRuleForInscriptionAdministrative($this->inscriptionAdministrative);
         $receptionRule->execute();
 
@@ -67,6 +72,7 @@ class InscriptionAdministrativeController extends AbstractController
         $childModel->setVariables([
             'inscriptionAdministrative' => $this->inscriptionAdministrative,
             'receptionRule' => $receptionRule,
+            'updateDoctorantIfPossible' => $this->inscriptionAdministrativeReceptionProcess->getUpdateDoctorantIfPossible(),
         ]);
         $childModel->setTemplate('inscription-administrative/inscription-administrative/partial/reception-process');
 
@@ -91,11 +97,12 @@ class InscriptionAdministrativeController extends AbstractController
             return $this->redirect()->toRoute('inscription-administrative/voir', ['id' => $this->inscriptionAdministrative->getId()]);
         }
 
-        $this->flashMessenger()->addSuccessMessage(
-            "Opération réalisée avec succès !" .
-            '<ul><li>'.$result->getMessage('</li><li>', MessageAwareInterface::SUCCESS).'</li></ul>');
+        if ($result->hasMessages(MessageAwareInterface::SUCCESS)) {
+            $this->flashMessenger()->addSuccessMessage(
+                "Opération réalisée avec succès !" .
+                '<ul><li>'.$result->getMessage('</li><li>', MessageAwareInterface::SUCCESS).'</li></ul>');
+        }
 
-//        return $this->redirect()->toRoute('these/identite', ['these' => $result->getCreatedThese()->getId()]);
         return $this->redirect()->toRoute('inscription-administrative/voir', ['id' => $this->inscriptionAdministrative->getId()]);
     }
 

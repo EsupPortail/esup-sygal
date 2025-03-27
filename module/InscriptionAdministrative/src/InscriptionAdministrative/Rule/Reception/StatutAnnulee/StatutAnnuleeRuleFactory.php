@@ -11,8 +11,6 @@ class StatutAnnuleeRuleFactory implements FactoryInterface
     {
         $rule = new StatutAnnuleeRule();
 
-        $rule->setDoctorantUpdateEnabled();
-
         return $rule;
     }
 }

@@ -5,8 +5,10 @@ namespace InscriptionAdministrative\Rule\Reception\StatutValidee;
 use Admission\Entity\Db\Admission;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Entity\AnneeUniv;
+use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeApprenant;
 use InscriptionAdministrative\Entity\Db\InscriptionAdministrativeDoctorant;
 use InscriptionAdministrative\Rule\Reception\AbstractReceptionRule;
 use InvalidArgumentException;
@@ -42,10 +44,10 @@ class StatutValideeRule extends AbstractReceptionRule
             throw new InvalidArgumentException("Statut inscription inattendu");
         }
 
-        $this->processInscriptionValidee();
+        $this->process();
     }
 
-    private function processInscriptionValidee(): void
+    private function process(): void
     {
         // IA déjà liée à un doctorant ?
         // (n'a pas de sens pour une IA en cours de réception mais pas très grave, on généralise)
@@ -86,10 +88,8 @@ class StatutValideeRule extends AbstractReceptionRule
      */
     private function processDoctorantExistant(): void
     {
-        // Mise à jour (si mécanisme activé) du doctorant à partir des données Apprenant
-        if ($this->doctorantUpdateEnabled) {
-            $this->setCanUpdateDoctorant();
-        }
+        // Mise à jour du doctorant à partir des données Apprenant
+        $this->setCanUpdateDoctorant();
 
         // Thèse existante pour ce doctorant ?
         $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->foundDoctorant);
@@ -205,10 +205,8 @@ class StatutValideeRule extends AbstractReceptionRule
                 // (Remarque : Le doctorant peut avoir une thèse ou pas.)
                 // Renseigner le code apprenant du doctorant
                 $this->setCanUpdateCodeApprenantDoctorantFromApprenant();
-                // Mise à jour (si mécanisme activé) du doctorant à partir des données Apprenant
-                if ($this->doctorantUpdateEnabled) {
-                    $this->setCanUpdateDoctorant();
-                }
+                // Mise à jour du doctorant à partir des données Apprenant
+                $this->setCanUpdateDoctorant();
                 // Créer le lien IA-Doctorant
                 $this->setCanCreateLinkInscriptionAdministrativeDoctorant();
             } else {
@@ -233,25 +231,18 @@ class StatutValideeRule extends AbstractReceptionRule
 
     private function setCanUpdateDoctorant(): void
     {
-        $diffIndividu = $this->individuService->diffIndividuFromApprenant(
-            $this->foundDoctorant->getIndividu(),
-            $this->inscriptionAdministrativeApprenant);
-        $diffDoctorant = $this->doctorantService->diffDoctorantFromApprenant(
-            $this->foundDoctorant,
-            $this->inscriptionAdministrativeApprenant);
+        $diff = $this->computeDoctorantApprenantDiff($this->foundDoctorant, $this->inscriptionAdministrativeApprenant);
 
-        if (!empty($diffIndividu) || !empty($diffDoctorant)) {
-            $message = "Mise à jour possible du doctorant à partir des données sur l'apprenant : ";
-            if (!empty($diffIndividu)) {
-                $message .= implode(', ', array_map(
-                    fn($arr) => $arr[0].'=>'.$arr[1],
-                    array_values(array_merge($diffIndividu, $diffDoctorant))
-                ));
-            }
-            $this->addMessage($message, $this->messageSeverityForAction);
-
-            $this->canUpdateDoctorant = true;
+        if (empty($diff)) {
+            // diff vide <=> màj inutile
+            return;
         }
+
+        $message = "Mise à jour possible du doctorant à partir des données de l'apprenant : " . PHP_EOL;
+        $message .= implode(', ' . PHP_EOL, $diff) . PHP_EOL;
+        $this->addMessage($message, $this->messageSeverityForAction);
+
+        $this->canUpdateDoctorant = true;
     }
 
     private function setCanCreateThese(): void
@@ -318,5 +309,32 @@ class StatutValideeRule extends AbstractReceptionRule
         $this->addMessage($message, $this->messageSeverityForAction);
 
         $this->canLinkAdmissionToDoctorant = true;
+    }
+
+    protected function computeDoctorantApprenantDiff(Doctorant $doctorant, InscriptionAdministrativeApprenant $apprenant): array
+    {
+        $diffIndividu = $this->individuService->diffIndividuFromApprenant($doctorant->getIndividu(), $apprenant);
+        $diffDoctorant = $this->doctorantService->diffDoctorantFromApprenant($doctorant, $apprenant);
+
+        if (empty($diffIndividu) && empty($diffDoctorant)) {
+            return [];
+        }
+
+        $diff = [];
+
+        if (!empty($diffIndividu)) {
+            $diff[] = implode(', '. PHP_EOL, array_map(
+                fn($field) => "individu.".$field.' : '.$diffIndividu[$field][0].' => '.$diffIndividu[$field][1],
+                array_keys($diffIndividu)
+            ));
+        }
+        if (!empty($diffDoctorant)) {
+            $diff[] = implode(', '. PHP_EOL, array_map(
+                fn($field) => "doctorant.".$field.' : '.$diffDoctorant[$field][0].' => '.$diffDoctorant[$field][1],
+                array_keys($diffDoctorant)
+            ));
+        }
+
+        return $diff;
     }
 }

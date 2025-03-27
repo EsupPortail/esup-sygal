@@ -8,16 +8,16 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Structure\Entity\Db\EcoleDoctorale;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /********************************************************************************************************************
  * Inscriptions administratives en vrac reçues de Pégase.
  ********************************************************************************************************************
  *
  * Données *non remaniées* issues de la synchro spécifiée dans la classe
- * {@see \SygalApiImpl\V1\Rest\InscriptionAdministrative\Process\InscriptionAdministrativeImportProcess}
+ * {@see \SygalApiImpl\V1\Process\InscriptionAdministrativeImportProcess}
  *
  * NB : l'id de l'inscription administrative est forgé (côté Pégase) à partir des attributs suivants :
  * - la structure organisationnelle (code UAI, ex : 'ETAB00'),

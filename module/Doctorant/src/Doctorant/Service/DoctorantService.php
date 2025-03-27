@@ -149,19 +149,25 @@ class DoctorantService extends BaseService
         $doctorant->setIne($iaa->getINE());
     }
 
+
     /**
      * Détermine si le doctorant spécifié possède des attributs dont la valeur pourrait être mise à jour
      * à partir de ceux de l'apprenant spécifié.
      */
     public function diffDoctorantFromApprenant(
-        Doctorant                          $doctorant,
-        InscriptionAdministrativeApprenant $apprenant): array
+        Doctorant $doctorant,
+        InscriptionAdministrativeApprenant $apprenant,
+        ?array $fieldNames = null): array
     {
-        $callable = function() use ($doctorant, $apprenant) {
-            // update provisoire du doctorant UNIQUEMENT pour pouvoir calculer le "changeset" Doctrine
-            $this->updateDoctorantFromApprenant($doctorant, $apprenant);
-        };
+        $doctorantFromApprenant = new Doctorant();
+        $this->updateDoctorantFromApprenant($doctorantFromApprenant, $apprenant);
 
-        return $this->computeDiffForUpdate($doctorant, $callable, ['ine']);
+        if ($fieldNames === null) {
+            $fieldNames = [
+                'ine',
+            ];
+        }
+
+        return $this->computeEntityDiff($doctorant, $doctorantFromApprenant, $fieldNames);
     }
 }

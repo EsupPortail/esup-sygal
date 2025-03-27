@@ -20,10 +20,10 @@ class StatutAutreRule extends AbstractReceptionRule
             throw new InvalidArgumentException("Statut inscription inattendu");
         }
 
-        $this->processInscriptionAutre();
+        $this->process();
     }
 
-    private function processInscriptionAutre(): void
+    private function process(): void
     {
         // ??
     }

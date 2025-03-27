@@ -1,6 +1,6 @@
 <?php
 
-namespace SygalApiImpl\V1\Rest\InscriptionAdministrative\Process;
+namespace SygalApiImpl\V1\Process;
 
 use Application\Entity\Db\Repository\SourceRepositoryAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -10,11 +10,11 @@ use InvalidArgumentException;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerAwareTrait;
 use stdClass;
-use SygalApiImpl\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeApprenantExtractor;
-use SygalApiImpl\V1\Rest\InscriptionAdministrative\Extractor\InscriptionAdministrativeExtractor;
 use SygalApiImpl\Event\InscriptionAdministrativeImportEvent;
 use SygalApiImpl\Exception\ErrorDuringImportException;
 use SygalApiImpl\Process\AbstractProcess;
+use SygalApiImpl\V1\Extractor\InscriptionAdministrativeApprenantExtractor;
+use SygalApiImpl\V1\Extractor\InscriptionAdministrativeExtractor;
 use UnicaenDbImport\Config\ConfigException;
 use UnicaenDbImport\Connection\NoConnection;
 use UnicaenDbImport\Domain\Destination;
