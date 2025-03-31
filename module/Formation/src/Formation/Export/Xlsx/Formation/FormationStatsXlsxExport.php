@@ -3,7 +3,9 @@
 namespace Formation\Export\Xlsx\Formation;
 
 use Application\Export\Xlsx\AbstractXlsxExport;
+use Application\Export\Xlsx\XlsxExportDataProviderInterface;
 use Doctrine\DBAL\Exception;
+use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchServiceAwareTrait;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use RuntimeException;
 use Webmozart\Assert\Assert;
@@ -11,11 +13,13 @@ use Webmozart\Assert\Assert;
 class FormationStatsXlsxExport extends AbstractXlsxExport
 {
     use FormationServiceAwareTrait;
+    use EnqueteReponseSearchServiceAwareTrait;
 
     const CODE = 'FORMATION_STATS_XLSX_EXPORT';
 
     const FORMATION_DATA_TAB = 'DATA_FORM';
-    const ENQUETE_DATA_TAB = 'DATA_ENQ';
+    const ENQUETE_DATA_TAB = 'Résultat questionn.'; // todo : renommer !
+    const DOCTORANT_DATA_TAB = 'DATA_DOCTORANT';
 
     protected string $code = self::CODE;
 
@@ -37,8 +41,6 @@ class FormationStatsXlsxExport extends AbstractXlsxExport
     {
         $this->setFormationsIds($context['formationsIds'] ?? null);
         $this->setSessionId($context['sessionId'] ?? null);
-        unset($context['formationsIds']);
-        unset($context['sessionId']);
 
         parent::setContext($context);
     }
@@ -73,10 +75,28 @@ class FormationStatsXlsxExport extends AbstractXlsxExport
         parent::generate($outputFilePath);
     }
 
-    protected function fetchDataForTab(string $tabName): array
+    protected function fetchServiceDataForTab(string $tabName): array
     {
-        $viewName = $this->getViewNameForTab($tabName);
-        $viewColumns = $this->getViewColumnsForTab($tabName);
+        Assert::same($tabName, static::ENQUETE_DATA_TAB);
+
+        /** @var XlsxExportDataProviderInterface $service */
+        $service = $this->getSourceForTab($tabName);
+
+        $service->setContext($this->context);
+        $array = $service->fetchData();
+
+        $data = [];
+        foreach ($array as $inscriptionId => $items) {
+            $data[] = ["Inscription" => $inscriptionId] + $items;
+        }
+
+        return $data;
+    }
+
+    protected function fetchDbDataForTab(string $tabName): array
+    {
+        $viewName = $this->getSourceForTab($tabName);
+        $viewColumns = $this->getColumnsForTab($tabName);
 
         $sql = sprintf(
             "select %s from $viewName",

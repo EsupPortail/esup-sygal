@@ -3,14 +3,19 @@
 namespace Application\Export\Xlsx;
 
 use Application\Export\Xlsx\Writer\XlsxWriterInterface;
+use BadMethodCallException;
 use DateTime;
 use Exception;
+use InvalidArgumentException;
 use UnicaenApp\Traits\MessageAwareTrait;
 use Webmozart\Assert\Assert;
 
 abstract class AbstractXlsxExport implements XlsxExportInterface
 {
     use MessageAwareTrait;
+
+    const SOURCE_TYPE_DB = 'db';
+    const SOURCE_TYPE_SERVICE = 'service';
 
     const LOG_TAB = 'LOG';
 
@@ -106,7 +111,9 @@ abstract class AbstractXlsxExport implements XlsxExportInterface
         header(sprintf('Content-Disposition: attachment;filename="%s"', $filename));
         header('Cache-Control: max-age=0');
 
-        file_put_contents('php://output', $this->exportToString());
+        $content = $this->exportToString();
+
+        file_put_contents('php://output', $content);
     }
 
     protected function generate(string $outputFilePath): void
@@ -137,12 +144,40 @@ abstract class AbstractXlsxExport implements XlsxExportInterface
         }
     }
 
+    protected function fetchDataForTab(string $tabName): array
+    {
+        $data = match ($this->getSourceTypeForTab($tabName)) {
+            self::SOURCE_TYPE_DB => $this->fetchDbDataForTab($tabName),
+            self::SOURCE_TYPE_SERVICE => $this->fetchServiceDataForTab($tabName),
+            default => throw new InvalidArgumentException("Type de source inattendu !"),
+        };
+
+        foreach ($this->getDataProcessorsForTab($tabName) as $processor) {
+            $data = $processor->processData($data);
+        }
+
+        return $data;
+    }
+
     /**
-     * Méthode chargée fournir les données à écrire dans l'onglet spécifié.
+     * Méthode chargée fournir les données à écrire dans l'onglet spécifié, à partir de la base de données.
      *
      * @return array Ex : ['col1' => 'val1', 'col2' => 'val2', ...]
      */
-    abstract protected function fetchDataForTab(string $tabName): array;
+    protected function fetchDbDataForTab(string $tabName): array
+    {
+        throw new BadMethodCallException("Méthode non implémentée !");
+    }
+
+    /**
+     * Méthode chargée fournir les données à écrire dans l'onglet spécifié, à partir d'un tableau de données PHP.
+     *
+     * @return array Ex : ['col1' => 'val1', 'col2' => 'val2', ...]
+     */
+    protected function fetchServiceDataForTab(string $tabName): array
+    {
+        throw new BadMethodCallException("Méthode non implémentée !");
+    }
 
 
     protected function computeTempOutputFilePath(): string
@@ -165,19 +200,37 @@ abstract class AbstractXlsxExport implements XlsxExportInterface
         return $config;
     }
 
-    protected function getViewNameForTab(string$tabName): string
+    protected function getSourceTypeForTab(string $tabName): string
     {
         $tabConfig = $this->getConfigForTab($tabName);
-        Assert::keyExists($tabConfig, $k = 'view_name', "Clé %s introuvable dans le tableau de config de l'onglet $tabName");
+        Assert::keyExists($tabConfig, $k = 'source_type', "Clé %s introuvable dans le tableau de config de l'onglet $tabName");
 
         return $tabConfig[$k];
     }
 
-    protected function getViewColumnsForTab(string$tabName): array
+    protected function getSourceForTab(string $tabName): string|object
+    {
+        $tabConfig = $this->getConfigForTab($tabName);
+        Assert::keyExists($tabConfig, $k = 'source', "Clé %s introuvable dans le tableau de config de l'onglet $tabName");
+
+        return $tabConfig[$k];
+    }
+
+    /**
+     * @return array<\Application\Export\Xlsx\XlsxExportDataProcessorInterface>
+     */
+    protected function getDataProcessorsForTab(string $tabName): array
     {
         $tabConfig = $this->getConfigForTab($tabName);
 
-        Assert::keyExists($tabConfig, $k = 'view_columns', "Clé %s introuvable dans le tableau de config de l'onglet $tabName");
+        return $tabConfig['data_processors'] ?? [];
+    }
+
+    protected function getColumnsForTab(string $tabName): array
+    {
+        $tabConfig = $this->getConfigForTab($tabName);
+
+        Assert::keyExists($tabConfig, $k = 'columns', "Clé %s introuvable dans le tableau de config de l'onglet $tabName");
         $viewColumns = $tabConfig[$k];
 
         if (is_string($viewColumns)) {

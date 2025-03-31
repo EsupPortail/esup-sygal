@@ -18,7 +18,7 @@ class FormationRechercheController extends AbstractRechercheController
     protected string $filtersActionTemplate = 'formation/filters';
     protected string $title = "Formations";
 
-    public function indexAction(): Response|ViewModel
+    public function indexAction(bool $searchIfRequested = false): Response|ViewModel
     {
         $model = parent::indexAction();
         if ($model instanceof Response) {

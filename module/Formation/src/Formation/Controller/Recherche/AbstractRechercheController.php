@@ -23,12 +23,9 @@ class AbstractRechercheController extends AbstractController implements SearchCo
     protected string $filtersActionTemplate = 'formation/filters';
     protected string $title;
 
-    /**
-     * @return ViewModel|Response
-     */
-    public function indexAction()
+    public function indexAction(bool $searchIfRequested = false): Response|ViewModel
     {
-        $result = $this->search();
+        $result = $searchIfRequested ? $this->searchIfRequested(): $this->search();
         if ($result instanceof Response) {
             return $result;
         }

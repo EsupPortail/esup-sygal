@@ -2,8 +2,11 @@
 
 namespace Application\Export\Xlsx\Manager;
 
+use Application\Export\Xlsx\AbstractXlsxExport;
 use Application\Export\Xlsx\Writer\XlsxWriterManagerAwareTrait;
 use Application\Export\Xlsx\XlsxExportInterface;
+use Application\Export\Xlsx\XlsxExportDataProcessorInterface;
+use Application\Export\Xlsx\XlsxExportDataProviderInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Webmozart\Assert\Assert;
 
@@ -12,13 +15,17 @@ class XlsxExportManager extends AbstractPluginManager
     use XlsxWriterManagerAwareTrait;
 
     protected $instanceOf = XlsxExportInterface::class;
-    protected array $config;
+    protected array $exports;
 
-    public function setConfig(array $config): void
+    public function setExports(array $exports): void
     {
-        $this->config = $config;
+        $this->exports = $exports;
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function get($name, ?array $options = null): XlsxExportInterface
     {
         $options = $this->prepareOptionsForExport($name, $options);
@@ -31,13 +38,56 @@ class XlsxExportManager extends AbstractPluginManager
         return $export;
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     protected function prepareOptionsForExport(string $name, ?array $options = null): array
     {
-        $exportClassName = $this->aliases[$name] ?? $name;
+        $options = $options ?? [];
 
-        return array_merge_recursive($options ?? [], $this->config[$exportClassName]);
+        $exportClassName = $this->aliases[$name] ?? $name;
+        $exportConfig = $this->exports[$exportClassName];
+
+        foreach ($exportConfig['data_tabs'] as $tabName => $tabConfig) {
+
+            // remplacement de chaque nom de service de 'data provider' éventuel par l'instance du service
+            $sourceType = $tabConfig['source_type'] ?? null;
+            if ($sourceType === AbstractXlsxExport::SOURCE_TYPE_SERVICE) {
+                Assert::keyExists($tabConfig, $key = 'source', "La clé %s est introuvable dans la config de l'onglet $tabName");
+                $serviceName = $tabConfig['source'];
+                Assert::true($this->creationContext->has($serviceName), "Le service spécifié dans la config de l'onglet $tabName (clé '$key') n'existe pas : " . $serviceName);
+                $service = $this->creationContext->get($serviceName);
+                Assert::isInstanceOf($service, XlsxExportDataProviderInterface::class,
+                    "Le service spécifié dans la config de l'onglet $tabName (clé '$key') doit implémenter %s");
+
+                $exportConfig['data_tabs'][$tabName]['source'] = $service;
+            }
+
+            // remplacement de chaque nom de 'data processor' éventuel par l'instance du service
+            $dataProcessors = $tabConfig[$key = 'data_processors'] ?? [];
+            foreach ($dataProcessors as $i => $config) {
+                Assert::isArray($config, "Chaque data processor doit être spécifié au format tableau");
+                Assert::keyExists($config, 'name', "La clé %s est obligatoire dans la config d'un data processor");
+                $name = $config['name'];
+                Assert::stringNotEmpty($name, "Le 'name' d'un data processor doit être un nom de service");
+                Assert::true($this->creationContext->has($name), "Le service '$name' spécifié dans la config du data processor est introuvable");
+                unset($config['name']);
+                $service = $this->creationContext->build($name, $config);
+                Assert::isInstanceOf($service, XlsxExportDataProcessorInterface::class,
+                    "Le data processor '$name' spécifié dans la config de l'onglet $tabName doit implémenter %s");
+
+                $exportConfig['data_tabs'][$tabName][$key][$i] = $service;
+            }
+        }
+
+        return array_merge_recursive($options, $exportConfig);
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     protected function injectDependencies(XlsxExportInterface $export, array $options): void
     {
         // injection du writer

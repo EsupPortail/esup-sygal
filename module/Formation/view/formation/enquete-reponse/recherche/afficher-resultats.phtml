@@ -6,6 +6,7 @@ use Formation\Entity\Db\EnqueteReponse;
 
 /**
  * @see \Formation\Controller\Recherche\EnqueteReponseRechercheController::afficherResultatsAction()
+ *
  * @var \Formation\Entity\Db\Session $session
  * @var array $array;
  * @var array $histogramme;
@@ -27,22 +28,26 @@ usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return 
 </script>
 
 <h1 class="page-header">
-    <?php echo $this->translate($title) ?>
+    <?php echo $session ? $this->translate("Résultat de l'enquête") : $this->translate("Résultats des enquêtes") ?>
 </h1>
-<h2>
+<h2 class="page-header">
     <?php echo $session ? $this->sessionLibelle($session) : "Toutes sessions confondues" ?>
 </h2>
 
-
-<!-- Formulaire de filtrage -->
-<div class="float-start">
-    <?php $loadFiltersUrl = $this->url($routeName . '/filters', $session ? ['session' => $session->getId()] : [], ['query' => $this->queryParams()], true); ?>
-    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 120px">
-        <!-- Contenu chargé en AJAX -->
+<?php if ($session === null): ?>
+    <!-- Formulaire de filtrage -->
+    <div class="float-start">
+        <?php $loadFiltersUrl = $this->url($routeName . '/filters', $session ? ['session' => $session->getId()] : [], ['query' => $this->queryParams()], true); ?>
+        <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 120px">
+            <!-- Contenu chargé en AJAX -->
+        </div>
     </div>
-</div>
-<div class="clearfix"></div>
+    <div class="clearfix"></div>
+<?php endif ; ?>
 
+<hr>
+
+<?php if ($nbReponses): ?>
 
 <div class="row">
     <div class="col-md-6">
@@ -298,6 +303,8 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
     });
 
 </script>
+
+<?php endif ; ?>
 
 <script>
     $(function() {

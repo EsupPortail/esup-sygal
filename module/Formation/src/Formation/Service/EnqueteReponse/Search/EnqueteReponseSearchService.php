@@ -86,6 +86,7 @@ class EnqueteReponseSearchService extends SearchService
             ->leftJoin("form.site", 'site')
             ->leftJoin("site.structure", 'site_structure')->addSelect('site_structure')
             ->andWhere('er.histoDestruction is null')
+            ->andWhere('q.histoDestruction is null')
             ->addOrderBy('q.id');
     }
 

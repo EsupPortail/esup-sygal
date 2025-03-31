@@ -13,6 +13,7 @@ use Formation\Entity\Db\Repository\EnqueteQuestionRepositoryAwareTrait;
 use Formation\Entity\Db\Repository\FormateurRepositoryAwareTrait;
 use Formation\Entity\Db\Repository\SessionRepositoryAwareTrait;
 use Formation\Entity\Db\Session;
+use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
 use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService;
 use Individu\Entity\Db\Individu;
 use Laminas\Http\Response;
@@ -27,6 +28,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
     use FormateurRepositoryAwareTrait;
     use EnqueteQuestionRepositoryAwareTrait;
     use EnqueteCategorieRepositoryAwareTrait;
+    use EnqueteReponseServiceAwareTrait;
     use SearchControllerTrait2 { search as public searchDefault; }
 
     public const SESSION_ROUTE_PARAM_TOUTES = 'toutes';
@@ -74,7 +76,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
     {
         $this->initFormateurFilter();
 
-        $model = parent::indexAction();
+        $model = parent::indexAction(true);
 
         if ($model instanceof Response) {
             return $model;
@@ -82,39 +84,12 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
 
         /** @var \UnicaenSearch\SearchResultPaginator $reponses */
         $reponses = $model->getVariable('paginator');
-        $reponses->setItemCountPerPage(-1);
+        $reponses->setItemCountPerPage(-1); // toutes les données, i.e. pas de pagination
+        $reponses = iterator_to_array($reponses);
 
         $questions = $this->enqueteQuestionRepository->findAll();
-        $questions = array_filter($questions, function (EnqueteQuestion $a) {
-            return $a->estNonHistorise();
-        });
-        usort($questions, function (EnqueteQuestion $a, EnqueteQuestion $b) {
-            return $a->getOrdre() > $b->getOrdre();
-        });
 
-        /** PREP HISTOGRAMME $histogramme */
-        $histogramme = [];
-        foreach ($questions as $question) {
-            $histogramme[$question->getId()] = [];
-            foreach (EnqueteReponse::NIVEAUX as $clef => $value) $histogramme[$question->getId()][$clef] = 0;
-        }
-
-        $array = [];
-
-        /** @var EnqueteReponse $reponse */
-        foreach ($reponses as $reponse) {
-            if ($reponse->getQuestion()->estNonHistorise()) {
-                $question = $reponse->getQuestion()->getId();
-                $inscription = $reponse->getInscription()->getId();
-
-                $niveau = $reponse->getNiveau();
-                $description = $reponse->getDescription();
-
-                $array[$inscription]["Niveau_" . $question] = EnqueteReponse::NIVEAUX[$niveau];
-                $array[$inscription]["Commentaire_" . $question] = $description;
-                $histogramme[$question][$niveau]++;
-            }
-        }
+        [$array, $histogramme] = $this->enqueteReponseService->prepareResultatsEnquetes($reponses, $questions);
 
         $categories = $this->enqueteCategorieRepository->findBy([], ['ordre' => 'asc']);
 

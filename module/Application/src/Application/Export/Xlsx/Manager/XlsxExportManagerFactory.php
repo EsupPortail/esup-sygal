@@ -11,27 +11,21 @@ class XlsxExportManagerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): XlsxExportManager
     {
-        $xlsxExportConfig = $container->get('Config')['xlsx_export'];
+        $xlsxExportConfig = $container->get('Config')['xlsx_export_manager'];
 
         $manager =  new XlsxExportManager($container);
 
-        // config des exports
-        $config = $xlsxExportConfig['config'] ?? [];
-        $manager->setConfig($config);
-
-        // factory et alias
+        // exports et leur factory+alias
         $factories = $xlsxExportConfig['factories'] ?? [];
         $aliases = $xlsxExportConfig['aliases'] ?? [];
-        Assert::isEmpty(
-            $diff = array_diff(array_keys($factories), $aliases),
-            "Chacune des classes d'exports suivantes doit avoir un alias : " . implode(', ', $diff)
-        );
+        $exports = $xlsxExportConfig['exports'] ?? [];
+        foreach ($exports as $className => $config) {
+            Assert::keyExists($factories, $className, "Une factory doit être fournie pour l'export '$className'");
+            Assert::inArray($className, $aliases, "Un alias doit être fourni pour l'export '$className'");
+        }
+        $manager->setExports($exports);
         foreach ($factories as $className => $factoryName) {
             $manager->setFactory($className, $factoryName);
-            Assert::notEmpty(
-                $config[$className] ?? [],
-                "Une clé de config '$className' doit exister et fournir la config de la classe d'export du même nom"
-            );
         }
         foreach ($aliases as $alias => $className) {
             $manager->setAlias($alias, $className);

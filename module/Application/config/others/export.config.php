@@ -21,10 +21,10 @@ return [
             ExcelDataTablesXlsxWriter::class => InvokableFactory::class,
         ],
     ],
-    'xlsx_export' => [
+    'xlsx_export_manager' => [
         'factories' => [],
         'aliases' => [],
-        'config' => [],
+        'exports' => [],
     ],
 
     'bjyauthorize'    => [
