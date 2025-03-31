@@ -23,15 +23,10 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\PropositionThese;
 use Soutenance\Provider\Parametre\These\SoutenanceParametres;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
-use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
-use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
-use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
-use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionThese\PropositionTheseService;
-use Soutenance\Service\Validation\ValidationThese\ValidationTheseServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\These\TheseService;
 use UnicaenApp\Exception\RuntimeException;
@@ -201,7 +196,6 @@ class PresoutenanceTheseController extends PresoutenanceController
 
         //creation de l'utilisateur
         if ($membre->estRapporteur()) {
-            $this->createUtilisateurRapporteur($acteur, $membre);
             $this->createUtilisateurRapporteur($acteur, $membre);
 
             //quand c'est une thèse saisie dans SyGAL, on enregistre également un acteur avec le rôle Membre (ce qui était automatique quand cela provenait d'un SI)

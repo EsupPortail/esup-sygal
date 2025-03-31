@@ -457,10 +457,14 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 //            //->setNamespace('presoutenance')
 //            ->addSuccessMessage("Le candidat a été notifié de la délibération du jury.");
 
+        $message = $this->entity instanceof These ? "La délibération a bien été prise en compte. <br> La thèse est passée à l'état soutenue." :
+            "La délibération a bien été prise en compte. <br> La HDR est passée à l'état soutenue.";
         if((int)$resultat === HDR::RESULTAT_ADMIS || (int)$resultat === These::RESULTAT_ADMIS){
             $this->horodatageService->addHorodatage($this->proposition, HorodatageService::TYPE_ETAT, "Délibération positive");
+            $this->flashMessenger()->addSuccessMessage($message);
         }else{
             $this->horodatageService->addHorodatage($this->proposition, HorodatageService::TYPE_ETAT, "Délibération négative");
+            $this->flashMessenger()->addSuccessMessage($message);
         }
         return $this->redirect()->toRoute("soutenance_{$this->type}/presoutenance", ['id' => $this->entity->getId()], [], true);
     }

@@ -145,11 +145,12 @@ abstract class PropositionController extends AbstractSoutenanceController
                 }
                 $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
 
+                $message = $new === true ? "Le membre a bien été créé." : "Le membre a bien été mis à jour.";
                 if (!($this->proposition->getEtat()->getCode() === Etat::EN_COURS_SAISIE) && !$this->isAllowed($this->entity, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)){
                     $this->annulerValidationsForProposition();
-                    $this->flashMessenger()->addSuccessMessage("Le membre a bien été mis à jour.");
+                    $this->flashMessenger()->addSuccessMessage($message);
                 }else{
-                    $this->flashMessenger()->addSuccessMessage("Le membre a bien été mis à jour.");
+                    $this->flashMessenger()->addSuccessMessage($message);
                 }
             }
         }

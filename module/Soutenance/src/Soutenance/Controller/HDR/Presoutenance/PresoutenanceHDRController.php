@@ -21,11 +21,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\PropositionHDR;
 use Soutenance\Provider\Parametre\HDR\SoutenanceParametres;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
-use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
-use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
-use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
-use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
@@ -187,6 +183,7 @@ class PresoutenanceHDRController extends PresoutenanceController
         }catch(RuntimeException) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en base d'un acteur");
         }
+        $this->flashMessenger()->addSuccessMessage($membre->getDenomination()." a bien été associé à un acteur.");
         $this->getHorodatageService()->addHorodatage($this->proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
         //creation de l'utilisateur
