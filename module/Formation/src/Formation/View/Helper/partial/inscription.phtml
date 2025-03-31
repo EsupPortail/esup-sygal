@@ -57,11 +57,17 @@ $these = current($doctorant->getTheses());
                     <?php foreach ($doctorant->getTheses() as $these) {
                         if ($these->getEtatThese() === These::ETAT_EN_COURS and $these->estNonHistorise()) {
                             echo "<br/>";
-                            echo $this->structure($these->getEtablissement(), false, true);
-                            echo " - ";
-                            echo $this->structure($these->getEcoleDoctorale(), false, true);
-                            echo " - ";
-                            echo $this->structure($these->getUniteRecherche(), false, true);
+                            if($these->getEtablissement()){
+                                echo $this->structure($these->getEtablissement(), false, true);
+                            }
+                            if($these->getEcoleDoctorale()){
+                                echo " - ";
+                                echo $this->structure($these->getEcoleDoctorale(), false, true);
+                            }
+                            if($these->getUniteRecherche()){
+                                echo " - ";
+                                echo $this->structure($these->getUniteRecherche(), false, true);
+                            }
                         }
                         $missions = $doctorant->getMissionsEnseignements();
                         if (!empty($missions)) {

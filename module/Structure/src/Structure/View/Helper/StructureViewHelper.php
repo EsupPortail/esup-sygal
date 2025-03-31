@@ -31,10 +31,14 @@ class StructureViewHelper extends AbstractHelper
             $typeStructureClass = "ed";
             $structureCode = $structure->getStructure()->getSigle();
             $structureLibelle = $structure;
-        }else{
+        }elseif($structure instanceof Structure){
             $typeStructureClass = "structure";
             $structureCode = $structure->getSigle();
             $structureLibelle = $structure;
+        }else{
+            $typeStructureClass = "";
+            $structureCode = "";
+            $structureLibelle = "";
         }
 
         return $this->view->partial('structure.phtml', [
