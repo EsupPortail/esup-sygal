@@ -1,5 +1,10 @@
 Journal des modifications
 =========================
+10.0.0
+-----
+Nouveau Module HDR permettant : 
+- de saisir toutes les informations nécessaires (CNU, structures, acteurs...) à la création d'une HDR dans SyGAL.
+- de créer/suivre le déroulé d'une soutenance HDR
 
 9.4.1
 -----
