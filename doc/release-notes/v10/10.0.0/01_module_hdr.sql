@@ -951,10 +951,10 @@ INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_na
 
 INSERT INTO public.unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('Url#ConvocationCandidat', NULL, 'Url', 'getSoutenanceConvocationCandidat');
 
-INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES (''SoutenanceActeur#ActeursPouvantEtrePresidentDuJuryAsUl'', ''<p>Retourne la liste à puce des acteurs pouvant être Président du jury</p>'', ''soutenanceActeur'', ''getActeursPouvantEtrePresidentDuJuryAsUl'');
-update unicaen_renderer_template set document_corps = replace(document_corps, ''[SoutenanceMembre#MembresPouvantEtrePresidentDuJuryAsUl'', ''[SoutenanceActeur#ActeursPouvantEtrePresidentDuJuryAsUl''),
-                                     document_sujet = replace(document_sujet, ''[SoutenanceMembre#MembresPouvantEtrePresidentDuJuryAsUl'', ''[SoutenanceActeur#ActeursPouvantEtrePresidentDuJuryAsUl'')
-where document_corps like ''%SoutenanceMembre#MembresPouvantEtrePresidentDuJuryAsUl%'';
+INSERT INTO unicaen_renderer_macro (code, description, variable_name, methode_name) VALUES ('SoutenanceActeur#ActeursPouvantEtrePresidentDuJuryAsUl', '<p>Retourne la liste à puce des acteurs pouvant être Président du jury</p>', 'soutenanceActeur', 'getActeursPouvantEtrePresidentDuJuryAsUl');
+update unicaen_renderer_template set document_corps = replace(document_corps, '[SoutenanceMembre#MembresPouvantEtrePresidentDuJuryAsUl', '[SoutenanceActeur#ActeursPouvantEtrePresidentDuJuryAsUl'),
+                                     document_sujet = replace(document_sujet, '[SoutenanceMembre#MembresPouvantEtrePresidentDuJuryAsUl', '[SoutenanceActeur#ActeursPouvantEtrePresidentDuJuryAsUl')
+where document_corps like '%SoutenanceMembre#MembresPouvantEtrePresidentDuJuryAsUl%';
 
 
 ------------------------------------------------- Versions de diplômes -------------------------------------------------

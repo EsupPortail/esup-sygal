@@ -14,6 +14,7 @@ use Fichier\Provider\Privilege\FichierPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Laminas\Paginator\Paginator;
 
+$canTeleverserFichierCommuns = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_COMMUN_TELEVERSER));
 ?>
 
 <?php $this->headTitle($this->translate("Fichiers communs")) ?>
@@ -23,24 +24,25 @@ use Laminas\Paginator\Paginator;
     <span class="badge bg-secondary"><?php echo $fichiers->getTotalItemCount(); ?></span>
 </h1>
 
-<div class="upload-container"> <!-- Cette div.upload-container est INDISPENSABLE -->
-    <?php
+<?php
+if($canTeleverserFichierCommuns):
     $uploader = $this->uploader()->setUrl($urlFichierPlugin->televerserFichiersCommuns());
-    ?>
-    <div class="row">
-        <div class="col-md-7">
-            <!-- Formulaire de dépôt de PJ -->
-            <?php
-            $form = $uploader->getForm();
-            $form->setAjaxMode(false);
-            $form->get('submit')->setAttribute('class', 'float-end');
-            echo $uploader->renderForm();
-            ?>
+?>
+    <div class="upload-container"> <!-- Cette div.upload-container est INDISPENSABLE -->
+        <div class="row">
+            <div class="col-md-7">
+                <!-- Formulaire de dépôt de PJ -->
+                <?php
+                $form = $uploader->getForm();
+                $form->setAjaxMode(false);
+                $form->get('submit')->setAttribute('class', 'float-end');
+                echo $uploader->renderForm();
+                ?>
+            </div>
         </div>
     </div>
-</div>
-
-<hr>
+    <hr>
+<?php endif; ?>
 
 <table class="table table-bordered table-hovered table-sm">
     <thead>
@@ -86,11 +88,15 @@ use Laminas\Paginator\Paginator;
             <td>
                 <?php echo $fichier->getHistoCreation()->format(Constants::DATETIME_FORMAT) ?>
             </td>
-            <td>
-                <a data-toggle="confirmationx" href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>"
-                    ><span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
-                           data-bs-html="true" title="Supprimer le fichier <br>(Une confirmation avant la suppression vous sera demandée)"></span></a>
-            </td>
+            <?php if($canTeleverserFichierCommuns): ?>
+                <td>
+                    <a data-toggle="confirmationx" href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>">
+                        <span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
+                               data-bs-html="true" title="Supprimer le fichier <br>(Une confirmation avant la suppression vous sera demandée)">
+                        </span>
+                    </a>
+                </td>
+           <?php endif; ?>
         </tr>
     <?php endforeach ?>
     </tbody>

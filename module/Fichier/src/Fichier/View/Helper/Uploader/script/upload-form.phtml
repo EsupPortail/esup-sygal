@@ -55,8 +55,8 @@ if ($this->url): ?>
         /** @var Submit $submit */
         $submit = $this->form->get('submit');
         ?>
-        <button class="upload-file <?php echo $submit->getAttribute('class') ?>" data-loading-text="Patientez...">
-            <span class="icon icon-upload"></span> <?php echo $submit->getLabel() ?>
+        <button class="btn btn-primary upload-file <?php echo $submit->getAttribute('class') ?>" data-loading-text="Patientez...">
+            <?php echo $submit->getLabel() ?>
         </button>
     <?php endif ?>
 

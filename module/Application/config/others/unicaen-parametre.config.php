@@ -25,49 +25,49 @@ return [
                     'action' => [
                         'ajouter',
                     ],
-                    'pivileges' => ParametrecategoriePrivileges::PARAMETRECATEGORIE_AJOUTER,
+                    'privileges' => ParametrecategoriePrivileges::PARAMETRECATEGORIE_AJOUTER,
                 ],
                 [
                     'controller' => CategorieController::class,
                     'action' => [
                         'modifier',
                     ],
-                    'pivileges' => ParametrecategoriePrivileges::PARAMETRECATEGORIE_MODIFIER,
+                    'privileges' => ParametrecategoriePrivileges::PARAMETRECATEGORIE_MODIFIER,
                 ],
                 [
                     'controller' => CategorieController::class,
                     'action' => [
                         'supprimer',
                     ],
-                    'pivileges' => ParametrecategoriePrivileges::PARAMETRECATEGORIE_SUPPRIMER,
+                    'privileges' => ParametrecategoriePrivileges::PARAMETRECATEGORIE_SUPPRIMER,
                 ],
                 [
                     'controller' => ParametreController::class,
                     'action' => [
                         'ajouter',
                     ],
-                    'pivileges' => ParametrePrivileges::PARAMETRE_AJOUTER,
+                    'privileges' => ParametrePrivileges::PARAMETRE_AJOUTER,
                 ],
                 [
                     'controller' => ParametreController::class,
                     'action' => [
                         'modifier',
                     ],
-                    'pivileges' => ParametrePrivileges::PARAMETRE_MODIFIER,
+                    'privileges' => ParametrePrivileges::PARAMETRE_MODIFIER,
                 ],
                 [
                     'controller' => ParametreController::class,
                     'action' => [
                         'modifier-valeur',
                     ],
-                    'pivileges' => ParametrePrivileges::PARAMETRE_VALEUR,
+                    'privileges' => ParametrePrivileges::PARAMETRE_VALEUR,
                 ],
                 [
                     'controller' => ParametreController::class,
                     'action' => [
                         'supprimer',
                     ],
-                    'pivileges' => ParametrePrivileges::PARAMETRE_SUPPRIMER,
+                    'privileges' => ParametrePrivileges::PARAMETRE_SUPPRIMER,
                 ],
             ],
         ],
