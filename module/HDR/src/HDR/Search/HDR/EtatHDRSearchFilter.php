@@ -32,7 +32,7 @@ class EtatHDRSearchFilter extends SelectSearchFilter
     /**
      * @param QueryBuilder $qb
      */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(QueryBuilder $qb): void
     {
         $alias = 'hdr'; // todo: rendre paramétrable
 

@@ -10,8 +10,8 @@ use Webmozart\Assert\Assert;
  */
 abstract class SearchFilter implements SearchFilterInterface
 {
-    const OPERATOR_OR = 'OR';
-    const OPERATOR_AND = 'AND';
+    public const OPERATOR_OR = 'OR';
+    public const OPERATOR_AND = 'AND';
 
     protected string $name;
     protected string $label;
@@ -198,7 +198,7 @@ abstract class SearchFilter implements SearchFilterInterface
      * Cherche parmi les query params valués spécifiés si l'un correspond au nom de ce filtre,
      * et retourne la valeur associée le cas échéant.
      */
-    public function paramFromQueryParams(array $queryParams): ?string
+    public function paramFromQueryParams(array $queryParams): mixed
     {
         $name = $this->getName();
 
@@ -210,6 +210,11 @@ abstract class SearchFilter implements SearchFilterInterface
         // NB: '' <=> "Tous"
 
         return $queryParams[$name];
+    }
+
+    public function applyDefaultsToQueryBuilder(QueryBuilder $qb): void
+    {
+        // Rien par défaut. À redéfinir, au besoin...
     }
 
     public function applyToQueryBuilder(QueryBuilder $qb): void

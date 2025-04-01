@@ -90,6 +90,6 @@ class PropositionHDRRechercheController extends AbstractController implements Se
         $filter
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
-            ->setAllowsEmptyOption(false);
+            ->setAllowsEmptyValueOption(false);
     }
 }

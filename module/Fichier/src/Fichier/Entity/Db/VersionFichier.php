@@ -2,10 +2,12 @@
 
 namespace Fichier\Entity\Db;
 
+use Application\Search\Filter\SearchFilterValueInterface;
+
 /**
  * VersionFichier
  */
-class VersionFichier
+class VersionFichier implements SearchFilterValueInterface
 {
     /**
      * Constantes définissant les codes de "version" du fichier.
@@ -195,6 +197,12 @@ class VersionFichier
     public function getId()
     {
         return $this->id;
+    }
+
+
+    public function createSearchFilterValueOption(): array
+    {
+        return ['value' => $this->getCode(), 'label' => $this->getCode(), 'subtext' => $this->getLibelle()];
     }
 }
 
