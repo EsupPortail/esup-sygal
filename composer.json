@@ -62,7 +62,7 @@
         "unicaen/pdf": "^6.1",
         "unicaen/renderer": "^7.0",
         "unicaen/sql": "dev-master",
-        "unicaen/sygal-api": "dev-wip_reception_flux_ia",
+        "unicaen/sygal-api": "dev-master",
         "unicaen/utilisateur": "^6.3"
     },
     "minimum-stability": "dev",
