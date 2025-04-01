@@ -1,5 +1,10 @@
 Journal des modifications
 =========================
+10.0.1
+-----
+- [FIX] Filtres sur les propositions de soutenance de thèses étaient ceux de HDR
+- [FIX] Exceptions mieux gérées sur certaines pages relatives à la soutenance lorsque la proposition n'est pas encore initialisée
+
 10.0.0
 -----
 Nouveau Module HDR permettant : 
