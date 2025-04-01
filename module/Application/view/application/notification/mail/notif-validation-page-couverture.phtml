@@ -13,6 +13,9 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 $appli = $this->appInfos()->nom;
+$proposition = $these->getCurrentProposition();
+$dateSoutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
+$dateDepot = $dateSoutenance ? $dateSoutenance->sub(new DateInterval('P1M')) : null;
 ?>
 
 <p>
@@ -23,36 +26,62 @@ $appli = $this->appInfos()->nom;
 </p>
 
 <?php if ($isValidation): ?>
-<p>
-    Vous êtes informé-e que l'application <?php echo $appli ?> génère la page
-    de couverture de votre thèse automatiquement à partir des informations liées à votre dossier de soutenance
-    validé par la direction de l'établissement.
-</p>
-<p>
-    Par conséquent, en tant que doctorant, vous pouvez désormais procéder au dépôt de votre thèse dans l'application.
-    <strong><u> Ce dépôt numérique 1 mois avant la date de soutenance, est un préalable obligatoire </u> à l'autorisation
-    de soutenance qui sera accordée par la direction de l'établissement au vu des rapports de pré soutenance. </strong>
-</p>
-<p>
-    La page de couverture (page recto) étant produite automatiquement par l'application <?php echo $appli ?>, vous
-    n'aurez pas à concevoir et inclure cette page de couverture dans le fichier de thèse que vous déposerez dans l'application.
-</p>
-<p>
-    IMPORTANT :
-    Vous pouvez envoyer votre manuscrit de thèse aux rapporteurs et membres de votre jury de soutenance.
-    Vos rapporteurs ont reçu un mail automatique de l'application pour signer en ligne leur engagement d'impartialité
-    et pour leur indiquer la date de retour de leur rapport, au plus tard 14 jours avant la date de soutenance.
-</p>
+    <p>
+        Vous êtes informé-e que l'application <?php echo $appli ?> génère la page
+        de couverture de votre thèse automatiquement à partir des informations liées à votre dossier de soutenance
+        validé par la direction de l'établissement.
+        <strong>Si une erreur est constatée sur la page de couverture, merci de le signaler via l'assistance de
+            l'application <?php echo $appli ?>.</strong>
+    </p>
+    <p>
+        La page de couverture (page recto) étant produite automatiquement par l'application <?php echo $appli ?>, vous
+        n'aurez pas à concevoir et inclure cette page de couverture dans le fichier de thèse que vous déposerez dans l'application.
+    </p>
+    <p>
+        Par conséquent, en tant que doctorant, vous pouvez désormais procéder au dépôt de votre thèse dans l'application.
+        <strong>
+            <u>
+                Ce dépôt numérique doit avoir lieu avant le <?= $dateDepot ? $dateDepot->format('d/m/Y') : "<b>Aucune date de soutenance renseignée</b>";?>,
+                soit 1 mois maximum avant la date de soutenance. C'est un préalable obligatoire
+                à l'autorisation de soutenance qui sera accordée par la direction de l'établissement au vu des rapports de pré-soutenance.
+                Lors de ce dépôt, vous devez suivre dans la rubrique "Dépôt de la thèse"
+                toutes les étapes : Téléversement de la thèse / Signalement / Archivage / Rendez-vous avec la bibliothèque universitaire.
+                Lors du rendez-vous avec la bibliothèque universitaire, vous devez remettre 2 exemplaires originaux signés de votre Convention de mise en ligne (imprimable sur <?php echo $appli ?>).
+            </u>
+        </strong>
+    </p>
+
+    <p>
+        IMPORTANT :
+        Vous pouvez envoyer votre manuscrit de thèse aux rapporteurs et membres de votre jury de soutenance.
+        Vos rapporteurs ont reçu un mail automatique de l'application pour signer en ligne leur engagement d'impartialité
+        et pour leur indiquer la date de retour de leur rapport, au plus tard 14 jours avant la date de soutenance.
+    </p>
+    <p>
+        <strong>
+            Lors de votre soutenance de thèse sur le PV, le président de jury :
+        </strong>
+    </p>
+    <ul>
+        <li>
+            n'a pas demandé de modifications ou corrections de votre thèse : le dépôt de votre thèse effectué avant
+            soutenance vaut version définitive.
+        </li>
+        <li>
+            a demandé des modifications ou corrections de votre thèse : le dépôt de votre thèse corrigée sera à faire
+            sur <?php echo $appli ?> après soutenance.
+        </li>
+    </ul>
 <?php else: ?>
-<p>
-    Vous êtes informé-e que l'application <?php echo $appli ?> n'est plus en mesure de produire la page
-    de couverture de votre thèse automatiquement à partir des informations de scolarité.
-</p>
-<p>
-    Par conséquent, le processus de dépôt de votre thèse dans l'application est temporairement bloqué. <br>
-    Vous recevrez un mail lorsque <?php echo $appli ?> sera de nouveau en mesure de produire la page de couverture
-    de manière satisfaisante.
-</p>
+    <p>
+        Vous êtes informé-e que l'application <?php echo $appli ?> n'est plus en mesure de produire la page
+        de couverture de votre thèse automatiquement à partir des informations de scolarité.
+    </p>
+    <p>
+        Par conséquent, le processus de dépôt de votre thèse dans l'application est temporairement bloqué. <br>
+        Vous recevrez un mail lorsque <?php echo $appli ?> sera de nouveau en mesure de produire la page de couverture
+        de manière satisfaisante.
+    </p>
 <?php endif ?>
 
 <p>

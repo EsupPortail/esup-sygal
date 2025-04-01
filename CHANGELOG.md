@@ -1,5 +1,9 @@
 Journal des modifications
 =========================
+10.1.0
+-----
+- Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
+
 10.0.0
 -----
 Nouveau Module HDR permettant : 
