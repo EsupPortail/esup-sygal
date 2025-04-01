@@ -60,17 +60,6 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
     </div>
 <?php else : ?>
 
-    <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
-    <div class="alert alert-info">
-        <span class="icon icon-info"></span>
-        Vous pouvez télécharger les formulaires de délégation grâce au lien suivant :
-        <strong><u>
-                <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
-                    formulaire de demande de délégation
-                </a>
-            </u></strong>.
-    </div>
-
     <?php
     $classe_distanciel = 'bg-warning';
     if ($distanciel !== null) {
@@ -94,6 +83,20 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
 
                 <?php /** DECLARATION ******************************************************************/ ?>
                 <div class="row">
+                    <div class="col-md-12">
+                        <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
+                        <div class="alert alert-info">
+                            <span class="icon icon-info"></span>
+                            Vous pouvez télécharger le formulaire de délégation grâce au lien suivant :
+                            <strong>
+                                <u>
+                                    <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
+                                        formulaire de demande de délégation
+                                    </a>
+                                </u>
+                            </strong>.
+                        </div>
+                    </div>
                     <div class="col-md-8">
                         Déclaration que le président du jury sera en distanciel
                         faite le <?php echo $distanciel->getHistoCreation()->format('d/m/Y'); ?>
@@ -154,7 +157,16 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
                 </div>
 
                 <div class="alert alert-warning">
-                    <span class="fas fa-exclamation-triangle"></span> Si le président du jury est en distanciel, tous les membres du jury devront remplir une délégation de signature.
+                    <span class="fas fa-exclamation-triangle"></span>
+                    Si le président du jury est en distanciel, tous les membres du jury devront remplir une délégation de signature,
+                    téléchargeable grâce au
+                    <strong>
+                        <u>
+                            <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
+                                lien suivant.
+                            </a>
+                        </u>
+                    </strong>
                 </div>
             <?php endif; ?>
         </div>

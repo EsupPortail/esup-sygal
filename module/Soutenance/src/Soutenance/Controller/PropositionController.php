@@ -722,21 +722,25 @@ abstract class PropositionController extends AbstractSoutenanceController
     /** Error *********************************************************************************************************/
 
     /**
-     * @param Proposition $proposition
-     * @param array $privilieges
+     * @param ?Proposition $proposition
+     * @param array $privileges
      * @param string|null $message
      * @return ViewModel|null
      */
-    protected function verifierAutorisation(Proposition $proposition, array $privilieges, ?string $message = null): ?ViewModel
+    protected function verifierAutorisation(?Proposition $proposition, array $privileges, ?string $message = null): ?ViewModel
     {
         $authorized = false;
-        $propositionAssertion = $proposition->getObject() instanceof These ?
-            $this->getPropositionTheseAssertion() :
-            $this->getPropositionHDRAssertion();
-        foreach ($privilieges as $priviliege) {
-            $authorized = $propositionAssertion->computeValeur(null, $proposition, $priviliege);
-            if ($authorized === true) break;
+
+        if($this->proposition){
+            $propositionAssertion = $proposition->getObject() instanceof These ?
+                $this->getPropositionTheseAssertion() :
+                $this->getPropositionHDRAssertion();
+            foreach ($privileges as $privilege) {
+                $authorized = $propositionAssertion->computeValeur(null, $proposition, $privilege);
+                if ($authorized === true) break;
+            }
         }
+
         if ($authorized === false) {
             $vm = new ViewModel();
             $vm->setTemplate('soutenance/error/403');

@@ -40,6 +40,13 @@ class InterventionController extends AbstractSoutenanceController
     {
         $this->initializeFromType(false, false, false);
 
+        if ($this->proposition === null) {
+            $vm = new ViewModel();
+            $vm->setTemplate('soutenance/error/403');
+            $vm->setVariables(['message' => "Aucune proposition de soutenance n'a encore été créée. Veuillez-vous rendre dans un premier temps, sur l'onglet Proposition de soutenance."]);
+            return $vm;
+        }
+
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($this->proposition, true);
         $distanciels = $this->getInterventionService()->getInterventionByPropositionType($this->proposition, Intervention::TYPE_DISTANCIEL);
         $visios = $this->getInterventionService()->getInterventionByPropositionType($this->proposition, Intervention::TYPE_VISIO_TARDIVE);
