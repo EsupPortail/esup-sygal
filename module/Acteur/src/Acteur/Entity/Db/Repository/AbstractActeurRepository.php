@@ -157,12 +157,9 @@ abstract class AbstractActeurRepository extends DefaultEntityRepository
         }
 
         $qb = $this->createQueryBuilder('a')
-            ->addSelect('i, r, t, ed, s')
+            ->addSelect('i, r')
             ->join('a.individu', 'i')
             ->join('a.role', 'r', Join::WITH, 'r.code = :role')->setParameter('role', $role)
-//            ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
-//            ->join('t.ecoleDoctorale', 'ed')
-//            ->join('ed.structure', 's')
             ->andWhere('a.histoDestruction is null')
             ->addOrderBy('i.nomUsuel, i.prenom1');
 
@@ -172,9 +169,10 @@ abstract class AbstractActeurRepository extends DefaultEntityRepository
             $qb->join('a.hdr', 'ent', Join::WITH, 'ent.etatHdr = :etat');
         }
         $qb
+            ->addSelect('ent')
             ->setParameter('etat', These::ETAT_EN_COURS)
-            ->join('ent.ecoleDoctorale', 'ed')
-            ->join('ed.structure', 's');
+            ->join('ent.ecoleDoctorale', 'ed')->addSelect('ed')
+            ->join('ed.structure', 's')->addSelect('s');
 
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {
