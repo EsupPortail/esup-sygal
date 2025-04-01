@@ -3,11 +3,10 @@
 namespace Fichier\Service\Fichier;
 
 use Application\Service\BaseService;
-use Fichier\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
-use Doctrine\ORM\EntityRepository;
 use Exception;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\Repository\FichierRepository;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\FileUtils;
 use Fichier\Filter\AbstractNomFichierFormatter;
@@ -15,6 +14,7 @@ use Fichier\Filter\NomFichierFormatter;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use ZipArchive;
@@ -26,33 +26,21 @@ class FichierService extends BaseService
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
 
-    /**
-     * @var AbstractNomFichierFormatter
-     */
-    protected $nomFichierFormatter;
+    protected AbstractNomFichierFormatter $nomFichierFormatter;
 
-    /**
-     * @param AbstractNomFichierFormatter $nomFichierFormatter
-     */
-    public function setNomFichierFormatter(AbstractNomFichierFormatter $nomFichierFormatter)
+    public function setNomFichierFormatter(AbstractNomFichierFormatter $nomFichierFormatter): void
     {
         $this->nomFichierFormatter = $nomFichierFormatter;
     }
 
-    /**
-     * FichierService constructor.
-     */
     public function __construct()
     {
         $this->nomFichierFormatter = new NomFichierFormatter();
     }
 
-    /**
-     * @return EntityRepository
-     */
-    public function getRepository(): EntityRepository
+    public function getRepository(): FichierRepository
     {
-        /** @var EntityRepository $repo */
+        /** @var FichierRepository $repo */
         $repo = $this->entityManager->getRepository(Fichier::class);
 
         return $repo;
@@ -98,7 +86,10 @@ class FichierService extends BaseService
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
      * @return Fichier[] Fichiers instanciés
      */
-    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null): array
+    public function createFichiersFromUpload(
+        array $uploadResult,
+        NatureFichier|string $nature,
+        VersionFichier|string $version = null): array
     {
         $fichiers = [];
         $files = $uploadResult['files'];
@@ -152,7 +143,7 @@ class FichierService extends BaseService
      *
      * @param Fichier[] $fichiers
      */
-    public function saveFichiers(array $fichiers)
+    public function saveFichiers(array $fichiers): void
     {
         $this->entityManager->beginTransaction();
         try {
@@ -175,7 +166,7 @@ class FichierService extends BaseService
      *
      * @param Fichier[] $fichiers
      */
-    public function supprimerFichiers(array $fichiers, bool $throwExceptionOnFileError = false)
+    public function supprimerFichiers(array $fichiers, bool $throwExceptionOnFileError = false): void
     {
         $this->entityManager->beginTransaction();
         try {
@@ -269,7 +260,7 @@ class FichierService extends BaseService
      *
      * @param Fichier $fichier
      */
-    public function telechargerFichier(Fichier $fichier)
+    public function telechargerFichier(Fichier $fichier): void
     {
         $content = $fichier->getContenu();
         $contentType = $fichier->getTypeMime() ?: 'application/octet-stream';

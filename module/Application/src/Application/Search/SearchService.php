@@ -8,8 +8,12 @@ use Application\Search\Filter\SearchFilterPluginManagerAwareInterface;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Exception\RuntimeException;
 
+/**
+ * Classe mère des services à injecter dans un {@see \Application\Search\Controller\SearchControllerInterface} et
+ * fournissant le nécessaire pour gérer une page de recherche/filtrage de données à l'aide de filtres normalisés de
+ * type {@see \Application\Search\Filter\SearchFilterInterface}.
+ */
 abstract class SearchService implements SearchServiceInterface, SearchFilterPluginManagerAwareInterface
 {
     protected bool $unpopulatedOptions = false;
@@ -155,7 +159,7 @@ abstract class SearchService implements SearchServiceInterface, SearchFilterPlug
             if ($filter instanceof SelectSearchFilter) {
                 // si des valeurs ont déjà été fournies, pas besoin de fetch.
                 if (($data = $filter->getData()) === null) {
-                    $data = $filter->loadData(); // obtention des données
+                    $data = $filter->fetchData(); // obtention des données
                 }
                 $valueOptions = $filter->createValueOptionsFromData($data);
                 $filterValueOptions[$filterName] = $valueOptions;
@@ -246,6 +250,7 @@ abstract class SearchService implements SearchServiceInterface, SearchFilterPlug
         $qb = $this->createQueryBuilder();
 
         foreach ($this->filters as $filter) {
+            $filter->applyDefaultsToQueryBuilder($qb);
             if ($filter->canApplyToQueryBuilder()) {
                 $filter->applyToQueryBuilder($qb);
             }

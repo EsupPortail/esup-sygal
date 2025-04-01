@@ -2,10 +2,12 @@
 
 namespace Fichier\Entity\Db;
 
+use Application\Search\Filter\SearchFilterValueInterface;
+
 /**
  * NatureFichier
  */
-class NatureFichier
+class NatureFichier implements SearchFilterValueInterface
 {
     const CODE_THESE_PDF = 'THESE_PDF';
     const CODE_HDR_PDF = 'HDR_PDF';
@@ -208,5 +210,10 @@ class NatureFichier
     public function estRapportSoutenance()
     {
         return $this->getCode() === NatureFichier::CODE_RAPPORT_SOUTENANCE;
+    }
+
+    public function createSearchFilterValueOption(): array
+    {
+        return ['value' => $this->getCode(), 'label' => $this->getCode(), 'subtext' => $this->getLibelle()];
     }
 }

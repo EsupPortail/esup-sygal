@@ -9,16 +9,25 @@ namespace Fichier;
 use Fichier\Command\TestArchivabiliteShellCommandFactory;
 use Fichier\Controller\ConsoleController;
 use Fichier\Controller\Factory\FichierControllerFactory;
+use Fichier\Controller\FichierController;
 use Fichier\Controller\Plugin\UrlFichier;
 use Fichier\Exporter\PageFichierIntrouvablePdfExporter;
 use Fichier\Exporter\PageFichierIntrouvablePdfExporterFactory;
 use Fichier\Provider\Privilege\FichierPrivileges;
+use Fichier\Search\NatureFichierSearchFilter;
+use Fichier\Search\NatureFichierSearchFilterFactory;
+use Fichier\Search\NomFichierSearchFilter;
+use Fichier\Search\VersionFichierSearchFilter;
+use Fichier\Search\VersionFichierSearchFilterFactory;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierServiceFactory;
+use Fichier\Service\Fichier\Search\FichierSearchService;
+use Fichier\Service\Fichier\Search\FichierSearchServiceFactory;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Fichier\View\Helper\Fichier\FichierViewHelper;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Unicaen\Console\Router\Simple;
 use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
@@ -92,8 +101,9 @@ return [
                     'roles' => [],
                 ],
                 [
-                    'controller' => 'Application\Controller\Fichier',
+                    'controller' => FichierController::class,
                     'action' => [
+                        'index',
                         'lister-fichiers-communs',
                     ],
                     'privileges' => [
@@ -101,7 +111,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => 'Application\Controller\Fichier',
+                    'controller' => FichierController::class,
                     'action' => [
                         'telecharger',
                     ],
@@ -110,14 +120,14 @@ return [
                     ],
                 ],
                 [
-                    'controller' => 'Application\Controller\Fichier',
+                    'controller' => FichierController::class,
                     'action' => [
                         'telecharger-permanent',
                     ],
                     'roles' => [],
                 ],
                 [
-                    'controller' => 'Application\Controller\Fichier',
+                    'controller' => FichierController::class,
                     'action' => [
                         'televerser-fichiers-communs',
                         'supprimer',
@@ -136,10 +146,11 @@ return [
                 'options' => [
                     'route' => '/fichier',
                     'defaults' => [
-                        'controller' => 'Application\Controller\Fichier',
+                        'controller' => FichierController::class,
+                        'action' => 'index',
                     ],
                 ],
-                'may_terminate' => false,
+                'may_terminate' => true,
                 'child_routes' => [
                     'telecharger' => [
                         'type' => 'Segment',
@@ -202,11 +213,18 @@ return [
                 'pages' => [
                     'admin' => [
                         'pages' => [
-                            'fichiers-communs' => [
+                            'fichiers' => [
+                                'label' => 'Fichiers',
+                                'route' => 'fichier',
+                                'order' => 598,
+                                'resource' => PrivilegeController::getResourceId(FichierController::class, 'index'),
+                                'icon' => 'fas fa-file'
+                            ],
+                            'fichiers-communs' => [ ///////////// todo : à supprimer lorsqu'on pourra créer/uploader des fichiers depuis "FichierController::index".
                                 'label' => 'Fichiers communs',
                                 'route' => 'fichier/lister-fichiers-communs',
                                 'order' => 599,
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Fichier', 'lister-fichiers-communs'),
+                                'resource' => PrivilegeController::getResourceId(FichierController::class, 'lister-fichiers-communs'),
                                 'icon' => 'fas fa-file'
                             ],
                         ],
@@ -232,7 +250,10 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            'Application\Controller\Fichier' => FichierControllerFactory::class,
+            FichierController::class => FichierControllerFactory::class,
+        ],
+        'aliases' => [
+            'Application\Controller\Fichier' => FichierController::class,
         ],
     ],
     'controller_plugins' => [
@@ -243,6 +264,18 @@ return [
     'view_helpers' => [
         'invokables' => [
             'fichier' => FichierViewHelper::class,
+        ],
+    ],
+    'search_services' => [
+        'factories' => [
+            FichierSearchService::class => FichierSearchServiceFactory::class,
+        ],
+    ],
+    'search_filters' => [
+        'factories' => [
+            NatureFichierSearchFilter::class => NatureFichierSearchFilterFactory::class,
+            VersionFichierSearchFilter::class => VersionFichierSearchFilterFactory::class,
+            NomFichierSearchFilter::class => InvokableFactory::class,
         ],
     ],
 ];

@@ -1,0 +1,133 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \Laminas\Paginator\Paginator $paginator
+ * @var \Application\Search\Filter\SearchFilter[] $filters
+ * @var \Fichier\Controller\Plugin\UrlFichier $urlFichierPlugin
+ */
+
+use Application\Constants;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Provider\Privilege\FichierPrivileges;
+
+?>
+
+<?php $this->headTitle($this->translate("Fichiers déposés")) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("Fichiers déposés"); ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php echo $this->filtersPanel($filters) ?>
+
+<?php if ($paginator->getTotalItemCount()): ?>
+
+<p>
+    <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("fichier(s) trouvé(s).") ?>
+</p>
+
+<table class="table table-bordered table-hovered table-sm">
+    <thead>
+    <tr>
+        <th>
+            <a href="<?php echo $s = $this->sortable('nom'); ?>"><?php echo $this->translate("Nom normalisé"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('nature'); ?>"><?php echo $this->translate("Nature"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('version'); ?>"><?php echo $this->translate("Version"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>"><?php echo $this->translate("Nom original"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>"><?php echo $this->translate("Id permanent"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.permanentId'); ?>"><?php echo $this->translate("Téléversé par"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.histoCreation'); ?>"><?php echo $this->translate("Téléversé le"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th class="action">
+            Action
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var Fichier $fichier */
+    foreach ($paginator as $fichier): ?>
+        <tr>
+            <td>
+                <?php
+                $canDownload = $this->isAllowed($fichier, FichierPrivileges::FICHIER_COMMUN_TELECHARGER);
+                $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerFichier($fichier) : null;
+                echo $this->uploader()->renderUploadedFile($fichier, $urlTelecharger);
+                ?>
+            </td>
+            <td>
+                <abbr title="<?php echo $fichier->getNature()->getLibelle() ?>"><?php echo $fichier->getNature()->getCode() ?></abbr>
+            </td>
+            <td>
+                <abbr title="<?php echo $fichier->getVersion()->getLibelle() ?>"><?php echo $fichier->getVersion()->getCode() ?></abbr>
+            </td>
+            <td>
+                <?php echo $fichier->getNomOriginal() ?>
+            </td>
+            <td>
+                <?php if ($idp = $fichier->getIdPermanent()): ?>
+                    <?php $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerPermanentFichier($fichier) : null; ?>
+                    <code class="small"><a href="<?php echo $urlTelecharger ?>"
+                       title="Téléchargement à l'aide de l'id permanent <?php echo $idp ?>"><?php echo $idp ?></a></code>
+                <?php else: ?>
+                    -
+                <?php endif ?>
+            </td>
+            <td>
+                <?php echo $fichier->getHistoCreateur() ?>
+            </td>
+            <td>
+                <?php echo $fichier->getHistoCreation()->format(Constants::DATETIME_FORMAT) ?>
+            </td>
+            <td>
+                <a data-toggle="confirmationx" href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>"
+                    ><span class="icon icon-delete iconly text-danger" data-bs-toggle="tooltip"
+                           data-bs-html="true" title="Supprimer le fichier <br>(Une confirmation avant la suppression vous sera demandée)"></span></a>
+            </td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+
+<?php echo $paginationControl = $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => 'fichier/lister-fichiers-communs']); ?>
+
+<?php else: ?>
+
+Aucun fichier trouvé.
+
+<?php endif ?>
+
+<!-- for translation purpose -->
+<?php
+$this->translate("Fichiers déposés");
+$this->translate("Fichier");
+$this->translate("Nom original");
+$this->translate("Téléversé par");
+$this->translate("Téléversé le");
+?>
+
+<script>
+    $(function() {
+        // $("select.selectpicker").selectpicker();
+    });
+</script>

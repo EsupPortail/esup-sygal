@@ -4,24 +4,31 @@ use Application\Search\Filter\SelectSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer       $this
+ * @var PhpRenderer $this
  * @var SelectSearchFilter $filter
- * @var array             $queryParams
+ * @var array $queryParams
  */
 
-$paramAttributes = $filter->getAttributes();
-$paramName = $filter->getName();
+$attributes = $filter->getAttributes();
+$isMultiple = $filter->multiple();
 
-$width = $paramAttributes['width'] ?? 'fit';
-$liveSearch = (bool) ($paramAttributes['liveSearch'] ?? false);
+$classes =  array_map('trim', explode(' ', $attributes['class'] ?? ''));
+$classes = array_merge($classes, ['filter', 'selectpicker', 'show-menu-arrow']);
+$attributes['class'] = implode(' ', $classes);
+
+$attributes['name'] = $isMultiple ? $filter->getName() . '[]' : $filter->getName();
+$attributes['data-bs-live-search'] = ($attributes['liveSearch'] ?? false) ? 'true' : 'false';
+$attributes['data-bs-width'] = $attributes['width'] ?? 'fit';
+$attributes['data-bs-html'] = 'true';
+if ($isMultiple) {
+    $attributes['multiple'] = 'multiple';
+}
 ?>
 
-<select title=""
-        class="filter selectpicker show-menu-arrow"
-        name="<?php echo $paramName ?>"
-        data-live-search="<?php echo $liveSearch ? 'true' : 'false' ?>"
-        data-width="<?php echo $width ?>"
-        data-bs-html="true"
+<select
+    <?php foreach ($attributes as $key => $value): ?>
+        <?php echo $key . '="' . $value . '"' ?>
+    <?php endforeach; ?>
 >
 
 <?php foreach ($filter->getValueOptions() as $data): ?>

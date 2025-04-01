@@ -15,9 +15,21 @@ interface SearchFilterInterface
     public function processQueryParams(array $queryParams): void;
 
     /**
-     * Applique ce filtre au query builder spécifié.
+     * Retourne `true` si ce filtre peut être appliqué au query builder, en fonction de sa valeur courante.
+     */
+    public function canApplyToQueryBuilder(): bool;
+
+    /**
+     * Applique au query builder spécifié le·s condition·s correspondant à la valeur de ce filtre.
+     * NB : cette méthode n'est pas appelée si {@see canApplyToQueryBuilder()} retourne `false`.
      */
     public function applyToQueryBuilder(QueryBuilder $qb): void;
+
+    /**
+     * Applique au query builder spécifié les conditions par défaut imposées par ce filtre, le cas échéant.
+     * NB : cette méthode est appelée systématiquement.
+     */
+    public function applyDefaultsToQueryBuilder(QueryBuilder $qb): void;
 
     /**
      * Retourne le petit nom de ce filtre (unique au sein d'un ensemble de filtres).

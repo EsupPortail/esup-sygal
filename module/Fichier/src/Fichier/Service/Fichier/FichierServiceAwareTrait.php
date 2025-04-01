@@ -4,15 +4,9 @@ namespace Fichier\Service\Fichier;
 
 trait FichierServiceAwareTrait
 {
-    /**
-     * @var FichierService
-     */
-    protected $fichierService;
+    protected FichierService $fichierService;
 
-    /**
-     * @param FichierService $fichierService
-     */
-    public function setFichierService(FichierService $fichierService)
+    public function setFichierService(FichierService $fichierService): void
     {
         $this->fichierService = $fichierService;
     }
