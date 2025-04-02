@@ -134,6 +134,7 @@ class StructureController extends AbstractController
             NatureFichier::CODE_DELEGATION_SIGNATURE_HDR,
             NatureFichier::CODE_DELOCALISATION_SOUTENANCE_HDR,
             NatureFichier::CODE_DEMANDE_CONFIDENT_HDR,
+            NatureFichier::CODE_LANGUE_ANGLAISE_HDR,
         ]);
         if ($etab = $structure->getEtablissement()) {
             $allowAucunEtablissement = false;
