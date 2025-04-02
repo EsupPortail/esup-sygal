@@ -1,11 +1,13 @@
 Journal des modifications
 =========================
+
 10.1.0
------
+------
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
+- Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 
 10.0.0
------
+------
 Nouveau Module HDR permettant : 
 - de saisir toutes les informations nécessaires (CNU, structures, acteurs...) à la création d'une HDR dans SyGAL.
 - de créer/suivre le déroulé d'une soutenance HDR
