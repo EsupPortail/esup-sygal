@@ -3,12 +3,13 @@ Journal des modifications
 
 10.0.1
 -----
+- [FIX] Extraction CSV des inscriptions aux formations : mention "désistement" si inscription supprimée & liste = P ou C.
 - [FIX] Filtres sur les propositions de soutenance de thèses étaient ceux de HDR
 - [FIX] Exceptions mieux gérées sur certaines pages relatives à la soutenance lorsque la proposition n'est pas encore initialisée
 - [FIX] Export CSV des thèses : correction de l'erreur 'Undefined array key "lib_disc" (vue v_extract_theses erronée). 
 
 10.0.0
------
+------
 Nouveau Module HDR permettant : 
 - de saisir toutes les informations nécessaires (CNU, structures, acteurs...) à la création d'une HDR dans SyGAL.
 - de créer/suivre le déroulé d'une soutenance HDR
