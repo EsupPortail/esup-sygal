@@ -3,6 +3,7 @@ Journal des modifications
 
 10.0.1
 -----
+- Possibilité d'ajouter les formulaires nécessaires pour la soutenance HDR depuis la fiche d'un établissement
 - [FIX] Extraction CSV des inscriptions aux formations : mention "désistement" si inscription supprimée & liste = P ou C.
 - [FIX] Filtres sur les propositions de soutenance de thèses étaient ceux de HDR
 - [FIX] Exceptions mieux gérées sur certaines pages relatives à la soutenance lorsque la proposition n'est pas encore initialisée
