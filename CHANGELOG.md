@@ -7,6 +7,7 @@ Journal des modifications
 - [FIX] Filtres sur les propositions de soutenance de thèses étaient ceux de HDR
 - [FIX] Exceptions mieux gérées sur certaines pages relatives à la soutenance lorsque la proposition n'est pas encore initialisée
 - [FIX] Export CSV des thèses : correction de l'erreur 'Undefined array key "lib_disc" (vue v_extract_theses erronée). 
+- [FIX] Pages des droits d'accès : pb d'affichage des filtres-liens lorsqu'ils sont très longs (CSS).
 
 10.0.0
 ------

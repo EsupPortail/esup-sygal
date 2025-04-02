@@ -480,7 +480,9 @@ div.filters {
     div.filters span.filter a:hover {
       text-decoration: underline; }
     div.filters span.filter .badge {
-      padding: .2em .5em; }
+      padding: .2em .5em;
+      white-space: normal;
+      text-align: inherit; }
   div.filters .filter-option-inner-inner {
     padding-right: 3px; }
   div.filters form {
