@@ -8,6 +8,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Exception;
+use Fichier\Entity\Db\NatureFichier;
 use HDR\Entity\Db\HDR;
 use HDR\Service\HDRService;
 use Individu\Entity\Db\Individu;
@@ -29,6 +30,7 @@ use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRService;
 use Soutenance\Service\SignaturePresident\SignaturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidationHDR\ValidationHDRServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 use Validation\Entity\Db\ValidationHDR;
@@ -143,16 +145,11 @@ class PropositionHDRController extends PropositionController
 //        }
         if (empty($emailsAspectDoctorats)) $informationsOk = false;
 
-        /** Paramètres ---------------------------------------------------------------------------------------------- */
-
-        try {
-            $FORMULAIRE_DELOCALISATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION);
-            $FORMULAIRE_DELEGUATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE);
-            $FORMULAIRE_DEMANDE_ANGLAIS = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS);
-            $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE);
-        } catch (Exception $e) {
-            throw new RuntimeException("Une erreur est survenue lors de la récupération de paramètre.",0,$e);
-        }
+        /** Formulaires associés à la proposition ---------------------------------------------------------------------------------------------- */
+        $FORMULAIRE_DELOCALISATION = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELOCALISATION_SOUTENANCE_HDR, $this->urlFichierHDR());
+        $FORMULAIRE_DELEGATION = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELEGATION_SIGNATURE_HDR, $this->urlFichierHDR());
+        $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DEMANDE_CONFIDENT_HDR, $this->urlFichierHDR());
+        $FORMULAIRE_DEMANDE_ANGLAIS = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_LANGUE_ANGLAISE_HDR, $this->urlFichierHDR());
 
         $vm = new ViewModel();
         $vm->setTemplate('soutenance/proposition-hdr/proposition');
@@ -178,10 +175,9 @@ class PropositionHDRController extends PropositionController
             'informationsOk' => $informationsOk,
             'avis' => $this->getAvisService()->getAvisByProposition($this->proposition),
             'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
-            'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION,
+            'FORMULAIRE_DELEGATION' => $FORMULAIRE_DELEGATION,
             'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
-
         ]);
         return $vm;
     }

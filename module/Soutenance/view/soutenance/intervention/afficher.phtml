@@ -18,7 +18,7 @@ use Soutenance\Provider\Privilege\InterventionPrivileges;
  * @var Proposition $proposition
  * @var Membre[] $membres
  * @var array $justificatifs
- * @var string $FORMULAIRE_DELEGUATION
+ * @var string $FORMULAIRE_DELEGATION
  * @var UrlFichierThese|UrlFichierHDR $urlFichier
  * @var string $typeProposition
  */
@@ -90,7 +90,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
                             Vous pouvez télécharger le formulaire de délégation grâce au lien suivant :
                             <strong>
                                 <u>
-                                    <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
+                                    <a href="<?php echo $FORMULAIRE_DELEGATION; ?>">
                                         formulaire de demande de délégation
                                     </a>
                                 </u>
@@ -162,7 +162,7 @@ $canModifier = $this->isAllowed($object, InterventionPrivileges::INTERVENTION_MO
                     téléchargeable grâce au
                     <strong>
                         <u>
-                            <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
+                            <a href="<?php echo $FORMULAIRE_DELEGATION; ?>">
                                 lien suivant.
                             </a>
                         </u>

@@ -6,6 +6,7 @@ use Acteur\Entity\Db\ActeurHDR;
 use Acteur\Entity\Db\ActeurThese;
 use Application\Entity\Db\Utilisateur;
 use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
+use Exception;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Entity\Db\IndividuRole;
@@ -361,14 +362,16 @@ abstract class PropositionController extends AbstractSoutenanceController
     {
         $this->initializeFromType();
 
-        $categorieParametre = $this->proposition instanceof PropositionThese ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+        $FORMULAIRE_DELOCALISATION = $this->proposition instanceof PropositionThese ?
+            $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION) :
+            $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELOCALISATION_SOUTENANCE_HDR, $this->urlFichierHDR());
 
         $vm = new ViewModel();
         $vm->setTerminal(true);
         $vm->setTemplate("soutenance/proposition/generate-view-date-lieu");
         $vm->setVariables([
             'proposition' => $this->proposition,
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_DELOCALISATION),
+            'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
             'typeProposition' => $this->type,
         ]);
@@ -384,7 +387,9 @@ abstract class PropositionController extends AbstractSoutenanceController
         $juryOk = $this->propositionService->isJuryPropositionOk($this->proposition, $indicateurs);
         if ($juryOk === false) $indicateurs["valide"] = false;
         //$isOk = $this->propositionService->isOk($this->proposition, $indicateurs);
-        $categorieParametre = $this->proposition instanceof PropositionThese ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+        $FORMULAIRE_DELEGATION = $this->proposition instanceof PropositionThese ?
+            $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE) :
+            $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELEGATION_SIGNATURE_HDR, $this->urlFichierHDR());
 
         $vm = new ViewModel();
         $vm->setTerminal(true);
@@ -392,7 +397,7 @@ abstract class PropositionController extends AbstractSoutenanceController
         $vm->setVariables([
             'object' => $this->entity,
             'proposition' => $this->proposition,
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
+            'FORMULAIRE_DELEGATION' => $FORMULAIRE_DELEGATION,
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
             'indicateurs' => $indicateurs,
         ]);
@@ -403,8 +408,18 @@ abstract class PropositionController extends AbstractSoutenanceController
     {
         $this->initializeFromType();
 
-        $categorieParametre = $this->proposition instanceof PropositionThese ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
-        $formulaireDemandeLabel = $this->proposition instanceof PropositionThese ? $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_LABEL_EUROPEEN) : null;
+        if($this->proposition instanceof PropositionThese){
+            try {
+                $FORMULAIRE_DEMANDE_LABEL = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN);
+                $FORMULAIRE_DEMANDE_ANGLAIS = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS);
+                $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE);
+            } catch (Exception $e) {
+                throw new RuntimeException("Une erreur est survenue lors de la récupération de paramètre.",0,$e);
+            }
+        }else{
+            $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DEMANDE_CONFIDENT_HDR, $this->urlFichierHDR());
+            $FORMULAIRE_DEMANDE_ANGLAIS = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_LANGUE_ANGLAISE_HDR, $this->urlFichierHDR());
+        }
 
         $vm = new ViewModel();
         $vm->setTerminal(true);
@@ -412,9 +427,9 @@ abstract class PropositionController extends AbstractSoutenanceController
         $vm->setVariables([
             'object' => $this->entity,
             'proposition' => $this->proposition,
-            'FORMULAIRE_DEMANDE_LABEL' => $formulaireDemandeLabel,
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre($categorieParametre, SoutenanceParametres::DOC_CONFIDENTIALITE),
+            'FORMULAIRE_DEMANDE_LABEL' => isset($FORMULAIRE_DEMANDE_LABEL) ?: null,
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
             'typeProposition' => $this->type,
         ]);

@@ -130,7 +130,10 @@ class StructureController extends AbstractController
             NatureFichier::CODE_SIGNATURE_CONVOCATION,
             NatureFichierFormation::CODE_SIGNATURE_FORMATION,
             NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
-            NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT
+            NatureFichier::CODE_ADMISSION_CHARTE_DOCTORAT,
+            NatureFichier::CODE_DELEGATION_SIGNATURE_HDR,
+            NatureFichier::CODE_DELOCALISATION_SOUTENANCE_HDR,
+            NatureFichier::CODE_DEMANDE_CONFIDENT_HDR,
         ]);
         if ($etab = $structure->getEtablissement()) {
             $allowAucunEtablissement = false;

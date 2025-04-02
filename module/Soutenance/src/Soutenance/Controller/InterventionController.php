@@ -56,7 +56,10 @@ class InterventionController extends AbstractSoutenanceController
             $membres[$membre->getId()] = $membre;
         }
 
-        $categorieCode = ($this->proposition instanceof PropositionThese) ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
+        $FORMULAIRE_DELEGATION = $this->proposition instanceof PropositionThese ?
+            $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE) :
+            $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELEGATION_SIGNATURE_HDR, $this->urlFichierHDR());
+
         return new ViewModel([
             'object' => $this->entity,
             'distanciel' => (!empty($distanciels)) ? current($distanciels) : null,
@@ -65,7 +68,7 @@ class InterventionController extends AbstractSoutenanceController
             'membres' => $membres,
             'justificatifs' => $justificatifs,
             'urlFichier' => $this->type === Proposition::ROUTE_PARAM_PROPOSITION_THESE ? $this->urlFichierThese(): $this->urlFichierHDR(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
+            'FORMULAIRE_DELEGATION' => $FORMULAIRE_DELEGATION,
             'typeProposition' => $this->type,
         ]);
     }

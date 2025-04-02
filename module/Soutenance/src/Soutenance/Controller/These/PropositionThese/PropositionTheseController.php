@@ -162,7 +162,7 @@ class PropositionTheseController extends PropositionController
 
         try {
             $FORMULAIRE_DELOCALISATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION);
-            $FORMULAIRE_DELEGUATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE);
+            $FORMULAIRE_DELEGATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE);
             $FORMULAIRE_DEMANDE_LABEL = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN);
             $FORMULAIRE_DEMANDE_ANGLAIS = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS);
             $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE);
@@ -196,7 +196,7 @@ class PropositionTheseController extends PropositionController
             'informationsOk' => $informationsOk,
             'avis' => $this->getAvisService()->getAvisByProposition($this->proposition),
             'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
-            'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION,
+            'FORMULAIRE_DELEGATION' => $FORMULAIRE_DELEGATION,
             'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
             'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
