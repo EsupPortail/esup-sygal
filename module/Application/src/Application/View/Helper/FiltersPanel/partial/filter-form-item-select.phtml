@@ -17,9 +17,9 @@ $classes = array_merge($classes, ['filter', 'selectpicker', 'show-menu-arrow']);
 $attributes['class'] = implode(' ', $classes);
 
 $attributes['name'] = $isMultiple ? $filter->getName() . '[]' : $filter->getName();
-$attributes['data-bs-live-search'] = ($attributes['liveSearch'] ?? false) ? 'true' : 'false';
-$attributes['data-bs-width'] = $attributes['width'] ?? 'fit';
-$attributes['data-bs-html'] = 'true';
+$attributes['data-live-search'] = ($attributes['liveSearch'] ?? $attributes['live-search'] ?? false) ? 'true' : 'false';
+$attributes['data-width'] = $attributes['width'] ?? 'fit';
+$attributes['data-html'] = 'true';
 if ($isMultiple) {
     $attributes['multiple'] = 'multiple';
 }
