@@ -9,34 +9,12 @@ class DomaineScientifiqueSearchFilter extends SelectSearchFilter
 {
     public const NAME = 'domaineScientifique';
 
-    /**
-     * @inheritDoc
-     */
-    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
-    {
-        parent::__construct($label, $name, $attributes, $defaultValue);
-    }
+    protected string $name = self::NAME;
+    protected string $label = "Dom. scien.";
+    protected array $attributes = ['liveSearch' => true];
+    protected string $emptyOptionLabel = "Tous";
 
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
-    {
-        $instance = new self(
-            "Dom. scien.",
-            self::NAME,
-            ['liveSearch' => true]
-        );
-
-        $instance->setEmptyOptionLabel("Tous");
-
-        return $instance;
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(QueryBuilder $qb): void
     {
         $alias = 'these'; // todo: rendre paramétrable
 

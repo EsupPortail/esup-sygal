@@ -734,6 +734,8 @@ div.filters {
     }
     .badge {
       padding: .2em .5em;
+      white-space: normal;
+      text-align: inherit;
     }
   }
   .filter-option-inner-inner {

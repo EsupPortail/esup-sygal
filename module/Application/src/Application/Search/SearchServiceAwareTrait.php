@@ -4,22 +4,13 @@ namespace Application\Search;
 
 trait SearchServiceAwareTrait
 {
-    /**
-     * @var SearchServiceInterface
-     */
-    protected $searchService;
+    protected SearchServiceInterface $searchService;
 
-    /**
-     * @param SearchServiceInterface $searchService
-     */
-    public function setSearchService(SearchServiceInterface $searchService)
+    public function setSearchService(SearchServiceInterface $searchService): void
     {
         $this->searchService = $searchService;
     }
 
-    /**
-     * @return SearchServiceInterface
-     */
     public function getSearchService(): SearchServiceInterface
     {
         return $this->searchService;

@@ -9,8 +9,11 @@ use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
+use Depot\Controller\Plugin\UrlFichierHDR;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use HDR\Entity\Db\HDR;
 use Individu\Entity\Db\Individu;
@@ -25,7 +28,9 @@ use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationHDR\ValidationHDRServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
@@ -45,6 +50,7 @@ class PropositionHDRService extends PropositionService
     use EtablissementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use StructureDocumentServiceAwareTrait;
 
     public function getRepository(): DefaultEntityRepository
     {
@@ -285,5 +291,16 @@ class PropositionHDRService extends PropositionService
             $encadrement->setMembre($membre);
             $this->acteurHDRService->save($encadrement);
         }
+    }
+
+    public function findUrlFormulaireFichierByEtabAndNatureFichierCode(HDR $hdr, string $natureFichier, UrlFichierHDR $urlFichierHdr) : string|null{
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $hdr->getEtablissement()->getStructure(),
+            $natureFichier,
+            $hdr->getEtablissement());
+
+        return $fichier ?
+            $urlFichierHdr->telechargerFichierHDR($hdr, $fichier) :
+            null;
     }
 }

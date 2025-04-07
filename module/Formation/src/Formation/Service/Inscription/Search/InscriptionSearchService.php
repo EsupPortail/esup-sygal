@@ -42,7 +42,7 @@ class InscriptionSearchService extends SearchService
     public const NAME_anneeUniv = 'anneeUniv';
 
 
-    public function init()
+    public function init(): void
     {
         $libelleFilter = $this->createLibelleFilter();
         $doctorantFilter = $this->createDoctorantFilter();
@@ -72,7 +72,7 @@ class InscriptionSearchService extends SearchService
             $libelleFilter,
             $doctorantFilter,
             $etatFilter,
-            $anneeUnivFilter->setAllowsNoneOption()->setAllowsEmptyOption(false)->setDefaultValue($debut->format('Y')),
+            $anneeUnivFilter->setAllowsNoneValueOption()->setAllowsEmptyValueOption(false)->setDefaultValue($debut->format('Y')),
             $listeFilter,
         ]);
 
@@ -124,7 +124,7 @@ class InscriptionSearchService extends SearchService
 
     public function createSiteFilter(): EtablissementSearchFilter
     {
-        return EtablissementSearchFilter::newInstance()
+        return (new EtablissementSearchFilter())
             ->setName(self::NAME_site)
             ->setLabel("Site")
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
@@ -158,8 +158,8 @@ class InscriptionSearchService extends SearchService
     {
         $filter = new SelectSearchFilter("Liste", self::NAME_liste);
         $filter
-            ->setAllowsNoneOption()
-            ->setNoneOptionLabel("Aucune")
+            ->setAllowsNoneValueOption()
+            ->setNoneValueOptionLabel("Aucune")
             ->setWhereField('i.liste');
 
         return $filter;

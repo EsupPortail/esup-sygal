@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Depot\Service\FichierHDR\FichierHDRServiceAwareTrait;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Exception;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
@@ -15,6 +16,8 @@ use Soutenance\Form\Justificatif\JustificatifFormAwareTrait;
 use Soutenance\Provider\Parametre\These\SoutenanceParametres;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class JustificatifController extends AbstractSoutenanceController
@@ -122,19 +125,34 @@ class JustificatifController extends AbstractSoutenanceController
         }
 
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($this->proposition);
-        $categorieCode = ($this->proposition instanceof PropositionThese) ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
 
+        if($this->proposition instanceof PropositionThese){
+            try {
+                $FORMULAIRE_DELOCALISATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION);
+                $FORMULAIRE_DELEGATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE);
+                $FORMULAIRE_DEMANDE_LABEL = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN);
+                $FORMULAIRE_DEMANDE_ANGLAIS = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS);
+                $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE);
+            } catch (Exception $e) {
+                throw new RuntimeException("Une erreur est survenue lors de la récupération de paramètre.",0,$e);
+            }
+        }else{
+            $FORMULAIRE_DELOCALISATION = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELOCALISATION_SOUTENANCE_HDR, $this->urlFichierHDR());
+            $FORMULAIRE_DELEGATION = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DELEGATION_SIGNATURE_HDR, $this->urlFichierHDR());
+            $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_DEMANDE_CONFIDENT_HDR, $this->urlFichierHDR());
+            $FORMULAIRE_DEMANDE_ANGLAIS = $this->propositionService->findUrlFormulaireFichierByEtabAndNatureFichierCode($this->entity, NatureFichier::CODE_LANGUE_ANGLAISE_HDR, $this->urlFichierHDR());
+        }
         $vm =  new ViewModel([
             'title' => "Téléversement d'un justificatif",
             'object' => $this->entity,
             'form' => $form,
             'justificatifs' => $justificatifs,
 
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_DELOCALISATION),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
-            'FORMULAIRE_DEMANDE_LABEL' => $this->proposition instanceof PropositionThese ? $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_LABEL_EUROPEEN) : null,
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre($categorieCode, SoutenanceParametres::DOC_CONFIDENTIALITE),
+            'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
+            'FORMULAIRE_DELEGATION' => $FORMULAIRE_DELEGATION,
+            'FORMULAIRE_DEMANDE_LABEL' => isset($FORMULAIRE_DEMANDE_LABEL) ?: null,
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
         ]);
         if ($nature !== null) $vm->setTemplate('soutenance/justificatif/ajouter');
         return $vm;

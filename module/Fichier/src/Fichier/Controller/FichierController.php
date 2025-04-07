@@ -3,26 +3,96 @@
 namespace Fichier\Controller;
 
 use Application\Controller\AbstractController;
-use Fichier\Entity\Db\Fichier;
-use Fichier\Entity\Db\NatureFichier;
-use Fichier\Provider\Privilege\FichierPrivileges;
 use Application\RouteMatch;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Application\Search\Controller\SearchControllerInterface;
+use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\SearchServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Exception;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Provider\Privilege\FichierPrivileges;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use UnicaenApp\Exception\RuntimeException;
+use Laminas\Http\Response;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Exception\RuntimeException;
 
-class FichierController extends AbstractController
+/**
+ * @property \Fichier\Service\Fichier\Search\FichierSearchService $searchService
+ */
+class FichierController extends AbstractController implements SearchControllerInterface
 {
+    use SearchServiceAwareTrait;
+    use SearchControllerTrait;
+
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
+
+    public function indexAction(): Response|ViewModel
+    {
+        $this->restrictFilters();
+
+        $result = $this->search();
+        if ($result instanceof Response) {
+            return $result;
+        }
+        /** @var LaminasPaginator $paginator */
+        $paginator = $result;
+
+        return new ViewModel([
+            'paginator' => $paginator,
+            'filters' => $this->filters(),
+            'urlFichierPlugin' => $this->urlFichier(),
+        ]);
+    }
+
+    private function restrictFilters(): void
+    {
+        // filtre "nature de fichier"
+        $natureFilter = $this->searchService->getNatureFichierSearchFilter();
+        $natures = $natureFilter->getData();
+        $naturesAutorisees = [];
+        foreach ($natures as $nature) {
+            try {
+                $privilege = FichierPrivileges::privilegeTelechargerFor($nature);
+            } catch (Exception $e) {
+                continue;
+            }
+            if ($this->isAllowed(FichierPrivileges::getResourceId($privilege))) {
+                $naturesAutorisees[] = $nature;
+            }
+        }
+        if (empty($naturesAutorisees)) {
+            $natureFilter->setAllowsEmptyValueOption(false);
+        }
+        $natureFilter->setData($naturesAutorisees);
+    }
+
+    /**
+     * Surcharge de la méthode {@see SearchControllerTrait::filtersAction()}.
+     *
+     * @return ViewModel
+     */
+    public function filtersAction(): ViewModel
+    {
+        $this->restrictFilters();
+
+        $filters = $this->filters();
+
+        $model = new ViewModel([
+            'filters' => $filters,
+        ]);
+
+        return $model;
+    }
 
     public function listerFichiersCommunsAction()
     {

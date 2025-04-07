@@ -15,7 +15,7 @@ trait EtablissementInscSearchFilterAwareTrait
     public function getEtablissementInscSearchFilter(): EtablissementSearchFilter
     {
         if ($this->etablissementInscSearchFilter === null) {
-            $this->etablissementInscSearchFilter = EtablissementSearchFilter::newInstance();
+            $this->etablissementInscSearchFilter = new EtablissementSearchFilter();
         }
         return $this->etablissementInscSearchFilter;
     }

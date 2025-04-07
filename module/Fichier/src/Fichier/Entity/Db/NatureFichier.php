@@ -2,10 +2,12 @@
 
 namespace Fichier\Entity\Db;
 
+use Application\Search\Filter\SearchFilterValueInterface;
+
 /**
  * NatureFichier
  */
-class NatureFichier
+class NatureFichier implements SearchFilterValueInterface
 {
     public const CODE_THESE_PDF = 'THESE_PDF';
     public const CODE_HDR_PDF = 'HDR_PDF';
@@ -92,6 +94,17 @@ class NatureFichier
     public const LABEL_DELOCALISATION_SOUTENANCE_HDR = "Formulaire de délocalisation de soutenance HDR";
     public const LABEL_DELEGUATION_SIGNATURE_HDR = "Formulaire de délégation de signature du rapport de soutenance (visioconférence) pour une HDR";
     public const LABEL_LANGUE_ANGLAISE_HDR = "Formulaire d'utilisation de la langue anglaise pour une HDR";
+
+
+    //HDR
+    const CODE_DELOCALISATION_SOUTENANCE_HDR = 'DELOCALISATION_SOUTENANCE_HDR';
+    const CODE_DELEGATION_SIGNATURE_HDR = 'DELEGATION_SIGNATURE_HDR';
+    const CODE_DEMANDE_CONFIDENT_HDR = 'DEMANDE_CONFIDENT_HDR';
+    const CODE_LANGUE_ANGLAISE_HDR = 'DEMANDE_LANGUE_ANGLAISE_HDR';
+    const LABEL_DEMANDE_CONFIDENT_HDR = "Formulaire de demande de confidentialité pour une HDR";
+    const LABEL_DELOCALISATION_SOUTENANCE_HDR = "Formulaire de délocalisation de soutenance HDR";
+    const LABEL_DELEGUATION_SIGNATURE_HDR = "Formulaire de délégation de signature du rapport de soutenance (visioconférence) pour une HDR";
+    const LABEL_LANGUE_ANGLAISE_HDR = "Formulaire d'utilisation de la langue anglaise pour une HDR";
 
 
     /**
@@ -208,5 +221,10 @@ class NatureFichier
     public function estRapportSoutenance()
     {
         return $this->getCode() === NatureFichier::CODE_RAPPORT_SOUTENANCE;
+    }
+
+    public function createSearchFilterValueOption(): array
+    {
+        return ['value' => $this->getCode(), 'label' => $this->getCode(), 'subtext' => $this->getLibelle()];
     }
 }

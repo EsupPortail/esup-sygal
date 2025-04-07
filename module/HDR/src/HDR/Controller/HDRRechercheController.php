@@ -137,7 +137,7 @@ class HDRRechercheController extends AbstractController implements SearchControl
         $filter
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
-            ->setAllowsEmptyOption(false);
+            ->setAllowsEmptyValueOption(false);
     }
 
     private function restrictFiltersByStructure(): void

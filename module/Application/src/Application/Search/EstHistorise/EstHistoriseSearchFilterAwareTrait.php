@@ -9,7 +9,7 @@ trait EstHistoriseSearchFilterAwareTrait
     public function getEstHistoriseSearchFilter(): EstHistoriseSearchFilter
     {
         if ($this->estHistoriseSearchFilter === null) {
-            $this->estHistoriseSearchFilter = EstHistoriseSearchFilter::newInstance();
+            $this->estHistoriseSearchFilter = new EstHistoriseSearchFilter();
         }
         return $this->estHistoriseSearchFilter;
     }

@@ -15,7 +15,7 @@ trait TheseTextSearchFilterAwareTrait
     public function getTheseTextSearchFilter(): TheseTextSearchFilter
     {
         if ($this->theseTextSearchFilter === null) {
-            $this->theseTextSearchFilter = TheseTextSearchFilter::newInstance();
+            $this->theseTextSearchFilter = new TheseTextSearchFilter();
         }
         return $this->theseTextSearchFilter;
     }

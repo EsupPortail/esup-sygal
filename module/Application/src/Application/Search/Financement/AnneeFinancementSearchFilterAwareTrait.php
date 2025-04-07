@@ -9,7 +9,7 @@ trait AnneeFinancementSearchFilterAwareTrait
     public function getAnneeFinancementSearchFilter(): AnneeFinancementSearchFilter
     {
         if ($this->anneeFinancementSearchFilter === null) {
-            $this->anneeFinancementSearchFilter = AnneeFinancementSearchFilter::newInstance();
+            $this->anneeFinancementSearchFilter = new AnneeFinancementSearchFilter();
         }
         return $this->anneeFinancementSearchFilter;
     }

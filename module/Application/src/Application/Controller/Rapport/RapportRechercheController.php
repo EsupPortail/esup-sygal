@@ -157,7 +157,7 @@ abstract class RapportRechercheController extends AbstractController implements 
                 $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
                 $edFilter->setData([$ed]);
                 $edFilter->setDefaultValueAsObject($ed);
-                $edFilter->setAllowsEmptyOption(false);
+                $edFilter->setAllowsEmptyValueOption(false);
             }
         }
     }
@@ -175,7 +175,7 @@ abstract class RapportRechercheController extends AbstractController implements 
                 $ur = $role->getStructure()->getUniteRecherche();
                 $filter->setData([$ur]);
                 $filter->setDefaultValueAsObject($ur);
-                $filter->setAllowsEmptyOption(false);
+                $filter->setAllowsEmptyValueOption(false);
             }
         }
     }

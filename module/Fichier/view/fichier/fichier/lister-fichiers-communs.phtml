@@ -47,16 +47,30 @@ if($canTeleverserFichierCommuns):
 <table class="table table-bordered table-hovered table-sm">
     <thead>
     <tr>
-        <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">
-                <?php echo $this->translate("Fichier"); ?></a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
-                <?php echo $this->translate("Nom original"); ?></a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>">
-                <?php echo $this->translate("Id permanent"); ?></a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('f.permanentId'); ?>">
-                <?php echo $this->translate("Téléversé par"); ?></a> <?php echo $s->icon() ?></th>
-        <th><a href="<?php echo $s = $this->sortable('f.histoCreation'); ?>">
-                <?php echo $this->translate("Téléversé le"); ?></a> <?php echo $s->icon() ?></th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.nom'); ?>"><?php echo $this->translate("Fichier"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('n.code'); ?>"><?php echo $this->translate("Nature"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>"><?php echo $this->translate("Nom original"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.nomOriginal'); ?>"><?php echo $this->translate("Id permanent"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.permanentId'); ?>"><?php echo $this->translate("Téléversé par"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
+        <th>
+            <a href="<?php echo $s = $this->sortable('f.histoCreation'); ?>"><?php echo $this->translate("Téléversé le"); ?></a>
+            <?php echo $s->icon() ?>
+        </th>
         <th class="action">Action</th>
     </tr>
     </thead>
@@ -69,6 +83,9 @@ if($canTeleverserFichierCommuns):
                 $urlTelecharger = $canDownload ? $urlFichierPlugin->telechargerFichier($fichier) : null;
                 echo $this->uploader()->renderUploadedFile($fichier, $urlTelecharger);
                 ?>
+            </td>
+            <td>
+                <abbr title="<?php echo $fichier->getNature()->getLibelle() ?>"><?php echo $fichier->getNature()->getCode() ?></abbr>
             </td>
             <td>
                 <?php echo $fichier->getNomOriginal() ?>

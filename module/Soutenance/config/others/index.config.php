@@ -131,7 +131,7 @@ return array(
                         'type' => Literal::class,
                         'may_terminate' => false,
                         'options' => [
-                            'route' => '/recherche',
+                            'route' => '/recherche-these',
                             'defaults' => [
                                 'controller' => PropositionTheseRechercheController::class,
                                 'type' => 'these', // requis
@@ -154,7 +154,7 @@ return array(
                         'type' => Literal::class,
                         'may_terminate' => false,
                         'options' => [
-                            'route' => '/recherche',
+                            'route' => '/recherche-hdr',
                             'defaults' => [
                                 'controller' => PropositionHDRRechercheController::class,
                                 'type' => 'hdr', // requis

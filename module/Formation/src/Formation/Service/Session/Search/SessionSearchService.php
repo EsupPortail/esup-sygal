@@ -41,7 +41,7 @@ class SessionSearchService extends SearchService
     public const NAME_seances = 'seances';
 
 
-    public function init()
+    public function init(): void
     {
         $siteFilter = $this->createSiteFilter();
         $structureFilter = $this->createStructureFilter();
@@ -75,7 +75,7 @@ class SessionSearchService extends SearchService
             $libelleFilter,
             $etatFilter,
             $modaliteFilter,
-            $anneeUnivFilter->setAllowsNoneOption()->setAllowsEmptyOption(false)->setDefaultValue($debut->format('Y')),
+            $anneeUnivFilter->setAllowsNoneValueOption()->setAllowsEmptyValueOption(false)->setDefaultValue($debut->format('Y')),
             $typeFilter
         ]);
 
@@ -106,7 +106,7 @@ class SessionSearchService extends SearchService
 
     public function createSiteFilter(): EtablissementSearchFilter
     {
-        return EtablissementSearchFilter::newInstance()
+        return (new EtablissementSearchFilter())
             ->setName(self::NAME_site)
             ->setLabel("Site")
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {

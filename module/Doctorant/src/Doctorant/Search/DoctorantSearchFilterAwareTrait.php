@@ -15,7 +15,7 @@ trait DoctorantSearchFilterAwareTrait
     public function getDoctorantSearchFilter(): DoctorantSearchFilter
     {
         if ($this->doctorantSearchFilter === null) {
-            $this->doctorantSearchFilter = DoctorantSearchFilter::newInstance();
+            $this->doctorantSearchFilter = new DoctorantSearchFilter();
         }
         return $this->doctorantSearchFilter;
     }

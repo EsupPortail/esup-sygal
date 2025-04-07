@@ -75,10 +75,7 @@ class RapportSearchService extends SearchService
      */
     private $finalSearchFilter;
 
-    /**
-     * @inheritDoc
-     */
-    public function init()
+    public function init(): void
     {
         $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
@@ -474,8 +471,8 @@ class RapportSearchService extends SearchService
                 ->setDataProvider(function () {
                     return ['oui' => "Oui", 'non' => "Non"];
                 })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
+                ->setEmptyValueOptionLabel("(Peu importe)")
+                ->setAllowsEmptyValueOption()
                 ->setQueryBuilderApplier([$this, 'applyValidationFilterToQueryBuilder']);
         }
 

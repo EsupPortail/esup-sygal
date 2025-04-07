@@ -14,7 +14,7 @@ use Soutenance\Form\Justificatif\JustificatifForm;
  * @var array $justificatifs
  *
  * @var $FORMULAIRE_DELOCALISATION
- * @var $FORMULAIRE_DELEGUATION
+ * @var $FORMULAIRE_DELEGATION
  * @var $FORMULAIRE_DEMANDE_LABEL
  * @var $FORMULAIRE_DEMANDE_ANGLAIS
  * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
@@ -34,7 +34,23 @@ if($object instanceof These){
         "<strong><span class='fas fa-info-circle'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
         "L'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par une lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
         "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse qui peut être téléchargé ici : ".
-        "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
+        "<a target='_blank' href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
+        "</div>";
+    $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
+        "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'une HDR extérieur à l'établissement/la COMUE de soutenance. <br/>" .
+        "</div>";
+    $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Justification d'éméritat</strong> <br/>".
+        "Le justificatif d'éméritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
+        "</div>";
+    $explications[NatureFichier::CODE_DEMANDE_LABEL] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Demande de label européen</strong> <br/>".
+        "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
+        "<a target='_blank' href='". $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
         "</div>";
 }else{
     $explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER] =
@@ -48,44 +64,38 @@ if($object instanceof These){
         "<strong><span class='fas fa-info-circle'></span> Usage de la langue anglaise pour la soutenance de l'HDR</strong> <br/>".
         "L'usage de la langue anglaise pour la soutenance de l'HDR doit être motivé par une lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
         "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la soutenance de l'HDR qui peut être téléchargé ici : ".
-        "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la soutenance de l'HDR.</a></i>" .
+        "<a target='_blank' href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la soutenance de l'HDR.</a></i>" .
+        "</div>";
+    $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
+        "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'un HDR extérieur à l'établissement de soutenance. <br/>" .
+        "</div>";
+    $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
+        "<div class='alert alert-warning'>" .
+        "<strong><span class='fas fa-info-circle'></span> Justification d'éméritat</strong> <br/>".
+        "Le justificatif d'éméritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement de soutenance. <br/>" .
         "</div>";
 }
-$explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
-    "<div class='alert alert-warning'>" .
-        "<strong><span class='fas fa-info-circle'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
-        "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'un HDR extérieur à l'établissement/la COMUE de soutenance. <br/>" .
-    "</div>";
-$explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
-    "<div class='alert alert-warning'>" .
-    "<strong><span class='fas fa-info-circle'></span> Justification d'éméritat</strong> <br/>".
-    "Le justificatif d'éméritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
-    "</div>";
 $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='fas fa-info-circle'></span> Délocalisation de la soutenance</strong> <br/>".
-    "Lorsque la soutenance se déroule à l'extérieur de l'établissement d'inscription il est nécessaire de fournir un justificatif de délocalisation de soutenance. <br/>" .
+    "Lorsque la soutenance se déroule à l'extérieur de l'établissement d'inscription, il est nécessaire de fournir un justificatif de délocalisation de soutenance. <br/>" .
     "<u>NB:</u> Le formulaire de demande de délocalisation de la soutenance peut être téléchargé ici : ".
-    "<a href='". $FORMULAIRE_DELOCALISATION ."'>formulaire de demande de délocalisation.</a></i>" .
+    "<a target='_blank' href='". $FORMULAIRE_DELOCALISATION ."'>formulaire de demande de délocalisation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DELEGUATION_SIGNATURE] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='fas fa-info-circle'></span> Délégation de signature</strong> <br/>".
     "Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir une demande de délégation de signature <br/>" .
     "<u>NB:</u> Le formulaire de demande de délégation de signature peut être téléchargé ici : ".
-    "<a href='". $FORMULAIRE_DELEGUATION ."'>formulaire de demande de délégation.</a></i>" .
-    "</div>";
-$explications[NatureFichier::CODE_DEMANDE_LABEL] =
-    "<div class='alert alert-warning'>" .
-    "<strong><span class='fas fa-info-circle'></span> Demande de label européen</strong> <br/>".
-    "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
-    "<a href='". $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
+    "<a target='_blank' href='". $FORMULAIRE_DELEGATION ."'>formulaire de demande de délégation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='fas fa-info-circle'></span> Demande de confidentialité</strong> <br/>".
-    "<u>NB:</u> La demande de confidentialité nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
-    "<a href='". $FORMULAIRE_DEMANDE_CONFIDENTIALITE ."'>formulaire de demande de confidentialité.</a></i>" .
+    "<u>NB:</u> La demande de confidentialité nécessite le retour du formulaire de demande de confidentialité qui peut être téléchargé ici : ".
+    "<a target='_blank' href='". $FORMULAIRE_DEMANDE_CONFIDENTIALITE ."'>formulaire de demande de confidentialité.</a></i>" .
     "</div>";
 ?>
 
@@ -221,7 +231,9 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
                 $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DELEGUATION_SIGNATURE]; ?>");
                 break;
             case <?php echo "'".NatureFichier::CODE_DEMANDE_LABEL."'"; ?> :
-                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DEMANDE_LABEL]; ?>");
+                <?php if($object instanceof These): ?>
+                    $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DEMANDE_LABEL]; ?>");
+                <?php endif; ?>
                 break;
             case <?php echo "'".NatureFichier::CODE_LANGUE_ANGLAISE."'"; ?> :
                 $('div.explication').html("<?php echo $explications[NatureFichier::CODE_LANGUE_ANGLAISE]; ?>");
@@ -229,7 +241,6 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
             case <?php echo "'".NatureFichier::CODE_DEMANDE_CONFIDENT."'"; ?> :
                 $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DEMANDE_CONFIDENT]; ?>");
                 break;
-
             default :
                 break;
         }

@@ -31,7 +31,7 @@ class FormationSearchService extends SearchService
     public const NAME_anneeUniv = 'anneeUniv';
 
 
-    public function init()
+    public function init(): void
     {
         $siteFilter = $this->createSiteFilter();
         $structureFilter = $this->createStructureFilter();
@@ -57,7 +57,7 @@ class FormationSearchService extends SearchService
             $structureFilter,
             $libelleFilter,
             $modaliteFilter,
-            $anneeUnivFilter->setAllowsNoneOption()->setAllowsEmptyOption(false)->setDefaultValue($debut->format('Y')),
+            $anneeUnivFilter->setAllowsNoneValueOption()->setAllowsEmptyValueOption(false)->setDefaultValue($debut->format('Y')),
         ]);
 
         $this->addSorters([
@@ -89,7 +89,7 @@ class FormationSearchService extends SearchService
 
     public function createSiteFilter(): EtablissementSearchFilter
     {
-        return EtablissementSearchFilter::newInstance()
+        return (new EtablissementSearchFilter())
             ->setName(self::NAME_site)
             ->setLabel("Site")
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {

@@ -15,7 +15,7 @@ trait EtatAdmissionSearchFilterAwareTrait
     public function getEtatAdmissionSearchFilter(): EtatAdmissionSearchFilter
     {
         if ($this->etatAdmissionSearchFilter === null) {
-            $this->etatAdmissionSearchFilter = EtatAdmissionSearchFilter::newInstance();
+            $this->etatAdmissionSearchFilter = new EtatAdmissionSearchFilter();
         }
         return $this->etatAdmissionSearchFilter;
     }

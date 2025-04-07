@@ -15,7 +15,7 @@ trait AnneeRapportActiviteSearchFilterAwareTrait
     public function getAnneeRapportActiviteSearchFilter(): AnneeRapportActiviteSearchFilter
     {
         if ($this->anneeRapportActiviteSearchFilter === null) {
-            $this->anneeRapportActiviteSearchFilter = AnneeRapportActiviteSearchFilter::newInstance();
+            $this->anneeRapportActiviteSearchFilter = new AnneeRapportActiviteSearchFilter();
         }
         return $this->anneeRapportActiviteSearchFilter;
     }

@@ -9,13 +9,8 @@ class AnneeFinancementSearchFilter extends SelectSearchFilter
 {
     public const NAME = 'financementAnnee';
 
-    static public function newInstance(): self
-    {
-        return new self(
-            "Année financ.",
-            self::NAME
-        );
-    }
+    protected string $name = self::NAME;
+    protected string $label = "Année financ.";
 
     public function applyToQueryBuilder(QueryBuilder $qb): void
     {

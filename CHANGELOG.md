@@ -9,6 +9,15 @@ Journal des modifications
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 
+10.0.1
+-----
+- Possibilité d'ajouter les formulaires nécessaires pour la soutenance HDR depuis la fiche d'un établissement
+- [FIX] Extraction CSV des inscriptions aux formations : mention "désistement" si inscription supprimée & liste = P ou C.
+- [FIX] Filtres sur les propositions de soutenance de thèses étaient ceux de HDR
+- [FIX] Exceptions mieux gérées sur certaines pages relatives à la soutenance lorsque la proposition n'est pas encore initialisée
+- [FIX] Export CSV des thèses : correction de l'erreur 'Undefined array key "lib_disc" (vue v_extract_theses erronée).
+- [FIX] Pages des droits d'accès : pb d'affichage des filtres-liens lorsqu'ils sont très longs (CSS).
+
 10.0.0
 ------
 Nouveau Module HDR permettant : 

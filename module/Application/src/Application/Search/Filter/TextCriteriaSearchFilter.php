@@ -9,44 +9,37 @@ namespace Application\Search\Filter;
  */
 class TextCriteriaSearchFilter extends TextSearchFilter
 {
-    public const NAME_text = 'text';
-    public const NAME_criteria = 'textCriteria';
+    protected string $name = 'text';
 
-    /**
-     * @var string
-     */
-    protected $textValue;
+    protected string $criteriaName = 'textCriteria';
+
+    protected ?string $textValue = null;
 
     /**
      * @var string[]
      */
-    protected $criteriaValue = [];
+    protected array $criteriaValue = [];
 
     /**
-     * Critères possibles sur lesquels faire porter la recherche sur texte libre.
+     * Critères sur lesquels peut porter le filtrage, à surcharger dans les classes filles.
      * @var string[]
      */
-    protected $availableCriteria = [];
+    protected array $availableCriteria;
 
-    /**
-     * @param array $queryParams
-     */
-    public function processQueryParams(array $queryParams)
+
+    public function processQueryParams(array $queryParams): void
     {
         $filterValue = $this->paramFromQueryParams($queryParams);
 
-        if (array_key_exists(self::NAME_criteria, $queryParams) && !empty($queryParams[self::NAME_criteria])) {
-            $criteria = $queryParams[self::NAME_criteria];
+        if (array_key_exists($this->criteriaName, $queryParams) && !empty($queryParams[$this->criteriaName])) {
+            $criteria = $queryParams[$this->criteriaName];
         } else {
             $criteria = array_keys($this->availableCriteria);
         }
 
         $this->setTextValue($filterValue);
         $this->setCriteriaValue($criteria);
-//        $this->setValue([
-//            'text' => $filterValue,
-//            'criteria' => $criteria,
-//        ]);
+
         $this->setValue($filterValue);
     }
 
@@ -59,6 +52,14 @@ class TextCriteriaSearchFilter extends TextSearchFilter
     }
 
     /**
+     * Retourne le 'name' de l'élément de formulaire permettant de sélectionner le·s critère·s de filtrage.
+     */
+    public function getCriteriaName(): string
+    {
+        return $this->criteriaName;
+    }
+
+    /**
      * @return string|null
      */
     public function getTextValue(): ?string
@@ -67,6 +68,7 @@ class TextCriteriaSearchFilter extends TextSearchFilter
     }
 
     /**
+     * Spécifie la valeur
      * @param string|null $textValue
      * @return self
      */
@@ -76,12 +78,9 @@ class TextCriteriaSearchFilter extends TextSearchFilter
         return $this;
     }
 
-    /**
-     * @return string[]
-     */
     public function getCriteriaValue(): array
     {
-        return (array) $this->criteriaValue;
+        return $this->criteriaValue;
     }
 
     /**

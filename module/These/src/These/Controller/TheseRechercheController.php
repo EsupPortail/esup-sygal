@@ -134,7 +134,7 @@ class TheseRechercheController extends AbstractController implements SearchContr
         $filter
             ->setData([$entity])
             ->setDefaultValueAsObject($entity)
-            ->setAllowsEmptyOption(false);
+            ->setAllowsEmptyValueOption(false);
     }
 
     private function restrictFiltersByStructure(): void

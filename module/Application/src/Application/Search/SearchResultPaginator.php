@@ -6,13 +6,10 @@ use Laminas\Paginator\Paginator;
 
 class SearchResultPaginator extends Paginator
 {
-    /**
-     * @var bool
-     */
-    protected $containsRealSearchResult = false;
+    protected bool $containsRealSearchResult = false;
 
     /**
-     * @return bool
+     * Indique si le paginator contient des données ou non.
      */
     public function containsRealSearchResult(): bool
     {
@@ -20,10 +17,9 @@ class SearchResultPaginator extends Paginator
     }
 
     /**
-     * @param bool $containsRealSearchResult
-     * @return self
+     * Spécifie si le paginator contient des données ou non.
      */
-    public function setContainsRealSearchResult(bool $containsRealSearchResult = true): self
+    public function setContainsRealSearchResult(bool $containsRealSearchResult = true): static
     {
         $this->containsRealSearchResult = $containsRealSearchResult;
         return $this;

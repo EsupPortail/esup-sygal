@@ -17,6 +17,7 @@ use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Validation\ValidationHDR\ValidationHDRService;
 use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\StructureDocument\StructureDocumentService;
 use UnicaenParametre\Service\Parametre\ParametreService;
 
 class PropositionHDRServiceFactory
@@ -38,7 +39,7 @@ class PropositionHDRServiceFactory
          * @var EtablissementService $etablissamentService
          * @var MembreService $membreService
          * @var UserContextService $userContextService
-         * @var HorodatageService $horodatageService
+         * @var StructureDocumentService $structureDocumentService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $acteurService = $container->get(ActeurHDRService::class);
@@ -50,7 +51,7 @@ class PropositionHDRServiceFactory
         $etablissamentService = $container->get(EtablissementService::class);
         $membreService = $container->get(MembreService::class);
         $userContextService = $container->get('UserContextService');
-        $horodatageService = $container->get(HorodatageService::class);
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         $service = new PropositionHDRService();
         $service->setEntityManager($entityManager);
@@ -63,6 +64,7 @@ class PropositionHDRServiceFactory
         $service->setEtablissementService($etablissamentService);
         $service->setMembreService($membreService);
         $service->setUserContextService($userContextService);
+        $service->setStructureDocumentService($structureDocumentService);
 
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $service->setSoutenanceNotificationFactory($soutenanceNotificationFactory);

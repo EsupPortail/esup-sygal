@@ -11,24 +11,8 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
 {
     public const NAME = 'anneeRapport';
 
-    /**
-     * @inheritDoc
-     */
-    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
-    {
-        parent::__construct($label, $name, $attributes, $defaultValue);
-    }
-
-    /**
-     * @return self
-     */
-    static public function newInstance(): self
-    {
-        return new self(
-            "Année du rapport",
-            self::NAME
-        );
-    }
+    protected string $name = self::NAME;
+    protected string $label = "Année du rapport";
 
     /**
      * @inheritDoc
@@ -44,10 +28,7 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
         return self::formatAnneesValueOptions($options);
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb, $alias = 'ra')
+    public function applyToQueryBuilder(QueryBuilder $qb, $alias = 'ra'): void
     {
         $qb
             ->andWhere("$alias.anneeUniv = :anneeRapportActivite")

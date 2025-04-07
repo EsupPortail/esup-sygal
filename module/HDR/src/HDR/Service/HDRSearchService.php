@@ -74,7 +74,7 @@ class HDRSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
             ->setDataProvider(function(SelectSearchFilter $filter) {

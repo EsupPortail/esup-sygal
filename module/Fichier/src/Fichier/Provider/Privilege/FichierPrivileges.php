@@ -58,12 +58,8 @@ class FichierPrivileges extends Privileges
     /**
      * Retourne le privilège correspondant à l'opération de téléchargement de fichier
      * en fonction de la nature de fichier.
-     *
-     * @param NatureFichier       $nature
-     * @param VersionFichier|null $versionFichier
-     * @return string
      */
-    public static function privilegeTelechargerFor(NatureFichier $nature, VersionFichier $versionFichier = null)
+    public static function privilegeTelechargerFor(NatureFichier $nature, ?VersionFichier $versionFichier = null): string
     {
         switch (true) {
             case in_array($nature->getCode(), NatureFichier::CODES_FICHIERS_DIVERS):

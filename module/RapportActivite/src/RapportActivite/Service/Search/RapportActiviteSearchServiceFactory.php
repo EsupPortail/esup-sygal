@@ -61,11 +61,11 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $service->setTheseSearchService($theseSearchService);
         $service->setRapportActiviteService($rapportActiviteService);
 
-        $service->setEtablissementTheseSearchFilter(EtablissementSearchFilter::newInstance());
-        $service->setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter::newInstance());
-        $service->setUniteRechercheSearchFilter(UniteRechercheSearchFilter::newInstance());
-        $service->setEcoleDoctoraleSearchFilter(EcoleDoctoraleSearchFilter::newInstance());
-        $service->setAnneeRapportActiviteSearchFilter(AnneeRapportActiviteSearchFilter::newInstance());
+        $service->setEtablissementTheseSearchFilter(new EtablissementSearchFilter());
+        $service->setOrigineFinancementSearchFilter(new OrigineFinancementSearchFilter());
+        $service->setUniteRechercheSearchFilter(new UniteRechercheSearchFilter());
+        $service->setEcoleDoctoraleSearchFilter(new EcoleDoctoraleSearchFilter());
+        $service->setAnneeRapportActiviteSearchFilter(new AnneeRapportActiviteSearchFilter());
 
         /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
         $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);

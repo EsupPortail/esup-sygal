@@ -60,6 +60,13 @@ class PresoutenanceHDRController extends PresoutenanceController
     {
         $this->initializeFromType();
 
+        if ($this->proposition === null) {
+            $vm = new ViewModel();
+            $vm->setTemplate('soutenance/error/403');
+            $vm->setVariables(['message' => "Aucune proposition de soutenance n'a encore été créée. Veuillez-vous rendre dans un premier temps, sur l'onglet Proposition de soutenance."]);
+            return $vm;
+        }
+
         /** @var Membre[] $membres */
         $membres = $this->proposition->getMembres()->toArray();
         $acteursMembres = $this->acteurService->getRepository()->findActeursForSoutenanceMembres($membres);

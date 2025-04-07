@@ -2,21 +2,21 @@
 
 namespace Fichier\Service\NatureFichier;
 
-use Fichier\Entity\Db\NatureFichier;
 use Application\Service\BaseService;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\QueryException;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\Repository\NatureFichierRepository;
 use RuntimeException;
 
 class NatureFichierService extends BaseService
 {
-    /**
-     * @return EntityRepository
-     */
-    public function getRepository(): EntityRepository
+    public function getRepository(): NatureFichierRepository
     {
-        return $this->entityManager->getRepository(NatureFichier::class);
+        /** @var NatureFichierRepository $repo */
+        $repo = $this->entityManager->getRepository(NatureFichier::class);
+
+        return $repo;
     }
 
     /**
