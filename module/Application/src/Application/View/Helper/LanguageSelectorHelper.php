@@ -28,8 +28,7 @@ class LanguageSelectorHelper extends AbstractHelper
 
     public function render()
     {
-        $html = \Locale::getDefault();
-        return $html;
+        return \Locale::getDefault();
     }
 
 

@@ -10,9 +10,9 @@ use Webmozart\Assert\Assert;
 
 class ListeDiffusionAddressGenerator
 {
-    private const SEPARATOR = '.';
-    private const ECOLE_DOCTORALE_PREFIX = 'ED';
-    private const CODES_ROLES_ALIASES = [
+    private public const SEPARATOR = '.';
+    private public const ECOLE_DOCTORALE_PREFIX = 'ED';
+    private public const CODES_ROLES_ALIASES = [
         Role::CODE_DOCTORANT => 'doctorants',
         Role::CODE_DIRECTEUR_THESE => 'dirtheses',
     ];

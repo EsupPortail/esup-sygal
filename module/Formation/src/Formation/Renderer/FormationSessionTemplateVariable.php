@@ -3,6 +3,7 @@
 namespace Formation\Renderer;
 
 use DateTime;
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Application\Renderer\Template\Variable\AbstractTemplateVariable;
@@ -56,7 +57,7 @@ class FormationSessionTemplateVariable extends AbstractTemplateVariable
                     $texte .= $seance->getLieu();
                 }
             } else {
-                if ($this->session->getModalite() === Session::MODALITE_PRESENTIEL) {
+                if ($this->session->getModalite() === HasModaliteInterface::MODALITE_PRESENTIEL) {
                     $texte .= "<em> Lieu non renseigné </em>";
                 } else {
                     if($seance->getLien() !== null){

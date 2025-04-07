@@ -27,7 +27,7 @@ class DirectionFieldset extends Fieldset implements InputFilterProviderInterface
     use QualiteServiceAwareTrait;
     use StructureServiceAwareTrait;
 
-    const NBCODIR = 2;
+    public const NBCODIR = 2;
 
     private string $urlAutocompleteIndividu;
     private array $etablissementsInscription;

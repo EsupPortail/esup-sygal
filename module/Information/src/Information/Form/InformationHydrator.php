@@ -37,7 +37,7 @@ class InformationHydrator implements HydratorInterface
         $object->setTitre($data['titre']);
         $object->setContenu($data['contenu']);
         $object->setPriorite($data['priorite']);
-        $object->setVisible( ($data['visible'] == 1)?true:false);
+        $object->setVisible($data['visible'] == 1);
         $object->setLangue( $langue);
 
         return $object;

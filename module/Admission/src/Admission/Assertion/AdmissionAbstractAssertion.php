@@ -73,7 +73,7 @@ class AdmissionAbstractAssertion extends AbstractAssertion
                     $inscription->getDirecteur()->getId() === $individu->getId(),
                     $message
                 );
-            } else if (empty($inscription) || empty($inscription->getDirecteur())) {
+            } elseif (empty($inscription) || empty($inscription->getDirecteur())) {
                 return true;
             } else {
                 throw new FailedAssertionException($message);
@@ -117,7 +117,7 @@ class AdmissionAbstractAssertion extends AbstractAssertion
                     $inscription->getDirecteur()->getId() === $individuUtilisateur->getId(),
                     $message
                 );
-            } else if (empty($inscription) || empty($inscription->getDirecteur())) {
+            } elseif (empty($inscription) || empty($inscription->getDirecteur())) {
                 return true;
             } else {
                 throw new FailedAssertionException($message);
@@ -133,7 +133,7 @@ class AdmissionAbstractAssertion extends AbstractAssertion
             } else {
                 throw new FailedAssertionException($message);
             }
-        }else if($role->getCode() !== Role::CODE_ADMIN_TECH && $role->getCode() !== Role::CODE_BDD){
+        }elseif($role->getCode() !== Role::CODE_ADMIN_TECH && $role->getCode() !== Role::CODE_BDD){
             throw new FailedAssertionException("Vous ne pouvez pas accéder au module admission");
         }
     }

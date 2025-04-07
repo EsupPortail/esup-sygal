@@ -21,8 +21,7 @@ class CompletIndicateurStructureHelper extends AbstractHelper
             'Type'                  => 'type_structure_id',
         ];
 
-        $html  = '';
-        $html .= '<table class="table table-extra-condensed">';
+        $html = '<table class="table table-extra-condensed">';
             $html .= '<thead>';
             $html .= '<tr>';
             foreach ($rubriques as $clef => $valeur) {

@@ -14,7 +14,7 @@ use Webmozart\Assert\Assert;
  */
 class SelectSearchFilter extends SearchFilter
 {
-    const VALUE_NULL = 'NULL';
+    public const VALUE_NULL = 'NULL';
 
     /**
      * @var array|null

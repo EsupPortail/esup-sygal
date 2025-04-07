@@ -13,15 +13,15 @@ use UnicaenApp\Exception\LogicException;
  */
 class TheseSorter
 {
-    const NAME_titre = 'titre';
-    const NAME_etablissement = 'etablissement';
-    const NAME_etatThese = 'etatThese';
-    const NAME_numeroEtudiant = 'numeroEtudiant';
-    const NAME_doctorant = 'doctorant';
-    const NAME_ecoleDoctorale = 'ecoleDoctorale';
-    const NAME_uniteRecherche = 'uniteRecherche';
-    const NAME_datePremiereInscription = 'datePremiereInscription';
-    const NAME_dateSoutenance = 'dateSoutenance';
+    public const NAME_titre = 'titre';
+    public const NAME_etablissement = 'etablissement';
+    public const NAME_etatThese = 'etatThese';
+    public const NAME_numeroEtudiant = 'numeroEtudiant';
+    public const NAME_doctorant = 'doctorant';
+    public const NAME_ecoleDoctorale = 'ecoleDoctorale';
+    public const NAME_uniteRecherche = 'uniteRecherche';
+    public const NAME_datePremiereInscription = 'datePremiereInscription';
+    public const NAME_dateSoutenance = 'dateSoutenance';
 
     /**
      * @var string

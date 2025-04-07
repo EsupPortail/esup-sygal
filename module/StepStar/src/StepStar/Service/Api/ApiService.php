@@ -14,8 +14,8 @@ class ApiService
 {
     use SoapClientAwareTrait;
 
-    const OPERATION_KEY__DEPOSER = 'deposer';
-    const OPERATION_KEY__DEPOSER_AVEC_ZIP = 'deposer_avec_zip';
+    public const OPERATION_KEY__DEPOSER = 'deposer';
+    public const OPERATION_KEY__DEPOSER_AVEC_ZIP = 'deposer_avec_zip';
 
     /**
      * @var array

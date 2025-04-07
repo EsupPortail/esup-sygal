@@ -16,7 +16,7 @@ class SourceServiceFactory
      */
     public function __invoke(ContainerInterface $container): SourceService
     {
-        $service = new SourceService;
+        $service = new SourceService();
 
         $helper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($helper);

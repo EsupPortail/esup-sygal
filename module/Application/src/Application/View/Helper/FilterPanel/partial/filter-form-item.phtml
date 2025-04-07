@@ -28,7 +28,7 @@ use Application\View\Renderer\PhpRenderer;
         <?php
         $isActive =
             ($value !== '' && ((isset($queryParams[$paramName]) && $queryParams[$paramName] === $value))) ||
-            ($value === '' && (!isset($queryParams[$paramName]) || !isset($queryParams[$paramName]) || $queryParams[$paramName] === ''));
+            ($value === '' && (!isset($queryParams[$paramName]) || $queryParams[$paramName] === ''));
         ?>
         <?php if ($isActive): ?>
             <span class="badge bg-info"><?php echo $label ?></span>

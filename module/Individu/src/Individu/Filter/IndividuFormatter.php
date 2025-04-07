@@ -86,8 +86,7 @@ class IndividuFormatter extends AbstractFilter {
     private function doFormatUnorderedList($individus) {
         $individus = array_map([$this, 'htmlifyActeur'], $individus);
         $helper = new HtmlList();
-        $results = $helper($individus, $ordered = false, $attribs = false, $escape = false);
-        return $results;
+        return $helper($individus, $ordered = false, $attribs = false, $escape = false);
     }
 
     /** This function format an array of acteurs as Separated Values object
@@ -96,8 +95,7 @@ class IndividuFormatter extends AbstractFilter {
      */
     private function doFormatSeparated($individus) {
         $individus = array_map([$this, 'htmlifyActeur'], $individus);
-        $results = implode($this->separator, $individus);
-        return $results;
+        return implode($this->separator, $individus);
     }
 
     /**
@@ -130,8 +128,7 @@ class IndividuFormatter extends AbstractFilter {
      */
     public function htmlifyIndividu($individu)
     {
-        $str = (string) $individu;
-        return $str;
+        return (string) $individu;
     }
 
     /**

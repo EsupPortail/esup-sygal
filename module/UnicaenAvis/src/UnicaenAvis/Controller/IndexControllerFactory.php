@@ -14,8 +14,6 @@ class IndexControllerFactory
      */
     public function __invoke(ContainerInterface $container): IndexController
     {
-        $controller = new IndexController();
-
-        return $controller;
+        return new IndexController();
     }
 }

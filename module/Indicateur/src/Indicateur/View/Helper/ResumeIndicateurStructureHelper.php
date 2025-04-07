@@ -16,8 +16,7 @@ class ResumeIndicateurStructureHelper extends AbstractHelper
     {
         $url = $this->view->url('indicateur/view', ['indicateur' => $indicateur->getId()], [], true);
 
-        $html  = '';
-        $html .= '<div class="col-md-4">';
+        $html = '<div class="col-md-4">';
         $html .= '<div class="card card-'.$indicateur->getClass().'">';
             $html .= '<div class="card-header">';
                 $html .= '<span class="fas fa-home"></span> &nbsp; ';

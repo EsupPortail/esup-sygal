@@ -289,8 +289,7 @@ class PropositionService extends BaseService
         $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $object->getEtablissement());
         $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $object->getEtablissement());
 
-        $libelle  = "";
-        $libelle .= $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
+        $libelle = $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
         $libelle .= ", ";
         $libelle .= $ETB_LIB_TIT_RESP ? $ETB_LIB_TIT_RESP->getValeur() : "(Variable ETB_LIB_TIT_RESP introuvable)";
         $libelle .= " de ";

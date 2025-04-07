@@ -15,8 +15,7 @@ class DomaineHalService {
 
     public function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(DomaineHal::class)->createQueryBuilder('domaineHal');
-        return $qb;
+        return $this->getEntityManager()->getRepository(DomaineHal::class)->createQueryBuilder('domaineHal');
     }
 
     /**
@@ -45,8 +44,7 @@ class DomaineHalService {
     {
         $qb = $this->createQueryBuilder()
             ->orderBy('domaineHal.'. $champ, $ordre);
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**

@@ -45,7 +45,7 @@ class EtudiantHydrator extends DoctrineObject
         if($pays && $pays->getLibelle() === "France"){
             //on met à vide la ville étrangère potentielle
             $data["adresseCpVilleEtrangere"] = null;
-        }else if($pays && $pays->getLibelle() !== "France") {
+        }elseif($pays && $pays->getLibelle() !== "France") {
             $data["adresseCodePostal"] = null;
             $data["adresseCodeCommune"] = null;
             $data["adresseNomCommune"] = null;

@@ -41,7 +41,7 @@ class AdmissionFinancementTemplateVariable extends AbstractTemplateVariable
     {
         if ($this->financement->getTempsTravail() === 1) {
             return "temps complet";
-        } else if ($this->financement->getTempsTravail() === 2) {
+        } elseif ($this->financement->getTempsTravail() === 2) {
             return "temps partiel";
         } else {
             return "<b>Non renseigné</b>";
@@ -55,7 +55,7 @@ class AdmissionFinancementTemplateVariable extends AbstractTemplateVariable
     {
         if ($this->financement->getEstSalarie() === 1) {
             return "Oui";
-        } else if ($this->financement->getEstSalarie() === 0) {
+        } elseif ($this->financement->getEstSalarie() === 0) {
             return "Non";
         } else {
             return "<b>Non renseigné</b>";

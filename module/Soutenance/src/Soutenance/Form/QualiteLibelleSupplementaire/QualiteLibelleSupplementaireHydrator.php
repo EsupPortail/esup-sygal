@@ -13,11 +13,10 @@ class QualiteLibelleSupplementaireHydrator implements HydratorInterface {
      */
     public function extract($object): array
     {
-        $data = [
+        return [
             'qualite' => $object->getQualite()->getLibelle(),
             'libelle' => $object->getLibelle(),
         ];
-        return $data;
     }
 
     /**

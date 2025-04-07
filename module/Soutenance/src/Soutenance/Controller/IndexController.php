@@ -64,7 +64,7 @@ class IndexController extends AbstractSoutenanceController
 
     public function indexActeurAction()
     {
-        $this->initializeFromType(false, true);
+        $this->initializeFromType(false);
         /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
         $individu = $this->userContextService->getIdentityIndividu();
@@ -105,7 +105,7 @@ class IndexController extends AbstractSoutenanceController
 
     public function indexRapporteurAction()
     {
-        $this->initializeFromType(false, true);
+        $this->initializeFromType(false);
         $individu = $this->userContextService->getIdentityIndividu();
 
         if ($this->entity !== null) {

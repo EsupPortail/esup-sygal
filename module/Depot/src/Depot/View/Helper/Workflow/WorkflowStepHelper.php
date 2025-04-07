@@ -58,7 +58,7 @@ class WorkflowStepHelper extends AbstractHelper
      */
     public function isStepAtteignable()
     {
-        return $this->step ? (bool)$this->step->getAtteignable() : false;
+        return $this->step && $this->step->getAtteignable();
     }
 
     /**
@@ -107,6 +107,6 @@ EOS;
             $etape = $etape->getCode();
         }
 
-        return $this->step ? $this->step->getEtape()->getCode() === $etape : false;
+        return $this->step && $this->step->getEtape()->getCode() === $etape;
     }
 }

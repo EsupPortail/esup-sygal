@@ -12,8 +12,6 @@ class SearchControllerPluginFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $plugin = new SearchControllerPlugin();
-
-        return $plugin;
+        return new SearchControllerPlugin();
     }
 }

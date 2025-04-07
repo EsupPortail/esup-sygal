@@ -48,8 +48,8 @@ class JustificatifAssertion implements AssertionInterface {
         $entity = $resource;
         $proposition = $this->getPropositionService()->findOneForObject($entity);
         if($proposition instanceof PropositionThese){
-            $date_soutenance = ($entity->getDateSoutenance())?$entity->getDateSoutenance():$proposition->getDate();
-        }else if($proposition instanceof PropositionHDR){
+            $date_soutenance = ($entity->getDateSoutenance())?:$proposition->getDate();
+        }elseif($proposition instanceof PropositionHDR){
             $date_soutenance = $proposition->getDate();
         }
 

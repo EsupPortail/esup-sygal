@@ -26,11 +26,11 @@ class EnqueteReponseSearchService extends SearchService
 
     use EtablissementServiceAwareTrait;
 
-    const NAME_libelle = 'libelle';
-    const NAME_modalite = 'modalite';
-    const NAME_responsable = 'responsable';
-    const NAME_formateur = 'formateur';
-    const NAME_site = 'site';
+    public const NAME_libelle = 'libelle';
+    public const NAME_modalite = 'modalite';
+    public const NAME_responsable = 'responsable';
+    public const NAME_formateur = 'formateur';
+    public const NAME_site = 'site';
 
     protected SearchFilter $siteFilter;
     protected SearchFilter $libelleFilter;
@@ -71,7 +71,7 @@ class EnqueteReponseSearchService extends SearchService
         $this->modaliteFilter->setData(HasModaliteInterface::MODALITES);
     }
 
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         return $this->enqueteReponseRepository->createQueryBuilder('er')

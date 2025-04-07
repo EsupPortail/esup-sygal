@@ -11,7 +11,7 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  */
 class PresidentJuryPrivileges extends Privileges
 {
-    const PRESIDENT_GESTION           = 'gestion-president-gestion-president';
-    const PRESIDENT_MODIFIER_MAIL     = 'gestion-president-modifier-mail-president';
-    const PRESIDENT_NOTIFIER          = 'gestion-president-notifier-president';
+    public const PRESIDENT_GESTION           = 'gestion-president-gestion-president';
+    public const PRESIDENT_MODIFIER_MAIL     = 'gestion-president-modifier-mail-president';
+    public const PRESIDENT_NOTIFIER          = 'gestion-president-notifier-president';
 }

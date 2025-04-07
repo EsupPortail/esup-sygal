@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class OrigineFinancementSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'financement';
+    public const NAME = 'financement';
 
     private ?AnneeFinancementSearchFilter $anneeFinancementSearchFilter = null;
 

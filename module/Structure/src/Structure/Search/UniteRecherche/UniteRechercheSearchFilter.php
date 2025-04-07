@@ -11,7 +11,7 @@ use Structure\Entity\Db\UniteRecherche;
  */
 class UniteRechercheSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'uniteRecherche';
+    public const NAME = 'uniteRecherche';
 
     /**
      * @inheritDoc

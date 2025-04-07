@@ -36,7 +36,7 @@ class RechercherCoEncadrantForm extends Form
         ]);
         $coEncadrant
             ->setAutocompleteSource($this->urlCoEncadrant)
-            ->setSelectionRequired(true)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'co-encadrant',
                 'placeholder' => "Sélectionner un·e co-encadrant·e ... ",
@@ -46,7 +46,7 @@ class RechercherCoEncadrantForm extends Form
         $coEncadrant = new SearchAndSelect('etablissement', ['label' => "Établissement (laisser vide si établissement d'inscription) :"]);
         $coEncadrant
             ->setAutocompleteSource($this->urlEtablissement)
-            ->setSelectionRequired(true)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'etablissement',
                 'placeholder' => "Sélectionner un établissement ... ",

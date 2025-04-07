@@ -127,7 +127,7 @@ class TheseSaisieController extends AbstractController
                         }
                     }
                 }
-            } else if ($fieldset instanceof FieldsetInterface) {
+            } elseif ($fieldset instanceof FieldsetInterface) {
                 // Récupère les messages d'erreur de chaque élément du fieldset
                 foreach ($fieldset->getElements() as $element) {
                     $elementMessages = $element->getMessages();

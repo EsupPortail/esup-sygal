@@ -29,7 +29,7 @@ class ActeurTheseAssertion extends AbstractActeurAssertion
         }
 
         try {
-            $this->assertAppartenanceThese($this->acteur->getThese(), $this->userContextService);
+            $this->assertAppartenanceThese();
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
                 $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
@@ -59,7 +59,7 @@ class ActeurTheseAssertion extends AbstractActeurAssertion
             switch ($action) {
                 case 'modifier':
                     $this->assertEtatThese($this->entity);
-                    $this->assertAppartenanceThese($this->entity, $this->userContextService);
+                    $this->assertAppartenanceThese();
                     break;
             }
 
@@ -93,7 +93,7 @@ class ActeurTheseAssertion extends AbstractActeurAssertion
                 case ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES:
                     if($this->entity){
                         $this->assertEtatThese($this->entity);
-                        $this->assertAppartenanceThese($this->entity, $this->userContextService);
+                        $this->assertAppartenanceThese();
                     }
             }
 

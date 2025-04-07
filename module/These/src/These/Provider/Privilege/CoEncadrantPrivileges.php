@@ -11,6 +11,6 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  */
 class CoEncadrantPrivileges extends Privileges
 {
-    const COENCADRANT_AFFICHER          = 'co-encadrant-co-encadrant_afficher';
-    const COENCADRANT_GERER             = 'co-encadrant-co-encadrant_gerer';
+    public const COENCADRANT_AFFICHER = 'co-encadrant-co-encadrant_afficher';
+    public const COENCADRANT_GERER = 'co-encadrant-co-encadrant_gerer';
 }

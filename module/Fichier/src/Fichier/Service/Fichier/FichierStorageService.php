@@ -16,11 +16,11 @@ class FichierStorageService
 {
     use PageFichierIntrouvablePdfExporterTrait;
 
-    const TEMP_FILENAME_PREFIX = 'sygal_storage_service_';
+    public const TEMP_FILENAME_PREFIX = 'sygal_storage_service_';
 
-    const DIR_ETAB = 'Etab';
-    const DIR_ED = 'ED';
-    const DIR_UR = 'UR';
+    public const DIR_ETAB = 'Etab';
+    public const DIR_ED = 'ED';
+    public const DIR_UR = 'UR';
 
     private StorageAdapterInterface $storageAdapter;
 

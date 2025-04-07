@@ -31,18 +31,15 @@ class ModuleRepository extends EntityRepository
 
     public function createQB() : QueryBuilder
     {
-        $qb = $this->createQueryBuilder('module')
+        return $this->createQueryBuilder('module')
             ->leftjoin('module.formations', 'formation')->addSelect('formation');
-
-        return $qb;
     }
 
     public function getModules(string $champ = "libelle", $ordre='ASC')
     {
         $qb = $this->createQB()
             ->orderBy("module.".$champ, $ordre);
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function getModulesCatalogue(?\DateTime $debut = null, ?\DateTime $fin = null, bool $verifDatePublication = false)
@@ -69,7 +66,6 @@ class ModuleRepository extends EntityRepository
                 ->setParameter('currentDate', new \DateTime());
         }
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

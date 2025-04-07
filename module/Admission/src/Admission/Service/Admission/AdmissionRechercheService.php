@@ -39,10 +39,10 @@ class AdmissionRechercheService extends SearchService
     use EcoleDoctoraleServiceAwareTrait;
     use StructureServiceAwareTrait;
 
-    const NAME_etatAdmission = 'etat';
+    public const NAME_etatAdmission = 'etat';
 
-    const SORTER_NAME_titre = 'titreThese';
-    const SORTER_NAME_individu = 'individu';
+    public const SORTER_NAME_titre = 'titreThese';
+    public const SORTER_NAME_individu = 'individu';
 
     /**
      * @var Role|null
@@ -231,13 +231,13 @@ class AdmissionRechercheService extends SearchService
     private function fetchEcolesDoctorales(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.sigle', true, true);
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.sigle');
     }
 
     private function fetchUnitesRecherches(): array
     {
         return $this->structureService->findAllStructuresAffichablesByType(
-            TypeStructure::CODE_UNITE_RECHERCHE, 'structure.code', true, true);
+            TypeStructure::CODE_UNITE_RECHERCHE, 'structure.code');
     }
 
     /**

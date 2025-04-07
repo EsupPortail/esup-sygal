@@ -10,12 +10,12 @@ class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
 {
     use HistoriqueAwareTrait;
 
-    const EN_COURS_SAISIE = 'EN_COURS_SAISIE';
-    const EN_COURS_EXAMEN = 'EN_COURS_EXAMEN';
-    const ETABLISSEMENT = 'ETABLISSEMENT';
-    const VALIDEE = 'VALIDEE';
-    const REJETEE = 'REJETEE';
-    const COMPLET = 'COMPLET';
+    public const EN_COURS_SAISIE = 'EN_COURS_SAISIE';
+    public const EN_COURS_EXAMEN = 'EN_COURS_EXAMEN';
+    public const ETABLISSEMENT = 'ETABLISSEMENT';
+    public const VALIDEE = 'VALIDEE';
+    public const REJETEE = 'REJETEE';
+    public const COMPLET = 'COMPLET';
 
     /** @var integer */
     private $id;

@@ -160,8 +160,7 @@ class MembreService
     public function getRequestedMembre(AbstractActionController $controller, string  $paramName = 'membre') : ?Membre
     {
         $id = $controller->params()->fromRoute($paramName);
-        $membre = $this->find($id);
-        return $membre;
+        return $this->find($id);
     }
 
     /**
@@ -179,8 +178,7 @@ class MembreService
             ->setParameter('rapporteurAbsent', Membre::RAPPORTEUR_ABSENT)
         ;
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
 
@@ -213,8 +211,7 @@ class MembreService
             ->setParameter('date', $date)
         ;
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -366,7 +363,6 @@ class MembreService
         $token = $this->retrieveToken($membre);
         if ($token !== null) return $token;
 
-        $token = $this->createToken($membre);
-        return $token;
+        return $this->createToken($membre);
     }
 }

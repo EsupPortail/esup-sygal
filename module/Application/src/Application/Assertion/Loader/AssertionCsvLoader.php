@@ -7,10 +7,10 @@ use UnicaenApp\Exception\LogicException;
 
 class AssertionCsvLoader
 {
-    const SEPARATOR = ';';
-    const COLUMN_FOR_LINE = 0;
-    const COLUMN_FOR_ENABLED = 1;
-    const COLUMN_FOR_PRIVILEGE = 2;
+    public const SEPARATOR = ';';
+    public const COLUMN_FOR_LINE = 0;
+    public const COLUMN_FOR_ENABLED = 1;
+    public const COLUMN_FOR_PRIVILEGE = 2;
 
     private string $ruleFilePath;
     private bool $loaded = false;
@@ -126,7 +126,7 @@ class AssertionCsvLoader
                 $tests = [];
                 foreach ($tmp as $item) {
                     $testName = $item['test'];
-                    $negativeTest = $item['value'] ? false : true;
+                    $negativeTest = !$item['value'];
                     $testNumber = $item['number'];
                     $tests[$testName] = ['negative' => $negativeTest, 'number' => $testNumber];
                 }

@@ -261,8 +261,8 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             return null;
         }
 
-        $dateProchaineNotif->setTime(0, 0, 0);
-        $now = (new \DateTime())->setTime(0, 0, 0);
+        $dateProchaineNotif->setTime(0, 0);
+        $now = (new \DateTime())->setTime(0, 0);
 
         if ($now != $dateProchaineNotif) {
             return null;

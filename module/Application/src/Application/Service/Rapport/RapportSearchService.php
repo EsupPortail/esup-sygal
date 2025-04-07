@@ -40,11 +40,11 @@ class RapportSearchService extends SearchService
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;
 
-    const NAME_nom_doctorant = 'nom_doctorant';
-    const NAME_nom_directeur = 'nom_directeur';
-    const NAME_type = 'type';
-    const NAME_validation = 'est_valide';
-    const NAME_avis = 'avis';
+    public const NAME_nom_doctorant = 'nom_doctorant';
+    public const NAME_nom_directeur = 'nom_directeur';
+    public const NAME_type = 'type';
+    public const NAME_validation = 'est_valide';
+    public const NAME_avis = 'avis';
 
     /**
      * @var EtablissementSearchFilter
@@ -173,9 +173,7 @@ class RapportSearchService extends SearchService
     {
         $annees = $this->rapportService->findDistinctAnnees($this->typeRapport);
         $annees = array_reverse(array_filter($annees));
-        $annees = array_combine($annees, $annees);
-
-        return $annees;
+        return array_combine($annees, $annees);
     }
 
     /**
@@ -298,7 +296,7 @@ class RapportSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->rapportService->getRepository()->createQueryBuilder('ra')
             ->addSelect('tr, these, etab, ed, ur, f, d, i')

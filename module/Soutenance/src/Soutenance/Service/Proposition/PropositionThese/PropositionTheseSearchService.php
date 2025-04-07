@@ -33,7 +33,7 @@ class PropositionTheseSearchService extends SearchService
     use UniteRechercheSearchFilterAwareTrait;
     use EcoleDoctoraleSearchFilterAwareTrait;
 
-    const NAME_ETAT = 'etat';
+    public const NAME_ETAT = 'etat';
 
     /**
      * @inheritDoc

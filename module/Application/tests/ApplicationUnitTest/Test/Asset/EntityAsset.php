@@ -32,7 +32,7 @@ use Fichier\Entity\Db\VersionFichier;
  */
 class EntityAsset
 {
-    const SOURCE_TEST = 'Test';
+    public const SOURCE_TEST = 'Test';
 
     static public function newUtilisateur()
     {

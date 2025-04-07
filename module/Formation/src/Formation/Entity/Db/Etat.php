@@ -4,12 +4,12 @@ namespace Formation\Entity\Db;
 
 class Etat {
 
-    const CODE_PREPARATION = 'P';
-    const CODE_OUVERTE = 'O';
-    const CODE_FERME = 'F';
-    const CODE_CLOTURER = 'C';
-    const CODE_ANNULEE = 'A';
-    const CODE_IMMINENT = 'I';
+    public const CODE_PREPARATION = 'P';
+    public const CODE_OUVERTE = 'O';
+    public const CODE_FERME = 'F';
+    public const CODE_CLOTURER = 'C';
+    public const CODE_ANNULEE = 'A';
+    public const CODE_IMMINENT = 'I';
 
     private ?string $code = null;
     private ?string $libelle = null;

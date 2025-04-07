@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class EtatTheseSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'etatThese';
+    public const NAME = 'etatThese';
 
     /**
      * @inheritDoc

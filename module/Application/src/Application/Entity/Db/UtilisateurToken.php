@@ -12,7 +12,7 @@ use UnicaenAuthToken\Entity\Db\AbstractUserToken;
  */
 class UtilisateurToken extends AbstractUserToken
 {
-    const RESOURCE_ID = AbstractUserToken::RESOURCE_ID; // ne pas modifier !!
+    public const RESOURCE_ID = AbstractUserToken::RESOURCE_ID; // ne pas modifier !!
 
     /**
      * @var \Application\Entity\Db\Utilisateur

@@ -111,10 +111,8 @@ class QualiteService extends BaseService
      */
     public function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getRepository()->createQueryBuilder("qualite")
+        return $this->getRepository()->createQueryBuilder("qualite")
             ->addSelect('libelleSupplementaire')->leftJoin('qualite.libellesSupplementaires', 'libelleSupplementaire');
-
-        return $qb;
     }
 
     /**

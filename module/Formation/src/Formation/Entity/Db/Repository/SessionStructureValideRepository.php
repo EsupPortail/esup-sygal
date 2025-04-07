@@ -59,7 +59,6 @@ class SessionStructureValideRepository extends EntityRepository
     public function getRequestedSessionStructureValide(AbstractActionController $controller, string $param = 'structure-complementaire') : ?SessionStructureValide
     {
         $id = $controller->params()->fromRoute($param);
-        $result = $this->getSessionStructureValide($id);
-        return $result;
+        return $this->getSessionStructureValide($id);
     }
 }

@@ -17,9 +17,9 @@ class FichierHDR implements ResourceInterface, HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const RESOURCE_ID = 'FichierHDR';
+    public const RESOURCE_ID = 'FichierHDR';
 
-    const MESSAGE_DEPOT_DUREE = "L'opération de téléversement de fichier peut durer quelques minutes.";
+    public const MESSAGE_DEPOT_DUREE = "L'opération de téléversement de fichier peut durer quelques minutes.";
 
     /**
      * @var string

@@ -214,7 +214,7 @@ class AdmissionAssertion extends AdmissionAbstractAssertion implements UserConte
                 (int)$id === $individu->getId(),
                 "Le dossier d'admission n'appartient pas à l'individu " . $individu
             );
-        }else if($role->getRoleId() === Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE || $roleDirecteurThese || $role->getCode() === Role::CODE_ADMIN_TECH){
+        }elseif($role->getRoleId() === Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE || $roleDirecteurThese || $role->getCode() === Role::CODE_ADMIN_TECH){
             return;
         }else{
             throw new FailedAssertionException("Vous n'avez pas les droits pour initialiser un dossier d'admission");

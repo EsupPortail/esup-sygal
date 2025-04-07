@@ -33,12 +33,10 @@ class InscriptionRepository extends EntityRepository
      */
     public function createQB(string $alias) : QueryBuilder
     {
-        $qb = $this->createQueryBuilder($alias)
+        return $this->createQueryBuilder($alias)
             ->join($alias.".session", "session")->addSelect("session")
             ->join("session.formation", "formation")->addSelect("formation")
-            ->join($alias.".doctorant", "doctorant")->addSelect("doctorant")
-        ;
-        return $qb;
+            ->join($alias.".doctorant", "doctorant")->addSelect("doctorant");
     }
 
     /**
@@ -70,8 +68,7 @@ class InscriptionRepository extends EntityRepository
             }
         }
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -100,7 +97,6 @@ class InscriptionRepository extends EntityRepository
             ->setParameter('session', $session)
             ->andWhere('inscription.histoDestruction IS NULL')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

@@ -25,8 +25,7 @@ class CompletIndicateurIndividuHelper extends AbstractHelper
             'Email'                 => 'email',
         ];
 
-        $html  = '';
-        $html .= '<table class="table table-extra-condensed">';
+        $html = '<table class="table table-extra-condensed">';
         $html .= '<thead>';
         $html .= '<tr>';
         foreach ($rubriques as $clef => $valeur) {

@@ -52,6 +52,6 @@ class UniteRechercheHelper extends AbstractHelper
      */
     public function render($value = null)
     {
-        return $this->format((string) ($value ? $value : $this->value));
+        return $this->format((string) ($value ?: $this->value));
     }
 }

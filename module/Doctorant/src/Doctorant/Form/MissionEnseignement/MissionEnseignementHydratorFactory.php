@@ -8,7 +8,6 @@ class MissionEnseignementHydratorFactory {
 
     public function __invoke(ContainerInterface $container) : MissionEnseignementHydrator
     {
-        $hydrator = new MissionEnseignementHydrator();
-        return $hydrator;
+        return new MissionEnseignementHydrator();
     }
 }

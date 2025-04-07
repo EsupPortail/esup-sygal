@@ -118,12 +118,10 @@ class FichierTheseController extends AbstractController
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);
 
-        $vm = new ViewModel([
+        return new ViewModel([
             'fichiers' => $paginator,
             'urlFichierThese' => $this->urlFichierThese(),
         ]);
-
-        return $vm;
     }
 
     /**
@@ -233,7 +231,7 @@ class FichierTheseController extends AbstractController
                 $versionASupprimer = $version->estVersionCorrigee() ?
                     VersionFichier::CODE_ARCHI_CORR :
                     VersionFichier::CODE_ARCHI;
-                $fichierTheses = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null, $versionASupprimer, null) ;
+                $fichierTheses = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, null, $versionASupprimer) ;
                 if (! empty($fichierTheses)) {
                     $this->fichierTheseService->deleteFichiers($fichierTheses, $these);
                 }

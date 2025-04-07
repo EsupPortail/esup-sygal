@@ -12,13 +12,13 @@ use Acteur\Entity\Db\ActeurThese;
 
 class ModuleConfig
 {
-    const VALIDATION_DOCTORANT = 'VALIDATION_DOCTORANT';
-    const AVIS_GEST = 'AVIS_GEST';
-    const AVIS_DIR_THESE = 'AVIS_DIR_THESE';
-    const AVIS_CODIR_THESE = 'AVIS_CODIR_THESE';
-    const AVIS_DIR_UR = 'AVIS_DIR_UR';
-    const AVIS_DIR_ED = 'AVIS_DIR_ED';
-    const VALIDATION_AUTO = 'VALIDATION_AUTO';
+    public const VALIDATION_DOCTORANT = 'VALIDATION_DOCTORANT';
+    public const AVIS_GEST = 'AVIS_GEST';
+    public const AVIS_DIR_THESE = 'AVIS_DIR_THESE';
+    public const AVIS_CODIR_THESE = 'AVIS_CODIR_THESE';
+    public const AVIS_DIR_UR = 'AVIS_DIR_UR';
+    public const AVIS_DIR_ED = 'AVIS_DIR_ED';
+    public const VALIDATION_AUTO = 'VALIDATION_AUTO';
 
     /**
      * Config de l'enchaînement des opérations (validations ou avis) attendus.

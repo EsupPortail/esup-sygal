@@ -9,10 +9,10 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  */
 class IndicateurPrivileges extends Privileges
 {
-    const INDICATEUR_CONSULTATION                  = 'indicateur-consultation';
-    const INDICATEUR_EXPORTATION                   = 'indicateur-exportation';
-    const INDICATEUR_RAFRAICHISSEMENT              = 'indicateur-rafraichissement';
-    const INDICATEUR_EDITION                       = 'indicateur-edition';
-    const INDICATEUR_STATISTIQUE                   = 'indicateur-consultation-statistique';
+    public const INDICATEUR_CONSULTATION                  = 'indicateur-consultation';
+    public const INDICATEUR_EXPORTATION                   = 'indicateur-exportation';
+    public const INDICATEUR_RAFRAICHISSEMENT              = 'indicateur-rafraichissement';
+    public const INDICATEUR_EDITION                       = 'indicateur-edition';
+    public const INDICATEUR_STATISTIQUE                   = 'indicateur-consultation-statistique';
 
 }

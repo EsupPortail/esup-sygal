@@ -63,9 +63,7 @@ class DirectionHydrator extends AbstractHydrator
         }
 
         $prefixe = 'garant-';
-        $dataActeur = $this->extractActeur($garant, $prefixe);
-
-        return $dataActeur;
+        return $this->extractActeur($garant, $prefixe);
     }
 
     private function hydrateGarant(array $data, HDR $hdr)

@@ -16,11 +16,11 @@ class TitreAcces implements HistoriqueAwareInterface
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
-    const CODE_ACCES_INTERNE = "I";
-    const CODE_ACCES_EXTERNE = "E";
+    public const CODE_ACCES_INTERNE = "I";
+    public const CODE_ACCES_EXTERNE = "E";
 
-    const LIBELLE_ACCES_INTERNE = "Interne";
-    const LIBELLE_ACCES_EXTERNE = "Externe";
+    public const LIBELLE_ACCES_INTERNE = "Interne";
+    public const LIBELLE_ACCES_EXTERNE = "Externe";
 
     /**
      * @var integer

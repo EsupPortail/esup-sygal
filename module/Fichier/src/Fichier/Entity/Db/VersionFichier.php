@@ -17,12 +17,12 @@ class VersionFichier
      * - 'VAC' = Version d'archivage corrigée, destinée à être déposée sur la plateforme STAR
      * - 'VDC' = Version de diffusion corrigée, expurgée des contenus confidentiels notamment
      */
-    const CODE_ORIG         = 'VO';
-    const CODE_ARCHI        = 'VA';
-    const CODE_DIFF         = 'VD';
-    const CODE_ORIG_CORR    = 'VOC';
-    const CODE_ARCHI_CORR   = 'VAC';
-    const CODE_DIFF_CORR    = 'VDC';
+    public const CODE_ORIG         = 'VO';
+    public const CODE_ARCHI        = 'VA';
+    public const CODE_DIFF         = 'VD';
+    public const CODE_ORIG_CORR    = 'VOC';
+    public const CODE_ARCHI_CORR   = 'VAC';
+    public const CODE_DIFF_CORR    = 'VDC';
 
     /**
      * @var string

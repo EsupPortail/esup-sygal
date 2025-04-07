@@ -10,9 +10,9 @@ class Qualite implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const ID_QUALITE_PAR_DEFAUT = 1;
+    public const ID_QUALITE_PAR_DEFAUT = 1;
 
-    const RANG_LIBELLE_AUCUN = "Aucun";
+    public const RANG_LIBELLE_AUCUN = "Aucun";
 
     /** @var int */
     private $id;

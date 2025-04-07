@@ -4,9 +4,9 @@ namespace Indicateur\Model;
 
 class Indicateur {
 
-    const THESE = 'THESE';
-    const INDIVIDU = 'INDIVIDU';
-    const STRUCTURE = 'STRUCTURE';
+    public const THESE = 'THESE';
+    public const INDIVIDU = 'INDIVIDU';
+    public const STRUCTURE = 'STRUCTURE';
 
     /** @var int */
     private $id;

@@ -269,7 +269,7 @@ class FichierTheseService extends BaseService
         $fichierTheseRetraite
             ->setFichier($fichier)
             ->setThese($these)
-            ->setEstPartiel(true);
+            ->setEstPartiel();
 
         $fichierTheseRetraite->setRetraitement(FichierThese::RETRAITEMENT_AUTO);
 

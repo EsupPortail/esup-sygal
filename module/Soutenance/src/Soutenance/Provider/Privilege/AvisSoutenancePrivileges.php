@@ -7,8 +7,8 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
 class AvisSoutenancePrivileges extends Privileges
 {
     // PROPOSITION ET VALIDATION DE LA PROPOSITION ---------------------------------------------------------------------
-    const AVIS_VISUALISER                      = 'soutenance-avis-visualisation';
-    const AVIS_MODIFIER                        = 'soutenance-avis-modification';
-    const AVIS_ANNULER                         = 'soutenance-avis-annuler';
-    const AVIS_NOTIFIER                        = 'soutenance-avis-notifier';
+    public const AVIS_VISUALISER = 'soutenance-avis-visualisation';
+    public const AVIS_MODIFIER = 'soutenance-avis-modification';
+    public const AVIS_ANNULER = 'soutenance-avis-annuler';
+    public const AVIS_NOTIFIER = 'soutenance-avis-notifier';
 }

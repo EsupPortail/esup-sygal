@@ -14,12 +14,11 @@ class EnqueteCategorieHydrator implements HydratorInterface {
      */
     public function extract(object $object) : array
     {
-        $data = [
+        return [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
             'ordre' => $object->getOrdre(),
         ];
-        return $data;
     }
 
     /**

@@ -29,7 +29,7 @@ class ActeurHDRAssertion extends AbstractActeurAssertion
         }
 
         try {
-            $this->assertAppartenanceHDR($this->acteur->getHDR(), $this->userContextService);
+            $this->assertAppartenanceHDR();
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
                 $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
@@ -59,7 +59,7 @@ class ActeurHDRAssertion extends AbstractActeurAssertion
             switch ($action) {
                 case 'modifier':
                     $this->assertEtatHDR($this->entity);
-                    $this->assertAppartenanceHDR($this->entity, $this->userContextService);
+                    $this->assertAppartenanceHDR();
                     break;
             }
 
@@ -93,7 +93,7 @@ class ActeurHDRAssertion extends AbstractActeurAssertion
                 case ActeurPrivileges::MODIFIER_ACTEUR_TOUTES_THESES:
                     if($this->entity){
                         $this->assertEtatHDR($this->entity);
-                        $this->assertAppartenanceHDR($this->entity, $this->userContextService);
+                        $this->assertAppartenanceHDR();
                     }
             }
 

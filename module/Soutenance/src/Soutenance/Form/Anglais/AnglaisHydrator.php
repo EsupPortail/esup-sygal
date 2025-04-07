@@ -26,11 +26,9 @@ class AnglaisHydrator implements HydratorInterface
      */
     public function extract($proposition): array {
 
-        $data = [
+        return [
 //            'manuscrit' => $proposition->isManuscritAnglais(),
             'soutenance' => $proposition->isSoutenanceAnglais(),
         ];
-
-        return $data;
     }
 }

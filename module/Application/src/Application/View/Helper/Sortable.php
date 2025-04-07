@@ -14,8 +14,8 @@ use Laminas\View\Helper\AbstractHelper;
  */
 class Sortable extends AbstractHelper
 {
-    const ASC  = 'asc';
-    const DESC = 'desc';
+    public const ASC  = 'asc';
+    public const DESC = 'desc';
 
     /**
      * @var Http

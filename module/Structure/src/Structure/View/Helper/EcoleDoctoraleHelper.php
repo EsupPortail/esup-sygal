@@ -23,14 +23,14 @@ class EcoleDoctoraleHelper extends AbstractHelper
      * @param EcoleDoctorale $value
      * @return $this
      */
-    function __invoke($value = null)
+    public function __invoke($value = null)
     {
         $this->value = $value;
 
         return $this;
     }
 
-    function __call($name, $arguments)
+    public function __call($name, $arguments)
     {
         $attr = call_user_func_array([$this->value, $name], $arguments);
 
@@ -52,6 +52,6 @@ class EcoleDoctoraleHelper extends AbstractHelper
      */
     public function render($value = null)
     {
-        return $this->format((string) ($value ? $value : $this->value));
+        return $this->format((string)($value ?: $this->value));
     }
 }

@@ -23,12 +23,11 @@ class JusticatifHydrator implements HydratorInterface {
      */
     public function extract($object): array
     {
-        $data  = [
+        return [
             'nature' => ($object && $object->getFichier() &&  $object->getFichier()->getFichier()->getNature())? $object->getFichier()->getFichier()->getNature()->getCode(): null,
             'membre' => ($object && $object->getMembre())? $object->getMembre()->getId(): null,
 //            'fichier' => null,
         ];
-        return $data;
     }
 
     /**

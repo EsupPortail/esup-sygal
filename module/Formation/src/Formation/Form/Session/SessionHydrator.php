@@ -23,7 +23,7 @@ class SessionHydrator implements HydratorInterface {
      */
     public function extract(object $object) : array
     {
-        $data = [
+        return [
             'libelle' => $object->getFormation()->getLibelle(),
             'description' => $object->getDescription(),
             'site' => ($object->getSite())?$object->getSite()->getId():null,
@@ -36,7 +36,6 @@ class SessionHydrator implements HydratorInterface {
             'date_fermeture_inscription' => $object->getDateClotureInscription(),
             'date_publication' => $object->getDatePublication(),
         ];
-        return $data;
     }
 
     /**

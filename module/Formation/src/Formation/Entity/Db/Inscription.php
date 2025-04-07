@@ -18,9 +18,9 @@ class Inscription implements HistoriqueAwareInterface, ResourceInterface {
     }
 
 
-    const LISTE_PRINCIPALE = 'P';
-    const LISTE_COMPLEMENTAIRE = 'C';
-    const LISTES = [
+    public const LISTE_PRINCIPALE = 'P';
+    public const LISTE_COMPLEMENTAIRE = 'C';
+    public const LISTES = [
         self::LISTE_PRINCIPALE => "Principale",
         self::LISTE_COMPLEMENTAIRE => "Complémentaire",
     ];

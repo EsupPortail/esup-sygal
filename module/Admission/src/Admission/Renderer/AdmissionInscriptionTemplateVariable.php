@@ -105,10 +105,9 @@ class AdmissionInscriptionTemplateVariable extends AbstractTemplateVariable
             return "<b>Non renseigné</b>";
         }else{
             if($this->inscription->getCoDirection()) {
-                $coDirecteur = $this->inscription->getCoDirecteur() ?
+                return $this->inscription->getCoDirecteur() ?
                     $this->inscription->getCoDirecteur()->getCivilite() . " " . $this->inscription->getCoDirecteur()->getNomComplet() :
                     $this->inscription->getNomCodirecteurThese() . " " . $this->inscription->getPrenomCodirecteurThese();
-                return $coDirecteur;
             }else{
                 return "Non";
             }

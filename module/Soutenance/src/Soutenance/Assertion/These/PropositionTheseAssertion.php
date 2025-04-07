@@ -69,7 +69,7 @@ class PropositionTheseAssertion implements  AssertionInterface {
     public function computeValeur(RoleInterface $role = null, ?PropositionThese $proposition = null, $privilege = null) : bool
     {
         $these = $proposition->getThese();
-        $sursis = ($proposition)?$proposition->hasSursis():false;
+        $sursis = $proposition && $proposition->hasSursis();
         $dateValidationMax = ($proposition->getDate())?DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M')):null;
         $dateCurrent = new DateTime();
 
@@ -119,10 +119,10 @@ class PropositionTheseAssertion implements  AssertionInterface {
                         return $doctorant->getId() === $individu->getId();
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
-                        return (array_search($individu, $directeurs) !== false);
+                        return (in_array($individu, $directeurs));
                     case Role::CODE_RAPPORTEUR_JURY :
                     case Role::CODE_RAPPORTEUR_ABSENT :
-                        return (array_search($individu, $rapporteurs) !== false);
+                        return (in_array($individu, $rapporteurs));
                     default:
                         return false;
                 }
@@ -138,7 +138,7 @@ class PropositionTheseAssertion implements  AssertionInterface {
                         return $doctorant->getId() === $individu->getId();
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
-                        return (array_search($individu, $directeurs) !== false);
+                        return (in_array($individu, $directeurs));
                     default:
                         return false;
                 }
@@ -171,7 +171,7 @@ class PropositionTheseAssertion implements  AssertionInterface {
                         return ($isDoctorant AND $dateOk);
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
-                        $isDirecteur = (array_search($individu, $directeurs) !== false);
+                        $isDirecteur = (in_array($individu, $directeurs));
                         $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
                         foreach ($validations_ACTEUR as $validation) {
                             if($validation->getIndividu()->getId() === $individu->getId()) return false;

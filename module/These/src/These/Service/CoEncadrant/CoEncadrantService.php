@@ -40,8 +40,7 @@ class CoEncadrantService
         $qb = $this->createQueryBuilder()
             ->andWhere("LOWER(concat(concat(concat(concat(individu.prenom1, ' '),individu.nomUsuel), ' '), individu.prenom1)) like :term")
             ->setParameter('term', '%' . strtolower($term) . '%');
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function getCoEncadrant(?int $id): ?ActeurThese
@@ -62,8 +61,7 @@ class CoEncadrantService
     public function getRequestedCoEncadrant(AbstractActionController $controller, string $param = 'co-encadrant'): ?ActeurThese
     {
         $id = $controller->params()->fromRoute($param);
-        $result = $this->getCoEncadrant($id);
-        return $result;
+        return $this->getCoEncadrant($id);
     }
 
     public function findCoEncadrantsByStructureConcrete(StructureConcreteInterface $structureConcrete, bool $encours = true): array

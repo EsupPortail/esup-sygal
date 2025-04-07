@@ -85,7 +85,7 @@ class RolesUtilisateurFormatter extends AbstractFilter
             $roles = array_filter($roles, function (Role $r) use ($roleId) {
                 return $roleId === $r->getRoleId();
             });
-        };
+        }
 
         if (count($roles) === 0) {
             return '';

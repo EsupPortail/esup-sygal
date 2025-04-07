@@ -14,7 +14,6 @@ class TransmissionServiceFactory {
      */
     public function __invoke(ContainerInterface $container): TransmissionService
     {
-        $service = new TransmissionService();
-        return $service;
+        return new TransmissionService();
     }
 }

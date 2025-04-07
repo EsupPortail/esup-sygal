@@ -19,8 +19,8 @@ class AdmissionValidationService extends BaseService
     use UserContextServiceAwareTrait;
     use EventManagerAwareTrait;
 
-    const ADMISSION__VALIDATION_AJOUTE__EVENT = 'ADMISSION__VALIDATION_AJOUTE__EVENT';
-    const ADMISSION__VALIDATION_SUPPRIME__EVENT = 'ADMISSION__VALIDATION_SUPPRIME__EVENT';
+    public const ADMISSION__VALIDATION_AJOUTE__EVENT = 'ADMISSION__VALIDATION_AJOUTE__EVENT';
+    public const ADMISSION__VALIDATION_SUPPRIME__EVENT = 'ADMISSION__VALIDATION_SUPPRIME__EVENT';
 
     /**
      * @return AdmissionValidationRepository

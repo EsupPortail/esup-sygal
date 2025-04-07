@@ -14,9 +14,7 @@ class ComposanteEnseignementRepository extends DefaultEntityRepository
 
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
-        $qb = $this->_createQueryBuilder($alias);
-
-        return $qb;
+        return $this->_createQueryBuilder($alias);
     }
 
     /**

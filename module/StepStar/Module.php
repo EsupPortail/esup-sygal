@@ -9,10 +9,10 @@ use StepStar\Controller\Envoi\EnvoiConsoleController;
 class Module
 {
     // Nom du module
-    const NAME = __NAMESPACE__;
-    const STEP_STAR__CONSOLE_ROUTE__ENVOYER_FICHIERS = 'step-star:envoyer-fichiers';
-    const STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES = 'step-star:envoyer-theses';
-    const STEP_STAR__CONSOLE_ROUTE__GENERER_THESES = 'step-star:generer-theses';
+    public const NAME = __NAMESPACE__;
+    public const STEP_STAR__CONSOLE_ROUTE__ENVOYER_FICHIERS = 'step-star:envoyer-fichiers';
+    public const STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES = 'step-star:envoyer-theses';
+    public const STEP_STAR__CONSOLE_ROUTE__GENERER_THESES = 'step-star:generer-theses';
 
     public function getConfig()
     {

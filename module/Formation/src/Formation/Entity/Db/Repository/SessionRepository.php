@@ -112,8 +112,7 @@ class SessionRepository extends DefaultEntityRepository
                 ->setParameter('currentDate', new \DateTime());
         }
 
-        $result =  $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**

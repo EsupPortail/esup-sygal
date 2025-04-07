@@ -134,8 +134,8 @@ use These\Fieldset\Direction\DirectionFieldset;
 
 <script>
     $(function() {
-        const updateCodirecteurDiv = function($enabler) {
-            const codirId = $enabler.data('codirecteur-id');
+        public const updateCodirecteurDiv = function($enabler) {
+            public const codirId = $enabler.data('codirecteur-id');
             if ($enabler.is(':checked')) {
                 $("div.codirecteur" + codirId).show();
                 if (codirId === 1) {

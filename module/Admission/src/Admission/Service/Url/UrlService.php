@@ -23,9 +23,7 @@ class UrlService extends \Application\Service\Url\UrlService
             $individu = $admission->getAdmission()->getIndividu();
         }
         $link = $this->fromRoute('admission/ajouter', ['action' => 'etudiant', 'individu' => $individu->getId()], ['force_canonical' => true, 'query' => ['refresh' => 'true']], true);
-        $url = "<a href='" . $link . "'>lien</a>";
-
-        return $url;
+        return "<a href='" . $link . "'>lien</a>";
     }
 
     /**
@@ -35,8 +33,6 @@ class UrlService extends \Application\Service\Url\UrlService
     public function getAccueilAdmission() : string
     {
         $link = $this->fromRoute('admission', ['action' => 'index'], ['force_canonical' => true], true);
-        $url = "<a href='" . $link . "'>lien</a>";
-
-        return $url;
+        return "<a href='" . $link . "'>lien</a>";
     }
 }

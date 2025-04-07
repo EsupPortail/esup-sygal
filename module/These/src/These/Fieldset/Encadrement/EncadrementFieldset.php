@@ -10,7 +10,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 class EncadrementFieldset extends Fieldset implements InputFilterProviderInterface
 {
 
-    const NB_COENCADRANTS_MAXI = 3;
+    public const NB_COENCADRANTS_MAXI = 3;
 
     private string $urlCoEncadrant;
 
@@ -31,7 +31,7 @@ class EncadrementFieldset extends Fieldset implements InputFilterProviderInterfa
             $coEncadrant = new SearchAndSelect('coencadrant' . $i . '-individu', ['label' => "Coencadrant·e :"]);
             $coEncadrant
                 ->setAutocompleteSource($this->urlCoEncadrant)
-                ->setSelectionRequired(true)
+                ->setSelectionRequired()
                 ->setAttributes([
                     'id' => 'coencadrant' . $i,
                     'placeholder' => "Sélectionner un coencadrant ... ",

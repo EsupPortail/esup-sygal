@@ -16,7 +16,8 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 class Information implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
-    const DEFAULT_PRIORITE = 0;
+
+    public const DEFAULT_PRIORITE = 0;
 
     /** @var integer */
     private $id;

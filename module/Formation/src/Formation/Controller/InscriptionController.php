@@ -397,7 +397,7 @@ class InscriptionController extends AbstractController
         /** @var Inscription $inscription */
         foreach ($listing as $inscription) {
             $session = $inscription->getSession();
-            $doctorant = $inscription->getDoctorant() ? $inscription->getDoctorant() : null;
+            $doctorant = $inscription->getDoctorant() ?: null;
             $individu = $doctorant ? $doctorant->getIndividu() : null;
             $theses = array_filter($doctorant->getTheses(), function (These $t) { return (in_array($t->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]) AND $t->estNonHistorise());});
             /** @var These $these */

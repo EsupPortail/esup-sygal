@@ -27,8 +27,8 @@ class GenerateFacade
     use TefFileNameParamsAwareTrait;
     use LoggerAwareTrait;
 
-    const XML_DIR_NAME = 'xml';
-    const TEF_DIR_NAME = 'tef';
+    public const XML_DIR_NAME = 'xml';
+    public const TEF_DIR_NAME = 'tef';
 
     /**
      * Le *chemin absolu* du répertoire créé par le module et dans lequel sont générés le fichier

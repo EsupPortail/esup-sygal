@@ -30,7 +30,7 @@ class RapportSoutenancePdfExporter extends PdfExporter
     {
 //        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
-        $this->setFooterScript('footer.phtml', null, $this->vars);
+        $this->setFooterScript('footer.phtml');
         if(isset($this->vars["proposition"]) && $this->vars["proposition"] instanceof PropositionThese){
             $this->addBodyScript('rapport-soutenance-these.phtml', false, $this->vars);
         }else{

@@ -12,7 +12,7 @@ use UnicaenDbImport\Filter\ColumnValue\AbstractColumnValueFilter;
  */
 class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
 {
-    const PARAM_CODE_ETABLISSEMENT = 'code_etablissement';
+    public const PARAM_CODE_ETABLISSEMENT = 'code_etablissement';
 
     /**
      * Liste des noms de colonnes/attributs à transformer.

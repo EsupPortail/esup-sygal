@@ -12,7 +12,7 @@ use Doctrine\ORM\QueryBuilder;
  */
 class EstHistoriseSearchFilter extends CheckboxSearchFilter
 {
-    const NAME = 'estHistorise';
+    public const NAME = 'estHistorise';
 
     static public function newInstance(): self
     {

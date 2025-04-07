@@ -232,9 +232,7 @@ abstract class RapportController extends AbstractController
                     // déclenchement d'un événement "rapport téléversé"
                     $this->events->trigger(
                         $this->rapportTeleverseEventName,
-                        $rapport, [
-
-                        ]
+                        $rapport
                     );
 
                     $this->flashMessenger()->addSuccessMessage(sprintf(

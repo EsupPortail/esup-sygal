@@ -74,12 +74,10 @@ class MembreService {
 
     private function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
+        return $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
 //            ->leftJoin('membre.acteur', 'acteur')->addSelect('acteur') // n'existe plus
             ->leftJoin('membre.qualite', 'qualite')->addSelect('qualite')
-            ->leftJoin('membre.these', 'these')->addSelect('these')
-        ;
-        return $qb;
+            ->leftJoin('membre.these', 'these')->addSelect('these');
     }
 
     public function getMembre(?int $id) : ?Membre
@@ -97,8 +95,7 @@ class MembreService {
     public function getRequestedMembre(AbstractActionController $controller, string $param='membre') : ?Membre
     {
         $id = $controller->params()->fromRoute($param);
-        $result = $this->getMembre($id);
-        return $result;
+        return $this->getMembre($id);
     }
 
     /**
@@ -109,8 +106,7 @@ class MembreService {
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.these = :these')->setParameter('these', $these);
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /** FACADE ********************************************************************************************************/

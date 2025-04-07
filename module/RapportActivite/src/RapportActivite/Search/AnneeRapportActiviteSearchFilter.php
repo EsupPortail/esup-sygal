@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'anneeRapport';
+    public const NAME = 'anneeRapport';
 
     /**
      * @inheritDoc

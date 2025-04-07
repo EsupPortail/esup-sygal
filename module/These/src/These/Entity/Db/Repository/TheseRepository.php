@@ -57,11 +57,9 @@ class TheseRepository extends DefaultEntityRepository
                 ->setParameter('etablissement', $etablissement);
         }
 
-        $results = array_map(function($value) {
+        return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
-
-        return $results;
     }
 
     /**
@@ -83,11 +81,9 @@ class TheseRepository extends DefaultEntityRepository
                 ->setParameter('etablissement', $etablissement);
         }
 
-        $results = array_map(function($value) {
+        return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
-
-        return $results;
     }
 
     /**
@@ -158,7 +154,6 @@ class TheseRepository extends DefaultEntityRepository
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

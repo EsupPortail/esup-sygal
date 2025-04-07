@@ -29,7 +29,7 @@ class PropositionHDRSearchService extends SearchService
     use EtablissementInscSearchFilterAwareTrait;
     use UniteRechercheSearchFilterAwareTrait;
 
-    const NAME_ETAT = 'etat';
+    public const NAME_ETAT = 'etat';
 
     /**
      * @inheritDoc

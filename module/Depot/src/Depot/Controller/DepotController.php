@@ -273,7 +273,7 @@ class DepotController extends AbstractController
 
         $informations = $this->theseService->fetchInformationsPageDeCouverture($these);
 
-        $view = new ViewModel([
+        return new ViewModel([
             'these'            => $these,
             'validation'       => $validation ?: null,
             'apercevoirPdcUrl' => $this->urlFichierThese()->apercevoirPageDeCouverture($these),
@@ -284,13 +284,11 @@ class DepotController extends AbstractController
             'informations'     => $informations,
             'msgCollector'     => $this->getServiceMessageCollector(),
         ]);
-
-        return $view;
     }
 
     public function detailDepotAction()
     {
-        return $this->detailDepotActionViewModel(false);
+        return $this->detailDepotActionViewModel();
     }
 
     public function detailDepotVersionCorrigeeAction()
@@ -359,16 +357,12 @@ class DepotController extends AbstractController
 
     public function detailArchivageAction()
     {
-        $view = $this->detailArchivageActionViewModel(false);
-
-        return $view;
+        return $this->detailArchivageActionViewModel();
     }
 
     public function detailArchivageVersionCorrigeeAction()
     {
-        $view = $this->detailArchivageActionViewModel(true);
-
-        return $view;
+        return $this->detailArchivageActionViewModel(true);
     }
 
     /**
@@ -673,7 +667,7 @@ class DepotController extends AbstractController
         $hasVAC = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI_CORR);
         $hasVDC = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF_CORR);
 
-        $view = new ViewModel([
+        return new ViewModel([
             'these'                           => $these,
             'validationDepotTheseCorrigeeUrl' => $this->urlDepot()->validationDepotTheseCorrigeeUrl($these),
             'validationCorrectionTheseUrl'    => $this->urlDepot()->validationCorrectionTheseUrl($these),
@@ -690,8 +684,6 @@ class DepotController extends AbstractController
             'isDoctorant' => ($this->userContextService->getSelectedRoleDoctorant()),
 
         ]);
-
-        return $view;
     }
 
     public function validerFichierAction()
@@ -1047,15 +1039,13 @@ class DepotController extends AbstractController
         $form->addElement((new Hidden('version'))->setValue($this->idify($version)));
         $form->get('files')->setLabel("")->setAttribute('multiple', false)/*->setAttribute('accept', '.pdf')*/;
 
-        $view = new ViewModel([
+        return new ViewModel([
             'these'           => $these,
             'uploadUrl'       => $this->urlFichierThese()->televerserFichierThese($these),
             'fichiersListUrl' => $this->urlFichierThese()->listerFichiers($these, $nature),
             'nature'          => $nature,
             'version'         => $version,
         ]);
-
-        return $view;
     }
 
     /**

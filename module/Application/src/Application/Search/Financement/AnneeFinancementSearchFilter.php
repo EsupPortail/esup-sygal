@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class AnneeFinancementSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'financementAnnee';
+    public const NAME = 'financementAnnee';
 
     static public function newInstance(): self
     {

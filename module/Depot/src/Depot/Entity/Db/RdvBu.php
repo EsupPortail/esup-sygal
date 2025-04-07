@@ -13,8 +13,8 @@ class RdvBu implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const SEPARATEUR_MOTS_CLES_RAMEAU = '*';
-    const SEPARATEUR_MOTS_CLES_RAMEAU_LIB = 'astérisque';
+    public const SEPARATEUR_MOTS_CLES_RAMEAU = '*';
+    public const SEPARATEUR_MOTS_CLES_RAMEAU_LIB = 'astérisque';
 
     /**
      * @var boolean

@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 class ListeDiffusionAddressParser extends ListeDiffusionAbstractAddressParser
 {
-    const CODES_ROLES = [
+    public const CODES_ROLES = [
         Role::CODE_ADMIN_TECH,
         Role::CODE_BDD,
         Role::CODE_BU,

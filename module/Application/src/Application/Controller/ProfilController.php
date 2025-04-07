@@ -26,10 +26,10 @@ class ProfilController extends AbstractActionController
     use ProfilServiceAwareTrait;
     use ApplicationRoleServiceAwareTrait;
 
-    const PERIMETRE_ED = "ED";
-    const PERIMETRE_UR = "UR";
-    const PERIMETRE_Etab = "Etab";
-    const PERIMETRE_Aucun = "Aucun";
+    public const PERIMETRE_ED = "ED";
+    public const PERIMETRE_UR = "UR";
+    public const PERIMETRE_Etab = "Etab";
+    public const PERIMETRE_Aucun = "Aucun";
 
     /**
      * @var ProfilForm

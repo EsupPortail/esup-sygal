@@ -7,10 +7,10 @@ namespace Structure\Entity\Db;
  */
 class TypeStructure
 {
-    const CODE_ETABLISSEMENT   = 'etablissement';
-    const CODE_ECOLE_DOCTORALE = 'ecole-doctorale';
-    const CODE_UNITE_RECHERCHE = 'unite-recherche';
-    const CODE_COMPOSANTE_ENSEIGNEMENT = 'composante-enseignement';
+    public const CODE_ETABLISSEMENT   = 'etablissement';
+    public const CODE_ECOLE_DOCTORALE = 'ecole-doctorale';
+    public const CODE_UNITE_RECHERCHE = 'unite-recherche';
+    public const CODE_COMPOSANTE_ENSEIGNEMENT = 'composante-enseignement';
 
     /**
      * @var string

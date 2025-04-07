@@ -6,14 +6,14 @@ use Laminas\Validator\AbstractValidator;
 
 class PasswordValidator extends AbstractValidator {
 
-    const MIN_LENGTH = 8;
+    public const MIN_LENGTH = 8;
 
-    const NOT_YET       = 'not-yet';
-    const NO_UPPER      = 'no-upper';
-    const NO_LOWER      = 'no-lower';
-    const NO_SPECHAR    = 'no-spe';
-    const NO_NUMBER     = 'no-number';
-    const TOO_SHORT     = 'too_short';
+    public const NOT_YET       = 'not-yet';
+    public const NO_UPPER      = 'no-upper';
+    public const NO_LOWER      = 'no-lower';
+    public const NO_SPECHAR    = 'no-spe';
+    public const NO_NUMBER     = 'no-number';
+    public const TOO_SHORT     = 'too_short';
 
     protected $messageTemplates = [
         self::NOT_YET       => "La méthode est pas implémentée",

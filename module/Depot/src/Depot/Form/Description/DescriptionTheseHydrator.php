@@ -16,12 +16,10 @@ class DescriptionTheseHydrator extends DoctrineObject
      */
     public function extract(object $object): array
     {
-        $data = [
+        return [
             'domaineHal' => $object,
             'metadonneeThese' => $object
         ];
-
-        return $data;
     }
 
     /**

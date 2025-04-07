@@ -13,8 +13,8 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 class InscriptionAdministrative implements HistoriqueAwareInterface, ResourceInterface
 {
-    const STATUT_INSCRIPTION_VALIDE = 'VALIDE';
-    const STATUT_INSCRIPTION_ANNULE = 'ANNULEE';
+    public const STATUT_INSCRIPTION_VALIDE = 'VALIDE';
+    public const STATUT_INSCRIPTION_ANNULE = 'ANNULEE';
 
     use HistoriqueAwareTrait;
     use SourceAwareTrait;

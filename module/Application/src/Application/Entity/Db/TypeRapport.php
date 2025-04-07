@@ -7,8 +7,8 @@ namespace Application\Entity\Db;
  */
 class TypeRapport
 {
-    const RAPPORT_CSI = 'RAPPORT_CSI';
-    const RAPPORT_MIPARCOURS = 'RAPPORT_MIPARCOURS';
+    public const RAPPORT_CSI = 'RAPPORT_CSI';
+    public const RAPPORT_MIPARCOURS = 'RAPPORT_MIPARCOURS';
 
     /**
      * @var string

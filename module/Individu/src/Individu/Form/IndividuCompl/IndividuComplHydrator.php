@@ -17,14 +17,13 @@ class IndividuComplHydrator implements HydratorInterface
      */
     public function extract(object $object): array
     {
-        $data  = [
+        return [
             'individu' => [
                 'id' => ($object->getIndividu())?$object->getIndividu()->getId():null,
                 'label' => ($object->getIndividu())?$object->getIndividu()->getNomComplet():null,
             ],
             'email' => ($object->getEmailPro())?:null,
         ];
-        return $data;
     }
 
     /**

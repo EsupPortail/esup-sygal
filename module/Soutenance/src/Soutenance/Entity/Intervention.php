@@ -9,8 +9,8 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 class Intervention implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    const TYPE_DISTANCIEL = 1;
-    const TYPE_VISIO_TARDIVE = 2;
+    public const TYPE_DISTANCIEL = 1;
+    public const TYPE_VISIO_TARDIVE = 2;
 
     /** @var int */
     private $id;

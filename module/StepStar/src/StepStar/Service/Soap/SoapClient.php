@@ -11,7 +11,7 @@ use Laminas\Soap\Client;
  */
 class SoapClient extends Client
 {
-    const SOAP_VERSION = SOAP_1_1;
+    public const SOAP_VERSION = SOAP_1_1;
 
     protected array $params;
 

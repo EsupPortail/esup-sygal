@@ -71,8 +71,7 @@ class IndividuUsurpationHelper extends UserAbstract
         /** @var FormElement $formElementHelper */
         $formElementHelper = $this->view->plugin('formElement');
 
-        $html = '';
-        $html .= $formHelper->openTag($this->form);
+        $html = $formHelper->openTag($this->form);
         $html .= $formElementHelper->__invoke($this->form->get('individu'));
         $html .= $formElementHelper->__invoke($this->form->get('submit'));
         $html .= $formHelper->closeTag();

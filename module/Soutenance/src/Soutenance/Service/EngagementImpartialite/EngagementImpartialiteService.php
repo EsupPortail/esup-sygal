@@ -36,8 +36,7 @@ class EngagementImpartialiteService
         $acteurService = $entity instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
         $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
         $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
-        $validation = $validationService->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $entity, $acteur?->getIndividu());
-        return $validation;
+        return $validationService->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $entity, $acteur?->getIndividu());
     }
 
     /**
@@ -50,8 +49,7 @@ class EngagementImpartialiteService
         $acteurService = $entity instanceof These ? $this->acteurTheseService : $this->acteurHDRService;
         $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
         $acteur = $acteurService->getRepository()->findActeurForSoutenanceMembre($membre);
-        $validation = $validationService->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $entity, $acteur?->getIndividu());
-        return $validation;
+        return $validationService->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $entity, $acteur?->getIndividu());
     }
 
     /**
@@ -64,8 +62,7 @@ class EngagementImpartialiteService
         $validationService = $entity instanceof These ? $this->validationTheseService : $this->validationHDRService;
 
         $validation = $this->getEngagementImpartialiteByMembre($entity, $membre);
-        $validation = $validationService->historiser($validation);
-        return $validation;
+        return $validationService->historiser($validation);
     }
 
     /** REQUETE *******************************************************************************************************/

@@ -4,7 +4,7 @@ namespace Information\Entity\Db;
 
 class InformationLangue
 {
-    const ID_LANGUE_PAR_DEFAUT = 'FR';
+    public const ID_LANGUE_PAR_DEFAUT = 'FR';
 
     /** @var string */
     private $id;

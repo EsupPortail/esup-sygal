@@ -127,17 +127,11 @@ abstract class AbstractActeur implements HistoriqueAwareInterface, ResourceInter
      */
     public function estDirecteur() : bool
     {
-        return in_array($this->getRole()->getCode(), [
-                Role::CODE_DIRECTEUR_THESE,
-            ]
-        );
+        return $this->getRole()->getCode() == Role::CODE_DIRECTEUR_THESE;
     }
     public function estCodirecteur() : bool
     {
-        return in_array($this->getRole()->getCode(), [
-                Role::CODE_CODIRECTEUR_THESE,
-            ]
-        );
+        return $this->getRole()->getCode() == Role::CODE_CODIRECTEUR_THESE;
     }
     public function estCoEncadrant() : bool
     {
@@ -146,10 +140,7 @@ abstract class AbstractActeur implements HistoriqueAwareInterface, ResourceInter
 
     public function estGarant() : bool
     {
-        return in_array($this->getRole()->getCode(), [
-                Role::CODE_HDR_GARANT,
-            ]
-        );
+        return $this->getRole()->getCode() == Role::CODE_HDR_GARANT;
     }
 
     /**

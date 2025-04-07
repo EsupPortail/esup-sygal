@@ -10,9 +10,9 @@ use Doctrine\Common\Collections\Collection;
  */
 class AvisTypeValeurComplem
 {
-    const TYPE_COMPLEMENT_TEXTAREA = 'textarea';
-    const TYPE_COMPLEMENT_CHECKBOX = 'checkbox';
-    const TYPE_COMPLEMENT_INFORMATION = 'information';
+    public const TYPE_COMPLEMENT_TEXTAREA = 'textarea';
+    public const TYPE_COMPLEMENT_CHECKBOX = 'checkbox';
+    public const TYPE_COMPLEMENT_INFORMATION = 'information';
 
     /**
      * @var string

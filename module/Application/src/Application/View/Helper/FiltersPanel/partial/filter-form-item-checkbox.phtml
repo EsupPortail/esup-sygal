@@ -11,7 +11,7 @@ use Application\View\Renderer\PhpRenderer;
 
 $paramAttributes = $filter->getAttributes();
 $width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
-$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
+$liveSearch = isset($paramAttributes['liveSearch']) && (bool)$paramAttributes['liveSearch'];
 //$isActive = $filter->isChecked($queryParams);
 $isActive = $filter->getValue();
 ?>

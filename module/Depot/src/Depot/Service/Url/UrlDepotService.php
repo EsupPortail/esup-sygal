@@ -68,7 +68,7 @@ class UrlDepotService extends UrlService
 
     private function getRouteNameFromNatureFichier(string $code): string
     {
-        return (new NatureFichier)->setCode($code)->getCodeToLowerAndDash();
+        return (new NatureFichier())->setCode($code)->getCodeToLowerAndDash();
     }
 
     public function identiteThese(These $these)

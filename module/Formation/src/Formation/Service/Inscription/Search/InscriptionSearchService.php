@@ -31,15 +31,15 @@ class InscriptionSearchService extends SearchService
     use AnneeUnivServiceAwareTrait;
     use SessionRepositoryAwareTrait;
 
-    const NAME_libelle = 'libelle';
-    const NAME_doctorant = 'doctorant';
-    const NAME_liste = 'liste';
-    const NAME_etat = 'etat';
-    const NAME_individu = 'individu';
-    const NAME_seances = 'seances';
-    const NAME_structure = 'structure';
-    const NAME_site = 'site';
-    const NAME_anneeUniv = 'anneeUniv';
+    public const NAME_libelle = 'libelle';
+    public const NAME_doctorant = 'doctorant';
+    public const NAME_liste = 'liste';
+    public const NAME_etat = 'etat';
+    public const NAME_individu = 'individu';
+    public const NAME_seances = 'seances';
+    public const NAME_structure = 'structure';
+    public const NAME_site = 'site';
+    public const NAME_anneeUniv = 'anneeUniv';
 
 
     public function init()
@@ -87,7 +87,7 @@ class InscriptionSearchService extends SearchService
         $this->addInvisibleSort("i.id", 'DESC');
     }
 
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         return $this->inscriptionRepository->createQueryBuilder('i')

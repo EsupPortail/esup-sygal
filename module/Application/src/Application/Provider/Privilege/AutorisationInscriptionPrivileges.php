@@ -6,5 +6,5 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class AutorisationInscriptionPrivileges extends Privileges
 {
-    const AUTORISATION_INSCRIPTION_AJOUTER = 'autorisation-inscription-ajouter';
+    public const AUTORISATION_INSCRIPTION_AJOUTER = 'autorisation-inscription-ajouter';
 }

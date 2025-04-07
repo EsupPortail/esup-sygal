@@ -25,11 +25,11 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const CODE = 'RAPPORT_ACTIVITE';
-    const RESOURCE_ID = 'RapportActivite';
+    public const CODE = 'RAPPORT_ACTIVITE';
+    public const RESOURCE_ID = 'RapportActivite';
 
-    const LIBELLE_ANNUEL = 'Annuel';
-    const LIBELLE_FIN_CONTRAT = 'Fin de contrat';
+    public const LIBELLE_ANNUEL = 'Annuel';
+    public const LIBELLE_FIN_CONTRAT = 'Fin de contrat';
 
     private ?int $id = null;
     private int $anneeUniv;

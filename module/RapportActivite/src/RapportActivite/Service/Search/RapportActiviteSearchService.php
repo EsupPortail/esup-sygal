@@ -47,13 +47,13 @@ class RapportActiviteSearchService extends SearchService
     use RapportActiviteOperationServiceAwareTrait;
     use TypeValidationAwareTrait;
 
-    const NAME_nom_doctorant = 'nom_doctorant';
-    const NAME_nom_directeur = 'nom_directeur';
-    const NAME_type = 'type';
-    const NAME_avis_attendu = 'avis_attendu';
-    const NAME_avis_fourni = 'avis_fourni';
-    const NAME_validation = 'est_valide';
-    const NAME_est_dematerialise = 'est_dematerialise';
+    public const NAME_nom_doctorant = 'nom_doctorant';
+    public const NAME_nom_directeur = 'nom_directeur';
+    public const NAME_type = 'type';
+    public const NAME_avis_attendu = 'avis_attendu';
+    public const NAME_avis_fourni = 'avis_fourni';
+    public const NAME_validation = 'est_valide';
+    public const NAME_est_dematerialise = 'est_dematerialise';
 
     private ?EtablissementSearchFilter $etablissementTheseSearchFilter = null;
     private ?OrigineFinancementSearchFilter $origineFinancementSearchFilter = null;
@@ -130,7 +130,7 @@ class RapportActiviteSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         // ATTENTION ! Les relations suivantes doivent être sélectionnées lors du fetch des rapports :
         // 'rapportAvis->avis->avisType'.

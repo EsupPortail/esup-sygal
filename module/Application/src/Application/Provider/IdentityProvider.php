@@ -192,11 +192,9 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
 
         usort($individuRoles, IndividuRole::sorter());
 
-        $roles = array_map(function(IndividuRole $role) {
+        return array_map(function(IndividuRole $role) {
             return $role->getRole();
         }, $individuRoles);
-
-        return $roles;
     }
 
     /**

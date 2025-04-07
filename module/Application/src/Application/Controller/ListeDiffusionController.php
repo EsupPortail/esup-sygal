@@ -220,11 +220,11 @@ class ListeDiffusionController extends AbstractController
                 $dataByED = new SplObjectStorage();
                 // d'abord, toute ED confondue
                 $edTouteConfondue = $this->ecoleDoctoraleService->createTouteEcoleDoctoraleConfondue();
-                $ng = $this->listeDiffusionService->createNameGenerator($edTouteConfondue, $role, null);
+                $ng = $this->listeDiffusionService->createNameGenerator($edTouteConfondue, $role);
                 $dataByED->attach($edTouteConfondue, $this->prepareListeDataForView($ng));
                 // ensuite, par ED
                 foreach ($ecolesDoctorales as $ed) {
-                    $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, null);
+                    $ng = $this->listeDiffusionService->createNameGenerator($ed, $role);
                     $dataByED->attach($ed, $this->prepareListeDataForView($ng));
                 }
                 $dataByRole->attach($role, $dataByED);
@@ -349,7 +349,7 @@ class ListeDiffusionController extends AbstractController
         $model->setEnclosure('"');
         $model->setHeader($header);
         $model->setData($data);
-        $model->setFilename(sprintf('sygal_listediff_sympa_%s.csv', date_create('now')->format("Ymd-His")));
+        $model->setFilename(sprintf('sygal_listediff_sympa_%s.csv', date_create()->format("Ymd-His")));
 
         return $model;
     }

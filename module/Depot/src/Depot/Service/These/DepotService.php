@@ -544,7 +544,7 @@ EOS;
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
 
                 $token = $this->userService->updateUserPasswordResetToken($user);
-                $notification = $this->applicationNotificationFactory->createNotificationInitialisationCompte($user, $token);
+                $notification = $this->applicationNotificationFactory->createNotificationInitialisationCompte($user);
                 $this->notifierService->trigger($notification);
 
                 $notification = $this->depotNotificationFactory->createNotificationValidationDepotTheseCorrigee($these);

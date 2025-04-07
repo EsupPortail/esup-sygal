@@ -307,8 +307,7 @@ class UserContextService extends BaseUserContextService
 
         if ($role->isTheseDependant()) {
             if ($role->isDoctorant()) {
-                $utilisateurEstAuteurDeLaThese = $these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
-                return $utilisateurEstAuteurDeLaThese;
+                return $these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
             }elseif ($role->isActeurDeThese()) {
                 if ($individu = $this->getIdentityIndividu()) {
                     return $these->hasActeurWithRole($individu, $role->getCode());

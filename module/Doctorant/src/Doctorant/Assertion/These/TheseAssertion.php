@@ -12,7 +12,7 @@ use UnicaenApp\Exception\RuntimeException;
 
 class TheseAssertion extends AbstractAssertion
 {
-    const DOCTORANT_CONTROLLER = 'Application\Controller\Doctorant';
+    public const DOCTORANT_CONTROLLER = 'Application\Controller\Doctorant';
 
     private TheseEntityAssertion $theseEntityAssertion;
     private ?Doctorant $doctorant = null;

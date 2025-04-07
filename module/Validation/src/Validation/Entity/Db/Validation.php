@@ -84,8 +84,7 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getAuteurToString() : string
     {
-        $displayname = $this->getIndividu()->getNomComplet();
-        return $displayname;
+        return $this->getIndividu()->getNomComplet();
     }
     /**
      * @noinspection
@@ -94,7 +93,6 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getDateToString() : string
     {
-        $date = $this->getHistoCreation()->format('d/m/Y à H:i');
-        return $date;
+        return $this->getHistoCreation()->format('d/m/Y à H:i');
     }
 }

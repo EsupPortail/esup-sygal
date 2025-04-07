@@ -17,8 +17,8 @@ class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     use HistoriqueAwareTrait;
     use HasHorodatagesTrait;
 
-    const ROUTE_PARAM_PROPOSITION_HDR = "hdr";
-    const ROUTE_PARAM_PROPOSITION_THESE = "these";
+    public const ROUTE_PARAM_PROPOSITION_HDR = "hdr";
+    public const ROUTE_PARAM_PROPOSITION_THESE = "these";
 
     private ?int $id = null;
     private ?DateTime $date = null;

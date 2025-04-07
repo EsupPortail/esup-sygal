@@ -6,13 +6,13 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class SessionPrivileges extends Privileges {
 
-    const SESSION_INDEX      = 'formation_session-index';
-    const SESSION_AFFICHER   = 'formation_session-afficher';
-    const SESSION_AJOUTER    = 'formation_session-ajouter';
-    const SESSION_MODIFIER   = 'formation_session-modifier';
-    const SESSION_HISTORISER = 'formation_session-historiser';
-    const SESSION_SUPPRIMER  = 'formation_session-supprimer';
-    const SESSION_INSCRIPTION  = 'formation_session-gerer_inscription';
-    const SESSION_VOIR_LIEU    = 'formation_session-voir_lieu';
+    public const SESSION_INDEX      = 'formation_session-index';
+    public const SESSION_AFFICHER   = 'formation_session-afficher';
+    public const SESSION_AJOUTER    = 'formation_session-ajouter';
+    public const SESSION_MODIFIER   = 'formation_session-modifier';
+    public const SESSION_HISTORISER = 'formation_session-historiser';
+    public const SESSION_SUPPRIMER  = 'formation_session-supprimer';
+    public const SESSION_INSCRIPTION  = 'formation_session-gerer_inscription';
+    public const SESSION_VOIR_LIEU    = 'formation_session-voir_lieu';
 
 }

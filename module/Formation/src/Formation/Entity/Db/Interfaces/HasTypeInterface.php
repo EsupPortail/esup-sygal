@@ -6,10 +6,10 @@ use Structure\Entity\Db\Structure;
 
 interface HasTypeInterface {
 
-    const TYPE_SPECIFIQUE       = 'S';
-    const TYPE_TRANSVERSALE     = 'T';
+    public const TYPE_SPECIFIQUE = 'S';
+    public const TYPE_TRANSVERSALE = 'T';
 
-    const TYPES = [
+    public const TYPES = [
         self::TYPE_SPECIFIQUE => "Spécifique",
         self::TYPE_TRANSVERSALE => "Transversale",
     ];

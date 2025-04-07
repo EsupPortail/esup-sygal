@@ -11,21 +11,21 @@ use Application\Search\Filter\TextCriteriaSearchFilter;
  */
 class TheseTextSearchFilter extends TextCriteriaSearchFilter
 {
-    const NAME = 'text';
+    public const NAME = 'text';
 
-    const CRITERIA_titre = 'titre';
-    const CRITERIA_numero_doctorant = 'doctorant-numero';
-    const CRITERIA_nom_doctorant = 'doctorant-nom';
-    const CRITERIA_prenom_doctorant = 'doctorant-prenom';
-    const CRITERIA_nom_directeur = 'directeur-nom';
-    const CRITERIA_code_ed = 'code-ed';
-    const CRITERIA_code_ur = 'code_ur';
+    public const CRITERIA_titre = 'titre';
+    public const CRITERIA_numero_doctorant = 'doctorant-numero';
+    public const CRITERIA_nom_doctorant = 'doctorant-nom';
+    public const CRITERIA_prenom_doctorant = 'doctorant-prenom';
+    public const CRITERIA_nom_directeur = 'directeur-nom';
+    public const CRITERIA_code_ed = 'code-ed';
+    public const CRITERIA_code_ur = 'code_ur';
 
     /**
      * ATTENTION : les identifiants (clés) doivent être identiques à ceux utilisés dans
      *             le script de la vue matérialisée MV_RECHERCHE_THESE sollicitée pour la recherche.
      */
-    const CRITERIA = [
+    public const CRITERIA = [
         self::CRITERIA_titre => "Titre de la thèse",
         self::CRITERIA_numero_doctorant => "Numéro étudiant du doctorant",
         self::CRITERIA_nom_doctorant => "Nom d'usage ou patronymique du doctorant",

@@ -24,12 +24,11 @@ class JustificatifViewHelper extends AbstractHelper
         /** @var PhpRenderer $view */
         $view = $this->view;
         $view->resolver()->attach(new TemplatePathStack(['script_paths' => [__DIR__ . "/partial"]]));
-        $texte = $view->partial('justificatif', [
+        return $view->partial('justificatif', [
             'justificatif' => $justificatif,
             'urlFichier' => $urlFichier,
             'urlSuppressionJustificatif' => $urlSuppressionJustificatif,
             'canGererDocument' => $canGererDocument,
             'options' => $options]);
-        return $texte;
     }
 }

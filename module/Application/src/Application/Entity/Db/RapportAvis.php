@@ -17,10 +17,10 @@ class RapportAvis implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Attention : constantes correspondant au type Postgres énuméré "avis_enum".
      */
-    const AVIS_FAVORABLE = 'Favorable';
-    const AVIS_DEFAVORABLE = 'Défavorable';
+    public const AVIS_FAVORABLE = 'Favorable';
+    public const AVIS_DEFAVORABLE = 'Défavorable';
 
-    const AVIS = [
+    public const AVIS = [
         self::AVIS_FAVORABLE => self::AVIS_FAVORABLE,
         self::AVIS_DEFAVORABLE => self::AVIS_DEFAVORABLE,
     ];

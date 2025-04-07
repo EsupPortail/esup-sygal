@@ -175,7 +175,7 @@ class AdmissionController extends AdmissionAbstractController {
         if($data['_fieldset'] == "etudiant") {
             //Enregistrement des informations de l'Etudiant
             $this->enregistrerEtudiant($data, $admission);
-        } else if($data['_fieldset'] == "financement"){
+        } elseif($data['_fieldset'] == "financement"){
             $this->admissionForm->bind($admission);
             //Enregistrement des informations de financement
             $this->enregistrerFinancement($data, $admission);
@@ -215,7 +215,7 @@ class AdmissionController extends AdmissionAbstractController {
             if($data['_fieldset'] == "inscription"){
                 //Enregistrement des informations de l'inscription
                 $this->enregistrerInscription($data, $admission);
-            }else if($data['_fieldset'] == "document"){
+            }elseif($data['_fieldset'] == "document"){
                 //Enregistrement des informations de financement
                 $this->enregistrerDocument($data, $admission);
             }
@@ -712,7 +712,7 @@ class AdmissionController extends AdmissionAbstractController {
             } else {
                 if($role->getRoleId() == Role::ROLE_ID_ADMISSION_DIRECTEUR_THESE){
                     $admissionsIndividu = $this->inscriptionService->getRepository()->findBy(["directeur" => $individu]);
-                }else if($role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE){
+                }elseif($role->getRoleId() == Role::ROLE_ID_ADMISSION_CODIRECTEUR_THESE){
                     $admissionsIndividu = $this->inscriptionService->getRepository()->findBy(["coDirecteur" => $individu]);
                 }
                 if(empty($admissionsIndividu)){

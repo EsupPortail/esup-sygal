@@ -10,7 +10,7 @@ use Laminas\Validator\AbstractValidator;
 
 class FichierCinesValidator extends AbstractValidator
 {
-    const INVALID = 'INVALID';
+    public const INVALID = 'INVALID';
 
     /**
      * @var array

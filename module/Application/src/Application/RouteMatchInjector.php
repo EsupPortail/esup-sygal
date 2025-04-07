@@ -24,7 +24,7 @@ class RouteMatchInjector implements ListenerAggregateInterface, EntityManagerAwa
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'injectRouteMatch'], 1);
+        $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'injectRouteMatch']);
     }
 
     /**

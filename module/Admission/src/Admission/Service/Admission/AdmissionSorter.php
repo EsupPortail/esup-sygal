@@ -13,12 +13,12 @@ use UnicaenApp\Exception\LogicException;
  */
 class AdmissionSorter
 {
-    const NAME_titre = 'titreThese';
-    const NAME_etablissement = 'etablissement';
-    const NAME_etatAdmission = 'etat';
-    const NAME_individu = 'individu';
-    const NAME_ecoleDoctorale = 'ecoleDoctorale';
-    const NAME_uniteRecherche = 'uniteRecherche';
+    public const NAME_titre = 'titreThese';
+    public const NAME_etablissement = 'etablissement';
+    public const NAME_etatAdmission = 'etat';
+    public const NAME_individu = 'individu';
+    public const NAME_ecoleDoctorale = 'ecoleDoctorale';
+    public const NAME_uniteRecherche = 'uniteRecherche';
 
     /**
      * @var string

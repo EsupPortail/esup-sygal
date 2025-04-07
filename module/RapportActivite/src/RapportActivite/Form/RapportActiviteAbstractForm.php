@@ -23,11 +23,11 @@ use UnicaenApp\Form\Element\Collection;
  */
 abstract class RapportActiviteAbstractForm extends Form implements InputFilterProviderInterface
 {
-    const ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE = 'annee-univ';
-    const ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX = 'if-estFinContrat-equals-';
+    public const ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE = 'annee-univ';
+    public const ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX = 'if-estFinContrat-equals-';
 
-    const EST_FINAL__VALUE__ANNUEL = '0';
-    const EST_FINAL__VALUE__FIN_CONTRAT = '1';
+    public const EST_FINAL__VALUE__ANNUEL = '0';
+    public const EST_FINAL__VALUE__FIN_CONTRAT = '1';
 
     protected SplObjectStorage $anneesUnivs;
 

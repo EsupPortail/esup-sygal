@@ -150,7 +150,7 @@ class PresoutenanceAssertion extends AbstractAssertion
         if (($routeMatch = $this->getRouteMatch())) {
             if($routeMatch->getParam('these') !== null){
                 $entity = $this->theseService->getRepository()->find($routeMatch->getParam('these'));
-            }else if($routeMatch->getParam('hdr') !== null){
+            }elseif($routeMatch->getParam('hdr') !== null){
                 $entity = $this->hdrService->getRepository()->find($routeMatch->getParam('hdr'));
             }
         }

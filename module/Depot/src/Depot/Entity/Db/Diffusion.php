@@ -15,27 +15,27 @@ class Diffusion implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const CONFIDENTIELLE_OUI = '1';
-    const CONFIDENTIELLE_NON = '0';
+    public const CONFIDENTIELLE_OUI = '1';
+    public const CONFIDENTIELLE_NON = '0';
 
-    const AUTORISATION_OUI_IMMEDIAT = 2;
-    const AUTORISATION_OUI_EMBARGO = 1;
-    const AUTORISATION_NON = 0;
+    public const AUTORISATION_OUI_IMMEDIAT = 2;
+    public const AUTORISATION_OUI_EMBARGO = 1;
+    public const AUTORISATION_NON = 0;
 
-    const EMBARGO_DUREE_6_MOIS = '6 mois';
-    const EMBARGO_DUREE_1_AN = '1 an';
-    const EMBARGO_DUREE_2_ANS = '2 ans';
-    const EMBARGO_DUREE_5_ANS = '5 ans';
+    public const EMBARGO_DUREE_6_MOIS = '6 mois';
+    public const EMBARGO_DUREE_1_AN = '1 an';
+    public const EMBARGO_DUREE_2_ANS = '2 ans';
+    public const EMBARGO_DUREE_5_ANS = '5 ans';
 
-    const EMBARGO_DUREES_PHP_INTERVALS = [
+    public const EMBARGO_DUREES_PHP_INTERVALS = [
         self::EMBARGO_DUREE_6_MOIS => 'P6M',
         self::EMBARGO_DUREE_1_AN => 'P1Y',
         self::EMBARGO_DUREE_2_ANS => 'P2Y',
         self::EMBARGO_DUREE_5_ANS => 'P5Y',
     ];
 
-    const DROIT_AUTEUR_OK_OUI = '1';
-    const DROIT_AUTEUR_OK_NON = '0';
+    public const DROIT_AUTEUR_OK_OUI = '1';
+    public const DROIT_AUTEUR_OK_NON = '0';
 
     /**
      * @var bool

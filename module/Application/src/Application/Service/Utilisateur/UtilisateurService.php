@@ -28,7 +28,7 @@ class UtilisateurService extends BaseService
     use UserServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
-    const SQL_CREATE_APP_USER =
+    public const SQL_CREATE_APP_USER =
         "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application ESUP-SyGAL', 'ldap');";
 
     /**

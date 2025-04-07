@@ -4,11 +4,11 @@ namespace Admission\Entity\Db;
 
 class Etat {
 
-    const CODE_EN_COURS_SAISIE   = 'C';
-    const CODE_ABANDONNE = 'A';
-    const CODE_VALIDE = 'V';
-    const CODE_EN_COURS_VALIDATION = 'E';
-    const CODE_REJETE = 'R';
+    public const CODE_EN_COURS_SAISIE   = 'C';
+    public const CODE_ABANDONNE = 'A';
+    public const CODE_VALIDE = 'V';
+    public const CODE_EN_COURS_VALIDATION = 'E';
+    public const CODE_REJETE = 'R';
 
     private ?string $code = null;
     private ?string $libelle = null;

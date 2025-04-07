@@ -19,8 +19,7 @@ class ValidationHDRTemplateVariable extends AbstractTemplateVariable
      */
     public function getAuteurToString() : string
     {
-        $displayname = $this->validationHDR->getIndividu()->getNomComplet();
-        return $displayname;
+        return $this->validationHDR->getIndividu()->getNomComplet();
     }
 
     /**
@@ -28,8 +27,7 @@ class ValidationHDRTemplateVariable extends AbstractTemplateVariable
      */
     public function getDateToString() : string
     {
-        $date = $this->validationHDR->getHistoCreation()->format('d/m/Y à H:i');
-        return $date;
+        return $this->validationHDR->getHistoCreation()->format('d/m/Y à H:i');
     }
 
     /**

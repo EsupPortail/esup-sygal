@@ -56,12 +56,10 @@ class Atteignable extends FunctionNode
         
         $expr1->field = 'id';
         $expr2->field = 'id';
-        
-        $sql = sprintf('APP_WORKFLOW.ATTEIGNABLE(%s, %s)',
+
+        return sprintf('APP_WORKFLOW.ATTEIGNABLE(%s, %s)',
             $expr1->dispatch($sqlWalker),
             $expr2->dispatch($sqlWalker)
         );
-        
-        return $sql;
     }
 }

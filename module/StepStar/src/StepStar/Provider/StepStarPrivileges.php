@@ -6,8 +6,8 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class StepStarPrivileges extends Privileges
 {
-    const LOG_LISTER = 'step-star-log-lister';
-    const LOG_CONSULTER = 'step-star-log-consulter';
+    public const LOG_LISTER = 'step-star-log-lister';
+    public const LOG_CONSULTER = 'step-star-log-consulter';
 
-    const TEF_TELECHARGER = 'step-star-tef-telecharger';
+    public const TEF_TELECHARGER = 'step-star-tef-telecharger';
 }

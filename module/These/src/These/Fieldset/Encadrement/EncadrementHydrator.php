@@ -69,7 +69,7 @@ class EncadrementHydrator extends DoctrineObject
         }
         $coencadrants = $object->getId() ? $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($object, Role::CODE_CO_ENCADRANT) : [];
         foreach ($coencadrants as $acteur) {
-            if (array_search($acteur->getId(), $temoins) === false) {
+            if (!in_array($acteur->getId(), $temoins)) {
                 $acteur->historiser();
             }
         }

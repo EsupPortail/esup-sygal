@@ -8,8 +8,8 @@ namespace Application;
  */
 class Constants
 {
-    const DATE_FORMAT     = 'd/m/Y';
-    const DATETIME_FORMAT = 'd/m/Y à H:i';
-    
-    const ALERTE_FERMETURE_ESTIVALE = 'ALERTE_FERMETURE_ESTIVALE';
+    public const DATE_FORMAT = 'd/m/Y';
+    public const DATETIME_FORMAT = 'd/m/Y à H:i';
+
+    public const ALERTE_FERMETURE_ESTIVALE = 'ALERTE_FERMETURE_ESTIVALE';
 }

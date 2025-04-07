@@ -49,12 +49,12 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     use TheseCorrectionAwareTrait;
 
-    const RESOURCE_ID = 'These';
+    public const RESOURCE_ID = 'These';
 
-    const ETAT_EN_COURS   = 'E';
-    const ETAT_ABANDONNEE = 'A';
-    const ETAT_SOUTENUE   = 'S';
-    const ETAT_TRANSFEREE = 'U';
+    public const ETAT_EN_COURS   = 'E';
+    public const ETAT_ABANDONNEE = 'A';
+    public const ETAT_SOUTENUE   = 'S';
+    public const ETAT_TRANSFEREE = 'U';
 
     public static array $etatsLibelles = [
         self::ETAT_EN_COURS   => "En cours",
@@ -63,8 +63,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         self::ETAT_TRANSFEREE => "Transférée",
     ];
 
-    const RESULTAT_AJOURNE = 0;
-    const RESULTAT_ADMIS   = 1;
+    public const RESULTAT_AJOURNE = 0;
+    public const RESULTAT_ADMIS   = 1;
 
     public static $resultatsLibellesLongs = [
         self::RESULTAT_AJOURNE => "Ajourné",
@@ -441,7 +441,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return false;
         }
 
-        return $this->getDateFinConfidentialite()->setTime(0, 0, 0) < (new DateTime())->setTime(0, 0, 0);
+        return $this->getDateFinConfidentialite()->setTime(0, 0) < (new DateTime())->setTime(0, 0);
     }
 
     /**
@@ -453,7 +453,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             return false;
         }
 
-        return $this->getDateFinConfidentialite()->setTime(0, 0, 0) >= (new DateTime())->setTime(0, 0, 0);
+        return $this->getDateFinConfidentialite()->setTime(0, 0) >= (new DateTime())->setTime(0, 0);
     }
 
     /**
@@ -718,11 +718,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         $attestations = $this->attestations;
 
-        $attestations = $attestations->filter(function(Attestation $d) use ($historisee) {
+        return $attestations->filter(function(Attestation $d) use ($historisee) {
             return $historisee === null || !$historisee === $d->estNonHistorise();
         });
-
-        return $attestations;
     }
 
     /**
@@ -957,11 +955,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $validations = $validations->filter(function(ValidationThese $v) use ($type) {
             return $v->getValidation()->getTypeValidation()->getCode() === $type;
         });
-        $validations = $validations->filter(function (ValidationThese $v) use ($historisee) {
+        return $validations->filter(function (ValidationThese $v) use ($historisee) {
             return !$historisee === $v->estNonHistorise();
         });
-
-        return $validations;
     }
 
     /**
@@ -1329,7 +1325,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             if (! $email) {
                 $individusSansMail[$name] = $individu;
             } else {
-                $emails[$email] = $name;
+                $emailsPros[$email] = $name;
             }
         }
 

@@ -90,7 +90,7 @@ class GeneralitesFieldset extends Fieldset implements InputFilterProviderInterfa
         $doctorant
             ->setAutocompleteSource($this->urlAutocompleteIndividu)
             ->setRequired()
-            ->setSelectionRequired(true)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'candidat',
                 'placeholder' => "Rechercher un·e candidat·e ...",

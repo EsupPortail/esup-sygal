@@ -17,7 +17,7 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
 {
     use HistoriqueAwareTrait;
 
-    const RESOURCE_ID_VALIDATION_ENSEIGNEMENT = 'VALIDATION_ENSEIGNEMENT';
+    public const RESOURCE_ID_VALIDATION_ENSEIGNEMENT = 'VALIDATION_ENSEIGNEMENT';
 
     /**
      * @var integer

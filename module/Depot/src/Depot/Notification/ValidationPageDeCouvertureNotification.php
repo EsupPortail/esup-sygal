@@ -12,8 +12,8 @@ class ValidationPageDeCouvertureNotification extends Notification
 {
     use TheseAwareTrait;
 
-    const ACTION_VALIDER = 'valider';
-    const ACTION_DEVALIDER = 'devalider';
+    public const ACTION_VALIDER = 'valider';
+    public const ACTION_DEVALIDER = 'devalider';
 
     protected ?string $templatePath = 'application/notification/mail/notif-validation-page-couverture';
     private string $action;

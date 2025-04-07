@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class DoctorantSearchFilter extends TextSearchFilter // todo : hériter de StrReducedTextSearchFilter
 {
-    const NAME = 'doctorant';
+    public const NAME = 'doctorant';
 
     /**
      * @return self

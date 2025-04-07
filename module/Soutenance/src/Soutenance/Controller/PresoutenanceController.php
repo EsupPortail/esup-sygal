@@ -372,7 +372,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 
     public function feuVertAction() : Response
     {
-        $this->initializeFromType(false, true);
+        $this->initializeFromType(false);
 
         $etat = $this->propositionService->findPropositionEtatByCode(Etat::VALIDEE);
         $this->proposition->setEtat($etat);
@@ -443,7 +443,7 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
 
     public function deliberationJuryAction() : Response
     {
-        $this->initializeFromType(false, true);
+        $this->initializeFromType(false);
 
         $resultat = $this->params()->fromRoute('resultat');
 

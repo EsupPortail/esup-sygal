@@ -18,7 +18,7 @@ class IndividuSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->individuService->getRepository()->createQueryBuilder('i');
         $qb

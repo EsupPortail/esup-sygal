@@ -38,7 +38,7 @@ class RetraitementServiceFactory
         }
 
         /** @var ShellCommandInterface $command */
-        $command = new $commandClass;
+        $command = new $commandClass();
 
         if (isset($config['sygal']['retraitement']['command']['options'])) {
             $command->setOptions($config['sygal']['retraitement']['command']['options']);

@@ -1143,7 +1143,7 @@ class Etudiant implements HistoriqueAwareInterface{
     {
         if($this->getSituationHandicap()){
             return "Oui";
-        }else if($this->getSituationHandicap() === false){
+        }elseif($this->getSituationHandicap() === false){
             return "Non";
         }else{
             return "<b>Non renseigné</b>";
@@ -1156,7 +1156,7 @@ class Etudiant implements HistoriqueAwareInterface{
     public function getNiveauEtudeInformations(){
         if($this->niveauEtude === 1){
             return "Diplôme national tel que le master";
-        }else if($this->niveauEtude === 2){
+        }elseif($this->niveauEtude === 2){
             return "Diplôme autre qu'un diplôme national - à titre dérogatoire";
         }else{
             return "<b>Non renseigné</b>";

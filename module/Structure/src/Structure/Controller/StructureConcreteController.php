@@ -314,7 +314,7 @@ abstract class StructureConcreteController extends AbstractController
     {
         try {
             // NB : on vise ici la structure liée
-            $structure = $structureConcrete->getStructure(false);
+            $structure = $structureConcrete->getStructure();
             $this->structureService->updateLogoStructure($structure, $cheminLogoUploade);
         } catch (RuntimeException $e) {
             $this->flashMessenger()->addErrorMessage(

@@ -62,19 +62,19 @@ class TheseSearchService extends SearchService
     use FinancementServiceAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
 
-    const NAME_etatThese = 'etatThese';
-    const NAME_anneeCivile1ereInscription = 'anneePremiereInscription';
-    const NAME_anneeUniv1ereInscription = 'anneeUniv1ereInscription';
-    const NAME_anneeUnivInscription = 'anneeUnivInscription';
-    const NAME_anneeUnivFinancement = 'anneeUnivFinancement';
-    const NAME_anneeSoutenance = 'anneeSoutenance';
-    const NAME_domaineScientifique = 'domaineScientifique';
+    public const NAME_etatThese = 'etatThese';
+    public const NAME_anneeCivile1ereInscription = 'anneePremiereInscription';
+    public const NAME_anneeUniv1ereInscription = 'anneeUniv1ereInscription';
+    public const NAME_anneeUnivInscription = 'anneeUnivInscription';
+    public const NAME_anneeUnivFinancement = 'anneeUnivFinancement';
+    public const NAME_anneeSoutenance = 'anneeSoutenance';
+    public const NAME_domaineScientifique = 'domaineScientifique';
 
-    const SORTER_NAME_titre = 'titre';
-    const SORTER_NAME_numeroEtudiant = 'numeroEtudiant';
-    const SORTER_NAME_doctorant = 'doctorant';
-    const SORTER_NAME_datePremiereInscription = 'datePremiereInscription';
-    const SORTER_NAME_dateSoutenance = 'dateSoutenance';
+    public const SORTER_NAME_titre = 'titre';
+    public const SORTER_NAME_numeroEtudiant = 'numeroEtudiant';
+    public const SORTER_NAME_doctorant = 'doctorant';
+    public const SORTER_NAME_datePremiereInscription = 'datePremiereInscription';
+    public const SORTER_NAME_dateSoutenance = 'dateSoutenance';
 
     /**
      * @var Role|null

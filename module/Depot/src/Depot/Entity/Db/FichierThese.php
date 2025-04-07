@@ -21,15 +21,15 @@ class FichierThese implements ResourceInterface, HistoriqueAwareInterface
      *
      * 'V2' = Deuxième dépôt (après corrections)
      */
-    const TAG_DEUXIEME_DEPOT = 'V2';
+    public const TAG_DEUXIEME_DEPOT = 'V2';
 
-    const RESOURCE_ID = 'FichierThese';
+    public const RESOURCE_ID = 'FichierThese';
 
-    const MESSAGE_RETRAITEMENT_DUREE = "L'opération de retraitement automatique de fichier peut durer quelques minutes.";
-    const MESSAGE_DEPOT_DUREE = "L'opération de téléversement de fichier peut durer quelques minutes.";
+    public const MESSAGE_RETRAITEMENT_DUREE = "L'opération de retraitement automatique de fichier peut durer quelques minutes.";
+    public const MESSAGE_DEPOT_DUREE = "L'opération de téléversement de fichier peut durer quelques minutes.";
 
-    const RETRAITEMENT_AUTO = 'sygal';
-    const RETRAITEMENT_MANU = 'Inconnu';
+    public const RETRAITEMENT_AUTO = 'sygal';
+    public const RETRAITEMENT_MANU = 'Inconnu';
 
     /**
      * @var string

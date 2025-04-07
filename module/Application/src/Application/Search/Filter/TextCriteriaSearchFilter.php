@@ -9,8 +9,8 @@ namespace Application\Search\Filter;
  */
 class TextCriteriaSearchFilter extends TextSearchFilter
 {
-    const NAME_text = 'text';
-    const NAME_criteria = 'textCriteria';
+    public const NAME_text = 'text';
+    public const NAME_criteria = 'textCriteria';
 
     /**
      * @var string

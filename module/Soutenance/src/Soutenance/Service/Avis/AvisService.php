@@ -142,12 +142,9 @@ class AvisService
      */
     public function createQueryBuilder()
     {
-        $qb = $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
+        return $this->getEntityManager()->getRepository(Avis::class)->createQueryBuilder('avis')
             ->addSelect('proposition')->join('avis.proposition', 'proposition')
-            ->addSelect('membre')->join('avis.membre', 'membre')
-        ;
-
-        return $qb;
+            ->addSelect('membre')->join('avis.membre', 'membre');
     }
 
     /**
@@ -179,7 +176,7 @@ class AvisService
         $acteurService = $proposition instanceof PropositionThese ?
             $this->acteurTheseService :
             $this->acteurHDRService;
-        $qb = $this->createQueryBuilder('avis')
+        $qb = $this->createQueryBuilder()
             ->andWhere('avis.histoDestruction IS NULL')
             ->andWhere('proposition.histoDestruction IS NULL')
             ->andWhere('proposition = :proposition')

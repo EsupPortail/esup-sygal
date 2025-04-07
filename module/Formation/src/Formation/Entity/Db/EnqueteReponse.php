@@ -8,7 +8,7 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 class EnqueteReponse implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    const NIVEAUX = [
+    public const NIVEAUX = [
         5 => "Très satisfait",
         4 => "Assez satisfait",
         3 => "Sans Avis",

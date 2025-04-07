@@ -35,11 +35,11 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
     use HasHorodatagesTrait;
     use SourceAwareTrait;
 
-    const RESOURCE_ID = "HDR";
+    public const RESOURCE_ID = "HDR";
 
-    const ETAT_EN_COURS   = 'E';
-    const ETAT_ABANDONNEE = 'A';
-    const ETAT_SOUTENUE   = 'S';
+    public const ETAT_EN_COURS = 'E';
+    public const ETAT_ABANDONNEE = 'A';
+    public const ETAT_SOUTENUE = 'S';
 
     public static array $etatsLibelles = [
         self::ETAT_EN_COURS   => "En cours",
@@ -47,8 +47,8 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
         self::ETAT_SOUTENUE   => "Soutenue",
     ];
 
-    const RESULTAT_AJOURNE = 0;
-    const RESULTAT_ADMIS   = 1;
+    public const RESULTAT_AJOURNE = 0;
+    public const RESULTAT_ADMIS = 1;
 
     public static $resultatsLibellesLongs = [
         self::RESULTAT_AJOURNE => "Ajourné",
@@ -287,7 +287,7 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
             return false;
         }
 
-        return $this->getDateFinConfidentialite()->setTime(0, 0, 0) < (new DateTime())->setTime(0, 0, 0);
+        return $this->getDateFinConfidentialite()->setTime(0, 0) < (new DateTime())->setTime(0, 0);
     }
 
     /**
@@ -299,7 +299,7 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
             return false;
         }
 
-        return $this->getDateFinConfidentialite()->setTime(0, 0, 0) >= (new DateTime())->setTime(0, 0, 0);
+        return $this->getDateFinConfidentialite()->setTime(0, 0) >= (new DateTime())->setTime(0, 0);
     }
 
     /**
@@ -500,11 +500,9 @@ class HDR implements HistoriqueAwareInterface, HasHorodatagesInterface, Resource
         $validations = $validations->filter(function(ValidationHDR $v) use ($type) {
             return $v->getValidation()->getTypeValidation()->getCode() === $type;
         });
-        $validations = $validations->filter(function (ValidationHDR $v) use ($historisee) {
+        return $validations->filter(function (ValidationHDR $v) use ($historisee) {
             return !$historisee === $v->estNonHistorise();
         });
-
-        return $validations;
     }
 
     /**

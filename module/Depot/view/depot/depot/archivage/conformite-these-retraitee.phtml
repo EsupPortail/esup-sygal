@@ -13,7 +13,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string      $contact
  */
 
-const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
+public const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
 ?>
 
 <?php if ($fichierTheseRetraite && ($v = $fichierTheseRetraite->getFichier()->getValidite()) && $v->getEstValide() === true): ?>

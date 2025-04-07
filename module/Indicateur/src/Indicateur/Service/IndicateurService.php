@@ -21,8 +21,7 @@ class IndicateurService {
             ->orderBy("indicateur.id")
         ;
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**

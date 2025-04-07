@@ -59,7 +59,7 @@ class PropositionHDRAssertion implements  AssertionInterface {
     public function computeValeur(RoleInterface $role = null, ?PropositionHDR $proposition = null, $privilege = null) : bool
     {
         $hdr = $proposition->getHDR();
-        $sursis = ($proposition)?$proposition->hasSursis():false;
+        $sursis = $proposition && $proposition->hasSursis();
         $dateValidationMax = ($proposition->getDate())?DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M')):null;
         $dateCurrent = new DateTime();
 
@@ -103,10 +103,10 @@ class PropositionHDRAssertion implements  AssertionInterface {
                     case Role::CODE_HDR_CANDIDAT :
                         return $candidat->getId() === $individu->getId();
                     case Role::CODE_HDR_GARANT :
-                        return (array_search($individu, $garants) !== false);
+                        return (in_array($individu, $garants));
                     case Role::CODE_RAPPORTEUR_JURY :
                     case Role::CODE_RAPPORTEUR_ABSENT :
-                        return (array_search($individu, $rapporteurs) !== false);
+                        return (in_array($individu, $rapporteurs));
                     default:
                         return false;
                 }
@@ -120,7 +120,7 @@ class PropositionHDRAssertion implements  AssertionInterface {
                     case Role::CODE_HDR_CANDIDAT :
                         return $candidat->getId() === $individu->getId();
                     case Role::CODE_HDR_GARANT :
-                        return (array_search($individu, $garants) !== false);
+                        return (in_array($individu, $garants));
                     default:
                         return false;
                 }
@@ -146,7 +146,7 @@ class PropositionHDRAssertion implements  AssertionInterface {
                         }
                         return ($isCandidat AND $dateOk);
                     case Role::CODE_HDR_GARANT :
-                        $isGarant = (array_search($individu, $garants) !== false);
+                        $isGarant = (in_array($individu, $garants));
                         $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
                         $garant = $garants[0];
                         foreach ($validations_ACTEUR as $validation) {

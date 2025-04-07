@@ -16,11 +16,10 @@ class SessionStructureValideHydrator implements HydratorInterface {
      */
     public function extract(object $object): array
     {
-        $data = [
+        return [
             'structure' => ($object AND $object->getStructure())?$object->getStructure()->getId():null,
             'lieu' => ($object AND $object->getLieu())?$object->getLieu():null,
         ];
-        return $data;
     }
 
     /**

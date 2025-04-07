@@ -16,9 +16,9 @@ class SourceService extends BaseService
 {
     use SourceCodeStringHelperAwareTrait;
 
-    const APPL_SOURCE_CODE = 'SYGAL::sygal';
+    public const APPL_SOURCE_CODE = 'SYGAL::sygal';
 
-    const SQL_TEMPLATE_CREATE_APP_SOURCE =
+    public const SQL_TEMPLATE_CREATE_APP_SOURCE =
         "INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE) VALUES (1, '%s', 'ESUP-SyGAL', 0);";
 
     /**

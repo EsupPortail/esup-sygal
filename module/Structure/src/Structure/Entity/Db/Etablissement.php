@@ -28,13 +28,13 @@ class Etablissement implements
     use StructureAwareTrait;
     use SubstitutionAwareEntityTrait;
 
-    const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
+    public const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
 
-    const CODE_TOUT_ETABLISSEMENT_CONFONDU = 'Tous';
+    public const CODE_TOUT_ETABLISSEMENT_CONFONDU = 'Tous';
 
-    const TYPE_INSCRIPTION = 'inscription';
-    const TYPE_COLLEGE_ED = 'ced';
-    const TYPE_AUTRE = 'autre';
+    public const TYPE_INSCRIPTION = 'inscription';
+    public const TYPE_COLLEGE_ED = 'ced';
+    public const TYPE_AUTRE = 'autre';
 
     protected $id;
     protected ?string $emailAssistance = null;
@@ -408,6 +408,6 @@ class Etablissement implements
      */
     public function getSigle(): string
     {
-        return $this->structure->getSigle() ? $this->structure->getSigle() : "";
+        return $this->structure->getSigle() ?: '';
     }
 }

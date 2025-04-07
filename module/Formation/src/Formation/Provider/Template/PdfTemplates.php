@@ -4,7 +4,7 @@ namespace Formation\Provider\Template;
 
 class PdfTemplates {
 
-    const FORMATION_CONVOCATION = "FORMATION_CONVOCATION";
-    const FORMATION_ATTESTATION = "FORMATION_ATTESTATION";
+    public const FORMATION_CONVOCATION = "FORMATION_CONVOCATION";
+    public const FORMATION_ATTESTATION = "FORMATION_ATTESTATION";
 
 }

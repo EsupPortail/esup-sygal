@@ -16,8 +16,8 @@ use Laminas\InputFilter\InputFilterProviderInterface;
  */
 class MetadonneeTheseFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    const SEPARATEUR_MOTS_CLES = MetadonneeThese::SEPARATEUR_MOTS_CLES;
-    const SEPARATEUR_MOTS_CLES_LIB = MetadonneeThese::SEPARATEUR_MOTS_CLES_LIB;
+    public const SEPARATEUR_MOTS_CLES = MetadonneeThese::SEPARATEUR_MOTS_CLES;
+    public const SEPARATEUR_MOTS_CLES_LIB = MetadonneeThese::SEPARATEUR_MOTS_CLES_LIB;
 
     /**
      * @var array

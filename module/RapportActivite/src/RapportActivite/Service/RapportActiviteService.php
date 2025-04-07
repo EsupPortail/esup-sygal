@@ -69,9 +69,9 @@ class RapportActiviteService extends BaseService
 
     use EventManagerAwareTrait;
 
-    const RAPPORT_ACTIVITE__AJOUTE__EVENT = 'RAPPORT_ACTIVITE__AJOUTE__EVENT';
-    const RAPPORT_ACTIVITE__MODIFIE__EVENT = 'RAPPORT_ACTIVITE__MODIFIE__EVENT';
-    const RAPPORT_ACTIVITE__SUPPRIME__EVENT = 'RAPPORT_ACTIVITE__SUPPRIME__EVENT';
+    public const RAPPORT_ACTIVITE__AJOUTE__EVENT = 'RAPPORT_ACTIVITE__AJOUTE__EVENT';
+    public const RAPPORT_ACTIVITE__MODIFIE__EVENT = 'RAPPORT_ACTIVITE__MODIFIE__EVENT';
+    public const RAPPORT_ACTIVITE__SUPPRIME__EVENT = 'RAPPORT_ACTIVITE__SUPPRIME__EVENT';
 
     /**
      * Fetch complet d'un rapport par son id :
@@ -169,8 +169,7 @@ class RapportActiviteService extends BaseService
 
             $event = $this->triggerEvent(
                 $rapportActivite->getId() ? self::RAPPORT_ACTIVITE__MODIFIE__EVENT : self::RAPPORT_ACTIVITE__AJOUTE__EVENT,
-                $rapportActivite,
-                []
+                $rapportActivite
             );
         } catch (Exception $e) {
             $this->entityManager->rollback();
@@ -203,8 +202,7 @@ class RapportActiviteService extends BaseService
 
             $event = $this->triggerEvent(
                 self::RAPPORT_ACTIVITE__SUPPRIME__EVENT,
-                $rapportActivite,
-                []
+                $rapportActivite
             );
         } catch (Exception $e) {
             $this->entityManager->rollback();
@@ -289,7 +287,7 @@ class RapportActiviteService extends BaseService
         $exporter->setWatermark("CONFIDENTIEL");
         $exporter->getMpdf()->watermarkTextAlpha = 0.1;
         $exporter->setVars(['rapport' => $rapport, 'data' => $data]);
-        $exporter->export($outputFilepath, Pdf::DESTINATION_BROWSER);
+        $exporter->export($outputFilepath);
     }
 
     /**
@@ -312,7 +310,7 @@ class RapportActiviteService extends BaseService
             throw new ExporterDataException("La thèse n'est rattachée à aucune unité de recherche");
         }
 
-        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
+        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable();
 
         // Logos COMUE & établissements d'inscription
         $data->logosEtablissements = [];
@@ -397,7 +395,7 @@ class RapportActiviteService extends BaseService
         $exportData->ecoleDoctorale = $ed->getStructure()->getLibelle();
         $exportData->uniteRecherche = $ur->getStructure()->getLibelle();
 
-        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
+        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable();
 
         // logo COMUE
         $exportData->useCOMUE = false;
@@ -478,7 +476,7 @@ class RapportActiviteService extends BaseService
         }
 
         try {
-            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable();
             return $this->fichierStorageService->getFileForFichier($fichier);
         } catch (StorageAdapterException $e) {
             throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);

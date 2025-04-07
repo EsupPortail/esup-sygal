@@ -13,7 +13,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
  */
 class WfEtapeResource implements ResourceInterface
 {
-    const RESOURCE_ID = 'WfEtapeResource';
+    public const RESOURCE_ID = 'WfEtapeResource';
 
     /**
      * @var \Depot\Entity\Db\WfEtape|string

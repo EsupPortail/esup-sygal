@@ -62,7 +62,7 @@ class SearchControllerPlugin extends AbstractPlugin
         $page = $this->getController()->params()->fromQuery('page', 1);
         $paginator = new SearchResultPaginator(new DoctrinePaginator(new Paginator($qb, true)));
         $paginator
-            ->setContainsRealSearchResult(true)
+            ->setContainsRealSearchResult()
             ->setPageRange(30)
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);

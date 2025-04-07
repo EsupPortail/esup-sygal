@@ -16,7 +16,7 @@ class AbstractValidationEntityServiceFactory
      */
     public function __invoke(ContainerInterface $container): AbstractValidationEntityService
     {
-        $service = new $this->validationEntityServiceClass;
+        $service = new $this->validationEntityServiceClass();
 
         $em = $container->get('doctrine.entitymanager.orm_default');
         $service->setEntityManager($em);

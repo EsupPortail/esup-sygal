@@ -23,12 +23,12 @@ class FormationSearchService extends SearchService
     use EtablissementServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
 
-    const NAME_libelle = 'libelle';
-    const NAME_modalite = 'modalite';
-    const NAME_responsable = 'responsable';
-    const NAME_site = 'site';
-    const NAME_structure = 'structure';
-    const NAME_anneeUniv = 'anneeUniv';
+    public const NAME_libelle = 'libelle';
+    public const NAME_modalite = 'modalite';
+    public const NAME_responsable = 'responsable';
+    public const NAME_site = 'site';
+    public const NAME_structure = 'structure';
+    public const NAME_anneeUniv = 'anneeUniv';
 
 
     public function init()
@@ -76,7 +76,7 @@ class FormationSearchService extends SearchService
         $this->addInvisibleSort('ABS(DATE_DIFF(CURRENT_DATE(), seance.debut))', 'ASC');
     }
 
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         $queryBuilder = $this->formationRepository->createQueryBuilder('f');

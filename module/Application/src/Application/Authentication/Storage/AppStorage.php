@@ -37,9 +37,9 @@ class AppStorage implements ChainableStorage
     use EtablissementServiceAwareTrait;
     use UserWrapperFactoryAwareTrait;
 
-    const KEY_DB_UTILISATEUR = 'db';
-    const KEY_DOCTORANT = 'doctorant';
-    const KEY_CANDIDAT_HDR = 'candidat_hdr';
+    public const KEY_DB_UTILISATEUR = 'db';
+    public const KEY_DOCTORANT = 'doctorant';
+    public const KEY_CANDIDAT_HDR = 'candidat_hdr';
 
     /**
      * @var UserWrapper

@@ -177,7 +177,7 @@ class Candidat implements
      */
     public function getDenominationPatronymique()
     {
-        return $this->getIndividu()->getNomComplet(true, false, false, false, true);
+        return $this->getIndividu()->getNomComplet();
     }
 
     /**

@@ -18,8 +18,7 @@ class FinancementService
 
     public function getRepository()
     {
-        $repo = $this->entityManager->getRepository(Financement::class);
-        return $repo;
+        return $this->entityManager->getRepository(Financement::class);
     }
 
     /**

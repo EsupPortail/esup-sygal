@@ -146,9 +146,8 @@ class InterventionService
      */
     public function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Intervention::class)->createQueryBuilder('intervention')
+        return $this->getEntityManager()->getRepository(Intervention::class)->createQueryBuilder('intervention')
             ->addSelect('proposition')->join('intervention.proposition', 'proposition');
-        return $qb;
     }
 
     /**
@@ -160,8 +159,7 @@ class InterventionService
     {
         $qb = $this->createQueryBuilder()
             ->orderBy('intervention.' . $champ, $ordre);
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -179,8 +177,7 @@ class InterventionService
             ->andWhere('intervention.histoDestruction IS NULL')
             ->orderby('intervention.histoCreation', 'DESC');
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -204,8 +201,7 @@ class InterventionService
     public function getRequestedIntervention(AbstractActionController $controller, string $param = "intervention") : ?Intervention
     {
         $id = $controller->params()->fromRoute($param);
-        $intervention = $this->getIntervention($id);
-        return $intervention;
+        return $this->getIntervention($id);
     }
 
 }

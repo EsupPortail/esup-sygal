@@ -11,7 +11,7 @@ use Structure\Entity\Db\EcoleDoctorale;
  */
 class EcoleDoctoraleSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'ecoleDoctorale';
+    public const NAME = 'ecoleDoctorale';
 
     /**
      * @inheritDoc

@@ -21,7 +21,7 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
 {
     use HistoriqueAwareTrait;
 
-    const RESOURCE_ID = 'Fichier';
+    public const RESOURCE_ID = 'Fichier';
 
     /**
      * @var integer
@@ -115,7 +115,7 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     {
         $content = file_get_contents($filepath);
 
-        $fichier = new static;
+        $fichier = new static();
         $fichier
             ->setNom(basename($filepath))
             ->setNomOriginal(basename($filepath))

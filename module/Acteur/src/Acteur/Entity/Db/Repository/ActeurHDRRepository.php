@@ -126,10 +126,9 @@ class ActeurHDRRepository extends AbstractActeurRepository
             ->first()
             ->getIndividu();
 
-        $acteursSansGarant = array_filter($qb->getQuery()->getResult(), fn($acteur) =>
+        return array_filter($qb->getQuery()->getResult(), fn($acteur) =>
             $acteur->getIndividu() !== $garantIndividu
         );
-        return $acteursSansGarant;
     }
 
     public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurHDR|null

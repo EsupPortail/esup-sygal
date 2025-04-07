@@ -12,13 +12,12 @@ class AdresseSoutenanceHydrator implements HydratorInterface
     #[Pure] public function extract(object $object): array
     {
         /** @var Adresse $object */
-        $data = [
+        return [
             'ligne1' => $object->getLigne1(),
             'ligne2' => $object->getLigne2(),
             'ligne3' => $object->getLigne3(),
             'ligne4' => $object->getLigne4(),
         ];
-        return $data;
     }
 
     public function hydrate(array $data,object $object): object

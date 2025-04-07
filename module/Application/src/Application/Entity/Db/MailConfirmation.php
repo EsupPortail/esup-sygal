@@ -6,8 +6,8 @@ use Individu\Entity\Db\Individu;
 
 class MailConfirmation
 {
-    const ENVOYE = 'E';
-    const CONFIRME = 'C';
+    public const ENVOYE = 'E';
+    public const CONFIRME = 'C';
 
     private $id;
     /** @var \Individu\Entity\Db\Individu $individu */

@@ -10,17 +10,17 @@ use UnicaenApp\Exception\RuntimeException;
 
 class TestArchivabiliteShellCommandResult extends ShellCommandResult
 {
-    const XML_TAG_VALIDATOR = 'validator';
+    public const XML_TAG_VALIDATOR = 'validator';
 
-    const XML_TAG_VALID = 'valid';
-    const XML_TAG_WELLFORMED = 'wellFormed';
-    const XML_TAG_ARCHIVABLE = 'archivable';
-    const XML_TAG_MESSAGE = 'message';
-    const XML_TAG_SIZE = 'size';
-    const XML_TAG_MD5SUM = 'md5sum';
-    const XML_TAG_SHA256SUM = 'sha256sum';
-    const XML_TAG_FORMAT = 'format';
-    const XML_TAG_VERSION = 'version';
+    public const XML_TAG_VALID = 'valid';
+    public const XML_TAG_WELLFORMED = 'wellFormed';
+    public const XML_TAG_ARCHIVABLE = 'archivable';
+    public const XML_TAG_MESSAGE = 'message';
+    public const XML_TAG_SIZE = 'size';
+    public const XML_TAG_MD5SUM = 'md5sum';
+    public const XML_TAG_SHA256SUM = 'sha256sum';
+    public const XML_TAG_FORMAT = 'format';
+    public const XML_TAG_VERSION = 'version';
 
     /**
      * @var string XML retourné par le web service.

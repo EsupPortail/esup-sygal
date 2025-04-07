@@ -85,16 +85,14 @@ class IndexController extends AbstractController
 
     public function notAllowedAction()
     {
-        $vm = new ViewModel([
+        return new ViewModel([
             'messages' => [
                 'danger' => "<strong>Il semblerait que vous n'êtes pas habilité&middot;e à utiliser cette application.</strong>",
                 'info'  => <<<EOS
 <strong>NB : </strong>Si vous êtes doctorant&middot;e, vous devez vous connecter avec votre compte étudiant.
 EOS
             ],
-        ]);
-
-        return $vm;
+]);
     }
 
     /**

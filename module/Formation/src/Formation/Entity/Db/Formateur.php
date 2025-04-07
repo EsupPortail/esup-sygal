@@ -9,7 +9,7 @@ use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 class Formateur  implements HistoriqueAwareInterface{
     use HistoriqueAwareTrait;
 
-    const ROLE = 'FORMATEUR';
+    public const ROLE = 'FORMATEUR';
 
     private int $id;
     private ?Individu $individu = null;

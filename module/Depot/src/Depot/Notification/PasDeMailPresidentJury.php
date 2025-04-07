@@ -22,7 +22,7 @@ class PasDeMailPresidentJury extends Notification
 
         $successMessage = sprintf(
             "Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)",
-            $to,
+            implode(', ', $to),
         );
 
         $this

@@ -140,13 +140,13 @@ class TheseAssertion extends AbstractAssertion
             $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
             $individus = [];
             foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
-            return (array_search($individu, $individus) !== false);
+            return (in_array($individu, $individus));
         }
         if ($role->getCode() === Role::CODE_CODIRECTEUR_THESE) {
             $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
             $individus = [];
             foreach ($directeurs as $directeur) $individus[] = $directeur->getIndividu();
-            return (array_search($individu, $individus) !== false);
+            return (in_array($individu, $individus));
         }
         // structure
         // todo : remplacer par $role->isStructureDependant() && $role->getTypeStructureDependant()->isEcoleDoctorale() :

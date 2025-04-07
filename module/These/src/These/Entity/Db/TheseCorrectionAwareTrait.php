@@ -237,7 +237,7 @@ trait TheseCorrectionAwareTrait
         $date = clone $dateSoutenance;
         $date
             ->add(new DateInterval($intervalSpec))
-            ->setTime(0, 0, 0);
+            ->setTime(0, 0);
 
         return $date;
     }

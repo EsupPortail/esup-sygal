@@ -8,7 +8,6 @@ class DomaineHalSaisieFormFactory
 {
     public function __invoke(ContainerInterface $container): DomaineHalSaisieForm
     {
-        $form = new DomaineHalSaisieForm();
-        return $form;
+        return new DomaineHalSaisieForm();
     }
 }

@@ -12,7 +12,7 @@ use UnicaenApp\Util;
 
 class FileUtils
 {
-    const MIME_TYPE_PDF = 'application/pdf';
+    public const MIME_TYPE_PDF = 'application/pdf';
 
     /**
      * Génère un fichier PNG temporaire pour aperçu de la première page d'un fichier PDF,

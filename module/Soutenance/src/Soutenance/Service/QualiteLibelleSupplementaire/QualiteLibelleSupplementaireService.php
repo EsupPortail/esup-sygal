@@ -126,7 +126,6 @@ class QualiteLibelleSupplementaireService {
     public function getRequestedLibelle($controller, $param = 'libelle')
     {
         $id = $controller->params()->fromRoute($param);
-        $libelle = $this->getQualiteLibelleSupplementaire($id);
-        return $libelle;
+        return $this->getQualiteLibelleSupplementaire($id);
     }
 }

@@ -144,7 +144,7 @@ class AdmissionEtudiantTemplateVariable extends AbstractTemplateVariable
     {
         if($this->etudiant->getSituationHandicap()){
             return "Oui";
-        }else if($this->etudiant->getSituationHandicap() === false){
+        }elseif($this->etudiant->getSituationHandicap() === false){
             return "Non";
         }else{
             return "<b>Non renseigné</b>";
@@ -157,7 +157,7 @@ class AdmissionEtudiantTemplateVariable extends AbstractTemplateVariable
     public function getNiveauEtudeInformations(){
         if($this->etudiant->getNiveauEtude() === 1){
             return "Diplôme national tel que le master";
-        }else if($this->etudiant->getNiveauEtude() === 2){
+        }elseif($this->etudiant->getNiveauEtude() === 2){
             return "Diplôme autre qu'un diplôme national - à titre dérogatoire";
         }else{
             return "<b>Non renseigné</b>";

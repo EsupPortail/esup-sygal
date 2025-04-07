@@ -12,8 +12,6 @@ class StructuresFormFactory
      */
     public function __invoke(ContainerInterface $container): StructuresForm
     {
-        $form = new StructuresForm('Structures');
-
-        return $form;
+        return new StructuresForm('Structures');
     }
 }

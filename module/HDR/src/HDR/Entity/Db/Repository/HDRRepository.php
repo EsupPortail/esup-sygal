@@ -34,11 +34,9 @@ class HDRRepository extends DefaultEntityRepository
                 ->setParameter('etablissement', $etablissement);
         }
 
-        $results = array_map(function($value) {
+        return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
-
-        return $results;
     }
 
     /**

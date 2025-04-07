@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class EtatHDRSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'etatHDR';
+    public const NAME = 'etatHDR';
 
     /**
      * @inheritDoc

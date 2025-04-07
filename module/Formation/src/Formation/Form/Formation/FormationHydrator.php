@@ -25,7 +25,7 @@ class FormationHydrator implements HydratorInterface {
      */
     public function extract($object): array
     {
-        $data = [
+        return [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
             'lien' => $object->getLien(),
@@ -40,7 +40,6 @@ class FormationHydrator implements HydratorInterface {
             'objectif' => $object->getObjectif(),
             'programme' => $object->getProgramme(),
         ];
-        return $data;
     }
 
     /**

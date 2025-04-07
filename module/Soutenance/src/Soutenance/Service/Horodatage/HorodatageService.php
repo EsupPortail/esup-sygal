@@ -10,11 +10,11 @@ class HorodatageService {
     use HorodatageServiceAwareTrait;
     use PropositionServiceAwareTrait;
 
-    const TYPE_EDITION      = "Édition";
-    const TYPE_ETAT         = "État";
-    const TYPE_MODIFICATION = "Modification";
-    const TYPE_NOTIFICATION = "Notification";
-    const TYPE_VALIDATION   = "Validation";
+    public const TYPE_EDITION      = "Édition";
+    public const TYPE_ETAT         = "État";
+    public const TYPE_MODIFICATION = "Modification";
+    public const TYPE_NOTIFICATION = "Notification";
+    public const TYPE_VALIDATION   = "Validation";
 
     public function addHorodatage(Proposition $proposition, string $type, ?string $complement = null)
     {

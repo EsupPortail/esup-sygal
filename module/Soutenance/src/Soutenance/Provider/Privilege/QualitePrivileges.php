@@ -6,6 +6,6 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class QualitePrivileges extends Privileges
 {
-    const SOUTENANCE_QUALITE_VISUALISER                      = 'soutenance-qualite-visualisation';
-    const SOUTENANCE_QUALITE_MODIFIER                        = 'soutenance-qualite-modification';
+    public const SOUTENANCE_QUALITE_VISUALISER                      = 'soutenance-qualite-visualisation';
+    public const SOUTENANCE_QUALITE_MODIFIER                        = 'soutenance-qualite-modification';
 }

@@ -67,9 +67,7 @@ class DirectionHydrator extends AbstractHydrator
         }
 
         $prefixe = 'directeur-';
-        $dataActeur = $this->extractActeur($directeur, $prefixe);
-
-        return $dataActeur;
+        return $this->extractActeur($directeur, $prefixe);
     }
 
     /**
@@ -160,7 +158,7 @@ class DirectionHydrator extends AbstractHydrator
 
         $codirsEnBdd = $these->getId() ?  $this->acteurTheseService->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE) : [];
         foreach ($codirsEnBdd as $acteur) {
-            if (array_search($acteur->getId(), $temoins) === false) {
+            if (!in_array($acteur->getId(), $temoins)) {
                 $acteur->historiser();
 
                 //on historise également l'acteur ayant le rôle Membre associé à l'individu

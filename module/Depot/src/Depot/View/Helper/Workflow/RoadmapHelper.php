@@ -49,9 +49,7 @@ class RoadmapHelper extends AbstractHelper implements WorkflowServiceAwareInterf
         foreach ($workflow as $i => $r) {
             $parts[] = sprintf('<tr>%s</tr>', $this->renderRow($r));
         }
-        $html =  sprintf('<table class="roadmap table table-sm table-hover">%s</table>', implode('', $parts));
-
-        return $html;
+        return sprintf('<table class="roadmap table table-sm table-hover">%s</table>', implode('', $parts));
     }
 
     /**

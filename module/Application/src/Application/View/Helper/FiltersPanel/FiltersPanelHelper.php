@@ -14,7 +14,7 @@ class FiltersPanelHelper extends AbstractHelper
      * @param SearchFilter[] $filters
      * @return string
      */
-    function __invoke(array $filters): string
+    public function __invoke(array $filters): string
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
@@ -27,8 +27,8 @@ class FiltersPanelHelper extends AbstractHelper
     /**
      * Retourne true si, d'après les valeurs des paramètres GET, l'<option> d'un <select> est sélectionnée.
      *
-     * @param string   $optionName  Name de l'<option>
-     * @param mixed    $optionValue Valeur de l'<option>
+     * @param string $optionName Name de l'<option>
+     * @param mixed $optionValue Valeur de l'<option>
      * @param string[] $queryParams valeurs des paramètres GET
      * @return bool
      * @deprecated Utiliser à la place {@see SelectSearchFilter::isSelectOptionActive()}

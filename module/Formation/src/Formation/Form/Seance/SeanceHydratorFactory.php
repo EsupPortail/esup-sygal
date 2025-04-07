@@ -12,7 +12,6 @@ class SeanceHydratorFactory {
      */
     public function __invoke(ContainerInterface $container) : SeanceHydrator
     {
-        $hydrator = new SeanceHydrator();
-        return $hydrator;
+        return new SeanceHydrator();
     }
 }

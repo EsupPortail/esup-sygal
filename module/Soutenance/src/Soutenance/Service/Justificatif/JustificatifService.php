@@ -118,7 +118,7 @@ class JustificatifService
      */
     public function createQueryBuilder(): QueryBuilder
     {
-        $qb = $this->getRepository()->createQueryBuilder('justificatif')
+        return $this->getRepository()->createQueryBuilder('justificatif')
             ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
             ->addSelect('fichierthese')->leftJoin('justificatif.fichierThese', 'fichierthese')
             ->addSelect('fichierhdr')->leftJoin('justificatif.fichierHDR', 'fichierhdr')
@@ -127,7 +127,6 @@ class JustificatifService
             ->addSelect('natureH')->leftJoin('fichierH.nature', 'natureH')
             ->addSelect('natureT')->leftJoin('fichierT.nature', 'natureT')
             ->addSelect('membre')->leftJoin('justificatif.membre', 'membre');
-        return $qb;
     }
 
     public function getJustificatif($id)
@@ -152,8 +151,7 @@ class JustificatifService
     public function getRequestedJustificatif(AbstractActionController $controller, string $paramName = 'justificatif'): ?Justificatif
     {
         $id = $controller->params()->fromRoute($paramName);
-        $justificatif = $this->getJustificatif($id);
-        return $justificatif;
+        return $this->getJustificatif($id);
     }
 
 
@@ -178,21 +176,21 @@ class JustificatifService
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DELOCALISATION_SOUTENANCE,
                 'label' => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELOCALISATION_SOUTENANCE, null),
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELOCALISATION_SOUTENANCE),
             ];
         }
         if ($proposition instanceof PropositionThese && $proposition->isLabelEuropeen()) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DEMANDE_LABEL,
                 'label' => NatureFichier::LABEL_DEMANDE_LABEL,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_LABEL, null),
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_LABEL),
             ];
         }
         if ($proposition->getConfidentialite() !== null) {
             $justificatifs[] = [
                 'type' => NatureFichier::CODE_DEMANDE_CONFIDENT,
                 'label' => NatureFichier::LABEL_DEMANDE_CONFIDENT,
-                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_CONFIDENT, null),
+                'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DEMANDE_CONFIDENT),
             ];
         }
 //        if (  $proposition->isManuscritAnglais() OR $proposition->isSoutenanceAnglais()) {
@@ -317,7 +315,7 @@ class JustificatifService
         $justificatifsOk = true;
         foreach ($justificatifs as $justificatif) {
             if ($justificatif['justificatif'] === null) {
-                if (array_search($justificatif['type'], $non_bloquant) === false) {
+                if (!in_array($justificatif['type'], $non_bloquant)) {
                     $justificatifsOk = false;
                     break;
                 } else {
@@ -339,7 +337,6 @@ class JustificatifService
         if($proposition instanceof PropositionThese) $qb = $qb->andWhere('natureT.code = :natureT')->setParameter('natureT', $natureCode);
         if($proposition instanceof PropositionHDR) $qb = $qb->andWhere('natureH.code = :natureH')->setParameter('natureH', $natureCode);
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

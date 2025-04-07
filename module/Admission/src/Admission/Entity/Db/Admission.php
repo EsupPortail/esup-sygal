@@ -15,11 +15,11 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
 
     use HistoriqueAwareTrait;
 
-    const ETAT_EN_COURS_SAISIE   = 'C';
-    const ETAT_EN_COURS_VALIDATION   = 'E';
-    const ETAT_ABANDONNE = 'A';
-    const ETAT_VALIDE = 'V';
-    const ETAT_REJETE = 'R';
+    public const ETAT_EN_COURS_SAISIE = 'C';
+    public const ETAT_EN_COURS_VALIDATION = 'E';
+    public const ETAT_ABANDONNE = 'A';
+    public const ETAT_VALIDE = 'V';
+    public const ETAT_REJETE = 'R';
 
     public static $etatsLibelles = [
         self::ETAT_EN_COURS_SAISIE => "En cours de saisie",
@@ -438,8 +438,7 @@ class Admission implements HistoriqueAwareInterface, ResourceInterface{
      */
     public function getDateToString() : string
     {
-        $date = $this->getHistoCreation()->format('d/m/Y à H:i');
-        return $date;
+        return $this->getHistoCreation()->format('d/m/Y à H:i');
     }
 
     public function getResourceId()

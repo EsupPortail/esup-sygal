@@ -11,9 +11,9 @@ class NewEmailValidator extends AbstractValidator
 {
     use EntityManagerAwareTrait;
 
-    const NOT_EMAIL = 'not-email';
-    const UTILISATEUR = 'utilisateur';
-    const INDIVIDU = 'individu';
+    public const NOT_EMAIL = 'not-email';
+    public const UTILISATEUR = 'utilisateur';
+    public const INDIVIDU = 'individu';
 
     protected array $perimetre = [];
 

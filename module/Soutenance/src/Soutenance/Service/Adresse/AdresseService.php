@@ -53,9 +53,8 @@ class AdresseService {
 
     public function createQueryBuilder(): QueryBuilder
     {
-        $qb = $this->getObjectManager()->getRepository(Adresse::class)->createQueryBuilder('adresse')
+        return $this->getObjectManager()->getRepository(Adresse::class)->createQueryBuilder('adresse')
             ->join('adresse.proposition', 'proposition')->addSelect('proposition');
-        return $qb;
     }
 
     public function getAdresse(?int $id): ?Adresse

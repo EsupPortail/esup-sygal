@@ -117,7 +117,7 @@ class ValidationController extends AbstractController
                 $successMessage ="Validation annulée avec succès.";
 
                 // notification
-                $notification->setEstDevalidation(true);
+                $notification->setEstDevalidation();
                 $notification->setNotifierDoctorant(false);
             }
             else {

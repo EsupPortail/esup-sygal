@@ -9,9 +9,9 @@ use Exception;
 
 class Log
 {
-    const OPERATION__ENVOI = 'ENVOI';
-    const OPERATION__GENERATION_XML = 'GENERATION_XML';
-    const OPERATION__SYNTHESE = 'SYNTHESE';
+    public const OPERATION__ENVOI = 'ENVOI';
+    public const OPERATION__GENERATION_XML = 'GENERATION_XML';
+    public const OPERATION__SYNTHESE = 'SYNTHESE';
 
     private int $id;
     private string $operation;

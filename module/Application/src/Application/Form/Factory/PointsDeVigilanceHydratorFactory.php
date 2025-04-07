@@ -9,6 +9,6 @@ class PointsDeVigilanceHydratorFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        return new PointsDeVigilanceHydrator($container->get('doctrine.entitymanager.orm_default'));
+        return new PointsDeVigilanceHydrator();
     }
 }

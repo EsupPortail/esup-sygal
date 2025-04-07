@@ -4,8 +4,8 @@ namespace Formation\Provider\Parametre;
 
 class FormationParametres
 {
-    const CATEGORIE = 'FORMATION';
+    public const CATEGORIE = 'FORMATION';
 
-    const DELAI_ENQUETE = 'DELAI_ENQUETE';
-    const DELAI_ANNULATION_INSCRIPTION= 'DELAI_ANNULATION_INSCRIPTION';
+    public const DELAI_ENQUETE = 'DELAI_ENQUETE';
+    public const DELAI_ANNULATION_INSCRIPTION = 'DELAI_ANNULATION_INSCRIPTION';
 }

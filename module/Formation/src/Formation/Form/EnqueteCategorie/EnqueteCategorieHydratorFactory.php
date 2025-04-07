@@ -12,7 +12,6 @@ class EnqueteCategorieHydratorFactory {
      */
     public function __invoke(ContainerInterface $container) : EnqueteCategorieHydrator
     {
-        $hydrator = new EnqueteCategorieHydrator();
-        return $hydrator;
+        return new EnqueteCategorieHydrator();
     }
 }

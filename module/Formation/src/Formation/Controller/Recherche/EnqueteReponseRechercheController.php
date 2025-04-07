@@ -26,7 +26,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
     use EnqueteQuestionRepositoryAwareTrait;
     use EnqueteCategorieRepositoryAwareTrait;
 
-    const SESSION_ROUTE_PARAM_TOUTES = 'toutes';
+    public const SESSION_ROUTE_PARAM_TOUTES = 'toutes';
 
     protected string $routeName = 'formation/enquete/resultat';
     protected string $indexActionTemplate = 'formation/enquete-reponse/recherche/afficher-resultats';

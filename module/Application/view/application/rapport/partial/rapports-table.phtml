@@ -429,12 +429,12 @@ $acteursFormatterCodirecteurs->asSeparated()
     })
 
     $(function() {
-        const avisComplemsModal = document.getElementById('commentairesAutorisationInscrModal')
+        public const avisComplemsModal = document.getElementById('commentairesAutorisationInscrModal')
         avisComplemsModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const logFullContent = $(button).siblings(".log-full-content").html();
+            public const button = event.relatedTarget;
+            public const logFullContent = $(button).siblings(".log-full-content").html();
 
-            const modalBody = avisComplemsModal.querySelector('.modal-body');
+            public const modalBody = avisComplemsModal.querySelector('.modal-body');
             $(modalBody).html(logFullContent);
         });
     })

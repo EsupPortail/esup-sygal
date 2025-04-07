@@ -30,15 +30,15 @@ class SessionSearchService extends SearchService
 
     use EtablissementServiceAwareTrait;
 
-    const NAME_libelle = 'libelle';
-    const NAME_modalite = 'modalite';
-    const NAME_etat = 'etat';
-    const NAME_responsable = 'responsable';
-    const NAME_site = 'site';
-    const NAME_structure = 'structure';
-    const NAME_anneeUniv = 'anneeUniv';
-    const NAME_type = 'type';
-    const NAME_seances = 'seances';
+    public const NAME_libelle = 'libelle';
+    public const NAME_modalite = 'modalite';
+    public const NAME_etat = 'etat';
+    public const NAME_responsable = 'responsable';
+    public const NAME_site = 'site';
+    public const NAME_structure = 'structure';
+    public const NAME_anneeUniv = 'anneeUniv';
+    public const NAME_type = 'type';
+    public const NAME_seances = 'seances';
 
 
     public function init()
@@ -97,7 +97,7 @@ class SessionSearchService extends SearchService
         $this->addInvisibleSort('ABS(DATE_DIFF(CURRENT_DATE(), seance.debut))', 'ASC');
     }
 
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         return $this->sessionRepository->createQueryBuilder('s');
     }

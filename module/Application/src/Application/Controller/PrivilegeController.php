@@ -26,11 +26,11 @@ class PrivilegeController extends AbstractController
     use EtablissementServiceAwareTrait;
     use PrivilegeServiceAwareTrait;
 
-    const PERIMETRE_ED = 'ED';
-    const PERIMETRE_UR = 'UR';
-    const PERIMETRE_Etab = 'Etab';
-    const PERIMETRE_These = 'These';
-    const PERIMETRE_Aucun = 'Aucun';
+    public const PERIMETRE_ED = 'ED';
+    public const PERIMETRE_UR = 'UR';
+    public const PERIMETRE_Etab = 'Etab';
+    public const PERIMETRE_These = 'These';
+    public const PERIMETRE_Aucun = 'Aucun';
 
     public function indexAction()
     {

@@ -13,10 +13,10 @@ use UnicaenApp\Exception\RuntimeException;
 class Membre implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    const MEMBRE_JURY        = 'Membre';
-    const RAPPORTEUR_JURY    = 'Rapporteur membre du jury';
-    const RAPPORTEUR_VISIO   = 'Rapporteur en visioconférence';
-    const RAPPORTEUR_ABSENT  = 'Rapporteur absent';
+    public const MEMBRE_JURY        = 'Membre';
+    public const RAPPORTEUR_JURY    = 'Rapporteur membre du jury';
+    public const RAPPORTEUR_VISIO   = 'Rapporteur en visioconférence';
+    public const RAPPORTEUR_ABSENT  = 'Rapporteur absent';
 
     /** @var int */
     private $id;

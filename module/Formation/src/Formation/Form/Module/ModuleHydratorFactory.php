@@ -12,7 +12,6 @@ class ModuleHydratorFactory {
      */
     public function __invoke(ContainerInterface $container) : ModuleHydrator
     {
-        $hydrator = new ModuleHydrator();
-        return $hydrator;
+        return new ModuleHydrator();
     }
 }

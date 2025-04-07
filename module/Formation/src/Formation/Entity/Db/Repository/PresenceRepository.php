@@ -36,11 +36,9 @@ class PresenceRepository extends EntityRepository
      */
     public function createQB(string $alias) : QueryBuilder
     {
-        $qb = $this->createQueryBuilder($alias)
+        return $this->createQueryBuilder($alias)
             ->leftJoin($alias.".inscription", "inscription")->addSelect("inscription")
-            ->leftJoin($alias.".seance", "seance")->addSelect("seance")
-        ;
-        return $qb;
+            ->leftJoin($alias.".seance", "seance")->addSelect("seance");
     }
 
     /**
@@ -75,8 +73,7 @@ class PresenceRepository extends EntityRepository
             ->andWhere('seance.session = :session')
             ->setParameter('session', $session)
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -89,7 +86,6 @@ class PresenceRepository extends EntityRepository
             ->andWhere('presence.inscription = :inscription')
             ->setParameter('inscription', $inscription)
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

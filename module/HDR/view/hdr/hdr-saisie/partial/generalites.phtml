@@ -115,18 +115,18 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
 
 <script>
     $(function () {
-        const $etablissementSelect2 = $('#etablissement');
-        const $versionDiplomeSelect2 = $("#versionDiplome");
+        public const $etablissementSelect2 = $('#etablissement');
+        public const $versionDiplomeSelect2 = $("#versionDiplome");
 
-        const updateVersionDiplomeOptionsForSelectedEtablissement = function() {
+        public const updateVersionDiplomeOptionsForSelectedEtablissement = function() {
             // filtrage des versions de diplômes en fonction de l'établissement sélectionné
-            const sourcecode = $etablissementSelect2.select2('data')[0].sourcecode;
+            public const sourcecode = $etablissementSelect2.select2('data')[0].sourcecode;
             if (!sourcecode) {
                 $versionDiplomeSelect2.val('').attr('disabled', 'disabled');
                 return;
             }
-            const $options = $versionDiplomeSelect2.find("option.etablissement");
-            const $optionsToShow = $options.filter('.' + sourcecode);
+            public const $options = $versionDiplomeSelect2.find("option.etablissement");
+            public const $optionsToShow = $options.filter('.' + sourcecode);
             $options.attr('disabled', 'disabled');
             $optionsToShow.removeAttr('disabled');
             $versionDiplomeSelect2.trigger('change'); // NB #versionDiplome est un Select2

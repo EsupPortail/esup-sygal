@@ -15,11 +15,11 @@ class FinancementFormatter
 {
     use AuthorizeServiceAwareTrait;
 
-    const DISPLAY_AS_HTML_LINES = 'DISPLAY_AS_HTML_LINES';
-    const DISPLAY_AS_ARRAY = 'DISPLAY_AS_ARRAY';
+    public const DISPLAY_AS_HTML_LINES = 'DISPLAY_AS_HTML_LINES';
+    public const DISPLAY_AS_ARRAY = 'DISPLAY_AS_ARRAY';
 
-    const SORT_BY_DATE = 'SORT_DATE';
-    const SORT_BY_ORIGINE = 'SORT_ORIGINE';
+    public const SORT_BY_DATE = 'SORT_DATE';
+    public const SORT_BY_ORIGINE = 'SORT_ORIGINE';
 
     private string $displayAs = self::DISPLAY_AS_HTML_LINES;
     private string $sortBy = self::SORT_BY_DATE;

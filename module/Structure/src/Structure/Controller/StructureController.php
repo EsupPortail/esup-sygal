@@ -24,11 +24,11 @@ use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 
 class StructureController extends AbstractController
 {
-    const TAB_infos = 'informations';
-    const TAB_membres = 'membres';
-    const TAB_docs = 'documents';
-    const TAB_coenc = 'coencadrants';
-    const TAB_variables = 'variables';
+    public const TAB_infos = 'informations';
+    public const TAB_membres = 'membres';
+    public const TAB_docs = 'documents';
+    public const TAB_coenc = 'coencadrants';
+    public const TAB_variables = 'variables';
 
     use ApplicationRoleServiceAwareTrait;
     use IndividuServiceAwareTrait;

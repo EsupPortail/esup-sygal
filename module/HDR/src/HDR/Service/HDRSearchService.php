@@ -38,11 +38,11 @@ class HDRSearchService extends SearchService
     use EcoleDoctoraleServiceAwareTrait;
     use StructureServiceAwareTrait;
 
-    const NAME_etatHDR = 'etatHDR';
-    const NAME_anneeSoutenance = 'anneeSoutenance';
+    public const NAME_etatHDR = 'etatHDR';
+    public const NAME_anneeSoutenance = 'anneeSoutenance';
 
-    const SORTER_NAME_candidat = 'candidat';
-    const SORTER_NAME_dateSoutenance = 'date';
+    public const SORTER_NAME_candidat = 'candidat';
+    public const SORTER_NAME_dateSoutenance = 'date';
 
     /**
      * @var Role|null

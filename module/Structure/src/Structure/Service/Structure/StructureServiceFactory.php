@@ -32,7 +32,7 @@ class StructureServiceFactory
         /** @var \Fichier\Service\Fichier\FichierStorageService $fileService */
         $fileService = $container->get(FichierStorageService::class);
 
-        $service = new StructureService;
+        $service = new StructureService();
         $service->setSourceService($sourceService);
         $service->setEcoleDoctoraleService($ecoleService);
         $service->setEtablissementService($etablissementService);

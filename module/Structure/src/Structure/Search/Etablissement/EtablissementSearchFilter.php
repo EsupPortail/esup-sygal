@@ -11,7 +11,7 @@ use Structure\Entity\Db\Etablissement;
  */
 class EtablissementSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'etablissement';
+    public const NAME = 'etablissement';
 
     /**
      * Instancie un filtre par établissement

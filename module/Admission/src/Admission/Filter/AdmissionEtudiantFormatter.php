@@ -14,7 +14,7 @@ class AdmissionEtudiantFormatter extends AbstractFilter {
 
     public function htmlifyDiplomeIntituleInformations(Etudiant $etudiant){
         if ($etudiant->getNiveauEtude() == 1) {
-            $str = "<table>
+            return "<table>
                        <tr>
                         <th>Intitulé</th>
                         <th>Année d'obtention</th>
@@ -26,16 +26,15 @@ class AdmissionEtudiantFormatter extends AbstractFilter {
                           <td>".$etudiant->getEtablissementDobtentionDiplomeNational()."</td>
                         </tr>
                      </table>";
-            return $str;
-        }else if($etudiant->getNiveauEtude() == 2){
+        }elseif($etudiant->getNiveauEtude() == 2){
             $typeDiplome = null;
             if($etudiant->getTypeDiplomeAutre() == 1){
                 $typeDiplome = "Diplôme obtenu à l'étranger";
-            }else if($etudiant->getTypeDiplomeAutre() == 2){
+            }elseif($etudiant->getTypeDiplomeAutre() == 2){
                 $typeDiplome = "Diplôme français ne conférant pas le grade de master";
             }
 
-            $str = "<table>
+            return "<table>
                        <tr>
                         <th>Intitulé</th>
                         <th>Année d'obtention</th>
@@ -49,7 +48,6 @@ class AdmissionEtudiantFormatter extends AbstractFilter {
                           <td>".$typeDiplome."</td>
                         </tr>
                      </table>";
-            return $str;
         }
     }
 }

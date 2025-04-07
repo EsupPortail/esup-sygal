@@ -26,13 +26,13 @@ class Session implements HistoriqueAwareInterface,
     use HasModaliteTrait;
     use HasTypeTrait;
 
-    const ETAT_PREPARATION       = 'P';
-    const ETAT_INSCRIPTION       = 'O';
-    const ETAT_INSCRIPTION_CLOSE = 'F';
-    const ETAT_IMMINENTE         = 'I';
-    const ETAT_EN_COURS          = 'E';
-    const ETAT_CLOS_FINAL        = 'C';
-    const ETATS = [
+    public const ETAT_PREPARATION       = 'P';
+    public const ETAT_INSCRIPTION       = 'O';
+    public const ETAT_INSCRIPTION_CLOSE = 'F';
+    public const ETAT_IMMINENTE         = 'I';
+    public const ETAT_EN_COURS          = 'E';
+    public const ETAT_CLOS_FINAL        = 'C';
+    public const ETATS = [
         self::ETAT_PREPARATION => self::ETAT_PREPARATION,
         self::ETAT_INSCRIPTION => self::ETAT_INSCRIPTION,
         self::ETAT_INSCRIPTION_CLOSE => self::ETAT_INSCRIPTION_CLOSE,
@@ -130,8 +130,7 @@ class Session implements HistoriqueAwareInterface,
 
     public function getInscriptionsByListe(?string $liste) : array
     {
-        $result = array_filter($this->inscriptions->toArray(), function (Inscription $a) use ($liste) { return ($a->estNonHistorise() AND $a->getListe()===$liste);});
-        return $result;
+        return array_filter($this->inscriptions->toArray(), function (Inscription $a) use ($liste) { return ($a->estNonHistorise() AND $a->getListe()===$liste);});
     }
 
     public function getTailleListePrincipale(): ?int
@@ -146,8 +145,7 @@ class Session implements HistoriqueAwareInterface,
 
     public function getListePrincipale() : array
     {
-        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_PRINCIPALE; });
-        return $inscriptions;
+        return array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_PRINCIPALE; });
     }
 
     public function isListePrincipaleComplete() : bool
@@ -168,8 +166,7 @@ class Session implements HistoriqueAwareInterface,
 
     public function getListeComplementaire() : array
     {
-        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE; });
-        return $inscriptions;
+        return array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE; });
     }
 
     public function isListeComplementaireComplete() : bool
@@ -180,8 +177,7 @@ class Session implements HistoriqueAwareInterface,
 
     public function getNonClasses() : array
     {
-        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === null; });
-        return $inscriptions;
+        return array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === null; });
     }
 
     public function getDescription(): ?string

@@ -4,11 +4,11 @@ namespace Formation\Entity\Db\Interfaces;
 
 interface HasModaliteInterface {
 
-    const MODALITE_PRESENTIEL   = 'P';
-    const MODALITE_DISTANCIEL   = 'D';
-    const MODALITE_MIXTE        = 'M';
+    public const MODALITE_PRESENTIEL   = 'P';
+    public const MODALITE_DISTANCIEL   = 'D';
+    public const MODALITE_MIXTE        = 'M';
 
-    const MODALITES = [
+    public const MODALITES = [
         self::MODALITE_PRESENTIEL => "Présentiel",
         self::MODALITE_DISTANCIEL => "Distanciel",
         self::MODALITE_MIXTE => "Présentiel et distanciel",

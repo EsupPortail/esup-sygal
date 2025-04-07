@@ -14,8 +14,8 @@ class Avis implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const FAVORABLE = 'Favorable';
-    const DEFAVORABLE = 'Défavorable';
+    public const FAVORABLE = 'Favorable';
+    public const DEFAVORABLE = 'Défavorable';
 
     private ?int $id = null;
     private ?Proposition $proposition = null;

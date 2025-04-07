@@ -46,10 +46,10 @@ class AdmissionService extends BaseService
     use VerificationServiceAwareTrait;
     use TemplateServiceAwareTrait;
 
-    const ADMISSION__AJOUTE__EVENT = 'ADMISSION__AJOUTE__EVENT';
-    const ADMISSION__SUPPRIME__EVENT = 'ADMISSION__SUPPRIME__EVENT';
+    public const ADMISSION__AJOUTE__EVENT = 'ADMISSION__AJOUTE__EVENT';
+    public const ADMISSION__SUPPRIME__EVENT = 'ADMISSION__SUPPRIME__EVENT';
 
-    private const DEFAULT_SOURCE_CODE = "SYG";
+    private public const DEFAULT_SOURCE_CODE = "SYG";
 
 
     /**
@@ -248,7 +248,7 @@ class AdmissionService extends BaseService
                         $this->update($admission);
                         break;
                         //Mise du dossier d'admission dans l'état "Rejeté"
-                    }else if($operation->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF){
+                    }elseif($operation->getAvis()->getAvisValeur()->getCode() == AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF){
                         /** @var Etat $rejete */
                         $rejete = $etatRepository->findOneBy(["code" => Etat::CODE_REJETE]);
                         $admission->setEtat($rejete);
@@ -265,7 +265,7 @@ class AdmissionService extends BaseService
                     $this->update($admission);
                     break;
                     //Mise du dossier d'admission dans l'état "En cours de saisie"
-                }else if($typeAction === "devalider"){
+                }elseif($typeAction === "devalider"){
                     /** @var Etat $enCoursDeSaisie */
                     $enCoursDeSaisie = $etatRepository->findOneBy(["code" => Etat::CODE_EN_COURS_SAISIE]);
                     $admission->setEtat($enCoursDeSaisie);

@@ -121,7 +121,7 @@ class InscriptionService {
         if ($annee !== null) {
             $annee = AnneeUniv::fromPremiereAnnee($annee);
             $debut = $this->anneeUnivService->computeDateDebut($annee);
-            $fin = $this->anneeUnivService->computeDateFin($annee);;
+            $fin = $this->anneeUnivService->computeDateFin($annee);
             $qb
                 ->andWhere('seance.debut >= :debut')->setParameter('debut', $debut)
                 ->andWhere('seance.fin <= :fin')->setParameter('fin', $fin);

@@ -24,10 +24,10 @@ use Doctrine\DBAL\DBALException;
  */
 class DetectionResultatAdmisTest extends AbstractControllerTestCase
 {
-    const ENVVAR_THESE_SOURCE_CODE   = 'THESE_SOURCE_CODE';
+    public const ENVVAR_THESE_SOURCE_CODE   = 'THESE_SOURCE_CODE';
 
-    const ENVVAR_DISABLE_SYNCHRO_CMD = 'DISABLE_SYNCHRO_CMD';
-    const ENVVAR_ENABLE_SYNCHRO_CMD  = 'ENABLE_SYNCHRO_CMD';
+    public const ENVVAR_DISABLE_SYNCHRO_CMD = 'DISABLE_SYNCHRO_CMD';
+    public const ENVVAR_ENABLE_SYNCHRO_CMD  = 'ENABLE_SYNCHRO_CMD';
 
     private $srcTheseViewSelectOriginalSQL = <<<EOS
 -- script initial de la vue src_these A VERIFIER !

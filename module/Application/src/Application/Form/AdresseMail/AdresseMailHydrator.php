@@ -8,10 +8,9 @@ class AdresseMailHydrator implements HydratorInterface {
 
     public function extract($object): array
     {
-        $data  = [
+        return [
             'email' => $object->getEmail(),
         ];
-        return $data;
     }
 
     public function hydrate(array $data, $object)

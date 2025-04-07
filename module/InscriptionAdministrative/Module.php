@@ -8,7 +8,7 @@ use Laminas\Stdlib\Glob;
 class Module
 {
     // Nom du module
-    const NAME = __NAMESPACE__;
+    public const NAME = __NAMESPACE__;
 
     public function getConfig(): array
     {

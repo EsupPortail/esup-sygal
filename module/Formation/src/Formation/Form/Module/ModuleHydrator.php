@@ -16,13 +16,12 @@ class ModuleHydrator implements HydratorInterface {
     public function extract(object $object) : array
     {
         /** @var Module $object */
-        $data = [
+        return [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
             'lien' => $object->getLien(),
             'mission_enseignement' => $object->isRequireMissionEnseignement()?"1":null,
         ];
-        return $data;
     }
 
     public function hydrate(array $data, object $object): object
@@ -31,7 +30,7 @@ class ModuleHydrator implements HydratorInterface {
         $libelle = (isset($data['libelle']) AND trim($data['libelle']) !== '')?trim($data['libelle']):null;
         $description = (isset($data['description']) AND trim($data['description']) !== '')?trim($data['description']):null;
         $lien = (isset($data['lien']) AND trim($data['lien']) !== '')?trim($data['lien']):null;
-        $mission = (isset($data['mission_enseignement']) AND $data['mission_enseignement'] === "1")?true:false;
+        $mission = (isset($data['mission_enseignement']) AND $data['mission_enseignement'] === "1");
 
         $object->setLibelle($libelle);
         $object->setDescription($description);

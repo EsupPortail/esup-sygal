@@ -98,8 +98,7 @@ class DateLieuForm extends Form implements InputFilterProviderInterface
                             'callback' => function ($value) {
                                 $sdate = DDateTime::createFromFormat('Y-m-d', $value);
                                 $cdate = new DDateTime();
-                                $res = $sdate >= $cdate;
-                                return $res;
+                                return $sdate >= $cdate;
                             },
                         ],
                     ],

@@ -13,9 +13,9 @@ use ZfcUser\Entity\UserInterface;
  */
 class UserAuthenticatedEvent extends \UnicaenAuthentification\Event\UserAuthenticatedEvent
 {
-    const PARAM_DB_USER    = 'db_user';
-    const PARAM_LDAP_USER  = 'ldap_user';
-    const PARAM_SHIB_USER  = 'shib_user';
+    public const PARAM_DB_USER    = 'db_user';
+    public const PARAM_LDAP_USER  = 'ldap_user';
+    public const PARAM_SHIB_USER  = 'shib_user';
     
     /**
      * Retourne l'entité utilisateur issue de la base de données.

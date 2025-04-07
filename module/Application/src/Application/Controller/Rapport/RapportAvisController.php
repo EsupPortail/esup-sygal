@@ -69,8 +69,7 @@ class RapportAvisController extends AbstractController
                 // déclenchement d'un événement "avis ajouté"
                 $this->events->trigger(
                     $this->rapportAvisAjouteEventName,
-                    $rapportAvis,
-                    []
+                    $rapportAvis
                 );
 
                 $this->flashMessenger()->addSuccessMessage("Avis enregistré avec succès.");
@@ -107,8 +106,7 @@ class RapportAvisController extends AbstractController
                 // déclenchement d'un événement "avis modifié"
                 $this->events->trigger(
                     $this->rapportAvisModifieEventName,
-                    $rapportAvis,
-                    []
+                    $rapportAvis
                 );
 
                 $this->flashMessenger()->addSuccessMessage("Avis modifié avec succès.");

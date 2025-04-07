@@ -10,10 +10,9 @@ class MissionEnseignementHydrator implements HydratorInterface {
     /** @var MissionEnseignement $object */
     public function extract(object $object): array
     {
-        $data = [
+        return [
             'annee_univ' => $object->getAnneeUniversitaire(),
         ];
-        return $data;
     }
 
     /** @var MissionEnseignement $object */

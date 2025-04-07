@@ -32,8 +32,8 @@ class StructureDocumentServiceFactory {
         $service = new StructureDocumentService();
         $service->setEntityManager($entityManager);
         $service->setUserContextService($userContext);
-        $service->setFichierStorageService($fileService);;
-        $service->setFichierService($fichierService);;
+        $service->setFichierStorageService($fileService);
+        $service->setFichierService($fichierService);
 
         return $service;
     }

@@ -63,12 +63,10 @@ class FichierController extends AbstractController
             ->setItemCountPerPage((int)$maxi)
             ->setCurrentPageNumber((int)$page);
 
-        $vm = new ViewModel([
+        return new ViewModel([
             'fichiers' => $paginator,
             'urlFichierPlugin' => $this->urlFichier(),
         ]);
-
-        return $vm;
     }
 
     public function televerserFichiersCommunsAction()

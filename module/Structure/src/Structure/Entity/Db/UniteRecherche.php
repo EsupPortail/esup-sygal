@@ -212,6 +212,6 @@ class UniteRecherche implements
      */
     public function getSigle(): string
     {
-        return $this->structure->getSigle() ? $this->structure->getSigle() : "";
+        return $this->structure->getSigle() ?: '';
     }
 }

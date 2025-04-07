@@ -6,7 +6,7 @@ use UnicaenApp\Exception\RuntimeException;
 
 class RetraitementShellCommandMines extends RetraitementShellCommand
 {
-    const DEFAULT_COMPATIBILITY_LEVEL = '1.4';
+    public const DEFAULT_COMPATIBILITY_LEVEL = '1.4';
 
     protected $options = [
         'gs_path'             => 'gs',

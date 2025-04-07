@@ -13,7 +13,7 @@ class ModuleSearchService extends SearchService
 {
     use ModuleRepositoryAwareTrait;
 
-    const NAME_libelle = 'libelle';
+    public const NAME_libelle = 'libelle';
 
     public function init()
     {
@@ -26,7 +26,7 @@ class ModuleSearchService extends SearchService
         ]);
     }
 
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         return $this->moduleRepository->createQueryBuilder('m');

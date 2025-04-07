@@ -92,8 +92,7 @@ class SelectHelper  extends AbstractHelper {
 
     public function render()
     {
-        $texte  = '';
-        $texte .= '<select id="'.$this->elementId.'">';
+        $texte = '<select id="' . $this->elementId . '">';
         $texte .= '<option>'.$this->text.'</option>';
         foreach ($this->listing as $element) {
             if ($element instanceof StructureConcreteInterface) {

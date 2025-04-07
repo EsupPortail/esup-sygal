@@ -12,12 +12,12 @@ class MetadonneeThese
     /**
      * Codes ISO 639-1 des langues.
      */
-    const LANGUE_FRANCAIS = 'fr';
-    const LANGUE_ANGLAIS  = 'en';
-    const LANGUE_ESPAGNOL = 'es';
-    const LANGUE_ALLEMAND = 'de';
-    const LANGUE_ITALIEN  = 'it';
-    const LANGUE_AUTRE    = 'AUTRE';
+    public const LANGUE_FRANCAIS = 'fr';
+    public const LANGUE_ANGLAIS  = 'en';
+    public const LANGUE_ESPAGNOL = 'es';
+    public const LANGUE_ALLEMAND = 'de';
+    public const LANGUE_ITALIEN  = 'it';
+    public const LANGUE_AUTRE    = 'AUTRE';
 
     static public $langues = [
         self::LANGUE_FRANCAIS => "Français",
@@ -28,8 +28,8 @@ class MetadonneeThese
         self::LANGUE_AUTRE    => "Autre",
     ];
 
-    const SEPARATEUR_MOTS_CLES = '*';
-    const SEPARATEUR_MOTS_CLES_LIB = 'astérisque';
+    public const SEPARATEUR_MOTS_CLES = '*';
+    public const SEPARATEUR_MOTS_CLES_LIB = 'astérisque';
 
     /**
      * @var string

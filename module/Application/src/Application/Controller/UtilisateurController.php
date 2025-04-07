@@ -222,7 +222,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
                 $this->authentificationUserService->updateUserPasswordResetToken($utilisateur);
 
                 try {
-                    $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($utilisateur, $utilisateur->getPasswordResetToken());
+                    $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($utilisateur);
                     $this->notifierService->trigger($notif);
                 } catch (\Notification\Exception\RuntimeException $e) {
                     // aucun destinataire, todo : gerer le cas !
@@ -446,7 +446,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
                 true
             );
             try {
-                $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($user, $url);
+                $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($user);
                 $this->notifierService->trigger($notif);
             } catch (\Notification\Exception\RuntimeException $e) {
                 // aucun destinataire, todo : gerer le cas !
@@ -624,7 +624,7 @@ class UtilisateurController extends \UnicaenAuthentification\Controller\Utilisat
     public function delierIndividuAction()
     {
         $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
-        $utilisateur->setIndividu(null);
+        $utilisateur->setIndividu();
         try {
             $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
         } catch (ORMException $e) {

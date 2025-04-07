@@ -16,7 +16,7 @@ abstract class AbstractHelper extends ZFAbstractHelper
      * @param mixed $value
      * @return AbstractHelper|string
      */
-    function __invoke($value = null)
+    public function __invoke($value = null)
     {
         if ($value === null) {
             return $this;

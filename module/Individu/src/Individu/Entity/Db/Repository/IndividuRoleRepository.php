@@ -20,7 +20,6 @@ class IndividuRoleRepository extends DefaultEntityRepository
             ->addSelect('i, r')
             ->join('Role', 'r', Join::WITH, 'ir.role = :role')
             ->setParameter('role', $role);
-        ;
 
         return $qb->getQuery()->getResult();
     }

@@ -16,7 +16,7 @@ class UtilisateurSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->utilisateurService->getRepository()->createQueryBuilder('u');
         $qb

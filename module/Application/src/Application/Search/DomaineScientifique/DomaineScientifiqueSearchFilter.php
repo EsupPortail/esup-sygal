@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class DomaineScientifiqueSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'domaineScientifique';
+    public const NAME = 'domaineScientifique';
 
     /**
      * @inheritDoc

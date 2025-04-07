@@ -80,12 +80,10 @@ class UploaderHelper extends AbstractHelper
     {
         $form = $this->getForm();
 
-        $html = $this->getView()->render("upload-form.phtml", [
+        return $this->getView()->render("upload-form.phtml", [
             'form' => $form,
             'url'  => $this->url,
         ]);
-
-        return $html;
     }
 
     /**
@@ -97,12 +95,10 @@ class UploaderHelper extends AbstractHelper
      */
     public function renderUploadedFiles($url, $label = "Fichiers déposés :")
     {
-        $html = $this->getView()->render("uploaded-files.phtml", [
+        return $this->getView()->render("uploaded-files.phtml", [
             'url'   => $url,
             'label' => $label,
         ]);
-
-        return $html;
     }
 
     /**
@@ -115,12 +111,10 @@ class UploaderHelper extends AbstractHelper
      */
     public function renderUploadedFile(UploadedFileInterface $fichier, $url = null)
     {
-        $html = $this->getView()->render("uploaded-file.phtml", [
+        return $this->getView()->render("uploaded-file.phtml", [
             'fichier' => $fichier,
             'url'     => $url,
         ]);
-
-        return $html;
     }
 
     /**
@@ -135,13 +129,11 @@ class UploaderHelper extends AbstractHelper
      */
     public function renderDeleteFile(UploadedFileInterface $fichier, $url = null, $confirm = true)
     {
-        $html = $this->getView()->render("delete-file.phtml", [
+        return $this->getView()->render("delete-file.phtml", [
             'fichier' => $fichier,
             'url'     => $url,
             'confirm' => $confirm,
         ]);
-
-        return $html;
     }
 
     /**

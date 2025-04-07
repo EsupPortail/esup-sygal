@@ -19,8 +19,7 @@ class ValidationTheseTemplateVariable extends AbstractTemplateVariable
      */
     public function getAuteurToString() : string
     {
-        $displayname = $this->validationThese->getIndividu()->getNomComplet();
-        return $displayname;
+        return $this->validationThese->getIndividu()->getNomComplet();
     }
 
     /**
@@ -28,8 +27,7 @@ class ValidationTheseTemplateVariable extends AbstractTemplateVariable
      */
     public function getDateToString() : string
     {
-        $date = $this->validationThese->getHistoCreation()->format('d/m/Y à H:i');
-        return $date;
+        return $this->validationThese->getHistoCreation()->format('d/m/Y à H:i');
     }
 
     /**

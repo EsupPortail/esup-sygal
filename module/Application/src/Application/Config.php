@@ -14,7 +14,7 @@ class Config
      * établissement précis) : cf. fonction {@see \generateConfigImportsForEtabs()} plus bas, appelée dans 'secret.local.php'.
      * Ce qui suit n'est que la config "commune".
      */
-    const CONFIG_IMPORTS = [
+    public const CONFIG_IMPORTS = [
         [
             'name' => 'structure-%s',
             'order' => 10,
@@ -634,7 +634,7 @@ class Config
      * établissement précis) : cf. fonction {@see \Application\Config::generateConfigSynchrosForEtabs()}, appelée dans 'secret.local.php'.
      * Ce qui suit n'est que la config "commune".
      */
-    const CONFIG_SYNCHROS = [
+    public const CONFIG_SYNCHROS = [
         ////////////////////////////////////////////// STRUCTURE //////////////////////////////////////////////
         [
             ////// STRUCTURE : sans doublons non historisés.

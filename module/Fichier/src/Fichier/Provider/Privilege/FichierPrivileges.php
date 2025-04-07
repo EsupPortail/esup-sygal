@@ -18,8 +18,8 @@ class FichierPrivileges extends Privileges
     /**
      * Dépôt de fichiers "communs" (ex: modèle d'avenant à la convention de MEL).
      */
-    const FICHIER_COMMUN_TELEVERSER = 'fichier-commun-televerser';
-    const FICHIER_COMMUN_TELECHARGER = 'fichier-commun-telecharger';
+    public const FICHIER_COMMUN_TELEVERSER = 'fichier-commun-televerser';
+    public const FICHIER_COMMUN_TELECHARGER = 'fichier-commun-telecharger';
 
     /**
      * Retourne le privilège correspondant au téléversement/suppression de fichier

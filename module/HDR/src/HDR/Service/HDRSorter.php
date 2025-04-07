@@ -13,11 +13,11 @@ use UnicaenApp\Exception\LogicException;
  */
 class HDRSorter
 {
-    const NAME_etablissement = 'etablissement';
-    const NAME_etatHDR = 'etatHDR';
-    const NAME_candidat = 'candidat';
-    const NAME_uniteRecherche = 'uniteRecherche';
-    const NAME_dateSoutenance = 'date';
+    public const NAME_etablissement = 'etablissement';
+    public const NAME_etatHDR = 'etatHDR';
+    public const NAME_candidat = 'candidat';
+    public const NAME_uniteRecherche = 'uniteRecherche';
+    public const NAME_dateSoutenance = 'date';
 
     /**
      * @var string

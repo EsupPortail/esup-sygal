@@ -30,10 +30,10 @@ class Individu implements
     use SourceAwareTrait;
     use SubstitutionAwareEntityTrait;
 
-    const CIVILITE_M = 'M.';
-    const CIVILITE_MME = 'Mme';
+    public const CIVILITE_M = 'M.';
+    public const CIVILITE_MME = 'Mme';
 
-    const TYPE_DOCTORANT = 'doctorant';
+    public const TYPE_DOCTORANT = 'doctorant';
 
     /**
      * Identifiant qui correspond en fait au :

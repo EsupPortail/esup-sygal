@@ -66,11 +66,11 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
             $className = $this->computeBaseAssertionClassName();
             $prefix = $this->prefix . '\\' . $this->requestedDomain . '\\';
             /** @var BaseAssertion $instance */
-            $instance = new $className;
+            $instance = new $className();
             $this->initBaseAssertion($instance, $container, $prefix);
         } elseif ($this->isSpecializedAssertionRequested()) {
             $className = $this->computeSpecializedAssertionClassName();
-            $instance = new $className;
+            $instance = new $className();
         } else {
             throw new InvalidArgumentException("Assertion demandée inattendue : $requestedName");
         }

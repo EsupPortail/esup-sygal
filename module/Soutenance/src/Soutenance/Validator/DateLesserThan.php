@@ -10,8 +10,8 @@ use Laminas\Validator\Exception\InvalidArgumentException;
 
 class DateLesserThan extends AbstractValidator
 {
-    const NOT_LESSER           = 'notLesserThan';
-    const NOT_LESSER_INCLUSIVE = 'notLesserThanInclusive';
+    public const NOT_LESSER = 'notLesserThan';
+    public const NOT_LESSER_INCLUSIVE = 'notLesserThanInclusive';
 
     /**
      * Validation failure message template definitions

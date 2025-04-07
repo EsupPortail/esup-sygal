@@ -43,7 +43,7 @@ class InterventionAssertion extends AbstractAssertion implements  AssertionInter
         return true;
     }
 
-    public function assertEntity(ResourceInterface $entity = null, $privilege = null)
+    protected function assertEntity(ResourceInterface $entity = null, $privilege = null)
     {
         if (! parent::assertEntity($entity, $privilege)) {
             return false;
@@ -52,9 +52,9 @@ class InterventionAssertion extends AbstractAssertion implements  AssertionInter
         /** @var These|HDR $entity */
         $proposition = $this->getPropositionService()->findOneForObject($entity);
         if($proposition instanceof PropositionThese){
-            $date_soutenance = ($entity->getDateSoutenance())?$entity->getDateSoutenance():$proposition->getDate();
+            $date_soutenance = ($entity->getDateSoutenance())?:$proposition->getDate();
             $categorieCode = SoutenanceParametres::CATEGORIE;
-        }else if($proposition instanceof PropositionHDR){
+        }elseif($proposition instanceof PropositionHDR){
             $date_soutenance = $proposition->getDate();
             $categorieCode = \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
         }
@@ -111,8 +111,8 @@ class InterventionAssertion extends AbstractAssertion implements  AssertionInter
                 case 'ajouter-visioconference-tardive':
                 case 'supprimer-visioconference-tardive':
                     if($this->entity instanceof These){
-                        $date_soutenance = ($this->entity->getDateSoutenance())?$this->entity->getDateSoutenance():$proposition->getDate();
-                    }else if($this->entity instanceof HDR){
+                        $date_soutenance = ($this->entity->getDateSoutenance())?:$proposition->getDate();
+                    }elseif($this->entity instanceof HDR){
                         $date_soutenance = $proposition->getDate();
                     }
                     $categorieCode = ($proposition instanceof PropositionThese) ? SoutenanceParametres::CATEGORIE : \Soutenance\Provider\Parametre\HDR\SoutenanceParametres::CATEGORIE;
@@ -139,7 +139,7 @@ class InterventionAssertion extends AbstractAssertion implements  AssertionInter
         if (($routeMatch = $this->getRouteMatch())) {
             if($routeMatch->getParam('these') !== null){
                 $entity = $this->theseService->getRepository()->find($routeMatch->getParam('these'));
-            }else if($routeMatch->getParam('hdr') !== null){
+            }elseif($routeMatch->getParam('hdr') !== null){
                 $entity = $this->hdrService->getRepository()->find($routeMatch->getParam('hdr'));
             }
         }

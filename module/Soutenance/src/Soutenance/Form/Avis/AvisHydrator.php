@@ -13,12 +13,11 @@ class AvisHydrator implements HydratorInterface {
      */
     public function extract($object): array
     {
-        $data = [
+        return [
             'avis' => $object->getAvis(),
             'motifs' => $object->getMotif(),
             //'rapport' => $object->getFichier(),
         ];
-        return $data;
     }
 
     /**

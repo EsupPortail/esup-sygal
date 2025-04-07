@@ -4,6 +4,7 @@ namespace Application\Assertion\Generator;
 
 use Application\Assertion\Loader\AssertionCsvLoader;
 use Application\Assertion\Loader\AssertionCsvLoaderResult;
+use Laminas\Code\Generator\AbstractMemberGenerator;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\DocBlock\Tag\AuthorTag;
 use Laminas\Code\Generator\DocBlock\Tag\GenericTag;
@@ -19,7 +20,7 @@ use ReflectionException;
 
 class AssertionGenerator
 {
-    const HR = '//--------------------------------------------------------------------------------------';
+    public const HR = '//--------------------------------------------------------------------------------------';
 
     private AssertionCsvLoader $loader;
     protected ClassGenerator $classGenerator;
@@ -96,8 +97,8 @@ class AssertionGenerator
         }
 
         $this->classGenerator->addProperties([
-            new PropertyGenerator('failureMessage', null, PropertyGenerator::FLAG_PROTECTED, TypeGenerator::fromTypeString('?string')),
-            new PropertyGenerator('linesTrace', [], PropertyGenerator::FLAG_PROTECTED, TypeGenerator::fromTypeString('array')),
+            new PropertyGenerator('failureMessage', null, AbstractMemberGenerator::FLAG_PROTECTED, TypeGenerator::fromTypeString('?string')),
+            new PropertyGenerator('linesTrace', [], AbstractMemberGenerator::FLAG_PROTECTED, TypeGenerator::fromTypeString('array')),
         ]);
     }
 
@@ -149,7 +150,7 @@ class AssertionGenerator
             ],
         ]);
 
-        $methodGen = new MethodGenerator($methodName, [new ParameterGenerator('privilege', 'string')], MethodGenerator::FLAG_PUBLIC, $body, $docblockGenerator);
+        $methodGen = new MethodGenerator($methodName, [new ParameterGenerator('privilege', 'string')], AbstractMemberGenerator::FLAG_PUBLIC, $body, $docblockGenerator);
         $methodGen->setReturnType('bool');
         $this->classGenerator->addMethodFromGenerator($methodGen);
     }
@@ -163,7 +164,7 @@ class AssertionGenerator
                 ],
             ]);
 
-            $methodGen = new MethodGenerator($testName, [], MethodGenerator::FLAG_PROTECTED | MethodGenerator::FLAG_ABSTRACT, null, $docblockGenerator);
+            $methodGen = new MethodGenerator($testName, [], AbstractMemberGenerator::FLAG_PROTECTED | AbstractMemberGenerator::FLAG_ABSTRACT, null, $docblockGenerator);
             $methodGen->setReturnType('bool');
             $this->classGenerator->addMethodFromGenerator($methodGen);
         }
@@ -187,7 +188,7 @@ class AssertionGenerator
 
         $body = "return <<<'EOT'" . PHP_EOL . file_get_contents($this->loadingResult->getRuleFilePath()) . "EOT;";
 
-        $methodGen = new MethodGenerator($methodName, [], MethodGenerator::FLAG_PUBLIC, $body, $docblockGenerator);
+        $methodGen = new MethodGenerator($methodName, [], AbstractMemberGenerator::FLAG_PUBLIC, $body, $docblockGenerator);
         $methodGen->setReturnType('string');
         $this->classGenerator->addMethodFromGenerator($methodGen);
     }

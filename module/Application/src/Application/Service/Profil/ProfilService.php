@@ -31,8 +31,7 @@ class ProfilService extends BaseService
         $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
             ->orderBy('profil.structureType, profil.libelle')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     /**

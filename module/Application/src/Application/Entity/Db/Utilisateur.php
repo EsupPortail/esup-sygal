@@ -16,8 +16,8 @@ use UnicaenUtilisateur\Entity\Db\RoleInterface;
  */
 class Utilisateur extends AbstractUser implements UserInterface, ProviderInterface, IndividuAwareInterface
 {
-    const APP_UTILISATEUR_ID = 1; // indispensable à UnicaenImport !
-    const APP_UTILISATEUR_USERNAME = 'sygal-app';
+    public const APP_UTILISATEUR_ID = 1; // indispensable à UnicaenImport !
+    public const APP_UTILISATEUR_USERNAME = 'sygal-app';
 
     private ?string $nom = null;
     private ?string $prenom = null;

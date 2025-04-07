@@ -157,11 +157,10 @@ class SessionController extends AbstractController
             }
         }
 
-        $vm = new ViewModel([
+        return new ViewModel([
             'title' => "Modification d'une session de formation",
             'form' => $form,
         ]);
-        return $vm;
     }
 
     public function historiserAction() : Response
@@ -666,8 +665,8 @@ class SessionController extends AbstractController
             $entry['Formation'] = $formation ? $formation->getLibelle() : null;
             $entry['Type de formation'] = $formation ? $formation->getType() : null;
             $entry['Établissement organisateur'] = $session->getSite() ? $session->getSite()->getStructure()->getLibelle() : null;
-            $entry['Responsable de la formation'] = $session->getResponsable() ? $session->getResponsable() : null;
-            $entry['Formateur(s)'] = implode("/", $formateursStrings);;
+            $entry['Responsable de la formation'] = $session->getResponsable() ?: null;
+            $entry['Formateur(s)'] = implode("/", $formateursStrings);
             $entry['État de la session'] = $session->getEtat();
             $entry["Structures valides pour l'inscription"] = implode("/", $structuresValidesStrings);
             $entry['Modalité'] = $session->getModalite();
@@ -678,7 +677,7 @@ class SessionController extends AbstractController
             $entry['Nombre d\'inscrits'] = $nbInscrits;
             $entry['Nombre d\'inscrits sur liste principale'] = $nbInscritsListePrincipale;
             $entry['Effectif présents d\'après la liste d\'émargement'] = $presences;
-            $entry['Inscrits sur liste principale'] = implode(' / ', $inscritsPrincipaleStrings);;
+            $entry['Inscrits sur liste principale'] = implode(' / ', $inscritsPrincipaleStrings);
 
             $records[] = $entry;
         }

@@ -86,7 +86,7 @@ class AbstractActeurService extends BaseService
             $role = $this->applicationRoleService->getRepository()->findByCode($role);
         }
 
-        $acteur = new $this->entityClass;
+        $acteur = new $this->entityClass();
         $acteur->setIndividu($individu);
         $acteur->setRole($role);
         $acteur->setEtablissement($etablissement);

@@ -16,7 +16,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    const RESOURCE_ID = 'Rapport';
+    public const RESOURCE_ID = 'Rapport';
 
     /**
      * @var string

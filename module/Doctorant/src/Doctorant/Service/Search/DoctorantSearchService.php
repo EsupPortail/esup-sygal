@@ -15,7 +15,7 @@ class DoctorantSearchService extends SearchService
     use IndividuServiceAwareTrait;
     use DoctorantServiceAwareTrait;
 
-    public function createQueryBuilder(): QueryBuilder
+    protected function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->doctorantService->getRepository()->createQueryBuilder('d');
         $qb

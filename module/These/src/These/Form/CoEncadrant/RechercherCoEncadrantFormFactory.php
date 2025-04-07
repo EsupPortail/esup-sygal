@@ -9,7 +9,6 @@ class RechercherCoEncadrantFormFactory
 
     public function __invoke(ContainerInterface $container): RechercherCoEncadrantForm
     {
-        $form = new RechercherCoEncadrantForm();
-        return $form;
+        return new RechercherCoEncadrantForm();
     }
 }

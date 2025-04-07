@@ -42,8 +42,6 @@ class Year extends FunctionNode
      */
     public function getSql(SqlWalker $sqlWalker)
     {
-        $sql = sprintf('EXTRACT(year FROM %s)', $this->expression->dispatch($sqlWalker));
-        
-        return $sql;
+        return sprintf('EXTRACT(year FROM %s)', $this->expression->dispatch($sqlWalker));
     }
 }

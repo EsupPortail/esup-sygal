@@ -13,8 +13,8 @@ use UnicaenApp\Exception\RuntimeException;
 class Membre implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    const MEMBRE_CSI        = 'Membre';
-    const RAPPORTEUR_CSI    = 'Rapporteur';
+    public const MEMBRE_CSI        = 'Membre';
+    public const RAPPORTEUR_CSI    = 'Rapporteur';
 
     private ?int $id = -1;
     private ?These $these = null;

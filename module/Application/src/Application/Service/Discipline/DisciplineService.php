@@ -15,8 +15,7 @@ class DisciplineService {
 
     public function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Discipline::class)->createQueryBuilder('discipline');
-        return $qb;
+        return $this->getEntityManager()->getRepository(Discipline::class)->createQueryBuilder('discipline');
     }
 
     /**
@@ -50,8 +49,7 @@ class DisciplineService {
             $qb->andWhere('discipline.code LIKE :filter')
                 ->setParameter('filter', $filter);
         }
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function getDisciplinesAsOptions(string $champ = 'code', string $ordre = 'ASC', string $attributeForKeys = 'libelle', string $filter = '') : array

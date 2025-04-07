@@ -126,10 +126,9 @@ class ActeurTheseRepository extends AbstractActeurRepository
             ->first()
             ->getIndividu();
 
-        $acteursSansDirectionThese = array_filter($qb->getQuery()->getResult(), fn($acteur) =>
+        return array_filter($qb->getQuery()->getResult(), fn($acteur) =>
             $acteur->getIndividu() !== $directeurIndividu
         );
-        return $acteursSansDirectionThese;
     }
 
     public function findActeurForSoutenanceMembre(Membre $soutenanceMembre): ActeurThese|null

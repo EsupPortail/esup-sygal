@@ -33,9 +33,8 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
         if ($inscription->getCoTutelle()) {
             $etablissementInscription = $inscription->getEtablissementInscription()?->getStructure();
             $pays = $inscription->getPaysCoTutelle() ? $inscription->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
-            $str = "- Vu la convention de co-tutelle internationale de thèse entre l’établissement <b>".
+            return "- Vu la convention de co-tutelle internationale de thèse entre l’établissement <b>".
                 $etablissementInscription."</b> et <b>".$pays."</b>";
-            return $str;
         }
     }
 
@@ -45,12 +44,12 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
             $pays = $inscription->getPaysCoTutelle() ? $inscription->getPaysCoTutelle()->getLibelle() : "<b>Non renseigné</b>";
             $str .= "Pays : ";
             $str .= $pays;
-        }else if($inscription->getCoDirection()){
+        }elseif($inscription->getCoDirection()){
             $str = "Et<br>";
             $uniteRechercheCoDirecteur = $inscription->getUniteRechercheCoDirecteurLibelle() ? $inscription->getUniteRechercheCoDirecteurLibelle() : "<b>Non renseignée</b>";
             if(!$responsablesURCoDirection && $inscription->getUniteRechercheCoDirecteurLibelle()){
                 $responsablesUniteRechercheCoDirecteur = "<b>Aucune direction n'est désignée dans l'application</b>";
-            }else if(!$responsablesURCoDirection && !$inscription->getUniteRechercheCoDirecteurLibelle()){
+            }elseif(!$responsablesURCoDirection && !$inscription->getUniteRechercheCoDirecteurLibelle()){
                 $responsablesUniteRechercheCoDirecteur = "<b>Non renseigné</b>";
             }else{
                 $responsablesUniteRechercheCoDirecteur = $this->htmlifyResponsablesURCoDirecteur($responsablesURCoDirection, true);
@@ -67,7 +66,7 @@ class AdmissionInscriptionFormatter extends AbstractFilter {
     public function htmlifyResponsablesURDirecteur(Inscription $inscription, array $responsablesURDirection){
         if(!$responsablesURDirection && $inscription->getUniteRecherche()){
             $str = "<b>Aucune direction n'est désignée dans l'application</b>";
-        }else if(!$responsablesURDirection && !$inscription->getUniteRecherche()){
+        }elseif(!$responsablesURDirection && !$inscription->getUniteRecherche()){
             $str = "<b>Non renseigné</b>";
         }else{
             $str = "<ul>";

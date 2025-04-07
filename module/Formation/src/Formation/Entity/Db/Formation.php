@@ -22,8 +22,8 @@ class Formation implements HistoriqueAwareInterface,
     use HasModaliteTrait;
     use HasTypeTrait;
 
-    const TYPE_CODE_TRAVERSAL = 'T';
-    const TYPE_CODE_SPECIFIQUE = 'S';
+    public const TYPE_CODE_TRAVERSAL = 'T';
+    public const TYPE_CODE_SPECIFIQUE = 'S';
 
     private int $id;
     private ?string $libelle = null;

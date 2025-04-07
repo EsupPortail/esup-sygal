@@ -9,6 +9,6 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  */
 class EtablissementPrivileges extends Privileges
 {
-    const ETABLISSEMENT_CONSULTATION = 'etablissement-consultation';
-    const ETABLISSEMENT_MODIFICATION = 'etablissement-modification';
+    public const ETABLISSEMENT_CONSULTATION = 'etablissement-consultation';
+    public const ETABLISSEMENT_MODIFICATION = 'etablissement-modification';
 }

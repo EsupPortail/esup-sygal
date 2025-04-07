@@ -11,8 +11,8 @@ use UnicaenPrivilege\Provider\Privilege\Privileges;
  */
 class UtilisateurPrivileges extends Privileges
 {
-    const UTILISATEUR_CONSULTATION                  = 'utilisateur-consultation';
-    const UTILISATEUR_MODIFICATION                  = 'utilisateur-modification';
-    const UTILISATEUR_ATTRIBUTION_ROLE              = 'utilisateur-attribution-role';
-    const UTILISATEUR_CREATE_FROM_INDIVIDU          = 'utilisateur-create_from_individu';
+    public const UTILISATEUR_CONSULTATION                  = 'utilisateur-consultation';
+    public const UTILISATEUR_MODIFICATION                  = 'utilisateur-modification';
+    public const UTILISATEUR_ATTRIBUTION_ROLE              = 'utilisateur-attribution-role';
+    public const UTILISATEUR_CREATE_FROM_INDIVIDU          = 'utilisateur-create_from_individu';
 }

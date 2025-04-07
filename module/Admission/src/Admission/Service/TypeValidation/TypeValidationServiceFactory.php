@@ -14,7 +14,6 @@ class TypeValidationServiceFactory {
      */
     public function __invoke(ContainerInterface $container): TypeValidationService
     {
-        $service = new TypeValidationService();
-        return $service;
+        return new TypeValidationService();
     }
 }

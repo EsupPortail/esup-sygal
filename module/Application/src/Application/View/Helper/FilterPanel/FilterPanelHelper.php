@@ -18,7 +18,7 @@ class FilterPanelHelper extends AbstractHelper
      * @param array $config
      * @return string
      */
-    function __invoke(array $config)
+    public function __invoke(array $config)
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();

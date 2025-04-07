@@ -20,7 +20,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
 {
     use MessageAwareTrait;
 
-    const SPEC_INTERVAL_ENTRE_DATE_NOTIF_ET_BUTOIRE = 'P1M'; // 1 mois
+    public const SPEC_INTERVAL_ENTRE_DATE_NOTIF_ET_BUTOIRE = 'P1M'; // 1 mois
 
     /**
      * @var These
@@ -82,7 +82,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
         $this->dateDerniereNotif = $dateDerniereNotif;
 
         if ($this->dateDerniereNotif !== null) {
-            $this->dateDerniereNotif->setTime(0, 0, 0);
+            $this->dateDerniereNotif->setTime(0, 0);
         }
 
         return $this;
@@ -94,7 +94,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
     public function execute(): self
     {
         $dateButoir = $this->these->getDateButoirDepotVersionCorrigeeFromDateSoutenance($this->these->getDateSoutenance());
-        $dateButoir->setTime(0, 0, 0);
+        $dateButoir->setTime(0, 0);
 
         // si la date butoir est dépassée, pas de notif
         if ($this->dateAujourdhui > $dateButoir) {
@@ -140,7 +140,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
             return $this;
         }
 
-        $dateProchaineNotif->setTime(0, 0, 0);
+        $dateProchaineNotif->setTime(0, 0);
 
         // La date de prochaine notif est passée: plus de notif.
         if ($dateProchaineNotif < $this->dateAujourdhui) {
@@ -186,7 +186,7 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
     public function setDateAujourdhui(DateTime $dateAujourdhui)
     {
         $this->dateAujourdhui = $dateAujourdhui;
-        $this->dateAujourdhui->setTime(0, 0, 0);
+        $this->dateAujourdhui->setTime(0, 0);
 
         return $this;
     }

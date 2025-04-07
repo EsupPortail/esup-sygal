@@ -106,7 +106,7 @@ class NotificationFactory extends NF
         if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();;
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();
             $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 
@@ -247,7 +247,7 @@ class NotificationFactory extends NF
             $cc = array_merge($cc, $this->extractionMailRule->extractEmailsFromAdmissionRoles($admission, $rolesCC));
             $notificationAvisAdmission->setAnomalies($this->extractionMailRule->getAnomalies());
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DOSSIER_VALIDE, $vars);
-        }else if($admissionAvis->getAvis()->getAvisType()->getCode() === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() === AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF) {
+        }elseif($admissionAvis->getAvis()->getAvisType()->getCode() === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() === AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF) {
             //Récupération des emails des responsables d'ED et d'UR
             $cc = array_merge($cc, $this->extractionMailRule->extractEmailsFromAdmissionRoles($admission, $rolesCC));
             $notificationAvisAdmission->setAnomalies($this->extractionMailRule->getAnomalies());
@@ -322,7 +322,7 @@ class NotificationFactory extends NF
             $cc = array_merge($cc, $this->extractionMailRule->extractEmailsFromAdmissionRoles($admission, $rolesCC));
             $notificationAvisAdmission->setAnomalies($this->extractionMailRule->getAnomalies());
             $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DOSSIER_VALIDE, $vars);
-        }else if($admissionAvis->getAvis()->getAvisType()->getCode() === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() === AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF) {
+        }elseif($admissionAvis->getAvis()->getAvisType()->getCode() === AdmissionAvis::AVIS_TYPE__CODE__AVIS_ADMISSION_PRESIDENCE && $admissionAvis->getAvis()->getAvisValeur()->getCode() === AdmissionAvis::AVIS_VALEUR__CODE__AVIS_ADMISSION_VALEUR_NEGATIF) {
             //Récupération des emails des responsables d'ED et d'UR
             $cc = array_merge($cc, $this->extractionMailRule->extractEmailsFromAdmissionRoles($admission, $rolesCC));
             $notificationAvisAdmission->setAnomalies($this->extractionMailRule->getAnomalies());
@@ -441,7 +441,7 @@ class NotificationFactory extends NF
         if(!empty($inscription->getDirecteur())){
             /** @var Individu $directeur */
             $directeur = $admission->getInscription()->first()->getDirecteur();
-            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();;
+            $emailDirecteur = $directeur->getEmailContact() ?: $directeur->getEmailPro() ?: $directeur->getEmailUtilisateur() ?: $inscription->getEmailDirecteurThese();
             $notif->setCc([$emailDirecteur => $directeur->getNomComplet()]);
         }
 

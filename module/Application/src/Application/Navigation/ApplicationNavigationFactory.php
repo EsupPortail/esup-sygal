@@ -27,23 +27,23 @@ class ApplicationNavigationFactory extends NavigationFactory
     use TheseServiceAwareTrait;
     use HDRServiceAwareTrait;
 
-    const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
-    const MA_THESE_PAGE_ID = 'MA_THESE';
-    const MES_THESES_PAGE_ID = 'MES_THESES';
-    const NOS_THESES_PAGE_ID = 'NOS_THESES';
+    public const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
+    public const MA_THESE_PAGE_ID = 'MA_THESE';
+    public const MES_THESES_PAGE_ID = 'MES_THESES';
+    public const NOS_THESES_PAGE_ID = 'NOS_THESES';
 
-    const HDR_SELECTIONNEE_PAGE_ID = 'HDR_SELECTIONNEE';
-    const MA_HDR_PAGE_ID = 'MA_HDR';
-    const MES_HDR_PAGE_ID = 'MES_HDR';
-    const NOS_HDR_PAGE_ID = 'NOS_HDR';
+    public const HDR_SELECTIONNEE_PAGE_ID = 'HDR_SELECTIONNEE';
+    public const MA_HDR_PAGE_ID = 'MA_HDR';
+    public const MES_HDR_PAGE_ID = 'MES_HDR';
+    public const NOS_HDR_PAGE_ID = 'NOS_HDR';
 
-    const FORMATIONS_PAGE_ID = 'FORMATIONS';
-    const MES_FORMATIONS_DOCTORANT_PAGE_ID = 'MES_FORMATIONS_DOCTORANT';
-    const MES_FORMATIONS_FORMATEUR_PAGE_ID = 'MES_FORMATIONS_FORMATEUR';
+    public const FORMATIONS_PAGE_ID = 'FORMATIONS';
+    public const MES_FORMATIONS_DOCTORANT_PAGE_ID = 'MES_FORMATIONS_DOCTORANT';
+    public const MES_FORMATIONS_FORMATEUR_PAGE_ID = 'MES_FORMATIONS_FORMATEUR';
 
-    const MON_ADMISSION_PAGE_ID = 'MON_ADMISSION';
-    const MES_ADMISSIONS_PAGE_ID = 'MES_ADMISSIONS';
-    const NOS_ADMISSIONS_PAGE_ID = 'NOS_ADMISSIONS';
+    public const MON_ADMISSION_PAGE_ID = 'MON_ADMISSION';
+    public const MES_ADMISSIONS_PAGE_ID = 'MES_ADMISSIONS';
+    public const NOS_ADMISSIONS_PAGE_ID = 'NOS_ADMISSIONS';
 
     private ?Doctorant $doctorant = null;
     private ?Candidat $candidat = null;

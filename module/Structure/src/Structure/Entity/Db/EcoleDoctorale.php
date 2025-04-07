@@ -28,7 +28,7 @@ class EcoleDoctorale implements
     use StructureAwareTrait;
     use SubstitutionAwareEntityTrait;
 
-    const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
+    public const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
 
     /**
      * @var integer
