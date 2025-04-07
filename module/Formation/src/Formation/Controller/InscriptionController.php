@@ -391,7 +391,7 @@ class InscriptionController extends AbstractController
 
         //export
         $headers = ['Civilité', 'Nom', 'Prénom', 'Email', 'Année de thèse', 'Établissement', 'École doctorale',	'Unité de recherche', 'Type de formation',
-            'Intitulé', 'Date(s) de formation',	'État de la formation',	"Nombre d'heure(s)", 'Statut de suivi de la formation', 'Liste', 'Motif d\'absence/désistement du doctorant'
+            'Intitulé', 'Date(s) de formation',	'État de la formation',	"Nombre d'heure(s)", "Nombre d'heure(s) suivies par le doctorant", 'Statut de suivi de la formation', 'Liste', 'Motif d\'absence/désistement du doctorant'
         ];
         $records = [];
         /** @var Inscription $inscription */
@@ -469,6 +469,7 @@ class InscriptionController extends AbstractController
             $entry['Date(s) de formation'] = implode(' ; ', $seanceStrings);
             $entry['État de la formation'] = $session->getEtat()->getCode();
             $entry["Nombre d'heure(s)"] = (string) $session->getDuree();
+            $entry["Nombre d'heure(s) suivies par le doctorant"] = (string) $inscription->computeDureePresence();
             $entry['Statut de suivi de la formation'] = $presences;
             $entry['Liste'] = $inscription->getListe();
             $entry['Motif d\'absence/désistement du doctorant'] = strip_tags($inscription->getDescription());

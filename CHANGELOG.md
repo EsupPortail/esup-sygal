@@ -3,6 +3,7 @@ Journal des modifications
 
 10.1.0
 ------
+- Module Formation : Ajout d'une colonne dans l'export des inscriptions du nombre d'heures effectif de suivi du doctorant (pour une session)
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée

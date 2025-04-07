@@ -49,7 +49,7 @@ class AdmissionService extends BaseService
     public const ADMISSION__AJOUTE__EVENT = 'ADMISSION__AJOUTE__EVENT';
     public const ADMISSION__SUPPRIME__EVENT = 'ADMISSION__SUPPRIME__EVENT';
 
-    private public const DEFAULT_SOURCE_CODE = "SYG";
+    public const DEFAULT_SOURCE_CODE = "SYG";
 
 
     /**
