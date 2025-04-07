@@ -99,7 +99,7 @@ class EtablissementController extends StructureConcreteController
         $variables = $structureConcrete->estInscription() ? $this->variableService->getRepository()->findAllByEtab($structureConcrete) : [];
 
         foreach ($roles as $role) {
-            if (!$role->isTheseDependant()) {
+            if (!$role->isTheseDependant() && !$role->isHDRDependant()) {
                 $roleListings [$role->getLibelle()] = 0;
             }
         }
@@ -110,7 +110,7 @@ class EtablissementController extends StructureConcreteController
         }
 
         foreach ($individuRoles as $individuRole) {
-            if (!$individuRole->getRole()->isTheseDependant()) {
+            if (!$individuRole->getRole()->isTheseDependant() && !$individuRole->getRole()->isHDRDependant()) {
                 $denomination = $individuRole->getIndividu()->getNomComplet();
                 $role = $individuRole->getRole()->getLibelle();
                 $individuListings[$denomination][] = $role;

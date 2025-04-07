@@ -6,6 +6,7 @@ Journal des modifications
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
+- [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 
 10.0.0
 ------
