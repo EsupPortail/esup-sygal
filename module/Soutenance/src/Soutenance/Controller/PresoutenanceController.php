@@ -145,7 +145,12 @@ abstract class PresoutenanceController extends AbstractSoutenanceController
         /** @var ActeurThese|ActeurHDR $acteur */
         foreach ($acteurs as $acteur) {
             // à avoir si ça pose des problèmes
-            if(!$acteur->getMembre()) $acteurs_libres[] = $acteur;
+            // si l'acteur n'est pas encore associé à un membre,
+            // ou que la proposition associée au membre n'est pas la même que celle actuelle
+            // (dans le cas d'une première prop. rejetée)
+            if(!$acteur->getMembre() || $acteur->getMembre()->getProposition()->getId() !== $this->proposition->getId()){
+                $acteurs_libres[] = $acteur;
+            }
 //            $libre = true;
 //            foreach ($membres as $membre_) {
 //                $acteur_ = $this->acteurService->getRepository()->findActeurForSoutenanceMembre($membre_);

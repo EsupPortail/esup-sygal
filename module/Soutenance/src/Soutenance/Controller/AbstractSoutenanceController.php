@@ -61,7 +61,7 @@ abstract class AbstractSoutenanceController extends AbstractController
             if($withValidationService) $this->validationService = $this->getValidationTheseService();
             $this->propositionService = $this->getPropositionTheseService();
             /** @var PropositionThese $proposition */
-            $this->proposition = $this->propositionService->getRepository()->findOneBy(['these' => $this->entity]);
+            $this->proposition = $this->propositionService->findOneForThese($this->entity);
         } elseif ($this->type === Proposition::ROUTE_PARAM_PROPOSITION_HDR) {
             $this->entity = $this->requestedHDR();
             if($withEntityService) $this->entityService = $this->getHDRService();
@@ -69,7 +69,7 @@ abstract class AbstractSoutenanceController extends AbstractController
             if($withValidationService) $this->validationService = $this->getValidationHDRService();
             $this->propositionService = $this->getPropositionHDRService();
             /** @var PropositionHDR $proposition */
-            $this->proposition = $this->propositionService->getRepository()->findOneBy(['hdr' => $this->entity]);
+            $this->proposition = $this->propositionService->findOneForHDR($this->entity);
         } else {
             throw new InvalidArgumentException('Type invalide : ' . $this->type);
         }

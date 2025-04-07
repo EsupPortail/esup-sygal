@@ -87,22 +87,22 @@ class PropositionTheseService extends PropositionService
     protected function createQueryBuilder(): DefaultQueryBuilder
     {
         return $this->getRepository()->createQueryBuilder("propositionThese")
-            ->addSelect('proposition')->join('propositionThese.proposition', 'proposition')
-            ->addSelect('etat')->join('proposition.etat', 'etat')
-            ->addSelect('these')->join('proposition.these', 'these')
+//            ->addSelect('proposition')->join('propositionThese.proposition', 'proposition')
+            ->addSelect('etat')->join('propositionThese.etat', 'etat')
+            ->addSelect('these')->join('propositionThese.these', 'these')
             ->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
             ->addSelect('structure_ur')->leftJoin('unite.structure', 'structure_ur')
             ->addSelect('ecole')->leftJoin('these.ecoleDoctorale', 'ecole')
             ->addSelect('structure_ed')->leftJoin('ecole.structure', 'structure_ed')
             ->addSelect('etablissement')->leftJoin('these.etablissement', 'etablissement')
             ->addSelect('structure_etab')->leftJoin('etablissement.structure', 'structure_etab')
-            ->addSelect('membre')->leftJoin('proposition.membres', 'membre')
+            ->addSelect('membre')->leftJoin('propositionThese.membres', 'membre')
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
 //            ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur') // n'existe plus
 //            ->addSelect('amembre')->leftJoin('acteur.membre', 'amembre')
-            ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
-            ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
-            ->andWhere('proposition.histoDestruction is null')
+            ->addSelect('justificatif')->leftJoin('propositionThese.justificatifs', 'justificatif')
+            ->addSelect('avis')->leftJoin('propositionThese.avis', 'avis')
+            ->andWhere('propositionThese.histoDestruction is null')
         ;
     }
 
