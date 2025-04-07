@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+10.0.2
+-----
+- [FIX] Vue v_extract_theses erronée (ERREUR : la colonne code_sise_disc n'existe pas).
+
 10.0.1
 -----
 - Possibilité d'ajouter les formulaires nécessaires pour la soutenance HDR depuis la fiche d'un établissement
