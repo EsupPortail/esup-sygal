@@ -4,6 +4,7 @@ Journal des modifications
 10.0.2
 -----
 - [FIX] Vue v_extract_theses erronée (ERREUR : la colonne code_sise_disc n'existe pas).
+- [FIX] Module Soutenance : dépôt impossible des documents liés à la soutenance
 
 10.0.1
 -----
