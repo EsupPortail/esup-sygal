@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - [FIX] Vue v_extract_theses erronée (ERREUR : la colonne code_sise_disc n'existe pas).
 - [FIX] Module Soutenance : dépôt impossible des documents liés à la soutenance
+- [FIX] Impossibilité d'ajouter un co-encadrant à une thèse
 
 10.0.1
 -----
