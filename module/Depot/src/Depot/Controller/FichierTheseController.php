@@ -8,7 +8,7 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
 use Validation\Service\ValidationThese\ValidationTheseServiceAwareTrait;
-use Application\View\Helper\Sortable;
+use UnicaenSearch\View\Helper\Sortable;
 use Depot\Entity\Db\FichierThese;
 use Depot\Event\EventsInterface;
 use Depot\Service\FichierThese\Exception\DepotImpossibleException;

@@ -2,7 +2,7 @@
 
 namespace Admission\Search\Admission;
 
-use Application\Search\Filter\TextCriteriaSearchFilter;
+use UnicaenSearch\Filter\TextCriteriaSearchFilter;
 
 class AdmissionTextSearchFilter extends TextCriteriaSearchFilter
 {

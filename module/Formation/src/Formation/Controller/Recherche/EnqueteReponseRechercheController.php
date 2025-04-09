@@ -38,7 +38,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
      * Redéfinition de la méthode {@see SearchControllerTrait::search()} pour pouvoir filtrer selon la Session
      * éventuellement spécifié dans la requête.
      *
-     * @return \Application\Search\SearchResultPaginator|\Laminas\Http\Response|\Laminas\Paginator\Paginator
+     * @return \UnicaenSearch\SearchResultPaginator|\Laminas\Http\Response|\Laminas\Paginator\Paginator
      */
     public function search()
     {
@@ -74,7 +74,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
             return $model;
         }
 
-        /** @var \Application\Search\SearchResultPaginator $reponses */
+        /** @var \UnicaenSearch\SearchResultPaginator $reponses */
         $reponses = $model->getVariable('paginator');
         $reponses->setItemCountPerPage(-1);
 
@@ -128,7 +128,7 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
     {
         $session = $this->getRequestedSession();
 
-        /** @var \Application\Search\Filter\SelectSearchFilter $formateurFilter */
+        /** @var \UnicaenSearch\Filter\SelectSearchFilter $formateurFilter */
         $formateurFilter = $this->searchService->getFilterByName(EnqueteReponseSearchService::NAME_formateur);
         $formateurFilter->setDataProvider(
             function() use ($session) {

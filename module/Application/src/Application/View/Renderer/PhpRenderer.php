@@ -144,7 +144,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  *
  * @method array                                              queryParams()
  * @method \Fichier\View\Helper\Uploader\UploaderHelper   uploader()
- * @method \Application\View\Helper\Sortable                  sortable($sort)
+ * @method \UnicaenSearch\View\Helper\Sortable                  sortable($sort)
  * @method string                                             filterPanel($config)
  * @method string                                             filtersPanel($config)
  * @method EscapeTextHelper                                   escapeText($value = null)

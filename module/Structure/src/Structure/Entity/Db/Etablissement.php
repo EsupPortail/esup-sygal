@@ -3,7 +3,7 @@
 namespace Structure\Entity\Db;
 
 use Application\Entity\Db\Role;
-use Application\Search\Filter\SearchFilterValueInterface;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 use Individu\Entity\Db\IndividuRole;
 use Doctrine\Common\Collections\ArrayCollection;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;

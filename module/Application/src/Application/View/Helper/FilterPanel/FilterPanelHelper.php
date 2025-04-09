@@ -2,15 +2,15 @@
 
 namespace Application\View\Helper\FilterPanel;
 
-use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Resolver\TemplatePathStack;
 
 /**
- * Class FilterPanelHelper
- * @package Application\View\Helper\FilterPanel
- * @deprecated Utiliser à la place {@see FiltersPanelHelper}
+ * Aide de vue générant des filtres au format lien hypertexte
+ *
+ * @deprecated Utiliser {@see \UnicaenSearch\View\Helper\FiltersPanel\FiltersPanelHelper} à la place,
+ * lorsqu'il existera la possibilité de dessiner un filtre (select) au format lien hypertexte.
  */
 class FilterPanelHelper extends AbstractHelper
 {

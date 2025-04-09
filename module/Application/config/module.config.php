@@ -33,9 +33,6 @@ use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\Etat\EtatViewHelper;
-use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
-use Application\View\Helper\Sortable;
-use Application\View\Helper\SortableHelperFactory;
 use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
@@ -294,17 +291,14 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
-            'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
             'etatHelper'  => EtatViewHelper::class,
         ),
         'factories' => array(
             'languageSelector'          => 'Application\View\Helper\LanguageSelectorHelperFactory',
-            Sortable::class => SortableHelperFactory::class,
             UploaderHelper::class => UploaderHelperFactory::class,
         ),
         'aliases' => [
-            'sortable' => Sortable::class,
             'uploader' => UploaderHelper::class,
         ],
         'initializers' => [

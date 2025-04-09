@@ -2,10 +2,10 @@
 
 namespace Doctorant\Service\Search;
 
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;

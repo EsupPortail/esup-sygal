@@ -3,7 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Search\SearchServiceAwareTrait;
+use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\PersistentCollection;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;

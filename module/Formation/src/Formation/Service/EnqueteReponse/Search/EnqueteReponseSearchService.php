@@ -2,12 +2,12 @@
 
 namespace Formation\Service\EnqueteReponse\Search;
 
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Filter\StrReducedTextSearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\StrReducedTextSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Repository\EnqueteReponseRepositoryAwareTrait;

@@ -62,6 +62,7 @@ return [
         'UnicaenRenderer',
         'Unicaen\Console',
         'UnicaenParametre',
+        'UnicaenSearch',
 
         'Horodatage',
         'Structure',

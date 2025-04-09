@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e38c8106bd679c65a021c67929664600",
+    "content-hash": "5122e4e9ee758f35394c2dc20ed724d0",
     "packages": [
         {
             "name": "apereo/phpcas",
@@ -11538,6 +11538,42 @@
             "time": "2025-02-24T11:24:07+00:00"
         },
         {
+            "name": "unicaen/search",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/search.git",
+                "reference": "3b1c5fd520c3a075ba19c2bf61e34fdc6d9ea299"
+            },
+            "require": {
+                "doctrine/doctrine-orm-module": "^5.3",
+                "doctrine/orm": "^2.20",
+                "laminas/laminas-config": "^3.9",
+                "laminas/laminas-http": "^2.21",
+                "laminas/laminas-mvc": "^3.6",
+                "laminas/laminas-mvc-i18n": "^1.7",
+                "laminas/laminas-paginator": "^2.19",
+                "laminas/laminas-servicemanager": "^3.20",
+                "laminas/laminas-stdlib": "^3.6",
+                "laminas/laminas-uri": "^2.13",
+                "laminas/laminas-view": "^2.36",
+                "php": ">=8.0",
+                "psr/container": "^1.0",
+                "webmozart/assert": "^1.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "UnicaenSearch\\": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module Unicaen proposant la création de pages de recherche en BDD et de filtres normalisés",
+            "time": "2025-04-09T11:13:08+00:00"
+        },
+        {
             "name": "unicaen/shell",
             "version": "1.0.0",
             "source": {
@@ -14491,6 +14527,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "unicaen/db-import": 20,
+        "unicaen/search": 20,
         "unicaen/sql": 20,
         "unicaen/sygal-api": 20
     },

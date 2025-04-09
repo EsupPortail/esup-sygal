@@ -4,12 +4,12 @@ namespace RapportActivite\Service\Search;
 
 use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\Financement\OrigineFinancementSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\Financement\OrigineFinancementSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Application\Service\Financement\FinancementServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;

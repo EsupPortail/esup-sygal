@@ -5,7 +5,7 @@ namespace RapportActivite;
 use Application\Form\Factory\RapportAvisFormFactory;
 use Application\Form\Rapport\RapportAvisForm;
 use Application\Navigation\ApplicationNavigationFactory;
-use Application\Search\Controller\SearchControllerPluginFactory;
+use UnicaenSearch\Controller\SearchControllerPluginFactory;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertion;

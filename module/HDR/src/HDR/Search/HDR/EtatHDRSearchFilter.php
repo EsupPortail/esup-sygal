@@ -2,8 +2,8 @@
 
 namespace HDR\Search\HDR;
 
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 
 class EtatHDRSearchFilter extends SelectSearchFilter

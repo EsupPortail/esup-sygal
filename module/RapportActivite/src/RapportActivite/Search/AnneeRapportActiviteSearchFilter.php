@@ -3,8 +3,8 @@
 namespace RapportActivite\Search;
 
 use Application\Filter\AnneeUnivFormatter;
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 
 class AnneeRapportActiviteSearchFilter extends SelectSearchFilter

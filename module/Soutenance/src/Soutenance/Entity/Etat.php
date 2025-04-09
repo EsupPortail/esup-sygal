@@ -2,7 +2,7 @@
 
 namespace Soutenance\Entity;
 
-use Application\Search\Filter\SearchFilterValueInterface;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 

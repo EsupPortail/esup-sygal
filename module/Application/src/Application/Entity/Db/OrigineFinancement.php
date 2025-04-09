@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Application\Search\Filter\SearchFilterValueInterface;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 

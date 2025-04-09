@@ -2,7 +2,7 @@
 
 namespace Fichier\Entity\Db;
 
-use Application\Search\Filter\SearchFilterValueInterface;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 
 /**
  * NatureFichier

@@ -2,7 +2,7 @@
 
 namespace Application\Search\Financement;
 
-use Application\Search\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 
 class AnneeFinancementSearchFilter extends SelectSearchFilter

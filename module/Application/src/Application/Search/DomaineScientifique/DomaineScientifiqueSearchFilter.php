@@ -2,7 +2,7 @@
 
 namespace Application\Search\DomaineScientifique;
 
-use Application\Search\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 
 class DomaineScientifiqueSearchFilter extends SelectSearchFilter

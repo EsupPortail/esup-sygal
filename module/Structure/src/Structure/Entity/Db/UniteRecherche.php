@@ -3,7 +3,7 @@
 namespace Structure\Entity\Db;
 
 use Application\Entity\Db\DomaineScientifique;
-use Application\Search\Filter\SearchFilterValueInterface;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;

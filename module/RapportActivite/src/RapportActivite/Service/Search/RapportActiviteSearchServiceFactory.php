@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Service\Search;
 
-use Application\Search\Financement\OrigineFinancementSearchFilter;
+use UnicaenSearch\Financement\OrigineFinancementSearchFilter;
 use Application\Service\Financement\FinancementService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;

@@ -3,10 +3,10 @@
 namespace Soutenance\Controller\HDR\Proposition;
 
 use Application\Controller\AbstractController;
-use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchResultPaginator;
-use Application\Search\SearchServiceAwareTrait;
+use UnicaenSearch\Controller\SearchControllerInterface;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchResultPaginator;
+use UnicaenSearch\SearchServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Soutenance\Service\Proposition\PropositionHDR\PropositionHDRSearchService;

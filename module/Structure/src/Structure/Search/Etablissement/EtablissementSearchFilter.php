@@ -2,7 +2,7 @@
 
 namespace Structure\Search\Etablissement;
 
-use Application\Search\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 use Structure\Entity\Db\Etablissement;
 
@@ -23,8 +23,8 @@ class EtablissementSearchFilter extends SelectSearchFilter
 
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
-         * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;
-         * - spécifier le champ sur lequel doit porter le 'where' via {@see \Application\Search\Filter\SearchFilter::setWhereField()}
+         * - faire la jointure nécessaire dans {@see \UnicaenSearch\SearchService::createQueryBuilder()} ;
+         * - spécifier le champ sur lequel doit porter le 'where' via {@see \UnicaenSearch\Filter\SearchFilter::setWhereField()}
          */
         $qb
             ->andWhere($whereField . " = :etab_sourceCode")

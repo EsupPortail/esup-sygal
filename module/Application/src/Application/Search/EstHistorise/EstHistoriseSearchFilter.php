@@ -2,7 +2,7 @@
 
 namespace Application\Search\EstHistorise;
 
-use Application\Search\Filter\CheckboxSearchFilter;
+use UnicaenSearch\Filter\CheckboxSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 
 /**

@@ -4,10 +4,10 @@ namespace Fichier\Controller;
 
 use Application\Controller\AbstractController;
 use Application\RouteMatch;
-use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchServiceAwareTrait;
-use Application\View\Helper\Sortable;
+use UnicaenSearch\Controller\SearchControllerInterface;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchServiceAwareTrait;
+use UnicaenSearch\View\Helper\Sortable;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;

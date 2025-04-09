@@ -2,7 +2,7 @@
 
 namespace These\Search\These;
 
-use Application\Search\Filter\TextCriteriaSearchFilter;
+use UnicaenSearch\Filter\TextCriteriaSearchFilter;
 
 class TheseTextSearchFilter extends TextCriteriaSearchFilter
 {

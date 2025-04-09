@@ -23,7 +23,6 @@ use Application\Form\RapportCsiForm;
 use Application\Form\RapportMiparcoursForm;
 use Application\Navigation\ApplicationNavigationFactory;
 use Application\Provider\Privilege\RapportPrivileges;
-use Application\Search\Controller\SearchControllerPluginFactory;
 use Application\Service\Rapport\Avis\RapportAvisService;
 use Application\Service\Rapport\Avis\RapportAvisServiceFactory;
 use Application\Service\Rapport\RapportSearchService;
@@ -521,11 +520,6 @@ return [
             RapportMiparcoursRechercheController::class => RapportMiparcoursRechercheControllerFactory::class,
             RapportValidationController::class => RapportValidationControllerFactory::class,
             RapportAvisController::class => RapportAvisControllerFactory::class,
-        ],
-    ],
-    'controller_plugins' => [
-        'factories' => [
-            'searchControllerPlugin' => SearchControllerPluginFactory::class,
         ],
     ],
     'form_elements'   => [

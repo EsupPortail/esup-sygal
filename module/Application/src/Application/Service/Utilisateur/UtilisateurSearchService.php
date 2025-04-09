@@ -2,11 +2,11 @@
 
 namespace Application\Service\Utilisateur;
 
-use Application\Search\Filter\CheckboxSearchFilter;
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\CheckboxSearchFilter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 
 class UtilisateurSearchService extends SearchService

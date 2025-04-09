@@ -2,10 +2,10 @@
 
 namespace StepStar\Service\Log\Recherche;
 
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Filter\StrReducedTextSearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\SearchService;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\StrReducedTextSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
 use Doctorant\Search\DoctorantSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 use StepStar\Entity\Db\Log;

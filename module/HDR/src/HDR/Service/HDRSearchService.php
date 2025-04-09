@@ -4,10 +4,10 @@ namespace HDR\Service;
 
 use Application\Entity\Db\Role;
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use HDR\Entity\Db\HDR;

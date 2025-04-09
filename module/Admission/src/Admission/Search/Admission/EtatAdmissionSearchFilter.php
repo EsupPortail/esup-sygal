@@ -2,8 +2,8 @@
 
 namespace Admission\Search\Admission;
 
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 
 class EtatAdmissionSearchFilter extends SelectSearchFilter

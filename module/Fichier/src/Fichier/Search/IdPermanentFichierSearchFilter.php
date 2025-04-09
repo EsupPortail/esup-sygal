@@ -2,7 +2,7 @@
 
 namespace Fichier\Search;
 
-use Application\Search\Filter\CheckboxSearchFilter;
+use UnicaenSearch\Filter\CheckboxSearchFilter;
 
 class IdPermanentFichierSearchFilter extends CheckboxSearchFilter
 {

@@ -3,7 +3,7 @@
 namespace Application\Entity\Db;
 
 
-use Application\Search\Filter\SearchFilterValueInterface;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 
 class DomaineScientifique implements SearchFilterValueInterface
 {

@@ -2,7 +2,7 @@
 
 namespace Fichier\Controller\Factory;
 
-use Application\Search\SearchServicePluginManager;
+use UnicaenSearch\SearchServicePluginManager;
 use Fichier\Controller\FichierController;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;

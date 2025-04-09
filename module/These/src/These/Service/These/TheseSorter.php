@@ -3,7 +3,7 @@
 namespace These\Service\These;
 
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\View\Helper\Sortable;
+use UnicaenSearch\View\Helper\Sortable;
 use UnicaenApp\Exception\LogicException;
 
 /**

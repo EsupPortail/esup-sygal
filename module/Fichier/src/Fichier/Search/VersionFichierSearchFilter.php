@@ -2,7 +2,7 @@
 
 namespace Fichier\Search;
 
-use Application\Search\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
 
 class VersionFichierSearchFilter extends SelectSearchFilter
 {

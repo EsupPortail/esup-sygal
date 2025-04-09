@@ -4,10 +4,10 @@ namespace HDR\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchResultPaginator;
-use Application\Search\SearchServiceAwareTrait;
+use UnicaenSearch\Controller\SearchControllerInterface;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchResultPaginator;
+use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use HDR\Entity\Db\HDR;
 use HDR\Service\HDRSearchService;

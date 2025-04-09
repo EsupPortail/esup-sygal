@@ -2,7 +2,7 @@
 
 namespace Fichier\Search;
 
-use Application\Search\Filter\TextSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
 
 class NomFichierSearchFilter extends TextSearchFilter
 {

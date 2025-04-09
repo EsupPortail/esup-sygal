@@ -2,8 +2,8 @@
 
 namespace Fichier\Service\Fichier\Search;
 
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 use Fichier\Search\IdPermanentFichierSearchFilter;
 use Fichier\Search\NatureFichierSearchFilter;

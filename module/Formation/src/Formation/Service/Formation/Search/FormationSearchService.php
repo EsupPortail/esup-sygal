@@ -4,11 +4,11 @@ namespace Formation\Service\Formation\Search;
 
 use Application\Entity\AnneeUniv;
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\Search\Filter\SearchFilter;
-use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Filter\TextSearchFilter;
-use Application\Search\SearchService;
-use Application\Search\Sorter\SearchSorter;
+use UnicaenSearch\Filter\SearchFilter;
+use UnicaenSearch\Filter\SelectSearchFilter;
+use UnicaenSearch\Filter\TextSearchFilter;
+use UnicaenSearch\SearchService;
+use UnicaenSearch\Sorter\SearchSorter;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;

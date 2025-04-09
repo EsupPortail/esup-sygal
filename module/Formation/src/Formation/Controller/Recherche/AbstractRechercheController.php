@@ -3,9 +3,9 @@
 namespace Formation\Controller\Recherche;
 
 use Application\Controller\AbstractController;
-use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchServiceAwareTrait;
+use UnicaenSearch\Controller\SearchControllerInterface;
+use UnicaenSearch\Controller\SearchControllerTrait;
+use UnicaenSearch\SearchServiceAwareTrait;
 use Formation\Provider\Parametre\FormationParametres;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
