@@ -1,0 +1,104 @@
+<?php
+/**
+ * @see \Formation\Controller\JustificatifController::justifierAbsenceAction()
+ * @var PhpRenderer $this
+ * @var array|null $absences
+ * @var Session $session
+ * @var Doctorant $doctorant
+ * @var Role $role
+ */
+
+use Application\Entity\Db\Role;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Justificatif;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\JustificatifPrivileges;
+
+echo $this->alertes()->addAlertesFromFlashMessenger(true)->renderAsBootstrapToasts();
+
+if($role->isDoctorant()): ?>
+    <h1 class="page-header">
+        Justificatifs de vos absences à la formation <?= $session->getFormation()->getLibelle() ?>
+    </h1>
+    <p class="lead">
+        Nous vous rappelons que toute inscription à une formation vous engage à la suivre. En cas d’indisponibilité, il est de votre devoir de vous désinscrire jusqu’à J-5 ou de prévenir la personne chargée de la gestion de cette formation.
+        <br>
+        Nous vous prions de bien vouloir justifier votre absence, qui sera transmise à la direction de votre école doctorale.
+    </p>
+    <a type="button" class="btn btn-primary mb-4"
+       href="<?php echo $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], [], true) ?>"
+    >
+        <span class="icon icon-retour"></span>
+        <?php echo $this->translate("Retour à vos formations"); ?>
+    </a>
+<?php endif; ?>
+
+<div class="row">
+        <?php if(is_array($absences)) :
+            foreach($absences as $absence):
+                /** @var Seance $seance */
+                $seance = $absence["seance"];
+                /** @var Inscription $inscription */
+                $inscription = $absence["inscription"];
+
+                $cssColor = isset($absence["justificatif"]) ? "bg-success" : "bg-danger";
+                ?>
+                <div class="col-md-6">
+                    <div class="box card">
+                        <div class="card-header <?= $cssColor ?> text-white">
+                            <h2 class="first">
+                                Séance du <?php echo $seance->getDebut()->format('d/m/Y'); ?>
+                                (<?= $seance->getDebut()->format('H:i'); ?> à  <?= $seance->getFin()->format('H:i'); ?>)
+                            </h2>
+                        </div>
+                        <?php
+                        /** @var Justificatif|null $justificatif */
+                        $justificatif = $absence["justificatif"] ?: new Justificatif();
+                        $canGererJustificatif =  $this->isAllowed($justificatif, JustificatifPrivileges::INSCRIPTION_GERER_JUSTIFICATIF_ABSENCE);
+                        if(isset($absence["justificatif"])): ?>
+                            <?php echo $this->fichier($justificatif->getFichier(),
+                                /** @see \Formation\Controller\JustificatifController::telechargerJustificatifAbsenceSeanceAction() */
+                                $this->url('formation/seance/telecharger-justificatif-absence-seance', ['justificatif' => $justificatif->getId(), 'seance' => $seance->getId()], ['query' => ['redirect' => $this->url('formation/session/justifier-absence', ["inscription" => $inscription->getId()])]], true),
+                                /** @see \Formation\Controller\JustificatifController::supprimerJustificatifAbsenceSeanceAction() */
+                                $this->url('formation/seance/supprimer-justificatif-absence-seance', ['justificatif' => $justificatif->getId(), 'seance' => $seance->getId()], ['query' => ['redirect' => $this->url('formation/session/justifier-absence', ["inscription" => $inscription->getId()])]], true),
+                                $canGererJustificatif,
+                                "Justificatif d'absence",
+                                true,
+                                true,
+                                true
+                            ); ?>
+                        <?php else:
+                            if($canGererJustificatif): ?>
+                                <div class="card-body">
+                                    <a class="btn btn-primary ajax-modal action" data-event="modification" href="<?php echo $this->url('formation/seance/ajouter-justificatif-absence-seance', ['seance' => $seance->getId(), 'inscription' => $inscription->getId()], [], true); ?>">
+                                        <span class="icon icon-plus"></span>
+                                        Ajouter un justificatif
+                                    </a>
+                                </div>
+                            <?php else: ?>
+                                <span class="badge bg-secondary text-white" style="font-size:unset; margin:10px; width:fit-content">
+                                    <span class="icon icon-info" style="padding-right: unset"></span>
+                                    <?php echo $this->translate("Aucun justificatif renseigné") ?>
+                                </span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach;
+        else: ?>
+            <p class="lead">
+                Aucun justificatif n'est à fournir pour cette formation.
+            </p>
+        <?php endif; ?>
+</div>
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

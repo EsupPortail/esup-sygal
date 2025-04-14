@@ -30,16 +30,16 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
     use AnneeUnivServiceAwareTrait;
     use SessionServiceAwareTrait;
 
-    private ?int $delaiDescinscription = null;
+    private ?int $delaiDesinscription = null;
 
-    public function getDelaiDescinscription(): ?int
+    public function getDelaiDesinscription(): ?int
     {
-        return $this->delaiDescinscription;
+        return $this->delaiDesinscription;
     }
 
-    public function setDelaiDescinscription(?int $delaiDescinscription): void
+    public function setDelaiDesinscription(?int $delaiDesinscription): void
     {
-        $this->delaiDescinscription = $delaiDescinscription;
+        $this->delaiDesinscription = $delaiDesinscription;
     }
 
 
@@ -178,7 +178,7 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
         if($session->getDateDebut()){
             $dateMax = DateTime::createFromFormat('d/m/Y H:m', $session->getDateDebut()->format('d/m/Y H:m'));
             try {
-                $dateMax->sub(new DateInterval('P' . $this->getDelaiDescinscription() . 'D'));
+                $dateMax->sub(new DateInterval('P' . $this->getDelaiDesinscription() . 'D'));
             } catch (Exception $e) {
                 throw new RuntimeException("Un problème est survenu lors de la manipulation de la date bloquante", 0, $e);
             }

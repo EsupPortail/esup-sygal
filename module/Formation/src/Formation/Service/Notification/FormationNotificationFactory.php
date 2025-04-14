@@ -291,13 +291,11 @@ class FormationNotificationFactory extends NotificationFactory
 
     public function createNotificationAbsencesInjustifieesSession(Inscription $inscription) : Notification
     {
-//        $vars = [
-//            'doctorant' => $inscription->getDoctorant(),
-//            'formation' => $inscription->getSession()->getFormation(),
-//            'session'   => $inscription->getSession(),
-//            'inscription'   => $inscription,
-//        ];
         $vars = $this->createTemplateVarsForInscription($inscription);
+        $this->urlService->setVariables([
+            'inscription' => $inscription,
+        ]);
+        $vars['Url'] = $this->urlService;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_ABSENCES_INJUSTIFIEES, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();

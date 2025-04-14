@@ -5,7 +5,10 @@
  * @var Doctorant $doctorant
  * @var Session[] $ouvertes
  * @var Session[] $preparations
+ * @var Inscription[] $terminees
+ * @var Inscription[] $encours
  * @var Inscription[] $inscriptions
+ * @var ?Inscription[] $inscriptionsAbsenceInjustifiees
  * @var EnqueteReponse[] $reponses;
  * @var int $delai;
  */
@@ -21,22 +24,6 @@ use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Provider\Privilege\ModulePrivileges;
 
 $this->headTitle('Mes formations');
-
-$encours = [];
-$terminees = [];
-foreach ($inscriptions as $inscription) {
-    $seances = $inscription->getSession()->getSeances()->toArray();
-    $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
-    $nbSeance = count($seances);
-    if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
-        $terminees[] = $inscription;
-    } else {
-        if ($inscription->estNonHistorise()) $encours[] = $inscription;
-    }
-}
-
-/** @var Inscription[] $terminees */
-$terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
 
 $canAjouterInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_AJOUTER));
 $canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
@@ -491,11 +478,20 @@ $now = new DateTime();
                                     </span>
                                 <?php endif; ?>
                             <?php endif; ?>
-                        <?php else :?>
-                            <a class="text-danger" href="<?php echo $this->url('formation/session/justifier-absence', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], [], true); ?>" target="_blank">
-                                <span class="icon icon-plus text-danger"></span>
-                                Justifier votre absence
-                            </a>
+                        <?php else :
+                            if(in_array($inscription, $inscriptionsAbsenceInjustifiees)):
+                                /** @see \Formation\Controller\JustificatifController::justifierAbsenceAction() */?>
+                                <a class="text-danger" href="<?php echo $this->url('formation/session/justifier-absence', ['inscription' => $inscription->getId()], [], true); ?>"
+                                   title="Il reste des justificatifs à déposer" data-bs-toggle="tooltip">
+                                    <span class="fas fa-user-slash text-danger"></span>
+                                    Justifier votre absence
+                                </a>
+                            <?php else: ?>
+                                <a href="<?php echo $this->url('formation/session/justifier-absence', ['inscription' => $inscription->getId()], [], true); ?>">
+                                    <span class="fas fa-user-slash"></span>
+                                    Voir les justificatifs d'absence déposés
+                                </a>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>

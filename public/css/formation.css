@@ -69,6 +69,24 @@ table.formation-presence tr td.journee {
   color: white;
   width: 5rem; }
 
+table.formation-presence tr td.justificatif {
+  background: #1b6d85;
+  color: white;
+  width: 5rem;
+  padding: 1rem; }
+
+table.formation-presence tr td.justificatif-voir {
+  vertical-align: center;
+  text-align: center;
+  min-width: 3rem;
+  min-height: 3rem; }
+
+table.formation-presence tr td.justificatif-voir span {
+  font-size: 15px; }
+
+table.formation-presence tr td.justificatif-aucun {
+  background: #d3d3d3; }
+
 table.formation-presence tr td.inscrit {
   padding-left: .5rem;
   padding-right: 1rem;

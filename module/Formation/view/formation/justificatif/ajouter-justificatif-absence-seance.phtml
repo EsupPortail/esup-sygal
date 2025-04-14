@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @see \Formation\Controller\JustificatifController::ajouterJustificatifAbsenceSeanceAction()
+ * @var Seance $seance
+ * @var Doctorant $doctorant
+ * @var bool $seanceMemeJour
+ */
+
+use Doctorant\Entity\Db\Doctorant;
+use Formation\Entity\Db\Seance;
+
+?>
+
+<form enctype="multipart/form-data" method="post" action="<?php echo $this->url('formation/seance/ajouter-justificatif-absence-seance', ['seance' => $seance->getId(), 'doctorant' => $doctorant->getId()], [], true); ?>">
+    <div class="row">
+        <div class="col-md-12">
+            <label for="justificatif">
+                Justificatif
+                <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :
+            </label>
+            <input type="file" id="justificatif" name="justificatif" required>
+            <?php if($seanceMemeJour): ?>
+                <input type="checkbox" name="justificatif_journee">
+                    Justificatif pour la journée
+                </input>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary" value="Enregistrer le justificatif">
+                <span class="icon icon-save"></span>
+                Enregistrer le justificatif
+            </button>
+        </div>
+    </div>
+</form>

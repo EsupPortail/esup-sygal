@@ -6,6 +6,7 @@ use Application\Controller\AbstractController;
 use Formation\Entity\Db\Presence;
 use Formation\Entity\Db\Seance;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
+use Formation\Service\Justificatif\JustificatifServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Formation\Service\Seance\SeanceServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
@@ -18,6 +19,7 @@ class PresenceController extends AbstractController {
     use PresenceServiceAwareTrait;
     use SeanceServiceAwareTrait;
     use SessionServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
@@ -38,9 +40,16 @@ class PresenceController extends AbstractController {
             $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
         }
 
+        $inscriptions = $session->getListePrincipale();
+        $inscriptionsAbsenceInjustifiees = [];
+        foreach ($inscriptions as $inscription) {
+            if($this->justificatifService->isInscriptionHasAbsenceInjustifiee($inscription)) $inscriptionsAbsenceInjustifiees[] = $inscription;
+        }
+
         return new ViewModel([
             'session' => $session,
             'presences' => $dictionnaire,
+            'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees
         ]);
     }
 

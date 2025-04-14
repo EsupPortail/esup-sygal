@@ -19,6 +19,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @var Session $session
  * @var array $presences
  * @var AnneeUniv $anneeUniv
+ * @var Inscription[] $inscriptionsAbsenceInjustifiees
  */
 
 $formation = $session->getFormation();
@@ -66,6 +67,8 @@ $listePrincipaleTrue = array_filter($listePrincipale, function (Inscription $a) 
 $listeComplementaire = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
 $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscription $a) { return $a->estNonHistorise();});
 usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a->getHistoCreation() > $b->getHistoCreation();});
+
+echo $this->alertes()->addAlertesFromFlashMessenger(true)->renderAsBootstrapToasts();
 ?>
 
 <div class="row">
@@ -590,7 +593,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <?php if ($session->getEtat()->getCode() !== Etat::CODE_IMMINENT AND $session->getEtat()->getCode() !== Etat::CODE_FERME AND $session->getEtat()->getCode() !== Etat::CODE_CLOTURER) : ?>
         <em> Les présences ne peuvent pas encore être renseignées.</em>
     <?php else : ?>
-        <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
+        <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false, 'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees], [], true); ?>
     <?php endif; ?>
 
 <?php endif; ?>

@@ -64,4 +64,15 @@ class UrlService extends \Application\Service\Url\UrlService
         $url = $this->fromRoute('formation/session/generer-emargements', ['session' => $session->getId()], ['force_canonical' => true] , true);
         return "<a href='".$url."'>Liste des inscrits à cette session de formation</a>";
     }
+
+    /** @noinspection PhpUnused */
+    public function getUrlJustificationAbsenceFormation(): string
+    {
+        if (!isset($this->variables['inscription'])) throw new RuntimeException("Variable inscription non fournie à [".UrlService::class."]");
+        /** @var Inscription $inscription */
+        $inscription = $this->variables['inscription'];
+
+        $url = $this->fromRoute('formation/session/justifier-absence', ['inscription' => $inscription->getId()], ['force_canonical' => true], true);
+        return "<a href='".$url."'>Justification de vos absences</a>";
+    }
 }
