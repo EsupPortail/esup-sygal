@@ -19,6 +19,9 @@ use Validation\Entity\Db\ValidationFormationExterne;
 $canAjouterFormationExterne = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_FORMATIONEXTERNE_AJOUTER));
 ?>
 <div role="tabpanel" class="tab-pane" id="formation-externe">
+    <p class="lead">
+        Les formations validées seront automatiquement remontées dans le rapport d'activité.
+    </p>
     <?php if($canAjouterFormationExterne): ?>
         <a href="<?php echo $this->url('formation/formation/ajouter-formation-externe',["doctorant" => $doctorant->getId()],[], true); ?>"
            class="btn btn-primary mt-2 ajax-modal"
@@ -151,7 +154,7 @@ $canAjouterFormationExterne = $this->isAllowed(FormationPrivileges::getResourceI
                                 <a      <?php /** @see FormationExterneController::validerFormationExterneAction()  */ ?>
                                     href="<?php echo $this->url('formation/formation/valider-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
                                     style="width:80%;"
-                                    title="Valider cette formation externe"
+                                    title="Valider cette formation externe ? <br><br> Cette validation fera remonter cette formation dans le rapport d'activité"
                                     data-bs-toggle="tooltip" data-bs-html="true">
                                     <span class="fas fa-thumbs-up text-success"></span>
                                 </a>

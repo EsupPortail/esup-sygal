@@ -107,7 +107,7 @@ class FormationExterneForm extends Form implements InputFilterProviderInterface 
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],
-                'empty_option' => "Non précisée",
+                'empty_option' => "Non précisé",
                 'value_options' => ['T' => 'Transversale', 'S' => 'Spécifique'],
             ],
             'attributes' => [
