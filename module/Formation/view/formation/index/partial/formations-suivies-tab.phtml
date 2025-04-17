@@ -20,7 +20,6 @@ if (is_array($terminees) && count($terminees) > 0): ?>
         <thead>
         <tr>
             <th> Formation</th>
-            <th> Session</th>
             <th> Formateur&middot;trice&middot;s</th>
             <th> Établissement</th>
             <th> Dates et lieux</th>
@@ -46,7 +45,6 @@ if (is_array($terminees) && count($terminees) > 0): ?>
                         <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
                     <?php endif; ?>
                 </td>
-                <td> <?php echo $session->getIndex(); ?> </td>
                 <td> <?php echo $this->formateurs($session); ?> </td>
                 <td> <?php echo $this->site($session); ?> </td>
                 <td> <?php echo $this->seances($session); ?> </td>
@@ -72,7 +70,11 @@ if (is_array($terminees) && count($terminees) > 0): ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
                     <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
                        class="ajax-modal">
-                        <span class="icon icon-voir"></span> Afficher les informations </a>
+                        <span class="icon icon-voir">
+                            Afficher les informations
+                        </span>
+                    </a>
+                    <br/>
                     <br/>
                     <?php if ($inscription->computeDureePresence() > 0) : ?>
                         <?php if ($canRepondreEnquete and $inscription->getValidationEnquete() === null) : ?>
@@ -99,13 +101,13 @@ if (is_array($terminees) && count($terminees) > 0): ?>
                                 </a>
                                 <br/>
                             <?php elseif ($dateButoir && $now > $dateButoir) : ?>
-                                <span class="text-danger"
-                                      title="Impossible de valider l'enquête après la date butoir (date butoir : <?php echo $dateButoir->format('d/m/Y'); ?>)"
+                                <span class="badge bg-danger text-white mt-3"
+                                      title="Impossible de valider l'enquête après la date butoir (<?php echo $dateButoir->format('d/m/Y'); ?>)"
                                       data-bs-toggle="tooltip" data-bs-html="true"
                                 >
                                         <span class="icon icon-unchecked"></span>
-                                        Date butoir dépassée
-                                    </span>
+                                        Impossible de valider l'enquête
+                                </span>
                             <?php else : ?>
                                 <span class="text-danger"
                                       title="<?= $delai ?> jours à partir de la clôture de la session pour répondre et valider"
@@ -125,14 +127,21 @@ if (is_array($terminees) && count($terminees) > 0): ?>
                                           data-bs-toggle="tooltip" data-bs-html="true"></span>
                                     Télécharger l'attestation
                                 </a>
+                                <br/>
+                                <br/>
                             <?php else : ?>
-                                <span class="text-warning">
-                                        L'attestation sera disponible à la clôture de la session
-                                    </span>
+                                <span class="badge bg-warning text-white">
+                                    L'attestation sera disponible à la clôture de la session
+                                </span>
                             <?php endif; ?>
                         <?php endif; ?>
                     <?php else : ?>
-                        Pas de présence
+                        <span class="badge bg-danger text-white mt-2">
+                            <span class="icon icon-utilisateur-supprimer" title="Vous n'avez été présent à aucune séance de cette session de formation"
+                                  data-bs-toggle="tooltip" data-bs-html="true">
+                                Absent
+                            </span>
+                        </span>
                     <?php endif; ?>
                 </td>
             </tr>

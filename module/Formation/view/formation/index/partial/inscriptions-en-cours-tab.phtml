@@ -16,7 +16,6 @@ $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResource
     <thead>
         <tr>
             <th> Formation</th>
-            <th> Session</th>
             <th> Formateur&middot;trice&middot;s</th>
             <th> Établissement</th>
             <th> Dates et lieux</th>
@@ -44,7 +43,6 @@ $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                     <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
                 <?php endif; ?>
             </td>
-            <td> <?php echo $session->getIndex(); ?> </td>
             <td> <?php echo $this->formateurs($session); ?> </td>
             <td> <?php echo $this->site($session); ?> </td>
             <td> <?php echo $this->seances($session); ?> </td>
@@ -52,36 +50,62 @@ $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             <td> <?php echo $this->type($session); ?></td>
             <td> <?php echo $this->etat($session); ?></td>
             <td>
-                <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
-                <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire <br/>Position " . $inscription->getPositionListeComplementaire(); ?>
+                <?php if ($inscription->isListePrincipale()): ?>
+                    <span class="badge bg-success text-white">
+                        Liste principale
+                    </span>
+                <?php endif;?>
+                <?php if ($inscription->isListeComplementaire()): ?>
+                    <span class="badge bg-warning text-white">
+                        Liste complémentaire <br>
+                        (Position : <?= $inscription->getPositionListeComplementaire(); ?>)
+                    </span>
+                <?php endif ?>
                 <?php if ($inscription->getListe() === null) : ?>
-                    <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
-                    <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>
+                    <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE): ?>
+                        <span class="badge bg-info text-white">
+                            En attente
+                        </span>
+                    <?php endif ?>
+                    <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME): ?>
+                        <span class="badge bg-danger text-white">
+                            Non classé
+                        </span>
+                    <?php endif ?>
                 <?php endif; ?>
             </td>
             <td>
                 <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
                 <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
                    class="ajax-modal">
-                    <span class="icon icon-voir"></span> Afficher les informations </a>
+                    <span class="icon icon-voir">
+                        Afficher les informations
+                    </span>
+                </a>
+                <br/>
                 <br/>
                 <?php if ($canAnnulerInscription) : ?>
                     <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
                     <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
-                       class="ajax-modal" data-event="modification"
+                       class="ajax-modal text-danger" data-event="modification"
                     >
-                        <span class="icon icon-unchecked"
-                              title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span> Annuler mon inscription</a>
+                        <span class="icon icon-unchecked text-danger"
+                              title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true">
+                            Annuler mon inscription
+                        </span>
+                    </a>
+                    <br/>
+                    <br/>
                 <?php endif; ?>
-                <br/>
                 <?php if ($canConvocationInscription) : ?>
                     <?php if ($inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>"
                            target="_blank">
                             <span class="icon icon-pdf" title="Télécharger la convocation" data-bs-toggle="tooltip"
-                                  data-bs-html="true"></span> Télécharger la convocation
+                                  data-bs-html="true">
+                                Télécharger la convocation
+                            </span>
                         </a>
                     <?php else: ?>
                         <span class="icon icon-pdf" style="color: lightgrey;" data-bs-toggle="tooltip"
@@ -89,6 +113,8 @@ $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                               Convocation
                         </span>
                     <?php endif; ?>
+                    <br/>
+                    <br/>
                 <?php endif; ?>
             </td>
         </tr>

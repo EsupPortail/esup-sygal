@@ -33,6 +33,7 @@ return [
                     'privileges' => [
                         IndexPrivileges::INDEX_DOCTORANT,
                     ],
+                    'assertion' => IndexAssertion::class
                 ],
                 [
                     'controller' => IndexController::class,

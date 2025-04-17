@@ -5,7 +5,9 @@ namespace Formation\Assertion\Index;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
+use Application\Entity\Db\Role;
 use Application\Service\UserContextServiceAwareInterface;
+use Doctorant\Entity\Db\Doctorant;
 use Formation\Entity\Db\FormationExterne;
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
@@ -48,14 +50,17 @@ class IndexAssertion extends AbstractAssertion implements  AssertionInterface,  
             return false;
         }
 
-        $these = $this->getRequestedThese();
-        if(!$these) return false;
-
         try {
             switch($action) {
                 case 'index-maison-doctorat' :
+                    $these = $this->getRequestedThese();
+                    if(!$these) return false;
                     $this->assertAppartenanceThese($these);
                     break;
+                case 'index-doctorant' :
+                    $doctorant = $this->getRequestedDoctorant();
+                    if(!$doctorant) return true;
+                    return $this->scopeValideForDoctorant($doctorant);
             }
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -84,6 +89,15 @@ class IndexAssertion extends AbstractAssertion implements  AssertionInterface,  
             return null;
         }
     }
+
+    private function getRequestedDoctorant(): ?Doctorant
+    {
+        if ($routeMatch = $this->getRouteMatch()) {
+            return $routeMatch->getDoctorant();
+        } else {
+            return null;
+        }
+    }
     private function assertAppartenanceThese(These $these)
     {
         $role = $this->userContextService->getSelectedIdentityRole();
@@ -104,5 +118,20 @@ class IndexAssertion extends AbstractAssertion implements  AssertionInterface,  
                 "La thèse n'est pas rattachée à l'établissement " . $roleBDD->getStructure()->getCode()
             );
         }
+    }
+
+    public function scopeValideForDoctorant(?Doctorant $doctorant): bool
+    {
+        $individu = $this->userContextService->getIdentityIndividu();
+        $role = $this->userContextService->getSelectedIdentityRole();
+        if (!$role) {
+            return false;
+        }
+
+        switch ($role->getCode()) {
+            case Role::CODE_DOCTORANT :
+                return $doctorant->getIndividu() === $individu;
+        }
+        return true;
     }
 }
