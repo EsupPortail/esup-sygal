@@ -1,0 +1,152 @@
+<?php
+
+/**
+ * @see \Formation\Controller\IndexController::indexMaisonDoctoratAction()
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Doctorant $doctorant
+ * @var Inscription[] $inscriptions
+ * @var FormationExterne[] $formationsExternes
+ * @var array $anneesUniv
+ * @var AnneeUniv $anneeUnivCourante
+ * @var int $delai;
+ */
+
+
+use Application\Entity\AnneeUniv;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\FormationExterne;
+use Formation\Entity\Db\Inscription;
+use These\Entity\Db\These;
+
+$this->headTitle('Tableau de bord des formations de '. $doctorant);
+
+$encours = [];
+$terminees = [];
+foreach ($inscriptions as $inscription) {
+    $seances = $inscription->getSession()->getSeances()->toArray();
+    $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
+    $nbSeance = count($seances);
+    if ($nbSeance > 0 /**  && $inscription->getSession()->estTerminee() **/ && $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
+        $terminees[] = $inscription;
+    } else {
+        if ($inscription->estNonHistorise()) $encours[] = $inscription;
+    }
+}
+
+/** @var Inscription[] $terminees */
+$terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
+?>
+
+<h1 class="page-header">
+    Tableau de bord des formations de <?= $doctorant ?>
+</h1>
+
+<?php if ($doctorant === null) : ?>
+    <p class="lead">
+        Aucun&middot;e doctorant&middot;e de trouvé&middot;e.
+    </p>
+<?php else : ?>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="lead"><strong>Bienvenue sur le tableau de bord des formations de <?= $doctorant ?></strong>. Sur cette page, vous pouvez : consulter ses inscriptions (en cours et terminées), ainsi que ses formations suivies à l'extérieur.</p>
+        </div>
+    </div>
+
+    <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="nav-item">
+            <a href="#inscription"
+               class="nav-link"
+               role="tab"
+               aria-controls="inscription"
+               data-bs-toggle="tab"
+            >
+                Inscriptions en cours
+            </a>
+        </li>
+        <li role="presentation" class="nav-item">
+            <a href="#formation"
+               class="nav-link"
+               role="tab"
+               aria-controls="formation"
+               data-bs-toggle="tab"
+            >
+                Formations suivies
+            </a>
+        </li>
+        <li role="presentation" class="nav-item">
+            <a href="#formation-externe"
+               class="nav-link"
+               role="tab"
+               aria-controls="formation-externe"
+               data-bs-toggle="tab"
+            >
+                Formations suivies à l'extérieur
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane" id="inscription">
+            <h2> Inscriptions en cours </h2>
+            <?php
+                echo $this->partial('formation/index/partial/inscriptions-en-cours-tab', [
+                    'encours' => $encours,
+                ]);
+            ?>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="formation">
+            <h2> Formations suivies </h2>
+            <?php
+                echo $this->partial('formation/index/partial/formations-suivies-tab', [
+                    'terminees' => $terminees,
+                    'delai' => $delai
+                ]);
+            ?>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="formation-externe">
+            <h2> Formations suivies à l'extérieur </h2>
+            <?php
+                $returnUrl = $this->url('formation/index-maison-doctorat', ['these' => $these->getId()]);
+                echo $this->partial('formation/index/partial/formations-externes-tab', [
+                    'doctorant' => $doctorant,
+                    'formationsExternes' => $formationsExternes,
+                    'anneesUniv' => $anneesUniv,
+                    'anneeUnivCourante' => $anneeUnivCourante,
+                    'returnUrl' => $returnUrl,
+                ]);
+            ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+        let hash = $(location).attr('hash');
+        let name = hash.substr(1);
+        if (name === undefined || name === "") name = "inscription";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').click(function () {
+            // No e.preventDefault() here
+            $(this).tab('show');
+        });
+    });
+</script>
+
+<style>
+    .w-10 { min-width: 10rem; }
+    .w-12 { min-width: 12rem; }
+</style>

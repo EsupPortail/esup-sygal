@@ -41,16 +41,16 @@ class AbstractValidationEntityService extends BaseService
         return $validation;
     }
 
-    public function saveValidation(AbstractValidationEntity $validationHDR): void
+    public function saveValidation(AbstractValidationEntity $validation): void
     {
         $this->entityManager->beginTransaction();
         try {
-            $this->validationService->saveValidation($validationHDR->getValidation());
+            $this->validationService->saveValidation($validation->getValidation());
 
-            if (!$validationHDR->getId()) {
-                $this->entityManager->persist($validationHDR);
+            if (!$validation->getId()) {
+                $this->entityManager->persist($validation);
             }
-            $this->entityManager->flush($validationHDR);
+            $this->entityManager->flush($validation);
             $this->entityManager->commit();
         } catch (ORMException $e) {
             $this->entityManager->rollback();

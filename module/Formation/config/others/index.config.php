@@ -3,6 +3,8 @@
 namespace Formation;
 
 use Application\Navigation\ApplicationNavigationFactory;
+use Formation\Assertion\Index\IndexAssertion;
+use Formation\Assertion\Index\IndexAssertionFactory;
 use Formation\Controller\IndexController;
 use Formation\Controller\IndexControllerFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
@@ -41,6 +43,16 @@ return [
                         IndexPrivileges::INDEX_FORMATEUR,
                     ],
                 ],
+                [
+                    'controller' => IndexController::class,
+                    'action' => [
+                        'index-maison-doctorat',
+                    ],
+                    'privileges' => [
+                        IndexPrivileges::INDEX_MAISON_DOCTORAT,
+                    ],
+                    'assertion' => IndexAssertion::class
+                ],
             ],
         ],
     ],
@@ -67,7 +79,36 @@ return [
 //                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-formateur') ,
                         'order'    => 92,
                     ],
-                ],
+                    /**
+                     * Navigation pour LA thèse "sélectionnée".
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 3
+                            'divider-formation' => [
+                                'label' => null,
+                                'order' => 35,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
+                            ],
+                            'index-maison-doctorat' => [
+                                'id' => 'index-maison-doctorat',
+                                'label' => 'Formation',
+                                'order' => 36,
+                                'route' => 'formation/index-maison-doctorat',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                            'icon' => 'fas fa-book-open',
+                            'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-maison-doctorat'),
+                            'visible' => IndexAssertion::class,
+                            ],
+                        ]
+                    ]
+                ]
             ],
         ],
     ],
@@ -92,6 +133,7 @@ return [
                             'route'    => '/index-doctorant[/:doctorant]',
                             'defaults' => [
                                 'controller' => IndexController::class,
+                                /** @see IndexController::indexDoctorantAction() */
                                 'action'     => 'index-doctorant',
                             ],
                         ],
@@ -103,7 +145,20 @@ return [
                             'route'    => '/index-formateur[/:formateur]',
                             'defaults' => [
                                 'controller' => IndexController::class,
+                                /** @see IndexController::indexFormateurAction() */
                                 'action'     => 'index-formateur',
+                            ],
+                        ],
+                    ],
+                    'index-maison-doctorat' => [
+                        'type'  => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/index-maison-doctorat/:these',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                /** @see IndexController::indexMaisonDoctoratAction() */
+                                'action'     => 'index-maison-doctorat',
                             ],
                         ],
                     ],
@@ -113,7 +168,9 @@ return [
     ],
 
     'service_manager' => [
-        'factories' => [],
+        'factories' => [
+            IndexAssertion::class => IndexAssertionFactory::class
+        ],
     ],
     'controllers'     => [
         'factories' => [

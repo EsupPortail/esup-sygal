@@ -1,0 +1,8 @@
+<?php
+
+namespace Formation\Provider\Validation;
+
+class TypeValidation {
+    const CODE_VALIDATION_FORMATION_EXTERNE = 'VALIDATION_FORMATION_EXTERNE';
+    const CODE_REFUS_FORMATION_EXTERNE = 'REFUS_VALIDATION_FORMATION_EXTERNE';
+}

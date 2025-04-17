@@ -1,0 +1,209 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var FormationExterne[] $formationsExternes
+ * @var array $anneesUniv
+ * @var AnneeUniv $anneeUnivCourante
+ * @var string $returnUrl
+ * @var Doctorant $doctorant
+ */
+
+use Application\Entity\AnneeUniv;
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+use Formation\Entity\Db\FormationExterne;
+use Formation\Provider\Privilege\FormationPrivileges;
+use Formation\Provider\Validation\TypeValidation;
+use Validation\Entity\Db\ValidationFormationExterne;
+
+$canAjouterFormationExterne = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_FORMATIONEXTERNE_AJOUTER));
+?>
+<div role="tabpanel" class="tab-pane" id="formation-externe">
+    <?php if($canAjouterFormationExterne): ?>
+        <a href="<?php echo $this->url('formation/formation/ajouter-formation-externe',["doctorant" => $doctorant->getId()],[], true); ?>"
+           class="btn btn-primary mt-2 ajax-modal"
+           data-event="modification"
+        >
+            <span class="icon icon-ajouter"></span>
+            Ajouter une formation suivie à l'extérieur
+        </a>
+    <?php endif; ?>
+    <?php if(is_array($formationsExternes) && count($formationsExternes) > 0): ?>
+        <div class="float-end">
+            <label for="annee"> Filtre sur l'année universitaire :</label>
+            <select id="annee" name="annee">
+                <?php foreach($anneesUniv as $annee => $anneeUniv) : ?>
+                    <option value="<?php echo $annee; ?>" <?php if ($annee === $anneeUnivCourante->getPremiereAnnee()) echo " selected "; ?> ><?php echo $anneeUniv; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <table class="table table-sm formations-externes mt-2">
+            <thead>
+            <tr>
+                <th> Formation </th>
+                <th> Date de début </th>
+                <th> Date de fin </th>
+                <th> Durée </th>
+                <th> Type </th>
+                <th> Attestation de suivi </th>
+                <th> Validation </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($formationsExternes as $formationEx) :
+                $anneeUniv = $formationEx["anneeUniv"];
+                /** @var FormationExterne $formationExterne */
+                $formationExterne = $formationEx["formationExterne"];
+                /** @var ValidationFormationExterne $validation */
+                $validation = $formationEx["validation"];
+                ?>
+                <tr class="<?php echo $anneeUniv; ?>">
+                    <td> <?php echo $formationExterne->getLibelle(); ?> </td>
+                    <td> <?php echo $formationExterne->getDebut()->format("d/m/Y"); ?> </td>
+                    <td> <?php echo $formationExterne->getFin()->format("d/m/Y"); ?> </td>
+                    <td> <?php echo $formationExterne->getDuree(); ?> h </td>
+                    <td> <?php echo $this->type($formationExterne); ?> </td>
+                    <td>
+                        <?php echo $this->fichier($formationExterne->getAttestation(),
+                            $this->url('formation/formation/telecharger-attestation-formation-externe', ["formationExterne"=> $formationExterne->getId()],[], true),
+                            $this->url('formation/formation/supprimer-attestation-formation-externe', ["formationExterne"=> $formationExterne->getId(), "fichier" => $formationExterne->getAttestation()->getId()], ['query' => ['redirect' => $returnUrl], ['fragment' => 'formation-externe'], true], true),
+                            true,
+                            "Attestation de suivi",
+                            true,
+                            false
+                        ); ?>
+                    </td>
+                    <td>
+                        <?php
+                        if($validation):
+                            if($validation->getValidation()?->getTypeValidation()->getCode() === TypeValidation::CODE_VALIDATION_FORMATION_EXTERNE): ?>
+                                <span class="badge bg-success text-white"
+                                      title="Validée par <?= $validation->getHistoCreateur() ?>, le <?= $validation->getHistoCreation()->format("d/m/Y à H:i") ?>"
+                                      data-bs-toggle="tooltip" data-bs-html="true">
+                                    <span class="icon icon-ok"></span>
+                                    Validée
+                                </span>
+                            <?php else: ?>
+                                <span class="badge bg-danger text-white"
+                                      title="Refusée par <?= $validation->getHistoCreateur() ?>, le <?= $validation->getHistoCreation()->format("d/m/Y à H:i") ?>"
+                                      data-bs-toggle="tooltip" data-bs-html="true">
+                                    <span class="icon icon-ko"></span>
+                                    Refusée
+                                </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="badge bg-warning text-white">
+                                <span class="icon icon-hourglass"></span>
+                                En attente de validation
+                            </span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php
+                        $canModifierFormationExterne = $this->isAllowed($formationExterne, FormationPrivileges::FORMATION_FORMATIONEXTERNE_MODIFIER);
+                        $canHistoriserFormation = $this->isAllowed($formationExterne, FormationPrivileges::FORMATION_FORMATIONEXTERNE_HISTORISER);;
+                        $canSupprimerFormation = $this->isAllowed($formationExterne, FormationPrivileges::FORMATION_FORMATIONEXTERNE_SUPPRIMER);;
+                        $canGererValidation = $this->isAllowed($formationExterne, FormationPrivileges::FORMATION_FORMATIONEXTERNE_GERER_VALIDATION);;
+
+                        if ($canModifierFormationExterne) : ?>
+                            <?php /** @see \Formation\Controller\FormationExterneController::modifierAction() */ ?>
+                            <a href="<?php echo $this->url('formation/formation/modifier-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                               title="Modifier la formation #<?php echo $formationExterne->getId(); ?>"
+                               data-bs-toggle="tooltip" data-bs-html="true"
+                               data-event="modification"
+                               class="ajax-modal">
+                                <span class="icon icon-modifier"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($canHistoriserFormation) : ?>
+                            <?php if ($formationExterne->estNonHistorise()) : ?>
+                                <?php /** @see \Formation\Controller\FormationExterneController::historiserAction() */ ?>
+                                <a href="<?php echo $this->url('formation/formation/historiser-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                                   title="Historiser la formation #<?php echo $formationExterne->getId(); ?> <br>(Une confirmation avant l'historisation vous sera demandée)"
+                                   data-bs-toggle="tooltip" data-bs-html="true" class="historiser-formation-btn"
+                                   data-toggle="confirmationx"
+                                   data-message="Êtes-vous sûr de vouloir historiser cette formation  ?">
+                                    <span class="icon icon-historiser"></span>
+                                </a>
+                            <?php else : ?>
+                                <?php /** @see \Formation\Controller\FormationExterneController::restaurerAction() */ ?>
+                                <a href="<?php echo $this->url('formation/formation/restaurer-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                                   title="Restaurer la formation #<?php echo $formationExterne->getId(); ?>"
+                                   data-bs-toggle="tooltip" data-bs-html="true">
+                                    <span class="icon icon-restaurer"></span>
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php if ($canSupprimerFormation && $formationExterne->estHistorise()) : ?>
+                            <?php /** @see FormationExterneController::supprimerAction() */?>
+                            <a href="<?php echo $this->url('formation/formation/supprimer-formation-externe',['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                               class="ajax-modal" data-event="modification"
+                               title="Suppression de la formation #<?php echo $formationExterne->getId(); ?> <br>(Une confirmation avant la suppression vous sera demandée)" data-bs-toggle="tooltip" data-bs-html="true"
+                               data-message="Êtes-vous sûr de vouloir supprimer cette formation ?">
+                                <span class="icon icon-detruire text-danger"></span>
+                            </a>
+                        <?php endif; ?>
+                        <?php  if($canGererValidation): ?>
+                            <?php  if(!$validation): ?>
+                                <a      <?php /** @see FormationExterneController::validerFormationExterneAction()  */ ?>
+                                    href="<?php echo $this->url('formation/formation/valider-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                                    style="width:80%;"
+                                    title="Valider cette formation externe"
+                                    data-bs-toggle="tooltip" data-bs-html="true">
+                                    <span class="fas fa-thumbs-up text-success"></span>
+                                </a>
+
+                                <a      <?php /** @see FormationExterneController::refuserFormationExterneAction()  */ ?>
+                                    href="<?php echo $this->url('formation/formation/refuser-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                                    style="width:80%;"
+                                    title="Refuser cette formation externe"
+                                    data-bs-toggle="tooltip" data-bs-html="true">
+                                    <span class="fas fa-thumbs-down text-danger"></span>
+                                </a>
+                            <?php else: ?>
+                                <?php /** @see FormationExterneController::revoquerFormationExterneAction() */ ?>
+                                <a href="<?php echo $this->url('formation/formation/revoquer-formation-externe', ['formationExterne' => $formationExterne->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+                                   title="Révoquer la validation de cette formation externe <br>(Une confirmation avant la révocation vous sera demandée)"
+                                   data-bs-toggle="tooltip" data-bs-html="true"
+                                >
+                                    <span class="icon icon-unchecked text-danger"></span>
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <p class="lead">Aucune formation suivie à l'extérieur n'a été déclarée.</p>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
+    function toggleAnnee() {
+        let anneeSelected = $('#annee option:selected').val();
+        // alert(anneeSelected);
+        $('.formations-externes tbody tr').hide();
+        $('.formations-externes tbody tr.' + anneeSelected).show();
+    }
+
+    $(function() {
+        toggleAnnee();
+        $("select#annee").on("change", toggleAnnee).selectpicker();
+    });
+</script>

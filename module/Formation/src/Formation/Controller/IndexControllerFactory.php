@@ -5,6 +5,8 @@ namespace Formation\Controller;
 use Application\Service\AnneeUniv\AnneeUnivService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
+use Formation\Service\Formation\FormationExterne\FormationExterneService;
+use Formation\Service\Validation\ValidationFormationExterne\ValidationFormationExterneService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -25,17 +27,23 @@ class IndexControllerFactory {
          * @var DoctorantService $doctorantService
          * @var ParametreService $parametreService
          * @var AnneeUnivService $anneeUnivService
+         * @var FormationExterneService $formationExterneService
+         * @var ValidationFormationExterneService $validationFormationExterneService
         */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $doctorantService = $container->get(DoctorantService::class);
         $parametreService = $container->get(ParametreService::class);
         $anneeUnivService = $container->get(AnneeUnivService::class);
+        $formationExterneService = $container->get(FormationExterneService::class);
+        $validationFormationExterneService = $container->get(ValidationFormationExterneService::class);
 
         $controller = new IndexController();
         $controller->setEntityManager($entityManager);
         $controller->setDoctorantService($doctorantService);
         $controller->setParametreService($parametreService);
         $controller->setAnneeUnivService($anneeUnivService);
+        $controller->setFormationExterneService($formationExterneService);
+        $controller->setValidationFormationExterneService($validationFormationExterneService);
 
         return $controller;
     }
