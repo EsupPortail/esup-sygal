@@ -9,11 +9,13 @@
  * @var FormationExterne[] $formationsExternes
  * @var array $anneesUniv
  * @var AnneeUniv $anneeUnivCourante
- * @var int $delai;
+ * @var int $delai
+ * @var Role $role
  */
 
 
 use Application\Entity\AnneeUniv;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Doctorant\Entity\Db\Doctorant;
 use Formation\Entity\Db\Etat;
@@ -96,6 +98,7 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
             <?php
                 echo $this->partial('formation/index/partial/inscriptions-en-cours-tab', [
                     'encours' => $encours,
+                    'role' => $role
                 ]);
             ?>
         </div>
@@ -105,7 +108,8 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
             <?php
                 echo $this->partial('formation/index/partial/formations-suivies-tab', [
                     'terminees' => $terminees,
-                    'delai' => $delai
+                    'delai' => $delai,
+                    'role' => $role
                 ]);
             ?>
         </div>

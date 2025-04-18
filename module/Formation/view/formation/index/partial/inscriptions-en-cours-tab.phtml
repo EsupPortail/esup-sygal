@@ -2,12 +2,15 @@
 /**
  * @var PhpRenderer $this
  * @var Inscription[] $encours
+ * @var Role $role
  */
 
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 
 $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_CONVOCATION));
 ?>
@@ -32,7 +35,9 @@ $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResource
         $canAnnulerInscription = $this->isAllowed($inscription, InscriptionPrivileges::INSCRIPTION_AJOUTER);
         $session = $inscription->getSession();
         $formation = $session->getFormation();
-        $module = $formation->getModule(); ?>
+        $module = $formation->getModule();
+        $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+        ?>
         <tr>
             <td><span class="formation-typage">Formation</span>
                 <?php echo $formation->getLibelle(); ?>
@@ -75,15 +80,28 @@ $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                 <?php endif; ?>
             </td>
             <td>
-                <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
-                <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
-                   class="ajax-modal">
-                    <span class="icon icon-voir">
-                        Afficher les informations
-                    </span>
-                </a>
-                <br/>
-                <br/>
+                <?php if($role->isDoctorant()):
+                        /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
+                           class="ajax-modal">
+                            <span class="icon icon-voir">
+                                Afficher les informations
+                            </span>
+                        </a>
+                        <br/>
+                        <br/>
+                    <?php else: ?>
+                        <?php if ($canAfficherSession) : ?>
+                            <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                            <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                                <span class="icon icon-voir">
+                                    Afficher les informations
+                                </span>
+                            </a>
+                            <br/>
+                            <br/>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 <?php if ($canAnnulerInscription) : ?>
                     <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
                     <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"

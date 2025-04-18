@@ -11,11 +11,13 @@
  * @var array $anneesUniv
  * @var AnneeUniv $anneeUnivCourante
  * @var EnqueteReponse[] $reponses;
- * @var int $delai;
+ * @var int $delai
+ * @var Role $role
  */
 
 
 use Application\Entity\AnneeUniv;
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Doctorant\Entity\Db\Doctorant;
 use Formation\Entity\Db\EnqueteReponse;
@@ -312,6 +314,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
         <?php
         echo $this->partial('formation/index/partial/inscriptions-en-cours-tab', [
             'encours' => $encours,
+            'role' => $role
         ]);
         ?>
     </div>
@@ -322,7 +325,8 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
             echo $this->partial('formation/index/partial/formations-suivies-tab', [
                 'terminees' => $terminees,
                 'titre' => "Formations suivies",
-                'delai' => $delai
+                'delai' => $delai,
+                'role' => $role
             ]);
         ?>
     </div>

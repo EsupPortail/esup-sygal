@@ -3,13 +3,16 @@
  * @var PhpRenderer $this
  * @var Inscription[] $terminees
  * @var int $delai
+ * @var Role $role
  */
 
+use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\Privilege\EnquetePrivileges;
 use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 
 $now = new DateTime();
 $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_ATTESTATION));
@@ -32,9 +35,12 @@ if (is_array($terminees) && count($terminees) > 0): ?>
         </thead>
         <tbody>
         <?php foreach ($terminees as $inscription) : ?>
-            <?php $session = $inscription->getSession();
+            <?php
+            $session = $inscription->getSession();
             $formation = $session->getFormation();
-            $module = $formation->getModule(); ?>
+            $module = $formation->getModule();
+            $canAfficherSession  = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+            ?>
             <tr>
                 <td><span class="formation-typage">Formation</span>
                     <?php echo $formation->getLibelle(); ?>
@@ -67,15 +73,28 @@ if (is_array($terminees) && count($terminees) > 0): ?>
                     Liste complémentaire : <?php echo ($session->getTailleListeComplementaire()) ?: "N.C."; ?>
                 </td>
                 <td>
-                    <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
-                    <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
-                       class="ajax-modal">
-                        <span class="icon icon-voir">
-                            Afficher les informations
-                        </span>
-                    </a>
-                    <br/>
-                    <br/>
+                    <?php if($role->isDoctorant()):
+                        /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche", ["session" => $session->getId()], [], true); ?>"
+                           class="ajax-modal">
+                            <span class="icon icon-voir">
+                                Afficher les informations
+                            </span>
+                        </a>
+                        <br/>
+                        <br/>
+                    <?php else: ?>
+                        <?php if ($canAfficherSession) : ?>
+                            <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                            <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                                <span class="icon icon-voir">
+                                    Afficher les informations
+                                </span>
+                            </a>
+                            <br/>
+                            <br/>
+                        <?php endif; ?>
+                    <?php endif; ?>
                     <?php if ($inscription->computeDureePresence() > 0) : ?>
                         <?php if ($canRepondreEnquete and $inscription->getValidationEnquete() === null) : ?>
                             <?php
