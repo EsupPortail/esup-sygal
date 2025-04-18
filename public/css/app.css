@@ -754,7 +754,8 @@ ul.roadmap.pagination {
     #menu-actualites .nav-item .nav-link,
     #menu-offretheses .nav-item .nav-link,
     #menu-soutenances-a-venir .nav-item .nav-link {
-      padding: 0.3rem 0.3rem; }
+      padding: 0.3rem 0.3rem;
+      color: var(--primary-color); }
 
 ul.menu-secondaire li a.roadmap {
   font-weight: bold; }
