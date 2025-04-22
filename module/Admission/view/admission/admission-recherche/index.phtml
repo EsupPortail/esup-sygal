@@ -159,12 +159,15 @@ echo $this->partial('admission/admission/partial/header', []); ?>
             foreach ($admissions as $admission): ?>
                 <tr>
                     <td><?php echo $admission->getIndividu()->getNomComplet() ?></td>
-                    <td><?php echo $this->etatHelper($admission->getEtat(), null, "") ?>
-                        <a href="<?php echo $this->url('admission/generer-statut-dossier', ['action' => 'generer-statut-dossier','admission' => $admission->getId()], [], true) ?>"
-                           title="Appuyer pour avoir plus de détails"
-                           data-bs-toggle="tooltip" data-bs-html="true" data-event="acces-statut-dossier" class="info_statut_dossier action ajax-modal">
-                            <span class="icon icon-information"></span>
-                        </a>
+                    <td >
+                        <div class="d-flex align-items-center">
+                            <?php echo $this->etatHelper($admission->getEtat(), null, "") ?>
+                            <a href="<?php echo $this->url('admission/generer-statut-dossier', ['action' => 'generer-statut-dossier','admission' => $admission->getId()], [], true) ?>"
+                               title="Appuyer pour avoir plus de détails"
+                               data-bs-toggle="tooltip" data-bs-html="true" data-event="acces-statut-dossier" class="action ajax-modal" style="margin-left: 5px">
+                                <span class="icon icon-information"></span>
+                            </a>
+                        </div>
                     </td>
                     <td>
                         <span title="<?php echo $admission?->getInscription()->first() ? $admission->getInscription()->first()->getTitreThese() : null ?>">

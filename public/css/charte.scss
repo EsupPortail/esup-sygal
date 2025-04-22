@@ -39,7 +39,7 @@ dd{
   }
 }
 
-td > a > span.icon, td > a > span.fas{
+td > a > span.icon, td > a > span.fas, td > div > a > span.icon {
   color: var(--secondary-color);
 }
 
@@ -295,10 +295,14 @@ h1.app-name {
     }
   }
 }
+
+.nav-tabs .nav-link {
+    color:var(--primary-color)
+}
 /**
  Table
  */
-/* Style de base du tableau */
+/* Style de basemenu-informations du tableau */
 .table {
   width: 100%;
   border-collapse: collapse;

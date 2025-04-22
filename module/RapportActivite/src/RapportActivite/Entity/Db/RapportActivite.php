@@ -4,6 +4,8 @@ namespace RapportActivite\Entity\Db;
 
 use Application\Constants;
 use Application\Entity\AnneeUniv;
+use Formation\Entity\Db\FormationExterne;
+use Formation\Entity\Db\Inscription;
 use Validation\Entity\Db\TypeValidation;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -192,35 +194,51 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     /**
      * Initialisation des formations transversales et/ou spécifiques suivies par le doctorant à partir des
-     * {@see \Formation\Entity\Db\Inscription} renseignées dans le module Formation.
+     * {@see Inscription} et {@see FormationExterne} renseignées dans le module Formation.
      *
      * Le stockage des formations dans le rapport d'activité est très rudimentaire. Comme il n'y a pas de relation
      * 'to-many' entre le {@see \RapportActivite\Entity\Db\RapportActivite} et les formations suivies, on la
      * "simule" en stockant une chaîne de caractères représentant au format JSON la liste des formations suivies
      * (intitulé et durée).
      *
-     * @param \Formation\Entity\Db\Inscription[] $formationInscriptions
+     * @param Inscription|FormationExterne[] $formations
      */
-    public function setFormationsFromInscriptions(array $formationInscriptions): void
+    public function setFormationsFromInscriptionsOrFormationsExternes(array $formations): void
     {
         // parcours des inscriptions à des sessions pour cumul des durées par intitulé de formation
         $infosFormations = [];
-        foreach ($formationInscriptions as $inscription) {
-            $session = $inscription->getSession();
-            $dateDebut = $session->getDateDebut();
-            if ($dateDebut > new DateTime()) {
-                continue; // on écarte les sessions situées dans le futur
-            }
-            if ($inscription->computeDureePresence() === 0.0) {
-                continue; // on écarte les inscription dont la durée de présence est nulle
-            }
-            $formation = $session->getFormation();
-            $type = $formation->getType();
+        /** @var Inscription|FormationExterne $entity */
+        foreach ($formations as $entity) {
+            $session = $entity instanceof Inscription ? $entity->getSession() : null;
+            /** @var \Formation\Entity\Db\Formation|FormationExterne $formation */
+            $formation = $entity instanceof Inscription ? $session->getFormation() : $entity;
+            $dateDebut = $entity instanceof Inscription ? $session->getDateDebut() : $formation->getDebut();
             $intitule = sprintf('%s (%s)', $formation->getLibelle(), $dateDebut->format(Constants::DATE_FORMAT));
-            $infosFormations[$type][$session->getId()] = $infosFormations[$type][$session->getId()] ?? ['intitule' => null, 'temps' => 0.0];
-            $infosFormations[$type][$session->getId()]['intitule'] = $intitule;
-            $infosFormations[$type][$session->getId()]['temps'] += $inscription->computeDureePresence();
+            $type = $entity instanceof Inscription ? $session->getType() : $entity->getType();
+
+            if($entity instanceof Inscription){
+                if ($dateDebut > new DateTime()) {
+                    continue; // on écarte les sessions situées dans le futur
+                }
+                if ($entity->computeDureePresence() === 0.0) {
+                    continue; // on écarte les inscriptions dont la durée de présence est nulle
+                }
+
+                $key = $session->getId();
+                $temps = $entity->computeDureePresence();
+            }elseif($entity instanceof FormationExterne){
+                if(!$formation->getValidation(\Formation\Provider\Validation\TypeValidation::CODE_VALIDATION_FORMATION_EXTERNE)){
+                    continue; // on écarte les formations externes qui n'ont pas été validées
+                }
+                $key = $formation->getId();
+                $temps = $formation->getDuree();
+            }
+
+            $infosFormations[$type][$key] = $infosFormations[$type][$key] ?? ['intitule' => null, 'temps' => 0.0];
+            $infosFormations[$type][$key]['intitule'] = $intitule;
+            $infosFormations[$type][$key]['temps'] += $temps;
         }
+
         foreach ($infosFormations as $type => $data) {
             $formations = array_map(fn($d) => Formation::fromArray($d), $data);
             if ($formations) {

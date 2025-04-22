@@ -3,18 +3,24 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Entity\AnneeUniv;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\FormationExterne;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Provider\Parametre\FormationParametres;
 use Formation\Service\Justificatif\JustificatifServiceAwareTrait;
+use Formation\Provider\Validation\TypeValidation;
+use Formation\Service\Formation\FormationExterne\FormationExterneServiceAwareTrait;
+use Formation\Service\Validation\ValidationFormationExterne\ValidationFormationExterneServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Laminas\View\Model\ViewModel;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
+use Validation\Entity\Db\ValidationFormationExterne;
 
 class IndexController extends AbstractController
 {
@@ -22,6 +28,8 @@ class IndexController extends AbstractController
     use DoctorantServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
+    use FormationExterneServiceAwareTrait;
+    use ValidationFormationExterneServiceAwareTrait;
     use JustificatifServiceAwareTrait;
 
     public function indexAction() : ViewModel
@@ -40,10 +48,11 @@ class IndexController extends AbstractController
             $doctorant = $this->doctorantService->getDoctorantsByUser($user);
         }
 
+        $anneeUnivCourante = $this->anneeUnivService->courante();
+        $formationsExternes = [];
         if($doctorant) {
-            $anneeScolaire = $this->anneeUnivService->courante();
-            $debut = $this->anneeUnivService->computeDateDebut($anneeScolaire);
-            $fin = $this->anneeUnivService->computeDateFin($anneeScolaire);
+            $debut = $this->anneeUnivService->computeDateDebut($anneeUnivCourante);
+            $fin = $this->anneeUnivService->computeDateFin($anneeUnivCourante);
             $ouvertes = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_OUVERTE, $debut, $fin, true);
             $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION, $debut, $fin, true);
             /** @var Inscription[] $inscription */
@@ -65,6 +74,9 @@ class IndexController extends AbstractController
                     if ($inscription->estNonHistorise()) $encours[] = $inscription;
                 }
             }
+
+            $formationsExternes = $this->formationExterneService->getRepository()->fetchFormationsExternesByDoctorant($doctorant, 'debut', 'ASC', true);
+            $formationsExternesAvecAnneeUniv = $this->getFormationsExternesAvecAnneeUniv($formationsExternes, $anneeUnivCourante);
         } else {
             $ouvertes = [];
             $preparations = [];
@@ -72,6 +84,7 @@ class IndexController extends AbstractController
             $terminees = [];
             $encours = [];
             $inscriptionsAbsenceInjustifiees = [];
+            $formationsExternesAvecAnneeUniv = [];
         }
 
         return new ViewModel([
@@ -81,6 +94,10 @@ class IndexController extends AbstractController
             'terminees' => $terminees,
             'encours' => $encours,
             'inscriptions' => $inscriptions,
+            'formationsExternes' => $formationsExternesAvecAnneeUniv,
+            'role' => $this->userContextService->getSelectedIdentityRole(),
+            'anneeUnivCourante' => $anneeUnivCourante,
+            'anneesUniv' => $this->formationExterneService->getAnneesUnivAsOptions($formationsExternes),
             'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees,
             'delai' => $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
         ]);
@@ -115,4 +132,48 @@ class IndexController extends AbstractController
         ]);
     }
 
+    public function indexMaisonDoctoratAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $doctorant = $these->getDoctorant();
+
+        $anneeUnivCourante = $this->anneeUnivService->courante();
+
+        /** @var Inscription[] $inscription */
+        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
+
+        $formationsExternes = $this->formationExterneService->getRepository()->fetchFormationsExternesByDoctorant($doctorant, 'debut', 'ASC', true);
+        $formationsExternesAvecAnneeUniv = $this->getFormationsExternesAvecAnneeUniv($formationsExternes, $anneeUnivCourante);
+
+        return new ViewModel([
+            'these' => $these,
+            'doctorant' => $doctorant,
+            'inscriptions' => $inscriptions,
+            'formationsExternes' => $formationsExternesAvecAnneeUniv,
+            'role' => $this->userContextService->getSelectedIdentityRole(),
+            'anneeUnivCourante' => $anneeUnivCourante,
+            'anneesUniv' => $this->formationExterneService->getAnneesUnivAsOptions($formationsExternes),
+            'delai' => $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
+        ]);
+    }
+
+    private function getFormationsExternesAvecAnneeUniv(array $formationsExternes, AnneeUniv $anneeUnivCourante): array
+    {
+        $formationsExternesAvecAnneeUniv = [];
+        /** @var FormationExterne $formationExterne */
+        foreach ($formationsExternes as $formationExterne) {
+            $premiereAnnee = null;
+            if ($formationExterne->getDebut()) {
+                $anneeUniv = $this->anneeUnivService->fromDate($formationExterne->getDebut());
+                $premiereAnnee = $anneeUniv->getPremiereAnnee();
+            }
+            /** @var ValidationFormationExterne|null $validation */
+            $validation =
+                $this->validationFormationExterneService->getRepository()->findValidationByFormationExterneAndCode($formationExterne, TypeValidation::CODE_VALIDATION_FORMATION_EXTERNE);
+            if (!$validation) $validation = $this->validationFormationExterneService->getRepository()->findValidationByFormationExterneAndCode($formationExterne, TypeValidation::CODE_REFUS_FORMATION_EXTERNE);
+            $formationsExternesAvecAnneeUniv[] = array("formationExterne" => $formationExterne, "anneeUniv" => $premiereAnnee ?? $anneeUnivCourante->getPremiereAnnee(), "validation" => $validation);
+        }
+
+        return $formationsExternesAvecAnneeUniv;
+    }
 }

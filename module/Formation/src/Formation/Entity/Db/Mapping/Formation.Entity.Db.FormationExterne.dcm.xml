@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Formation\Entity\Db\FormationExterne"
+            table="FORMATION_FORMATION_EXTERNE"
+            repository-class="Formation\Entity\Db\Repository\FormationExterneRepository">
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="SEQUENCE"/>
+        </id>
+        <field name="libelle"             type="string"       length="1024"       column="libelle"          nullable="false"/>
+        <field name="type"                type="string"       length="1"          column="type"             nullable="false"/>
+        <field name="debut"               type="datetime"                         column="date_debut"            nullable="false"/>
+        <field name="fin"                 type="datetime"                         column="date_fin"              nullable="false"/>
+        <field name="duree"                 type="integer"                         column="duree"              nullable="false"/>
+
+        <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
+            <join-columns>
+                <join-column name="doctorant_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+
+        <one-to-one field="attestation" target-entity="Fichier\Entity\Db\Fichier" orphan-removal="true">
+            <cascade>
+                <cascade-remove/>
+            </cascade>
+            <join-column name="attestation_id" referenced-column-name="id" on-delete="CASCADE" nullable="false" unique="true"/>
+        </one-to-one>
+
+        <one-to-many field="validations" target-entity="Validation\Entity\Db\ValidationFormationExterne" mapped-by="formationExterne"/>
+
+        <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>
+        <field name="histoModification" type="datetime" column="histo_modification" nullable="false"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_createur_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_modificateur_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="histo_destructeur_id" referenced-column-name="id"/>
+            </join-columns>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

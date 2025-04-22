@@ -22,7 +22,7 @@ dd a > span.icon, dd td > a > span.fas {
 dd a > span.icon:hover, dd a > span.fas:hover {
   color: var(--primary-color); }
 
-td > a > span.icon, td > a > span.fas {
+td > a > span.icon, td > a > span.fas, td > div > a > span.icon {
   color: var(--secondary-color); }
 
 td > a > span.icon:hover, td > a > span.fas:hover {
@@ -226,10 +226,13 @@ h1.app-name {
     overflow: hidden;
     border-top: 1px solid rgba(0, 0, 0, 0.15); }
 
+.nav-tabs .nav-link {
+  color: var(--primary-color); }
+
 /**
  Table
  */
-/* Style de base du tableau */
+/* Style de basemenu-informations du tableau */
 .table {
   width: 100%;
   border-collapse: collapse;

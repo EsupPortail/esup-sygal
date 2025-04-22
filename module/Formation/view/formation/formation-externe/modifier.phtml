@@ -1,0 +1,80 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @see \Formation\Controller\FormationExterneController::ajouterAction()
+ * @see \Formation\Controller\FormationExterneController::modifierAction()
+ * @var FormationExterneForm $form
+ */
+
+use Application\View\Renderer\PhpRenderer;
+use Fichier\Controller\Plugin\UrlFichier;
+use Formation\Entity\Db\FormationExterne;
+use Formation\Form\Formation\FormationExterne\FormationExterneForm;
+use Formation\Provider\Privilege\FormationPrivileges;
+
+$canModifierFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
+
+/** @var FormationExterne $object */
+$object = $form->getObject();
+?>
+
+<?php
+$form->prepare();
+echo $this->form()->openTag($form);
+?>
+
+<?php echo $this->formControlGroup($form->get('libelle')); ?>
+<?php echo $this->formControlGroup($form->get('debut')); ?>
+<?php echo $this->formControlGroup($form->get('fin')); ?>
+<?php echo $this->formControlGroup($form->get('duree')); ?>
+<?php echo $this->formControlGroup($form->get('type')); ?>
+<?php if ($object->getAttestation()): ?>
+    <div class="row mb-3">
+        <div class="col">
+            Attestation existante <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> :
+            <?php echo $this->fichier($object->getAttestation(),
+                $this->url('formation/formation/telecharger-attestation-formation-externe', ["formationExterne"=> $object->getId()],[], true),
+"",
+                $canModifierFormation,
+                "Attestation de suivi de la formation",
+                true,
+                true
+            ); ?>
+        </div>
+
+    </div>
+    <a type="button" class="btn btn-primary mb-4" data-bs-target="#upload-file-container" data-bs-toggle="collapse" aria-expanded="true" aria-controls="upload-file-container">
+        <span class="icon icon-pdf"></span>
+        Remplacer l'attestation existante
+    </a>
+    <?php
+        $fileHasError = $form->hasValidated() && $form->get('attestation')->getMessages();
+        $collapseClass = $fileHasError ? 'collapse show' : 'collapse';
+    ?>
+    <div class="<?= $collapseClass ?> row subfield mb-4" id="upload-file-container">
+        <div class="alert alert-info">
+            <span class="icon icon-info"></span>
+            Cela remplacera automatiquement l'attestation déjà présente
+        </div>
+        <?php echo $this->formControlGroup($form->get('attestation')); ?>
+    </div>
+<?php else: ?>
+    <?php echo $this->formControlGroup($form->get('attestation')); ?>
+<?php endif; ?>
+
+<?php echo $this->formControlGroup($form->get('submit')); ?>
+
+<?php echo $this->form()->closeTag(); ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+    $('select').selectpicker();
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
+</script>

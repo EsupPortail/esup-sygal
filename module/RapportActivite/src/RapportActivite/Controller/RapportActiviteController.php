@@ -11,6 +11,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Formation\Service\Formation\FormationExterne\FormationExterneServiceAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait as FormationInscriptionServiceAwareTrait;
 use InvalidArgumentException;
 use Laminas\Http\Response;
@@ -42,6 +43,7 @@ class RapportActiviteController extends AbstractController
     use TheseAnneeUnivServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
     use FormationInscriptionServiceAwareTrait;
+    use FormationExterneServiceAwareTrait;
 
     private RapportActiviteAnnuelForm $annuelForm;
     private RapportActiviteFinContratForm $finContratForm;
@@ -349,7 +351,11 @@ class RapportActiviteController extends AbstractController
             //     et ensuite le formulaire entier (avec année grisée) initialisé avec les formations de l'année choisie.
             //     Cf. AnneeUnivService pour les bornes de début et de fin d'une année univ.
             $formationInscriptions = $this->inscriptionService->getInscriptionByDoctorantAndAnnee($rapportActivite->getThese()->getDoctorant());
-            $rapportActivite->setFormationsFromInscriptions($formationInscriptions);
+            $formationExternes = $this->formationExterneService->getRepository()->fetchFormationsExternesByDoctorant($rapportActivite->getThese()->getDoctorant());
+
+            $formations = array_merge($formationInscriptions, $formationExternes);
+
+            $rapportActivite->setFormationsFromInscriptionsOrFormationsExternes($formations);
 
             if ($rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportFinContrat() ||
                 !$rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {

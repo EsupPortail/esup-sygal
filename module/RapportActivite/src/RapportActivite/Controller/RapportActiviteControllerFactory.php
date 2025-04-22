@@ -5,6 +5,7 @@ namespace RapportActivite\Controller;
 use Application\Service\AnneeUniv\AnneeUnivService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
+use Formation\Service\Formation\FormationExterne\FormationExterneService;
 use Formation\Service\Inscription\InscriptionService as FormationInscriptionService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Form\RapportActiviteAnnuelForm;
@@ -38,6 +39,9 @@ class RapportActiviteControllerFactory
         /** @var \RapportActivite\Service\Fichier\RapportActiviteFichierService $rapportActiviteFichierService */
         $rapportActiviteFichierService = $container->get(RapportActiviteFichierService::class);
         $controller->setRapportActiviteFichierService($rapportActiviteFichierService);
+        /** @var FormationExterneService $formationExterneService */
+        $formationExterneService = $container->get(FormationExterneService::class);
+        $controller->setFormationExterneService($formationExterneService);
 
         // forms
         /** @var \RapportActivite\Form\RapportActiviteAnnuelForm $rapportActiviteAnnuelForm */
