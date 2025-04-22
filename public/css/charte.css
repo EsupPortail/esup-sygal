@@ -67,6 +67,12 @@ th {
 .bg-danger {
   background-color: #CE4946 !important; }
 
+.bg-light-danger {
+  background-color: #8b000021; }
+
+.bg-light-success {
+  background-color: #0064002e; }
+
 .popover,
 .popover-title {
   font-size: 12px; }

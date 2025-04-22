@@ -1,0 +1,48 @@
+<?php
+/**
+ * @var array $absences
+ * @var Session $session
+ */
+
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+
+?>
+
+<h1 class="page-header">
+    Justificatifs de vos absences à la formation <?= $session->getFormation()->getLibelle() ?>
+</h1>
+<p class="lead">
+    Nous vous rappelons que toute inscription à une formation vous engage à la suivre. En cas d’indisponibilité, il est de votre devoir de vous désinscrire jusqu’à J-5 ou de prévenir la personne chargée de la gestion de cette formation.
+    <br>
+    Nous vous prions de bien vouloir justifier votre absence, qui sera transmise à la direction de votre école doctorale.
+</p>
+<div class="row">
+        <?php
+        foreach($absences as $absence):
+            /** @var Seance $seance */
+            $seance = $absence["seance"];
+            /** @var Inscription $inscription */
+            $inscription = $absence["inscription"];
+
+            $cssColor = isset($absence["justificatif"]) ? "bg-success" : "bg-danger";
+            ?>
+            <div class="col-md-6">
+                <div class="box card">
+                    <div class="card-header <?= $cssColor ?> text-white">
+                        <h2 class="first">
+                            Séance du <?php echo $seance->getDebut()->format('d/m/Y'); ?>
+                            (<?= $seance->getDebut()->format('H:i'); ?> à  <?= $seance->getFin()->format('H:i'); ?>)
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <a class="btn btn-primary ajax-modal action">
+                            <span class="icon icon-plus"></span>
+                            Ajouter un justificatif
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+</div>

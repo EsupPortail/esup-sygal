@@ -3,6 +3,7 @@
 namespace Formation\Provider\NatureFichier;
 
 class NatureFichier {
-    public const CODE_SIGNATURE_FORMATION = 'SIGNATURE_FORMATION';
-    public const CODE_FICHE_FORMATION = 'FORMATION_FICHE';
+    const CODE_SIGNATURE_FORMATION = 'SIGNATURE_FORMATION';
+    const CODE_FICHE_FORMATION = 'FORMATION_FICHE';
+    const CODE_JUSTIFICATIF_ABSENCE = 'JUSTIFICATIF_ABSENCE';
 }

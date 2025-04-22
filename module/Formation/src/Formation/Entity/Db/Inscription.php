@@ -31,6 +31,7 @@ class Inscription implements HistoriqueAwareInterface, ResourceInterface {
     private ?string $liste = null;
     private ?string $description = null;
     private ?Collection $presences = null;
+    private Collection $justificatifs;
     private ?DateTime $validationEnquete = null;
     private ?int $sursisEnquete = null;
 

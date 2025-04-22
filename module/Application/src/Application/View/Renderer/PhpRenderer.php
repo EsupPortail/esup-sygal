@@ -159,7 +159,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method FinancementFormatterHelper financementFormatter()
  *
  * @method ActualiteViewHelper actualite()
- * @method FichierViewHelper fichier(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $voirHistoInfo = true, bool $canVoirSuppression = true, array $options = [])
+ * @method FichierViewHelper fichier(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $voirHistoInfo = true, bool $canVoirSuppression = true, bool $isTargetBlank = false, array $options = [])
  *
  * @method IdrefLinkViewHelper idrefLink(string $ppn)
  *

@@ -39,7 +39,7 @@ class InscriptionAssertionFactory {
         $assertion->setInscriptionService($inscriptionService);
         $assertion->setAnneeUnivService($anneeUnivService);
         $assertion->setSessionService($sessionService);
-        $assertion->setDelaiDescinscription($parametreService->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ANNULATION_INSCRIPTION));
+        $assertion->setDelaiDesinscription($parametreService->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ANNULATION_INSCRIPTION));
 
         /* @var $application Application */
         $application = $container->get('Application');

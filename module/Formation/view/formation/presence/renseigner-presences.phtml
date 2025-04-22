@@ -4,9 +4,11 @@
  * @see \Formation\Controller\PresenceController::renseignerPresencesAction()
  * @var Session $session
  * @var Presence[][] $presences
+ * @var Inscription[] $inscriptionsAbsenceInjustifiees
  * @var bool $titre
  */
 
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -44,8 +46,12 @@ $this->headTitle($titrePage);
                     <?php echo $seance->getDebut()->format('d/m/Y');?> <br/>
                     <?php echo $seance->getDebut()->format('H:i');?> &rightarrow; <?php echo $seance->getFin()->format('H:i');?> </td>
             <?php endforeach; ?>
+            <?php if($session->getEtat()->getCode() === Etat::CODE_CLOTURER): ?>
+                <td class="justificatif">Justificatif(s) d'absence(s)</td>
+            <?php endif; ?>
         </tr>
-        <?php foreach ($inscriptions as $inscription) : ?>
+        <?php foreach ($inscriptions as $inscription) :
+            $absent = false; ?>
         <tr>
             <td class="inscrit">
                     <div style="float:left;">
@@ -64,9 +70,35 @@ $this->headTitle($titrePage);
                         <span class="icon icon-yes" style="color:darkgreen;" title="Présent"></span>
                     <?php else : ?>
                         <span class="icon icon-no" style="color:darkred;" title="Non présent"></span>
-                    <?php endif; ?>
+                    <?php
+                        $absent = true;
+
+                    endif; ?>
                 </td>
             <?php endforeach; ?>
+            <?php if($session->getEtat()->getCode() === Etat::CODE_CLOTURER): ?>
+                <?php if($absent):
+                    if(in_array($inscription, $inscriptionsAbsenceInjustifiees)): ?>
+                        <td class="justificatif-voir bg-light-danger" data-bs-toggle="tooltip"
+                            title="Tous les justificatifs d'absence n'ont pas été fournis">
+                            <a class="ajax-modal"
+                               href="<?php echo $this->url('formation/session/justifier-absence', ["inscription" => $inscription->getId()]) ?>">
+                                <span class="icon icon-voir"></span>
+                            </a>
+                        </td>
+                    <?php else: ?>
+                        <td class="justificatif-voir bg-light-success" data-bs-toggle="tooltip"
+                            title="Voir les justificatifs d'absence pour <?= $inscription->getDoctorant() ?>">
+                            <a class="ajax-modal"
+                               href="<?php echo $this->url('formation/session/justifier-absence', ["inscription" => $inscription->getId()]) ?>">
+                                <span class="icon icon-voir"></span>
+                            </a>
+                        </td>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <td class="justificatif-aucun"></td>
+                <?php endif; ?>
+            <?php endif; ?>
         </tr>
         <?php endforeach; ?>
     </table>

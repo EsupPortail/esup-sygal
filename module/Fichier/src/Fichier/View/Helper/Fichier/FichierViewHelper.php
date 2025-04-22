@@ -22,11 +22,12 @@ class FichierViewHelper extends AbstractHelper
      * @param string $libelleOptionnel          Un libellé optionnel à afficher (à la place du nom du fichier).
      * @param bool $seeHistoInfo                Indique si les informations concernant l'historique (Nom du créateur, date de création) doivent être affichées.
      * @param bool $canSeeSuppression           Indique si l'on peut voir le bouton pour supprimer le fichier.
+     * @param bool $isTargetBlank               Indique si l'on veut que le lien de téléchargement soit ouvert dans un autre onglet
      * @param array $options                    Options supplémentaires pour le rendu.
      *
      * @return string                           Le rendu HTML du fichier.
      */
-    public function __invoke(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $seeHistoInfo = true, bool $canSeeSuppression = true, array $options = [])
+    public function __invoke(Fichier $object, string $urlTelechargementFichier, string $urlSuppressionFichier, bool $canGererFichier, string $libelleOptionnel = "", bool $seeHistoInfo = true, bool $canSeeSuppression = true, bool $isTargetBlank = false, array $options = [])
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
@@ -40,8 +41,9 @@ class FichierViewHelper extends AbstractHelper
             'libelleOptionnel' => $libelleOptionnel,
             'seeHistoInfo' => $seeHistoInfo,
             'canSeeSuppression' => $canSeeSuppression,
-            'options' => $options]
-        );
+            'isTargetBlank' => $isTargetBlank,
+            'options' => $options
+        ]);
     }
 
     public function __toString()

@@ -25,6 +25,8 @@
             <field name="validationEnquete"   type="datetime"                         column="validation_enquete"      nullable="true"/>
             <field name="sursisEnquete"   type="integer"                         column="sursis_enquete"      nullable="true"/>
 
+            <one-to-many field="justificatifs" target-entity="Formation\Entity\Db\Justificatif" mapped-by="inscription"/>
+
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <field name="histoCreation" type="datetime" column="histo_creation" nullable="false"/>
             <field name="histoDestruction" type="datetime" column="histo_destruction" nullable="true"/>

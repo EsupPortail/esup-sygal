@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;
+use Formation\Service\Justificatif\JustificatifService;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\Seance\SeanceService;
 use Formation\Service\Session\SessionService;
@@ -27,12 +28,14 @@ class PresenceControllerFactory {
          * @var PresenceService $presenceService
          * @var SeanceService $seanceService
          * @var SessionService $sessionService
+         * @var JustificatifService $justificatifService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $inscriptionService = $container->get(InscriptionService::class);
         $presenceService = $container->get(PresenceService::class);
         $seanceService = $container->get(SeanceService::class);
         $sessionService = $container->get(SessionService::class);
+        $justificatifService = $container->get(JustificatifService::class);
 
         $controller = new PresenceController();
         $controller->setEntityManager($entityManager);
@@ -40,6 +43,7 @@ class PresenceControllerFactory {
         $controller->setPresenceService($presenceService);
         $controller->setSeanceService($seanceService);
         $controller->setSessionService($sessionService);
+        $controller->setJustificatifService($justificatifService);
         return $controller;
     }
 }

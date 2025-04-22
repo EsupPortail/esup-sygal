@@ -5,7 +5,10 @@ namespace Formation\Controller;
 use Application\Controller\AbstractController;
 use UnicaenSearch\SearchServiceAwareTrait;
 use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\PersistentCollection;
+use Formation\Entity\Db\Presence;
+use Formation\Service\Justificatif\JustificatifServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Session\Search\SessionSearchServiceAwareTrait;
 use Notification\Exception\ExceptionInterface;
@@ -49,6 +52,7 @@ class SessionController extends AbstractController
     use SessionStructureValideServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
     use SessionSearchServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
 
 
     use SessionFormAwareTrait;
@@ -73,12 +77,19 @@ class SessionController extends AbstractController
             if($presence->getSeance()->estNonHistorise()) $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
         }
 
+        $inscriptions = $session->getListePrincipale();
+        $inscriptionsAbsenceInjustifiees = [];
+        foreach ($inscriptions as $inscription) {
+            if($this->justificatifService->isInscriptionHasAbsenceInjustifiee($inscription)) $inscriptionsAbsenceInjustifiees[] = $inscription;
+        }
+
         $anneeUniv = $session->getDateDebut() ? $this->anneeUnivService->fromDate($session->getDateDebut()) : $this->anneeUnivService->courante();
 
         return new ViewModel([
             'session' => $session,
             'presences' => $dictionnaire,
             'anneeUniv' => $anneeUniv,
+            'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees
         ]);
     }
 
@@ -243,7 +254,8 @@ class SessionController extends AbstractController
                         $this->triggerNotificationInscriptionEchec($session);
                         break;
                     case Etat::CODE_CLOTURER :
-                        $this->triggerNotificationSessionTerminee($session);
+//                        $this->triggerNotificationSessionTerminee($session);
+                        $this->triggerNotificationAbsencesInjustifieesSession($session);
                         break;
                     case Etat::CODE_ANNULEE :
                         $this->triggerNotificationSessionAnnulee($session);
@@ -271,6 +283,31 @@ class SessionController extends AbstractController
            "title" => "Changement de l'état de la session",
            "etats" => $this->getEntityManager()->getRepository(Etat::class)->findAll(),
            "session" => $session,
+        ]);
+    }
+
+    public function justifierAbsenceAction()
+    {
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        $doctorantId = $this->params()->fromRoute('doctorant');
+        /** @var Doctorant|null $doctorant */
+        $doctorant = $doctorantId !== null ? $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId) : null;
+
+        $inscriptions = $this->inscriptionService->getRepository()->findInscriptionsByDoctorantAndSession($doctorant, $session);
+        $seances = $session->getSeances()->toArray();
+        $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
+
+        foreach ($inscriptions as $inscription) {
+            foreach ($seances as $seance) {
+                $presence = $this->getPresenceService()->getRepository()->findPresenceByInscriptionAndSeance($inscription, $seance);
+                if($presence === null || !$presence->isPresent()) $absences[$seance->getId()] = ["seance" => $seance, "inscription" => $inscription];
+            }
+        }
+
+        return new ViewModel([
+            "title" => count($absences) > 1 ? "Justifications de vos absences" : "Justification de votre absence",
+            "session" => $session,
+            'absences' => $absences,
         ]);
     }
 
@@ -425,6 +462,33 @@ class SessionController extends AbstractController
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
+    }
+
+    private function triggerNotificationAbsencesInjustifieesSession(Session $session)
+    {
+        $inscriptions = $session->getListePrincipale();
+        usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
+        $seances = $session->getSeances()->toArray();
+        $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
+
+        $absentDejaNotifie = [];
+        $auMoinsUneAbsence = false;
+        foreach ($inscriptions as $inscription) {
+            foreach ($seances as $seance) {
+                $presence = $this->getPresenceService()->getRepository()->findPresenceByInscriptionAndSeance($inscription, $seance);
+                if (($presence === null || !$presence->isPresent()) && !in_array($inscription->getDoctorant(), $absentDejaNotifie)) {
+                    try {
+                        $notif = $this->formationNotificationFactory->createNotificationAbsencesInjustifieesSession($inscription);
+                        $this->notifierService->trigger($notif);
+                        $absentDejaNotifie[] = $inscription->getDoctorant();
+                        $auMoinsUneAbsence = true;
+                    } catch (NotificationRuntimeException $e) {
+                        // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+                    }
+                }
+            }
+        }
+        if($auMoinsUneAbsence) $this->flashMessenger()->addInfoMessage("Le·s doctorant·e·s absent·e·s (entièrement ou partiellement) à cette session de formation ont été notifié·e·s afin de justifier cette situation.");
     }
 
     public function classerInscriptionsAction() : Response

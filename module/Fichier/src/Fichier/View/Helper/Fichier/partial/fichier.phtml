@@ -8,6 +8,7 @@
 * @var string $libelleOptionnel
 * @var bool $seeHistoInfo
 * @var bool $canSeeSuppression
+* @var bool $isTargetBlank
 */
 
 use Fichier\Entity\Db\Fichier;
@@ -31,7 +32,7 @@ use Fichier\Entity\Db\Fichier;
             </div>
             <!-- Boutons Actions -->
             <div class="file-actions">
-                <a href="<?php echo $urlTelechargementFichier; ?>">
+                <a href="<?php echo $urlTelechargementFichier; ?>" <?= $isTargetBlank ? "target='_blank'" : "" ?>>
                     <i class="fas fa-download"></i>
                 </a>
                 <?php if ($canGererFichier && $canSeeSuppression) : ?>

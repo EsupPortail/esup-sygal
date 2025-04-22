@@ -5,6 +5,7 @@ namespace Formation\Controller;
 use Application\Service\AnneeUniv\AnneeUnivService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Formation\FormationService;
+use Formation\Service\Justificatif\JustificatifService;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\Session\Search\SessionSearchService;
@@ -40,6 +41,7 @@ class SessionControllerFactory {
          * @var PresenceService $presenceService
          * @var SessionService $sessionService
          * @var SessionStructureValideService $sessionStructureComplementaireService
+         * @var JustificatifService $justificatifService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
@@ -52,6 +54,7 @@ class SessionControllerFactory {
         $sessionStructureComplementaireService = $container->get(SessionStructureValideService::class);
         $anneeUnivService = $container->get(AnneeUnivService::class);
         $searchService = $container->get(SessionSearchService::class);
+        $justificatifService = $container->get(JustificatifService::class);
 
         /**
          * @var SessionForm $sessionForm
@@ -74,6 +77,7 @@ class SessionControllerFactory {
         $controller->setSessionStructureValideService($sessionStructureComplementaireService);
         $controller->setAnneeUnivService($anneeUnivService);
         $controller->setSessionSearchService($searchService);
+        $controller->setJustificatifService($justificatifService);
         /** Form ******************************************************************************************************/
         $controller->setSessionForm($sessionForm);
         /** Autre *****************************************************************************************************/

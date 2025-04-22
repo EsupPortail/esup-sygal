@@ -10,6 +10,7 @@ use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Provider\Parametre\FormationParametres;
+use Formation\Service\Justificatif\JustificatifServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Laminas\View\Model\ViewModel;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -21,6 +22,7 @@ class IndexController extends AbstractController
     use DoctorantServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use AnneeUnivServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
@@ -46,17 +48,40 @@ class IndexController extends AbstractController
             $preparations = $this->getEntityManager()->getRepository(Session::class)->findSessionsByDoctorant($doctorant, Etat::CODE_PREPARATION, $debut, $fin, true);
             /** @var Inscription[] $inscription */
             $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
+
+            $terminees = [];
+            $encours = [];
+            $inscriptionsAbsenceInjustifiees = [];
+
+            /** @var Inscription $inscription */
+            foreach ($inscriptions as $inscription) {
+                $seances = $inscription->getSession()->getSeances()->toArray();
+                $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
+                $nbSeance = count($seances);
+                if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
+                    $terminees[] = $inscription;
+                    if($this->justificatifService->isInscriptionHasAbsenceInjustifiee($inscription)) $inscriptionsAbsenceInjustifiees[] = $inscription;
+                } else {
+                    if ($inscription->estNonHistorise()) $encours[] = $inscription;
+                }
+            }
         } else {
             $ouvertes = [];
             $preparations = [];
             $inscriptions = [];
+            $terminees = [];
+            $encours = [];
+            $inscriptionsAbsenceInjustifiees = [];
         }
 
         return new ViewModel([
             'doctorant' => $doctorant,
             'ouvertes' => $ouvertes,
             'preparations' => $preparations,
+            'terminees' => $terminees,
+            'encours' => $encours,
             'inscriptions' => $inscriptions,
+            'inscriptionsAbsenceInjustifiees' => $inscriptionsAbsenceInjustifiees,
             'delai' => $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
         ]);
     }
