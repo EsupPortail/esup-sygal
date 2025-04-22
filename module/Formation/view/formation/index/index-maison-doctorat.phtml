@@ -6,6 +6,8 @@
  * @var These $these
  * @var Doctorant $doctorant
  * @var Inscription[] $inscriptions
+ * @var Inscription[] $terminees
+ * @var Inscription[] $encours
  * @var FormationExterne[] $formationsExternes
  * @var array $anneesUniv
  * @var AnneeUniv $anneeUnivCourante
@@ -18,28 +20,11 @@ use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Doctorant\Entity\Db\Doctorant;
-use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\FormationExterne;
 use Formation\Entity\Db\Inscription;
 use These\Entity\Db\These;
 
 $this->headTitle('Tableau de bord des formations de '. $doctorant);
-
-$encours = [];
-$terminees = [];
-foreach ($inscriptions as $inscription) {
-    $seances = $inscription->getSession()->getSeances()->toArray();
-    $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
-    $nbSeance = count($seances);
-    if ($nbSeance > 0 /**  && $inscription->getSession()->estTerminee() **/ && $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
-        $terminees[] = $inscription;
-    } else {
-        if ($inscription->estNonHistorise()) $encours[] = $inscription;
-    }
-}
-
-/** @var Inscription[] $terminees */
-$terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
 ?>
 
 <h1 class="page-header">

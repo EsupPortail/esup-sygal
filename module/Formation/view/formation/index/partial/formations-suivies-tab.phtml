@@ -4,6 +4,7 @@
  * @var Inscription[] $terminees
  * @var int $delai
  * @var Role $role
+ * @var Inscription[] $inscriptionsAbsenceInjustifiees
  */
 
 use Application\Entity\Db\Role;
@@ -154,13 +155,29 @@ if (is_array($terminees) && count($terminees) > 0): ?>
                                 </span>
                             <?php endif; ?>
                         <?php endif; ?>
-                    <?php else : ?>
-                        <span class="badge bg-danger text-white mt-2">
-                            <span class="icon icon-utilisateur-supprimer" title="Vous n'avez été présent à aucune séance de cette session de formation"
-                                  data-bs-toggle="tooltip" data-bs-html="true">
-                                Absent
+                    <?php else :
+                        if($role->isDoctorant()):
+                            if(in_array($inscription, $inscriptionsAbsenceInjustifiees)):
+                                /** @see \Formation\Controller\JustificatifController::justifierAbsenceAction() */?>
+                                <a class="text-danger" href="<?php echo $this->url('formation/session/justifier-absence', ['inscription' => $inscription->getId()], [], true); ?>"
+                                   title="Il reste des justificatifs à déposer" data-bs-toggle="tooltip">
+                                    <span class="fas fa-user-slash text-danger"></span>
+                                    Justifier votre absence
+                                </a>
+                            <?php else: ?>
+                                <a href="<?php echo $this->url('formation/session/justifier-absence', ['inscription' => $inscription->getId()], [], true); ?>">
+                                    <span class="fas fa-user-slash"></span>
+                                    Voir les justificatifs d'absence déposés
+                                </a>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="badge bg-danger text-white mt-2">
+                                <span class="icon icon-utilisateur-supprimer" title="<?=$inscription->getDoctorant()?> n'a été présent à aucune séance de cette session de formation"
+                                      data-bs-toggle="tooltip" data-bs-html="true">
+                                    Absent
+                                </span>
                             </span>
-                        </span>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </td>
             </tr>

@@ -4,6 +4,13 @@ Journal des modifications
 10.1.0
 ------
 - Module Formation : Ajout d'une colonne dans l'export des inscriptions du nombre d'heures effectif de suivi du doctorant (pour une session)
+- Module Formation : Possibilité de renseigner par le doctorant (depuis son tableau de bord), une formation externe avec attestation :
+  - avec une validation par la Maison du doctorat
+  - formations externes validées récupérées automatiquement dans le rapport d'activité
+- Module Formation : Dépôt de justificatifs d'absence à une formation
+  - Lors du passage à l'état clôturé d'une session de formation : envoi d'un mail aux doctorants qui ont été entièrement/partiellement absent aux séances.
+  - Le doctorant pourra déposer ensuite sur une interface, les justificatifs pour chaque séance où il a été absent. Si ce dernier a été absent à deux séances (se déroulant sur une même journée), il pourra déposer un seul justificatif pour les deux séances. 
+  - La gestionnaire pourra visualiser les justificatifs depuis la session de formations, au niveau des présences (seulement lorsque la session sera à l'état clôturée).
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée

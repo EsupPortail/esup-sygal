@@ -91,7 +91,7 @@ class IndexController extends AbstractController
             'doctorant' => $doctorant,
             'ouvertes' => $ouvertes,
             'preparations' => $preparations,
-            'terminees' => $terminees,
+            'terminees' => array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; }),
             'encours' => $encours,
             'inscriptions' => $inscriptions,
             'formationsExternes' => $formationsExternesAvecAnneeUniv,
@@ -142,6 +142,21 @@ class IndexController extends AbstractController
         /** @var Inscription[] $inscription */
         $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
 
+        $terminees = [];
+        $encours = [];
+
+        /** @var Inscription $inscription */
+        foreach ($inscriptions as $inscription) {
+            $seances = $inscription->getSession()->getSeances()->toArray();
+            $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
+            $nbSeance = count($seances);
+            if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
+                $terminees[] = $inscription;
+            } else {
+                if ($inscription->estNonHistorise()) $encours[] = $inscription;
+            }
+        }
+
         $formationsExternes = $this->formationExterneService->getRepository()->fetchFormationsExternesByDoctorant($doctorant, 'debut', 'ASC', true);
         $formationsExternesAvecAnneeUniv = $this->getFormationsExternesAvecAnneeUniv($formationsExternes, $anneeUnivCourante);
 
@@ -149,6 +164,8 @@ class IndexController extends AbstractController
             'these' => $these,
             'doctorant' => $doctorant,
             'inscriptions' => $inscriptions,
+            'terminees' => array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; }),
+            'encours' => $encours,
             'formationsExternes' => $formationsExternesAvecAnneeUniv,
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'anneeUnivCourante' => $anneeUnivCourante,
