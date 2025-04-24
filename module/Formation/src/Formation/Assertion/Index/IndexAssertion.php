@@ -52,11 +52,10 @@ class IndexAssertion extends AbstractAssertion implements  AssertionInterface,  
 
         try {
             switch($action) {
-                case 'index-maison-doctorat' :
+                case 'index-gestion' :
                     $these = $this->getRequestedThese();
                     if(!$these) return false;
-                    $this->assertAppartenanceThese($these);
-                    break;
+                    return $this->userContextService->isStructureDuRoleRespecteeForThese($these);
                 case 'index-doctorant' :
                     $doctorant = $this->getRequestedDoctorant();
                     if(!$doctorant) return true;
@@ -96,27 +95,6 @@ class IndexAssertion extends AbstractAssertion implements  AssertionInterface,  
             return $routeMatch->getDoctorant();
         } else {
             return null;
-        }
-    }
-    private function assertAppartenanceThese(These $these)
-    {
-        $role = $this->userContextService->getSelectedIdentityRole();
-        if (!$role) {
-            return;
-        }
-
-        if ($role->isDoctorant()) {
-            $doctorant = $this->userContextService->getIdentityDoctorant();
-            $this->assertTrue(
-                $these->getDoctorant()->getId() === $doctorant->getId(),
-                "La thèse n'appartient pas au doctorant " . $doctorant
-            );
-        }
-        elseif ($roleBDD = $this->userContextService->getSelectedRoleBDD()) {
-            $this->assertTrue(
-                $these->getEtablissement()->getStructure()->getId() === $roleBDD->getStructure()->getId(),
-                "La thèse n'est pas rattachée à l'établissement " . $roleBDD->getStructure()->getCode()
-            );
         }
     }
 

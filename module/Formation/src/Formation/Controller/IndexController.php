@@ -132,7 +132,7 @@ class IndexController extends AbstractController
         ]);
     }
 
-    public function indexMaisonDoctoratAction() : ViewModel
+    public function indexGestionAction() : ViewModel
     {
         $these = $this->requestedThese();
         $doctorant = $these->getDoctorant();

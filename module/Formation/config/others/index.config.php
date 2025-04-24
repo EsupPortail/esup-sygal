@@ -47,10 +47,10 @@ return [
                 [
                     'controller' => IndexController::class,
                     'action' => [
-                        'index-maison-doctorat',
+                        'index-gestion',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_MAISON_DOCTORAT,
+                        IndexPrivileges::INDEX_GESTION,
                     ],
                     'assertion' => IndexAssertion::class
                 ],
@@ -94,17 +94,17 @@ return [
                                 'class' => 'divider',
                                 'separator' => true,
                             ],
-                            'index-maison-doctorat' => [
-                                'id' => 'index-maison-doctorat',
+                            'index-gestion' => [
+                                'id' => 'index-gestion',
                                 'label' => 'Formation',
                                 'order' => 36,
-                                'route' => 'formation/index-maison-doctorat',
+                                'route' => 'formation/index-gestion',
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
                                 ],
                             'icon' => 'fas fa-book-open',
-                            'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-maison-doctorat'),
+                            'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-gestion'),
                             'visible' => IndexAssertion::class,
                             ],
                         ]
@@ -151,15 +151,15 @@ return [
                             ],
                         ],
                     ],
-                    'index-maison-doctorat' => [
+                    'index-gestion' => [
                         'type'  => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/index-maison-doctorat/:these',
+                            'route'    => '/index-gestion/:these',
                             'defaults' => [
                                 'controller' => IndexController::class,
-                                /** @see IndexController::indexMaisonDoctoratAction() */
-                                'action'     => 'index-maison-doctorat',
+                                /** @see IndexController::indexGestionAction() */
+                                'action'     => 'index-gestion',
                             ],
                         ],
                     ],

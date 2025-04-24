@@ -50,9 +50,9 @@ INSERT INTO public.unicaen_privilege_privilege (categorie_id, code, libelle, ord
 VALUES ((SELECT id FROM unicaen_privilege_categorie WHERE code = 'formation_formationexterne'), 'gerer-validation', 'Gérer les validations (valider/refuser/révoquer) d''une formation externe', 5);
 
 
---------------- Privilèges concernant le tableau de bord des formations pour Maison du doctorat
+--------------- Privilèges concernant le tableau de bord de gestion des formations
 INSERT INTO public.unicaen_privilege_privilege (categorie_id, code, libelle, ordre)
-VALUES ((SELECT id FROM unicaen_privilege_categorie WHERE code = 'formation'), 'index_maison-doctorat', 'Accès à l''index maison du doctorat concernant un doctorant', 3);
+VALUES ((SELECT id FROM unicaen_privilege_categorie WHERE code = 'formation'), 'index_gestion', 'Accès à l''index de gestion concernant un doctorant', 3);
 ----------------
 
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
@@ -77,25 +77,31 @@ from data
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'formation_formationexterne', 'telecharger-attestation')
+with data(categ, priv) as (select 'formation_formationexterne', 'telecharger-attestation'
+                           union
+                           select 'formation_formationexterne', 'modifier')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
-                                           'BDD'
+                                           'BDD',
+                                          'GEST_ED',
+                                          'RESP_ED'
     )
          join unicaen_privilege_categorie cp on cp.CODE = data.categ
          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id);
 
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (select 'formation', 'index_maison-doctorat'
+with data(categ, priv) as (select 'formation', 'index_gestion'
                            union
                            select 'formation_formationexterne', 'gerer-validation')
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in (
-    'BDD',
-                                          'ADMIN_TECH'
+                                          'BDD',
+                                          'ADMIN_TECH',
+                                          'GEST_ED',
+                                          'RESP_ED'
     )
          join unicaen_privilege_categorie cp on cp.CODE = data.categ
          join unicaen_privilege_privilege p on p.CATEGORIE_ID = cp.id and p.code = data.priv

@@ -10,5 +10,5 @@ class IndexPrivileges extends Privileges {
     const INDEX_AFFICHER = 'formation-index';
     const INDEX_DOCTORANT = 'formation-index_doctorant';
     const INDEX_FORMATEUR = 'formation-index_formateur';
-    const INDEX_MAISON_DOCTORAT = 'formation-index_maison-doctorat';
+    const INDEX_GESTION = 'formation-index_gestion';
 }

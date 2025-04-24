@@ -12,6 +12,7 @@ use Formation\Service\Formation\FormationExterne\FormationExterneServiceAwareTra
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use These\Entity\Db\These;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 
 class FormationExterneAssertion extends AbstractAssertion implements  AssertionInterface,  UserContextServiceAwareInterface, MessageCollectorAwareInterface
@@ -92,20 +93,15 @@ class FormationExterneAssertion extends AbstractAssertion implements  AssertionI
     }
     public function scopeValide(?FormationExterne $formationExterne): bool
     {
-        $individu = $this->userContextService->getIdentityIndividu();
         $role = $this->userContextService->getSelectedIdentityRole();
         if (!$role) {
             return false;
         }
 
         $doctorant = $formationExterne->getDoctorant();
-        switch ($role->getCode()) {
-            case Role::CODE_DOCTORANT :
-                $userDoctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
-                return $doctorant === $userDoctorant;
-            case Role::CODE_BDD :
-                return $doctorant && $doctorant->getEtablissement()->getStructure()->getCode() === $role->getStructure()->getCode();
-        }
-        return true;
+        $theses = array_filter($doctorant->getTheses(), function (These $t) { return (in_array($t->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]) AND $t->estNonHistorise());});
+        /** @var These $these */
+        $these = (!empty($theses))?current($theses):null;
+        return $this->userContextService->isStructureDuRoleRespecteeForThese($these);
     }
 }

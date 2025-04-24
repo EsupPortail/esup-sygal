@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @see \Formation\Controller\IndexController::indexMaisonDoctoratAction()
+ * @see \Formation\Controller\IndexController::indexGestionAction()
  * @var PhpRenderer $this
  * @var These $these
  * @var Doctorant $doctorant
@@ -102,7 +102,7 @@ $this->headTitle('Tableau de bord des formations de '. $doctorant);
         <div role="tabpanel" class="tab-pane" id="formation-externe">
             <h2> Formations suivies à l'extérieur </h2>
             <?php
-                $returnUrl = $this->url('formation/index-maison-doctorat', ['these' => $these->getId()]);
+                $returnUrl = $this->url('formation/index-gestion', ['these' => $these->getId()]);
                 echo $this->partial('formation/index/partial/formations-externes-tab', [
                     'doctorant' => $doctorant,
                     'formationsExternes' => $formationsExternes,
