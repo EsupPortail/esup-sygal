@@ -220,3 +220,44 @@ FROM these th
          LEFT JOIN dernier_rapport_activite ract ON ract.these_id = th.id
          LEFT JOIN dernier_rapport_csi rcsi ON rcsi.these_id = th.id
 WHERE th.histo_destruction IS NULL;
+
+
+create or replace view v_situ_depot_vc_valid_pres(id, these_id, individu_id, valide) as
+WITH validations_attendues AS (
+    SELECT a.these_id,
+           a.individu_id,
+           tv.id AS type_validation_id
+    FROM acteur_these a
+             JOIN role r ON a.role_id = r.id AND r.code::text = 'P'::text
+             JOIN type_validation tv ON tv.code::text = 'CORRECTION_THESE'::text
+    WHERE a.histo_destruction IS NULL AND NOT (EXISTS (
+        SELECT vt.id,
+               v.type_validation_id,
+               vt.these_id,
+               vt.individu_id,
+               vt.histo_creation,
+               vt.histo_createur_id,
+               vt.histo_modification,
+               vt.histo_modificateur_id,
+               vt.histo_destruction,
+               vt.histo_destructeur_id,
+               tv.id,
+               tv.code,
+               tv.libelle
+        FROM validation_these vt
+                 join validation v on v.id = vt.validation_id
+                 JOIN type_validation tv ON v.type_validation_id = tv.id AND tv.code::text = 'CORRECTION_THESE'::text
+        WHERE vt.these_id = a.these_id AND v.type_validation_id = tv.id AND vt.histo_destruction IS NULL))
+)
+SELECT (va.these_id || '_'::text) || va.individu_id AS id,
+       va.these_id,
+       va.individu_id,
+       CASE
+           WHEN v.id IS NOT NULL THEN 1
+           ELSE 0
+           END AS valide
+FROM validations_attendues va
+         LEFT JOIN validation_these vt ON vt.these_id = va.these_id AND vt.individu_id = va.individu_id AND vt.histo_destructeur_id IS NULL
+         left join validation v on v.id = vt.validation_id AND v.type_validation_id = va.type_validation_id;
+
+drop view if exists v_situ_depot_vc_valid_pres_new;
