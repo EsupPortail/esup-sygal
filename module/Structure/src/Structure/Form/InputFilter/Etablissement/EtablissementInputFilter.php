@@ -137,6 +137,19 @@ class EtablissementInputFilter extends StructureInputFilter
         $structureForm->remove('emailBibliotheque');
         $structureForm->remove('emailDoctorat');
         $structureForm->remove('estInscription');
-        $structureForm->remove('estCed');
+//        $structureForm->remove('estCed');
+
+        $structureForm->get('code')
+            ->setLabel("Code (ex : UAI/RNE, etc.)  <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> 
+                                <span class='icon icon-information' data-bs-html='true' data-toggle='tooltip' title='Dans le cas dun établissement étranger, veuillez saisir un code unique de votre choix, qui permettra d’identifier ce dernier.
+                                    <br>
+                                    <br>
+                                    Ce code peut contenir des lettres et/ou des chiffres (ex : UNIV01, ECL2024).
+                                    <br>
+                                    <br>
+                                    Il doit être court, explicite, et différent des autres établissements enregistrés.'
+                                </span>
+        ")
+            ->setLabelOptions(['disable_html_escape' => true]);
     }
 }

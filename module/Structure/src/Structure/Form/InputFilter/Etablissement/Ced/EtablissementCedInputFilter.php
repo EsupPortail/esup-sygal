@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Laminas\Form\Form;
 use Laminas\Validator\NotEmpty;
 use Structure\Form\InputFilter\Etablissement\EtablissementInputFilter;
+use Structure\Form\StructureForm;
 use Webmozart\Assert\Assert;
 
 class EtablissementCedInputFilter extends EtablissementInputFilter
@@ -51,7 +52,7 @@ class EtablissementCedInputFilter extends EtablissementInputFilter
         ]);
     }
 
-    public function prepareForm(Form $structureForm): void
+    public function prepareForm(StructureForm $structureForm): void
     {
         parent::prepareForm($structureForm);
 
@@ -61,6 +62,7 @@ class EtablissementCedInputFilter extends EtablissementInputFilter
         $structureForm->get('code')->setAttribute('disabled', 'disabled');
         $structureForm->get('sigle')->setAttribute('disabled', 'disabled');
         $structureForm->get('sourceCode')->setAttribute('disabled', 'disabled');
+
         $structureForm->remove('domaine');
 
         $structureForm->remove('estInscription');
@@ -74,5 +76,9 @@ class EtablissementCedInputFilter extends EtablissementInputFilter
 
         $structureForm->remove('id_ref');
         $structureForm->remove('id_hal');
+
+        $structureForm->get('adresse')
+            ->setLabel("Adresse postale (sur une ligne) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
     }
 }

@@ -203,5 +203,36 @@ class EtablissementInscriptionInputFilter extends EtablissementInputFilter
         if ($structureForm->getObject()->getId()) {
             $structureForm->get('sourceCode')->setAttribute('disabled', 'disabled');
         }
+
+        $structureForm->get('code')
+            ->setLabel("Code UAI (RNE) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span> ")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('sigle')
+            ->setLabel("Sigle <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('sourceCode')
+            ->setLabel("Source Code <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('domaine')
+            ->setLabel("Domaine <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('adresse')
+            ->setLabel("Adresse postale (sur une ligne) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('emailAssistance')
+            ->setLabel("Adresse électronique d'Assistance <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('emailBibliotheque')
+            ->setLabel("Adresse électronique pour les aspects Bibliothèque <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('emailDoctorat')
+            ->setLabel("Adresse électronique pour les aspects Doctorat <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('id_ref')
+            ->setLabel("IdRef <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
+        $structureForm->get('cheminLogo')
+            ->setLabel("Logo : <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true]);
     }
 }

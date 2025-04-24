@@ -28,7 +28,8 @@ class EtablissementForm extends StructureForm
         );
 
         $this->get('code')
-            ->setLabel("Code (ex : UAI/RNE, etc.)")
+            ->setLabel("Code (ex : UAI/RNE, etc.) <span class='icon icon-obligatoire' style='color: darkred;font-size: 0.8em;' data-bs-toggle='tooltip' title='Obligatoire'></span>")
+            ->setLabelOptions(['disable_html_escape' => true])
             ->setAttribute('placeholder', "Ex : 0141408E");
 
         $this->get('sigle')->setAttribute('placeholder', "Ex : Unicaen");
