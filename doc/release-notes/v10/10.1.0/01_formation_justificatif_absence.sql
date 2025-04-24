@@ -35,6 +35,10 @@ CREATE TABLE formation_justificatif_seance
             ON DELETE CASCADE
 );
 
+-- Création de la nature du fichier associée au justificatif d'absence
+INSERT INTO nature_fichier (id, code, libelle) VALUES (nextval('nature_fichier_id_seq'::regclass), 'JUSTIFICATIF_ABSENCE', 'Justificatif d''absence à une formation');
+
+
 
 -- Privilèges
 INSERT INTO public.unicaen_privilege_privilege (categorie_id, code, libelle, ordre)
