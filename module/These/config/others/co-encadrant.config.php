@@ -26,7 +26,7 @@ return [
                         'privileges' => [
                             CoEncadrantPrivileges::COENCADRANT_GERER,
                         ],
-                        'resources' => ['Acteur'],
+                        'resources' => ['ActeurThese'],
                         'assertion'  => ActeurTheseAssertion::class,
                     ],
                 ],
