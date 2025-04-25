@@ -17,6 +17,7 @@ Journal des modifications
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 - [FIX] Ajout d'un CED impossible
+- [FIX] Correction de la vue v_situ_depot_vc_valid_pres : calcul erroné de l'existence d'une validation.
 
 10.0.1
 -----
