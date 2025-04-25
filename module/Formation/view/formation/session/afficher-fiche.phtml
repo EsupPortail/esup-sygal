@@ -1,18 +1,22 @@
 <?php
 
+use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Entity\Db\SessionStructureValide;
+use Formation\Provider\Privilege\FormationPrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 
 /**
+ * @var PhpRenderer $this
  * @see \Formation\Controller\SessionController::afficherFicheAction()
  * @var Session $session
  */
 
 $canVoirLieuSession = $this->isAllowed($session, SessionPrivileges::SESSION_VOIR_LIEU);
+$canModifierFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
 
 $formation = $session->getFormation();
 $module = $formation->getModule();
@@ -63,6 +67,25 @@ $this->headTitle($pageTitle);
                 <dt class="col-md-3"> Description </dt>
                 <dd class="col-md-9"> <?php echo $session->getDescription(); ?> </dd>
             <?php endif; ?>
+            <?php if ($formation->getFiche()) : ?>
+                <dt class="col-md-4"> Fiche </dt>
+                <dd class="col-md-8">
+                    <?php echo $this->fichier($formation->getFiche(),
+                        $this->url('formation/formation/telecharger-fiche', ["formation"=> $formation->getId()],[], true),
+                        $this->url('formation/formation/supprimer-fiche', ["formation"=>$formation->getId(), "fichier" => $formation->getFiche()->getId()], ['query' => ['redirect' => $this->url('formation/formation/afficher', ["formation" => $formation->getId()])]], true),
+                        $canModifierFormation,
+                        "Fiche de la formation",
+                        false,
+                        false,
+                        true
+                    ); ?>
+                </dd>
+            <?php else: ?>
+                <?php if ($formation->getLien()) : ?>
+                    <dt class="col-md-4"> Lien vers la fiche </dt>
+                    <dd class="col-md-8"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+                <?php endif ?>
+            <?php endif ?>
             <dt class="col-md-3"> Code </dt>
             <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
             <dt class="col-md-3"> État </dt>
