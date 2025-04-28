@@ -27,6 +27,17 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
             <div class="row">
                 <div class="col-md-9">
                     <?php echo $this->formControlGroup($fs->get('candidat')) ?>
+                    <p class="lead">
+                        Vous ne trouvez pas le candidat·e dans <?= $this->appInfos()->nom; ?> ?
+                        Assurez-vous qu'il ou elle n'existe pas déjà avant de procéder à son enregistrement via ce formulaire.
+                    </p>
+                    <a class="btn btn-primary float-end"
+                       target="_blank"
+                       title="Création d'un nouvel utilisateur..."
+                       href="<?php echo $this->url('unicaen-utilisateur/ajouter') ?>">
+                        <span class="icon icon-ajouter"></span>
+                        <?php echo $this->translate("Ajouter un nouvel utilisateur") ?>
+                    </a>
                 </div>
             </div>
 
@@ -115,18 +126,18 @@ use HDR\Fieldset\Generalites\GeneralitesFieldset;
 
 <script>
     $(function () {
-        public const $etablissementSelect2 = $('#etablissement');
-        public const $versionDiplomeSelect2 = $("#versionDiplome");
+        const $etablissementSelect2 = $('#etablissement');
+        const $versionDiplomeSelect2 = $("#versionDiplome");
 
-        public const updateVersionDiplomeOptionsForSelectedEtablissement = function() {
+        const updateVersionDiplomeOptionsForSelectedEtablissement = function() {
             // filtrage des versions de diplômes en fonction de l'établissement sélectionné
-            public const sourcecode = $etablissementSelect2.select2('data')[0].sourcecode;
+            const sourcecode = $etablissementSelect2.select2('data')[0].sourcecode;
             if (!sourcecode) {
                 $versionDiplomeSelect2.val('').attr('disabled', 'disabled');
                 return;
             }
-            public const $options = $versionDiplomeSelect2.find("option.etablissement");
-            public const $optionsToShow = $options.filter('.' + sourcecode);
+            const $options = $versionDiplomeSelect2.find("option.etablissement");
+            const $optionsToShow = $options.filter('.' + sourcecode);
             $options.attr('disabled', 'disabled');
             $optionsToShow.removeAttr('disabled');
             $versionDiplomeSelect2.trigger('change'); // NB #versionDiplome est un Select2
