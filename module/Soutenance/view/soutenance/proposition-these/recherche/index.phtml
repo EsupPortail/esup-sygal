@@ -90,7 +90,7 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
             </td>
             <td>
                 <?php if ($these->getEtablissement()) : ?>
-                    <?php echo $this->structure($these->getEtablissement()); ?>
+                    <?php echo $this->structure($these->getEtablissement(), false); ?>
                 <?php else : ?>
                     <strong style="color:darkred;">
                         Établissement  : Aucun
@@ -99,7 +99,7 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
                 <br/>
 
                 <?php if ($these->getEcoleDoctorale()) : ?>
-                    <?php echo $this->structure($these->getEcoleDoctorale()); ?>
+                    <?php echo $this->structure($these->getEcoleDoctorale(), false); ?>
                 <?php else : ?>
                     <strong style="color:darkred;">
                         École doctorale  : Aucune
@@ -108,7 +108,7 @@ $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges:
                 <br/>
 
                 <?php if ($these->getUniteRecherche()) : ?>
-                    <?php echo $this->structure($these->getUniteRecherche()); ?>
+                    <?php echo $this->structure($these->getUniteRecherche(), false); ?>
                 <?php endif; ?>
             </td>
             <td>

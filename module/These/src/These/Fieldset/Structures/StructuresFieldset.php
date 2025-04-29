@@ -30,9 +30,10 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
     public function setEtablissements(array $etablissements): void
     {
         $options = [];
+
+        /** @var Etablissement $etablissement */
         foreach ($etablissements as $etablissement) {
-            $sigle = $etablissement->getStructure()?->getSigle() ? " (".$etablissement->getStructure()->getSigle().")" : null;
-            $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
+            $options[$etablissement->getId()] = (string) $etablissement;
         }
         $this->etablissements = $options;
     }
@@ -41,9 +42,9 @@ class StructuresFieldset extends Fieldset implements InputFilterProviderInterfac
     {
         $options = [];
 
+        /** @var EcoleDoctorale $ecole */
         foreach ($ecolesDoctorales as $ecole) {
-            $sigle = $ecole->getStructure()?->getCode() ? " (".$ecole->getStructure()->getCode().")" : null;
-            $options[$ecole->getId()] = $ecole->getStructure()?->getLibelle() . $sigle;
+            $options[$ecole->getId()] = (string) $ecole;
         }
         $this->ecolesDoctorales = $options;
     }

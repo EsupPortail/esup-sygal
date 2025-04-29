@@ -122,8 +122,7 @@ function generateSelect($structures, $id, $roles = null)
 
     foreach ($structuresValides as $structure) {
         $texte .= '<option value="' . $structure->getStructure()->getId() . '">';
-        $texte .= $structure->getStructure()->getLibelle();
-        $texte .= ' (' . $structure->getStructure()->getSigle() . ')';
+        $texte .= $structure;
         $texte .= '</option>';
     }
     $texte .= "</select>";

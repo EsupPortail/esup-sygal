@@ -35,7 +35,7 @@ class AdmissionInscriptionTemplateVariable extends AbstractTemplateVariable
      */
     public function getEcoleDoctoraleLibelle(): ?string
     {
-        return $this->inscription->getEcoleDoctorale() ? $this->inscription->getEcoleDoctorale()->getStructure()->getLibelle() : null;
+        return $this->inscription->getEcoleDoctorale() ? $this->inscription->getEcoleDoctorale() : null;
     }
 
     /**
@@ -43,7 +43,7 @@ class AdmissionInscriptionTemplateVariable extends AbstractTemplateVariable
      */
     public function getUniteRechercheLibelle(): ?string
     {
-        return $this->inscription->getUniteRecherche() ? $this->inscription->getUniteRecherche()->getStructure()->getLibelle() : "<b>Non renseigné</b>";
+        return $this->inscription->getUniteRecherche() ? $this->inscription->getUniteRecherche() : "<b>Non renseigné</b>";
     }
 
     /**

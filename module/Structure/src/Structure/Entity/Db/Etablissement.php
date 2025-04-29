@@ -3,6 +3,7 @@
 namespace Structure\Entity\Db;
 
 use Application\Entity\Db\Role;
+use Structure\Filter\StructureFormatter;
 use UnicaenSearch\Filter\SearchFilterValueInterface;
 use Individu\Entity\Db\IndividuRole;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -55,7 +56,7 @@ class Etablissement implements
     {
         $options = [];
         foreach ($entities as $entity) {
-            $options[$entity->getId()] = $entity->getStructure()->getLibelle();
+            $options[$entity->getId()] = (string) $entity;
         }
 
         return $options;
@@ -118,12 +119,30 @@ class Etablissement implements
      * Etablissement prettyPrint
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return implode(' ', array_filter([
-            $this->structure->getLibelle(),
-            ($sigle = trim($this->structure->getSigle())) ? '(' . $sigle . ')' : null
-        ]));
+        return $this->getLibelleComplet();
+    }
+
+    /**
+     * Retourne le libellé *au format par défaut (recommandé)*.
+     *
+     * @see getLibelleCompletFormatter() pour avoir accès aux autres formats.
+     */
+    public function getLibelleComplet(): string
+    {
+        return $this->getLibelleCompletFormatter()->f();
+    }
+
+    /**
+     * Retourne une instance du formateur de libellé pour cet établissement.
+     */
+    public function getLibelleCompletFormatter(): StructureFormatter
+    {
+        $formatter = new StructureFormatter();
+        $formatter->setValue($this);
+
+        return $formatter;
     }
 
     /**

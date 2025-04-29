@@ -4,10 +4,10 @@ namespace RapportActivite\Service\Search;
 
 use Acteur\Service\ActeurThese\ActeurTheseServiceAwareTrait;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Search\Financement\OrigineFinancementSearchFilter;
 use UnicaenSearch\Filter\SearchFilter;
 use UnicaenSearch\Filter\SelectSearchFilter;
 use UnicaenSearch\Filter\TextSearchFilter;
-use UnicaenSearch\Financement\OrigineFinancementSearchFilter;
 use UnicaenSearch\SearchService;
 use UnicaenSearch\Sorter\SearchSorter;
 use Application\Service\Financement\FinancementServiceAwareTrait;

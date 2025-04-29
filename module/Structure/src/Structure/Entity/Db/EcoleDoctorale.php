@@ -2,6 +2,7 @@
 
 namespace Structure\Entity\Db;
 
+use Structure\Filter\StructureFormatter;
 use UnicaenSearch\Filter\SearchFilterValueInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
@@ -71,10 +72,28 @@ class EcoleDoctorale implements
 
     public function __toString(): string
     {
-        return implode(' - ', array_filter([
-            $this->structure->getSigle(),
-            $this->structure->getLibelle()
-        ]));
+        return $this->getLibelleComplet();
+    }
+
+    /**
+     * Retourne le libellé *au format par défaut (recommandé)*.
+     *
+     * @see getLibelleCompletFormatter() pour avoir accès aux autres formats.
+     */
+    public function getLibelleComplet(): string
+    {
+        return $this->getLibelleCompletFormatter()->f();
+    }
+
+    /**
+     * Retourne une instance du formateur de libellé pour cette école doctorale.
+     */
+    public function getLibelleCompletFormatter(): StructureFormatter
+    {
+        $formatter = new StructureFormatter();
+        $formatter->setValue($this);
+
+        return $formatter;
     }
 
     /**

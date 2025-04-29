@@ -48,7 +48,7 @@ class InscriptionFieldsetFactory
         $ecoles = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle', false);
         $fieldset->setEcolesDoctorales($ecoles);
 
-        $unites = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle', false);
+        $unites = $structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, ['structure.code', 'structure.libelle'], false);
         $fieldset->setUnitesRecherche($unites);
 
         $etablissementService = $container->get(EtablissementService::class);

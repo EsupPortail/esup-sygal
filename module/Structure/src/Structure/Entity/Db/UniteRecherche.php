@@ -3,13 +3,14 @@
 namespace Structure\Entity\Db;
 
 use Application\Entity\Db\DomaineScientifique;
-use UnicaenSearch\Filter\SearchFilterValueInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Structure\Filter\StructureFormatter;
 use Substitution\Entity\Db\SubstitutionAwareEntityInterface;
 use Substitution\Entity\Db\SubstitutionAwareEntityTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenSearch\Filter\SearchFilterValueInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareInterface;
 use UnicaenUtilisateur\Entity\Db\HistoriqueAwareTrait;
 
@@ -82,12 +83,28 @@ class UniteRecherche implements
 
     public function __toString(): string
     {
-        $sigle = $this->structure->getSigle();
+        return $this->getLibelleComplet();
+    }
 
-        return implode(' -- ', array_filter([
-            $this->structure->getCode(),
-            $this->structure->getLibelle() . ($sigle ? sprintf(" (%s)", $sigle) : null),
-        ]));
+    /**
+     * Retourne le libellé *au format par défaut (recommandé)*.
+     *
+     * @see getLibelleCompletFormatter() pour avoir accès aux autres formats.
+     */
+    public function getLibelleComplet(): string
+    {
+        return $this->getLibelleCompletFormatter()->f();
+    }
+
+    /**
+     * Retourne une instance du formateur de libellé pour cette unité de recherche.
+     */
+    public function getLibelleCompletFormatter(): StructureFormatter
+    {
+        $formatter = new StructureFormatter();
+        $formatter->setValue($this);
+
+        return $formatter;
     }
 
     /**

@@ -14,6 +14,7 @@ Journal des modifications
   - La gestionnaire pourra visualiser les justificatifs depuis la session de formations, au niveau des présences (seulement lorsque la session sera à l'état clôturée).
 - Changement du template envoyé au doctorant, à la suite de la validation de la page de couverture
 - Extraction CSV des inscriptions aux formations : ajout de la colonne 'Liste'.
+- Ajout d'un formatter pour l'affichage des structures
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 - [FIX] Ajout d'un CED impossible

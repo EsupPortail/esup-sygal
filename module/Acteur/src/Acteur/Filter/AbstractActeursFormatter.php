@@ -192,11 +192,11 @@ abstract class AbstractActeursFormatter extends AbstractFilter
             $result["qualite"] = $acteur->getLibelleQualite();
         }
         if ($this->displayEtablissement === true) {
-            $result["etablissement"] = ($etab = $acteur->getEtablissement()) ? $etab->getStructure()->getLibelle() : "(Établissement non renseigné)";
+            $result["etablissement"] = ($etab = $acteur->getEtablissement()) ? $etab : "(Établissement non renseigné)";
 //            $result["etablissementForce"] = ($etab = $acteur->getEtablissementForce()) ? $etab->getStructure()->getLibelle() : null;
         }
         if ($this->displayUniteRecherche === true && $acteur->getUniteRecherche()) {
-            $result["uniteRecherche"] = $acteur->getUniteRecherche()->getStructure()->getLibelle();
+            $result["uniteRecherche"] = $acteur->getUniteRecherche();
         }
         if ($acteur->getIndividu()->getSupannId() === null) {
             $result['alerte-supann-id'] = sprintf(

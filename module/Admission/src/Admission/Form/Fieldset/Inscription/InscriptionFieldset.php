@@ -18,6 +18,8 @@ use Laminas\Form\Element\Textarea;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\NotEmpty;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterProviderInterface
@@ -58,7 +60,7 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
     {
         $options = [];
         foreach ($ecolesDoctorales as $ecole) {
-            $options[$ecole->getId()] = $ecole->getStructure()->getLibelle();
+            $options[$ecole->getId()] = (string) $ecole;
         }
         $this->ecolesDoctorales = $options;
     }
@@ -75,8 +77,9 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
     public function setUnitesRecherche(array $unitesRecherche): void
     {
         $options = [];
+        /** @var UniteRecherche $unite */
         foreach ($unitesRecherche as $unite) {
-            $options[$unite->getId()] = $unite->getStructure()->getLibelle();
+            $options[$unite->getId()] = (string) $unite;
         }
         $this->unitesRecherche = $options;
     }
@@ -84,10 +87,10 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
     public function setEtablissements(array $etablissements): void
     {
         $options = [];
+        /** @var Etablissement $etablissement */
         foreach ($etablissements as $etablissement) {
             if(!$etablissement->estInscription() || $etablissement->estInscription() && $this->admissionService->canEtabAccessModuleAdmission($etablissement)) {
-                $sigle = $etablissement->getStructure()?->getSigle() ? " (" . $etablissement->getStructure()->getSigle() . ")" : null;
-                $options[$etablissement->getId()] = $etablissement->getStructure()?->getLibelle() . $sigle;
+                $options[$etablissement->getId()] = (string) $etablissement;
             }
         }
         $this->etablissements = $options;
@@ -96,10 +99,10 @@ class InscriptionFieldset extends AdmissionBaseFieldset implements InputFilterPr
     public function setEtablissementsInscription(array $etablissementsInscription): void
     {
         $options = [];
+        /** @var Etablissement $etablissement */
         foreach ($etablissementsInscription as $etablissementInscription) {
             if($this->admissionService->canEtabAccessModuleAdmission($etablissementInscription)){
-                $sigle = $etablissementInscription->getStructure()?->getSigle() ? " (" . $etablissementInscription->getStructure()->getSigle() . ")" : null;
-                $options[$etablissementInscription->getId()] = $etablissementInscription->getStructure()->getLibelle() . $sigle;
+                $options[$etablissementInscription->getId()] = (string) $etablissementInscription;
             }
         }
         $this->etablissementInscription = $options;

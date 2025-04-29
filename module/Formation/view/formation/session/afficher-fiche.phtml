@@ -91,7 +91,7 @@ $this->headTitle($pageTitle);
             <dt class="col-md-3"> État </dt>
             <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
             <dt class="col-md-3"> Établissement organisateur </dt>
-            <dd class="col-md-9"> <?php echo $this->site($session); ?> </dd>
+            <dd class="col-md-9 mt-2 mb-2"> <?php echo $this->site($session); ?> </dd>
             <dt class="col-md-3"> Responsable </dt>
             <dd class="col-md-9">
                 <?php if ($session->getResponsable()) : ?>
@@ -151,8 +151,8 @@ $this->headTitle($pageTitle);
                     <?php foreach ($session->getStructuresValides() as $structureComplemenaire) : ?>
                         <li>
                             <span class=" <?php if ($structureComplemenaire->estHistorise()) echo " historise text-danger "; ?> ">
-                                <span class="formation-typage">Structure</span>
-                                <?php echo $structureComplemenaire->getStructure()->getLibelle(); ?>
+                                <?php echo $this->structure($structureComplemenaire->getStructure(), true); ?>
+
                                 <?php if ($structureComplemenaire->getLieu() !== null) : ?>
                                     <br/>
                                     <span class="formation-typage">Adresse </span>

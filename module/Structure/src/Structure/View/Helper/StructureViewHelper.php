@@ -22,7 +22,7 @@ class StructureViewHelper extends AbstractHelper
         if($structure instanceof Etablissement){
             $typeStructureClass = "etablissement";
             $structureCode = $structure->getStructure()->getSourceCode();
-            $structureLibelle = $structure?->getStructure()->getLibelle();
+            $structureLibelle = $structure;
         }elseif($structure instanceof UniteRecherche){
             $typeStructureClass = "ur";
             $structureCode = $structure->getStructure()->getCode();

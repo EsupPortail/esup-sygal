@@ -113,8 +113,8 @@ class IndividuController extends AbstractActionController implements SearchContr
         $etablissementsQb->join('structure.etablissement', 'etab', Join::WITH, 'etab.estInscription = true');
         $etablissements = $etablissementsQb->getQuery()->execute();
 
-        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.libelle');
-        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.libelle');
+        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'structure.code', false);
+        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'structure.sigle', false);
 
         return new ViewModel([
             'individu' => $individu,

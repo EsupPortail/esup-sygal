@@ -71,7 +71,7 @@ if ($validatedCount === 0) {
                     <ul>
                         <li>
                             <?php if ($object->getUniteRecherche()) : ?>
-                                <?php echo $object->getUniteRecherche()->getStructure()->getLibelle(); ?>  (Unité de recherche) <br/>
+                                <?php echo $object->getUniteRecherche(); ?>  (Unité de recherche) <br/>
                             <?php endif; ?>
                             <?php if (isset($validations[Role::CODE_RESP_UR]) && $validations[Role::CODE_RESP_UR]) : ?>
                                 <?php $validation = current($validations[Role::CODE_RESP_UR]); ?>
@@ -88,7 +88,7 @@ if ($validatedCount === 0) {
                         <?php if($proposition instanceof PropositionThese): ?>
                             <li>
                                 <?php if ($object->getEcoleDoctorale()) : ?>
-                                    <?php echo $object->getEcoleDoctorale()->getStructure()->getLibelle(); ?>  (École Doctorale) <br/>
+                                    <?php echo $object->getEcoleDoctorale(); ?>  (École Doctorale) <br/>
                                 <?php else: ?>
                                     <strong style="color:darkred;">
                                         Aucune
@@ -109,7 +109,7 @@ if ($validatedCount === 0) {
                                 <?php endif; ?>
                             </li>
                             <li>
-                                <?php echo $object->getEtablissement()->getStructure()->getLibelle(); ?>
+                                <?php echo $object->getEtablissement(); ?>
                                 (Signature de la proposition de soutenance par la direction de l'établissement) <br/>
                                 <?php if (isset($validations[Role::CODE_BDD]) && $validations[Role::CODE_BDD]) : ?>
                                     <?php $validation = current($validations[Role::CODE_BDD]); ?>
