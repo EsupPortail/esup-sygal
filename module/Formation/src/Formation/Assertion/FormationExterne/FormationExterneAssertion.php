@@ -8,6 +8,7 @@ use Application\Service\UserContextServiceAwareInterface;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\FormationExterne;
 use Formation\Provider\Privilege\FormationPrivileges;
+use Formation\Provider\Validation\TypeValidation;
 use Formation\Service\Formation\FormationExterne\FormationExterneServiceAwareTrait;
 use JetBrains\PhpStorm\Pure;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
@@ -56,9 +57,13 @@ class FormationExterneAssertion extends AbstractAssertion implements  AssertionI
 
         switch($action) {
             case 'modifier' :
-            case 'historiser' :
-            case 'restaurer' :
             case 'supprimer' :
+            case 'historiser' :
+                if(!$this->scopeValide($formationExterne)) return false;
+                        $role = $this->userContextService->getSelectedIdentityRole();
+                        if($role->isDoctorant() &&
+                            $formationExterne->getValidation(TypeValidation::CODE_VALIDATION_FORMATION_EXTERNE)) return false;
+            case 'restaurer' :
             case 'supprimer-attestation' :
             case 'telecharger-attestation' :
             case 'valider-formation-externe' :
@@ -84,6 +89,10 @@ class FormationExterneAssertion extends AbstractAssertion implements  AssertionI
             case FormationPrivileges::FORMATION_FORMATIONEXTERNE_MODIFIER :
             case FormationPrivileges::FORMATION_FORMATIONEXTERNE_SUPPRIMER :
             case FormationPrivileges::FORMATION_FORMATIONEXTERNE_HISTORISER :
+                if(!$this->scopeValide($formationExterne)) return false;
+                        $role = $this->userContextService->getSelectedIdentityRole();
+                        if($role->isDoctorant() &&
+                            $formationExterne->getValidation(TypeValidation::CODE_VALIDATION_FORMATION_EXTERNE)) return false;
             case FormationPrivileges::FORMATION_FORMATIONEXTERNE_TELECHARGER_ATTESTATION :
             case FormationPrivileges::FORMATION_FORMATIONEXTERNE_GERER_VALIDATION :
                 return $this->scopeValide($formationExterne);

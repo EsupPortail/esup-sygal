@@ -48,6 +48,8 @@ INSERT INTO public.unicaen_privilege_privilege (categorie_id, code, libelle, ord
 VALUES ((SELECT id FROM unicaen_privilege_categorie WHERE code = 'formation_formationexterne'), 'telecharger-attestation', 'Télécharger une attestation de suivi d''une formation externe', 5);
 INSERT INTO public.unicaen_privilege_privilege (categorie_id, code, libelle, ordre)
 VALUES ((SELECT id FROM unicaen_privilege_categorie WHERE code = 'formation_formationexterne'), 'gerer-validation', 'Gérer les validations (valider/refuser/révoquer) d''une formation externe', 5);
+INSERT INTO public.unicaen_privilege_privilege (categorie_id, code, libelle, ordre)
+VALUES ((SELECT id FROM unicaen_privilege_categorie WHERE code = 'formation_formationexterne'), 'notifier-formation-ajoutee', 'Notifier les personnes ayant le droit de valider les formations externes, que des nouvelles ont été ajoutées', 5);
 
 
 --------------- Privilèges concernant le tableau de bord de gestion des formations
@@ -65,6 +67,8 @@ with data(categ, priv) as (select 'formation_formationexterne', 'ajouter'
                                select 'formation_formationexterne', 'supprimer'
                                union
                                select 'formation_formationexterne', 'telecharger-attestation'
+                               union
+                               select 'formation_formationexterne', 'notifier-formation-ajoutee'
                             )
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
@@ -166,3 +170,10 @@ alter table validation_formation_externe alter column id set default nextval('va
 insert into type_validation (id, code, libelle) VALUES (nextval('type_validation_id_seq'), 'VALIDATION_FORMATION_EXTERNE', 'Validation de la formation suivi à l''extérieur par un doctorant');
 insert into type_validation (id, code, libelle) VALUES (nextval('type_validation_id_seq'), 'REFUS_VALIDATION_FORMATION_EXTERNE', 'Refus de la formation suivi à l''extérieur par un doctorant');
 
+-- Templates/Macro Renderer
+INSERT INTO public.unicaen_renderer_macro (id, code, description, variable_name, methode_name) VALUES (160, 'Url#IndexGestionFormation', '<p>Retourne l''URL de l''index de gestion des formations d''un doctorant</p>', 'Url', 'getUrlIndexGestionFormation');
+INSERT INTO public.unicaen_renderer_template (id, code, description, document_type, document_sujet, document_corps, document_css, namespace, engine) VALUES (118, 'FORMATION_EXTERNE_AJOUTEE', '<p>Mail envoyé aux personnes ayant le droit de valider des formations externes déposées par le doctorant</p>', 'mail', 'Des formations externes déposées par VAR[Doctorant#Denomination] ont été soumises à validation', e'<p>Bonjour,</p>
+<p>De nouvelles déclarations de formations externes ont été enregistrées par <strong>VAR[Doctorant#Denomination]</strong>.</p>
+<p>Vous êtes invité·e à vous connecter à l\'application pour les examiner et, si nécessaire, les valider : VAR[Url#IndexGestionFormation]</p>
+<p>Cordialement, </p>
+                                                                                                                                                                <p><em>L’équipe SyGAL</em></p>', null, 'Formation\Provider\Template', 'default');

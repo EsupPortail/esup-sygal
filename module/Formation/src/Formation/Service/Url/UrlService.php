@@ -9,7 +9,7 @@ use Formation\Entity\Db\Session;
 use Formation\Provider\NatureFichier\NatureFichier;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
+use These\Entity\Db\These;use UnicaenApp\Exception\RuntimeException;
 
 class UrlService extends \Application\Service\Url\UrlService
 {
@@ -19,7 +19,8 @@ class UrlService extends \Application\Service\Url\UrlService
     protected ?array $allowedVariables = [
         'etablissement',
         'session',
-        'inscription'
+        'inscription',
+        'these'
     ];
 
     public function getFormationSignature() : string
@@ -74,5 +75,16 @@ class UrlService extends \Application\Service\Url\UrlService
 
         $url = $this->fromRoute('formation/session/justifier-absence', ['inscription' => $inscription->getId()], ['force_canonical' => true], true);
         return "<a href='".$url."'>Justification de vos absences</a>";
+    }
+
+    /** @noinspection PhpUnused */
+    public function getUrlIndexGestionFormation(): string
+    {
+        if (!isset($this->variables['these'])) throw new RuntimeException("Variable inscription non fournie à [".UrlService::class."]");
+        /** @var These $these */
+        $these = $this->variables['these'];
+        $url = $this->fromRoute('formation/index-gestion', ['these' => $these->getId()], ['force_canonical' => true], true);
+
+        return "<a href='".$url."'>Accéder au tableau de bord des formations</a>";
     }
 }

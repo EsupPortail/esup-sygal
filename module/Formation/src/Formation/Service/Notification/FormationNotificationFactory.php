@@ -4,6 +4,7 @@ namespace Formation\Service\Notification;
 
 use Application\Entity\Db\Role;
 use Application\Renderer\Template\Variable\PluginManager\TemplateVariablePluginManagerAwareTrait;
+use Application\Service\Email\EmailServiceAwareTrait;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
 use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
@@ -16,6 +17,7 @@ use Formation\Service\Url\UrlServiceAwareTrait;
 use Notification\Exception\RuntimeException;
 use Notification\Factory\NotificationFactory;
 use Notification\Notification;
+use These\Entity\Db\These;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /**
@@ -30,6 +32,7 @@ class FormationNotificationFactory extends NotificationFactory
     use ApplicationRoleServiceAwareTrait;
     use TemplateVariablePluginManagerAwareTrait;
     use UrlServiceAwareTrait;
+    use EmailServiceAwareTrait;
 
     /** INSCRIPTION ***************************************************************************************************/
 
@@ -307,6 +310,40 @@ class FormationNotificationFactory extends NotificationFactory
         $notif = new Notification();
         $notif
             ->setTo($mail)
+            ->setSubject($rendu->getSujet())
+            ->setBody($rendu->getCorps())
+        ;
+        return $notif;
+    }
+
+    public function createNotificationFormationExterneAjoutee(These $these) : Notification
+    {
+        $doctorant = $these->getDoctorant();
+        $vars = [
+            'doctorant' => $doctorant,
+        ];
+
+        $this->urlService->setVariables([
+            'these' => $these,
+        ]);
+        $vars['Url'] = $this->urlService;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::FORMATION_EXTERNE_AJOUTEE, $vars);
+        $emailsBdd = $this->emailService->fetchEmailAspectsDoctorat($these);
+        if (empty($emailsBdd)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
+        }
+
+        $emailsED = $this->emailService->fetchEmailEcoleDoctorale($these);
+        if (empty($emailsED)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour l'école doctorale de la thèse {$these->getId()}");
+        }
+
+        $mails = array_merge($emailsED, $emailsBdd);
+
+        $notif = new Notification();
+        $notif
+            ->setTo($mails)
             ->setSubject($rendu->getSujet())
             ->setBody($rendu->getCorps())
         ;

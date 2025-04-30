@@ -105,6 +105,15 @@ return [
                     ],
                     'assertion' => FormationExterneAssertion::class,
                 ],
+                [
+                    'controller' => FormationExterneController::class,
+                    'action' => [
+                        'notifier-formation-externe-ajoutee'
+                    ],
+                    'privileges' => [
+                        FormationPrivileges::FORMATION_FORMATIONEXTERNE_NOTIFIER_FORMATION_AJOUTEE,
+                    ],
+                ],
             ],
         ],
     ],
@@ -232,6 +241,18 @@ return [
                                         /** @see FormationExterneController::revoquerFormationExterneAction() */
                                         'controller' => FormationExterneController::class,
                                         'action' => 'revoquer-formation-externe',
+                                    ],
+                                ],
+                            ],
+                            'notifier-formation-externe-ajoutee' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/formation-externe/notifier-ajout/:these',
+                                    'defaults' => [
+                                        /** @see FormationExterneController::notifierFormationExterneAjouteeAction() */
+                                        'controller' => FormationExterneController::class,
+                                        'action' => 'notifier-formation-externe-ajoutee',
                                     ],
                                 ],
                             ],

@@ -14,15 +14,22 @@ use Doctorant\Entity\Db\Doctorant;
 use Formation\Entity\Db\FormationExterne;
 use Formation\Provider\Privilege\FormationPrivileges;
 use Formation\Provider\Validation\TypeValidation;
+use These\Entity\Db\These;
 use Validation\Entity\Db\ValidationFormationExterne;
 
 $canAjouterFormationExterne = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_FORMATIONEXTERNE_AJOUTER));
+$canNotifierGestionnaireAjoutFormationExterne = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_FORMATIONEXTERNE_NOTIFIER_FORMATION_AJOUTEE));
+
+$theses = array_filter($doctorant->getTheses(), function (These $t) { return (in_array($t->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]) AND $t->estNonHistorise());});
+/** @var These $these */
+$these = (!empty($theses))?current($theses):null;
 ?>
 <div role="tabpanel" class="tab-pane" id="formation-externe">
     <p class="lead">
         Les formations validées seront automatiquement remontées dans le rapport d'activité.
     </p>
-    <?php if($canAjouterFormationExterne): ?>
+    <?php if($canAjouterFormationExterne):
+        /** @see \Formation\Controller\FormationExterneController::ajouterAction() */ ?>
         <a href="<?php echo $this->url('formation/formation/ajouter-formation-externe',["doctorant" => $doctorant->getId()],[], true); ?>"
            class="btn btn-primary mt-2 ajax-modal"
            data-event="modification"
@@ -181,6 +188,17 @@ $canAjouterFormationExterne = $this->isAllowed(FormationPrivileges::getResourceI
             <?php endforeach; ?>
             </tbody>
         </table>
+        <?php if($canNotifierGestionnaireAjoutFormationExterne):
+            /** @see \Formation\Controller\FormationExterneController::notifierFormationExterneAjouteeAction() */ ?>
+            <a href="<?php echo $this->url('formation/formation/notifier-formation-externe-ajoutee',["these" => $these->getId()], ['query' => ['redirect' => $returnUrl]], true); ?>"
+               class="btn btn-primary"
+               title="Notifier le gestionnaire que de nouvelles formations externes sont prêtes à être validées"
+               data-bs-toggle="tooltip"
+            >
+                <span class="icon icon-mail"></span>
+                Notifier le gestionnaire
+            </a>
+        <?php endif; ?>
     <?php else: ?>
         <div class="row">
             <div class="col-md-12 mt-4">

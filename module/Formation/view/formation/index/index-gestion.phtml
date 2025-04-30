@@ -133,6 +133,25 @@ $this->headTitle('Tableau de bord des formations de '. $doctorant);
             $(this).tab('show');
         });
     });
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lorsqu’un onglet est activé, mettre à jour le hash de l’URL
+        document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function (el) {
+            el.addEventListener('shown.bs.tab', function (event) {
+                const target = event.target.getAttribute('href');
+                history.replaceState(null, null, target); // Change l'URL sans rechargement
+            });
+        });
+
+        // Au chargement, activer l’onglet correspondant au hash si présent
+        const hash = window.location.hash;
+        if (hash) {
+            const triggerEl = document.querySelector(`a[href="${hash}"]`);
+            if (triggerEl) {
+                const tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+            }
+        }
+    });
 </script>
 
 <style>

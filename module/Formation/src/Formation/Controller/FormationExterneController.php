@@ -13,11 +13,14 @@ use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\FormationExterne;
 use Formation\Form\Formation\FormationExterne\FormationExterneFormAwareTrait;
+use Formation\Provider\Template\MailTemplates;
 use Formation\Provider\Validation\TypeValidation;
 use Formation\Service\Formation\FormationExterne\FormationExterneServiceAwareTrait;
+use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Formation\Service\Validation\ValidationFormationExterne\ValidationFormationExterneServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use Notification\Service\NotifierServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -31,10 +34,12 @@ class FormationExterneController extends AbstractController
     use DoctorantServiceAwareTrait;
     use FormationExterneServiceAwareTrait;
     use ValidationFormationExterneServiceAwareTrait;
+    use FormationNotificationFactoryAwareTrait;
+    use NotifierServiceAwareTrait;
 
     public function ajouterAction() : ViewModel
     {
-              /** @var Doctorant $doctorant */
+        /** @var Doctorant $doctorant */
         $doctorantId = $this->params()->fromRoute('doctorant');
         if ($doctorantId !== null) {
             $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
@@ -250,6 +255,27 @@ class FormationExterneController extends AbstractController
         if($refus) $this->validationFormationExterneService->historiser($refus);
 
         $this->flashMessenger()->addSuccessMessage("La validation concernant cette formation a bien été révoquée.");
+
+        if($redirectUrl = $this->params()->fromQuery('redirect')){
+            return $this->redirect()->toUrl($redirectUrl);
+        }
+    }
+
+    public function notifierFormationExterneAjouteeAction(): Response
+    {
+        $these = $this->requestedThese();
+        try {
+            $notif = $this->formationNotificationFactory->createNotificationFormationExterneAjoutee($these);
+            if (empty($notif->getTo())) {
+                throw new RuntimeException(
+                    "Aucun mail pour la notification [" . MailTemplates::FORMATION_EXTERNE_AJOUTEE . "]");
+            }
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire , todo : cas à gérer !
+        }
+
+        $this->flashMessenger()->addSuccessMessage("Notification envoyée au gestionnaire");
 
         if($redirectUrl = $this->params()->fromQuery('redirect')){
             return $this->redirect()->toUrl($redirectUrl);

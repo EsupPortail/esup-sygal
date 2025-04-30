@@ -6,7 +6,8 @@ Journal des modifications
 - Module Formation : Ajout de la fiche de formation sur le détail d'une session pour un doctorant
 - Module Formation : Ajout d'une colonne dans l'export des inscriptions du nombre d'heures effectif de suivi du doctorant (pour une session)
 - Module Formation : Possibilité de renseigner par le doctorant (depuis son tableau de bord), une formation externe avec attestation :
-  - avec une validation par la Maison du doctorat
+  - avec une validation par la Maison du doctorat / Gestionnaire/Responsable de l'ED
+  - notification à l'initiative du doctorant, aux personnes habilitées à valider les formations 
   - formations externes validées récupérées automatiquement dans le rapport d'activité
 - Module Formation : Dépôt de justificatifs d'absence à une formation
   - Lors du passage à l'état clôturé d'une session de formation : envoi d'un mail aux doctorants qui ont été entièrement/partiellement absent aux séances.
