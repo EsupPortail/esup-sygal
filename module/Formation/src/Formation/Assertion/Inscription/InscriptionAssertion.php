@@ -91,8 +91,6 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
                         $inscription->setDoctorant($doctorant);
                         $inscription->setSession($session);
                         return $this->canInscrire($inscription);
-
-//                        return $this->scopeValide($inscription);
                     }
                     return false;
                 }
@@ -126,10 +124,13 @@ class InscriptionAssertion extends AbstractAssertion implements  AssertionInterf
     private function canInscrire(?Inscription $inscriptionEnCours): bool
     {
         if (!$this->scopeValide($inscriptionEnCours)) return false;
+
         $doctorant = $inscriptionEnCours->getDoctorant();
         $sessionInscriptionEnCours = $inscriptionEnCours->getSession();
-        $inscriptions = $this->inscriptionService->getRepository()->findInscriptionsByDoctorant($doctorant);
+        $etatSession = $sessionInscriptionEnCours->getEtat();
+        if ($etatSession->getCode() !== Session::ETAT_INSCRIPTION) return false;
 
+        $inscriptions = $this->inscriptionService->getRepository()->findInscriptionsByDoctorant($doctorant);
         /** @var Inscription $inscription */
         foreach ($inscriptions as $inscription) {
             $sessionInscriptionEnregistree = $inscription->getSession();

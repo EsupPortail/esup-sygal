@@ -20,6 +20,7 @@ Journal des modifications
 - [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 - [FIX] Ajout d'un CED impossible
 - [FIX] Correction de la vue v_situ_depot_vc_valid_pres : calcul erroné de l'existence d'une validation.
+- [FIX] Inscription à une formation possible même lorsque la formation était dans l'état "Inscriptions fermées"
 
 10.0.1
 -----
