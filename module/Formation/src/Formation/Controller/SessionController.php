@@ -254,7 +254,7 @@ class SessionController extends AbstractController
                         $this->triggerNotificationInscriptionEchec($session);
                         break;
                     case Etat::CODE_CLOTURER :
-//                        $this->triggerNotificationSessionTerminee($session);
+                        $this->triggerNotificationSessionTerminee($session);
                         $this->triggerNotificationAbsencesInjustifieesSession($session);
                         break;
                     case Etat::CODE_ANNULEE :
