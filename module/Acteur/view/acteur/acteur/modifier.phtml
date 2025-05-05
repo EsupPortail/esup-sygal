@@ -88,7 +88,6 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
 
 <?php echo $this->form()->closeTag(); ?>
 
-
 <style>
     .forcage .trigger.forcer {
         margin-top: 1.45em;
@@ -110,4 +109,19 @@ if (!$form->getObject()->getId() && !$form->getObject()->getSource()->getImporta
         // };
         widget.init();
     });
+
+    document.querySelector('.modal form button[type="submit"]').addEventListener('click', function () {
+        const form = this.closest('form');
+        // Ajoute une classe CSS pour "geler" le formulaire et possiblement éviter l'exception : plusieurs membres pour un même acteur
+        form.classList.add('form-locked');
+    });
 </script>
+
+<style>
+    .form-locked {
+        pointer-events: none;
+        opacity: 0.6;
+        user-select: none;
+    }
+</style>
+

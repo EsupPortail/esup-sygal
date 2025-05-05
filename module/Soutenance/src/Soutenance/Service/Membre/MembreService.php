@@ -293,9 +293,9 @@ class MembreService
         $acteur = $proposition instanceof PropositionThese ?
             $this->acteurTheseService->getRepository()->findActeurForSoutenanceMembre($membre) :
             $this->acteurHDRService->getRepository()->findActeurForSoutenanceMembre($membre);
-        if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
+        if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est manquant.");
         $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
-        return ($nomusuel . "_" . $membre->getId());
+        return ($nomusuel . "_" . $membre->getId()."_".$acteur->getIndividu()->getId());
     }
 
     /** RECUPERATION DE L'UTILSATEUR D'UN MEMBRE **********************************************************************/
@@ -315,8 +315,7 @@ class MembreService
         $individu = $acteur->getIndividu();
         if ($individu === null) return null;
 
-        /** @var AbstractUser[] $utilisateurs */
-        $utilisateurs = $individu->getUtilisateurs();
+        $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
         return (empty($utilisateurs))?null:$utilisateurs[0];
     }
 
