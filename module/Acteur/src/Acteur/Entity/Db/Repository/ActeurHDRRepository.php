@@ -111,7 +111,8 @@ class ActeurHDRRepository extends AbstractActeurRepository
             ->addSelect('membre')->join('acteur.membre', 'membre')
             ->addSelect('individu')->join('acteur.individu', 'individu')
             ->addSelect('proposition')->join('membre.proposition', 'proposition')
-            ->addSelect('qualite')->join('membre.qualite', 'qualite');
+            ->addSelect('qualite')->join('membre.qualite', 'qualite')
+            ->andWhere('acteur.histoDestruction is null');
 //            ->addSelect('acteur')->join('membre.acteur', 'acteur') // NB : une Acteur doit avoir été associé au Membre
 
         // peuvent être président du jury les membres de rang A

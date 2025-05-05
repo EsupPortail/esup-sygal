@@ -19,6 +19,7 @@ Journal des modifications
 - Ajout d'un formatter pour l'affichage des structures
 - [FIX] Module Soutenance : lorsque plusieurs propositions de soutenances étaient enregistrées en BDD, ce n'était pas forcément la bonne qui était récupérée
 - [FIX] Module Soutenance : Association d'un acteur à membre impossible dans certains cas
+- [FIX] Module Soutenance : Acteurs historisés pouvaient apparaître dans la liste de ceux désignés pour être président de jury
 - [FIX] Rôles HDR affichés à tort sur la fiche d'un établissement
 - [FIX] Ajout d'un CED impossible
 - [FIX] Correction de la vue v_situ_depot_vc_valid_pres : calcul erroné de l'existence d'une validation.

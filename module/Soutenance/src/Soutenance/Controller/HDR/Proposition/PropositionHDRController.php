@@ -270,7 +270,7 @@ class PropositionHDRController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPropositionValidee($this->entity);
                     $this->notifierService->trigger($notif);
-                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la proposition est complète et part pour saisie en présoutenance.
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la proposition est complète et part pour saisie en pré-soutenance.
                     <br><br> <b>Envoyé :</b> aux acteurs directs et aux structures");
                 } catch (Throwable $e) {
                     $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (aux acteurs directs et aux structures) indiquant que la proposition était validée. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
@@ -278,10 +278,10 @@ class PropositionHDRController extends PropositionController
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationPresoutenance($this->entity);
                     $this->notifierService->trigger($notif);
-                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la HDR peut débuter le circuit de présoutenance.
+                    $this->flashMessenger()->addSuccessMessage("Un mail a été envoyé indiquant que la HDR peut débuter le circuit de pré-soutenance.
                     <br><br> <b>Envoyé :</b> au gestionnaire HDR");
                 } catch (\Notification\Exception\RuntimeException $e) {
-                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (au gestionnaire HDR) indiquant que la HDR peut débuter le circuit de présoutenance. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
+                    $this->flashMessenger()->addErrorMessage("Une erreur s'est produite lors de l'envoi du mail (au gestionnaire HDR) indiquant que la HDR peut débuter le circuit de pré-soutenance. <br><br> <b>Message d'erreur</b> : ".$e->getMessage());
                 }
 
                 $this->proposition->setEtat($this->propositionService->findPropositionEtatByCode(Etat::ETABLISSEMENT));
